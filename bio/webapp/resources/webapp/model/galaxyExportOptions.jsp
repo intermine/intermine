@@ -51,7 +51,7 @@
   {
     jQuery("#data_type").val("tabular");
     jQuery("#URL").val("${tableURL}");
-    jQuery("#queryXML").val('${query}');
+    jQuery("#queryXML").val('${queryXML}');
     jQuery("#size").val("${size}");
     jQuery("#info").val("");
     jQuery("#dbkey").val("");
@@ -79,7 +79,7 @@
           }
 
       } else { // export as BED
-        jQuery("#queryXML").val('${query}'); //reset query if updated in tsv options
+        jQuery("#queryXML").val('${queryXML}'); //reset query if updated in tsv options
       }
   }
 
@@ -94,7 +94,7 @@
   <div id="exportTableView" class="option">
          <input type="radio" name="exportOptions" checked="checked" value="view"/>
          <label>Send results as <strong>tab separated</strong> values</label>
-         
+
          <a class="advanced" onclick="javascript: jQuery('#tsv-options').slideToggle('slow');"><strong>Choose columns</strong> to export</a>
          <%-- options for pathquery views --%>
          <div id="tsv-options" style="display: none;">
@@ -103,7 +103,7 @@
               <li><label>Add column:</label> &nbsp;
               <tiles:insert name="availableColumns.tile">
                  <tiles:put name="table" value="${table}" />
-                 <tiles:put name="table" value='${query}' />
+                 <tiles:put name="queryXML" value='${queryXML}' />
               </tiles:insert>
               &nbsp;
               <button type="button" onclick="javascript:addSelectedPath();jQuery('ul#pathsList li:last div').highlight();" id="columnAddButton">Add</button></li>

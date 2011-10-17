@@ -34,7 +34,6 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -55,19 +54,16 @@ public class AvailableColumnsController extends InterMineAction
             ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        String queryXml = request.getParameter("query");
-        String table = request.getParameter("table");
 
-        if (queryXml != null) {
-            PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
-                    PathQuery.USERPROFILE_VERSION);
-            request.setAttribute("availableColumns", getColumnsThatCanBeAdded(pathQuery));
+        String queryXML = (String) request.getAttribute("queryXML");
+        String table = (String) request.getAttribute("table");
 
-        } else {
-            PagedTable pagedTable = SessionMethods.getResultsTable(session, table);
-            PathQuery query = pagedTable.getWebTable().getPathQuery();
-            request.setAttribute("availableColumns", getColumnsThatCanBeAdded(query));
-        }
+        PathQuery q = (queryXML != null) ? PathQueryBinding.unmarshalPathQuery(
+                new StringReader(queryXML), PathQuery.USERPROFILE_VERSION)
+                : SessionMethods.getResultsTable(session, table).getWebTable()
+                        .getPathQuery();
+
+        request.setAttribute("availableColumns", getColumnsThatCanBeAdded(q));
 
         return null;
     }
