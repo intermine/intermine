@@ -162,12 +162,13 @@ class ListManager(object):
 
     def delete_lists(self, lists):
         """Delete the given lists from the webserver"""
+        all_names = self.get_all_list_names()
         for l in lists:
             if isinstance(l, List):
                 name = l.name
             else:
                 name = str(l)
-            if name not in self.get_all_list_names():
+            if name not in all_names:
                 continue
             uri = self.service.root + self.service.LIST_PATH
             query_form = {'name': name}
