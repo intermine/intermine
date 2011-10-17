@@ -462,7 +462,7 @@ class ResultRow(object):
 
     def __iter__(self):
         """Return the list view of the row, so each cell can be processed"""
-        return self.to_l()
+        return iter(self.to_l())
 
     def __getitem__(self, key):
         if isinstance(key, int):
@@ -642,12 +642,15 @@ class JSONIterator(object):
         self.header = ""
         self.footer = ""
         self.parse_header()
+        self._is_finished = False
     
     def __iter__(self):
         return self
 
     def next(self):
         """Returns a parsed row of data"""
+        if self._is_finished:
+            raise StopIteration
         return self.get_next_row_from_connection()
 
     def parse_header(self):
@@ -708,6 +711,7 @@ class JSONIterator(object):
             raise WebserviceError("Connection interrupted")
 
         if next_row is None:
+            self._is_finished = True
             raise StopIteration
         else:
             return next_row
