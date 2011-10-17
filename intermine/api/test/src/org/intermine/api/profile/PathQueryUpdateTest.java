@@ -46,7 +46,7 @@ public class PathQueryUpdateTest extends TestCase {
         query.setDescription("CEOTest.name", "CEO name");
         query.addConstraint(new PathConstraintAttribute("CEOTest.name", ConstraintOp.CONTAINS, "ploy"));
         query.addConstraint(new PathConstraintAttribute("CEOTest.company.name", ConstraintOp.CONTAINS, "pany"));
-        query.addConstraint(new PathConstraintLookup("Company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1"));
+        query.addConstraint(new PathConstraintLookup("CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1"));
         query.setOuterJoinStatus("CEOTest.company", OuterJoinStatus.OUTER);
         query.addOrderBy("CEOTest.name", OrderDirection.ASC);
         query.addOrderBy("CEOTest.sal", OrderDirection.ASC);
@@ -75,7 +75,7 @@ public class PathQueryUpdateTest extends TestCase {
         assertEquals("pany", constraint2.getValue());
         assertEquals(ConstraintOp.CONTAINS, constraint2.getOp().CONTAINS);
         PathConstraintLookup constraint3 = (PathConstraintLookup) queryUpdated
-            .getConstraintsForPath("Company.CEO.department.company.CEO").get(0);
+            .getConstraintsForPath("CEO.company.CEO.department.company.CEO").get(0);
         assertEquals("ttt", constraint3.getValue());
         assertEquals("DepartmentA1", constraint3.getExtraValue());
         //verify outer join
