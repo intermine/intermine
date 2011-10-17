@@ -39,6 +39,6 @@
     <c:if test="${!empty feature.length}">
       ${feature.length}
     </c:if>
-    <c:set var="interMineObject" value="${feature}" scope="request"/>&nbsp;<tiles:insert page="/model/sequenceShortDisplayer.jsp"/>
+    <c:set var="object" value="${feature}" scope="request"/>&nbsp;<tiles:insert page="/model/sequenceShortDisplayer.jsp"/>
   </td>
 <%--</tr>--%>
