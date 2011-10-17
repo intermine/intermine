@@ -6,6 +6,7 @@ import csv
 import base64
 import httplib
 import re
+import copy
 
 # Use core json for 2.6+, simplejson for <=2.5
 try:
@@ -443,7 +444,7 @@ class ResultRow(object):
     for convenience both list indexes and dictionary keys can be used. So the 
     following all work:
 
-       >>> # view is "Gene.symbol", "Gene.organism.name"
+        >>> # view is "Gene.symbol", "Gene.organism.name"
        >>> row["symbol"]
        >>> row["Gene.symbol"]
        >>> row[0]
@@ -486,25 +487,51 @@ class ResultRow(object):
         return self.index_map[key]
 
     def __str__(self):
-       root = re.sub("\..*$", "", self.views[0])
-       parts = [root + ":"]
-       for view in self.views:
+        root = re.sub("\..*$", "", self.views[0])
+        parts = [root + ":"]
+        for view in self.views:
            short_form = re.sub("^[^.]+.", "", view)
            value = self[view]
            parts.append(short_form + "=" + str(value))
-       return " ".join(parts)
+        return " ".join(parts)
 
     def to_l(self):
-       """Return a list view of this row"""
-       return map(lambda x: x["value"], self.data)
+        """Return a list view of this row"""
+        return map(lambda x: x["value"], self.data)
 
     def to_d(self):
-       """Return a dictionary view of this row"""
-       d = {}
-       for view in self.views:
-           d[view] = self[view]
+        """Return a dictionary view of this row"""
+        d = {}
+        for view in self.views:
+            d[view] = self[view]
 
-       return d
+        return d
+
+    def items(self):
+        return [(view, self[view]) for view in self.views]
+
+    def iteritems(self):
+        for view in self.views:
+            yield (view, self[view])
+
+    def keys(self):
+        return copy.copy(self.views)
+
+    def values(self):
+        return self.to_l()
+
+    def itervalues(self):
+        return iter(self.to_l())
+
+    def iterkeys(self):
+        return iter(self.views)
+
+    def has_key(self, key):
+        try:
+            self._get_index_for(key)
+            return True
+        except KeyError:
+           return False 
 
 class ResultIterator(object):
     """
