@@ -44,19 +44,15 @@ public class ModelUpdate {
     private Set<String> deletedClasses = new HashSet<String>();
     private Map<String, String> renamedClasses = new HashMap<String, String>();
     private Map<String, String> renamedFields = new HashMap<String, String>();
-    public static final String DELETED = "deleted";
-    public static final String RENAMED = "renamed-";
+    public static final String DELETE = "delete";
+    public static final String RENAME = "rename-";
 
     public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, String oldModelName) {
         this.uosw = uosw;
         this.pm = new ProfileManager(os, uosw);
         this.model = os.getModel();
         this.oldModel = Model.getInstanceByName(oldModelName);
-        String keyAsString;
-        String className;
-        String fieldName;
-        String update;
-
+        
         Properties modelUpdateProps = new Properties();
         try {
             modelUpdateProps.load(this.getClass().getClassLoader()
@@ -64,6 +60,14 @@ public class ModelUpdate {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        loadModelUpdate(modelUpdateProps);
+    }
+
+    private void loadModelUpdate(Properties modelUpdateProps) {
+        String keyAsString;
+        String className;
+        String fieldName;
+        String update;
 
         for(Object key : modelUpdateProps.keySet()) {
             keyAsString = (String) key;
@@ -73,17 +77,16 @@ public class ModelUpdate {
                 //it's a class update
                 className = keyAsString;
                 verifyClassAndField(className, null, oldModel);
-                if (update.equals(DELETED)) {
+                if (update.equals(DELETE)) {
                     deletedClasses.add(className);
-                } else if (update.contains(RENAMED)) {
-                    String newClassName = update.replace(RENAMED, "").trim();
+                } else if (update.contains(RENAME)) {
+                    String newClassName = update.replace(RENAME, "").trim();
                     verifyClassAndField(newClassName, null, model);
                     renamedClasses.put(className, newClassName);
                 } else {
                     throw new BuildException("For the class " + className
                                       + " only deleted or renamed- permitted.");
                 }
-
             } else {
                 //it's a field update
                 int index = keyAsString.indexOf(".");
@@ -91,8 +94,8 @@ public class ModelUpdate {
                 fieldName = keyAsString.substring(index + 1);
                 verifyClassAndField(className, fieldName, oldModel);
 
-                if (update.contains(RENAMED)) {
-                    update = update.replace(RENAMED, "").trim();
+                if (update.contains(RENAME)) {
+                    update = update.replace(RENAME, "").trim();
                     index = update.indexOf(".");
                     if (index == -1) {
                         throw new BuildException("Field " + keyAsString + " has to contain class.newfield");
@@ -100,7 +103,7 @@ public class ModelUpdate {
                     String newClassName = update.substring(0, index);
                     String newFieldName = update.substring(index + 1);
                     if (fieldName.equals(newFieldName)) {
-                        throw new BuildException(keyAsString + " = " + RENAMED + update +
+                        throw new BuildException(keyAsString + " = " + RENAME + update +
                                 " not permitted. Field has to be renamed. Please check" +
                                 " modelUpdate.properties file");
                     }
@@ -118,10 +121,10 @@ public class ModelUpdate {
                             }
                         }
                     }
-                    renamedFields.put(newClassName + "." + fieldName, newFieldName);
-                } else if (!update.contains(DELETED)) {
+                    renamedFields.put(className + "." + fieldName, newFieldName);
+                } else if (!update.contains(DELETE)) {
                     throw new BuildException("For the field " + keyAsString
-                            + " only deleted or renamed- permitted.");
+                            + " only " + DELETE + " or " + RENAME + " permitted.");
                 }
             }
         }
@@ -149,8 +152,10 @@ public class ModelUpdate {
                 throw new BuildException("Attribute " + fieldName + " in the class " + className
                     + " can not be blank. " + checkFileMsg);
             }
-            if (cd.getAttributeDescriptorByName(fieldName) == null) {
-                throw new BuildException("Attribute " + fieldName + " in the class " + className
+            if (cd.getAttributeDescriptorByName(fieldName) == null
+                && cd.getReferenceDescriptorByName(fieldName) == null
+                && cd.getCollectionDescriptorByName(fieldName) == null) {
+                throw new BuildException("The " + fieldName + " in the class " + className
                                + " not defined in the model " + model.getName() + ". " + checkFileMsg);
             }
         }
@@ -250,24 +255,11 @@ public class ModelUpdate {
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
                 PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model, oldModel);
-                for (String prevClass : renamedClasses.keySet()) {
-                    problems = pathQueryUpdate.updateWithRenamedClass(prevClass, renamedClasses.get(prevClass));
-                    if (!problems.isEmpty()) {
-                        System.out.println("Problems updating pathQuery in savedQuery " + savedQuery.getName()
-                        + " with renamed class " + prevClass + ": " + problems);
-                        continue;
-                    }
-                }
-                for (String key : renamedFields.keySet()) {
-                    int index = key.indexOf(".");
-                    cls = key.substring(0, index);
-                    prevField = key.substring(index + 1);
-                    problems = pathQueryUpdate.updateWithRenamedField(cls, prevField, renamedFields.get(key));
-                    if (!problems.isEmpty()) {
-                        System.out.println("Problems updating pathQuery in savedQuery " + savedQuery.getName()
-                                + " with renamed field " + prevField + ": " + problems);
-                        continue;
-                    }
+                problems = pathQueryUpdate.update(renamedClasses, renamedFields);
+                if (!problems.isEmpty()) {
+                    System.out.println("Problems updating pathQuery in savedQuery "
+                                     + savedQuery.getName() + ". " + problems);
+                    continue;
                 }
                 if (pathQueryUpdate.isUpdated()) {
                     SavedQuery updatedSavedQuery = new SavedQuery(savedQuery.getName(),
@@ -277,35 +269,18 @@ public class ModelUpdate {
             }
             templateQueries = profile.getSavedTemplates();
             for (TemplateQuery templateQuery : templateQueries.values()) {
-                PathQueryUpdate templateQueryUpdate = new PathQueryUpdate(templateQuery, model, oldModel);
-                for (String prevClass : renamedClasses.keySet()) {
-                    problems = templateQueryUpdate.updateWithRenamedClass(prevClass,
-                        renamedClasses.get(prevClass));
-                    if (!problems.isEmpty()) {
-                        System.out.println("Problems updating pathQuery in templateQuery " + templateQuery.getName()
-                                + " with renamed class " + prevClass + ": " + problems);
-                        continue;
-                    }
-                }
-                for (String key : renamedFields.keySet()) {
-                    int index = key.indexOf(".");
-                    cls = key.substring(0, index);
-                    prevField = key.substring(index + 1);
-                    problems = templateQueryUpdate.updateWithRenamedField(cls, prevField,
-                        renamedFields.get(key));
-                    if (!problems.isEmpty()) {
-                        System.out.println("Problems updating pathQuery in templateQuery " + templateQuery.getName()
-                                + " with renamed field " + prevField + ": " + problems);
-                        continue;
-                    }
+                TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery, model,
+                                                                          oldModel);
+                problems = templateQueryUpdate.update(renamedClasses, renamedFields);
+                if (!problems.isEmpty()) {
+                    System.out.println("Problems updating pathQuery in templateQuery "
+                                      + templateQuery.getName() + ". " + problems);
+                    continue;
                 }
                 if (templateQueryUpdate.isUpdated()) {
-                    TemplateQuery updatedTemplateQuery = new TemplateQuery(templateQuery.getName(),
-                        templateQuery.getTitle(), templateQuery.getComment(),
-                        templateQueryUpdate.getUpdatedPathQuery());
+                    TemplateQuery updatedTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
                     profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
                 }
-                profile.saveTemplate(templateQuery.getName(), templateQuery);
             }
         }
     }
