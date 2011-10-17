@@ -673,14 +673,31 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
             q_res = self.query.all("rr")
             t_res = self.template.all("rr")
             for results in [q_res, t_res]:
-                assertEqual(results[0]["age"], 'bar')
-                assertEqual(results[1]["Employee.age"], 1.23)
-                assertEqual(results[2][0], True)
+                assertEqual(results[0]["age"], 'bar') # Can index by short path
+                assertEqual(results[1]["Employee.age"], 1.23) # or by full path
+                assertEqual(results[2][0], True) # or by numerical index
                 assertEqual(len(results), 3)
                 for row in results:
                     assertEqual(len(row), 3)
         self.do_unpredictable_test(logic)
 
+    def testResultRowIterability(self):
+        """Result rows should iterate as lists"""
+        def logic():
+            q_res = self.query.all("rr")
+            t_res = self.template.all("rr")
+            for results in [q_res, t_res]:
+                # 'in' as test of iterability
+                self.assertTrue("bar" in results[0])
+                self.assertTrue(1.23 in results[1])
+                self.assertTrue(True in results[2])
+                # Should be able to actually iterate
+                count = 0
+                for val in results[0]:
+                    count += 1
+                    self.assertTrue(0 < count < 4)
+
+        self.do_unpredictable_test(logic)
 
     def testResultsDict(self):
         """Should be able to get results as one dictionary per row"""
