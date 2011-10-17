@@ -62,7 +62,9 @@ public class EnsemblComparaConverter extends BioFileConverter
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        humanResolverFactory = new EnsemblIdResolverFactory();
+        // tmp out for modmine build
+        // humanResolverFactory = new EnsemblIdResolverFactory();
+        humanResolverFactory = null;
     }
 
     /**
