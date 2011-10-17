@@ -699,6 +699,32 @@ class TestQueryResults(WebserviceTest): # pragma: no cover
 
         self.do_unpredictable_test(logic)
 
+    def testResultRowDictBehaviour(self):
+        """Result rows should allow iteration using items() and iterkeys()"""
+        def logic():
+            q_res = self.query.all("rr")
+            t_res = self.template.all("rr")
+            for results in [q_res, t_res]:
+                r = results[0]
+                count = 0
+                for (k, v) in r.items():
+                    count += 1
+                    self.assertTrue(0 < count < 4)
+                count = 0
+                self.assertEqual([("Employee.name", 'foo'), ("Employee.age", 'bar'), ("Employee.id", 'baz')], r.items())
+                for (k, v) in r.iteritems():
+                    count += 1
+                    self.assertTrue(0 < count < 4)
+                self.assertEqual([pair for pair in r.iteritems()], r.items())
+                self.assertEqual(r.keys(), self.query.views)
+                self.assertEqual(r.values(), r.to_l())
+                self.assertEqual(zip(r.values(), r.keys()), zip(r.itervalues(), r.iterkeys()))
+                self.assertTrue(r.has_key("age"))
+                self.assertTrue(r.has_key("Employee.age"))
+                self.assertTrue(not r.has_key("Employee.foo"))
+
+        self.do_unpredictable_test(logic)
+
     def testResultsDict(self):
         """Should be able to get results as one dictionary per row"""
         expected = [
