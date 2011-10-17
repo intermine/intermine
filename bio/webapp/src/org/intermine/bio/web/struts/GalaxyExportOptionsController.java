@@ -218,7 +218,7 @@ public class GalaxyExportOptionsController extends TilesAction
             + "/service/query/results";
 
         request.setAttribute("tableURL", tableViewURL);
-        request.setAttribute("query", queryXML);
+        request.setAttribute("queryXML", queryXML);
         request.setAttribute("size", 1000000);
 
         // If can export as BED
