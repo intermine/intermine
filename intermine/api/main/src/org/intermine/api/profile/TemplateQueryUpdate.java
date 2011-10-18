@@ -1,7 +1,15 @@
 package org.intermine.api.profile;
 
-import java.util.ArrayList;
-import java.util.List;
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Map;
 
 import org.intermine.api.template.TemplateQuery;
@@ -9,81 +17,48 @@ import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 
 public class TemplateQueryUpdate extends PathQueryUpdate {
     private TemplateQuery templateQuery;
-    private TemplateQuery newTemplateQuery;
 
     public TemplateQueryUpdate(TemplateQuery templateQuery, Model newModel, Model oldModel) {
-        super(templateQuery.getPathQuery(), newModel, oldModel);
+        super.pathQuery = templateQuery.getPathQuery();
+        this.oldModel = oldModel;
         this.templateQuery = templateQuery;
+        this.newPathQuery = new TemplateQuery(templateQuery.getName(),
+            templateQuery.getTitle(), templateQuery.getComment(), new PathQuery(newModel));
     }
 
     public TemplateQuery getNewTemplateQuery() {
-        return newTemplateQuery;
+        return (TemplateQuery) newPathQuery;
     }
 
-    public synchronized List<String> update(Map<String, String> renamedClasses,
-            Map<String, String> renamedFields) throws PathException {
-        List<String> problems = new ArrayList<String>();
-        problems = super.update(renamedClasses, renamedFields);
-        if (!problems.isEmpty()) {
-            return problems;
-        }
-        newTemplateQuery = new TemplateQuery(templateQuery.getName(),
-            templateQuery.getTitle(), templateQuery.getComment(), newPathQuery);
-        updateEditableConstraints(renamedClasses, renamedFields);
-        updateConstraintDescriptions(renamedClasses, renamedFields);
-        updateConstraintSwitchOffAbility(renamedClasses, renamedFields);
-        return problems;
-    }
-
-    private void updateEditableConstraints(Map<String, String> renamedClasses,
-            Map<String, String> renamedFields) throws PathException {
+    protected void updateConstraints (Map<String, String> renamedClasses, Map<String, String> renamedFields)
+        throws PathException {
         String path, newPath;
         Path p;
-        for (PathConstraint pathConstraint : templateQuery.getEditableConstraints()) {
+        for (PathConstraint pathConstraint : pathQuery.getConstraints().keySet()) {
             path = pathConstraint.getPath();
             newPath = getPathUpdated(path, renamedClasses, renamedFields);
+            PathConstraint newPathConstraint;
             if (!newPath.equals(path)) {
-                newTemplateQuery.setEditable(createPathConstraint(pathConstraint, newPath), true);
+                newPathConstraint = createPathConstraint(pathConstraint, newPath);
             } else {
-                newTemplateQuery.setEditable(pathConstraint, true);
+                newPathConstraint = pathConstraint;
             }
-        }
-    }
-
-    private void updateConstraintDescriptions(Map<String, String> renamedClasses,
-            Map<String, String> renamedFields) throws PathException {
-        String path, newPath;
-        Path p;
-        for (PathConstraint pathConstraint : templateQuery.getConstraintDescriptions().keySet()) {
-            path = pathConstraint.getPath();
-            newPath = getPathUpdated(path, renamedClasses, renamedFields);
-            if (!newPath.equals(path)) {
-                newTemplateQuery.setConstraintDescription(createPathConstraint(pathConstraint, newPath),
-                    templateQuery.getConstraintDescription(pathConstraint));
-            } else {
-                newTemplateQuery.setConstraintDescription(pathConstraint,
-                    templateQuery.getConstraintDescription(pathConstraint));
+            newPathQuery.addConstraint(newPathConstraint);
+            //update editable constraints
+            if (templateQuery.getEditableConstraints().contains(pathConstraint)) {
+                ((TemplateQuery) newPathQuery).setEditable(newPathConstraint, true);
             }
-        }
-    }
-
-    private void updateConstraintSwitchOffAbility(Map<String, String> renamedClasses,
-            Map<String, String> renamedFields) throws PathException {
-        String path, newPath;
-        Path p;
-        for (PathConstraint pathConstraint : templateQuery.getConstraintSwitchOffAbility().keySet()) {
-            path = pathConstraint.getPath();
-            newPath = getPathUpdated(path, renamedClasses, renamedFields);
-            if (!newPath.equals(path)) {
-                newTemplateQuery.setSwitchOffAbility((createPathConstraint(pathConstraint, newPath)),
-                    templateQuery.getSwitchOffAbility(pathConstraint));
-            } else {
-                newTemplateQuery.setSwitchOffAbility(pathConstraint,
-                    templateQuery.getSwitchOffAbility(pathConstraint));
+            //update constraint descriptions
+            String description = templateQuery.getConstraintDescription(pathConstraint);
+            if (description != null) {
+                ((TemplateQuery) newPathQuery).setConstraintDescription(newPathConstraint, description);
             }
+            // update switch off ability
+            ((TemplateQuery) newPathQuery).setSwitchOffAbility(newPathConstraint, templateQuery.getSwitchOffAbility(pathConstraint));
         }
     }
 }
