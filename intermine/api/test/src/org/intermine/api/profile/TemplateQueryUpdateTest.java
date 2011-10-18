@@ -13,11 +13,13 @@ package org.intermine.api.profile;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.api.template.SwitchOffAbility;
 import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OuterJoinStatus;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
@@ -38,7 +40,7 @@ public class TemplateQueryUpdateTest extends TestCase {
         renamedFields.put("Company.CEOTest", "CEO");
         renamedFields.put("CEOTest.sal", "salary");
     }
-    
+
     public void testUpdate() throws Exception {
         PathQuery query = new PathQuery(Model.getInstanceByName("oldtestmodel"));
         query.addView("CEOTest.name");
@@ -46,14 +48,20 @@ public class TemplateQueryUpdateTest extends TestCase {
         query.addView("CEOTest.company.name");
         query.addView("CEOTest.sal");
         query.setDescription("CEOTest.name", "CEO name");
-        query.addConstraint(new PathConstraintAttribute("CEOTest.name", ConstraintOp.CONTAINS, "ploy"));
-        query.addConstraint(new PathConstraintAttribute("CEOTest.company.name", ConstraintOp.CONTAINS, "pany"));
-        query.addConstraint(new PathConstraintLookup("CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1"));
+        PathConstraint con1 = new PathConstraintAttribute("CEOTest.name", ConstraintOp.CONTAINS, "ploy");
+        query.addConstraint(con1);
+        PathConstraint con2 = new PathConstraintAttribute("CEOTest.company.name", ConstraintOp.CONTAINS, "pany");
+        query.addConstraint(con2);
+        PathConstraint con3 = new PathConstraintLookup("CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1");
+        query.addConstraint(con3);
         query.setOuterJoinStatus("CEOTest.company", OuterJoinStatus.OUTER);
         query.addOrderBy("CEOTest.name", OrderDirection.ASC);
         query.addOrderBy("CEOTest.sal", OrderDirection.ASC);
         TemplateQuery templateQuery = new TemplateQuery("test", "title", "comment", query);
-        
+        templateQuery.setSwitchOffAbility(con1, SwitchOffAbility.ON);
+        templateQuery.setConstraintDescription(con2, "Description on constraint");
+        templateQuery.setEditable(con1, true);
+        templateQuery.setEditable(con2, true);
         TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery,
             Model.getInstanceByName("testmodel"), Model.getInstanceByName("oldtestmodel"));
         templateQueryUpdate.update(renamedClasses, renamedFields);
@@ -90,5 +98,15 @@ public class TemplateQueryUpdateTest extends TestCase {
         assertEquals(2, newTemplateQuery.getOrderBy().size());
         assertEquals("CEO.name", newTemplateQuery.getOrderBy().get(0).getOrderPath());
         assertEquals("CEO.salary", newTemplateQuery.getOrderBy().get(1).getOrderPath());
+        //verify switch off ability
+        assertEquals(SwitchOffAbility.ON, newTemplateQuery.getSwitchOffAbility(constraint1));
+        assertEquals(SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint2));
+        assertEquals(SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint3));
+        //verify constraint descriptions
+        assertEquals("Description on constraint", newTemplateQuery.getConstraintDescription(constraint2));
+        //verify editable constraints
+        assertEquals(2, newTemplateQuery.getEditableConstraints().size());
+        assertEquals(1, newTemplateQuery.getEditableConstraints("CEO.name").size());
+        assertEquals(1, newTemplateQuery.getEditableConstraints("CEO.company.name").size());
     }
 }
