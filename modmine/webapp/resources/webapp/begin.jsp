@@ -245,15 +245,15 @@ $.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/serv
      <img title="lists" src="images/icons/genomic-search-64.png" class="title">
      <h3><a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a></h3>
      <div class="text">
-       <span style="width:76px; height:20px; float:left;">&nbsp;</span>
+       <span style="width:76px; float:left;"></span>
        <p>
          <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">
          <img src="themes/modmine/genome_region.jpg" alt="Genome Region Search" style="float:right;padding-left:5px;margin-right:4px;"/>
          </a>
          <strong>Explore</strong> a genomic region for features found by the <strong>modENCODE</strong> project.
+         <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a>
        </p>
        <br />
-       <a href="/${WEB_PROPERTIES['webapp.path']}/spanUploadOptions.do">Genomic Region Search</a>
      </div>
    </div>
    </div>
