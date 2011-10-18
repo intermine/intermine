@@ -43,7 +43,7 @@ li { margin-left:auto; }
   #search-bochs input#exptSearch.eg { color:#666; }
   #search-bochs img.title { position:absolute; top:10px; left:10px; }
 
-#genomic-bochs { border:1px solid #192F39; height:180px; }
+#genomic-bochs { border:1px solid #192F39; height:240px; }
   #genomic-bochs h3 { background:#192F39; padding-left:85px; }
     #genomic-bochs h3 a { color:#FFF; }
   #genomic-bochs img.title { position:absolute; top:10px; left:10px; }
