@@ -34,6 +34,9 @@ public class PathQueryUpdate {
     protected Model oldModel;
     protected boolean isUpdated = false;
 
+    public PathQueryUpdate() {
+    }
+
     public PathQueryUpdate(PathQuery pathQuery, Model newModel, Model oldModel) {
         this.pathQuery = pathQuery;
         this.oldModel = oldModel;
@@ -75,7 +78,7 @@ public class PathQueryUpdate {
         }
     }
 
-    private void updateConstraints (Map<String, String> renamedClasses, Map<String, String> renamedFields)
+    protected void updateConstraints (Map<String, String> renamedClasses, Map<String, String> renamedFields)
         throws PathException {
         String path, newPath;
         Path p;
