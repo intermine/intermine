@@ -1,8 +1,8 @@
 <webconfig>
-<!-- ================================================================================ -->
-<!-- classes marked as modMine are unique to it. Others should follow FlyMine ones(?) -->
-<!-- ________________________________________________________________________________ -->
-
+<!-- ============================================================ 
+       alphabetical order to facilitate comparison with flymine
+       fields: summary in the qb
+     ============================================================ -->      
   <class className="org.intermine.model.bio.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -304,7 +304,7 @@
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="affiliation"/>
-      <fieldconfig fieldExpr="project.surnamePI"/>
+      <fieldconfig fieldExpr="project.surnamePI" label="project" />
     </fields>
   </class>
 
@@ -684,11 +684,18 @@
 
   <reportdisplayers>
 
-      <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
-                         jspName="model/sequenceFeatureDisplayer.jsp"
-                         replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
-                         placement="summary"
-                         types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
+                     jspName="model/cytoscapeNetworkDisplayer.jsp"
+                     replacesFields="interactions"
+                     placement="Interactions"
+                     types="Gene,Protein"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+                     jspName="model/geneOntologyDisplayer.jsp"
+                     replacesFields="goAnnotation,ontologyAnnotations"
+                     placement="Function"
+                     types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
@@ -696,83 +703,6 @@
                      placement="Genomics"
                      types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
-                     jspName="model/overlappingFeaturesDisplayer.jsp"
-                     replacesFields="overlappingFeatures"
-                     placement="Genomics"
-                     types="SequenceFeature"/>
-
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
-                     jspName="model/geneOntologyDisplayer.jsp"
-                     replacesFields="goAnnotation,ontologyAnnotations"
-                     placement="Gene Ontology"
-                     types="Gene"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
-                         jspName="model/submissionDetailsDisplayer.jsp"
-                         replacesFields="title,experimentType,notice, DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount,url,replacesSubmission"
-                         placement="top"
-                         types="Submission"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
-                         jspName="model/submissionPropertiesDisplayer.jsp"
-                         replacesFields="properties,experimentalFactors,developmentalStages,arrays,antibodies,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts,tissues,cellLines"
-                         placement="modENCODE"
-                         types="Submission"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGeneratedFeaturesDisplayer"
-                         jspName="model/submissionGeneratedFeaturesDisplayer.jsp"
-                         replacesFields=""
-                         placement="modENCODE"
-                         types="Submission"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionExternalLinksDisplayer"
-                         jspName="model/submissionExternalLinksDisplayer.jsp"
-                         replacesFields="databaseRecords"
-                         placement="modENCODE"
-                         types="Submission"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionFileDownloadDisplayer"
-                         jspName="model/submissionFileDownloadDisplayer.jsp"
-                         replacesFields=""
-                         placement="sidebar"
-                         types="Submission"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
-                         jspName="model/submissionProtocolsDisplayer.jsp"
-                         replacesFields="protocols,appliedProtocols"
-                         placement="modENCODE"
-                         types="Submission"/>
-
-      <!-- <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
-                         jspName="model/submissionsFromSameExperimentDisplayer.jsp"
-                         replacesFields=""
-                         placement="modENCODE"
-                         types="Submission"/>-->
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.ProjectDetailsDisplayer"
-                         jspName="model/projectDetailsDisplayer.jsp"
-                         replacesFields="name,title,namePI,surnamePI,url,organisms"
-                         placement="top"
-                         types="Project"/>
-
-      <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
-                       jspName="model/cytoscapeNetworkDisplayer.jsp"
-                       replacesFields="interactions"
-                       placement="Interactions"
-                       types="Gene,Protein"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
-                       jspName="model/modmineGBrowse.jsp"
-                       replacesFields="organism"
-                       placement="modENCODE"
-                       types="SequenceFeature"/>
-
-      <reportdisplayer javaClass="org.modmine.web.displayer.ModMineWikiDisplayer"
-                       jspName="model/wikiLink.jsp"
-                       replacesFields="wikiLink,name"
-                       placement="summary"
-                       types="SubmissionProperty,Protocol"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
                      jspName="model/homologueDisplayer.jsp"
@@ -780,6 +710,43 @@
                      placement="Comparative Genomics"
                      parameters="{'dataSets': ['TreeFam data set', 'Ensembl Compara data set', 'Drosophila 12 Genomes Consortium homology']}"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
+                     jspName="model/minePathwaysDisplayer.jsp"
+                     replacesFields="pathways"
+                     placement="summary"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
+                     jspName="model/modmineGBrowse.jsp"
+                     replacesFields="organism"
+                     placement="modENCODE"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.ModMineWikiDisplayer"
+                     jspName="model/wikiLink.jsp"
+                     replacesFields="wikiLink,name"
+                     placement="summary"
+                     types="SubmissionProperty,Protocol"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
+                     jspName="model/overlappingFeaturesDisplayer.jsp"
+                     replacesFields="overlappingFeatures"
+                     placement="Genomics"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwaysDisplayer"
+                     jspName="model/pathwaysDisplayer.jsp"
+                     replacesFields="pathways"
+                     placement="summary"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.ProjectDetailsDisplayer"
+                     jspName="model/projectDetailsDisplayer.jsp"
+                     replacesFields="name,title,namePI,surnamePI,url,organisms"
+                     placement="top"
+                     types="Project"/>
+
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
                      jspName="model/publicationAnnotationsDisplayer.jsp"
@@ -794,6 +761,74 @@
                      replacesFields="publications"
                      placement="summary"
                      types="BioEntity"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.RegulatoryRegionsDisplayer"
+                     jspName="model/regulatoryRegionsDisplayer.jsp"
+                     replacesFields="regulatoryRegions"
+                     placement="Regulation"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.flymine.web.displayer.RNAiDisplayer"
+                     jspName="model/rnaiDisplayer.jsp"
+                     replacesFields="rnaiResults"
+                     placement="Regulation"
+                     types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
+                     jspName="model/sequenceFeatureDisplayer.jsp"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
+                     placement="summary"
+                     types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
+                     jspName="model/submissionDetailsDisplayer.jsp"
+                     replacesFields="title,experimentType,notice, DCCid,design,experimentDate,publicReleaseDate,embargoDate,qualityControl,replicate,description,lab,project,organism,experiment,RNAsize,multiplyMappedReadCount,uniquelyMappedReadCount,totalReadCount,url,replacesSubmission"
+                     placement="top"
+                     types="Submission"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
+                     jspName="model/submissionPropertiesDisplayer.jsp"
+                     replacesFields="properties,experimentalFactors,developmentalStages,arrays,antibodies,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts,tissues,cellLines"
+                     placement="modENCODE"
+                     types="Submission"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGeneratedFeaturesDisplayer"
+                     jspName="model/submissionGeneratedFeaturesDisplayer.jsp"
+                     replacesFields=""
+                     placement="modENCODE"
+                     types="Submission"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionExternalLinksDisplayer"
+                     jspName="model/submissionExternalLinksDisplayer.jsp"
+                     replacesFields="databaseRecords"
+                     placement="modENCODE"
+                     types="Submission"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionFileDownloadDisplayer"
+                     jspName="model/submissionFileDownloadDisplayer.jsp"
+                     replacesFields=""
+                     placement="sidebar"
+                     types="Submission"/>
+
+    <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
+                     jspName="model/submissionProtocolsDisplayer.jsp"
+                     replacesFields="protocols,appliedProtocols"
+                     placement="modENCODE"
+                     types="Submission"/>
+
+<!-- <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
+                      jspName="model/submissionsFromSameExperimentDisplayer.jsp"
+                      replacesFields=""
+                      placement="modENCODE"
+                      types="Submission"/>-->
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
+                     jspName="model/uniProtCommentsDisplayer.jsp"
+                     replacesFields="comments"
+                     placement="Function"
+                     types="Protein"/>
+
+
 
   </reportdisplayers>
 
@@ -854,6 +889,14 @@
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
+                                 link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
+                                 dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
+                                 label="Protein Domain"
+                                 description="Protein Domains enriched for items in this list."
+                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+
       <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
                                  link="org.intermine.bio.web.widget.PublicationURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
@@ -863,14 +906,6 @@
                                  typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
 
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
-                                 link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
-                                 description="Protein Domains enriched for items in this list."
-                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
@@ -879,12 +914,23 @@
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
 
+      <bagtabledisplayer id="interactions" title="Interactions"
+                         pathStrings="Gene.interactions.interactingGenes"
+                         link="org.intermine.bio.web.widget.InteractionURLQuery"
+                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
+                         displayFields="primaryIdentifier"
+                         exportField="primaryIdentifier"
+                         typeClass="org.intermine.model.bio.Gene"
+                         columnTitle="Interactions"
+                         style="height:431px;"/>
 
+
+<!--
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
                       content="Have an idea for a widget?  Contact us at help [at] modencode.org!"
                       typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature,org.intermine.model.bio.BindingSite"
                       />
-
+-->
     </widgets>
 </webconfig>
