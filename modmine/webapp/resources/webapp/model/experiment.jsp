@@ -533,10 +533,10 @@ All GBrowse tracks generated for this experiment:
       There are no submissions for this experiment:
     </c:when>
     <c:when test="${exp.submissionCount == 1}">
-      There is <c:out value="${exp.submissionCount}"></c:out> <b><c:out value="${exp.experimentType}"></c:out></b> submission for this experiment:
+      There is <c:out value="${exp.submissionCount}"></c:out> <b> <c:out value="${exp.experimentType}"></c:out></b> submission for this experiment:
     </c:when>
     <c:otherwise>
-      There are <c:out value="${exp.submissionCount}"></c:out> <b><c:out value="${exp.experimentType}"></c:out></b> submissions for this experiment:
+      There are <c:out value="${exp.submissionCount}"></c:out> <b> <c:out value="${exp.experimentType}"></c:out></b> submissions for this experiment:
     </c:otherwise>
 
   </c:choose>
@@ -923,7 +923,7 @@ Expression Levels:&nbsp;
 
 <c:forEach items="${subRep}" var="rep" varStatus="rep_status">
    <c:if test="${rep.key == sub.dCCid}">
-      <br>
+     
       <c:forEach items="${rep.value}" var="aRef" varStatus="ref_status" begin="0" end="5">
 
 
