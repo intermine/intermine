@@ -611,7 +611,7 @@ public class Path
      * @return true if the first element contains the class
      */
     public boolean startContainsClass(String cls) {
-        String rootClass = startCld.getType().getSimpleName();
+        String rootClass = startCld.getSimpleName();
         if (rootClass.equals(cls)) {
             return true;
         }
@@ -630,7 +630,7 @@ public class Path
         for (int index = 0; index < elements.size(); index++) {
             if (elements.get(index).equals(field)) {
                 cd = getElementClassDescriptors().get(index);
-                if (cd.getType().getSimpleName().equals(cls)) {
+                if (cd.getSimpleName().equals(cls)) {
                     indexElementsContainingField.add(index);
                 } else {
                     for (String superClass : cd.getAllSuperclassNames()) {
