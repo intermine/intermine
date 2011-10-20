@@ -231,6 +231,7 @@
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
       <displayer src="heatMap.tile" showOnLeft="true"/>
     </bagdisplayers>
+  </class>
 
   <class className="org.intermine.model.bio.GeneExpressionScore">
     <fields>
