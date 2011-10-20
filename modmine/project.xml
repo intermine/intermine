@@ -96,7 +96,8 @@
     <!-- Added r25 -->
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
-      <property name="ensemblcompara.organisms" value="7227 6239 9606 10090"/>
+      <property name="ensemblcompara.organisms" value="7227 6239"/>
+      <property name="ensemblcompara.homologues" value="9606 10090"/>
     </source>
     
     <source name="reactome" type="biopax">
