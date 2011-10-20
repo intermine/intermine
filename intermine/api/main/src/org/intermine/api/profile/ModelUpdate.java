@@ -9,6 +9,8 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,13 +48,14 @@ public class ModelUpdate {
     private Map<String, String> renamedFields = new HashMap<String, String>();
     public static final String DELETE = "delete";
     public static final String RENAME = "rename-";
+    public static String OLD = "_OldBackup";
 
-    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, String oldModelName) {
+    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw) {
         this.uosw = uosw;
-        this.pm = new ProfileManager(os, uosw);
-        this.model = os.getModel();
-        this.oldModel = Model.getInstanceByName(oldModelName);
-        
+        pm = new ProfileManager(os, uosw);
+        model = os.getModel();
+        oldModel = Model.getInstanceByName("old" + model.getName());
+
         Properties modelUpdateProps = new Properties();
         try {
             modelUpdateProps.load(this.getClass().getClassLoader()
@@ -203,6 +206,8 @@ public class ModelUpdate {
             Profile profile = pm.getProfile(savedBag.getUserProfile().getUsername());
             try {
                 profile.deleteBag(savedBag.getName());
+                System.out.println("Deleted the list: " + savedBag.getName() + " having type "
+                                  + savedBag.getType());
             } catch (ObjectStoreException ose) {
                 System.out.println("Problems deleting bag: " + savedBag.getName());
             }
@@ -229,6 +234,7 @@ public class ModelUpdate {
             try {
                 if (newType != null) {
                     profile.updateBagType(savedBag.getName(), newType);
+                    System.out.println("Updated the type of the list: " + savedBag.getName());
                 }
             } catch (ObjectStoreException ose) {
                 System.out.println("Problems updating savedBag " + savedBag.getName()
@@ -251,35 +257,64 @@ public class ModelUpdate {
             ResultsRow row = (ResultsRow) i.next();
             UserProfile user = (UserProfile) row.get(0);
             Profile profile = pm.getProfile(user.getUsername());
-            savedQueries = profile.getSavedQueries();
+            savedQueries = new HashMap<String, SavedQuery>(profile.getSavedQueries());
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
-                PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model, oldModel);
-                problems = pathQueryUpdate.update(renamedClasses, renamedFields);
-                if (!problems.isEmpty()) {
-                    System.out.println("Problems updating pathQuery in savedQuery "
+                if (!savedQuery.getName().contains(OLD) && !pathQuery.isValid()) {
+                    PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model, oldModel);
+                    try {
+                        problems = pathQueryUpdate.update(renamedClasses, renamedFields);
+                        if (!problems.isEmpty()) {
+                            System.out.println("Problems updating pathQuery in savedQuery "
                                      + savedQuery.getName() + ". " + problems);
-                    continue;
-                }
-                if (pathQueryUpdate.isUpdated()) {
-                    SavedQuery updatedSavedQuery = new SavedQuery(savedQuery.getName(),
-                        savedQuery.getDateCreated(), pathQueryUpdate.getUpdatedPathQuery());
-                    profile.saveQuery(savedQuery.getName(), updatedSavedQuery);
+                            continue;
+                        }
+                        if (pathQueryUpdate.isUpdated()) {
+                            SavedQuery updatedSavedQuery = new SavedQuery(savedQuery.getName(),
+                                savedQuery.getDateCreated(), pathQueryUpdate.getUpdatedPathQuery());
+                            profile.deleteQuery(savedQuery.getName());
+                            String backupSavedQueryName = savedQuery.getName() + OLD;
+                            SavedQuery backupSavedQuery = new SavedQuery(backupSavedQueryName, savedQuery.getDateCreated(), savedQuery.getPathQuery());
+                            profile.saveQuery(backupSavedQueryName, backupSavedQuery);
+                            profile.saveQuery(savedQuery.getName(), updatedSavedQuery);
+                            System.out.println("Updated the saved query: " + savedQuery.getName());
+                        }
+                    } catch (PathException pe) {
+                        System.out.println("Problems updating pathQuery in savedQuery "
+                            + savedQuery.getName() + " caused by the wrong path "
+                            + pe.getPathString());
+                        continue;
+                    }
                 }
             }
-            templateQueries = profile.getSavedTemplates();
+            templateQueries = new HashMap<String, TemplateQuery>(profile.getSavedTemplates());
             for (TemplateQuery templateQuery : templateQueries.values()) {
-                TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery, model,
+                PathQuery pathQuery = templateQuery.getPathQuery();
+                if (!templateQuery.getName().contains(OLD) && !pathQuery.isValid()) {
+                    TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery, model,
                                                                           oldModel);
-                problems = templateQueryUpdate.update(renamedClasses, renamedFields);
-                if (!problems.isEmpty()) {
-                    System.out.println("Problems updating pathQuery in templateQuery "
-                                      + templateQuery.getName() + ". " + problems);
-                    continue;
-                }
-                if (templateQueryUpdate.isUpdated()) {
-                    TemplateQuery updatedTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
-                    profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
+                    try {
+                        problems = templateQueryUpdate.update(renamedClasses, renamedFields);
+                        if (!problems.isEmpty()) {
+                            System.out.println("Problems updating pathQuery in templateQuery "
+                                               + templateQuery.getName() + ". " + problems);
+                            continue;
+                        }
+                        if (templateQueryUpdate.isUpdated()) {
+                            TemplateQuery updatedTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
+                            String backupTemplateName = templateQuery.getName() + OLD;
+                            TemplateQuery backupTemplateQuery = templateQuery.clone();
+                            backupTemplateQuery.setName(backupTemplateName);
+                            profile.saveTemplate(backupTemplateName, backupTemplateQuery);
+                            profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
+                            System.out.println("Updated the template query: " + templateQuery.getName());
+                        }
+                    } catch (PathException pe) {
+                        System.out.println("Problems updating pathQuery in templateQuery "
+                            + templateQuery.getName() + " caused by the wrong path "
+                            + pe.getPathString());
+                        continue;
+                    }
                 }
             }
         }
