@@ -141,6 +141,16 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     public String getName() {
         return className;
     }
+    
+    /**
+     * Returns the simple class name described by this ClassDescriptor.
+     *
+     * @return simple name of the described Class
+     */
+    public String getSimpleName() {
+        int index = className.lastIndexOf(".");
+        return className.substring(index + 1);
+    }
 
     /**
      * Returns the Class described by this ClassDescriptor.
