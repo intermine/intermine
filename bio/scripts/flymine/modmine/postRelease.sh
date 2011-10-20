@@ -95,12 +95,11 @@ function prepare_production {
 #mv dump to archive
 echo
 # use the build dump (from modfast)
-mv $ARKDIR/build/mod-final.dmp $ARKDIR/r$REL/modmine-r$REL
+mv $ARKDIR/build/mod-final.dmp.final $ARKDIR/r$REL/modmine-r$REL
 
 #alt
 #echo "Dumping current release $REL ..."
 #pg_dump -F c -i -h modprod0 -f $ARKDIR/r$REL/modmine-r$REL modmine-r$REL -U modmine
-
 #echo "Dumping modmine-build in modfast..."
 #pg_dump -F c -i -h modfast -f $ARKDIR/r$REL/modmine-r$REL modmine-build -U modminebuild
 
@@ -115,8 +114,6 @@ pg_restore -h modprod0 -U modmine -d modmine-r$REL $ARKDIR/r$REL/modmine-r$REL
 echo "done"
 echo
 }
-
-
 
 
 function dump_chadoes {
