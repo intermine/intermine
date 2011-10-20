@@ -11,8 +11,6 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,19 +44,19 @@ public class BagUploadConfirmController extends TilesAction
      * Set up the bagUploadConfirm page.
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping, ActionForm form,
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping, ActionForm form,
             HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         String bagName = (String) request.getAttribute("newBagName");
         String bagQueryResultLabel = "bagQueryResult";
         if (bagName != null) {
-        	bagQueryResultLabel = bagQueryResultLabel + "_" + bagName;
+            bagQueryResultLabel = bagQueryResultLabel + "_" + bagName;
         }
-        
+
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute(bagQueryResultLabel);
         request.setAttribute("matches", bagQueryResult.getMatches());
         Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();
@@ -80,12 +78,13 @@ public class BagUploadConfirmController extends TilesAction
                 Map<String, ArrayList<Object>> inputToObjectsMap = (Map) otherMatchesIter.next();
                 //before adding inputToObjectsMap to lowQualityMatches
                 //we removed all object having the id already contained in the matchesIds
-                Map<String, ArrayList<Object>> inputToObjectsMapUpdated = new LinkedHashMap<String, ArrayList<Object>>();
+                Map<String, ArrayList<Object>> inputToObjectsMapUpdated = new LinkedHashMap<String,
+                ArrayList<Object>>();
                 for (String key : inputToObjectsMap.keySet()) {
                     ArrayList<Object> listObjects = inputToObjectsMap.get(key);
                     ArrayList<Object> listObjectsUpdated = new ArrayList<Object>();
                     for (Object obj : listObjects) {
-                        InterMineObject intermineObj= (InterMineObject) obj;
+                        InterMineObject intermineObj = (InterMineObject) obj;
                         if (matchesIds.isEmpty() || !matchesIds.contains(intermineObj.getId())) {
                             listObjectsUpdated.add(obj);
                         }
@@ -168,7 +167,7 @@ public class BagUploadConfirmController extends TilesAction
         request.setAttribute("matchCount", new Integer(matchCount));
         request.setAttribute("jsArray", flattenedArray);
         if (bagName != null) {
-        	request.setAttribute("bagName", bagName);
+            request.setAttribute("bagName", bagName);
         }
 
         return null;
