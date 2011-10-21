@@ -48,7 +48,8 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         if (StringUtils.isBlank(fileName)) {
             String message = "Ensembl resolver has no file name specified, set " + propName
                 + " to the file location.";
-            throw new IllegalArgumentException(message);
+            LOG.error(message);
+            return null;
         }
 
         IdResolver resolver;

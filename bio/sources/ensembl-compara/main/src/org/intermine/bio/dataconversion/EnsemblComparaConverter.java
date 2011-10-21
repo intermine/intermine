@@ -62,7 +62,9 @@ public class EnsemblComparaConverter extends BioFileConverter
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        flyResolver = flyResolverFactory.getIdResolver(false);
         humanResolverFactory = new EnsemblIdResolverFactory();
+        humanResolver = humanResolverFactory.getIdResolver(false);
     }
 
     /**
@@ -209,7 +211,7 @@ public class EnsemblComparaConverter extends BioFileConverter
         String id = identifier;
         if ("7227".equals(taxonId)) {
             if (flyResolver == null) {
-                flyResolver = flyResolverFactory.getIdResolver(false);
+                return identifier;
             }
             int resCount = flyResolver.countResolutions(taxonId, identifier);
             if (resCount != 1) {
@@ -222,7 +224,7 @@ public class EnsemblComparaConverter extends BioFileConverter
         }
         if ("9606".equals(taxonId)) {
             if (humanResolver == null) {
-                humanResolver = humanResolverFactory.getIdResolver();
+                return identifier;
             }
             int resCount = humanResolver.countResolutions(taxonId, identifier);
             if (resCount != 1) {
