@@ -93,20 +93,22 @@ sub make_source {
         when("http") {return DataDownloader::Resource::HTTP->new($args)}
         when("ftp")  {return DataDownloader::Resource::FTP->new($args)}
         default {confess "No source type found for method: $method"}
-    }
+    };
 }
 
 sub fetch_all_data {
     my $self = shift;
-    unless ($self->get_all_sources) {
+    my @sources = $self->get_all_sources;
+    unless (@sources) {
         confess "This source has no resources configured";
     }
-    for my $source ($self->get_all_sources) {
+    for my $source (@sources) {
         my $e = try {
             $source->fetch();
         };
         if (catch_all) {
             $self->debug("Error fetching " . $source->as_string());
+            $self->debug($e);
             throw $e;
         }
     }
