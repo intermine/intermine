@@ -9,8 +9,6 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
