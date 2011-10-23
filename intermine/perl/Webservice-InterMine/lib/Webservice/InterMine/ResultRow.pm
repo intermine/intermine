@@ -70,12 +70,17 @@ sub to_aref {
 
 sub to_href { 
     my $self = shift; 
+    my $style = lc(shift || "full");
     my $id = id $self;
-    if (my $href = $href{$id}) {
-        return $href;
+    my $href;
+    unless ($href = $href{$id}) {
+        $href = {map {$_ => $self->get_value($_)} $self->_available_keys};
+        $href{$id} = $href;
+    }
+    if ($style eq "short") {
+        return {map {substr($_, index($_, ".") + 1) => $self->get_value($_)} $self->keys};
     } else {
-        my $href = {map {$_ => $self->get_value($_)} $self->_available_keys};
-        return $href{$id} = $href;
+        return $href;
     }
 }
 
