@@ -79,6 +79,8 @@ sub to_href {
     }
     if ($style eq "short") {
         return {map {substr($_, index($_, ".") + 1) => $self->get_value($_)} $self->keys};
+    } elsif ($style eq "long") {
+        return {map {$_ => $self->get_value($_)} $self->keys};
     } else {
         return $href;
     }

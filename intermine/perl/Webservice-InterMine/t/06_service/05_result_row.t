@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Test::Exception;
-use Test::More tests => 17;
+use Test::More tests => 18;
 
 use Webservice::InterMine::ResultRow;
 
@@ -51,6 +51,12 @@ is_deeply {
     "age" => 33,
     "department.name" => "Sales",
 }, $row->to_href("short"), "Can get short form href";
+
+is_deeply {
+    "Employee.name" => "Tom",
+    "Employee.age" => 33, 
+    "Employee.department.name" => "Sales",
+}, $row->to_href("long"), "Can get long form href";
 
 is("$row", "Employee\tname: Tom\tage: 33\tdepartment.name: Sales",
     "Can stringify");
