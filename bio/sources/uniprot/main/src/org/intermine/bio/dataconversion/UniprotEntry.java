@@ -360,8 +360,8 @@ public class UniprotEntry
     /**
      * @return the isFragmant
      */
-    public boolean isFragment() {
-        return isFragment;
+    public String isFragment() {
+        return Boolean.toString(isFragment);
     }
 
     /**
