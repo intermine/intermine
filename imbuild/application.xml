@@ -131,7 +131,8 @@
 
   <target name="model-update" depends="-init-properties, -init-build-db">
     <model-update osAlias="${objectstore.name}"
-                  userProfileAlias="${userprofile.objectstorewriter.name}"/>
+                  userProfileAlias="${userprofile.objectstorewriter.name}"
+                  oldModelLocation="${oldModel}"/>
   </target>
 
   <!-- RELEASE / REMOVE FROM TOMCAT -->
