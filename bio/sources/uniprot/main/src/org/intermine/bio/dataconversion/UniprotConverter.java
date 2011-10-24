@@ -60,13 +60,13 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
     private static final String GENUS_LOOKUP = "Drosophila";
-    private boolean loadFragments = false;
 
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
 
     private boolean createInterpro = false;
     private boolean creatego = false;
+    private boolean loadFragments = false;
     private Set<String> taxonIds = null;
 
     protected IdResolverFactory flyResolverFactory;
@@ -238,7 +238,7 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param loadFragments if true, will load all proteins even if isFragment = true
      */
     public void setLoadfragments(String loadFragments) {
-        if ("true".equals(loadFragments)) {
+        if ("true".equalsIgnoreCase(loadFragments)) {
             this.loadFragments = true;
         } else {
             this.loadFragments = false;
@@ -280,13 +280,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry = new UniprotEntry();
                 String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
                 entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
-            } else if ("protein".equals(qName)) {
-                String isFragment = "false";
-                if (getAttrValue(attrs, "type") != null
-                       && getAttrValue(attrs, "type").startsWith("fragment")) {
-                    isFragment = "true";
-                }
-                entry.setFragment(isFragment);
             } else if ("fullName".equals(qName) && stack.search("protein") == 2
                     &&  ("recommendedName".equals(previousQName)
                             || "submittedName".equals(previousQName))) {
@@ -327,9 +320,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (strMass != null) {
                     entry.setMolecularWeight(strMass);
                 }
-                String isFragment = "false";
+                boolean isFragment = false;
                 if (getAttrValue(attrs, "fragment") != null) {
-                    isFragment = "true";
+                    isFragment = true;
                 }
                 entry.setFragment(isFragment);
             } else if ("feature".equals(qName) && getAttrValue(attrs, "type") != null) {
