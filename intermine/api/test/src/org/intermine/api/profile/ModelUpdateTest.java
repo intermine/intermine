@@ -9,25 +9,10 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Date;
 
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
-import org.intermine.model.userprofile.SavedBag;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OuterJoinStatus;
-import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.util.CacheMap;
 
 public class ModelUpdateTest extends InterMineAPITestCase {
 
@@ -39,8 +24,9 @@ public class ModelUpdateTest extends InterMineAPITestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        Model oldModel = Model.getInstanceByName("oldtestmodel");
         try {
-            modelUpdate = new ModelUpdate(os, uosw);
+            modelUpdate = new ModelUpdate(os, uosw, oldModel);
         } catch (BuildException be) {
             tearDown();
             throw be;
