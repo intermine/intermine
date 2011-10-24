@@ -53,20 +53,11 @@ public class ModelUpdate {
     public static final String RENAME = "rename-";
     public static String OLD = "_OldBackup";
 
-    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, String oldModelLocation) {
+    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, Model oldModel) {
         this.uosw = uosw;
         pm = new ProfileManager(os, uosw);
         model = os.getModel();
-        InterMineModelParser imModelParser = new InterMineModelParser();
-        try {
-            Reader fileReader = new FileReader(oldModelLocation);
-            oldModel = imModelParser.process(fileReader);
-        } catch (FileNotFoundException fnfe) {
-            throw new BuildException("File of the previous model not found ", fnfe);
-        } catch (ModelParserException mpe) {
-            throw new BuildException("Problems parsing the previous model ", mpe);
-        }
-
+        this.oldModel = oldModel;
         Properties modelUpdateProps = new Properties();
         try {
             modelUpdateProps.load(this.getClass().getClassLoader()
