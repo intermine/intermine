@@ -365,15 +365,10 @@ public class UniprotEntry
     }
 
     /**
-     * @param isFragment the isFragmant to set
+     * dev can configure converter to load these or not.  default is to ignore fragments
+     * @param isFragment true of the protein is a fragment
      */
-    public void setFragment(String isFragment) {
-        if ("true".equals(isFragment)) {
-            this.isFragment = true;
-        }
-    }
-
-    private void setFragment(boolean isFragment) {
+    public void setFragment(boolean isFragment) {
         this.isFragment = isFragment;
     }
 
