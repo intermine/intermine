@@ -280,13 +280,13 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry = new UniprotEntry();
                 String dataSetTitle = getAttrValue(attrs, "dataset") + " data set";
                 entry.setDatasetRefId(getDataSet(dataSetTitle, datasourceRefId));
-//            } else if ("protein".equals(qName)) {
-//                String isFragment = "false";
-//                if (getAttrValue(attrs, "type") != null
-//                       && getAttrValue(attrs, "type").startsWith("fragment")) {
-//                    isFragment = "true";
-//                }
-//                entry.setFragment(isFragment);
+            } else if ("protein".equals(qName)) {
+                String isFragment = "false";
+                if (getAttrValue(attrs, "type") != null
+                       && getAttrValue(attrs, "type").startsWith("fragment")) {
+                    isFragment = "true";
+                }
+                entry.setFragment(isFragment);
             } else if ("fullName".equals(qName) && stack.search("protein") == 2
                     &&  ("recommendedName".equals(previousQName)
                             || "submittedName".equals(previousQName))) {
@@ -553,7 +553,7 @@ public class UniprotConverter extends BioDirectoryConverter
             if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()
                     && !uniprotEntry.isDuplicate()) {
 
-                if (!loadFragments && uniprotEntry.isFragment()) {
+                if (!loadFragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
                     return null;
                 }
 
@@ -672,7 +672,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private void processIdentifiers(Item protein, UniprotEntry uniprotEntry) {
             protein.setAttribute("name", uniprotEntry.getName());
-            protein.setAttribute("isFragment", "false"); // we don't store fragments any more
+            protein.setAttribute("isFragment", uniprotEntry.isFragment());
             protein.setAttribute("uniprotAccession", uniprotEntry.getUniprotAccession());
             String primaryAccession = uniprotEntry.getPrimaryAccession();
             protein.setAttribute("primaryAccession", primaryAccession);
