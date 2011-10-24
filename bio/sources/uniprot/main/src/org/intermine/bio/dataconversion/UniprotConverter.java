@@ -85,8 +85,6 @@ public class UniprotConverter extends BioDirectoryConverter
         or = OrganismRepository.getOrganismRepository();
     }
 
-
-
     /**
      * {@inheritDoc}
      */
@@ -443,7 +441,9 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if ("accession".equals(qName)) {
                 String accession = attValue.toString();
                 entry.addAccession(accession);
-                checkUniqueIdentifier(entry, accession);
+                if (accession.equals(entry.getPrimaryAccession())) {
+                    checkUniqueIdentifier(entry, accession);
+                }
             } else if (StringUtils.isNotEmpty(attName) && "component".equals(attName)
                     && "fullName".equals(qName)
                     && "recommendedName".equals(previousQName)
