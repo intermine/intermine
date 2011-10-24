@@ -21,6 +21,7 @@ import org.intermine.pathquery.PathException;
 public class ModelUpdateTask extends Task {
     private String osAlias;
     private String userProfileAlias;
+    private String oldModelLocation;
     private ObjectStore os = null;
     private ObjectStoreWriter uosw = null;
 
@@ -40,6 +41,14 @@ public class ModelUpdateTask extends Task {
         this.userProfileAlias = userProfileAlias;
     }
 
+    /**
+     * Set the location  of the previous model.
+     * @param oldModel the location
+     */
+    public void setOldModelLocation(String oldModel) {
+        this.oldModelLocation = oldModel;
+    }
+
     public void execute() {
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
@@ -47,7 +56,7 @@ public class ModelUpdateTask extends Task {
         } catch (Exception e) {
             throw new BuildException("Exception while creating ObjectStore", e);
         }
-        ModelUpdate modelUpdate = new ModelUpdate(os, uosw);
+        ModelUpdate modelUpdate = new ModelUpdate(os, uosw, oldModelLocation);
         log("Read the updates in the modelUpdate.properties file");
         log("Classes deleted: " + modelUpdate.getDeletedClasses().toString());
         log("Classes renamed: " + modelUpdate.getRenamedClasses().toString());

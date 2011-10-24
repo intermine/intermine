@@ -9,6 +9,9 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +26,8 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.modelproduction.ModelParserException;
+import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -48,11 +53,19 @@ public class ModelUpdate {
     public static final String RENAME = "rename-";
     public static String OLD = "_OldBackup";
 
-    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw) {
+    public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, String oldModelLocation) {
         this.uosw = uosw;
         pm = new ProfileManager(os, uosw);
         model = os.getModel();
-        oldModel = Model.getInstanceByName("old" + model.getName());
+        InterMineModelParser imModelParser = new InterMineModelParser();
+        try {
+            Reader fileReader = new FileReader(oldModelLocation);
+            oldModel = imModelParser.process(fileReader);
+        } catch (FileNotFoundException fnfe) {
+            throw new BuildException("File of the previous model not found ", fnfe);
+        } catch (ModelParserException mpe) {
+            throw new BuildException("Problems parsing the previous model ", mpe);
+        }
 
         Properties modelUpdateProps = new Properties();
         try {
