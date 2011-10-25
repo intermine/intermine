@@ -4,7 +4,7 @@ from xml.dom import minidom, getDOMImplementation
 
 from intermine.util import openAnything, ReadableException
 from intermine.pathfeatures import PathDescription, Join, SortOrder, SortOrderList
-from intermine.model import Column, Class
+from intermine.model import Column, Class, Model
 import constraints
 
 """
@@ -352,6 +352,7 @@ class Query(object):
         self.order_by = self.add_sort_order
         self.all = self.get_results_list
         self.size = self.count
+        self.summarize = self.summarise
 
     def __iter__(self):
         """Return an iterator over all the objects returned by this query"""
@@ -606,7 +607,11 @@ class Query(object):
     
     def prefix_path(self, path):
         if self.root is None:
-            self.root = self.model.make_path(path, self.get_subclass_dict()).root
+            if path.endswith(".*"):
+                trimmed = re.sub("\.\*$", "", path)
+            else: 
+                trimmed = path
+            self.root = self.model.make_path(trimmed, self.get_subclass_dict()).root
             return path
         else:
             if path.startswith(self.root.name):
@@ -1094,7 +1099,7 @@ class Query(object):
                 subclass_dict[c.path] = c.subclass
         return subclass_dict
 
-    def results(self, row="object", start=0, size=None):
+    def results(self, row="object", start=0, size=None, summary_path=None):
         """
         Return an iterator over result rows
         ===================================
@@ -1123,6 +1128,9 @@ class Query(object):
         params["start"] = start
         if size:
             params["size"] = size
+        if summary_path:
+            params["summaryPath"] = self.prefix_path(summary_path)
+            row = "jsonrows" 
         view = self.views
         cld = self.root
         return self.service.get_results(path, params, row, view, cld)
@@ -1142,6 +1150,14 @@ class Query(object):
         @rtype: iterable<intermine.webservice.ResultRow>
         """
         return self.results(row="rr", start=start, size=size)
+
+    def summarise(self, summary_path, **kwargs):
+        p = self.model.make_path(self.prefix_path(summary_path), self.get_subclass_dict())
+        results = self.results(summary_path = summary_path, **kwargs)
+        if p.end.type_name in Model.NUMERIC_TYPES:
+            return dict([ (k, float(v)) for k, v in results.next().iteritems()])
+        else:
+            return dict([ (r["item"], r["count"]) for r in results])
 
     def one(self, row="jsonobjects"):
         """Return one result, and raise an error if the result size is not 1"""
@@ -1166,14 +1182,14 @@ class Query(object):
             else:
                 return self.first(row)
 
-    def first(self, row="jsonobjects", start=0):
+    def first(self, row="jsonobjects", start=0, **kw):
         """Return the first result, or None if the results are empty"""
         if row == "jsonobjects":
             size = None
         else:
             size = 1
         try:
-            return self.results(row, start=start, size=size).next()
+            return self.results(row, start=start, size=size, **kw).next()
         except StopIteration:
             return None
 
