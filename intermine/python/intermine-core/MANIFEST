@@ -122,6 +122,7 @@ tests/acceptance.py
 tests/live_format_tests.py
 tests/live_lists.py
 tests/live_lists_token.py
+tests/live_summary_test.py
 tests/test.py
 tests/test_lists.py
 tests/test_templates.py
