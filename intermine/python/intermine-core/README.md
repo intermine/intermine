@@ -80,4 +80,9 @@ License:
 
 All InterMine code is freely available under the LGPL license: http://www.gnu.org/licenses/lgpl.html 
 
+Changes:
+--------
+
+0.98.13: Added query column summary support
+
 
