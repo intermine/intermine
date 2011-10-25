@@ -20,7 +20,6 @@ class LiveListTest(unittest.TestCase):
 
     maxDiff = None
 
-
     def __init__(self, name):
         unittest.TestCase.__init__(self, name)
         self.initialListCount = None

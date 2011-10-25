@@ -516,6 +516,9 @@ class Model(object):
     of the database schema. It can be used to introspect what 
     data is available and how it is inter-related
     """
+
+    NUMERIC_TYPES = frozenset(["int", "Integer", "float", "Float", "double", "Double", "long", "Long", "short", "Short"])
+
     def __init__(self, source, service=None):
         """
         Constructor
