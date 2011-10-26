@@ -251,20 +251,10 @@ module InterMine::Results
 
         # Iterate over the result set one ResultsRow at a time
         def each_row
-            container = ''
-            each_line(params("jsonrows")) do |line|
-                if line.start_with?("[")
-                    begin
-                        row = ResultsRow.new(line.chomp("," + $/), @query.views)
-                    rescue => e
-                        raise ServiceError, "Error parsing #{line}: #{e.message}"
-                    end
-                    yield row
-                else
-                    container << line
-                end
-            end
-            check_result_set(container)
+            processor = lambda {|x| ResultsRow.new(line.chomp("," + $/), @query.views) }
+            read_result_set(params("jsonrows"), processor) {|x|
+                yield x
+            }
         end
 
         # Iterate over the resultset, one object at a time, where the
@@ -284,21 +274,40 @@ module InterMine::Results
         #
         def each_result
             model = @query.model
+            processor = lambda {|x| model.make_new(JSON.parse(line))}
+            read_result_set(params("jsonobjects"), processor) {|x|
+                yield x
+            }
+        end
+
+        def each_summary(summary_path)
+            extra = {"summaryPath" => @query.add_prefix(summary_path)}
+            p = params("jsonrows").merge(extra)
+            processor = lambda {|x| JSON.parse(x.chomp("," + $/)) }
+            read_result_set(p, processor) {|x|
+                yield x
+            }
+        end
+
+        def read_result_set(parameters, processor)
             container = ''
-            each_line(params("jsonobjects")) do |line|            
-                line.chomp!("," + $/)
-                if line.start_with?("{") and line.end_with?("}")
+            in_results = false
+            each_line(parameters) do |line|
+                if line.start_with?("]")
+                    in_results = false
+                end
+                if in_results
                     begin
-                        data = JSON.parse(line)
-                        result = model.make_new(data)
-                    rescue JSON::ParserError => e
-                        raise ServiceError, "Error parsing #{line}: #{e.message}"
+                        row = processor.call(line)
                     rescue => e
-                        raise ServiceError, "Could not instantiate this result object: #{e.message}"
+                        raise ServiceError, "Error parsing #{line}: #{e.message}"
                     end
-                    yield result
+                    yield row
                 else
                     container << line
+                    if line.chomp($/).end_with?("[")
+                        in_results = true
+                    end
                 end
             end
             check_result_set(container)

@@ -501,6 +501,43 @@ module InterMine::PathQuery
             res
         end
 
+        def summary_items(summary_path, start=0, size=nil)
+            q = self.clone
+            q.add_views(summary_path)
+            rr = q.results_reader(start, size)
+            if block_given?
+                rr.each_summary(summary_path) {|summary|
+                    yield summary
+                }
+            else
+                ret  = []
+                rr.each_summary(summary_path) {|summary|
+                    ret << summary
+                }
+                return ret
+            end
+        end
+
+        def summarise(summary_path, start=0, size=nil)
+            path = make_path(add_prefix(summary_path))
+            q = self.clone
+            q.add_views(summary_path)
+            rr = q.results_reader(start, size)
+            if InterMine::Metadata::Model::NUMERIC_TYPES.include? path.end_type
+                h = {}
+                rr.each_summary(summary_path) { |summary|
+                    h = Hash[summary.map {|k, v| [k, v.to_f]}]
+                }
+                return h
+            else
+                h = {}
+                rr.each_summary(summary_path) {|summary|
+                    h[summary["item"]] = summary["count"]
+                }
+                return h
+            end
+        end
+
         # Return all result record objects returned by running this query.
         def all
             return self.results
@@ -573,12 +610,14 @@ module InterMine::PathQuery
                 y = add_prefix(x)
                 if y.end_with?("*")
                     prefix = y.chomp(".*")
-                    path = InterMine::Metadata::Path.new(prefix, @model, subclasses)
-                    attrs = path.end_cd.attributes.map {|x| prefix + "." + x.name}
+                    path = make_path(prefix)
+                    attrs = path.end_cd.attributes.map {|x| 
+                        prefix + "." + x.name
+                    }
                     add_views(attrs)
                 else
-                    path = InterMine::Metadata::Path.new(y, @model, subclasses)
-                    path = InterMine::Metadata::Path.new(y.to_s + ".id", @model, subclasses) unless path.is_attribute?
+                    path = make_path(y)
+                    path = make_path(y.to_s + ".id") unless path.is_attribute?
                     if @root.nil?
                         @root = path.rootClass
                     end
@@ -586,6 +625,10 @@ module InterMine::PathQuery
                 end
             end
             return self
+        end
+
+        def make_path(path)
+            return InterMine::Metadata::Path.new(path, @model, subclasses)
         end
 
         alias add_to_select add_views

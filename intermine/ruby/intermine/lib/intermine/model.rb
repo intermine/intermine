@@ -27,6 +27,10 @@ module Metadata
     #
     class Model
 
+        FLOAT_TYPES = ["Float", "Double", "float", "double"]
+        INT_TYPES = ["Integer", "int",  "long", "Long", "short", "Short"]
+        BOOL_TYPES = ["Boolean", "boolean"]
+        NUMERIC_TYPES = FLOAT_TYPES | INT_TYPES
 
         # The name of the model
         attr_reader :name
@@ -497,9 +501,9 @@ module Metadata
         #
         def to_module
             if @module.nil?
-                nums = ["Float", "Double", "float", "double"]
-                ints = ["Integer", "int"]
-                bools = ["Boolean", "boolean"]
+                nums = Model::FLOAT_TYPES
+                ints = Model::INT_TYPES
+                bools = Model::BOOL_TYPES
 
                 supers = @extends.map { |x| @model.get_cd(x).to_module }
 
