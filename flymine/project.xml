@@ -36,7 +36,7 @@
     </source>
 
     <source name="wormbase-identifiers" type="wormbase-identifiers">
-      <property name="src.data.dir" location="/micklem/data/wormbase/current"/>
+      <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
      <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
@@ -139,7 +139,7 @@
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
       <property name="ensemblcompara.organisms" value="7227"/>
-      <property name="ensemblcompara.homologues" value="9606"/>
+      <property name="ensemblcompara.homologues" value="6239 9606 10090 10116"/>
     </source>
     <source name="anoest" type="anoest">
       <property name="dataSourceName" value="VectorBase"/>
