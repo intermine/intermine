@@ -501,6 +501,16 @@ module InterMine::PathQuery
             res
         end
 
+        # Return a list of summary items starting at the given offset.
+        #
+        #  summary = query.summary_items("chromosome.primaryIdentifier")
+        #  top_chromosome = summary[0]["item"]
+        #  no_in_top_chrom = summary[0]["count"]
+        #
+        # This can be made more efficient by passing in a size - ie, if 
+        # you only want the top item, pass in an offset of 0 and a size of 1
+        # and only that row will be fetched.
+        #
         def summary_items(summary_path, start=0, size=nil)
             q = self.clone
             q.add_views(summary_path)
@@ -518,6 +528,24 @@ module InterMine::PathQuery
             end
         end
 
+        # Return a summary for a column as a Hash
+        #
+        # For numeric values the hash has four keys: "average", "stdev", "min", and "max". 
+        #
+        #  summary = query.summarise("length")
+        #  puts summary["average"]
+        #
+        # For non-numeric values, the hash will have each possible value as a key, and the
+        # count of the occurrences of that value in this query's result set as the 
+        # corresponding value:
+        # 
+        #  summary = query.summarise("chromosome.primaryIdentifier")
+        #  puts summary["2L"]
+        #
+        # To limit the size of the result set you can use start and size as per normal 
+        # queries - this has no real effect with numeric queries, which always return the 
+        # same information.
+        #
         def summarise(summary_path, start=0, size=nil)
             path = make_path(add_prefix(summary_path))
             q = self.clone
