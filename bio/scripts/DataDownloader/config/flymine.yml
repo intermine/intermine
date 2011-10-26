@@ -19,6 +19,7 @@ default_sources:
   - "PubMed"
   - "Reactome"
   - "RedFly"
+  - "RGDIdentifiers"
   - "RNAiScreens"
   - "UniProt"
   - "WormbaseRNAi"
