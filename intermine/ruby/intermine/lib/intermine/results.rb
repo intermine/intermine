@@ -251,7 +251,7 @@ module InterMine::Results
 
         # Iterate over the result set one ResultsRow at a time
         def each_row
-            processor = lambda {|x| ResultsRow.new(line.chomp("," + $/), @query.views) }
+            processor = lambda {|x| ResultsRow.new(x.chomp("," + $/), @query.views) }
             read_result_set(params("jsonrows"), processor) {|x|
                 yield x
             }
@@ -274,7 +274,7 @@ module InterMine::Results
         #
         def each_result
             model = @query.model
-            processor = lambda {|x| model.make_new(JSON.parse(line))}
+            processor = lambda {|x| model.make_new(JSON.parse(x.chomp("," + $/)))}
             read_result_set(params("jsonobjects"), processor) {|x|
                 yield x
             }
