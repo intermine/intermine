@@ -90,7 +90,9 @@ public class UpdateListTablesTask extends Task
             //rename the column intermine_current -> intermine_state
             if (!DatabaseUtil.columnExists(connection, SAVEDBAG_TABLE, "intermine_state")
                 && DatabaseUtil.columnExists(connection, SAVEDBAG_TABLE, "intermine_current")) {
+                log("Start replacing intermine_current with intermine_state in savedbag table.");
                 addIntermineStateColumn(connection);
+                log("Replacing successfully.");
             }
             //add the column extra and set the value
             if (DatabaseUtil.tableExists(connection, "bagvalues")
@@ -103,6 +105,7 @@ public class UpdateListTablesTask extends Task
                     }
                     String sqlCreateIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value, extra)";
                     connection.createStatement().execute(sqlCreateIndex);
+                    log("Added column extra in bagvalues table.");
                     setExtraValue();
             }
         } catch (ObjectStoreException ose) {
@@ -182,6 +185,7 @@ public class UpdateListTablesTask extends Task
                     if (bag.isCurrent()) {
                         bag.deleteAllBagValues();
                         bag.addBagValues();
+                        log("Extra values for list:" + bag.getName() + " have been set.");
                     }
                 } catch (ObjectStoreException ose) {
                     throw new BuildException("Exception while creating InterMineBag", ose);
