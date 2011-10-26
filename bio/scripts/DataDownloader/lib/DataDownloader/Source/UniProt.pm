@@ -53,15 +53,15 @@ sub BUILD {
         my $sp_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %sp_params = (
             query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:yes ' . $excluded_str,
-            compress => 'yes', 
+            #compress => 'yes', 
             format => 'xml',
         );
         $sp_uri->query_form(%sp_params);
         push @sources, {
             SUBTITLE => "Swissprot $org",
             URI => "$sp_uri",
-            FILE => $org . '_uniprot_sprot.xml.gz',
-            EXTRACT => 1,
+            FILE => $org . '_uniprot_sprot.xml', #.gz',
+            #EXTRACT => 1,
             METHOD => 'HTTP',
             HEADER_CHECKER => $header_checker,
         };
@@ -69,15 +69,15 @@ sub BUILD {
         my $tr_uri = URI->new("http://www.uniprot.org/uniprot/");
         my %tr_params = (
             query => "taxonomy:" . $org . ' AND fragment:no AND reviewed:no ' . $excluded_str,
-            compress => 'yes', 
+            #compress => 'yes', 
             format => 'xml',
         );
         $tr_uri->query_form(%tr_params);
         push @sources, {
             SUBTITLE => "Trembl $org",
             URI => "$tr_uri",
-            FILE => $org . '_uniprot_trembl.xml.gz',
-            EXTRACT => 1,
+            FILE => $org . '_uniprot_trembl.xml', #.gz',
+            #EXTRACT => 1,
             METHOD => 'HTTP',
             HEADER_CHECKER => $header_checker,
         };
