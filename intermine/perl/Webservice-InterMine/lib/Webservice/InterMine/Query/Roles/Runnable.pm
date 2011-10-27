@@ -93,6 +93,24 @@ What to do with JSON results. The results can be returned as inflated objects,
 full instantiated Moose objects, a raw json string, or as a perl
 data structure. (default is C<perl>).
 
+=item * summaryPath => $path
+
+The path of the query to summarise (see L<summarise>). 
+
+If a value for this is supplied, then C<< (as => 'jsonrows')  >> is implied.
+Also, unlike the L< summarise > method, this option will return
+a list of item/count pairs, as below:
+
+  [
+    { item => "the-best", count => 100 },
+    { item => "the-runner-up", count => 99 },
+    { item => "the-wooden-spoon", count => 98 },
+  ]
+
+This is best when you care more about the top of the summary list, or which
+value is at the top than what the value of particular item is. If you are 
+using this method with a big result set it is best to use C<size> as well.
+
 =back
 
 =cut
@@ -119,14 +137,18 @@ sub results_iterator {
 
     my $row_format  = delete($args{as})   || "rr";
     $row_format = 'tab' if ($row_format eq 'string' || $row_format eq 'tsv');
+    $row_format = 'jsonrows' if $args{summaryPath};
     my $json_format = delete($args{json}) || "perl";
     my $roles       = delete $args{with};
 
     my %query_form = $self->get_request_parameters;
     
     # Set optional parameters
-    for my $opt (qw/start size columnheaders/) {
+    for my $opt (qw/start size columnheaders summaryPath/) {
         $query_form{$opt} = $args{$opt} if (defined $args{$opt});
+        if ($query_form{$opt} and $opt eq "summaryPath") {
+            $query_form{$opt} = $self->path($query_form{$opt})->to_string();
+        }
     }
     warn join(', ', map {"$_ => $query_form{$_}"} keys %query_form) if $ENV{DEBUG};
     return $self->service->get_results_iterator(
@@ -137,6 +159,47 @@ sub results_iterator {
         $json_format,
         $roles, 
     );
+}
+
+=head2 summarise($path, <%opts>) / summarize($path, <%opts>)
+
+Get a column summary for a path in the query. For numerical values this
+returns a hash reference with four keys: C< average >, C< stdev >, C< min >,
+and C< max >. These may be accessed as so:
+
+  my $average = $query->summarise("length")->{average};
+
+For non-numerical paths, the summary provides a hash from item => count, so
+the number of occurrences of an item may be accessed as so:
+
+  my $no_on_chr2 = $query->summarise("chromosome.primaryIdentifier")->{2};
+
+Obviously you can sort the hash yourself, but if you want this information
+in order, or just a particular subset (the top 100 perhaps), then you 
+should use C< results() > instead.
+
+Any further options will be passed along to the result-iterator as is,
+although the one that makes the most sense is C<size>, when you don't want
+all the results from a very large result set.
+
+=cut
+
+sub summarize {
+    goto &summarise;
+}
+
+sub summarise {
+    my $self = shift;
+    my $path = shift;
+    my %opts = @_;
+
+    my $it = $self->results_iterator(summaryPath => $path, %opts);
+    my @results = $it->get_all();
+    if (@results == 1) {
+        return $results[0];
+    } else {
+        return {map {$_->{item} => $_->{count}} @results};
+    }   
 }
 
 sub iterator {
