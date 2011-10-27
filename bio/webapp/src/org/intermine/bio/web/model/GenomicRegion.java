@@ -24,7 +24,7 @@ public class GenomicRegion implements Comparable<GenomicRegion>
 
     private Integer extendedStart;
     private Integer extendedEnd;
-    private Integer extendedRegionSize; // user add region flanking
+    private Integer extendedRegionSize = new Integer(0); // user add region flanking
 
     // TODO should we add chromosome info to the model to make a genomic region unique?
 
