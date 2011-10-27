@@ -209,7 +209,6 @@ module InterMine::Results
         end
     end
 
-
     # The class responsible for retrieving results and processing them
     #
     #   query.each_row do |row|
@@ -251,7 +250,10 @@ module InterMine::Results
 
         # Iterate over the result set one ResultsRow at a time
         def each_row
-            processor = lambda {|x| ResultsRow.new(x.chomp("," + $/), @query.views) }
+            processor = lambda {|line|
+                x = line.chomp.chomp(",")
+                x.empty? ? nil : ResultsRow.new(x, @query.views)
+            }
             read_result_set(params("jsonrows"), processor) {|x|
                 yield x
             }
@@ -274,7 +276,10 @@ module InterMine::Results
         #
         def each_result
             model = @query.model
-            processor = lambda {|x| model.make_new(JSON.parse(x.chomp("," + $/)))}
+            processor = lambda {|line|
+                x = line.chomp.chomp(",")
+                x.empty? ? nil : model.make_new(JSON.parse(x))
+            }
             read_result_set(params("jsonobjects"), processor) {|x|
                 yield x
             }
@@ -283,7 +288,10 @@ module InterMine::Results
         def each_summary(summary_path)
             extra = {"summaryPath" => @query.add_prefix(summary_path)}
             p = params("jsonrows").merge(extra)
-            processor = lambda {|x| JSON.parse(x.chomp("," + $/)) }
+            processor = lambda {|line|
+                x = line.chomp.chomp(",")
+                x.empty? ? nil : JSON.parse(x)
+            }
             read_result_set(p, processor) {|x|
                 yield x
             }
@@ -300,9 +308,11 @@ module InterMine::Results
                     begin
                         row = processor.call(line)
                     rescue => e
-                        raise ServiceError, "Error parsing #{line}: #{e.message}"
+                        raise ServiceError, "Error parsing '#{line}': #{e.message}"
                     end
-                    yield row
+                    unless row.nil?
+                        yield row
+                    end
                 else
                     container << line
                     if line.chomp($/).end_with?("[")
@@ -330,7 +340,9 @@ module InterMine::Results
                             if sock.eof?
                                 holdover = line
                             else
-                                yield line
+                                unless line.empty?
+                                    yield line
+                                end
                             end
                         }
                         sock.close
@@ -360,6 +372,35 @@ module InterMine::Results
                 raise ServiceError, result_set["error"]
             end
             result_set
+        end
+    end
+
+    class RowReader < ResultsReader
+
+        include Enumerable
+
+        alias :each :each_row
+    end
+
+    class ObjectReader < ResultsReader
+
+        include Enumerable
+
+        alias :each :each_result
+
+    end
+
+    class SummaryReader < ResultsReader
+
+        include Enumerable
+
+        def initialize(uri, query, start, size, path)
+            super(uri, query, start, size)
+            @path = path
+        end
+
+        def each
+            each_summary(@path) {|x| yield x}
         end
     end
 
