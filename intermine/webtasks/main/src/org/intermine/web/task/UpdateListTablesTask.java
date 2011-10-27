@@ -190,7 +190,7 @@ public class UpdateListTablesTask extends Task
                     }
                 } catch (ObjectStoreException ose) {
                     throw new BuildException("Exception while creating InterMineBag", ose);
-                } 
+                }
             }
         }
         if (osw != null) {
