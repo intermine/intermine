@@ -183,9 +183,10 @@ public class UpdateListTablesTask extends Task
                     bag.setKeyFieldNames(keyFielNames);
 
                     if (bag.isCurrent()) {
+                        log("Start setting extra values for list:" + bag.getName());
                         bag.deleteAllBagValues();
                         bag.addBagValues();
-                        log("Extra values for list:" + bag.getName() + " have been set.");
+                        log("Extra values set.");
                     }
                 } catch (ObjectStoreException ose) {
                     throw new BuildException("Exception while creating InterMineBag", ose);
