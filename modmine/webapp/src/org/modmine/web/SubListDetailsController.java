@@ -79,50 +79,12 @@ public class SubListDetailsController extends TilesAction
             subDCCids.add(sub.getdCCid());
         }
 
-        // Logic 2: find all the GBrowseTrack from MetadataCache
-        // Map key: Organism
-//        Map<String, Map<String, List<GBrowseTrack>>> tracks =
-//            new LinkedHashMap<String, Map<String, List<GBrowseTrack>>>();
 
         Set<String> orgSet = new LinkedHashSet<String>();
         for (Submission sub : subs) {
             orgSet.add(sub.getOrganism().getShortName());
         }
 
-//        for (String orgName : orgSet) {
-//            // Map Key: Submission DCCid
-//            Map<String, List<GBrowseTrack>> track =
-//                new LinkedHashMap<String, List<GBrowseTrack>>();
-//            for (Submission sub : subs) {
-//                // DCCid 2530, 2607 - D. Pseudoobscura
-//                if (sub.getOrganism().getShortName() != null
-//                        && sub.getOrganism().getShortName().equals(orgName)) {
-//                    List<GBrowseTrack> trackList = MetadataCache.getTracksByDccId(sub.getdCCid());
-//                    if (!trackList.isEmpty()) {
-//                        track.put(sub.getTitle(), trackList);
-//                    }
-//                }
-//                tracks.put(orgName, track);
-//            }
-//        }
-
-//        for (Map.Entry<String, Map<String, List<GBrowseTrack>>> entry : tracks.entrySet()) {
-//            if (entry.getValue().isEmpty() || entry.getValue().equals(null)) {
-//                tracks.remove(entry.getKey());
-//            }
-//        }
-//
-//        request.setAttribute("tracks", tracks);
-//
-//        String GBROWSE_DEFAULT_URL =
-//            "http://modencode.oicr.on.ca/fgb2/gbrowse/";
-//        String GBROWSE_BASE_URL = GBrowseParser.getGBrowsePrefix();
-//
-//        if (GBROWSE_BASE_URL.equals(null) || GBROWSE_BASE_URL.isEmpty()) {
-//            request.setAttribute("GBROWSE_BASE_URL", GBROWSE_DEFAULT_URL);
-//        } else {
-//            request.setAttribute("GBROWSE_BASE_URL", GBROWSE_BASE_URL);
-//        }
 
         
         /* ======== FILES ========== */
