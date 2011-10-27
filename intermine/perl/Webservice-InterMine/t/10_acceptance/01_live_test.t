@@ -15,7 +15,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 94 );
+    plan( tests => 96 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -429,17 +429,23 @@ DBIX_SUGAR: {
                          ->resultset('Manager')
                          ->search({'department.name' => 'Sales'});
 
-    is(@results, 3);
-    is_deeply([map {$_->getName} @results], ['Michael Scott', 'Gilles Triquet', 'David Brent'])
-        or diag explain(\@results);
+    is(@results, 3, "Search returns result");
+    is_deeply(
+        [map {$_->getName} @results], 
+        ['Michael Scott', 'Gilles Triquet', 'David Brent'], 
+        "And they have the expected content - reified objects"
+    ) or diag explain(\@results);
 
 }
 
 TEST_IMPORTED_FNS: {
     my @results = resultset("Manager")->search({"department.name" => 'Sales'});
-    is(@results, 3);
-    is_deeply([map {$_->getName} @results], ['Michael Scott', 'Gilles Triquet', 'David Brent'])
-        or diag explain(\@results);
+    is(@results, 3, "Can get results with search");
+    is_deeply(
+        [map {$_->getName} @results], 
+        ['Michael Scott', 'Gilles Triquet', 'David Brent'], 
+        "And they have the expected content - reified objects"
+    ) or diag explain(\@results);
     
     my $res = get_template('employeesFromCompanyAndDepartment')->results_with(valueA => "CompanyB");
     my $exp_res = [
@@ -449,11 +455,17 @@ TEST_IMPORTED_FNS: {
     ];
     for my $row (0, 1, 2) {
         for my $col (0, 1) {
-            is($res->[$row][$col], $exp_res->[$row][$col]);
+            is($res->[$row][$col], $exp_res->[$row][$col], "Results are rows, as expected");
         }
     }
 
-    is ($module->get_service->version, get_service()->version);
+    is ($module->get_service->version, get_service()->version, "Testing get_service");
 
+}
+
+TEST_LIST_STATUS: {
+    my @lists = get_service("www.flymine.org/query")->get_lists();
+    ok($lists[0]->has_status, "Status is provided");
+    is($lists[0]->status, "CURRENT", "And list is current");
 }
 

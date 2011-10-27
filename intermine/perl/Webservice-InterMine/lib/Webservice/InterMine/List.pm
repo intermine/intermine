@@ -45,7 +45,7 @@ with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::Showable';
 
 use Moose::Util::TypeConstraints qw(match_on_type);
-use MooseX::Types::Moose         qw/ArrayRef Undef Bool/;
+use MooseX::Types::Moose         qw/ArrayRef Undef Bool Str/;
 use InterMine::Model::Types      qw/PathString/;
 use Webservice::InterMine::Types qw/
     Date ListFactory ResultIterator Query File
@@ -253,6 +253,20 @@ has 'date' => (
     is        => 'ro',
     coerce    => 1,
     predicate => 'has_date',
+);
+
+=head2 status
+
+The status of the list. Usable lists are "CURRENT", all other statuses
+mean that the user should log in to the web-app to resolve issues 
+caused by a data-base upgrade.
+
+=cut
+
+has status => (
+    isa => Str,
+    is  => 'ro',
+    predicate => 'has_status',
 );
 
 =head2 get_unmatched_ids

@@ -119,6 +119,10 @@ Revision history for Webservice-InterMine
         * Deprecated username and password authentication on services that support tokens
 0.9809: Mon Aug  8 17:59:19 BST 2011
         * Backwards compatibility through to version 3 regarding JSON container formats
+0.9810: Bug-fix release
+0.9811: Allow ResultRow#to_href to produce either short or long key versions of hrefs
+0.9812: Added summarise method to runnable queries to get path summary information
+0.9813: Added support for the "status" field on lists, so you know if they need manual updating or not.
 
         
 
