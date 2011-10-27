@@ -60,10 +60,7 @@ jQuery("doclose").click(function(){
 
 <div id="details" style="display: block">
 
-
-<c:forEach var="tracks" items="${tracks}" varStatus="track_status">
-
-<table id="${tracks.key}_table" class="stats">
+<table class="stats">
 
    <tr>
       <td class="head" >
@@ -241,9 +238,6 @@ title="More about this target">
          </tr>
     </c:forEach>
   </table>
-  </div>
-</c:forEach>
-
 
 </div>
 
