@@ -6,7 +6,7 @@ require "intermine/service"
 class LiveDemoTest <  Test::Unit::TestCase
 
     def setup
-        @service = Service.new("http://localhost:8080/intermine-test")
+        @service = Service.new("http://localhost/intermine-test", "Z1a3D3U16cicCdS0T6y4bdN1SQh")
     end
 
     def testVersion
@@ -22,35 +22,16 @@ class LiveDemoTest <  Test::Unit::TestCase
         assert_equal(3, @service.query("Department").where(:name => "Sales").count)
     end
 
-end
-
-class LiveFlyMineTest < Test::Unit::TestCase
-
-    def setup
-        @service = Service.new("www.flymine.org/query")
+    def testGetTemplate
+        template = @service.template("ManagerLookup")
+        assert_equal("ManagerLookup", template.name)
+        assert_equal(1, template.constraints.length)
     end
 
-    # Tests a number of integrated features:
-    #  * Getting a template
-    #  * Passing template parameters
-    #  * getting counts
-    #  * getting rows
-    #  * getting records
-    #
-    def testBigResultSet
-        template = @service.template("Chromosome_Gene")
-        args = {"A" => {"!=" => '2L'}}
-        size = template.count(args)
-        i = 0
-        template.each_row(args) do |r|
-            i += 1
-        end
-        assert_equal(size, i)
-        i = 0
-        template.each_result(args) do |r|
-            i += 1
-        end
-        assert_equal(size, i)
+    def testGetLists
+        list = @service.list("My-Favourite-Employees")
+        assert_equal(4, list.size)
+        assert_match("CURRENT", list.status)
     end
-end
 
+end

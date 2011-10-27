@@ -6,23 +6,21 @@ require "intermine/service"
 class LiveSummaryTest < Test::Unit::TestCase
 
     def setup
-        service = Service.new("http://localhost/intermine-test")
-        @query = service.query("Employee").where(:age => {:lt => 50})
+        @service = Service.new("http://localhost/intermine-test")
+        @query = @service.query("Employee").where(:age => {:lt => 50})
     end
 
     def testIteration
-        rr = @query.results_reader
         count = 0
-        rr.each_summary("age") {|summary|
+        @query.summaries("age").each {|summary|
             assert_equal("36.3561643835616438", summary["average"])
             assert(summary["max"] < 50)
             count += 1
         }
         assert_equal(1, count)
 
-        rr = @query.results_reader
         count = 0
-        rr.each_summary("name") {|summary|
+        @query.summaries("name").each {|summary|
             assert_equal(1, summary["count"])
             count += 1
         }
@@ -44,9 +42,21 @@ class LiveSummaryTest < Test::Unit::TestCase
     end
 
     def testTop
-        summary = @query.summary_items("department.name")
-        assert_equal("Sales", summary[0]["item"])
-        assert_equal(11, summary[0]["count"])
+        summary = @query.summaries("department.name")
+        top = summary.first
+        assert_equal("Sales", top["item"])
+        assert_equal(11, top["count"])
+    end
+
+    def testTemplateSummary
+        template = @service.template("CEO_Rivals")
+        template_params = {"A" => {"!=" => "Charles Miner"}}
+
+        summary = template.summarise("salary", template_params)
+        assert_equal(6813474.8, summary["average"])
+
+        summary = template.summarise("company.name", template_params)
+        assert_equal(1, summary["Gogirep"])
     end
 
 end

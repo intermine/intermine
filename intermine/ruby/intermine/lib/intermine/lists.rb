@@ -63,6 +63,11 @@ module InterMine::Lists
         
         # The date that this list was originally created
         attr_reader :dateCreated
+
+        # The upgrade status of this list
+        # Anything other than current means this list
+        # needs to be manually curated.
+        attr_reader :status
         
         # The categories associated with this list
         attr_reader :tags
