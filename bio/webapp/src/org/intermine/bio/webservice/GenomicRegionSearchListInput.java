@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.bio.web.logic.GenomicRegionSearchQueryRunner;
@@ -33,9 +34,9 @@ public class GenomicRegionSearchListInput extends ListInput {
 
     private final InterMineAPI api;
     private final GenomicRegionSearchInfo info;
-    
+
     /**
-     * A representation of a request to a region based webservice. It knows how 
+     * A representation of a request to a region based webservice. It knows how
      * to parse and validate its own input.
      * @param request
      * @param bagManager
@@ -66,7 +67,7 @@ public class GenomicRegionSearchListInput extends ListInput {
             featureTypes.add(fts.getString(i));
         }
         parsed.setFeatureTypes(featureTypes);
-        
+
         JSONArray regs = jsonRequest.getJSONArray("regions");
         int noOfRegs = regs.length();
         List<String> regions = new ArrayList<String>();
@@ -76,7 +77,17 @@ public class GenomicRegionSearchListInput extends ListInput {
         parsed.setRegions(regions);
         return parsed;
     }
-    
+
+    @Override
+    protected String produceName() {
+        String name = request.getParameter("listName");
+        if (!StringUtils.isBlank(name)) {
+            return name;
+        } else {
+            return super.produceName();
+        }
+    }
+
     public GenomicRegionSearchInfo getSearchInfo() {
         return info;
     }
@@ -89,8 +100,8 @@ public class GenomicRegionSearchListInput extends ListInput {
         private List<String> regions;
         private int extension = 0;
         private boolean isInterbase = false;
-        private Set<String> invalidSpans = new HashSet<String>(); 
-        
+        private Set<String> invalidSpans = new HashSet<String>();
+
         public Set<String> getInvalidSpans() {
             return invalidSpans;
         }
@@ -103,28 +114,30 @@ public class GenomicRegionSearchListInput extends ListInput {
         public Set<String> getFeatureTypes() {
             return Collections.unmodifiableSet(featureTypes);
         }
-        
-        /** 
+
+        /**
          * Set the feature types for this request. Immediately parses the class
          * names to ClassDescriptors and fails as soon as possible.
-         * 
-         * @param featureTypes A collection of feature type names. 
-         * @throws BadRequestException if the feature types are not mappable to classes, and if 
+         *
+         * @param featureTypes A collection of feature type names.
+         * @throws BadRequestException if the feature types are not mappable to classes, and if
          *                             those classes are not Sequence Features.
          */
         public void setFeatureTypes(Collection<String> featureTypes) {
             this.featureTypes = new HashSet<String>(featureTypes);
             this.featureCds = new HashSet<ClassDescriptor>();
-            
+
             Set<String> badTypes = new HashSet<String>();
             Model model = api.getModel();
+            ClassDescriptor sfCd = model.getClassDescriptorByName(SF);
             for (String f : this.featureTypes) {
                 ClassDescriptor cld = model.getClassDescriptorByName(f);
                 if (cld == null) {
                     badTypes.add(f);
                 } else {
                     try {
-                        if (!SF.equals(f) && !ClassDescriptor.findSuperClassNames(model, f).contains(SF)) {
+                        if (!SF.equals(f) && !sfCd.getUnqualifiedName().equals(f)
+                                && !ClassDescriptor.findSuperClassNames(model, f).contains(SF)) {
                             throw new BadRequestException(f + " is not a " + SF);
                         }
                     } catch (MetaDataException e) {
@@ -138,11 +151,11 @@ public class GenomicRegionSearchListInput extends ListInput {
                 }
             }
             if (!badTypes.isEmpty()) {
-                throw new BadRequestException("The following feature types are not " 
+                throw new BadRequestException("The following feature types are not "
                         + "valid feature class names: " + badTypes);
             }
         }
-        
+
         /**
          * Returns an unmodifiable set of the classdescriptors corresponding to the
          * feature types in this query.
@@ -175,7 +188,7 @@ public class GenomicRegionSearchListInput extends ListInput {
         public List<GenomicRegion> getGenomicRegions() {
             Set<String> spans = new HashSet<String>(getRegions());
             List<GenomicRegion> regions = new ArrayList<GenomicRegion>();
-            Map<String, ChromosomeInfo> chromsForOrg 
+            Map<String, ChromosomeInfo> chromsForOrg
                 = GenomicRegionSearchQueryRunner.getChromosomeInfo(
                         api, SessionMethods.getProfile(request.getSession())).get(getOrganism());
             for (String span : spans) {
@@ -187,7 +200,7 @@ public class GenomicRegionSearchListInput extends ListInput {
             }
             return regions;
         }
-        
+
         public int getExtension() {
             return extension;
         }
@@ -200,7 +213,7 @@ public class GenomicRegionSearchListInput extends ListInput {
         public void setInterbase(boolean isInterbase) {
             this.isInterbase = isInterbase;
         }
-        
+
         public GenomicRegionSearchConstraint asSearchConstraint() {
             GenomicRegionSearchConstraint grsc = new GenomicRegionSearchConstraint();
             grsc.setOrgName(organism);
@@ -209,7 +222,7 @@ public class GenomicRegionSearchListInput extends ListInput {
             grsc.setExtededRegionSize(extension);
             return grsc;
         }
-        
+
     }
 
 
