@@ -81,6 +81,7 @@ class List(object):
             self._size = int(args["size"])
             self._date_created = args.get("dateCreated")
             self._is_authorized = args.get("authorized")
+            self._status = args.get("status")
 
             if self._is_authorized is None: self._is_authorized = True
 
@@ -113,6 +114,11 @@ class List(object):
     def title(self):
         """The fixed title of this list"""
         return self._title
+
+    @property
+    def status(self):
+        """The upgrade status of this list"""
+        return self._status
 
     @property
     def is_authorized(self):

@@ -22,13 +22,17 @@ class LiveListTest(unittest.TestCase):
 
     def __init__(self, name):
         unittest.TestCase.__init__(self, name)
-        self.initialListCount = None
+        self.initialListCount = self.SERVICE.get_list_count()
+
+    def testListsFromFlyMine(self):
+        s = Service("www.flymine.org/query")
+        all_lists = s.get_all_lists()
+        self.assertEqual("CURRENT", all_lists[0].status)
     
     def testLists(self):
         t = self.TYPE;
         s = self.SERVICE
         self.assertTrue(s.get_list_count() > 0)
-        self.initialListCount = s.get_list_count()
 
         l = s.create_list(self.LADIES_NAMES, t, description="Id list")
         self.assertEqual(l.unmatched_identifiers, set(["Zop", "Quux"]))
