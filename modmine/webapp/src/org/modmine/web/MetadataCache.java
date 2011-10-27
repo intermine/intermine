@@ -32,8 +32,6 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.filters.StringInputStream;
 import org.intermine.bio.constants.ModMineCacheKeys;
-import org.intermine.metadata.Model;
-import org.intermine.model.bio.BindingSite;
 import org.intermine.model.bio.DatabaseRecord;
 import org.intermine.model.bio.Experiment;
 import org.intermine.model.bio.Project;
@@ -44,18 +42,15 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
-import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.Database;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
@@ -545,7 +540,24 @@ public final class MetadataCache
         return submissionRepositedCache;
     }
 
-    
+    /**
+     * Fetch a list of records of repository entries for a given submission.
+     *
+     * @param os the objectStore
+     * @param dccId the modENCODE submission id
+     * @return a list of records of repository entries
+     */
+    public static synchronized List<String[]> getRepositoryEntriesByDccId(ObjectStore os,
+            String dccId) {
+        if (submissionRepositedCache == null) {
+            readSubmissionRepositoryEntries(os);
+        }
+        if (submissionRepositedCache.get(dccId) != null) {
+            return new ArrayList<String[]>(submissionRepositedCache.get(dccId));
+        }
+        return new ArrayList<String[]>();
+    }
+  
     
     
     /**

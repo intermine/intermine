@@ -27,6 +27,9 @@
 <definition name="subListGBrowseTrackDisplayer.tile" path="/model/subListGBrowseTrackDisplayer.jsp"
           controllerUrl="/initSubListGBrowseTrackDisplayer.do"/>
 
+<definition name="subListDetailsDisplayer.tile" path="/model/subListDetailsDisplayer.jsp"
+          controllerUrl="/initSubListDetailsDisplayer.do"/>
+
 <definition name="projects.tile" path="/model/projects.jsp"
         controllerUrl="/initProjects.do"/>
 <definition name="submissions.tile" path="/model/submissions.jsp"
