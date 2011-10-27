@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mm"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <!-- subListGBrowseTrackDisplayer.jsp -->
 
@@ -326,7 +327,8 @@ div.active {
 
 </style>
 
-<h3 id="GBTitle">GBrowse Tracks and Data Files</h3>
+<h3 id="GBTitle">GBrowse Tracks</h3>
+
 
 <c:forEach var="tracks" items="${tracks}" varStatus="track_status">
   <div class="trigger">
@@ -350,9 +352,6 @@ div.active {
         <input type="checkbox" id="${tracks.key}_all" value="${tracks.key}" onclick="checkAll(this.id)"/>
         <a id="${tracks.key}_a" title="View selected tracks for ${tracks.key} in GBrowse" target="_blank" onclick="if(!updateURL(this.id)){return false;}" >View Selected Tracks in GBrowse</a>
       </td>
-      <td class="head" text-align="right">
-Data Files
-     </td>
     </tr>
     <c:forEach var="trackDetails" items="${tracks.value}" varStatus="trackDetails_status">
       <tr>
@@ -374,16 +373,26 @@ Data Files
            <mm:allTracks tracks="${trackDetails.value}" dccId="${DCCid}"/>
          </td>
 
+<%-- === FILES ============================= 
 <c:forEach var="subFiles" items="${files}" varStatus="files_status">
-         <c:if test="${subFiles.key.title eq trackDetails.key}">
-         <td>
-         <span class="filelink">
-         <mm:dataFiles files="${subFiles.value}" dccId="${subFiles.key.dCCid}"/>
-       </span>
-       <mm:getTarball dccId="${subFiles.key.dCCid}"/>
-</c:if>
-         </c:forEach>  
-       </tr>
+  <c:if test="${subFiles.key.title eq trackDetails.key}">
+  <td>
+    <span class="filelink">
+      <mm:dataFiles files="${subFiles.value}" dccId="${subFiles.key.dCCid}"/>
+    </span>
+      <mm:getTarball dccId="${subFiles.key.dCCid}"/>
+  </c:if>
+</c:forEach>  
+
+         
+    
+
+ --%>
+
+
+         
+         
+         </tr>
     </c:forEach>
   </table>
   </div>

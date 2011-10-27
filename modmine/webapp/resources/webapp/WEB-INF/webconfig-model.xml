@@ -575,6 +575,7 @@
     </fields>
     <bagdisplayers>
       <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
+      <displayer src="subListDetailsDisplayer.tile" showOnLeft="true" />
     </bagdisplayers>
   </class>
 
@@ -715,13 +716,13 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
                      jspName="model/minePathwaysDisplayer.jsp"
                      replacesFields="pathways"
-                     placement="summary"
+                     placement="Pathways"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
                      jspName="model/modmineGBrowse.jsp"
                      replacesFields="organism"
-                     placement="modENCODE"
+                     placement="Genomics"
                      types="SequenceFeature"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.ModMineWikiDisplayer"
@@ -735,12 +736,13 @@
                      replacesFields="overlappingFeatures"
                      placement="Genomics"
                      types="SequenceFeature"/>
-
+<!--
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwaysDisplayer"
                      jspName="model/pathwaysDisplayer.jsp"
                      replacesFields="pathways"
-                     placement="summary"
+                     placement="Pathways"
                      types="Gene"/>
+-->
 
     <reportdisplayer javaClass="org.modmine.web.displayer.ProjectDetailsDisplayer"
                      jspName="model/projectDetailsDisplayer.jsp"
