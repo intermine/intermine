@@ -444,11 +444,9 @@ class ResultRow(object):
     for convenience both list indexes and dictionary keys can be used. So the 
     following all work:
 
-        >>> # view is "Gene.symbol", "Gene.organism.name"
-       >>> row["symbol"]
-       >>> row["Gene.symbol"]
-       >>> row[0]
-       >>> row[:1]
+        >>> # Assuming the view is "Gene.symbol", "Gene.organism.name":
+        >>> row[0] == row["symbol"] == row["Gene.symbol"]
+        ... True 
 
     """
 

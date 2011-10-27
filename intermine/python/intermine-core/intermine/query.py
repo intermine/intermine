@@ -1118,6 +1118,15 @@ class Query(object):
         @param row: the format for the row. Defaults to "object". Valid options are 
             "rr", "dict", "list", "jsonrows", "object", jsonobjects", "tsv", "csv". 
         @type row: string
+        @param start: the index of the first result to return (default = 0)
+        @type start: int
+        @param size: The maximum number of results to return (default = all)
+        @type size: int
+        @param summary_path: A column name to optionally summarise. Specifying a path
+                             will force "jsonrows" format, and return an iterator over a list
+                             of dictionaries. Use this when you are interested in processing
+                             a summary in order of greatest count to smallest.
+        @type summary_path: str or L{intermine.model.Path}
 
         @rtype: L{intermine.webservice.ResultIterator}
 
@@ -1147,11 +1156,44 @@ class Query(object):
           >>> for row in query.rows(start=10, size=10):
           ...     print row["proteins.name"]
 
+        @param start: the index of the first result to return (default = 0)
+        @type start: int
+        @param size: The maximum number of results to return (default = all)
+        @type size: int
         @rtype: iterable<intermine.webservice.ResultRow>
         """
         return self.results(row="rr", start=start, size=size)
 
     def summarise(self, summary_path, **kwargs):
+        """
+        Return a summary of the results for this column.
+        ================================================
+
+        Usage::
+            >>> query = service.select("Gene.*", "organism.*").where("Gene", "IN", "my-list")
+            >>> print query.summarise("length")["average"]
+            ... 12345.67890
+            >>> print query.summarise("organism.name")["Drosophila simulans"]
+            ... 98
+        
+        This method allows you to get statistics summarising the information
+        from just one column of a query. For numerical columns you get dictionary with
+        four keys ('average', 'stdev', 'max', 'min'), and for non-numerical
+        columns you get a dictionary where each item is a key and the values
+        are the number of occurrences of this value in the column.
+
+        Any key word arguments will be passed to the underlying results call - 
+        so you can limit the result size to the top 100 items by passing "size = 100"
+        as part of the call.
+
+        @see: L{intermine.query.Query.results}
+
+        @param summary_path: The column to summarise (either in long or short form)
+        @type summary_path: str or L{intermine.model.Path}
+
+        @rtype: dict
+        This method is sugar for particular combinations of calls to L{results}.
+        """
         p = self.model.make_path(self.prefix_path(summary_path), self.get_subclass_dict())
         results = self.results(summary_path = summary_path, **kwargs)
         if p.end.type_name in Model.NUMERIC_TYPES:
