@@ -53,6 +53,7 @@ import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
@@ -382,9 +383,11 @@ public class InterMineBag implements WebSearchable, Cloneable
             q.addFrom(qc);
             QueryClass qce = null;
             if (hasExtraValue) {
+                QueryObjectPathExpression qope = new QueryObjectPathExpression(qc, extraConnectField);
                 qce = new QueryClass(Class.forName(extraClassName));
-                q.addFrom(qce);
-                q.addToSelect(new QueryField(qce, extraConstrainField));
+                qope.addToSelect(qope.getDefaultClass());
+                q.addToSelect(qope);
+                q.addToSelect(qc);
             }
             if (keyFieldNames.isEmpty()) {
                 return Collections.EMPTY_LIST;
@@ -399,18 +402,7 @@ public class InterMineBag implements WebSearchable, Cloneable
             } else {
                 constraint = new BagConstraint(idField, ConstraintOp.IN, ids);
             }
-            if (!hasExtraValue) {
-                q.setConstraint(constraint);
-            } else {
-                ConstraintSet constraintSet = new ConstraintSet(ConstraintOp.AND);
-                constraintSet.addConstraint(constraint);
-                ContainsConstraint extraConstraint = new ContainsConstraint(
-                                                       new QueryObjectReference(qc, extraConnectField),
-                                                       ConstraintOp.CONTAINS,
-                                                       qce);
-                constraintSet.addConstraint(extraConstraint);
-                q.setConstraint(constraintSet);
-            }
+            q.setConstraint(constraint);
             Results res = os.execute(q);
             for (Object rowObj : res) {
                 ResultsRow<?> row = (ResultsRow<?>) rowObj;
@@ -418,8 +410,13 @@ public class InterMineBag implements WebSearchable, Cloneable
                 String extra = "";
                 int index = 0;
                 if (hasExtraValue) {
-                    extra = (String) row.get(0);
-                    index++;
+                    InterMineObject imObj = (InterMineObject) row.get(0);
+                    if (imObj != null) {
+                        extra = (String) imObj.getFieldValue(extraConstrainField);
+                    } else {
+                        extra = "";
+                    }
+                    index = index + 2; //row.get(1) contains the class of the bag type
                 }
                 for (; index < row.size(); index++) {
                     value = (String) row.get(index);
@@ -431,6 +428,8 @@ public class InterMineBag implements WebSearchable, Cloneable
             }
             return keyFieldValueList;
         } catch (ClassNotFoundException cne) {
+            return new ArrayList<BagValue>();
+        } catch (IllegalAccessException iae) {
             return new ArrayList<BagValue>();
         }
     }
