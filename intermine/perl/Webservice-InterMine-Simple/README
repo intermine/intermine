@@ -1,0 +1,70 @@
+NAME
+    Webservice::InterMine::Simple - A basic InterMine web-service client.
+
+SYNOPSIS
+      my $service = get_service("http://www.flymine.org/query/service");
+      my $query = $service->new_query;
+
+      $query->add_view("Organism.shortName", "Organism.taxonId");
+      $query->add_constraint({path => "Organism.genus", op => "=", value => "Rattus"});
+
+      @rows = $query2->results_table;
+      for my $row (@rows) {
+        print "name: $row->[0], id: $row->[1]\n";
+      }
+
+DESCRIPTION
+    This is a basic representation of a query. It can handle
+    straight-forward requests and result sets, but for anything more
+    complicated, we recommend you look as the more fully featured
+    Webservice::InterMine. This is especially true of large data sets, as
+    this implementation has the potential to use lots of memory when
+    receiving and processing results.
+
+IMPORTED ROUTINES
+  get_service(@args)
+    Get a service instantiated with the given arguments.
+
+    Arguments:
+
+    *   ($url) - The root-url to the webservice.
+
+    *   ($url, $token) - The root-url, and an authorisation token.
+
+    *   ($url, $username, $password) - The root-url, and a user's login
+        information.
+
+    This can also be called as a static method on the package:
+
+      Webservice::InterMine::Simple->get_service(...);
+
+SEE ALSO
+    *   Webservice::InterMine For a more powerful alternative
+
+AUTHOR
+    Alex Kalderimis "<dev@intermine.org>"
+
+BUGS
+    Please report any bugs or feature requests to "dev@intermine.org".
+
+SUPPORT
+    You can find documentation for this module with the perldoc command.
+
+        perldoc Webservice::InterMine::Simple
+
+    You can also look for information at:
+
+    *   InterMine
+
+        <http://www.intermine.org>
+
+    *   Documentation
+
+        <http://www.intermine.org/perlapi>
+
+COPYRIGHT AND LICENSE
+    Copyright 2006 - 2011 FlyMine, all rights reserved.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+

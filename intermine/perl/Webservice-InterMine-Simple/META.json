@@ -1,0 +1,58 @@
+{
+   "abstract" : "Low-Dependency Modules for interacting with InterMine Webservice APIs",
+   "author" : [
+      "Alex Kalderimis <dev@intermine.org>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Webservice-InterMine-Simple",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::More" : "0.9"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.36"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "LWP" : "5.8"
+         }
+      }
+   },
+   "provides" : {
+      "Webservice::InterMine::Simple" : {
+         "file" : "lib/Webservice/InterMine/Simple.pm",
+         "version" : "0.9800"
+      },
+      "Webservice::InterMine::Simple::Query" : {
+         "file" : "lib/Webservice/InterMine/Simple/Query.pm",
+         "version" : 0
+      },
+      "Webservice::InterMine::Simple::Service" : {
+         "file" : "lib/Webservice/InterMine/Simple/Service.pm",
+         "version" : 0
+      },
+      "Webservice::InterMine::Simple::Template" : {
+         "file" : "lib/Webservice/InterMine/Simple/Template.pm",
+         "version" : 0
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "0.9800"
+}

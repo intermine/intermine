@@ -1,0 +1,15 @@
+Build.PL
+lib/Webservice/InterMine/Simple.pm
+lib/Webservice/InterMine/Simple/Query.pm
+lib/Webservice/InterMine/Simple/Service.pm
+lib/Webservice/InterMine/Simple/Template.pm
+MANIFEST			This list of files
+t/10_acceptance.t
+t/data/org_query.xml
+t/manifest.t
+t/pod-coverage.t
+t/pod.t
+Makefile.PL
+README
+META.yml
+META.json
