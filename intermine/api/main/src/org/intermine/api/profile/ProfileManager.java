@@ -615,7 +615,12 @@ public class ProfileManager
      * @return the superuser profile
      */
     public Profile getSuperuserProfile(Map<String, List<FieldDescriptor>> classKeys) {
-        return getProfile(superuser, classKeys);
+        Profile profile = getProfile(superuser, classKeys);
+        if (profile == null) {
+            String msg = "Unable to retrieve superuser profile.";
+            throw new UserNotFoundException(msg);
+        }
+        return profile;
     }
 
     private final Map<String, PasswordChangeToken> passwordChangeTokens
