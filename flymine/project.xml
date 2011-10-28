@@ -164,12 +164,12 @@
       <property name="src.data.file" location="/micklem/data/old_shared_data/uberon/uberon.obo"/>
     </source>
 -->
-    <source name="go-annotation" type="go-annotation">
+    <source name="go-annotation" type="go-annotation" dump="true">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
     </source>
 
-    <source name="flyreg" type="flyreg" dump="true">
+    <source name="flyreg" type="flyreg">
       <property name="gff3.taxonId" value="7227"/>
       <property name="gff3.seqClsName" value="Chromosome"/>
       <property name="src.data.dir" location="/micklem/data/redfly/current/tfbs"/>
