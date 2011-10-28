@@ -52,6 +52,7 @@ import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
@@ -146,8 +147,14 @@ public class InitialiserPlugin implements PlugIn
         final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
         final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
         trackerDelegate = initTrackers(webProperties, userprofileOSW);
-        final InterMineAPI im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
+        final InterMineAPI im;
+        try {
+            im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
                 oss, trackerDelegate, redirect);
+        } catch (UserNotFoundException unfe) {
+            blockingErrorKeys.add("errors.superuser");
+            return;
+        }
         SessionMethods.setInterMineAPI(servletContext, im);
 
         // need a global reference to ProfileManager so it can be closed cleanly on destroy
@@ -305,8 +312,8 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os, Properties webProperties)
-        throws ServletException {
+    private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os,
+        Properties webProperties) throws ServletException {
         BagQueryConfig bagQueryConfig = null;
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
@@ -315,16 +322,20 @@ public class InitialiserPlugin implements PlugIn
             } catch (Exception e) {
                 throw new ServletException("Error loading class bag queries", e);
             }
-            InputStream isBag = getClass().getClassLoader().getResourceAsStream("extraBag.properties");
+            InputStream isBag = getClass().getClassLoader()
+                .getResourceAsStream("extraBag.properties");
             Properties bagProperties = new Properties();
             if (isBag != null) {
                 try {
                     bagProperties.load(isBag);
-                    bagQueryConfig.setConnectField(bagProperties.getProperty("extraBag.connectField"));
-                    bagQueryConfig.setExtraConstraintClassName(bagProperties.getProperty("extraBag.className"));
-                    bagQueryConfig.setConstrainField(bagProperties.getProperty("extraBag.constrainField"));
+                    bagQueryConfig.setConnectField(bagProperties
+                        .getProperty("extraBag.connectField"));
+                    bagQueryConfig.setExtraConstraintClassName(bagProperties
+                        .getProperty("extraBag.className"));
+                    bagQueryConfig.setConstrainField(bagProperties
+                        .getProperty("extraBag.constrainField"));
                 } catch (IOException e) {
-                      throw new ServletException(e);
+                    throw new ServletException(e);
                 }
             } else {
                 LOG.error("Could not find extraBag.properties file");
@@ -386,10 +397,12 @@ public class InitialiserPlugin implements PlugIn
         Set<String> providers = new HashSet<String>();
         Properties providerProps = new Properties();
 
-        InputStream is = getClass().getClassLoader().getResourceAsStream("openid-providers.properties");
+        InputStream is = getClass().getClassLoader()
+            .getResourceAsStream("openid-providers.properties");
         if (is == null) {
             LOG.info("couldn't find openid providers, using system class-loader");
-            is = ClassLoader.getSystemClassLoader().getResourceAsStream("openid-properties.properties");
+            is = ClassLoader.getSystemClassLoader()
+                .getResourceAsStream("openid-properties.properties");
         }
         if (is != null) {
             try {
@@ -622,7 +635,7 @@ public class InitialiserPlugin implements PlugIn
 
                 while (res.next()) {
                     if (res.getString(3).equals(TrackerUtil.TEMPLATE_TRACKER_TABLE)
-                        && res.getString(4).equals("timestamp")
+                        && "timestamp".equals(res.getString(4))
                         && res.getInt(5) == Types.TIMESTAMP) {
                         return true;
                     }
@@ -699,29 +712,30 @@ public class InitialiserPlugin implements PlugIn
                 listUpgrade = true;
             }
             if (listUpgrade) {
-                    LOG.warn("Serial numbers not equal: list upgrate needed");
-                    //set current attribute to false
-                    Connection conn = null;
+                LOG.warn("Serial numbers not equal: list upgrate needed");
+                //set current attribute to false
+                Connection conn = null;
+                try {
+                    conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
+                    if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")) {
+                        DatabaseUtil.updateColumnValue(
+                                     ((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                                     "savedbag", "intermine_state",
+                                     BagState.NOT_CURRENT.toString());
+                    }
+                } catch (SQLException sqle) {
+                    throw new BuildException("Problems connecting bagvalues table", sqle);
+                } finally {
                     try {
-                        conn = ((ObjectStoreInterMineImpl) uosw).getDatabase().getConnection();
-                        if (DatabaseUtil.columnExists(conn, "savedbag", "intermine_state")) {
-                            DatabaseUtil.updateColumnValue(
-                                         ((ObjectStoreInterMineImpl) uosw).getDatabase(),
-                                         "savedbag", "intermine_state", BagState.NOT_CURRENT.toString());
+                        if (conn != null) {
+                            conn.close();
                         }
                     } catch (SQLException sqle) {
-                        throw new BuildException("Problems connecting bagvalues table", sqle);
-                    } finally {
-                        try {
-                            if (conn != null) {
-                                conn.close();
-                            }
-                        } catch (SQLException sqle) {
-                        }
                     }
-                    // update the userprofileSerialNumber
-                    MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
-                            MetadataManager.SERIAL_NUMBER, productionSerialNumber);
+                }
+                // update the userprofileSerialNumber
+                MetadataManager.store(((ObjectStoreInterMineImpl) uosw).getDatabase(),
+                        MetadataManager.SERIAL_NUMBER, productionSerialNumber);
             }
         } catch (SQLException sqle) {
             throw new IllegalStateException("Error verifying list upgrading", sqle);
