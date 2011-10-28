@@ -2,13 +2,11 @@
 
 use strict;
 use warnings;
+use Scalar::Util 'looks_like_number';
 
-use URI;
-use LWP::UserAgent;
-use HTTP::Request;
-use Scalar::Util qw(looks_like_number);
+use Webservice::InterMine::Simple 0.9800;
 
-my ($xml_file, $url, $max_results) = @ARGV;
+my ($xml_file, $url, $max_results, $format) = @ARGV;
 
 sub usage() {
     return "$0 query.xml url [max_results]\n";
@@ -16,40 +14,34 @@ sub usage() {
 
 die "No xml supplied as input!\n" . usage()
     if (@ARGV < 1);
-die "No url supplied to querying!\n". usage()
+die "No url supplied!\n". usage()
     if (@ARGV < 2);
 die "Too many arguments!\n" . usage()
-    if (@ARGV > 3);
-if (@ARGV == 3 and not looks_like_number($max_results)) {
+    if (@ARGV > 4);
+if (@ARGV > 2 and not looks_like_number($max_results)) {
     die "Max_results must be a number, not $max_results\n" . usage();
 }
 
-my $xml;
-open(my $XML_FH, '<', $xml_file)
-    or die "Cannot open $xml_file, $!";
-$xml = join('', <$XML_FH>);
-close($XML_FH) 
-    or die "Cannot close $xml_file, $!";
-my ($query) = $xml =~ m!(<query.*?</query>)!sg;
-die "No query found in $xml"
-    unless $query;
+my $service = get_service($url);
+my $query = $service->new_from_xml(source_file => $xml_file);
 
-my $uri = URI->new($url);
-my %params = (
-    query => $query,
-    format => 'tab'
+my %args = ( 
+    columnheaders => ($format ? 0 : 1), 
+    ($max_results ? (size => $max_results) : ()),
+    ($format ?      (as => $format) :    ())
 );
-$params{size} = $max_results if $max_results;
-$uri->query_form(%params);
 
-my $ua = LWP::UserAgent->new;
-$ua->agent("InterMineXMLHandler/0.1");
-my $req = HTTP::Request->new(GET => $uri);
-
-my $res = $ua->request($req);
-if ($res->is_success) {
-    print $res->content;
+if ($format) {
+    print $query->results(%args);
 } else {
-    print '[ERROR] ', $res->status_line, "\n";
+    my @rows = $query->results_table(%args);
+
+    if (@rows) {
+        my $format = join(' | ', (("%-30.30s") x scalar(@{$rows[0]})));
+        for my $row (@rows) {
+            printf $format . "\n", @$row;
+        }
+    }
 }
+
 exit;
