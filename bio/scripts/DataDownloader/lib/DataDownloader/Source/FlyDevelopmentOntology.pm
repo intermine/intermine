@@ -8,7 +8,7 @@ use constant {
     DESCRIPTION =>
         'Ontologies from FlyBase - development terms',
     SOURCE_LINK => 'http://flybase.org',
-    SOURCE_DIR => 'ontologies',
+    SOURCE_DIR => 'ontologies/fly-development',
     SOURCES => [
         {
             SUBTITLE => 'Fly Development',
