@@ -25,7 +25,13 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathException;
 
-public class ModelUpdateTask extends Task {
+/**
+ * Task updating savedquery, savedtemplatequery and savedbag in the userprofile (identified by
+ * the userProfileAlias) when the model has been changed
+ * @author butano
+ */
+public class ModelUpdateTask extends Task 
+{
     private String osAlias;
     private String userProfileAlias;
     private String oldModelLocation;
@@ -56,6 +62,10 @@ public class ModelUpdateTask extends Task {
         this.oldModelLocation = oldModel;
     }
 
+    /**
+     * Update savedquery, savedtemplatequery and savedbag in the userprofile
+     * through ModelUpdate object
+     */
     public void execute() {
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);

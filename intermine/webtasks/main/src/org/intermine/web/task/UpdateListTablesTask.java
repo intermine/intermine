@@ -41,8 +41,8 @@ import org.intermine.sql.DatabaseUtil;
 
 /**
  * Task that rename the column 'intermine_current' into 'intermine_state' in savedbag table
- * and add the column 'extra' (and its value) in the bagvalues table
  * (from boolean to text)
+ * and add the column 'extra' (and its value) in the bagvalues table
  * @author dbutano
  */
 
