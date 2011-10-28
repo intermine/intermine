@@ -22,7 +22,13 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
 
-public class PathQueryUpdateTest extends TestCase {
+/**
+ * Test the PathQueryUpdate behaviour
+ * @author butano
+ *
+ */
+public class PathQueryUpdateTest extends TestCase 
+{
     private Map<String, String> renamedClasses = new HashMap<String, String>();
     private Map<String, String> renamedFields = new HashMap<String, String>();
 
@@ -44,9 +50,12 @@ public class PathQueryUpdateTest extends TestCase {
         query.addView("CEOTest.company.name");
         query.addView("CEOTest.sal");
         query.setDescription("CEOTest.name", "CEO name");
-        query.addConstraint(new PathConstraintAttribute("CEOTest.name", ConstraintOp.CONTAINS, "ploy"));
-        query.addConstraint(new PathConstraintAttribute("CEOTest.company.name", ConstraintOp.CONTAINS, "pany"));
-        query.addConstraint(new PathConstraintLookup("CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1"));
+        query.addConstraint(new PathConstraintAttribute("CEOTest.name",
+                            ConstraintOp.CONTAINS, "ploy"));
+        query.addConstraint(new PathConstraintAttribute("CEOTest.company.name",
+                            ConstraintOp.CONTAINS, "pany"));
+        query.addConstraint(new PathConstraintLookup(
+            "CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1"));
         query.setOuterJoinStatus("CEOTest.company", OuterJoinStatus.OUTER);
         query.addOrderBy("CEOTest.name", OrderDirection.ASC);
         query.addOrderBy("CEOTest.sal", OrderDirection.ASC);
@@ -67,11 +76,13 @@ public class PathQueryUpdateTest extends TestCase {
         //verify constraint
         assertEquals(3, queryUpdated.getConstraints().size());
         assertEquals(1, queryUpdated.getConstraintsForPath("CEO.name").size());
-        PathConstraintAttribute constraint1 = (PathConstraintAttribute) queryUpdated.getConstraintsForPath("CEO.name").get(0);
+        PathConstraintAttribute constraint1 = (PathConstraintAttribute) queryUpdated
+                                              .getConstraintsForPath("CEO.name").get(0);
         assertEquals("ploy", constraint1.getValue());
         assertEquals(ConstraintOp.CONTAINS, constraint1.getOp().CONTAINS);
         assertEquals(1, queryUpdated.getConstraintsForPath("CEO.company.name").size());
-        PathConstraintAttribute constraint2 = (PathConstraintAttribute) queryUpdated.getConstraintsForPath("CEO.company.name").get(0);
+        PathConstraintAttribute constraint2 = (PathConstraintAttribute) queryUpdated
+                                              .getConstraintsForPath("CEO.company.name").get(0);
         assertEquals("pany", constraint2.getValue());
         assertEquals(ConstraintOp.CONTAINS, constraint2.getOp().CONTAINS);
         PathConstraintLookup constraint3 = (PathConstraintLookup) queryUpdated

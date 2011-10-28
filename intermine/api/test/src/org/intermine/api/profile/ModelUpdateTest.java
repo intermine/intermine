@@ -14,8 +14,14 @@ import org.apache.tools.ant.BuildException;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.metadata.Model;
 
-public class ModelUpdateTest extends InterMineAPITestCase {
-
+/**
+ * Class to test that the ModelUpdate loads correctly all the changes set
+ * in the modelUpdate.properties file
+ * @author butano
+ *
+ */
+public class ModelUpdateTest extends InterMineAPITestCase
+{
     private ModelUpdate modelUpdate;
 
     public ModelUpdateTest(String arg) {
