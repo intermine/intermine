@@ -121,6 +121,11 @@ public class HtmlHeadController extends TilesAction
             }
             ReportObject dobj = reportObjects.get(object);
 
+            // TODO this shouldn't happen will be fixed by #2660
+            if (dobj == null || dobj.getAttributes() == null) {
+                return null;
+            }
+
             String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
             String idForPageTitle = "";
 
