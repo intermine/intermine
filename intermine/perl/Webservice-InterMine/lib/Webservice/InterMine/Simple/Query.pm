@@ -120,16 +120,16 @@ sub results {
     my $self = shift;
     my %args = @_;
     my $uri  = $self->get_uri;
-    my %query_form = (query => $self->as_xml, format => $self->{as});
+    my %query_form = (query => $self->as_xml, format => $args{as});
     for (qw/size start columnheaders/) {
         $query_form{$_} = $args{$_} if (exists $args{$_});
     }
     $uri->query_form(%query_form);
     my $result = $self->{service}{ua}->get($uri);
     if ($result->is_success) {
-        return encode_utf8($result->content);
+        return $result->decoded_content; 
     } else {
-        die $result->status_line, "\n", encode_utf8($result->content);
+        die $result->status_line, "\n", $result->decoded_content;
     }
 }
 
