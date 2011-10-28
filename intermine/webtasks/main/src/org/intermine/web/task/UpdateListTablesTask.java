@@ -83,7 +83,7 @@ public class UpdateListTablesTask extends Task
         }
         Connection connection = null;
         try {
-            userProfileOS =ObjectStoreFactory.getObjectStore(userProfileAlias);
+            userProfileOS = ObjectStoreFactory.getObjectStore(userProfileAlias);
             os = ObjectStoreFactory.getObjectStore(osAlias);
             connection = ((ObjectStoreInterMineImpl) userProfileOS).getDatabase().getConnection();
 
@@ -97,16 +97,17 @@ public class UpdateListTablesTask extends Task
             //add the column extra and set the value
             if (DatabaseUtil.tableExists(connection, "bagvalues")
                 && !DatabaseUtil.columnExists(connection, "bagvalues", "extra")) {
-                    DatabaseUtil.addColumn(connection, "bagvalues", "extra", DatabaseUtil.Type.text);
-                    String sqlDeleteIndex = "DROP INDEX bagvalues_index1";
-                    try {
-                        connection.createStatement().execute(sqlDeleteIndex);
-                    } catch (SQLException sql) {
-                    }
-                    String sqlCreateIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues (savedbagid, value, extra)";
-                    connection.createStatement().execute(sqlCreateIndex);
-                    log("Added column extra in bagvalues table.");
-                    setExtraValue();
+                DatabaseUtil.addColumn(connection, "bagvalues", "extra", DatabaseUtil.Type.text);
+                String sqlDeleteIndex = "DROP INDEX bagvalues_index1";
+                try {
+                    connection.createStatement().execute(sqlDeleteIndex);
+                } catch (SQLException sql) {
+                }
+                String sqlCreateIndex = "CREATE UNIQUE INDEX bagvalues_index1 ON bagvalues"
+                                        + " (savedbagid, value, extra)";
+                connection.createStatement().execute(sqlCreateIndex);
+                log("Added column extra in bagvalues table.");
+                setExtraValue();
             }
         } catch (ObjectStoreException ose) {
             ose.printStackTrace();
