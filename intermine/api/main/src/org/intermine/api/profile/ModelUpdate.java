@@ -9,9 +9,6 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,8 +23,6 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
-import org.intermine.modelproduction.ModelParserException;
-import org.intermine.modelproduction.xml.InterMineModelParser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -41,7 +36,13 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
-public class ModelUpdate {
+/**
+ * Update savedquery, savedtemplatequery and savedbag when the model has been changed
+ * @author butano
+ *
+ */
+public class ModelUpdate
+{
     private ObjectStoreWriter uosw;
     private ProfileManager pm;
     private Model model;
@@ -49,10 +50,20 @@ public class ModelUpdate {
     private Set<String> deletedClasses = new HashSet<String>();
     private Map<String, String> renamedClasses = new HashMap<String, String>();
     private Map<String, String> renamedFields = new HashMap<String, String>();
+    /** label in modelUpdate.properties file to identify deleted classes or fields */
     public static final String DELETE = "delete";
+    /** label in modelUpdate.properties file to identify renamed classes or fields */
     public static final String RENAME = "rename-";
-    public static String OLD = "_OldBackup";
+    /** suffix used to rename the previous items */
+    public static final String OLD = "_OldBackup";
 
+    /**
+     * Construct a ModelUpdate for updating items built in the userprofile with the oldModel
+     * given in input
+     * @param os
+     * @param uosw
+     * @param oldModel
+     */
     public ModelUpdate(ObjectStore os, ObjectStoreWriter uosw, Model oldModel) {
         this.uosw = uosw;
         pm = new ProfileManager(os, uosw);
@@ -74,7 +85,7 @@ public class ModelUpdate {
         String fieldName;
         String update;
 
-        for(Object key : modelUpdateProps.keySet()) {
+        for (Object key : modelUpdateProps.keySet()) {
             keyAsString = (String) key;
             update = (String) modelUpdateProps.getProperty(keyAsString);
 
@@ -103,14 +114,15 @@ public class ModelUpdate {
                     update = update.replace(RENAME, "").trim();
                     index = update.indexOf(".");
                     if (index == -1) {
-                        throw new BuildException("Field " + keyAsString + " has to contain class.newfield");
+                        throw new BuildException("Field " + keyAsString + " has to contain "
+                                               + "class.newfield");
                     }
                     String newClassName = update.substring(0, index);
                     String newFieldName = update.substring(index + 1);
                     if (fieldName.equals(newFieldName)) {
-                        throw new BuildException(keyAsString + " = " + RENAME + update +
-                                " not permitted. Field has to be renamed. Please check" +
-                                " modelUpdate.properties file");
+                        throw new BuildException(keyAsString + " = " + RENAME + update
+                                + " not permitted. Field has to be renamed. Please check"
+                                + " modelUpdate.properties file");
                     }
                     verifyClassAndField(newClassName, newFieldName, model);
                     if (!className.equals(newClassName)) {
@@ -120,9 +132,9 @@ public class ModelUpdate {
                             renamedClasses.put(className, newClassName);
                         } else {
                             if (!renamedClasses.get(className).equals(newClassName)) {
-                                throw new BuildException("Class " + className + " has been " +
-                                    "renamed in two different classes. Please check" +
-                                    " modelUpdate.properties file");
+                                throw new BuildException("Class " + className + " has been"
+                                    + " renamed in two different classes. Please check"
+                                    + " modelUpdate.properties file");
                             }
                         }
                     }
@@ -135,8 +147,7 @@ public class ModelUpdate {
         }
     }
 
-    private void verifyClassAndField(String className, String fieldName, Model model)
-        throws BuildException {
+    private void verifyClassAndField(String className, String fieldName, Model model) {
         String checkFileMsg = "Please check modelUpdate.properties file";
         if ("".equals(className)) {
             throw new BuildException("Class " + className + " can not be blank. " + checkFileMsg);
@@ -153,7 +164,7 @@ public class ModelUpdate {
             }
         }
         if (fieldName != null) {
-            if (fieldName.equals("")) {
+            if ("".equals(fieldName)) {
                 throw new BuildException("Attribute " + fieldName + " in the class " + className
                     + " can not be blank. " + checkFileMsg);
             }
@@ -161,37 +172,59 @@ public class ModelUpdate {
                 && cd.getReferenceDescriptorByName(fieldName) == null
                 && cd.getCollectionDescriptorByName(fieldName) == null) {
                 throw new BuildException("The " + fieldName + " in the class " + className
-                               + " not defined in the model " + model.getName() + ". " + checkFileMsg);
+                           + " not defined in the model " + model.getName() + ". " + checkFileMsg);
             }
         }
     }
 
+    /**
+     * Return a set containing all the deleted classes
+     * @return the set
+     */
     public Set<String> getDeletedClasses() {
         return deletedClasses;
     }
 
+    /**
+     * Return a map containing the couple previous class and new class
+     * @return the map
+     */
     public Map<String, String> getRenamedClasses() {
         return renamedClasses;
     }
 
+    /**
+     * Return a map containing the couple previousClass.previuosField and new field
+     * @return the map
+     */
     public Map<String, String> getRenamedFields() {
         return renamedFields;
     }
 
+    /**
+     * Update bags, savedquery and savedtemplatequery
+     * if class has been renamed -> update type bags, update savedquery and savedtemplatequery
+     * if a field has been renamed -> update savedquery and savedtemplatequery
+     * if class has been deleted -> delete bags with that type
+     * @throws PathException
+     */
     public void update() throws PathException {
-        if(!deletedClasses.isEmpty()) {
+        if (!deletedClasses.isEmpty()) {
             deleteBags();
         }
 
-        if(!renamedClasses.isEmpty()) {
+        if (!renamedClasses.isEmpty()) {
             updateTypeBag();
         }
 
-        if(!renamedClasses.isEmpty() || !renamedFields.isEmpty()) {
+        if (!renamedClasses.isEmpty() || !renamedFields.isEmpty()) {
             updateReferredQueryAndTemplate();
         }
     }
 
+    /*
+     * Delete all bags having as a type one of the classes deleted
+     */
     public void deleteBags() {
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
@@ -216,6 +249,9 @@ public class ModelUpdate {
         }
     }
 
+    /**
+     * Update the type  to all bags having as a type one of the classes renamed
+     */
     public void updateTypeBag() {
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
@@ -245,10 +281,13 @@ public class ModelUpdate {
         }
     }
 
+    /**
+     * Update savedquery and savedtemplatequery when they reeferring to renamed classes or fields
+     * @throws PathException
+     */
     public void updateReferredQueryAndTemplate() throws PathException {
         Map<String, SavedQuery> savedQueries;
         Map<String, TemplateQuery> templateQueries;
-        String cls, prevField;
         List<String> problems;
         Query q = new Query();
         QueryClass qc = new QueryClass(UserProfile.class);
@@ -263,7 +302,8 @@ public class ModelUpdate {
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
                 if (!savedQuery.getName().contains(OLD) && !pathQuery.isValid()) {
-                    PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model, oldModel);
+                    PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model,
+                                                                          oldModel);
                     try {
                         problems = pathQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
@@ -276,7 +316,8 @@ public class ModelUpdate {
                                 savedQuery.getDateCreated(), pathQueryUpdate.getUpdatedPathQuery());
                             profile.deleteQuery(savedQuery.getName());
                             String backupSavedQueryName = savedQuery.getName() + OLD;
-                            SavedQuery backupSavedQuery = new SavedQuery(backupSavedQueryName, savedQuery.getDateCreated(), savedQuery.getPathQuery());
+                            SavedQuery backupSavedQuery = new SavedQuery(backupSavedQueryName,
+                                savedQuery.getDateCreated(), savedQuery.getPathQuery());
                             profile.saveQuery(backupSavedQueryName, backupSavedQuery);
                             profile.saveQuery(savedQuery.getName(), updatedSavedQuery);
                             System.out.println("Updated the saved query: " + savedQuery.getName());
@@ -293,8 +334,8 @@ public class ModelUpdate {
             for (TemplateQuery templateQuery : templateQueries.values()) {
                 PathQuery pathQuery = templateQuery.getPathQuery();
                 if (!templateQuery.getName().contains(OLD) && !pathQuery.isValid()) {
-                    TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery, model,
-                                                                          oldModel);
+                    TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(
+                        templateQuery, model, oldModel);
                     try {
                         problems = templateQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
@@ -303,7 +344,8 @@ public class ModelUpdate {
                             continue;
                         }
                         if (templateQueryUpdate.isUpdated()) {
-                            TemplateQuery updatedTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
+                            TemplateQuery updatedTemplateQuery = templateQueryUpdate
+                                                                 .getNewTemplateQuery();
                             String backupTemplateName = templateQuery.getName() + OLD;
                             TemplateQuery backupTemplateQuery = templateQuery.clone();
                             backupTemplateQuery.setName(backupTemplateName);
