@@ -227,13 +227,13 @@ public class ProfileManager
      */
     public synchronized Profile getProfile(String username, String password) {
         if (hasProfile(username)) {
-        	if (getUserProfile(username).getLocalAccount()) {
-        		if (validPassword(username, password)) {
+            if (getUserProfile(username).getLocalAccount()) {
+                if (validPassword(username, password)) {
                     return getProfile(username);
-        		}
-        	} else {
-        		return getProfile(username);
-        	}
+                }
+            } else {
+                return getProfile(username);
+            }
         }
         return null;
     }
@@ -448,7 +448,7 @@ public class ProfileManager
         userProfile.setLocalAccount(profile.isLocal());
 
         if (profile.isLocal()) {
-        	userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+            userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
         }
 
         try {
@@ -476,8 +476,8 @@ public class ProfileManager
 
     /**
      * Generate a single use API key and store it in memory, before returning it.
-     * @param profile
-     * @return
+     * @param profile the user profile
+     * @return the generated key
      */
     public synchronized String generateSingleUseKey(Profile profile) {
         String key = generateApiKey();
@@ -704,7 +704,8 @@ public class ProfileManager
     }
 
     /**
-     * Transient API access keys for automated API access. These tokens are only valid for a single use.
+     * Transient API access keys for automated API access. These tokens are only valid for a
+     * single use.
      * @author Alex Kalderimis
      *
      */
@@ -831,7 +832,8 @@ public class ProfileManager
         return getProfile(profile.getUsername(), classKeys);
     }
 
-    public static class AuthenticationException extends RuntimeException {
+    public static class AuthenticationException extends RuntimeException
+    {
 
         /**
          * Default serial UID
