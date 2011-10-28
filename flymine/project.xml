@@ -115,10 +115,12 @@
       <property name="src.data.dir" location="/micklem/data/kegg/current"/>
       <property name="kegg.organisms" value="7227"/>
     </source>
+<!--
     <source name="kegg-orthologues" type="kegg-orthologues">
       <property name="src.data.dir" location="/micklem/data/kegg/orthologues"/>
       <property name="kegg.organisms" value="7227 9606 4932 6239 7955 10090 10116"/>
     </source>
+-->
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
