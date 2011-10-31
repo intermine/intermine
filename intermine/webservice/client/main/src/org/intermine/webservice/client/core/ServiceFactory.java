@@ -10,7 +10,7 @@ package org.intermine.webservice.client.core;
  *
  */
 
-import org.intermine.webservice.client.services.AvailableTemplatesService;
+import org.intermine.metadata.Model;
 import org.intermine.webservice.client.services.ListService;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
@@ -23,7 +23,8 @@ import org.intermine.webservice.client.services.TemplateService;
  *
  * Usage:
  * <pre>
- *   ServiceFactory serviceFactory = new ServiceFactory("http://www.flymine.org/query/service", "MyApp")
+ *   ServiceFactory serviceFactory =
+ *      new ServiceFactory("http://www.flymine.org/query/service", "MyApp")
  *   QueryService queryService = serviceFactory.getQueryService()
  *
  *      ...
@@ -37,6 +38,9 @@ public class ServiceFactory
 
     private final String rootUrl;
     private String applicationName = "InterMine-WS-Client-Java-0.96";
+    private final String userName;
+    private final String userPass;
+    private final String authToken;
 
     /**
      * Construct a service factory with a default application name. (defaults to
@@ -46,27 +50,83 @@ public class ServiceFactory
      */
     public ServiceFactory(String rootUrl) {
         this.rootUrl = rootUrl;
+        this.userName = null;
+        this.userPass = null;
+        this.authToken = null;
     }
 
     /**
-     * Construct a factory for gaining access to specific resources. Allows you to set 
-     * the root url and the User-Agent identifier.
+     * Construct a factory for gaining access to specific resources. Allows you to set
+     * the root url and the authorization token. Use this constructor if you need
+     * to access private restricted-access resources.
      * @param rootUrl the base URL for all services, it is the prefix common to all services.
      *      Example: http://www.flymine.org/query/service
-     * @param applicationName application name, information to identify your application to the
-     *      server
+     * @param token the authorization token.
      */
-    public ServiceFactory(String rootUrl, String applicationName) {
+    public ServiceFactory(String rootUrl, String token) {
         this.rootUrl = rootUrl;
-        this.applicationName = applicationName;
+        this.authToken = token;
+        this.userName = null;
+        this.userPass = null;
     }
+
+    /**
+     * Construct a factory for gaining access to specific resources. Allows you to set
+     * the root url and the authorization token. Use this constructor if you need
+     * to access private restricted-access resources.
+     * @param rootUrl the base URL for all services, it is the prefix common to all services.
+     *      Example: http://www.flymine.org/query/service
+     * @param userName your user account name (usually an email address)
+     * @param userPass your user account password, in plain text.
+     *
+     * <em>Please do not use this constructor unless you absolutely have to. Token
+     * identification is preferred</em>
+     * @deprecated This method causes username and password information to be insecurely
+     * transmitted over HTTP connections. Use the token authentication mechanism instead.
+     */
+    @Deprecated
+    public ServiceFactory(String rootUrl, String userName, String userPass) {
+        this.rootUrl = rootUrl;
+        this.authToken = null;
+        this.userName = userName;
+        this.userPass = userPass;
+    }
+
+    /**
+     * Set the application name used to identify your requests to the server.
+     * * @param name application name
+     */
+    public void setApplicationName(String name) {
+        this.applicationName = name;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void authoriseAndLink(Service s) {
+        if (authToken != null) {
+            s.setAuthentication(authToken);
+        } else if (userName != null && userPass != null) {
+            s.setAuthentication(userName, userPass);
+        }
+        s.setFactory(this);
+    }
+
+    // Variables for caching services. There is never going to be a need to create more
+    // than one for any ServiceFactory.
+    private QueryService qs;
+    private TemplateService ts;
+    private ListService ls;
+    private ModelService ms;
 
     /**
      * Return a new QueryService for getting query results from.
      * @return query service
      */
     public QueryService getQueryService() {
-        return new QueryService(rootUrl, applicationName);
+        if (qs == null) {
+            qs = new QueryService(rootUrl, applicationName);
+            authoriseAndLink(qs);
+        }
+        return qs;
     }
 
     /**
@@ -74,7 +134,11 @@ public class ServiceFactory
      * @return template service
      */
     public TemplateService getTemplateService() {
-        return new TemplateService(rootUrl, applicationName);
+        if (ts == null) {
+            ts = new TemplateService(rootUrl, applicationName);
+            authoriseAndLink(ts);
+        }
+        return ts;
     }
 
     /**
@@ -82,7 +146,11 @@ public class ServiceFactory
      * @return list service
      */
     public ListService getListService() {
-        return new ListService(rootUrl, applicationName);
+        if (ls == null) {
+            ls = new ListService(rootUrl, applicationName);
+            authoriseAndLink(ls);
+        }
+        return ls;
     }
 
     /**
@@ -90,15 +158,20 @@ public class ServiceFactory
      * @return model service
      */
     public ModelService getModelService() {
-        return new ModelService(rootUrl, applicationName);
+        if (ms == null) {
+            ms = new ModelService(rootUrl, applicationName);
+        }
+        return ms;
     }
 
     /**
-     * Return a new AvailableTemplatesService for getting lists of templates from.
-     * @return available templates service
+     * A convenience method to getting a model (used widely throughout the API).
+     * This method also allows us to not violate the law of Demeter in many
+     * ugly ways.
+     * @return the data model for the service we are attached to.
      */
-    public AvailableTemplatesService getAvailableTemplatesService() {
-        return new AvailableTemplatesService(rootUrl, applicationName);
+    public Model getModel() {
+        return getModelService().getModel();
     }
 
     /**
@@ -115,7 +188,8 @@ public class ServiceFactory
      */
     public Service getService(String serviceRelativeUrl,
             String applicationName) {
-        return new Service(rootUrl, serviceRelativeUrl, applicationName);
+        Service x = new Service(rootUrl, serviceRelativeUrl, applicationName);
+        authoriseAndLink(x);
+        return x;
     }
 }
-

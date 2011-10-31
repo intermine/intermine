@@ -23,8 +23,12 @@ import java.util.Map;
  *
  * @author Jakub Kulaviak
  **/
-public class URLParser
+public final class URLParser
 {
+
+    private URLParser() {
+        // Hidden constructor.
+    }
 
     /**
      * Returns service URL - i.e. URL before question mark.

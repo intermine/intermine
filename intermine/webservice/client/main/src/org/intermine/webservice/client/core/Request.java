@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.webservice.client.results.Page;
+
 /**
  * Client request interface. Client creates the request using following
  * methods and sends it to the server.
@@ -30,7 +32,11 @@ public interface Request
         /**
          * POST type.
          */
-        POST
+        POST,
+        /**
+         * DELETE type
+         */
+        DELETE
     }
 
     /**
@@ -66,6 +72,11 @@ public interface Request
      */
     void setParameter(String name, String value);
 
+    /** Set the authentication token for the request
+     * @param token the Authentication token for this request.
+     */
+    void setAuthToken(String token);
+
     /**
      * @return request type
      * @see RequestType
@@ -99,12 +110,15 @@ public interface Request
     void  setUrl(String url);
 
     /**
-     *
-     * @param encode true if returned string should be URL-encoded
      * @see <a href="http://www.ietf.org/rfc/rfc1738.txt">URL encoding specification</a>
-     * @return URL
+     * @return the URL-encoded URL.
      */
-    String getUrl(boolean encode);
+    String getEncodedUrl();
+
+    /**
+     * @return Get the URL as an un-encoded (ie. human-readable) string.
+     */
+    String getUnencodedUrl();
 
     /**
      * @return content type
@@ -117,8 +131,7 @@ public interface Request
     void setContentType(ContentType contentType);
 
     /**
-     * Returns all parameters as a modifiable map. You can
-     * modify parameters manipulating directly with this map.
+     * Returns all parameters as an unmodifiable map.
      * @return map
      */
     Map<String, List<String>> getParameterMap();
@@ -144,6 +157,16 @@ public interface Request
      * @return headers
      */
     Map<String, String> getHeaders();
+
+    /**
+     * Set the page for this request.
+     *
+     * The page delimits which subsection of the results you
+     * wish to receive.
+     *
+     * @param page The page
+     */
+    void setPage(Page page);
 
 }
 

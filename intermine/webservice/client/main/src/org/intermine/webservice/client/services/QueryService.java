@@ -11,23 +11,30 @@ package org.intermine.webservice.client.services;
  */
 
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.client.core.ContentType;
-import org.intermine.webservice.client.core.JSONResult;
 import org.intermine.webservice.client.core.Request.RequestType;
 import org.intermine.webservice.client.core.RequestImpl;
-import org.intermine.webservice.client.core.Service;
-import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.core.XMLTableResult;
-import org.intermine.webservice.client.core.RowResultSet;
 import org.intermine.webservice.client.exceptions.ServiceException;
-import org.intermine.webservice.client.util.HttpConnection;
+import org.intermine.webservice.client.results.JSONResult;
+import org.intermine.webservice.client.results.Page;
+import org.intermine.webservice.client.results.RowResultSet;
+import org.intermine.webservice.client.results.XMLTableResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,28 +51,21 @@ import org.json.JSONObject;
  *
  * Usage:
  * <pre>
- * ServiceFactory serviceFactory = new ServiceFactory(serviceRootUrl);
- * QueryService queryService = serviceFactory.getQueryService();
- * ModelService modelService = serviceFactory.getModelService();
- * PathQuery query = new PathQuery(modelService.getModel());
+ *     ServiceFactory services = new ServiceFactory(serviceRootUrl);
+ *     QueryService queryService = services.getQueryService();
  *
- * query.addViews("Gene.symbol", "Gene.length", "Gene.proteins.symbol");
- * query.addConstraint(Constraints.lookup("Gene", "zen", "D. melanogaster"));
+ *     PathQuery query = new PathQuery(services.getModel());
+ *     query.addViews("Gene.symbol", "Gene.length", "Gene.proteins.primaryIdentifier");
+ *     query.addConstraint(Constraints.lookup("Gene", "zen", "D. melanogaster"));
  *
- * //find out how many results there are
- * int count = queryService.getCount(query);
+ *     //find out how many results there are
+ *     out.printf("There are %d results for this query\n", queryService.getCount(query));
  *
- * System.out.println("There are " + count + " results for this query");
+ *     Iterator<List<Object>> results = queryService.getRowListIterator(query);
  *
- * List<List<String>> rows = service.getAllResults(query);
- *
- * for (List<String> row : rows) {
- *      for (int i = 0; i < row.size(); i++) {
- *           System.out.println(query.getViews().get(i) + " is " + row.get(i));
- *      }
- *      System.out.print("\n");
- * }
- *
+ *     while (results.hasNext()) {
+ *         out.println(StringUtils.join(results.next(), "\t"));
+ *     }
  * </pre>
  *
  * Query results are typically fetched as a multi-dimensional list of strings (rows of columns), but
@@ -77,16 +77,19 @@ import org.json.JSONObject;
  * appropriate slice of results. The default start is 0 (the beginning) and the default page-size
  * is null (everything). So the query above will get all results.
  *
+ * @author Alex Kalderimis
  * @author Jakub Kulaviak
  **/
-public class QueryService extends Service
+public class QueryService extends AbstractQueryService<PathQuery>
 {
 
     private static final String SERVICE_RELATIVE_URL = "query/results";
 
-    private static final int START = 0;
-
-    private static final Integer ALL_RESULTS = null;
+    private static final Set<String> NUMERIC_TYPES
+        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+            "int", "float", "double", "short", "long",
+            "java.util.Integer", "java.util.Float", "java.util.Double",
+            "java.util.Short", "java.util.Long", "java.util.BegDecimal")));
 
     /**
      * Constructor. It is recommended for maintainability reasons that you not use this constructor.
@@ -115,7 +118,6 @@ public class QueryService extends Service
          */
         public QueryRequest(RequestType type, String serviceUrl, ContentType contentType) {
             super(type, serviceUrl, contentType);
-            setXMLFormat();
         }
 
         /**
@@ -147,14 +149,9 @@ public class QueryService extends Service
                 PathQuery.USERPROFILE_VERSION);
     }
 
-    /**
-     * Returns the number of results the specified query will return.
-     *
-     * @param query query
-     * @return number of results of specified query.
-     */
+    @Override
     public int getCount(PathQuery query) {
-        return getCount(query.toXml(PathQuery.USERPROFILE_VERSION));
+        return getCount(query.toXml());
     }
 
     /**
@@ -166,30 +163,17 @@ public class QueryService extends Service
     public int getCount(String queryXml) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.TEXT_COUNT);
         request.setQueryXml(queryXml);
-        request.setCountFormat();
-        String body = getResponseString(request);
+        String body = getStringResponse(request);
         if (body.length() == 0) {
             throw new ServiceException("The server didn't return any results");
         }
         try {
             return Integer.parseInt(body);
         }  catch (NumberFormatException e) {
-            throw new ServiceException("The server returned an invalid result. It is not a number: "
+            throw new ServiceException(
+                    "The server returned an invalid result. It is not a number: "
                     + body, e);
         }
-    }
-
-    /**
-     * Fetch all the results as a list of JSON Objects
-     *
-     * @param query A PathQuery object
-     *
-     * @return a list of JSON objects
-     *
-     * @throws JSONException if the server returns badly formatted JSON, or non-json data
-     */
-    public List<JSONObject> getAllJSONResults(PathQuery query) throws JSONException {
-        return getJSONResults(query.toXml(PathQuery.USERPROFILE_VERSION), START, null);
     }
 
     /**
@@ -202,24 +186,12 @@ public class QueryService extends Service
      * @throws JSONException if the server returns badly formatted JSON, or non-JSON data
      */
     public List<JSONObject> getAllJSONResults(String queryXml) throws JSONException {
-        return getJSONResults(queryXml, START, ALL_RESULTS);
+        return getJSONResults(queryXml, Page.DEFAULT);
     }
 
-    /**
-     * Fetch some results as a list of JSON Objects. You define which results you want
-     * by supplying a start index, and a maximum page size.
-     *
-     * @param query A PathQuery object
-     * @param start the starting index
-     * @param maxCount maximum number of returned results
-     *
-     * @return a list of JSON objects
-     *
-     * @throws JSONException if the server returns badly formatted JSON, or non-JSON data
-     */
-    public List<JSONObject> getJSONResults(PathQuery query, int start, Integer maxCount)
-        throws JSONException {
-        return getJSONResults(query.toXml(PathQuery.USERPROFILE_VERSION), start, maxCount);
+    @Override
+    public List<JSONObject> getJSONResults(PathQuery query, Page page) throws JSONException {
+        return getJSONResults(query.toXml(), page);
     }
 
     /**
@@ -227,56 +199,25 @@ public class QueryService extends Service
      * by supplying a start index, and a maximum page size.
      *
      * @param queryXml An XML string representing the query
-     * @param start the starting index
-     * @param size the maximum number of results to return
+     * @param page The subsection of the result set to retrieve.
      *
      * @return a list of JSON objects
      *
      * @throws JSONException if the server returns badly formatted JSON, or non-JSON data
      */
-    public List<JSONObject> getJSONResults(String queryXml, int start, Integer size)
+    public List<JSONObject> getJSONResults(String queryXml, Page page)
         throws JSONException {
         QueryRequest request
-            = new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON);
+            = new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON_OBJ);
         request.setQueryXml(queryXml);
-        request.setJSONFormat();
-        request.setStart(start);
-        if (size != null) {
-            request.setMaxCount(size);
-        }
+        request.setPage(page);
         JSONResult response = getJSONResponse(request);
         return response.getObjects();
     }
 
-    /**
-     * Returns a String response for a request from a server. This is the method used internally
-     * to actually perform requests to the server.
-     *
-     * @param request the QueryRequest
-     *
-     * @return a String
-     */
-    protected String getResponseString(QueryRequest request) {
-        HttpConnection connection = executeRequest(request);
-        return connection.getResponseBodyAsString().trim();
-    }
-
-    /**
-     * Returns a specific set of the results of the specified PathQuery.
-     * If you expect a lot of results, or have set a very large page size
-     * we would recommend that you use the getResultIterator() method instead, as that will
-     * read through the lines one by one without storing them all in memory at once.
-     *
-     * @param query the query as a PathQuery object
-     *
-     * @param start The starting index
-     * @param maxCount maximum number of returned results
-     *
-     * @return results of specified PathQuery
-     */
-    public List<List<String>> getResults(PathQuery query, int start, Integer maxCount) {
-        return getResultInternal(
-                query.toXml(PathQuery.USERPROFILE_VERSION), start, maxCount).getData();
+    @Override
+    public List<List<String>> getResults(PathQuery query, Page page) {
+        return getResultInternal(query.toXml(), page).getData();
     }
 
     /**
@@ -286,28 +227,11 @@ public class QueryService extends Service
      * read through the lines one by one without storing them all in memory at once.
      *
      * @param queryXml PathQuery represented as a XML string
-     * @param start the starting index
-     * @param maxCount maximum number of returned results (null means all results)
-     *
+     * @param page The subsection of the result set to retrieve.
      * @return results of specified PathQuery
      */
-    public List<List<String>> getResults(String queryXml, int start, Integer maxCount) {
-        return getResultInternal(queryXml, start, maxCount).getData();
-    }
-
-    /**
-     * Returns all of the results of the specified PathQuery.
-     * If you expect a lot of results, we would recommend that you use the getResultIterator()
-     * method instead, as that will read through the lines one by one without storing
-     * them all in memory at once.
-     *
-     * Returns results of specified PathQuery. If you expect a lot of results
-     * use getResultIterator() method.
-     * @param query query
-     * @return results of specified PathQuery
-     */
-    public List<List<String>> getAllResults(PathQuery query) {
-        return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), START, null).getData();
+    public List<List<String>> getResults(String queryXml, Page page) {
+        return getResultInternal(queryXml, page).getData();
     }
 
     /**
@@ -321,23 +245,12 @@ public class QueryService extends Service
      * @return results of specified PathQuery
      */
     public List<List<String>> getAllResults(String queryXml) {
-        return getResultInternal(queryXml, START, null).getData();
+        return getResultInternal(queryXml, Page.DEFAULT).getData();
     }
 
-    /**
-     * Returns a specific set of the results of a specified PathQuery as an iterator.
-     * We would recommend that you use this method if you expect a lot of rows of results
-     * and might run out of memory.
-     *
-     * @param query the query as a PathQuery object
-     * @param start The starting index
-     * @param maxCount maximum number of returned results
-     *
-     * @return results of specified PathQuery
-     */
-    public Iterator<List<String>> getResultIterator(PathQuery query, int start, Integer maxCount) {
-        return getResultInternal(query.toXml(PathQuery.USERPROFILE_VERSION), start, maxCount)
-            .getIterator();
+    @Override
+    public Iterator<List<String>> getRowIterator(PathQuery query, Page page) {
+        return getResultInternal(query.toXml(), page).getIterator();
     }
 
     /**
@@ -346,25 +259,11 @@ public class QueryService extends Service
      * might run out of memory.
      *
      * @param queryXml the query represented as an XML string
-     * @param start the starting index
-     * @param maxCount maximum number of returned results
-     *
+     * @param page The subsection of the result set to retrieve.
      * @return results of specified PathQuery
      */
-    public Iterator<List<String>> getResultIterator(String queryXml, int start, Integer maxCount) {
-        return getResultInternal(queryXml, start, maxCount).getIterator();
-    }
-
-    /**
-     * Returns all the results of a specified PathQuery as an iterator. We would recommend that
-     * you use this method if you expect a lot of rows of results and might run out of memory.
-     *
-     * @param query the query as a PathQuery object
-     *
-     * @return results of specified PathQuery
-     */
-    public Iterator<List<String>> getAllResultIterator(PathQuery query) {
-        return getResultIterator(query, START, null);
+    public Iterator<List<String>> getRowIterator(String queryXml, Page page) {
+        return getResultInternal(queryXml, page).getIterator();
     }
 
     /**
@@ -375,8 +274,8 @@ public class QueryService extends Service
      *
      * @return an iterator over the results of the specified PathQuery
      */
-    public Iterator<List<String>> getAllResultIterator(String queryXml) {
-        return getResultIterator(queryXml, START, null);
+    public Iterator<List<String>> getAllRowIterator(String queryXml) {
+        return getRowIterator(queryXml, Page.DEFAULT);
     }
 
     /**
@@ -384,237 +283,79 @@ public class QueryService extends Service
      * sending it off to receive the results.
      *
      * @param queryXml the query represented as an XML string
-     * @param start the starting index
-     * @param maxCount maximum number of returned results
-     *
+     * @param page The subsection of the result set to retrieve.
      * @return a data table object
      */
-    private XMLTableResult getResultInternal(String queryXml, int start, Integer maxCount) {
+    private XMLTableResult getResultInternal(String queryXml, Page page) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(),
-                ContentType.TEXT_TAB);
-        if (maxCount != null) {
-            request.setMaxCount(maxCount);
-        }
-        request.setStart(start);
+                ContentType.TEXT_XML);
+        request.setPage(page);
         request.setQueryXml(queryXml);
         return getResponseTable(request);
     }
 
     /**
-     * Performs the query and returns a XMLTableResult containing the data.
-     * This is an internal method for handling the intermediate processing steps
+     * Get results for a query as rows of objects.
      *
-     * @param request a QueryRequest object
-     *
-     * @return a XMLTableResult object containing the data fetched
+     * @param query The query to run.
+     * @param page The subsection of the result set to retrieve.
+     * @return a list of rows, which are each a list of cells.
      */
-    protected XMLTableResult getResponseTable(QueryRequest request) {
-        HttpConnection connection = executeRequest(request);
-        return new XMLTableResult(connection);
+    public List<List<Object>> getRowsAsLists(String query, Page page) {
+        return getRows(query, page).getRowsAsLists();
     }
 
     /**
-     * Get results for a query as rows of objects. 
-     *
-     * @param query The query to run.
-     * @param start The first index to run.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
-     *
-     * @return a list of rows, which are each a list of cells.
-     */
-    public List<List<Object>> getRowsAsLists(String query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getRowsAsLists();
-    }
-
-    /**
-     * Get results for a query as rows of objects. 
-     *
-     * @param query The query to run.
-     * @param start The first index to run.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
-     *
-     * @return a list of rows, which are each a list of cells.
-     */
-    public List<List<Object>> getRowsAsLists(PathQuery query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getRowsAsLists();
-    }
-
-    /**
-     * Get results for a query as rows of objects. Retrieve up to 10,000,000 result from the given starting point.
-     *
-     * @param query The query to run.
-     * @param start The first index to run.
-     *
-     * @return a list of rows, which are each a list of cells.
-     */
-    public List<List<Object>> getRowsAsLists(String query, int start) {
-        return getRows(query, start, null).getRowsAsLists();
-    }
-
-    /**
-     * Get results for a query as rows of objects. Retrieve up to 10,000,000 result from the given starting point.
-     *
-     * @param query The query to run.
-     * @param start The index of the first result to include.
-     *
-     * @return a list of rows, which are each a list of cells.
-     */
-    public List<List<Object>> getRowsAsLists(PathQuery query, int start) {
-        return getRows(query, start, null).getRowsAsLists();
-    }
-    
-    /**
-     * Get results for a query as rows of objects. Retrieve up to 10,000,000 results from the beginning.
+     * Get results for a query as rows of objects. Retrieve up to
+     * 10,000,000 rows from the beginning.
      *
      * @param query The query to run.
      *
      * @return a list of rows, which are each a list of cells.
      */
     public List<List<Object>> getRowsAsLists(String query) {
-        return getRows(query, 0, null).getRowsAsLists();
+        return getRows(query, Page.DEFAULT).getRowsAsLists();
     }
 
     /**
-     * Get results for a query as rows of objects. Retrieve up to 10,000,000 results from the beginning.
+     * Get results for a query as rows of objects.
      *
      * @param query The query to run.
-     *
-     * @return a list of rows, which are each a list of cells.
+     * @param page The subsection of the result set to retrieve.
+     * @return a list of rows, which are each a map from output column
+     * (in alternate long and short form) to value.
      */
-    public List<List<Object>> getRowsAsLists(PathQuery query) {
-        return getRows(query, 0, null).getRowsAsLists();
+    public List<Map<String, Object>> getRowsAsMaps(String query, Page page) {
+        return getRows(query, page).getRowsAsMaps();
     }
 
     /**
-     * Get results for a query as rows of objects. 
-     *
-     * @param query The query to run.
-     * @param start The index of the first result to include.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
-     *
-     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
-     */
-    public List<Map<String, Object>> getRowsAsMaps(String query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getRowsAsMaps();
-    }
-
-    /**
-     * Get results for a query as rows of objects. 
-     *
-     * @param query The query to run.
-     * @param start The index of the first result to include.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null)
-     *
-     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
-     */
-    public List<Map<String, Object>> getRowsAsMaps(PathQuery query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getRowsAsMaps();
-    }
-
-    /**
-     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows.
-     *
-     * @param query The query to run.
-     * @param start The index of the first result to include.
-     *
-     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
-     */
-    public List<Map<String, Object>> getRowsAsMaps(String query, int start) {
-        return getRows(query, start, null).getRowsAsMaps();
-    }
-
-    /**
-     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows.
-     *
-     * @param query The query to run.
-     * @param start The index of the first result to include.
-     *
-     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
-     */
-    public List<Map<String, Object>> getRowsAsMaps(PathQuery query, int start) {
-        return getRows(query, start, null).getRowsAsMaps();
-    }
-
-    /**
-     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows from the beginning.
+     * Get results for a query as rows of objects.
+     * Get up to the maximum result size of 10,000,000 rows from the beginning.
      *
      * @param query The query to run.
      *
-     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
+     * @return a list of rows, which are each a map from
+     * output column (in alternate long and short form) to value.
      */
     public List<Map<String, Object>> getRowsAsMaps(String query) {
-        return getRows(query, 0, null).getRowsAsMaps();
+        return getRows(query, Page.DEFAULT).getRowsAsMaps();
     }
 
     /**
-     * Get results for a query as rows of objects. Get up to the maximum result size of 10,000,000 rows from the beginning.
-     *
-     * @param query The query to run.
-     *
-     * @return a list of rows, which are each a map from output colum (in alternate long and short form) to value.
-     */
-    public List<Map<String, Object>> getRowsAsMaps(PathQuery query) {
-        return getRows(query, 0, null).getRowsAsMaps();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
+     * Get an iterator over the results of a query. The iterator returns a representation
      * of one row at a time, in the order received over the connection.
      *
      * @param query the query to run.
-     * @param start the index of the first result to include.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
-     *
+     * @param page The subsection of the result set to retrieve.
      * @return an iterator over the rows, where each row is a list of objects.
      */
-    public Iterator<List<Object>> getRowListIterator(String query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getListIterator();
+    public Iterator<List<Object>> getRowListIterator(String query, Page page) {
+        return getRows(query, page).getListIterator();
     }
 
     /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection.
-     *
-     * @param query the query to run.
-     * @param start the index of the first result to include.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
-     *
-     * @return an iterator over the rows, where each row is a list of objects.
-     */
-    public Iterator<List<Object>> getRowListIterator(PathQuery query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getListIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
-     * result size of 10,000,000 rows from the given starting point.
-     *
-     * @param query the query to run.
-     * @param start the index of the first result to include.
-     *
-     * @return an iterator over the rows, where each row is a list of objects.
-     */
-    public Iterator<List<Object>> getRowListIterator(String query, int start) {
-        return getRows(query, start, null).getListIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
-     * result size of 10,000,000 rows from the given starting point.
-     *
-     * @param query the query to run.
-     * @param start the index of the first result to include.
-     *
-     * @return an iterator over the rows, where each row is a list of objects.
-     */
-    public Iterator<List<Object>> getRowListIterator(PathQuery query, int start) {
-        return getRows(query, start, null).getListIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
+     * Get an iterator over the results of a query. The iterator returns a representation
      * of one row at a time, in the order received over the connection. Retrieves up to the maximum
      * result size of 10,000,000 rows from the beginning.
      *
@@ -623,138 +364,212 @@ public class QueryService extends Service
      * @return an iterator over the rows, where each row is a list of objects.
      */
     public Iterator<List<Object>> getRowListIterator(String query) {
-        return getRows(query, 0, null).getListIterator();
+        return getRows(query, Page.DEFAULT).getListIterator();
     }
 
     /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection. Retrieves up to the maximum
-     * result size of 10,000,000 rows from the beginning.
-     *
-     * @param query the query to run.
-     *
-     * @return an iterator over the rows, where each row is a list of objects.
-     */
-    public Iterator<List<Object>> getRowListIterator(PathQuery query) {
-        return getRows(query, 0, null).getListIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
+     * Get an iterator over the results of a query. The iterator returns a representation
      * of one row at a time, in the order received over the connection.
      *
      * @param query the query to run.
-     * @param start the index of the first result to include.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
-     *
+     * @param page The subsection of the result set to retrieve.
      * @return an iterator over the rows, where each row is a mapping from output column to value.
      */
-    public Iterator<Map<String, Object>> getRowMapIterator(String query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getMapIterator();
+    public Iterator<Map<String, Object>> getRowMapIterator(String query, Page page) {
+        return getRows(query, page).getMapIterator();
     }
 
     /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection.
-     *
-     * @param query the query to run.
-     * @param start the index of the first result to include.
-     * @param maxCount The maximum size of the result set (or 10,000,000 if null).
-     *
-     * @return an iterator over the rows, where each row is a mapping from output column to value.
-     */
-    public Iterator<Map<String, Object>> getRowMapIterator(PathQuery query, int start, Integer maxCount) {
-        return getRows(query, start, maxCount).getMapIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection, up to the maximum result size
-     * of 10,000,000 rows from the given starting point.
-     *
-     * @param query the query to run.
-     * @param start the index of the first result to include.
-     *
-     * @return an iterator over the rows, where each row is a mapping from output column to value.
-     */
-    public Iterator<Map<String, Object>> getRowMapIterator(String query, int start) {
-        return getRows(query, start, null).getMapIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection, up to the maximum result size
-     * of 10,000,000 rows from the given starting point.
-     *
-     * @param query the query to run.
-     * @param start the index of the first result to include.
-     *
-     * @return an iterator over the rows, where each row is a mapping from output column to value.
-     */
-    public Iterator<Map<String, Object>> getRowMapIterator(PathQuery query, int start) {
-        return getRows(query, start, null).getMapIterator();
-    }
-
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection, up to the maximum result size
-     * of 10,000,000 rows from the beginning.
+     * Get an iterator over the results of a query. The iterator returns a representation
+     * of one row at a time, in the order received over the connection,
+     * up to the maximum result size of 10,000,000 rows from the beginning.
      *
      * @param query the query to run.
      *
      * @return an iterator over the rows, where each row is a mapping from output column to value.
      */
     public Iterator<Map<String, Object>> getRowMapIterator(String query) {
-        return getRows(query, 0, null).getMapIterator();
+        return getRows(query, Page.DEFAULT).getMapIterator();
     }
 
-    /**
-     * Get an iterator over the results of a query. The iterator returns a representation 
-     * of one row at a time, in the order received over the connection, up to the maximum result size
-     * of 10,000,000 rows from the beginning.
-     *
-     * @param query the query to run.
-     *
-     * @return an iterator over the rows, where each row is a mapping from output column to value.
-     */
-    public Iterator<Map<String, Object>> getRowMapIterator(PathQuery query) {
-        return getRows(query, 0, null).getMapIterator();
-    }
-
-    private RowResultSet getRows(String query, int start, Integer maxCount) {
+    private RowResultSet getRows(String query, Page page) {
         PathQuery pq = createPathQuery(query);
-        return getRows(pq, start, maxCount);
+        return getRows(pq, page);
     }
 
-    private RowResultSet getRows(PathQuery query, int start, Integer maxCount) {
+    @Override
+    protected RowResultSet getRows(PathQuery query, Page page) {
         List<String> views = query.getView();
         String queryXml = query.toXml(PathQuery.USERPROFILE_VERSION);
-        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON);
-        if (maxCount != null) {
-            request.setMaxCount(maxCount);
-        }
-        request.setStart(start);
+        QueryRequest request =
+                new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON_ROW);
+        request.setPage(page);
         request.setQueryXml(queryXml);
         return getRows(request, views);
     }
 
-    private RowResultSet getRows(QueryRequest request, List<String> views) {
-        request.setJSONRowsFormat();
-        HttpConnection connection = executeRequest(request);
-        return new RowResultSet(connection, views);
+    /**
+     * Get a summary for the values in column of a query.
+     *
+     * The column must represent a column of numeric values.
+     *
+     * @param query The query to summarise.
+     * @param summaryPath The column to summarise.
+     * @return A summary.
+     */
+    public NumericSummary getNumericSummary(PathQuery query, String summaryPath) {
+        try {
+            if (!summaryPath.startsWith(query.getRootClass())) {
+                summaryPath = query.getRootClass() + "." + summaryPath;
+            }
+        } catch (PathException e) {
+            throw new ServiceException("Error with query", e);
+        }
+        Path p = null;
+        try {
+            p = query.makePath(summaryPath);
+        } catch (PathException e) {
+            throw new ServiceException("while requesting numeric summary information", e);
+        }
+        FieldDescriptor fd = p.getEndFieldDescriptor();
+        if (!fd.isAttribute()) {
+            throw new ServiceException(summaryPath + " does not describe an attribute");
+        } else {
+            String dataType = ((AttributeDescriptor) fd).getType();
+            if (!NUMERIC_TYPES.contains(dataType)) {
+                throw new ServiceException(summaryPath + " does not represent a numeric column");
+            }
+        }
+        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(),
+                ContentType.APPLICATION_JSON_ROW);
+        request.setQueryXml(query.toXml());
+        request.setParameter("summaryPath", summaryPath);
+        JSONResult response = getJSONResponse(request);
+        try {
+            return new NumericSummary(summaryPath, response.getObjects().get(0));
+        } catch (JSONException e) {
+            throw new ServiceException("Error parsing JSON response", e);
+        }
     }
 
     /**
-     * Performs the query and returns a JSONResult containing the data.
-     * This is an internal method for handling the intermediate processing steps
+     * Get a summary for the values in column of a query.
      *
-     * @param request a QueryRequest object
+     * The column must represent a column of non-numeric values. The map returned represents
+     * each possible value as a key, with the count of the occurrences of that value as the
+     * associated value for that key. The map supports predictable iteration ordering from
+     * the most request value to the least.
      *
-     * @return a JSONResult object containing the data fetched
+     * @param query The query to summarise.
+     * @param summaryPath The column to summarise.
+     * @return A summary.
      */
-    protected JSONResult getJSONResponse(QueryRequest request) {
-        HttpConnection connection = executeRequest(request);
-        return new JSONResult(connection);
+    public Map<String, Integer> getSummary(PathQuery query, String summaryPath) {
+        return getSummary(query, summaryPath, Page.DEFAULT);
     }
+
+    /**
+     * Get a summary for the values in column of a query.
+     *
+     * The column must represent a column of non-numeric values. The map returned represents
+     * each possible value as a key, with the count of the occurrences of that value as the
+     * associated value for that key. The map supports predictable iteration ordering from
+     * the most request value to the least.
+     *
+     * @param query The query to summarise.
+     * @param summaryPath The column to summarise.
+     * @param page The subsection of the summary to retrieve.
+     * @return A summary.
+     */
+    public Map<String, Integer> getSummary(PathQuery query, String summaryPath, Page page) {
+        try {
+            if (!summaryPath.startsWith(query.getRootClass())) {
+                summaryPath = query.getRootClass() + "." + summaryPath;
+            }
+        } catch (PathException e) {
+            throw new ServiceException("Error with query", e);
+        }
+        Path p = null;
+        try {
+            p = query.makePath(summaryPath);
+        } catch (PathException e) {
+            throw new ServiceException("while requesting numeric summary information", e);
+        }
+        FieldDescriptor fd = p.getEndFieldDescriptor();
+        if (!fd.isAttribute()) {
+            throw new ServiceException(summaryPath + " does not describe an attribute");
+        } else {
+            String dataType = ((AttributeDescriptor) fd).getType();
+            if (NUMERIC_TYPES.contains(dataType)) {
+                throw new ServiceException(summaryPath + " represents a numeric column");
+            }
+        }
+        QueryRequest request = new QueryRequest(RequestType.POST, getUrl(),
+                ContentType.APPLICATION_JSON_ROW);
+        request.setQueryXml(query.toXml());
+        request.setPage(page);
+        request.setParameter("summaryPath", summaryPath);
+        JSONResult response = getJSONResponse(request);
+        Map<String, Integer> ret = new LinkedHashMap<String, Integer>();
+        try {
+            Iterator<JSONObject> it = response.getIterator();
+            while (it.hasNext()) {
+                JSONObject record = it.next();
+                ret.put(record.getString("item"), record.getInt("count"));
+            }
+        } catch (JSONException e) {
+            throw new ServiceException("Error parsing JSON response", e);
+        }
+        return ret;
+    }
+
+    /**
+     * Result format for Numeric Summary information.
+     * @author Alex Kalderimis
+     */
+    public static final class NumericSummary
+    {
+
+        private final String column;
+        private final double average;
+        private final double max;
+        private final double min;
+        private final double standardDeviation;
+
+        private NumericSummary(String name, JSONObject data) throws JSONException {
+            column = name;
+            average = data.getDouble("average");
+            max = data.getDouble("max");
+            min = data.getDouble("min");
+            standardDeviation = data.getDouble("stdev");
+        }
+
+        /** @return The name of the column this summary is about. **/
+        public String getColumn() {
+            return column;
+        }
+
+        /** @return the average of the numeric values in this column **/
+        public double getAverage() {
+            return average;
+        }
+
+
+        /** @return the maximum value in this column **/
+        public double getMax() {
+            return max;
+        }
+
+        /** @return the minimum value in this column **/
+        public double getMin() {
+            return min;
+        }
+
+        /** @return the standard deviation of the values in this column **/
+        public double getStandardDeviation() {
+            return standardDeviation;
+        }
+    }
+
 
 }

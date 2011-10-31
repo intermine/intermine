@@ -10,6 +10,8 @@ package org.intermine.webservice.client.exceptions;
  *
  */
 
+import java.net.HttpURLConnection;
+
 import org.intermine.webservice.client.util.ErrorMessageParser;
 import org.intermine.webservice.client.util.HttpConnection;
 
@@ -22,7 +24,8 @@ import org.intermine.webservice.client.util.HttpConnection;
 public class ServiceException extends RuntimeException
 {
 
-    private int httpErrorCode;
+    private final int httpErrorCode;
+    protected static final int ERROR_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +34,7 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(String message) {
         super(message);
+        httpErrorCode = ERROR_CODE;
     }
 
     /**
@@ -39,6 +43,7 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(String message, Throwable cause) {
         super(message, cause);
+        httpErrorCode = ERROR_CODE;
     }
 
     /**
@@ -46,6 +51,7 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(Throwable cause) {
         super(cause);
+        httpErrorCode = ERROR_CODE;
     }
 
     /**
@@ -54,7 +60,7 @@ public class ServiceException extends RuntimeException
      */
     public ServiceException(HttpConnection connection) {
         super(ErrorMessageParser.parseError(connection.getResponseBodyAsString()));
-        setHttpErrorCode(connection.getResponseCode());
+        httpErrorCode = connection.getResponseCode();
     }
 
      /**
@@ -73,12 +79,5 @@ public class ServiceException extends RuntimeException
      */
     public int getHttpErrorCode() {
         return httpErrorCode;
-    }
-
-    /**
-     * @param httpErrorCode http error code
-     */
-    public void setHttpErrorCode(int httpErrorCode) {
-        this.httpErrorCode = httpErrorCode;
     }
 }

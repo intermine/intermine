@@ -24,13 +24,13 @@ public class ServiceUnavailableException extends ServiceException
 {
 
     private static final long serialVersionUID = 1L;
+    protected static final int ERROR_CODE = HttpURLConnection.HTTP_UNAVAILABLE;
 
     /**
      * @param message message
      */
     public ServiceUnavailableException(String message) {
         super(message);
-        initResponseCode();
     }
 
     /**
@@ -39,7 +39,6 @@ public class ServiceUnavailableException extends ServiceException
      */
     public ServiceUnavailableException(String message, Throwable cause) {
         super(message, cause);
-        initResponseCode();
     }
 
     /**
@@ -48,7 +47,6 @@ public class ServiceUnavailableException extends ServiceException
      */
     public ServiceUnavailableException(Throwable cause) {
         this(null, cause);
-        initResponseCode();
     }
 
     /**
@@ -57,10 +55,10 @@ public class ServiceUnavailableException extends ServiceException
      */
     public ServiceUnavailableException(HttpConnection connection) {
         super(connection);
-        initResponseCode();
     }
 
-    private void initResponseCode() {
-        setHttpErrorCode(HttpURLConnection.HTTP_UNAVAILABLE);
+    @Override
+    public int getHttpErrorCode() {
+        return ERROR_CODE;
     }
 }

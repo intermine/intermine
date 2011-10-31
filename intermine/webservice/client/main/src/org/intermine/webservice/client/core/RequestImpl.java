@@ -14,12 +14,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.intermine.webservice.client.exceptions.ServiceException;
+import org.intermine.webservice.client.results.Page;
 import org.intermine.webservice.client.util.URLParser;
 
 
@@ -173,26 +175,46 @@ public class RequestImpl implements Request
         setParameter("size", maxCount + "");
     }
 
+    /**
+     * Set the start parameter.
+     * @param start The index of the first result to include.
+     */
     public void setStart(int start) {
         setParameter("start", start + "");
     }
 
+    /**
+     * Set the format for the request.
+     * @param format The format of the request.
+     */
     public void setFormat(String format) {
         setParameter("format", format);
     }
 
+    /**
+     * Set the format as JSON-Object format.
+     */
     public void setJSONFormat() {
         setFormat(FORMAT_PARAMETER_JSON_OBJ);
     }
 
+    /**
+     * Set the format as JSON-Rows format.
+     */
     public void setJSONRowsFormat() {
         setFormat(FORMAT_PARAMETER_JSON_ROWS);
     }
 
+    /**
+     * Set the format as XML format.
+     */
     public void setXMLFormat() {
         setFormat(FORMAT_PARAMETER_XML);
     }
 
+    /**
+     * Set the format as count format.
+     */
     public void setCountFormat() {
         setFormat(FORMAT_PARAMETER_COUNT);
     }
@@ -218,19 +240,33 @@ public class RequestImpl implements Request
      */
     @Override
     public Map<String, List<String>> getParameterMap() {
-        return parameters;
+        Map<String, List<String>> params = new HashMap<String, List<String>>(parameters);
+        if (authToken != null) {
+            params.put("token", Collections.singletonList(authToken));
+        }
+        return Collections.unmodifiableMap(params);
+    }
+
+    @Override
+    public String getEncodedUrl() {
+        return getUrl(true);
+    }
+
+    @Override
+    public String getUnencodedUrl() {
+        return getUrl(false);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String getUrl(boolean encode) {
+    private String getUrl(boolean encode) {
         StringBuilder sb = new StringBuilder();
         sb.append(serviceUrl);
         String separator = "?";
-        for (String parName : parameters.keySet()) {
-            for (String value : parameters.get(parName)) {
+        Map<String, List<String>> params = getParameterMap();
+        for (String parName : params.keySet()) {
+            for (String value : params.get(parName)) {
                 sb.append(separator);
                 if ("?".equals(separator)) {
                     separator = "&";
@@ -281,11 +317,31 @@ public class RequestImpl implements Request
         return headers.get(name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
+    private String authToken = null;
+
+    @Override
+    public void setAuthToken(String token) {
+        authToken = token;
+    }
+
     @Override
     public String toString() {
-        return getUrl(true);
+        return type + " " + serviceUrl
+                + ", params: " + parameters
+                + ", authorization-token: " + authToken
+                + ", content-type: " + contentType.toString()
+                + ", headers: " + headers;
+    }
+
+    /**
+     * Specify what section of the result set you wish to retrieve.
+     * @param page the subsection of the result set you want.
+     */
+    public void setPage(Page page) {
+        setStart(page.getStart());
+        if (page.getSize() != null) {
+            setMaxCount(page.getSize());
+        }
     }
 }

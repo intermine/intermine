@@ -34,28 +34,45 @@ public class TemplateParameter
 
     private String code;
 
+    /**
+     * @return The code of this constraint.
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * Set the code of this constraint.
+     * @param code The new code value.
+     */
     public void setCode(String code) {
         this.code = code;
     }
 
+    /**
+     * @return the path-string associated with this constraint.
+     */
     public String getPathId() {
         return pathId;
     }
 
+    /**
+     * Set the path string for this constraint.
+     * @param pathId The new path string value.
+     */
     public void setPathId(String pathId) {
         this.pathId = pathId;
     }
 
     /**
-     * @param operation operation
-     * @param value value
-     * @param extraValue extra value
+     * Create a new TemplateParameter.
+     * @param pathId The path-string for this constraint.
+     * @param operation The operation you wish to use.
+     * @param value The value the constraint should be run against.
+     * @param extraValue Any extra constraining value this operation might need.
      */
-    public TemplateParameter(String pathId, String operation, String value, String extraValue) {
+    public TemplateParameter(String pathId, String operation,
+            String value, String extraValue) {
         super();
         this.pathId = pathId;
         this.operation = operation;
@@ -109,8 +126,10 @@ public class TemplateParameter
     }
 
     /**
-     * @param operation operation
-     * @param value value
+     * Create a new TemplateParameter.
+     * @param pathId The path-string for this constraint.
+     * @param operation The operation you wish to use.
+     * @param value The value the constraint should be run against.
      */
     public TemplateParameter(String pathId, String operation, String value) {
         super();

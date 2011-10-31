@@ -16,8 +16,9 @@ package org.intermine.webservice.client.core;
  * which output format use according to the parameters in request
  * and not according to the content type header.
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
  **/
-public class ContentType
+public final class ContentType
 {
 
     private String type;
@@ -33,6 +34,12 @@ public class ContentType
      */
     public static final ContentType TEXT_XML =
         new ContentType("text", "xml", UTF8_CHARSET);
+
+    /**
+     * Content type for multi-part form requests.
+     */
+    public static final ContentType MULTI_PART_FORM =
+        new ContentType("multipart", "form-data", UTF8_CHARSET);
 
     /**
      * A ContentType constant that describes the generic text/plain content type.
@@ -57,10 +64,27 @@ public class ContentType
     public static final ContentType APPLICATION_JSON =
         new ContentType("application", "json", UTF8_CHARSET);
 
+    /**
+     * A Content type that describes the JSON objects content type.
+     */
+    public static final ContentType APPLICATION_JSON_OBJ =
+        new ContentType("application", "jsonobjects", UTF8_CHARSET);
+
+    /**
+     * A Content type that describes the JSON rows content type.
+     */
+    public static final ContentType APPLICATION_JSON_ROW =
+        new ContentType("application", "jsonrows", UTF8_CHARSET);
+
     private ContentType(String type, String subType, String charSet) {
         this.type = type;
         this.subType = subType;
         this.charSet = charSet;
+    }
+
+    @Override
+    public String toString() {
+        return type + "/" + subType + ";char-set:" + charSet;
     }
 
     /**

@@ -31,7 +31,6 @@ public class NotImplementedException extends ServiceException
      */
     public NotImplementedException(String message) {
         super(message);
-        initResponseCode();
     }
 
     /**
@@ -40,7 +39,6 @@ public class NotImplementedException extends ServiceException
      */
     public NotImplementedException(String message, Throwable cause) {
         super(message, cause);
-        initResponseCode();
     }
 
     /**
@@ -48,7 +46,6 @@ public class NotImplementedException extends ServiceException
      */
     public NotImplementedException(Throwable cause) {
         super(cause);
-        initResponseCode();
     }
 
     /**
@@ -59,7 +56,9 @@ public class NotImplementedException extends ServiceException
         super(connection);
     }
 
-    private void initResponseCode() {
-        setHttpErrorCode(HttpURLConnection.HTTP_NOT_IMPLEMENTED);
+    @Override
+    public int getHttpErrorCode() {
+        return HttpURLConnection.HTTP_NOT_IMPLEMENTED;
     }
+
 }

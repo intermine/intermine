@@ -18,7 +18,7 @@ package org.intermine.webservice.client.exceptions;
 public class ResultException extends RuntimeException
 {
 
-    private String errorReason = null;
+    private final String errorReason;
 
     private static final long serialVersionUID = 1L;
 
@@ -27,6 +27,7 @@ public class ResultException extends RuntimeException
      */
     public ResultException(String message) {
         super(message);
+        errorReason = null;
     }
 
     /**
@@ -35,6 +36,7 @@ public class ResultException extends RuntimeException
      */
     public ResultException(String message, Throwable cause) {
         super(message, cause);
+        errorReason = null;
     }
 
     /**
@@ -42,14 +44,15 @@ public class ResultException extends RuntimeException
      */
     public ResultException(Throwable cause) {
         super(cause);
+        errorReason = null;
     }
 
     /**
     * Construct an informative exception.
     * Result sets may provide two separate strings - the message,
-    * a fairly dull statement of the general status, and a more 
+    * a fairly dull statement of the general status, and a more
     * informative message about the reason for this particular
-    * error. 
+    * error.
     *
     * @param message The general statement
     * @param reason  The specific reason
@@ -77,8 +80,8 @@ public class ResultException extends RuntimeException
 
     /**
     * Get the reason for this error.
-    * The reason is an explaination why this service request failed, 
-    * hopefully giving the user enough information to be able to 
+    * The reason is an explanation why this service request failed,
+    * hopefully giving the user enough information to be able to
     * fix the original request.
     *
     * @return an explanation for the failure of the results.

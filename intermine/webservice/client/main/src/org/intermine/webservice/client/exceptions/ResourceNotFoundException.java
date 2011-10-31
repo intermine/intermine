@@ -32,7 +32,6 @@ public class ResourceNotFoundException extends ServiceException
      */
     public ResourceNotFoundException(String message) {
         super(message);
-        initResponseCode();
     }
 
     /**
@@ -41,7 +40,6 @@ public class ResourceNotFoundException extends ServiceException
      */
     public ResourceNotFoundException(String message, Throwable cause) {
         super(message, cause);
-        initResponseCode();
     }
 
     /**
@@ -49,7 +47,6 @@ public class ResourceNotFoundException extends ServiceException
      */
     public ResourceNotFoundException(Throwable cause) {
         super(cause);
-        initResponseCode();
     }
 
     /**
@@ -60,7 +57,8 @@ public class ResourceNotFoundException extends ServiceException
         super(connection);
     }
 
-    private void initResponseCode() {
-        setHttpErrorCode(HttpURLConnection.HTTP_NOT_FOUND);
+    @Override
+    public int getHttpErrorCode() {
+        return HttpURLConnection.HTTP_NOT_FOUND;
     }
 }

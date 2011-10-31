@@ -29,7 +29,6 @@ public class InternalErrorException extends ServiceException
      */
     public InternalErrorException(String message) {
         super(message);
-        initResponseCode();
     }
 
     /**
@@ -38,7 +37,6 @@ public class InternalErrorException extends ServiceException
      */
     public InternalErrorException(String message, Throwable cause) {
         super(message, cause);
-        initResponseCode();
     }
 
     /**
@@ -46,7 +44,6 @@ public class InternalErrorException extends ServiceException
      */
     public InternalErrorException(Throwable cause) {
         super(cause);
-        initResponseCode();
     }
 
     /**
@@ -57,7 +54,8 @@ public class InternalErrorException extends ServiceException
         super(connection);
     }
 
-    private void initResponseCode() {
-        setHttpErrorCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
+    @Override
+    public int getHttpErrorCode() {
+        return HttpURLConnection.HTTP_INTERNAL_ERROR;
     }
 }
