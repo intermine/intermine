@@ -20,13 +20,15 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.InterMineBag.BagValue;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
 import org.intermine.api.xml.TagHandler;
-import org.intermine.api.xml.TemplateQueryHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryHandler;
+import org.intermine.web.logic.template.TemplateHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -103,7 +105,7 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, savedTemplates, apiKey, isLocal);
+                                     savedBags, TemplateHelper.upcast(savedTemplates), apiKey, isLocal);
         return retval;
     }
 
@@ -150,7 +152,7 @@ class ProfileHandler extends DefaultHandler
         }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
-            subHandler = new TemplateQueryHandler(savedTemplates, savedBags, version);
+            subHandler = new TemplateQueryHandler(savedTemplates, version);
         }
         if ("queries".equals(qName)) {
             savedQueries = new LinkedHashMap();

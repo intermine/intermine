@@ -32,8 +32,6 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -43,6 +41,9 @@ import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.SqlGenerator;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.SynchronisedIterator;
 
@@ -80,7 +81,7 @@ public class PerformanceTester
         pm = new ProfileManager(productionOs, userProfileOs);
         Profile p = pm.getProfile(superuser);
 
-        Map<String, TemplateQuery> templates = p.getSavedTemplates();
+        Map<String, ApiTemplate> templates = p.getSavedTemplates();
 
 
         templates = new SearchFilterEngine().filterByTags(templates,
@@ -98,10 +99,10 @@ public class PerformanceTester
 
     private static void doRun(ObjectStore productionOs,
             Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
-            Map<String, TemplateQuery> templates, int threadCount) {
+            Map<String, ApiTemplate> templates, int threadCount) {
         long startTime = System.currentTimeMillis();
-        Iterator<Map.Entry<String, TemplateQuery>> iter
-            = new SynchronisedIterator<Map.Entry<String, TemplateQuery>>(templates.entrySet()
+        Iterator<Map.Entry<String, ApiTemplate>> iter
+            = new SynchronisedIterator<Map.Entry<String, ApiTemplate>>(templates.entrySet()
                     .iterator());
         Set<Integer> threads = new HashSet<Integer>();
 
@@ -116,7 +117,7 @@ public class PerformanceTester
 
         try {
             while (iter.hasNext()) {
-                Map.Entry<String, TemplateQuery> entry = iter.next();
+                Map.Entry<String, ApiTemplate> entry = iter.next();
                 doQuery(productionOs, classKeys, bagQueryConfig, entry.getKey(), entry.getValue(),
                         0);
             }
@@ -193,7 +194,7 @@ public class PerformanceTester
         private Map<String, List<FieldDescriptor>> classKeys;
         private BagQueryConfig bagQueryConfig;
         private Set<Integer> threads;
-        private Iterator<Map.Entry<String, TemplateQuery>> iter;
+        private Iterator<Map.Entry<String, ApiTemplate>> iter;
         private int threadNo;
 
         /**
@@ -207,7 +208,7 @@ public class PerformanceTester
          */
         public Worker(ObjectStore productionOs, Map<String, List<FieldDescriptor>> classKeys,
                 BagQueryConfig bagQueryConfig, Set<Integer> threads,
-                Iterator<Map.Entry<String, TemplateQuery>> iter, int threadNo) {
+                Iterator<Map.Entry<String, ApiTemplate>> iter, int threadNo) {
             this.productionOs = productionOs;
             this.classKeys = classKeys;
             this.bagQueryConfig = bagQueryConfig;
@@ -219,7 +220,7 @@ public class PerformanceTester
         public void run() {
             try {
                 while (iter.hasNext()) {
-                    Map.Entry<String, TemplateQuery> entry = iter.next();
+                    Map.Entry<String, ApiTemplate> entry = iter.next();
                     doQuery(productionOs, classKeys, bagQueryConfig, entry.getKey(),
                             entry.getValue(), threadNo);
                 }

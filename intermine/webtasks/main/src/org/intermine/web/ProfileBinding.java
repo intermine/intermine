@@ -26,15 +26,15 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.xml.InterMineBagBinding;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.api.xml.TagBinding;
-import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;
 
