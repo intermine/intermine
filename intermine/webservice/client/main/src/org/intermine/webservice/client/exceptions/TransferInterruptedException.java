@@ -11,8 +11,8 @@ package org.intermine.webservice.client.exceptions;
  */
 
 /**
- * TransferInterruptedException is the error thrown when 
- * a service returns an incomplete result set. 
+ * TransferInterruptedException is the error thrown when
+ * a service returns an incomplete result set.
  *
  * @author Alexis Kalderimis
  */
@@ -44,8 +44,8 @@ public class TransferInterruptedException extends RuntimeException
     }
 
     /**
-    * {@inheritDoc}
-    */
+     * Construct a new TransferInterrupted Exception.
+     */
     public TransferInterruptedException() {
         super();
     }

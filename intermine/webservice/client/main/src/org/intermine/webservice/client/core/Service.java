@@ -50,6 +50,26 @@ public class Service
 
     private String password;
 
+    private String authToken;
+
+    private ServiceFactory factory = null;
+
+    /**
+     * Get the ServiceFactory this service was constructed with.
+     * @return The parent service-factory.
+     */
+    public ServiceFactory getFactory() {
+        return factory;
+    }
+
+    /**
+     * Set the ServiceFactory this service can use to access other services.
+     * @param factory The parent service-factory.
+     */
+    public void setFactory(ServiceFactory factory) {
+        this.factory = factory;
+    }
+
     /**
      * Constructor. {@link ServiceFactory} should be used always to create services and not this
      * constructor.
@@ -64,7 +84,6 @@ public class Service
             String applicationName) {
         init(rootUrl, serviceRelativeUrl, applicationName);
     }
-
 
     private void init(String rootUrl, String serviceRelativeUrl,
             String applicationName) {
@@ -85,7 +104,12 @@ public class Service
      *
      * @param userName a user-name
      * @param password a password
+     *
+     * @deprecated Use token based authentication instead ({@link #setAuthentication(String)}
+     * as this method will cause your user name and password to be transmitted
+     * insecurely across HTTP connections.
      */
+    @Deprecated
     public void setAuthentication(String userName, String password) {
         if (userName == null || password == null || userName.length() == 0
                 || password.length() == 0) {
@@ -96,33 +120,52 @@ public class Service
     }
 
     /**
+     * Set the token to be used for authentication. This is the preferred mechanism for
+     * authenticating requests to the web-service.
+     * @param token The token to use for authentication.
+     */
+    public void setAuthentication(String token) {
+        if (token == null) {
+            throw new ServiceException("authorization token cannot be null.");
+        }
+        this.authToken = token;
+    }
+
+    /**
      * Open connection and returns connection.
      * @param request request
      * @return created connection
      */
     public HttpConnection executeRequest(Request request) {
         assureOutputFormatSpecified(request);
-        String url = request.getUrl(true);
         request.setHeader(VERSION_HEADER, getVersion().toString());
         request.setHeader(USER_AGENT_HEADER, getApplicationName() + " "
                 + "JavaLibrary/" + getVersion().toString());
-        setAuthenticationHeader(request);
+        applyAuthentication(request);
         HttpConnection connection = new HttpConnection(request);
         connection.setTimeout(timeout);
-        logger.debug("Executing request: " + url);
+        logger.debug("Executing request: " + request);
         connection.connect();
         return connection;
     }
 
-    private void setAuthenticationHeader(Request request) {
+    private void applyAuthentication(Request request) {
         if (userName != null && password != null) {
             String authValue = userName + ":" + password;
             String encodedValue = new String(Base64.encodeBase64(authValue.getBytes()));
             request.setHeader(AUTHENTICATION_FIELD_NAME, encodedValue);
+        } else if (authToken != null) {
+            request.setAuthToken(authToken);
         }
     }
 
-    private void assureOutputFormatSpecified(Request request) {
+    /**
+     * Add a format parameter to match the content-type if there is one.
+     *
+     * @param request The request to fool around with.
+     */
+    protected void assureOutputFormatSpecified(Request request) {
+        // This is such a bad implementation of REST principles it makes my eyes bleed.
         if (request.getParameter("format") == null
                 && getFormatValue(request.getContentType()) != null) {
             request.setParameter("format", getFormatValue(request.getContentType()));
@@ -132,6 +175,14 @@ public class Service
     private String getFormatValue(ContentType contentType) {
         if (contentType == ContentType.TEXT_TAB) {
             return "tab";
+        } else if (contentType == ContentType.APPLICATION_JSON_OBJ) {
+            return "jsonobjects";
+        } else if (contentType == ContentType.APPLICATION_JSON_ROW) {
+            return "jsonrows";
+        } else if (contentType == ContentType.TEXT_COUNT) {
+            return "count";
+        } else if (contentType == ContentType.APPLICATION_JSON) {
+            return "json";
         } else if (contentType == ContentType.TEXT_XML) {
             return "xml";
         }
@@ -192,7 +243,7 @@ public class Service
      * @return service version
      */
     public Version getVersion() {
-        return new Version("1.0");
+        return new Version("1.1");
     }
 
     /**

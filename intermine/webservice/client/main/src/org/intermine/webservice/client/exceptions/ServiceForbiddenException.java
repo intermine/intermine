@@ -30,7 +30,6 @@ public class ServiceForbiddenException extends ServiceException
      */
     public ServiceForbiddenException(String message) {
         super(message);
-        initResponseCode();
     }
 
     /**
@@ -39,7 +38,6 @@ public class ServiceForbiddenException extends ServiceException
      */
     public ServiceForbiddenException(String message, Throwable cause) {
         super(message, cause);
-        initResponseCode();
     }
 
     /**
@@ -47,7 +45,6 @@ public class ServiceForbiddenException extends ServiceException
      */
     public ServiceForbiddenException(Throwable cause) {
         super(cause);
-        initResponseCode();
     }
 
     /**
@@ -58,7 +55,8 @@ public class ServiceForbiddenException extends ServiceException
         super(connection);
     }
 
-    private void initResponseCode() {
-        setHttpErrorCode(HttpURLConnection.HTTP_FORBIDDEN);
+    @Override
+    public int getHttpErrorCode() {
+        return HttpURLConnection.HTTP_FORBIDDEN;
     }
 }

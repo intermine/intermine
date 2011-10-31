@@ -15,8 +15,12 @@ package org.intermine.webservice.client.util;
  *
  * @author Jakub Kulaviak
  **/
-public class ErrorMessageParser
+public final class ErrorMessageParser
 {
+
+    private ErrorMessageParser() {
+        // Hidden constructor.
+    }
 
     /**
      * Parses service error message.
