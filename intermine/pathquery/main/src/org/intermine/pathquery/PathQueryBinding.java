@@ -243,7 +243,7 @@ public class PathQueryBinding
      * @param version the version of the xml, an attribute on the profile manager
      * @return a Map from query name to PathQuery
      */
-    public static Map<String, PathQuery> unmarshal(Reader reader, int version) {
+    public static Map<String, PathQuery> unmarshalPathQueries(Reader reader, int version) {
         Map<String, PathQuery> queries = new LinkedHashMap<String, PathQuery>();
         try {
             SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, version));
@@ -260,7 +260,7 @@ public class PathQueryBinding
      * @return PathQuery
      */
     public static PathQuery unmarshalPathQuery(Reader reader, int version) {
-        Map<String, PathQuery> map = unmarshal(reader, version);
+        Map<String, PathQuery> map = unmarshalPathQueries(reader, version);
         if (map.size() != 0) {
             return map.values().iterator().next();
         }
