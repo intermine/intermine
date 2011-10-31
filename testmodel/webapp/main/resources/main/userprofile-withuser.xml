@@ -1,66 +1,38 @@
 <userprofile username="intermine-test-user" password="intermine-test-user-password">
-    <items>
-        <item id="1" class="Manager">
-            <attribute name="name" value="David Brent"/>
-        </item>
-        <item id="2" class="Manager">
-            <attribute name="name" value="Bernd Stromberg"/>
-        </item>
-        <item id="3" class="Manager">
-            <attribute name="name" value="Timo Becker"/>
-        </item>
-        <item id="4" class="Manager">
-            <attribute name="name" value="Neil Godwin"/>
-        </item>
-        <item id="5" class="Employee">
-            <attribute name="name" value="Brenda"/>
-        </item>
-        <item id="6" class="Employee">
-            <attribute name="name" value="Devon White"/>
-        </item>
-        <item id="7" class="Employee">
-            <attribute name="name" value="Hans Schmelzer"/>
-        </item>
-        <item id="8" class="Employee">
-            <attribute name="name" value="Frank Möllers"/>
-        </item>
-        <item id="9" class="Employee">
-            <attribute name="name" value="Herr Pötsch"/>
-        </item>
-        <item id="10" class="Department">
-            <attribute name="name" value="Kantine"/>
-        </item>
-        <item id="11" class="Department">
-            <attribute name="name" value="Quotes"/>
-        </item>
-        <item id="12" class="Department">
-            <attribute name="name" value="Verwaltung"/>
-        </item>
-        <item id="13" class="Department">
-            <attribute name="name" value="Archiven"/>
-        </item>
-    </items>
     <bags>
         <bag name="My-Favourite-Employees" type="Manager">
-            <bagElement id="1"/>
-            <bagElement id="2"/>
-            <bagElement id="3"/>
-            <bagElement id="4"/>
+            <bagValue value="David Brent"/>
+            <bagValue value="Bernd Stromberg"/>
+            <bagValue value="Timo Becker"/>
+            <bagValue value="Neil Godwin"/>
         </bag>
         <bag name="The great unknowns" type="Employee">
-            <bagElement id="5"/>
-            <bagElement id="6"/>
-            <bagElement id="7"/>
+            <bagValue value="Brenda"/>
+            <bagValue value="Devon White"/>
+            <bagValue value="Hans Schmelzer"/>
         </bag>
         <bag name="Umlaut holders" type="Employee">
-            <bagElement id="8"/>
-            <bagElement id="9"/>
+            <bagValue value="Frank Möllers"/>
+            <bagValue value="Herr Pötsch"/>
         </bag>
         <bag name="Unusual departments" type="Department">
-            <bagElement id="10"/>
-            <bagElement id="11"/>
-            <bagElement id="12"/>
-            <bagElement id="13"/>
+            <bagValue value="Kantine"/>
+            <bagValue value="Quotes"/>
+            <bagValue value="Verwaltung"/>
+            <bagValue value="Archiven"/>
+        </bag>
+        <bag name="some favs-some unknowns" type="Employee">
+            <bagValue value="David Brent"/>
+            <bagValue value="Bernd Stromberg"/>
+            <bagValue value="Brenda"/>
+            <bagValue value="Devon White"/>
+        </bag>
+        <bag name="some favs-some unknowns-some umlauts" type="Employee">
+            <bagValue value="David Brent"/>
+            <bagValue value="Neil Godwin"/>
+            <bagValue value="Devon White"/>
+            <bagValue value="Hans Schmelzer"/>
+            <bagValue value="Frank Möllers"/>
         </bag>
     </bags>
     <template-queries>
