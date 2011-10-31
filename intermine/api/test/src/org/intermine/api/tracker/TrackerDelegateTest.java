@@ -20,8 +20,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.metadata.Model;
@@ -29,6 +28,7 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateManager;
 
 public class TrackerDelegateTest extends InterMineAPITestCase
 {
@@ -60,7 +60,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
 
     private void createTemplates() {
         Model model = os.getModel();
-        TemplateQuery template1 = new TemplateQuery("template1", "template1", "",
+        ApiTemplate template1 = new ApiTemplate("template1", "template1", "",
                 new PathQuery(model));
         template1.addViews("Employee.name", "Employee.age");
         PathConstraint nameCon1 = Constraints.eq("Employee.name", "EmployeeA1");
@@ -70,7 +70,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         TagManager tagManager = new TagManager(uosw);
         tagManager.addTag("im:public", "template1", TagTypes.TEMPLATE, "superUser");
 
-        TemplateQuery template2 = new TemplateQuery("template2", "template2", "",
+        ApiTemplate template2 = new ApiTemplate("template2", "template2", "",
                 new PathQuery(model));
         template1.addViews("Employee.name", "Employee.age");
         PathConstraint nameCon2 = Constraints.eq("Employee.name", "EmployeeB1");

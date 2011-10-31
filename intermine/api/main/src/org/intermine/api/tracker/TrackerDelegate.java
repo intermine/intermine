@@ -19,7 +19,6 @@ import java.util.Queue;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.factory.TrackerFactory;
 import org.intermine.api.tracker.track.ListTrack;
 import org.intermine.api.tracker.track.Track;
@@ -28,6 +27,7 @@ import org.intermine.api.tracker.util.ListTrackerEvent;
 import org.intermine.api.tracker.util.TrackerUtil;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * Intermediate class which decouples the tracker components from the code that uses them.

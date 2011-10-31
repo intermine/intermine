@@ -12,9 +12,9 @@ package org.intermine.api.tracker;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.tracker.track.TemplateTrack;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * Class for saving the template executions into the memory. The template executions are saved into
@@ -66,7 +66,7 @@ public class TemplatesExecutionMap
         Map<String, Double> logarithmMap = new HashMap<String, Double>();
         if (executionKey == null) {
             if (templateManager != null) {
-                Map<String, TemplateQuery> publicTemplates =
+                Map<String, ApiTemplate> publicTemplates =
                     templateManager.getValidGlobalTemplates();
                 for (String templateName : templateExecutions.keySet()) {
                     if (publicTemplates.containsKey(templateName)) {

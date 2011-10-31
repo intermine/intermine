@@ -13,11 +13,12 @@ import junit.framework.TestCase;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
-import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 
 public class TemplatePrecomputeHelperTest extends TestCase {
 
@@ -26,7 +27,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         Reader reader = new InputStreamReader(TemplatePrecomputeHelperTest.class.getClassLoader().getResourceAsStream("default-template-queries.xml"));
-        templates = TemplateQueryBinding.unmarshal(reader, new HashMap<String, InterMineBag>(), PathQuery.USERPROFILE_VERSION);
+        templates = TemplateQueryBinding.unmarshalTemplates(reader, PathQuery.USERPROFILE_VERSION);
     }
 
     public void testPrecomputeQuery() throws Exception {
@@ -35,7 +36,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
             "SELECT DISTINCT a1_, a1_.name AS a2_, a1_.age AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_ ORDER BY a1_.name, a1_.age";
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.age\"><node path=\"Employee\" type=\"Employee\"></node></query>";
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-        PathQuery pathQuery = PathQueryBinding.unmarshal(new StringReader(queryXml), PathQuery.USERPROFILE_VERSION).values().iterator().next();
+        PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml), PathQuery.USERPROFILE_VERSION);
         MainHelper.makeQuery(pathQuery, new HashMap<String, InterMineBag>(), pathToQueryNode, null, null);
         List<?> indexes = new ArrayList<Object>();
         String precomputeQuery = TemplatePrecomputeHelper.getPrecomputeQuery(t, indexes).toString();
@@ -62,7 +63,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
                 + "    <constraint op=\"!=\" value=\"40\" description=\"d\" identifier=\"\" code=\"D\" editable=\"true\"></constraint>"
                 + "</node></query></template>");
         TemplateQuery t =
-            (TemplateQuery) TemplateQueryBinding.unmarshal(reader, new HashMap<String, InterMineBag>(), PathQuery.USERPROFILE_VERSION).values().iterator().next();
+            (TemplateQuery) TemplateQueryBinding.unmarshalTemplates(reader, PathQuery.USERPROFILE_VERSION).values().iterator().next();
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         System.out.println(TemplateQueryBinding.marshal(t, 2));
@@ -89,7 +90,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
         "  </query>\n" +
         "</template>");
         TemplateQuery t =
-            (TemplateQuery) TemplateQueryBinding.unmarshal(reader, new HashMap<String, InterMineBag>(), PathQuery.USERPROFILE_VERSION).values().iterator().next();
+            (TemplateQuery) TemplateQueryBinding.unmarshalTemplates(reader, PathQuery.USERPROFILE_VERSION).values().iterator().next();
         Query precomputeQuery = TemplatePrecomputeHelper.getPrecomputeQuery(t, new ArrayList<Object>());
         String expected = "SELECT DISTINCT a1_, a1_.id AS a2_, a1_.name AS a3_, a1_.title AS a4_ FROM org.intermine.model.testmodel.Manager AS a1_ ORDER BY a1_.name, a1_.title, a1_.id";
         assertEquals(expected, precomputeQuery.toString());

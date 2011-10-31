@@ -25,7 +25,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.testmodel.Address;
 import org.intermine.model.testmodel.Employee;
@@ -52,6 +52,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 
 /**
  * @author Matthew Wakeling
@@ -59,7 +60,7 @@ import org.intermine.pathquery.PathQuery;
  */
 public class TypeConverterTest extends StoreDataTestCase
 {
-    List<TemplateQuery> conversionTemplates;
+    List<ApiTemplate> conversionTemplates;
     ObjectStoreWriter uosw;
     ObjectStore os;
     Profile profile;
@@ -76,12 +77,12 @@ public class TypeConverterTest extends StoreDataTestCase
         profile = new Profile(pm, "test", null, "test", null, null, null, true);
         pm.createProfile(profile);
 
-        TemplateQuery template = new TemplateQuery("convertEmployeesToAddresses", "", "", new PathQuery(os.getModel()));
+        ApiTemplate template = new ApiTemplate("convertEmployeesToAddresses", "", "", new PathQuery(os.getModel()));
         template.addViews("Employee.id", "Employee.address.id");
         PathConstraint employeeId = Constraints.eq("Employee.id", "0");
         template.addConstraint(employeeId);
         template.setEditable(employeeId, true);
-        conversionTemplates = new ArrayList<TemplateQuery>(Collections.singleton(template));
+        conversionTemplates = new ArrayList<ApiTemplate>(Collections.singleton(template));
     }
 
     public void tearDown() throws Exception {

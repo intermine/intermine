@@ -11,6 +11,8 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 
 public class TemplateManagerTest extends InterMineAPITestCase {
 

@@ -29,7 +29,7 @@ import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.Util;
 

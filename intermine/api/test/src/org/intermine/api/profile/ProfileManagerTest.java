@@ -32,7 +32,7 @@ import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.CEO;
@@ -41,6 +41,7 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
@@ -101,8 +102,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
         Department departmentB1 = (Department) os.getObjectByExample(deptEx2, fieldNames);
         bag.addIdToBag(departmentB1.getId(), "Department");
 
-        TemplateQuery template =
-            new TemplateQuery("template", "ttitle", "tcomment",
+        ApiTemplate template =
+            new ApiTemplate("template", "ttitle", "tcomment",
                               new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
@@ -133,7 +134,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
                 new Date(), BagState.CURRENT, os, sallyId, uosw);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
-        template = new TemplateQuery("template", "ttitle", "tcomment",
+        template = new ApiTemplate("template", "ttitle", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")));
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
                                    new HashMap(), new HashMap(), new HashMap(), true);

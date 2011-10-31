@@ -20,10 +20,10 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
-import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 
 /**
  * Tests for the WebserviceJavaCodeGenerator class.
@@ -606,7 +606,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
 
     private void doTemplateComparison(String xml, String resource) {
         // Parse xml to TemplateQuery - TemplateQueryBinding
-        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(xml), null, PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
         TemplateQuery templateQuery = (TemplateQuery) tqs.values().toArray()[0];
 
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
@@ -733,8 +733,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "<constraint path=\"Employee\" editable=\"true\" op=\"IN\" value=\"aList\"/>" +
             "</query></template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
-        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(xml),
-                null, PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
         TemplateQuery templateQuery = (TemplateQuery) tqs.values().toArray()[0];
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
         String expected = TEMPLATE_BAG_CONSTRAINT;
@@ -751,8 +750,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "<constraint path=\"Employee\" editable=\"true\" op=\"NOT IN\" value=\"aList\"/>" +
             "</query></template>";
         // Parse xml to TemplateQuery - TemplateQueryBinding
-        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshal(new StringReader(xml),
-                null, PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
         TemplateQuery templateQuery = (TemplateQuery) tqs.values().toArray()[0];
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
         String expected = TEMPLATE_BAG_CONSTRAINT;

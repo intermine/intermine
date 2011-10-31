@@ -18,7 +18,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.userprofile.SavedBag;
@@ -35,6 +35,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 
 /**
  * Update savedquery, savedtemplatequery and savedbag when the model has been changed
@@ -287,7 +288,7 @@ public class ModelUpdate
      */
     public void updateReferredQueryAndTemplate() throws PathException {
         Map<String, SavedQuery> savedQueries;
-        Map<String, TemplateQuery> templateQueries;
+        Map<String, ApiTemplate> templateQueries;
         List<String> problems;
         Query q = new Query();
         QueryClass qc = new QueryClass(UserProfile.class);
@@ -330,8 +331,8 @@ public class ModelUpdate
                     }
                 }
             }
-            templateQueries = new HashMap<String, TemplateQuery>(profile.getSavedTemplates());
-            for (TemplateQuery templateQuery : templateQueries.values()) {
+            templateQueries = new HashMap<String, ApiTemplate>(profile.getSavedTemplates());
+            for (ApiTemplate templateQuery : templateQueries.values()) {
                 PathQuery pathQuery = templateQuery.getPathQuery();
                 if (!templateQuery.getName().contains(OLD) && !pathQuery.isValid()) {
                     TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(
@@ -360,6 +361,7 @@ public class ModelUpdate
                         continue;
                     }
                 }
+                profile.saveTemplate(templateQuery.getName(), templateQuery);
             }
         }
     }

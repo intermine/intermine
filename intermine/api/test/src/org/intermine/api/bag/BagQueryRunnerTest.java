@@ -16,9 +16,7 @@ import java.util.Set;
 import junit.framework.Test;
 
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
-import org.intermine.api.xml.TemplateQueryBinding;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.model.testmodel.Manager;
@@ -30,6 +28,9 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 
 /*
  * NOTE - this test depends on data being present in os.unittest which is
@@ -58,11 +59,15 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
 
         TemplateQueryBinding tqb = new TemplateQueryBinding();
-        Map<String, TemplateQuery> tqs = tqb.unmarshal(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), null, PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> tqs = tqb.unmarshalTemplates(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), PathQuery.USERPROFILE_VERSION);
 
         // construct with a null TemplateManager and set conversion templates to specific list
         runner = new TestingBagQueryRunner(os, classKeys, bagQueryConfig, null);
-        runner.setConversionTemplates(new ArrayList<TemplateQuery>(tqs.values()));
+        List<ApiTemplate> templates = new ArrayList<ApiTemplate>();
+        for (TemplateQuery t: tqs.values()) {
+            templates.add(new ApiTemplate(t));
+        }
+        runner.setConversionTemplates(templates);
     }
 
     public void executeTest(String type) {
