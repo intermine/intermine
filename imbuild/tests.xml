@@ -15,7 +15,7 @@
     <property name="build.instrumented.dir" location="${build.dir}/instrumented"/>
     <!-- junit task properties -->
     <property name="test.results.dir" location="${build.dir}/test/results"/>
-    <property name="test.excludes" location=""/>
+    <property name="test.excludes" value="**/Live*.class"/>
     <property name="test.includes" value="**/*Test.class"/>
     <condition property="test.fork" value="yes" else="no">
       <and><equals arg1="${emma.enabled}" arg2="true" casesensitive="false"/></and>
@@ -88,6 +88,25 @@
   </target>
   
   <target name="default" depends="test"/>
+
+  <!-- RUN LIVE TESTS -->
+
+  <target name="ensure-test-name" unless="test">
+      <fail message="You must run this target with -Dtest=TestName"/>
+  </target>
+
+  <target name="onetest" description="Runs the test you specify on the command 
+      line with -Dtest=" depends="ensure-test-name, -init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test, ensure-test-name">
+      <junit printsummary="withOutAndErr" fork="yes"> 
+          <classpath refid="classpath" />
+          <formatter type="plain" usefile="false"/>
+          <batchtest>
+              <fileset dir="${src}">
+                  <include name="**/${test}.java"/>
+              </fileset>
+          </batchtest>
+      </junit>
+  </target>
   
   <!-- CLEAN -->
   
