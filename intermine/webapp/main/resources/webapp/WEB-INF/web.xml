@@ -369,6 +369,8 @@
     <url-pattern>/service/check/*</url-pattern>
   </servlet-mapping>
 
+  <!-- NEW IN VERSION 6 -->
+  
   <servlet>
     <servlet-name>ws-possible-values</servlet-name>
     <servlet-class>org.intermine.webservice.server.path.PossibleValuesServlet</servlet-class>
@@ -397,6 +399,8 @@
     <url-pattern>/service/schema/*</url-pattern>
   </servlet-mapping>
 
+  <!-- NEW IN VERSION 7 -->
+  
   <servlet>
     <servlet-name>ws-summary-fields</servlet-name>
     <servlet-class>org.intermine.webservice.server.SummaryServlet</servlet-class>
@@ -423,6 +427,20 @@
   <servlet-mapping>
     <servlet-name>ws-code-gen</servlet-name>
     <url-pattern>/service/query/code</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-list-tags</servlet-name>
+    <servlet-class>org.intermine.webservice.server.lists.ListTagServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-list-tags</servlet-name>
+    <url-pattern>/service/list/tags/*</url-pattern>
   </servlet-mapping>
 
 
