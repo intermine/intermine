@@ -235,7 +235,7 @@ public class PagedResultsTest extends TestCase
         // TODO PagedResultsTest.xml is a copy of MainHelperTest.xml, it can be removed if this
         // test is ever moved into intermine/web/test
         InputStream is = getClass().getClassLoader().getResourceAsStream("PagedResultsTest.xml");
-        return PathQueryBinding.unmarshal(new InputStreamReader(is), 1);
+        return PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1);
     }
 
 //     public void testSizeLow() throws Exception {
