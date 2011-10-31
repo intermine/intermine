@@ -10,12 +10,15 @@ package samples;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.results.Page;
 import org.intermine.webservice.client.services.TemplateService;
-import org.intermine.webservice.client.template.TemplateParameter;
 
 /**
  * The TemplateClient is an example of client fetching template results from InterMine web service.
@@ -29,34 +32,60 @@ import org.intermine.webservice.client.template.TemplateParameter;
  **/
 public class TemplateClient
 {
-    private static String serviceRootUrl = "http://localhost:8080/query/service";
-
+    private static final String serviceRootUrl = "http://www.flymine.org/query/service";
+    private static final String templateName = "Pathway_Genes";
+    private static final String pathway = "ABC transporters";;
+    private static final ServiceFactory services = new ServiceFactory(serviceRootUrl);
+    private static final Page page = new Page(0, 10);
     /**
      *
      * @param args command line arguments
      */
     public static void main(String[] args) {
 
-        TemplateService service = new ServiceFactory(serviceRootUrl, "TemplateClient")
-            .getTemplateService();
-        List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
-        // setting first template parameter
-        // first organism should be equal to Drosophila melanogaster
-        parameters.add(new TemplateParameter("Homologue.gene.organism.name", "eq", "Drosophila melanogaster"));
-        // setting second template parameter
-        // second organism should be equal to Caenorhabditis elegans
-        parameters.add(new TemplateParameter("Homologue.homologue.organism.name", "eq", "Caenorhabditis elegans"));
-        // first 100 results are fetched
-        List<List<String>> result = service.getResults("GeneOrganism1_OrthologueOrganism2",
-                                                      parameters, 0, 100);
-        System.out.println("First 100 predicted orthologues between two organisms"
-                           + " sorted by FlyBase gene identifier:");
+        TemplateService service = services.getTemplateService();
+
+        TemplateQuery template = service.getTemplate(templateName);
+        template.replaceConstraint(template.getConstraintForCode("A"),
+                Constraints.eq("Pathway.name", pathway));
+
+        FormatInfo f = new FormatInfo(template);
+
+        List<List<String>> result = service.getResults(template, page);
+
+        int total = service.getCount(template);
+        int showing = Math.min(total, page.getSize());
+
+        System.out.println(template.getDescription());
+        System.out.println("Showing " + showing + " of " + total);
+        System.out.println(f.top);
+        System.out.printf(f.format, template.getView().toArray());
+
+        System.out.println(f.divider);
         for (List<String> row : result) {
-            for (String cell : row) {
-                System.out.print(cell + " ");
-            }
-            System.out.println();
+            System.out.printf(f.format, row.toArray());
         }
+        System.out.println(f.divider);
     }
 
+    private static class FormatInfo
+    {
+        String format;
+        String divider;
+        String top;
+
+        FormatInfo(PathQuery query) {
+            format = "|";
+            divider = "+";
+            int width = 1;
+            for (int i = 0; i < query.getView().size(); format += " |", i++) {
+                int cellWidth = Math.max(query.getView().get(i).length(), 20);
+                format += " %-" + cellWidth + "s";
+                width += cellWidth + 3;
+                divider += StringUtils.repeat("-", cellWidth) + "--+";
+            }
+            format += "\n";
+            top = StringUtils.repeat("=", width);
+        }
+    }
 }

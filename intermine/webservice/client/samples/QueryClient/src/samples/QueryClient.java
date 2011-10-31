@@ -13,8 +13,11 @@ package samples;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.services.QueryService;
+import org.intermine.webservice.client.results.Page;
 
 
 /**
@@ -31,7 +34,8 @@ import org.intermine.webservice.client.services.QueryService;
 public class QueryClient
 {
 
-    private static String serviceRootUrl = "http://localhost:8080/query/service";
+    private static String serviceRootUrl = "http://www.flymine.org/query/service";
+    private static final Page page = new Page(0, 10);
 
     /**
      *
@@ -40,23 +44,47 @@ public class QueryClient
      */
     public static void main(String[] args) {
 
-        QueryService service = new ServiceFactory(serviceRootUrl, "QueryClient").getQueryService();
-        // XML representation of PathQuery, XML representation can be downloaded from InterMine
-        // website for your query or template following query fetches genes shorter than 1000 bases
-        String queryXml = "<query name=\"\" model=\"genomic\""
-            + " view=\"Gene.primaryIdentifier Gene.symbol Gene.length\""
-            + " sortOrder=\"Gene.primaryIdentifier asc\">"
-            + " <constraint path=\"Gene.length\" op=\"&lt;\" value=\"1000\"/>"
-            + "</query>";
+        ServiceFactory services = new ServiceFactory(serviceRootUrl);
+        PathQuery query = new PathQuery(services.getModel());
+        query.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.length", "Gene.organism.species");
+        query.addConstraint(Constraints.lessThan("Gene.length", "1000"));
+        query.addConstraint(Constraints.eq("Gene.organism.genus", "Drosophila"));
 
-        // first 100 results are fetched
-        List<List<String>> result = service.getResults(queryXml, 0, 100);
-        System.out.println("First 100 genes shorter than 1kB sorted according to the identifier: ");
+        FormatInfo f = new FormatInfo(query);
+
+        int total = services.getQueryService().getCount(query);
+        int showing = Math.min(total, page.getSize());
+
+        List<List<String>> result = services.getQueryService().getResults(query, page);
+        System.out.println("Genes shorter than 1kB sorted according to identifier");
+        System.out.println("Showing " + showing + " of " + total);
+        System.out.println(f.top);
+        System.out.printf(f.format, query.getView().toArray());
+        System.out.println(f.divider);
         for (List<String> row : result) {
-            for (String cell : row) {
-                System.out.print(cell + " ");
+            System.out.printf(f.format, row.toArray());
+        }
+        System.out.println(f.divider);
+    }
+
+    private static class FormatInfo
+    {
+        String format;
+        String divider;
+        String top;
+
+        FormatInfo(PathQuery query) {
+            format = "|";
+            divider = "+";
+            int width = 1;
+            for (int i = 0; i < query.getView().size(); format += " |", i++) {
+                int cellWidth = Math.max(query.getView().get(i).length(), 14);
+                format += " %-" + cellWidth + "s";
+                width += cellWidth + 3;
+                divider += StringUtils.repeat("-", cellWidth) + "--+";
             }
-            System.out.println();
+            format += "\n";
+            top = StringUtils.repeat("=", width);
         }
     }
 }
