@@ -10,12 +10,15 @@ package org.intermine.webservice.client.services;
  *
  */
 
-import org.intermine.webservice.client.core.XMLTableResult;
+import org.intermine.webservice.client.core.Request;
+import org.intermine.webservice.client.results.XMLTableResult;
+import static org.junit.Assert.*;
 
 /**
  * Provides a dummy-fied QueryService.
  *
  * @author Matthew Wakeling
+ * @author Alex Kalderimis
  **/
 public class DummyQueryService extends QueryService
 {
@@ -41,16 +44,15 @@ public class DummyQueryService extends QueryService
     }
 
     protected String getResponseString(QueryRequest request) {
-        if (!request.getUrl(true).equals(expectedUrl)) {
-            throw new IllegalArgumentException("Expected URL \"" + expectedUrl + "\" does not match got URL \"" + request.getUrl(true) + "\"");
-        }
+        assureOutputFormatSpecified(request);
+        assertEquals(expectedUrl, request.getUnencodedUrl());
         return fakeResponse;
     }
 
-    protected XMLTableResult getResponseTable(QueryRequest request) {
-        if (!request.getUrl(true).equals(expectedUrl)) {
-            throw new IllegalArgumentException("Expected URL \"" + expectedUrl + "\" does not match got URL \"" + request.getUrl(true) + "\"");
-        }
+    @Override
+    protected XMLTableResult getResponseTable(Request request) {
+        assureOutputFormatSpecified(request);
+        assertEquals(expectedUrl, request.getUnencodedUrl());
         return new XMLTableResult(fakeResponse);
     }
 }

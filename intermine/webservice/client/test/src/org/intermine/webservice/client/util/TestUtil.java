@@ -21,25 +21,25 @@ import org.intermine.webservice.client.services.DummyTemplateService;
 /**
  * @author Jakub Kulaviak
  **/
-public class TestUtil extends TestCase 
+public class TestUtil extends TestCase
 {
 
     public static DummyQueryService getQueryService() {
         return new DummyQueryService(getRootUrl(), "TestUtil");
     }
-    
+
     public static DummyModelService getModelService() {
         return new DummyModelService(getRootUrl(), "TestUtil");
     }
-    
+
     public static DummyTemplateService getTemplateService() {
         return new DummyTemplateService(getRootUrl(), "TestUtil");
-    }    
-            
+    }
+
     public static String getRootUrl() {
         return "http://localhost:8080/intermine-test/service";
     }
-    
+
     public static void checkRow(List<String> actual, Object ... expected) {
         assertEquals(expected.length, actual.size());
         for (int i = 0; i < expected.length; i++) {
