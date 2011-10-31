@@ -13,8 +13,7 @@ package org.intermine.api.profile;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.intermine.api.template.SwitchOffAbility;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.OrderDirection;
@@ -57,15 +56,15 @@ public class TemplateQueryUpdateTest extends TestCase {
         query.setOuterJoinStatus("CEOTest.company", OuterJoinStatus.OUTER);
         query.addOrderBy("CEOTest.name", OrderDirection.ASC);
         query.addOrderBy("CEOTest.sal", OrderDirection.ASC);
-        TemplateQuery templateQuery = new TemplateQuery("test", "title", "comment", query);
-        templateQuery.setSwitchOffAbility(con1, SwitchOffAbility.ON);
+        ApiTemplate templateQuery = new ApiTemplate("test", "title", "comment", query);
+        templateQuery.setSwitchOffAbility(con1, org.intermine.template.SwitchOffAbility.ON);
         templateQuery.setConstraintDescription(con2, "Description on constraint");
         templateQuery.setEditable(con1, true);
         templateQuery.setEditable(con2, true);
         TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery,
             Model.getInstanceByName("testmodel"), Model.getInstanceByName("oldtestmodel"));
         templateQueryUpdate.update(renamedClasses, renamedFields);
-        TemplateQuery newTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
+        ApiTemplate newTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
         assertEquals("test", newTemplateQuery.getName());
         assertEquals("title", newTemplateQuery.getTitle());
         assertEquals("comment", newTemplateQuery.getComment());
@@ -99,9 +98,9 @@ public class TemplateQueryUpdateTest extends TestCase {
         assertEquals("CEO.name", newTemplateQuery.getOrderBy().get(0).getOrderPath());
         assertEquals("CEO.salary", newTemplateQuery.getOrderBy().get(1).getOrderPath());
         //verify switch off ability
-        assertEquals(SwitchOffAbility.ON, newTemplateQuery.getSwitchOffAbility(constraint1));
-        assertEquals(SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint2));
-        assertEquals(SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint3));
+        assertEquals(org.intermine.template.SwitchOffAbility.ON, newTemplateQuery.getSwitchOffAbility(constraint1));
+        assertEquals(org.intermine.template.SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint2));
+        assertEquals(org.intermine.template.SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint3));
         //verify constraint descriptions
         assertEquals("Description on constraint", newTemplateQuery.getConstraintDescription(constraint2));
         //verify editable constraints
