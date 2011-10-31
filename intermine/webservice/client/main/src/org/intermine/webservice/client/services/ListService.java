@@ -709,7 +709,7 @@ public class ListService extends Service
          * Create a new options bundle, with all elements set to their default apart
          * from the name and the description, which are given.
          * @param name the name of the new list to create.
-         * @param description A description to apply to the list·
+         * @param description A description to apply to the list.
          */
         public ListOperationInfo(String name, String description) {
             this(name);
