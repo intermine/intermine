@@ -719,7 +719,7 @@ public class ListService extends Service
         /**
          * Create a new options bundle, specifying all options.
          * @param name        The name of the new list to create.
-         * @param description A description to apply to the list·
+         * @param description A description to apply to the list.
          * @param tags        The tags to apply to the list.
          */
         public ListOperationInfo(String name, String description,
