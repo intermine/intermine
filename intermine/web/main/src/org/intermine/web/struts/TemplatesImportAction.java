@@ -29,11 +29,12 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
@@ -78,15 +79,16 @@ public class TemplatesImportAction extends InterMineAction
             }
             boolean validConstraints = true;
             for (TemplateQuery template : templates.values()) {
-                String templateName = template.getName();
+                ApiTemplate apiTemplate = new ApiTemplate(template);
+                String templateName = apiTemplate.getName();
 
                 String updatedName = NameUtil.validateName(profile.getSavedTemplates().keySet(),
                         templateName);
                 if (!templateName.equals(updatedName)) {
-                    template = renameTemplate(updatedName, template);
+                    apiTemplate = renameTemplate(updatedName, apiTemplate);
                 }
                 if (validateLookupConstraints(template)) {
-                    profile.saveTemplate(template.getName(), template);
+                    profile.saveTemplate(template.getName(), apiTemplate);
                     imported++;
                 } else {
                     validConstraints = false;
@@ -112,9 +114,9 @@ public class TemplatesImportAction extends InterMineAction
     }
 
     // clone the template and set the new special-character-free name
-    private TemplateQuery renameTemplate(String newName, TemplateQuery template) {
+    private ApiTemplate renameTemplate(String newName, ApiTemplate template) {
 
-        TemplateQuery newTemplate = template.clone();
+        ApiTemplate newTemplate = template.clone();
         newTemplate.setName(newName);
         return newTemplate;
     }

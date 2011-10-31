@@ -42,9 +42,9 @@ import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -62,7 +62,7 @@ public class WebSearchableListController extends TilesAction
 
     private InterMineAPI im;
     private static TagManager tagManager;
-    
+
     /**
      * Set up the attributes for webSearchableList.tile
      * {@inheritDoc}
@@ -107,7 +107,7 @@ public class WebSearchableListController extends TilesAction
         if (list != null) {
             filteredWebSearchables = filterByList(filteredWebSearchables, list);
         }
-        
+
         if (type.equals(TagTypes.BAG)) {
             filteredWebSearchables = filterByCurrent(filteredWebSearchables);
         }
@@ -154,24 +154,24 @@ public class WebSearchableListController extends TilesAction
      */
     private Map<String, WebSearchable> sortList(final Map<String, WebSearchable>
         filteredWebSearchables) {
-    	
+
         Comparator<String> comparator = new Comparator<String>() {
 
-        	private List<Tag> resolveTagsInBag(InterMineBag bag) {
-        		List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
-        		return tags;
-        	}
-        	
-        	private Integer resolveOrderFromTagsList(List<Tag> tags) {
-        		for (Tag t : tags) {
-            		String name = t.getTagName();
-            		if (name.startsWith("im:order:")) {
-            			return Integer.parseInt(name.replaceAll("[^0-9]", ""));
-            		}
-            	}
-        		return 666;
-        	}        	
-        	
+            private List<Tag> resolveTagsInBag(InterMineBag bag) {
+                List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
+                return tags;
+            }
+
+            private Integer resolveOrderFromTagsList(List<Tag> tags) {
+                for (Tag t : tags) {
+                    String name = t.getTagName();
+                    if (name.startsWith("im:order:")) {
+                        return Integer.parseInt(name.replaceAll("[^0-9]", ""));
+                    }
+                }
+                return 666;
+            }
+
             public int compare(String o1, String o2) {
                 WebSearchable ws1 = filteredWebSearchables.get(o1);
                 WebSearchable ws2 = filteredWebSearchables.get(o2);
@@ -187,8 +187,8 @@ public class WebSearchableListController extends TilesAction
             }
 
             private int compareBags(InterMineBag bag1, InterMineBag bag2) {
-            	Integer aO = resolveOrderFromTagsList(resolveTagsInBag(bag1));
-            	Integer bO = resolveOrderFromTagsList(resolveTagsInBag(bag2));
+                Integer aO = resolveOrderFromTagsList(resolveTagsInBag(bag1));
+                Integer bO = resolveOrderFromTagsList(resolveTagsInBag(bag2));
 
                 if (aO < bO) {
                     return -1;
@@ -361,7 +361,7 @@ public class WebSearchableListController extends TilesAction
 
         return clone;
     }
-    
+
     private Map<String, ? extends WebSearchable> filterByCurrent(
             Map<String, ? extends WebSearchable> filteredWebSearchables) {
         Map<String, WebSearchable> clone = new HashMap<String, WebSearchable>();

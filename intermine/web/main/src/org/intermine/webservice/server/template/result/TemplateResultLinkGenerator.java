@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.intermine.api.template.SwitchOffAbility;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -23,6 +21,8 @@ import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.template.SwitchOffAbility;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.webservice.server.CodeTranslator;
 import org.intermine.webservice.server.LinkGeneratorBase;

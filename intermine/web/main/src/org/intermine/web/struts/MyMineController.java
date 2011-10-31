@@ -30,14 +30,15 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplatePrecomputeHelper;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
@@ -134,14 +135,14 @@ public class MyMineController extends TilesAction
     public static void getPrecomputedSummarisedInfo(Profile profile, HttpSession session,
             HttpServletRequest request) throws ObjectStoreException {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Map<String, TemplateQuery> templates = profile.getSavedTemplates();
+        Map<String, ApiTemplate> templates = profile.getSavedTemplates();
         ObjectStoreInterMineImpl os = (ObjectStoreInterMineImpl) im.getObjectStore();
 
         Map<String, String> precomputedTemplateMap = new HashMap<String, String>();
         Map<String, String> summarisedTemplateMap = new HashMap<String, String>();
 
         TemplateSummariser summariser = im.getTemplateSummariser();
-        for (TemplateQuery template : templates.values()) {
+        for (ApiTemplate template : templates.values()) {
             if (template.isValid()) {
                 if ((session.getAttribute("precomputing_" + template.getName()) != null)
                         && "true".equals(session.getAttribute("precomputing_" + template

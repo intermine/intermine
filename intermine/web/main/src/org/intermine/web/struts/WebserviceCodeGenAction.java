@@ -36,9 +36,10 @@ import org.intermine.api.query.codegen.WebservicePythonCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceRubyCodeGenerator;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
@@ -188,7 +189,7 @@ public class WebserviceCodeGenAction extends InterMineAction
      * @return whether or not Joe Public could run this without logging in.
      */
     protected static boolean templateIsPublic(TemplateQuery t, InterMineAPI im, Profile p) {
-        Map<String, TemplateQuery> templates = p.getSavedTemplates();
+        Map<String, ApiTemplate> templates = p.getSavedTemplates();
 
         return !templates.keySet().contains(t.getName()) && pathQueryIsPublic(t, im, p);
     }

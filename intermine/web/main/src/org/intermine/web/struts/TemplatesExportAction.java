@@ -24,9 +24,9 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.XmlUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -61,10 +61,10 @@ public class TemplatesExportAction extends TemplateAction
         TemplateManager templateManager = im.getTemplateManager();
         if (name == null) {
             if (scope == null || scope.equals(Scope.USER)) {
-                xml = TemplateHelper.templateMapToXml(profile.getSavedTemplates(),
+                xml = TemplateHelper.apiTemplateMapToXml(profile.getSavedTemplates(),
                         PathQuery.USERPROFILE_VERSION);
             } else if (scope.equals(Scope.GLOBAL)) {
-                xml = TemplateHelper.templateMapToXml(templateManager.getGlobalTemplates(),
+                xml = TemplateHelper.apiTemplateMapToXml(templateManager.getGlobalTemplates(),
                         PathQuery.USERPROFILE_VERSION);
             } else {
                 throw new IllegalArgumentException("Cannot export all templates for scope "

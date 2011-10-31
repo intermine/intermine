@@ -22,12 +22,13 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -54,7 +55,7 @@ public class BagConversionHelper
      * @throws ObjectStoreException if an error occurs
      */
     public static WebResults getConvertedObjects(HttpSession session,
-            List<TemplateQuery> conversionTemplates, Class typeA, Class typeB,
+            List<ApiTemplate> conversionTemplates, Class typeA, Class typeB,
             InterMineBag imBag) throws InterMineException, ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);

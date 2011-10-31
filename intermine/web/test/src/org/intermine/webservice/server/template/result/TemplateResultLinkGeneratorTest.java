@@ -14,12 +14,12 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.intermine.TestUtil;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.webservice.server.WebServiceConstants;
 
 

@@ -29,11 +29,12 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
@@ -64,7 +65,7 @@ public class ConvertBagController extends TilesAction
         Model model = im.getModel();
         TemplateManager templateManager = im.getTemplateManager();
 
-        Map<Class, TemplateQuery> conversionTypesMap = TypeConverter.getConversionTemplates(
+        Map<Class, ApiTemplate> conversionTypesMap = TypeConverter.getConversionTemplates(
             templateManager.getConversionTemplates(),
             TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()));
         ArrayList<String> conversionTypes = new ArrayList<String>();

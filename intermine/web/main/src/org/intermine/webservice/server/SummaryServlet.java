@@ -11,24 +11,14 @@ package org.intermine.webservice.server;
  */
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
-import org.intermine.webservice.server.output.Output;
 
 /**
  * Returns a summary field information.
@@ -37,8 +27,6 @@ import org.intermine.webservice.server.output.Output;
  */
 public class SummaryServlet extends HttpServlet
 {
-
-    private static final Logger LOGGER = Logger.getLogger(SummaryServlet.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -56,5 +44,4 @@ public class SummaryServlet extends HttpServlet
         SummaryService sum = new SummaryService(im);
         sum.service(request, response);
     }
-        
 }
