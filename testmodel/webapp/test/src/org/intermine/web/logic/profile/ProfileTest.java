@@ -16,11 +16,12 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -28,6 +29,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 
 public class ProfileTest extends TestCase
 {
@@ -35,7 +37,7 @@ public class ProfileTest extends TestCase
     SavedQuery sq;
     Date date = new Date();
     InterMineBag bag;
-    TemplateQuery template;
+    ApiTemplate template;
     private Integer bobId = new Integer(101);
     private ObjectStoreWriter userprofileOS;
     private ObjectStore objectstoreOS;
@@ -50,12 +52,11 @@ public class ProfileTest extends TestCase
         query = new PathQuery(Model.getInstanceByName("testmodel"));
         userprofileOS = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         objectstoreOS = ObjectStoreFactory.getObjectStore("os.unittest");
-        bag = new InterMineBag("bob", "Company", "Description", new Date(),
-                               true, objectstoreOS, bobId, userprofileOS);
+        bag = new InterMineBag("bob", "Company", "Description", new Date(), BagState.CURRENT, objectstoreOS, bobId, userprofileOS);
         //Collections.singleton("testElement"));
 //        bag = new InterMinePrimitiveBag(bobId, "bob", userprofileOS, Collections.singleton("1234"));
         sq = new SavedQuery("query1", date, query);
-        template = new TemplateQuery("template", "ttitle", "tdesc", new PathQuery(Model.getInstanceByName("testmodel")));
+        template = new ApiTemplate("template", "ttitle", "tdesc", new PathQuery(Model.getInstanceByName("testmodel")));
         profileManager = new DummyProfileManager();
 
     }

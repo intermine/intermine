@@ -20,7 +20,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.intermine.api.template.TemplatePrecomputeHelper;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStore;
@@ -31,6 +30,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.template.TemplateQuery;
 
 /**
  * Tests for PrecomputeTemplatesTask.
