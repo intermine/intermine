@@ -23,9 +23,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.template.TemplateManager;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplatePrecomputeHelper;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -38,6 +37,7 @@ import org.intermine.objectstore.intermine.ParallelPrecomputer;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryNode;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * A Task that reads a list of queries from a properties file (eg. testmodel_precompute.properties)
@@ -169,10 +169,10 @@ public class PrecomputeTemplatesTask extends Task
      * @param oss the ObjectStoreSummary for os
      */
     protected void precomputeTemplates(ObjectStore os, ObjectStoreSummary oss) {
-        List<TemplateQuery> toSummarise = new ArrayList<TemplateQuery>();
+        List<ApiTemplate> toSummarise = new ArrayList<ApiTemplate>();
         List<ParallelPrecomputer.Job> jobs = new ArrayList<ParallelPrecomputer.Job>();
-        for (Map.Entry<String, TemplateQuery> entry : getPrecomputeTemplateQueries().entrySet()) {
-            TemplateQuery template = entry.getValue();
+        for (Map.Entry<String, ApiTemplate> entry : getPrecomputeTemplateQueries().entrySet()) {
+            ApiTemplate template = entry.getValue();
 
             // check if we should ignore this template (maybe it won't precompute)
             if (ignoreNames.contains(template.getName().toLowerCase())) {
@@ -222,7 +222,7 @@ public class PrecomputeTemplatesTask extends Task
         }
 
         TemplateSummariser summariser = new TemplateSummariser(os, userProfileOS);
-        for (TemplateQuery template : toSummarise) {
+        for (ApiTemplate template : toSummarise) {
             if (doSummarise) {
                 try {
                     summariser.summarise(template);
@@ -269,7 +269,7 @@ public class PrecomputeTemplatesTask extends Task
      * @return Map from template name to TemplateQuery
      * @throws BuildException if an IO error occurs loading the template queries
      */
-    protected Map<String, TemplateQuery> getPrecomputeTemplateQueries() {
+    protected Map<String, ApiTemplate> getPrecomputeTemplateQueries() {
         ProfileManager pm = new ProfileManager(os, userProfileOS);
         Profile profile = pm.getSuperuserProfile();
         TemplateManager templateManager = new TemplateManager(profile, os.getModel());

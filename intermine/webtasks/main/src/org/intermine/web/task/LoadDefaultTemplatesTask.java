@@ -27,7 +27,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -35,6 +35,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.ProfileBinding;
 
 /**
@@ -130,7 +131,7 @@ public class LoadDefaultTemplatesTask extends Task
                 LOG.info("Creating profile for " + username);
                 profileDest = new Profile(pm, username, null, password,
                         new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                        new HashMap<String, TemplateQuery>(), null, true);
+                        new HashMap<String, ApiTemplate>(), null, true);
                 profileDest.disableSaving();
                 pm.createProfile(profileDest);
             } else {
@@ -150,7 +151,7 @@ public class LoadDefaultTemplatesTask extends Task
                     profileDest.getPassword(), tags, osw, PathQuery.USERPROFILE_VERSION);
 
             if (profileDest.getSavedTemplates().size() == 0) {
-                for (TemplateQuery template : profileSrc.getSavedTemplates().values()) {
+                for (ApiTemplate template : profileSrc.getSavedTemplates().values()) {
                     String append = "";
                     if (!template.isValid()) {
                         append = " [invalid]";
