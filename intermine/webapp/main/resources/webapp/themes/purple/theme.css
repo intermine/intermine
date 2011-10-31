@@ -296,8 +296,9 @@ div.collection-table div.right a:hover,
 div.collection-table div.right a:visited { color:#5C0075; }
 div.collection-table thead th,
 div.collection-table thead td { background:#F4EEF7; border-color:#DCC8E2; }
-div.collection-table table tr.odd td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
-div.collection-table table tbody tr:nth-child(2n) td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
+div.collection-table table tbody tr:nth-child(2n) td,
+div.collection-table table tbody tr.odd td { background:#FCFAFD; border-top-color:#DCC8E2; border-bottom-color:#DCC8E2; }
+div.collection-table table tbody tr.even td { background:#FFF; }
 div.collection-table table td.class { color:#886644; }
 div.collection-table table a,
 div.collection-table table a:hover,
