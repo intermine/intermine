@@ -19,12 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 
 /**

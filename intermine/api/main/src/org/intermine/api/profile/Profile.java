@@ -26,7 +26,7 @@ import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
@@ -48,7 +48,7 @@ public class Profile
     protected String password;
     protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
     protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
-    protected Map<String, TemplateQuery> savedTemplates = new TreeMap<String, TemplateQuery>();
+    protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
     protected Map<String, InterMineBag> savedInvalidBags = new TreeMap<String, InterMineBag>();
     protected Map queryHistory = new ListOrderedMap();
@@ -75,7 +75,7 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-                   Map<String, TemplateQuery> savedTemplates, String token, boolean isLocal) {
+                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
@@ -109,7 +109,7 @@ public class Profile
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
                    Map<String, InterMineBag> savedInvalidBags,
-                   Map<String, TemplateQuery> savedTemplates, String token, boolean isLocal) {
+                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates, token,
             isLocal);
         this.savedInvalidBags = savedInvalidBags;
@@ -127,7 +127,7 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-            Map<String, TemplateQuery> savedTemplates, boolean isLocal) {
+            Map<String, ApiTemplate> savedTemplates, boolean isLocal) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates,
                 null, isLocal);
     }
@@ -236,7 +236,7 @@ public class Profile
      * Get the users saved templates
      * @return saved templates
      */
-    public Map<String, TemplateQuery> getSavedTemplates() {
+    public Map<String, ApiTemplate> getSavedTemplates() {
         return Collections.unmodifiableMap(savedTemplates);
     }
 
@@ -246,7 +246,7 @@ public class Profile
      * @param name the template name
      * @param template the template
      */
-    public void saveTemplate(String name, TemplateQuery template) {
+    public void saveTemplate(String name, ApiTemplate template) {
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
@@ -259,7 +259,7 @@ public class Profile
      * @param name the template
      * @return template
      */
-    public TemplateQuery getTemplate(String name) {
+    public ApiTemplate getTemplate(String name) {
         return savedTemplates.get(name);
     }
 
@@ -376,16 +376,16 @@ public class Profile
         result.put("NOT_CURRENT", new HashMap<String, InterMineBag>());
         result.put("TO_UPGRADE", new HashMap<String, InterMineBag>());
         result.put("CURRENT", new HashMap<String, InterMineBag>());
-        
+
         for (InterMineBag bag : savedBags.values()) {
-        	String state = bag.getState();
-        	// XXX: this can go pear shaped if new statei [sic] are introduced
-            Map<String, InterMineBag> stateMap = result.get(state); 
-        	stateMap.put(bag.getName(), bag);
+            String state = bag.getState();
+            // XXX: this can go pear shaped if new states are introduced
+            Map<String, InterMineBag> stateMap = result.get(state);
+            stateMap.put(bag.getName(), bag);
         }
         return result;
-    }    
-    
+    }
+
     /**
      * Get the value of savedBags current
      * @return the value of savedBags
@@ -520,7 +520,7 @@ public class Profile
      * @param template the new template
      * @throws ObjectStoreException if problems storing
      */
-    public void updateTemplate(String oldName, TemplateQuery template) throws ObjectStoreException {
+    public void updateTemplate(String oldName, ApiTemplate template) throws ObjectStoreException {
         if (!savedTemplates.containsKey(oldName)) {
             throw new IllegalArgumentException("Attempting to rename a template that doesn't"
                     + " exist: " + oldName);
@@ -603,7 +603,7 @@ public class Profile
      * @return Whether or not this is a local account.
      */
     public boolean isLocal() {
-    	return this.isLocal;
+        return this.isLocal;
     }
 
 }

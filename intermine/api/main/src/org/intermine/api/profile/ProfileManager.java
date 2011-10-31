@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -26,9 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.xml.SavedQueryBinding;
-import org.intermine.api.xml.TemplateQueryBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
@@ -52,6 +52,8 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PasswordHasher;
 import org.intermine.util.PropertiesUtil;
@@ -316,7 +318,7 @@ public class ProfileManager
                     SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
                             version);
                 if (queries.size() == 0) {
-                    queries = PathQueryBinding.unmarshal(new StringReader(query.getQuery()),
+                    queries = PathQueryBinding.unmarshalPathQueries(new StringReader(query.getQuery()),
                             version);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
@@ -334,16 +336,17 @@ public class ProfileManager
                 LOG.warn("Failed to unmarshal saved query: " + query.getQuery());
             }
         }
-        Map<String, TemplateQuery> savedTemplates = new HashMap<String, TemplateQuery>();
+        Map<String, ApiTemplate> savedTemplates = new HashMap<String, ApiTemplate>();
         for (SavedTemplateQuery template : userProfile.getSavedTemplateQuerys()) {
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map<String, TemplateQuery> templateMap = TemplateQueryBinding.unmarshal(sr,
-                        savedBags, version);
+                Map<String, TemplateQuery> templateMap = 
+                        TemplateQueryBinding.unmarshalTemplates(sr, version);
                 String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = templateMap.get(templateName);
-                templateQuery.setSavedTemplateQuery(template);
-                savedTemplates.put(templateName, templateQuery);
+                ApiTemplate apiTemplate = new ApiTemplate(templateQuery);
+                apiTemplate.setSavedTemplateQuery(template);
+                savedTemplates.put(templateName, apiTemplate);
             } catch (Exception err) {
                 // Ignore rows that don't unmarshal (they probably reference
                 // another model.
@@ -410,11 +413,10 @@ public class ProfileManager
                 }
             }
 
-            for (Iterator i = profile.getSavedTemplates().entrySet().iterator(); i.hasNext();) {
-                TemplateQuery template = null;
+            for (Entry<String, ApiTemplate> entry: profile.getSavedTemplates().entrySet()) {
+                ApiTemplate template = null;
                 try {
-                    Map.Entry entry = (Map.Entry) i.next();
-                    template = (TemplateQuery) entry.getValue();
+                    template = entry.getValue();
                     SavedTemplateQuery savedTemplate = template.getSavedTemplateQuery();
                     if (savedTemplate == null) {
                         savedTemplate = new SavedTemplateQuery();

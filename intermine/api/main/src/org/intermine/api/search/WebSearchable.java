@@ -11,13 +11,13 @@ package org.intermine.api.search;
  */
 
 /**
- * An interface implemented by objects that we want to index with lucene.
+ * An interface implemented by objects that we want to index with Lucene.
  * @author Kim Rutherford
  */
 public interface WebSearchable
 {
     /**
-     * The name (or identifier) usd as the primary key for storing this object.
+     * The name (or identifier) used as the primary key for storing this object.
      * @return the name
      */
     String getName();
@@ -29,7 +29,7 @@ public interface WebSearchable
     String getTitle();
 
     /**
-     * Return the description of this object
+     * Return the description of this object.
      * @return the description
      */
     String getDescription();

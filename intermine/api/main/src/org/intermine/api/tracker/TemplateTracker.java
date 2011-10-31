@@ -27,10 +27,10 @@ import org.apache.log4j.Logger;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.api.tracker.track.TemplateTrack;
 import org.intermine.api.tracker.track.Track;
 import org.intermine.api.tracker.util.TrackerUtil;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * Class for tracking the templates execution by the users. When a user executes a template,

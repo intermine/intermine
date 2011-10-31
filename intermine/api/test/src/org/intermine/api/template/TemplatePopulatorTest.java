@@ -51,6 +51,10 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.template.SwitchOffAbility;
+import org.intermine.template.TemplatePopulatorException;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.TemplateValue;
 import org.intermine.util.DynamicUtil;
 
 public class TemplatePopulatorTest extends TestCase

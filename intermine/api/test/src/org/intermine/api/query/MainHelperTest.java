@@ -110,7 +110,7 @@ public class MainHelperTest extends TestCase {
         expected.addConstraint(a);
         expected.addConstraint(b);
         assertEquals(expected, andCs);
-        
+
         expr = new LogicExpression("A and (B or C)");
         codeToConstraint.put("C", c);
         andCs = new ConstraintSet(ConstraintOp.AND);
@@ -121,7 +121,7 @@ public class MainHelperTest extends TestCase {
         expectedOr.addConstraint(c);
         expected.addConstraint(expectedOr);
         MainHelper.createConstraintStructure(expr, andCs, codeToConstraint);
-        
+
         assertEquals(expected, andCs);
     }
 
@@ -334,7 +334,7 @@ public class MainHelperTest extends TestCase {
 
     private Map<String, PathQuery> readQueries() throws Exception {
         InputStream is = getClass().getClassLoader().getResourceAsStream("MainHelperTest.xml");
-        Map<String, PathQuery> ret = PathQueryBinding.unmarshal(new InputStreamReader(is), PathQuery.USERPROFILE_VERSION);
+        Map<String, PathQuery> ret = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), PathQuery.USERPROFILE_VERSION);
         return ret;
     }
 
@@ -583,7 +583,7 @@ public class MainHelperTest extends TestCase {
         String caller = br.readLine();
         System.out.println("Executing doQuery " + caller);
         try {
-            Map<String, PathQuery> parsed = PathQueryBinding.unmarshal(new StringReader(web), PathQuery.USERPROFILE_VERSION);
+            Map<String, PathQuery> parsed = PathQueryBinding.unmarshalPathQueries(new StringReader(web), PathQuery.USERPROFILE_VERSION);
             PathQuery pq = parsed.get("test");
             Query q = MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap());
             String got = q.toString();
@@ -596,7 +596,7 @@ public class MainHelperTest extends TestCase {
         int columnNo = 0;
         String summaryPath = null;
         try {
-            Map<String, PathQuery> parsed = PathQueryBinding.unmarshal(new StringReader(web), PathQuery.USERPROFILE_VERSION);
+            Map<String, PathQuery> parsed = PathQueryBinding.unmarshalPathQueries(new StringReader(web), PathQuery.USERPROFILE_VERSION);
             PathQuery pq = parsed.get("test");
             for (String summary : summaries) {
                 try {

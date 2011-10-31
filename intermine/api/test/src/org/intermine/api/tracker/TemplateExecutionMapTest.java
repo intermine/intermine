@@ -18,8 +18,7 @@ import junit.framework.TestCase;
 
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.track.TemplateTrack;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -36,6 +35,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * Test the TemplateExecutionMap class
@@ -134,13 +134,13 @@ public class TemplateExecutionMapTest extends TestCase
             super(setUpProfile(), null);
         }
         @Override
-        public Map<String, TemplateQuery> getValidGlobalTemplates() {
+        public Map<String, ApiTemplate> getValidGlobalTemplates() {
             Model model = Model.getInstanceByName("testmodel");
-            TemplateQuery tq1 = new TemplateQuery("template1", "template1", "",
+            ApiTemplate tq1 = new ApiTemplate("template1", "template1", "",
                                                   new PathQuery(model));
-            TemplateQuery tq2 = new TemplateQuery("template2", "template2", "",
+            ApiTemplate tq2 = new ApiTemplate("template2", "template2", "",
                                                   new PathQuery(model));
-            Map<String, TemplateQuery> validGlobalTemplates = new HashMap<String, TemplateQuery>();
+            Map<String, ApiTemplate> validGlobalTemplates = new HashMap<String, ApiTemplate>();
             validGlobalTemplates.put("template1", tq1);
             validGlobalTemplates.put("template2", tq2);
             return validGlobalTemplates;

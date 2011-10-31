@@ -40,6 +40,7 @@ import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 
 /**
  * Tests for the TemplateSummariser.
@@ -75,7 +76,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
         PathConstraint depCon = Constraints.greaterThan("Employee.department.name", "Finance");
         twoConstraints.addConstraint(depCon);
         twoConstraints.setEditable(depCon, true);
-        profile.saveTemplate("template", twoConstraints);
+        profile.saveTemplate("template", new ApiTemplate(twoConstraints));
     }
 
     @Override
@@ -117,7 +118,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
     }
 
     public void test1() throws Exception {
-        TemplateQuery t = profile.getSavedTemplates().get("template");
+        ApiTemplate t = profile.getSavedTemplates().get("template");
         TemplateSummariser summariser = new TemplateSummariser(os, uosw);
         assertFalse(summariser.isSummarised(t));
         summariser.summarise(t);

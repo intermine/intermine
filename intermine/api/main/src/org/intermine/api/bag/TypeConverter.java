@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.query.MainHelper;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,6 +33,7 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 
 /**
  * Static helper routines to convert bags between different types.
@@ -62,7 +63,7 @@ public final class TypeConverter
      * @throws InterMineException if an error occurs
      */
     public static Map<InterMineObject, List<InterMineObject>>
-    getConvertedObjectMap(List<TemplateQuery> conversionTemplates, Class<?> typeA, Class<?> typeB,
+    getConvertedObjectMap(List<ApiTemplate> conversionTemplates, Class<?> typeA, Class<?> typeB,
             Object bagOrIds, ObjectStore os) throws InterMineException {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bagOrIds);
 
@@ -112,9 +113,9 @@ public final class TypeConverter
      * @param bagOrIds an InterMineBag or Collection of Integer object ids
      * @return a PathQuery that finds a conversion mapping for the given bag
      */
-    public static PathQuery getConversionMapQuery(List<TemplateQuery> conversionTemplates,
+    public static PathQuery getConversionMapQuery(List<ApiTemplate> conversionTemplates,
                                                 Class typeA, Class typeB, Object bagOrIds) {
-        TemplateQuery tq = getConversionTemplates(conversionTemplates, typeA).get(typeB);
+        ApiTemplate tq = getConversionTemplates(conversionTemplates, typeA).get(typeB);
         if (tq == null) {
             return null;
         }
@@ -151,7 +152,7 @@ public final class TypeConverter
      * @param bagOrIds an InterMineBag or Collection of Integer object identifiers
      * @return a PathQuery that finds converted objects for the given bag
      */
-    public static PathQuery getConversionQuery(List<TemplateQuery> conversionTemplates,
+    public static PathQuery getConversionQuery(List<ApiTemplate> conversionTemplates,
             Class<?> typeA, Class<?> typeB, Object bagOrIds) {
         PathQuery pq = getConversionMapQuery(conversionTemplates, typeA, typeB, bagOrIds);
         if (pq == null) {
@@ -184,10 +185,10 @@ public final class TypeConverter
      * @param typeA the type to convert from
      * @return a Map from Class to TemplateQuery
      */
-    public static Map<Class, TemplateQuery> getConversionTemplates(
-            List<TemplateQuery> conversionTemplates, Class typeA) {
-        Map<Class, TemplateQuery> retval = new HashMap();
-        for (TemplateQuery tq : conversionTemplates) {
+    public static Map<Class, ApiTemplate> getConversionTemplates(
+            List<ApiTemplate> conversionTemplates, Class typeA) {
+        Map<Class, ApiTemplate> retval = new HashMap();
+        for (ApiTemplate tq : conversionTemplates) {
 
             try {
                 // Find conversion types

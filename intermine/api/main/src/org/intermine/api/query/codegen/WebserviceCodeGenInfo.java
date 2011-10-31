@@ -10,8 +10,8 @@ package org.intermine.api.query.codegen;
  *
  */
 
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
 
 /**
  * Class to represent the information used to generate web service source code.

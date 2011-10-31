@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
@@ -32,6 +30,9 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.TypeUtil;
 
@@ -408,7 +409,7 @@ public class BagQueryRunner
      * so we can override and easily use a custom list of templates for testing.
      * @return a list of conversion templates
      */
-    protected List<TemplateQuery> getConversionTemplates() {
+    protected List<ApiTemplate> getConversionTemplates() {
         return templateManager.getConversionTemplates();
     }
 }
