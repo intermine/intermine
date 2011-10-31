@@ -31,7 +31,7 @@ import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
-import org.intermine.template.TemplateManager;
+import org.intermine.api.template.TemplateManager;
 
 /**
  * A dummy version of the API for testing against.
