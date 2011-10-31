@@ -345,10 +345,10 @@ public class ModelUpdate
                             continue;
                         }
                         if (templateQueryUpdate.isUpdated()) {
-                            TemplateQuery updatedTemplateQuery = templateQueryUpdate
+                            ApiTemplate updatedTemplateQuery = templateQueryUpdate
                                                                  .getNewTemplateQuery();
                             String backupTemplateName = templateQuery.getName() + OLD;
-                            TemplateQuery backupTemplateQuery = templateQuery.clone();
+                            ApiTemplate backupTemplateQuery = templateQuery.clone();
                             backupTemplateQuery.setName(backupTemplateName);
                             profile.saveTemplate(backupTemplateName, backupTemplateQuery);
                             profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);

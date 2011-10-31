@@ -12,7 +12,7 @@ package org.intermine.api.profile;
 
 import java.util.Map;
 
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
@@ -20,18 +20,18 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 public class TemplateQueryUpdate extends PathQueryUpdate {
-    private TemplateQuery templateQuery;
+    private ApiTemplate templateQuery;
 
-    public TemplateQueryUpdate(TemplateQuery templateQuery, Model newModel, Model oldModel) {
+    public TemplateQueryUpdate(ApiTemplate templateQuery, Model newModel, Model oldModel) {
         super.pathQuery = templateQuery.getPathQuery();
         this.oldModel = oldModel;
         this.templateQuery = templateQuery;
-        this.newPathQuery = new TemplateQuery(templateQuery.getName(),
+        this.newPathQuery = new ApiTemplate(templateQuery.getName(),
             templateQuery.getTitle(), templateQuery.getComment(), new PathQuery(newModel));
     }
 
-    public TemplateQuery getNewTemplateQuery() {
-        return (TemplateQuery) newPathQuery;
+    public ApiTemplate getNewTemplateQuery() {
+        return (ApiTemplate) newPathQuery;
     }
 
     protected void updateConstraints (Map<String, String> renamedClasses, Map<String, String> renamedFields)
@@ -50,15 +50,15 @@ public class TemplateQueryUpdate extends PathQueryUpdate {
             newPathQuery.addConstraint(newPathConstraint);
             //update editable constraints
             if (templateQuery.getEditableConstraints().contains(pathConstraint)) {
-                ((TemplateQuery) newPathQuery).setEditable(newPathConstraint, true);
+                ((ApiTemplate) newPathQuery).setEditable(newPathConstraint, true);
             }
             //update constraint descriptions
             String description = templateQuery.getConstraintDescription(pathConstraint);
             if (description != null) {
-                ((TemplateQuery) newPathQuery).setConstraintDescription(newPathConstraint, description);
+                ((ApiTemplate) newPathQuery).setConstraintDescription(newPathConstraint, description);
             }
             // update switch off ability
-            ((TemplateQuery) newPathQuery).setSwitchOffAbility(newPathConstraint, templateQuery.getSwitchOffAbility(pathConstraint));
+            ((ApiTemplate) newPathQuery).setSwitchOffAbility(newPathConstraint, templateQuery.getSwitchOffAbility(pathConstraint));
         }
     }
 }
