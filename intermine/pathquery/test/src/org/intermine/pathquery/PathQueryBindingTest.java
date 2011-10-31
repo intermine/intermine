@@ -33,7 +33,7 @@ public class PathQueryBindingTest extends TestCase
     public void setUp() throws Exception {
         super.setUp();
         InputStream is = getClass().getClassLoader().getResourceAsStream("PathQueryBindingTest.xml");
-        savedQueries = PathQueryBinding.unmarshal(new InputStreamReader(is), 1);
+        savedQueries = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1);
         // checking can be removed maybe
         expected = getExpectedQueries();
     }
@@ -65,7 +65,7 @@ public class PathQueryBindingTest extends TestCase
         companyInBag.addView("Company");
         companyInBag.addConstraint(new PathConstraintBag("Company", ConstraintOp.IN, "bag1"));
         expected.put("companyInBag", companyInBag);
-        
+
         // queryWithConstraint
         PathQuery queryWithConstraint = new PathQuery(model);
         queryWithConstraint.addViews("Company.name", "Company.departments.name", "Company.departments.employees.name", "Company.departments.employees.title");
@@ -118,19 +118,19 @@ public class PathQueryBindingTest extends TestCase
         // Test marshallings
         String xml = PathQueryBinding.marshal(expected.get("employeesWithOldManagers"),
                 "employeesWithOldManagers", "testmodel", 1);
-        Map readFromXml = new LinkedHashMap();
-        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
+        Map<String, PathQuery> readFromXml = new LinkedHashMap<String, PathQuery>();
+        readFromXml = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
         // checking can be removed maybe
-        Map expectedQuery = new LinkedHashMap();
+        Map<String, PathQuery> expectedQuery = new LinkedHashMap<String, PathQuery>();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
         assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
 
         xml = PathQueryBinding.marshal(expected.get("queryWithConstraint"),
                 "queryWithConstraint", "testmodel", 1);
-        readFromXml = new LinkedHashMap();
-        readFromXml = PathQueryBinding.unmarshal(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
-        expectedQuery = new LinkedHashMap();
+        readFromXml = new LinkedHashMap<String, PathQuery>();
+        readFromXml = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
+        expectedQuery = new LinkedHashMap<String, PathQuery>();
         expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
 
         assertEquals(xml, expectedQuery.toString(), readFromXml.toString());

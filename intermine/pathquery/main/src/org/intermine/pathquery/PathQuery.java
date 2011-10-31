@@ -1662,13 +1662,15 @@ public class PathQuery implements Cloneable
                                     + " may not be looped back on itself");
                             continue;
                         }
-                        Class<?> aClass = path.getEndType();
-                        Class<?> bClass = loopPath.getEndType();
-                        if (!(aClass.isAssignableFrom(bClass)
-                                || bClass.isAssignableFrom(aClass))) {
-                            problems.add("Loop constraint " + constraint
-                                    + " must loop between similar types");
-                            continue;
+                        if (model.isGeneratedClassesAvailable()) {
+                            Class<?> aClass = path.getEndType();
+                            Class<?> bClass = loopPath.getEndType();
+                            if (!(aClass.isAssignableFrom(bClass)
+                                    || bClass.isAssignableFrom(aClass))) {
+                                problems.add("Loop constraint " + constraint
+                                        + " must loop between similar types");
+                                continue;
+                            }
                         }
                         String loop = ((PathConstraintLoop) constraint).getDescriptiveString();
                         if (existingLoops.contains(loop)) {
@@ -1771,20 +1773,23 @@ public class PathQuery implements Cloneable
                         + "be an attribute");
                 continue;
             }
-            Class<?> parentClassType = subclassPath.getEndClassDescriptor().getType();
+
             ClassDescriptor subclassDesc = model.getClassDescriptorByName(subclass.getType());
-            Class<?> subclassType = (subclassDesc == null ? null : subclassDesc.getType());
-            if (subclassType == null) {
-                problems.add("Subclass " + subclass.getType() + " (for path " + subclass.getPath()
-                        + ") is not in the model");
-                continue;
-            }
-            if (!parentClassType.isAssignableFrom(subclassType)) {
-                problems.add("Subclass constraint on path " + subclass.getPath() + " (type "
-                        + DynamicUtil.getFriendlyName(parentClassType) + ") restricting to type "
-                        + DynamicUtil.getFriendlyName(subclassType) + " is not possible, as it is "
-                        + "not a subclass");
-                continue;
+            if (model.isGeneratedClassesAvailable()) {
+                Class<?> parentClassType = subclassPath.getEndClassDescriptor().getType();
+                Class<?> subclassType = (subclassDesc == null ? null : subclassDesc.getType());
+                if (subclassType == null) {
+                    problems.add("Subclass " + subclass.getType() + " (for path " + subclass.getPath()
+                            + ") is not in the model");
+                    continue;
+                }
+                if (!parentClassType.isAssignableFrom(subclassType)) {
+                    problems.add("Subclass constraint on path " + subclass.getPath() + " (type "
+                            + DynamicUtil.getFriendlyName(parentClassType) + ") restricting to type "
+                            + DynamicUtil.getFriendlyName(subclassType) + " is not possible, as it is "
+                            + "not a subclass");
+                    continue;
+                }
             }
             subclasses.put(subclass.getPath(), subclass.getType());
         }
@@ -2158,7 +2163,7 @@ public class PathQuery implements Cloneable
      * @return This query as xml
      */
     public synchronized String toXml() {
-    	return this.toXml(PathQuery.USERPROFILE_VERSION);
+        return this.toXml(PathQuery.USERPROFILE_VERSION);
     }
 
     /**
@@ -2179,5 +2184,21 @@ public class PathQuery implements Cloneable
         }
 
         return sw.toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (other instanceof PathQuery) {
+            return ((PathQuery) other).toXml().equals(this.toXml());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return toXml().hashCode();
     }
 }

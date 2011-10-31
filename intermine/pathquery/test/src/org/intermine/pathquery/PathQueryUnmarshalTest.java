@@ -159,7 +159,7 @@ public class PathQueryUnmarshalTest extends  TestCase
         String path = "PathQueryBindingUnmarshal/MultipleQueries.xml";
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
         Model model = Model.getInstanceByName("testmodel");
-        Collection<PathQuery> pqlist = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).values();
+        Collection<PathQuery> pqlist = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values();
 
         assertEquals(pqlist.size(), 2);
     }
@@ -168,7 +168,7 @@ public class PathQueryUnmarshalTest extends  TestCase
         String path = "PathQueryBindingUnmarshal/MultipleQueriesSameName.xml";
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
         Model model = Model.getInstanceByName("testmodel");
-        Set<String> pqnames = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).keySet();
+        Set<String> pqnames = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).keySet();
 
         assertTrue(pqnames.contains("a_query"));
         assertTrue(pqnames.contains("a_query_1"));
@@ -209,7 +209,7 @@ public class PathQueryUnmarshalTest extends  TestCase
         String path = "PathQueryBindingUnmarshal/" + fileName;
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
         Model model = Model.getInstanceByName("testmodel");
-        PathQuery ret = PathQueryBinding.unmarshal(new InputStreamReader(is), 1).values().iterator().next();
+        PathQuery ret = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values().iterator().next();
         return ret;
     }
 }
