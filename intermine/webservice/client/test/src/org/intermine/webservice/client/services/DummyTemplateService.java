@@ -10,11 +10,14 @@ package org.intermine.webservice.client.services;
  *
  */
 
-import org.intermine.webservice.client.core.XMLTableResult;
+import org.intermine.webservice.client.core.Request;
+import org.intermine.webservice.client.results.XMLTableResult;
+
+import static org.junit.Assert.*;
 
 /**
  * Provides a dummy-fied TemplateService.
- * 
+ *
  * @author Matthew Wakeling
  **/
 public class DummyTemplateService extends TemplateService
@@ -40,9 +43,11 @@ public class DummyTemplateService extends TemplateService
         this.expectedUrl = url;
     }
 
-    protected XMLTableResult getResponseTable(TemplateRequest request) {
-        if (!request.getUrl(true).equals(expectedUrl)) {
-            throw new IllegalArgumentException("Expected URL \"" + expectedUrl + "\" does not match got URL \"" + request.getUrl(true) + "\"");
+    @Override
+    protected XMLTableResult getResponseTable(Request request) {
+        assureOutputFormatSpecified(request);
+        if (!request.getEncodedUrl().equals(expectedUrl)) {
+            assertEquals(expectedUrl, request.getUnencodedUrl());
         }
         return new XMLTableResult(fakeResponse);
     }

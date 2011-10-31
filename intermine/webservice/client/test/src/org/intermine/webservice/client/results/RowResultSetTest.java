@@ -1,26 +1,22 @@
-package org.intermine.webservice.client.core;
+package org.intermine.webservice.client.results;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
-import java.util.TreeSet;
-import java.util.Map.Entry;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.intermine.webservice.client.results.RowResultSet;
 
 import junit.framework.TestCase;
 
 public class RowResultSetTest extends TestCase {
 
-	private List<String> views = Arrays.asList(
-		"Employee.age",
-		"Employee.fullTime",
-		"Employee.name",
-		"Employee.end",
+    private List<String> views = Arrays.asList(
+        "Employee.age",
+        "Employee.fullTime",
+        "Employee.name",
+        "Employee.end",
         "Employee.manager.end"
         );
 
@@ -31,16 +27,16 @@ public class RowResultSetTest extends TestCase {
             );
 
     private RowResultSet resultset = null;
-	
-	public RowResultSetTest() {
-	}
 
-	public RowResultSetTest(String name) {
-		super(name);
-	}
-	
+    public RowResultSetTest() {
+    }
+
+    public RowResultSetTest(String name) {
+        super(name);
+    }
+
     @Override
-	public void setUp() {
+    public void setUp() {
         InputStream is = getClass().getResourceAsStream("resultrowset.json");
         resultset = new RowResultSet(is, views);
     }
