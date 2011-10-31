@@ -62,7 +62,7 @@ public class ImportQueriesForm extends ValidatorForm
             }
 
             // TODO: Assumes we are loading the latest version format.
-            map = PathQueryBinding.unmarshal(new StringReader(xml),
+            map = PathQueryBinding.unmarshalPathQueries(new StringReader(xml),
                     PathQuery.USERPROFILE_VERSION);
         }
         return map;

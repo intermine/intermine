@@ -39,8 +39,8 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -52,6 +52,7 @@ import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.Aspect;
@@ -101,6 +102,7 @@ public final class SessionMethods
         protected boolean done = false;
         protected boolean error = false;
 
+        @SuppressWarnings("unused")
         protected boolean isDone() {
             return done;
         }
@@ -237,7 +239,7 @@ public final class SessionMethods
      * @param response the response
      */
     public static void loadQuery(PathQuery query, HttpSession session,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+            HttpServletResponse response) {
         // Depending on the class, load PathQuery or TemplateQuery
         if (query instanceof TemplateQuery) {
             TemplateQuery template = (TemplateQuery) query;
@@ -378,7 +380,7 @@ public final class SessionMethods
      * @param message The message to store
      */
     private static void recordMessage(String message, String attrib, HttpSession session) {
-        @SuppressWarnings("unchecked") Set<String> set = (Set<String>) session.getAttribute(attrib);
+        Set<String> set = (Set<String>) session.getAttribute(attrib);
         if (set == null) {
             set = Collections.synchronizedSet(new LinkedHashSet<String>());
             session.setAttribute(attrib, set);
@@ -457,7 +459,7 @@ public final class SessionMethods
         ProfileManager pm = im.getProfileManager();
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                    new HashMap<String, TemplateQuery>(), null, true));
+                    new HashMap<String, ApiTemplate>(), null, true));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 
@@ -619,7 +621,7 @@ public final class SessionMethods
     /**
      * Return the Map of currently running queries from the session.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static Map<String, QueryMonitor> getRunningQueries(final HttpSession session) {
         Map queries = (Map) session.getAttribute(Constants.RUNNING_QUERIES);
         if (queries == null) {
@@ -730,6 +732,7 @@ public final class SessionMethods
      */
     @SuppressWarnings("unchecked")
     public static void setResultsTable(HttpSession session, String identifier, PagedTable table) {
+        @SuppressWarnings("rawtypes")
         Map<String, PagedTable> tables = (Map) session.getAttribute(Constants.TABLE_MAP);
         if (tables == null) {
             tables = Collections.synchronizedMap(new LRUMap(100));
@@ -911,7 +914,6 @@ public final class SessionMethods
      * @param servletContext a ServletContext object
      * @return a Map
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, Aspect> getAspects(ServletContext servletContext) {
         return (Map<String, Aspect>) servletContext.getAttribute(Constants.ASPECTS);
     }
@@ -1058,7 +1060,6 @@ public final class SessionMethods
      * @param servletContext the ServletContext
      * @return a Set of aspect names
      */
-    @SuppressWarnings("unchecked")
     public static Set<String> getCategories(ServletContext servletContext) {
         return (Set<String>) servletContext.getAttribute(Constants.CATEGORIES);
     }
@@ -1128,6 +1129,7 @@ public final class SessionMethods
      * object to put in the session
      */
     public static void setNotCurrentSavedBagsStatus(HttpSession session, Profile profile) {
+        @SuppressWarnings("unchecked")
         Map<String, String> savedBagsStatus = new HashedMap();
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
@@ -1138,13 +1140,12 @@ public final class SessionMethods
         session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
     }
 
-	public static void setOpenIdProviders(ServletContext ctx, Set<String> providers) {
-		ctx.setAttribute(Constants.OPENID_PROVIDERS, providers);
-	}
+    public static void setOpenIdProviders(ServletContext ctx, Set<String> providers) {
+        ctx.setAttribute(Constants.OPENID_PROVIDERS, providers);
+    }
 
-	@SuppressWarnings("unchecked")
-	public static Set<String> getOpenIdProviders(HttpSession session) {
-		ServletContext ctx = session.getServletContext();
-		return (Set<String>) ctx.getAttribute(Constants.OPENID_PROVIDERS);
-	}
+    public static Set<String> getOpenIdProviders(HttpSession session) {
+        ServletContext ctx = session.getServletContext();
+        return (Set<String>) ctx.getAttribute(Constants.OPENID_PROVIDERS);
+    }
 }

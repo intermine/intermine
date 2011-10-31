@@ -22,8 +22,8 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.api.util.NameUtil;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**

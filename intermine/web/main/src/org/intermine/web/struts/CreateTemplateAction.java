@@ -26,12 +26,13 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -155,12 +156,13 @@ public class CreateTemplateAction extends InterMineAction
 
         recordMessage(new ActionMessage(key, template.getName()), request);
 
+        ApiTemplate toSave = new ApiTemplate(template);
         if (isNewTemplate) {
-            profile.saveTemplate(template.getName(), template);
+            profile.saveTemplate(template.getName(), toSave);
         } else {
             String oldTemplateName = (prevTemplateName != null)
                 ? prevTemplateName : template.getName();
-            profile.updateTemplate(oldTemplateName, template);
+            profile.updateTemplate(oldTemplateName, toSave);
             session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
             im.getTrackerDelegate().updateTemplateName(oldTemplateName, template.getName());
         }
@@ -170,15 +172,15 @@ public class CreateTemplateAction extends InterMineAction
             ServletContext servletContext = session.getServletContext();
             SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
             if (!isNewTemplate) {
-                tr.webSearchableUpdated(template, TagTypes.TEMPLATE);
+                tr.webSearchableUpdated(toSave, TagTypes.TEMPLATE);
             } else {
-                tr.webSearchableAdded(template, TagTypes.TEMPLATE);
+                tr.webSearchableAdded(toSave, TagTypes.TEMPLATE);
             }
         }
         session.removeAttribute(Constants.NEW_TEMPLATE);
         session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
 
-        SessionMethods.loadQuery(template, request.getSession(), response);
+        SessionMethods.loadQuery(toSave, request.getSession(), response);
         return mapping.findForward("query");
     }
 }

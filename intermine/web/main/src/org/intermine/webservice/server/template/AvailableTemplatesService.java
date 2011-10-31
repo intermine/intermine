@@ -22,9 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -68,7 +69,7 @@ public class AvailableTemplatesService extends WebService
             HttpServletResponse response) throws Exception {
 
         TemplateManager templateManager = im.getTemplateManager();
-        Map<String, TemplateQuery> templates;
+        Map<String, ApiTemplate> templates;
         boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
             Profile profile = SessionMethods.getProfile(request.getSession());
@@ -84,7 +85,7 @@ public class AvailableTemplatesService extends WebService
 
         if (formatIsXML()) {
             ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
-            output.addResultItem(Arrays.asList(TemplateHelper.templateMapToXml(templates,
+            output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToXml(templates,
                     PathQuery.USERPROFILE_VERSION)));
         } else if (formatIsJSON()) {
             ResponseUtil.setJSONHeader(response,  FILE_BASE_NAME + ".json");
@@ -94,7 +95,7 @@ public class AvailableTemplatesService extends WebService
             }
             attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
             output.setHeaderAttributes(attributes);
-            output.addResultItem(Arrays.asList(TemplateHelper.templateMapToJson(templates)));
+            output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(templates)));
         } else {
             ResponseUtil.setPlainTextHeader(response, FILE_BASE_NAME + ".txt");
             Set<String> templateNames = new TreeSet<String>(templates.keySet());

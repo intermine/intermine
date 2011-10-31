@@ -23,10 +23,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -61,11 +62,11 @@ public class SummariseTemplatesAction extends InterMineAction
 
         TemplateManager templateManager = new TemplateManager(profile,
                 im.getObjectStore().getModel());
-        Map<String, TemplateQuery> templates = templateManager.getGlobalTemplates();
+        Map<String, ApiTemplate> templates = templateManager.getGlobalTemplates();
 
-        for (Map.Entry<String, TemplateQuery> entry : templates.entrySet()) {
+        for (Map.Entry<String, ApiTemplate> entry : templates.entrySet()) {
             //String templateName = entry.getKey();
-            TemplateQuery template = entry.getValue();
+            ApiTemplate template = entry.getValue();
             try {
                 summariser.summarise(template);
             } catch (ObjectStoreException e) {

@@ -17,10 +17,10 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.InterMineObject;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;

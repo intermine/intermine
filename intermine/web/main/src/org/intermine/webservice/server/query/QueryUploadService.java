@@ -49,8 +49,8 @@ public class QueryUploadService extends WebService
     public static final String QUERIES_PARAMETER = "xml";
     /** The key for the version parameter **/
     public static final String VERSION_PARAMETER = "version";
-    public static final String USAGE = 
-          "\nQuery Upload Service:\n" 
+    public static final String USAGE =
+          "\nQuery Upload Service:\n"
         + "==========================\n"
         + "Parameters:\n"
         + QUERIES_PARAMETER + ": XML representation of template(s)\n"
@@ -87,7 +87,7 @@ public class QueryUploadService extends WebService
         Map<String, PathQuery> queries;
         Map<String, SavedQuery> toSave = new HashMap<String, SavedQuery>();
         try {
-            queries = PathQueryBinding.unmarshal(r, version);
+            queries = PathQueryBinding.unmarshalPathQueries(r, version);
         } catch (RuntimeException e) {
             throw new ServiceException("Error parsing queries", e);
         }

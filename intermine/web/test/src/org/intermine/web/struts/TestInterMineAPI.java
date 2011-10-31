@@ -15,11 +15,11 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
+import org.intermine.template.TemplateManager;
 
 /**
  * InterMineAPITest is a class created only to allow some tests.

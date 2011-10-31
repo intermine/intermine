@@ -14,14 +14,15 @@ import java.util.List;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.template.SwitchOffAbility;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.SwitchOffAbility;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.web.autocompletion.AutoCompleter;
 
 public class DisplayConstraintFactory
@@ -57,7 +58,7 @@ public class DisplayConstraintFactory
             // we need to find the original template to retrieve the summary
             TemplateManager templateManager = im.getTemplateManager();
 
-            TemplateQuery originalTemplate =
+            ApiTemplate originalTemplate =
                 templateManager.getUserOrGlobalTemplate(profile, template.getName());
             TemplateSummariser templateSummariser = im.getTemplateSummariser();
             if (templateSummariser.isSummarised(originalTemplate)) {

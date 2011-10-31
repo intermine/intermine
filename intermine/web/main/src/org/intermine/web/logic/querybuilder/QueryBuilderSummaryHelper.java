@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.intermine.api.template.SwitchOffAbility;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.SwitchOffAbility;
+import org.intermine.template.TemplateQuery;
 
 /**
  * Methods to generate summary information for a PathQuery for use in display of QueryBuilder

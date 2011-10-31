@@ -34,9 +34,10 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -109,7 +110,7 @@ public class BeginAction extends InterMineAction
             }
         }
 
-        List<TemplateQuery> templates = null;
+        List<ApiTemplate> templates = null;
 
         // do we have popular templates cached?
         if (bagOfTabs == null) {

@@ -82,6 +82,8 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * For using of web services see InterMine wiki pages.
  *
  * @author Jakub Kulaviak
+ * @author Alex Kalderimis
+ * @version 
  */
 public abstract class WebService
 {
@@ -157,15 +159,25 @@ public abstract class WebService
         return (format >= JSON_RANGE_START && format <= JSON_RANGE_END);
     }
 
+    /**
+     * @return Whether or not the format is a JSON-P format
+     */
     protected boolean formatIsJSONP() {
         return formatIsJSON() && (getFormat() % 2 == 1);
     }
 
+
+    /**
+     * @return Whether or not the format is for JSON-Objects
+     */
     protected boolean formatIsJsonObj() {
         int format = getFormat();
         return (format == JSON_OBJ_FORMAT || format == JSONP_OBJ_FORMAT);
     }
 
+    /**
+     * @return Whether or not the format is a flat-file format
+     */
     protected boolean formatIsFlatFile() {
         int format = getFormat();
         return (format == TSV_FORMAT || format == CSV_FORMAT);
@@ -179,7 +191,7 @@ public abstract class WebService
 
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
 
-	private static final String AUTH_TOKEN_PARAM_KEY = "token";
+    private static final String AUTH_TOKEN_PARAM_KEY = "token";
 
     protected HttpServletRequest request;
 
@@ -187,11 +199,9 @@ public abstract class WebService
 
     protected Output output;
 
-    private boolean authenticated = false;
-
     protected InterMineAPI im;
 
-	private ApiPermission permission = null;
+    private ApiPermission permission = null;
 
     /**
      * Construct the web service with the InterMine API object that gives access
@@ -263,7 +273,8 @@ public abstract class WebService
     }
 
     /**
-     * Subclasses can put initialisation checks here. The main use case is for confirming
+     * Subclasses can put initialisation checks here. 
+     * The main use case is for confirming
      * authentication.
      */
     protected void validateState() {
@@ -280,8 +291,7 @@ public abstract class WebService
      *
      * THIS IS NOT BASIC AUTHENTICATION - WE NEED TO FIX THIS!!
      *
-     * @param request
-     *            request
+     * @param request request
      */
     private void authenticate(HttpServletRequest request) {
 
@@ -289,29 +299,29 @@ public abstract class WebService
         final ProfileManager pm = im.getProfileManager();
 
         try {
-	        if (StringUtils.isEmpty(authToken)) {
-	            final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-	            if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
-	                return;
-	            }
+            if (StringUtils.isEmpty(authToken)) {
+                final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
+                if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
+                    return;
+                }
 
-	            final String decoded = new String(Base64.decodeBase64(authString.getBytes()));
-	            final String[] parts = decoded.split(":", 2);
-	            if (parts.length != 2) {
-	                throw new BadRequestException(
-	                    "Invalid request authentication. "
-	                    + "Authorization field contains invalid value. "
-	                    + "Decoded authorization value: " + parts[0]);
-	            }
-	            final String username = parts[0];
-	            final String password = parts[1];
+                final String decoded = new String(Base64.decodeBase64(authString.getBytes()));
+                final String[] parts = decoded.split(":", 2);
+                if (parts.length != 2) {
+                    throw new BadRequestException(
+                        "Invalid request authentication. "
+                        + "Authorization field contains invalid value. "
+                        + "Decoded authorization value: " + parts[0]);
+                }
+                final String username = parts[0];
+                final String password = parts[1];
 
-	            permission = pm.getPermission(username, password, im.getClassKeys());
-	        } else {
-	            permission = pm.getPermission(authToken, im.getClassKeys());
-	        }
+                permission = pm.getPermission(username, password, im.getClassKeys());
+            } else {
+                permission = pm.getPermission(authToken, im.getClassKeys());
+            }
         } catch (AuthenticationException e) {
-        	throw new ServiceForbiddenException(e.getMessage(), e);
+            throw new ServiceForbiddenException(e.getMessage(), e);
         }
 
         final HttpSession session = request.getSession();

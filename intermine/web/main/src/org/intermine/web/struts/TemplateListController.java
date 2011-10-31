@@ -28,10 +28,11 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -63,7 +64,7 @@ public class TemplateListController extends TilesAction
         }
 
         InterMineBag interMineIdBag = (InterMineBag) context.getAttribute("interMineIdBag");
-        List<TemplateQuery> templates = null;
+        List<ApiTemplate> templates = null;
         TemplateManager templateManager = im.getTemplateManager();
         Set<String> allClasses = new HashSet<String>();
         if (StringUtils.equals(Scope.GLOBAL, scope)) {

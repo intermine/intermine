@@ -62,8 +62,7 @@ import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.api.template.TemplateQuery;
+import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
@@ -77,6 +76,8 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.api.template.TemplateManager;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
@@ -167,7 +168,7 @@ public class AjaxServices
             HttpSession session = ctx.getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = SessionMethods.getProfile(session);
-            Map<String, TemplateQuery> templates = profile.getSavedTemplates();
+            Map<String, ApiTemplate> templates = profile.getSavedTemplates();
             TemplateQuery t = templates.get(templateName);
             WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
@@ -197,8 +198,8 @@ public class AjaxServices
             HttpSession session = ctx.getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile = SessionMethods.getProfile(session);
-            Map<String, TemplateQuery> templates = profile.getSavedTemplates();
-            TemplateQuery template = templates.get(templateName);
+            Map<String, ApiTemplate> templates = profile.getSavedTemplates();
+            ApiTemplate template = templates.get(templateName);
             TemplateSummariser summariser = im.getTemplateSummariser();
             try {
                 session.setAttribute("summarising_" + templateName, "true");
@@ -643,7 +644,7 @@ public class AjaxServices
             int count = 0;
             try {
                 imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-                List<TemplateQuery> conversionTemplates = templateManager.getConversionTemplates();
+                List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
 
                 PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
