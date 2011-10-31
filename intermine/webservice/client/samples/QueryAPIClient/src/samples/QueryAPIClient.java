@@ -11,10 +11,12 @@ package samples;
  */
 
 import java.io.IOException;
+import java.io.PrintStream;
+
+import java.util.Iterator;
 import java.util.List;
 
-import org.intermine.metadata.Model;
-import org.intermine.pathquery.OrderDirection;
+import static org.apache.commons.lang.StringUtils.repeat;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.QueryService;
@@ -25,34 +27,37 @@ import org.intermine.webservice.client.services.QueryService;
  **/
 public class QueryAPIClient
 {
-    private static String serviceRootUrl = "http://localhost:8080/query/service";
+    private static final String serviceRootUrl = "http://www.flymine.org/query/service";
+    private static final String NL = System.getProperty("line.separator");
+    private static final String FORMAT = "%-8s | %s" + NL;
+    private static final ServiceFactory factory = new ServiceFactory(serviceRootUrl);
+    private static final PrintStream o = System.out;
 
     /**
      * @param args command line arguments
      * @throws IOException
      */
     public static void main(String[] args) {
-        ServiceFactory factory = new ServiceFactory(serviceRootUrl, "QueryAPIClient");
+
         QueryService service = factory.getQueryService();
-        Model model = factory.getModelService().getModel();
 
         // Create a query
-        PathQuery query = new PathQuery(model);
-        query.addViews("Organism.name", "Organism.taxonId");
-        query.addOrderBy("Organism.name", OrderDirection.ASC);
+        PathQuery query = new PathQuery(factory.getModel());
+        query.addViews("Organism.taxonId", "Organism.name");
 
         // Run the query
-        List<List<String>> result = service.getAllResults(query);
+        Iterator<List<Object>> result = service.getRowListIterator(query);
 
-        // Output results
-        int count = 0;
-        for (List<String> row : result) {
-            for (String cell : row) {
-                System.out.print(cell + "\t");
-            }
-            System.out.println();
-            count++;
+        // Print a header
+        o.printf(FORMAT, "Taxon ID", "Species");
+        o.println(repeat("-", 9) + "+" + repeat("-", 30));
+
+        // Print the results
+        while (result.hasNext()) {
+            o.printf(FORMAT, result.next().toArray());
         }
-        System.out.println(System.getProperty("line.separator") + count + " results");
+
+        // Print a summary
+        o.println(NL + service.getCount(query) + " results");
     }
 }
