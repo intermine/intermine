@@ -114,6 +114,7 @@ class Service(object):
     LIST_CREATION_PATH     = '/lists/json'
     LIST_RENAME_PATH       = '/lists/rename/json'
     LIST_APPENDING_PATH    = '/lists/append/json'
+    LIST_TAG_PATH          = '/list/tags/json'
     SAVEDQUERY_PATH        = '/savedqueries/xml'
     VERSION_PATH           = '/version/ws'
     RELEASE_PATH           = '/version/release'

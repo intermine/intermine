@@ -179,6 +179,57 @@ class ListManager(object):
                 raise ListServiceError(response_data.get("error"))
         self.refresh_lists()
 
+    def remove_tags(self, to_remove_from, tags):
+        """
+        Add the tags to the given list
+        ==============================
+
+        Returns the current tags of this list.
+        """
+        uri = self.service.root + self.service.LIST_TAG_PATH
+        form = {"name": to_remove_from.name, "tags": ";".join(tags)}
+        uri += "?" + urllib.urlencode(form)
+        body = self.service.opener.delete(uri)
+        return self._body_to_json(body)["tags"]
+
+    def add_tags(self, to_tag, tags):
+        """
+        Add the tags to the given list
+        ==============================
+
+        Returns the current tags of this list.
+        """
+        uri = self.service.root + self.service.LIST_TAG_PATH
+        form = {"name": to_tag.name, "tags": ";".join(tags)}
+        resp = self.service.opener.open(uri, urllib.urlencode(form))
+        body = resp.read()
+        resp.close()
+        return self._body_to_json(body)["tags"]
+
+    def get_tags(self, im_list):
+        """
+        Get the up-to-date set of tags for a given list
+        ===============================================
+
+        Returns the current tags of this list.
+        """
+        uri = self.service.root + self.service.LIST_TAG_PATH
+        form = {"name": im_list.name}
+        uri += "?" + urllib.urlencode(form)
+        resp = self.service.opener.open(uri)
+        body = resp.read()
+        resp.close()
+        return self._body_to_json(body)["tags"]
+
+    def _body_to_json(self, body):
+        try:
+            data = json.loads(body)
+        except ValueError:
+            raise ListServiceError("Error parsing response: " + body)
+        if not data.get("wasSuccessful"):
+            raise ListServiceError(data.get("error"))
+        return data
+
     def delete_temporary_lists(self):
         """Delete all the lists considered temporary (those created without names)"""
         self.delete_lists(self._temp_lists)

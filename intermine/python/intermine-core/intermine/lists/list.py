@@ -346,3 +346,30 @@ class List(object):
         subtr.name = self.name
         return subtr
 
+    def add_tags(self, *tags):
+        """
+        Tag this list with one or more categories
+        =========================================
+
+        Calls the server to add these tags, and updates this lists tags.
+        """
+        self._tags = frozenset(self._manager.add_tags(self, tags))
+
+    def remove_tags(self, *tags):
+        """
+        Remove tags associated with this list.
+        ======================================
+
+        Calls the server to remove these tags, and updates this lists tags.
+        """
+        self._tags = frozenset(self._manager.remove_tags(self, tags))
+
+    def update_tags(self, *tags):
+        """
+        Remove tags associated with this list.
+        ======================================
+
+        Calls the server to remove these tags, and updates this lists tags.
+        """
+        self._tags = frozenset(self._manager.get_tags(self))
+
