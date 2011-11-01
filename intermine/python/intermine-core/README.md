@@ -85,5 +85,6 @@ Changes:
 
 0.98.13: Added query column summary support
 0.98.14: Added status property to list objects
+0.98.15: Added lazy-reference fetching for result objects, and list-tagging support
 
 

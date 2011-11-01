@@ -28,6 +28,35 @@ class LiveListTest(unittest.TestCase):
         s = Service("www.flymine.org/query")
         all_lists = s.get_all_lists()
         self.assertEqual("CURRENT", all_lists[0].status)
+
+    def testListTaggAdding(self):
+        s = self.SERVICE
+        t = self.TYPE;
+        l = s.create_list(self.GUYS_NAMES, t, description="Id string")
+        self.assertEqual(set(), l.tags)
+        l.add_tags("a-tag", "b-tag")
+        self.assertEqual(set(["a-tag", "b-tag"]), l.tags)
+
+    def testListTaggRemoval(self):
+        s = self.SERVICE
+        t = self.TYPE;
+        tags = ["a-tag", "b-tag", "c-tag"]
+        l = s.create_list(self.GUYS_NAMES, t, description="Id string", tags = tags)
+        self.assertEqual(set(tags), l.tags)
+        l.remove_tags("a-tag", "c-tag")
+        self.assertEqual(set(["b-tag"]), l.tags)
+        l.remove_tags("b-tag", "d-tag")
+        self.assertEqual(set(), l.tags)
+
+    def testListTagUpdating(self):
+        s = self.SERVICE
+        t = self.TYPE;
+        l = s.create_list(self.GUYS_NAMES, t, description="Id string")
+        self.assertEqual(set(), l.tags)
+        self.assertEqual(["a-tag", "b-tag"], s._list_manager.add_tags(l, ["a-tag", "b-tag"]))
+        self.assertEqual(set(), l.tags)
+        l.update_tags()
+        self.assertEqual(set(["a-tag", "b-tag"]), l.tags)
     
     def testLists(self):
         t = self.TYPE;
