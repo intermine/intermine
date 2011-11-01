@@ -421,19 +421,27 @@ class ResultObject(object):
         if isinstance(fld, Attribute):
             if name in self._data:
                 attr = self._data[name]
-        elif isinstance(fld, Collection):
-            if name in self._data:
-                attr = map(lambda x: ResultObject(x, fld.type_class), self._data[name])
-            else:
-                attr = []
         elif isinstance(fld, Reference):
             if name in self._data:
-                attr = ResultObject(self._data[name], fld.type_class)
+                data = self._data[name]
+            else:
+                data = self._fetch_reference(fld)
+            if isinstance(fld, Collection):
+                attr = map(lambda x: ResultObject(x, fld.type_class), data)
+            else: 
+                attr = ResultObject(data, fld.type_class)
         else:
             raise WebserviceError("Inconsistent model - This should never happen")
         self._attr_cache[name] = attr
         return attr
-            
+
+    def _fetch_reference(self, fld):
+        q = self._cld.model.service.new_query(self._cld.name)
+        q.select("id", fld.name + ".*")
+        q.where("id", "=", self._data["objectId"])
+        q.outerjoin(fld.name)
+        return q.first()._data[fld.name]
+
 
 class ResultRow(object):
     """
@@ -582,19 +590,12 @@ class ResultIterator(object):
         else:
             params.update({"format" : rowformat})
 
-        url  = root + path
-        data = urllib.urlencode(params)
-        con = opener.open(url, data)
-        self.reader = {
-            "tsv"         : lambda: FlatFileIterator(con, EchoParser()),
-            "csv"         : lambda: FlatFileIterator(con, EchoParser()),
-            "count"       : lambda: FlatFileIterator(con, EchoParser()),
-            "list"        : lambda: JSONIterator(con, ListValueParser()),
-            "rr"          : lambda: JSONIterator(con, ResultRowParser(view)),
-            "dict"        : lambda: JSONIterator(con, DictValueParser(view)),
-            "jsonobjects" : lambda: JSONIterator(con, ResultObjParser(cld)),
-            "jsonrows"    : lambda: JSONIterator(con, EchoParser())
-        }.get(rowformat)()
+        self.url  = root + path
+        self.data = urllib.urlencode(params)
+        self.view = view
+        self.opener = opener
+        self.cld = cld
+        self.rowformat = rowformat
 
     def __iter__(self):
         """
@@ -603,7 +604,18 @@ class ResultIterator(object):
 
         Returns the internal iterator object.
         """
-        return self.reader
+        con = self.opener.open(self.url, self.data)
+        reader = {
+            "tsv"         : lambda: FlatFileIterator(con, EchoParser()),
+            "csv"         : lambda: FlatFileIterator(con, EchoParser()),
+            "count"       : lambda: FlatFileIterator(con, EchoParser()),
+            "list"        : lambda: JSONIterator(con, ListValueParser()),
+            "rr"          : lambda: JSONIterator(con, ResultRowParser(self.view)),
+            "dict"        : lambda: JSONIterator(con, DictValueParser(self.view)),
+            "jsonobjects" : lambda: JSONIterator(con, ResultObjParser(self.cld)),
+            "jsonrows"    : lambda: JSONIterator(con, EchoParser())
+        }.get(self.rowformat)()
+        return reader
 
     def next(self):
         """
@@ -611,7 +623,7 @@ class ResultIterator(object):
         
         @rtype: whatever the rowformat was determined to be
         """
-        return self.reader.next()
+        return iter(self).next()
 
 class FlatFileIterator(object):
     """
