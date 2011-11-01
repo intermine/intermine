@@ -419,6 +419,13 @@ class Path(object):
         return isinstance(self.end, Attribute)
 
 class Column(object):
+    """
+    A representation of a path in a query that can be constrained
+    =============================================================
+
+    Column objects allow constraints to be constructed in something
+    close to a declarative style
+    """
 
     def __init__(self, path, model, subclasses={}, query=None):
         self._model = model
