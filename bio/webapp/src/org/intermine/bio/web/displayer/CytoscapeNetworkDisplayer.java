@@ -85,6 +85,7 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         //=== Handle object ===
         // From gene report page
         InterMineObject object = reportObject.getObject();
+        request.setAttribute("cytoscapeInteractionObjectId", object.getId());
         // From list analysis page
         InterMineBag bag = (InterMineBag) request.getAttribute("bag"); // OrthologueLinkController
 
