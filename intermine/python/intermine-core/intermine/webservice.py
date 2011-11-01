@@ -596,6 +596,7 @@ class ResultIterator(object):
         self.opener = opener
         self.cld = cld
         self.rowformat = rowformat
+        self._it = None
 
     def __iter__(self):
         """
@@ -623,7 +624,13 @@ class ResultIterator(object):
         
         @rtype: whatever the rowformat was determined to be
         """
-        return iter(self).next()
+        if self._it is None:
+            self._it = iter(self)
+        try:
+            return self._it.next()
+        except StopIteration:
+            self._it = None
+            raise StopIteration
 
 class FlatFileIterator(object):
     """
