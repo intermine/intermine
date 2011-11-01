@@ -108,6 +108,7 @@ module InterMine
         LIST_DIFFERENCE_PATH = "/lists/diff/json"
         LIST_INTERSECTION_PATH = "/lists/intersect/json"
         LIST_SUBTRACTION_PATH = "/lists/subtract/json"
+        LIST_TAG_PATH = "/list/tags/json"
 
         # The webservice version. An integer that 
         # supplies information about what features are supported.
@@ -122,11 +123,13 @@ module InterMine
         
         # A collection of the names of any templates that this service was not able to parse,
         # and you will thus not be able to access.
-        :broken_templates
+        attr_reader :broken_templates
 
         def_delegators :@list_manager, 
-            :lists, :list, :list_names, :create_list, :delete_lists, :get_lists_with_tags,
-            :union_of, :intersection_of, :symmetric_difference_of, :subtract
+            :lists, :list, :list_names, :create_list, :delete_lists, 
+            :get_lists_with_tags,
+            :union_of, :intersection_of, :symmetric_difference_of, 
+            :subtract
 
         # Construct a new service.
         #

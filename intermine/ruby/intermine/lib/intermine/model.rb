@@ -509,10 +509,10 @@ module Metadata
 
                 klass = Module.new
                 fd_names = @fields.values.map { |x| x.name }
+                attr_names = @fields.values.select { |x| x.is_a?(AttributeDescriptor)}.map {|x| x.name}
                 klass.class_eval do
                     include *supers
-                    attr_reader *fd_names
-
+                    attr_reader *attr_names
                 end
 
                 @fields.values.each do |fd|
@@ -535,6 +535,20 @@ module Metadata
                             end
                         end
                     end
+                    
+                    if fd.is_a?(ReferenceDescriptor)
+                        klass.class_eval do 
+                            define_method(fd.name) do 
+                                if instance_variable_get("@" + fd.name).nil?
+                                    q = __cd__.select(fd.name + ".*").where(:id => objectId)
+                                    instance_var = q.results.first[fd.name]
+                                    instance_variable_set("@" + fd.name, instance_var)
+                                end
+                                return instance_variable_get("@" + fd.name)
+                            end
+                        end
+                    end
+
                     klass.class_eval do
                         define_method(fd.name + "=") do |val|
                             if fd.is_a?(AttributeDescriptor)
