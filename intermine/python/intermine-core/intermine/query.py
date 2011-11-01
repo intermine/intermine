@@ -1279,13 +1279,12 @@ class Query(object):
         @raise WebserviceError: if the request is unsuccessful.
         """
         count_str = ""
-        rows = self.results("count")
-        for row in rows:
+        for row in self.results(row = "count"):
             count_str += row
         try:
             return int(count_str)
         except ValueError:
-            raise WebserviceError("Server returned a non-integer count: " + count_str)
+            raise ResultError("Server returned a non-integer count: " + count_str)
 
     def get_list_upload_uri(self):
         """
@@ -1683,5 +1682,8 @@ class ConstraintError(QueryError):
     pass
 
 class QueryParseError(QueryError):
+    pass
+
+class ResultError(ReadableException):
     pass
 
