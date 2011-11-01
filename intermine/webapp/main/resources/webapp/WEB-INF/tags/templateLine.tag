@@ -1,7 +1,7 @@
 <%@ tag body-content="empty"  %>
 
 <%@ attribute name="scope" required="true" %>
-<%@ attribute name="templateQuery" required="true" type="org.intermine.api.template.TemplateQuery" %>
+<%@ attribute name="templateQuery" required="true" type="org.intermine.template.TemplateQuery" %>
 <%@ attribute name="interMineObject" required="false" type="java.lang.Object" %>
 <%@ attribute name="name" required="false" type="java.lang.String" %>
 <%@ attribute name="descr" required="false" type="java.lang.String" %>
