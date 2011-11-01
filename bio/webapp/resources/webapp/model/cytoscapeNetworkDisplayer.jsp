@@ -182,7 +182,7 @@
     <a class="more" style="float:right;"><span>Show more rows</span></a>
   </div>
   <div class="show-in-table">
-    <html:link action="/collectionDetails?id=${object.id}&amp;field=interactions&amp;trail=${param.trail}">
+    <html:link action="/collectionDetails?id=${cytoscapeInteractionObjectId}&amp;field=interactions&amp;trail=${param.trail}">
       Show all in a table &raquo;
     </html:link>
   </div>
