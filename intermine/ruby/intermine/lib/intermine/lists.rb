@@ -46,6 +46,8 @@ module InterMine::Lists
     #
     class List
 
+        include Enumerable
+
         # The name of the list. This can be changed at any time.
         attr_reader :name
 
@@ -164,21 +166,8 @@ module InterMine::Lists
         #   end
         #  
         def each
-            query.each_result {|r| yield r}
+            query.results.each {|r| yield r}
             return self
-        end
-
-        # Return a list composed of the results of the elements of 
-        # this list process by the given block
-        #
-        #   symbols = list.map {|gene| gene.symbol}
-        #
-        def map 
-            ret = []
-            query.each_result {|r|
-                ret.push(yield r)
-            }
-            return ret
         end
 
         # Used to create a new list from the contents of this one. This can be used
@@ -296,6 +285,31 @@ module InterMine::Lists
                 self.name = myname
             end
             return self
+        end
+
+        # Add tags to the list
+        #
+        # Updates the current tags by adding tags to the list.
+        #
+        def add_tags(*tags)
+            @tags = @manager.add_tags(self, tags)
+        end
+
+        # Remove one or more tags from the list
+        #
+        # If the tags are not currently associated with the list, 
+        # they will be ignored. 
+        #
+        def remove_tags(*tags)
+            to_remove = tags.select {|t| @tags.include? t}
+            unless to_remove.empty?
+                @tags = @manager.remove_tags(self, to_remove)
+            end
+        end
+
+        # Update this lists tags with the current tags on the server.
+        def update_tags
+            @tags = @manager.tags_for(self)
         end
 
         private
@@ -583,6 +597,51 @@ module InterMine::Lists
             ret = list(new_name)
             ret.unmatched_identifiers.replace(failed_matches)
             return ret
+        end
+
+        # Add tags to a list. 
+        #
+        # Returns the current tags
+        #
+        def add_tags(list, *tags)
+            uri = URI.parse(@service.root + Service::LIST_TAG_PATH)
+            params = @service.params.merge("name" => list.name, "tags" => tags.join(";"))
+            res = Net::HTTP.post_form(uri, params)
+            check_response_for_error(res)
+            return JSON.parse(res.body)["tags"]
+        end
+
+        # Remove tags from a list
+        #
+        # Returns the current tags
+        #
+        def remove_tags(list, *tags)
+            uri = URI.parse(@service.root + Service::LIST_TAG_PATH)
+            params = @service.params.merge(
+                "name" => list.name, 
+                "tags" => tags.join(";")
+            )
+            req_path = uri.path + "?" + params_to_query_string(params)
+            req = Net::HTTP::Delete.new(req_path)
+            res = Net::HTTP.start(uri.host, uri.port) do |http|
+                http.request(req)
+            end
+            check_response_for_error(res)
+            return JSON.parse(res.body)["tags"]
+        end
+
+        # Get the current tags for a list
+        def tags_for(list)
+            uri = URI.parse(@service.root + Service::LIST_TAG_PATH)
+            params = @service.params.merge(
+                "name" => list.name
+            )
+            req_path = uri.path + "?" + params_to_query_string(params)
+            res = Net::HTTP.start(uri.host, uri.port) {|http|
+                  http.get(req_path)
+            }
+            check_response_for_error(res)
+            return JSON.parse(res.body)["tags"]
         end
 
         # only handles single value keys!
