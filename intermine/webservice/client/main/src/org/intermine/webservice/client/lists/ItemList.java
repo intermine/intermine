@@ -179,7 +179,7 @@ public class ItemList extends AbstractSet<Item> implements Iterable<Item>
 
     /**
      * Any status other than <code>CURRENT</code>
-     * indicated this list needs manual attention in the 
+     * indicated this list needs manual attention in the
      * webapp.
      * @return the current status if the list.
      */
@@ -198,6 +198,7 @@ public class ItemList extends AbstractSet<Item> implements Iterable<Item>
      * @param tags The tags this list is associated with.
      * @param authorized Whether the user can modify this list.
      * @param createdAt When the list was created.
+     * @param status The upgrade status of the list.
      */
     ItemList(ServiceFactory fac, String name, String desc, int size,
             String type, List<String> tags, boolean authorized, Date createdAt, String status) {
