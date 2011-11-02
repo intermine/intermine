@@ -79,7 +79,7 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getJSONResults(test1, middle);
         assertEquals(5, results.size());
-        assertEquals("Kai Dörfler", results.get(0).getString("name"));
+        assertEquals("Kai D\u00f6rfler", results.get(0).getString("name"));
         assertEquals(28, results.get(4).getInt("age"));
     }
 
@@ -88,7 +88,7 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getJSONResults(test1.toXml(), middle);
         assertEquals(5, results.size());
-        assertEquals("Kai Dörfler", results.get(0).getString("name"));
+        assertEquals("Kai D\u00f6rfler", results.get(0).getString("name"));
         assertEquals(28, results.get(4).getInt("age"));
     }
 
