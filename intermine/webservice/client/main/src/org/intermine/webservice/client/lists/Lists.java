@@ -61,7 +61,8 @@ public final class Lists
             for (int i = 0; i < noOfTags; i++) {
                 tags.add(tagArray.getString(i));
             }
-            return new ItemList(fac, name, description, size, type, tags, authorized, createdAt, status);
+            return new ItemList(fac, name, description, size,
+                    type, tags, authorized, createdAt, status);
         } catch (JSONException e) {
             throw new ServiceException("Error parsing '" + data.toString() + "'", e);
         } catch (ParseException e) {
@@ -86,7 +87,8 @@ public final class Lists
             }
             String name = jo.getString("listName");
             int size = 0;
-            ItemList il = new ItemList(factory, name, null, size, "dummy", null, true, new Date(), null);
+            ItemList il = new ItemList(factory, name, null, size, "dummy",
+                    null, true, new Date(), null);
             if (jo.has("unmatchedIdentifiers")) {
                 JSONArray badIds = jo.getJSONArray("unmatchedIdentifiers");
                 for (int i = 0; i < badIds.length(); i++) {
