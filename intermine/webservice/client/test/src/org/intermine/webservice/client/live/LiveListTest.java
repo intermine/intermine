@@ -360,7 +360,7 @@ public class LiveListTest {
     @Test
     public void removingFromCollection() {
         ListCreationInfo info = testmine.new ListCreationInfo("Employee");
-        info.setContent("Anne", "Brenda", "Carol", "Timo Becker", "Frank Möllers");
+        info.setContent("Anne", "Brenda", "Carol", "Timo Becker", "Frank M\u00f6llers");
         info.addTag("java-list");
 
         ItemList newList = testmine.createList(info);
