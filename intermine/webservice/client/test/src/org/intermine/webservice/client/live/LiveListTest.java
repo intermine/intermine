@@ -131,7 +131,7 @@ public class LiveListTest {
     @Test
     public void trickyCharacters() throws FileNotFoundException, ParseException {
         ListCreationInfo info = testmine.new ListCreationInfo("Employee");
-        info.setContent(Arrays.asList("Herr Pötsch"));
+        info.setContent(Arrays.asList("Herr P\u00f6tsch"));
         info.addTag("java-list");
 
         ItemList newList = testmine.createList(info);
