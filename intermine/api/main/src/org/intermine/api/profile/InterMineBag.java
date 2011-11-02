@@ -48,13 +48,11 @@ import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
-import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
-import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
@@ -245,6 +243,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      *
      * @return a List of Integers
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<Integer> getContentsAsIds() {
         Query q = new Query();
         q.addToSelect(osb);
@@ -258,6 +257,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * in this bag as Integer IDs.
      * @return a List of Integers
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<Integer> getIdsContained(Collection<Integer> ids) {
         Query q = new Query();
         q.setDistinct(false);
@@ -381,10 +381,8 @@ public class InterMineBag implements WebSearchable, Cloneable
         try {
             QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
             q.addFrom(qc);
-            QueryClass qce = null;
             if (hasExtraValue) {
                 QueryObjectPathExpression qope = new QueryObjectPathExpression(qc, extraConnectField);
-                qce = new QueryClass(Class.forName(extraClassName));
                 qope.addToSelect(qope.getDefaultClass());
                 q.addToSelect(qope);
                 q.addToSelect(qc);
