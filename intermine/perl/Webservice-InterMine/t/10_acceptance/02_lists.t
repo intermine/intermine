@@ -15,7 +15,7 @@ my($service, $initial_list_count);
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 118 );
+    plan( tests => 129 );
 
 my $module = 'Webservice::InterMine';
 my $id_file = 't/data/test-identifiers.list';
@@ -26,6 +26,7 @@ GET_SERVICE: {
     no warnings "deprecated";
     $service = eval {Webservice::InterMine->get_service(
         'squirrel.flymine.org/intermine-test', 'intermine-test-user', 'intermine-test-user-password');};
+    die $@ if $@;
 }
 
 $initial_list_count = $service->list_count;
@@ -323,6 +324,64 @@ PRINTING: {
 68\t""\tfalse\tFrank Möllers
 |;
     is $buffer, $expected, "Can print a list";
+}
+
+TAGGING_ADDING: {
+    eval {
+        my $list = $service->new_list(
+            type => "Employee", 
+            content => $id_file
+        );
+        is($list->tags->size, 0, "Tags are empty to start with");
+        $list->add_tags("test-tag-a", "test-tag-b");
+        is($list->tags->size, 2, "Tags are the right size after request")
+            or diag $list->tags;
+        ok($list->tags->contains("test-tag-a", "test-tag-b"),
+            "The tags are correct"
+        );
+    };
+    note($@), fail("adding tags") if $@;
+}
+
+TAGGING_REMOVAL: {
+    eval {
+        my $list = $service->new_list(
+            type => "Employee", 
+            content => $id_file,
+            tags => [qw/test-tag-a test-tag-b test-tag-c/]
+        );
+        is(3, $list->tags->size, "Tags are the right size to start with");
+        $list->remove_tags("test-tag-a", "test-tag-c");
+        is(1, $list->tags->size, "Tags are the right size after request");
+        $list->remove_tags("test-tag-b", "test-tag-d");
+        is(0, $list->tags->size, "Tags are the right size after request");
+    };
+    note($@), fail("removing tags") if $@;
+}
+
+TAGGING_UPDATES: {
+    eval {
+        my $list = $service->new_list(
+            type => "Employee", 
+            content => $id_file,
+            tags => ["test-tag-x"],
+        );
+        my @tags = ("test-tag-a", "test-tag-b");
+        is($list->tags->size, 1, "Tags are empty to start with");
+        is_deeply(
+            [$service->_lists->add_tags($list, @tags)],
+            [@tags, "test-tag-x"],
+            "Added the tags correctly"
+        );
+        is($list->tags->size, 1, "But the list doesn't know anything about that");
+        $list->update_tags();
+        is($list->tags->size, 3, "Tags are the right size after update")
+            or diag $list->tags;
+        ok($list->tags->contains(@tags, "test-tag-x"),
+            "The tags are correct"
+        );
+    };
+    note($@), fail("adding tags") if $@;
 }
 
 RENAME_DELETE: {

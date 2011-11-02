@@ -49,7 +49,7 @@ throws_ok(
     "Throws an error at bad urls",
 );
 
-is($module->get_service->version, 6, "Service version is correct");
+ok($module->get_service->version >= 6, "Service version is correct");
 isa_ok($module->get_service->model, 'InterMine::Model', "The model the service makes");
 my $q;
 lives_ok(sub {$q = $module->new_query}, "Makes a new query ok");
