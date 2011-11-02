@@ -178,7 +178,6 @@ public class PortalQueryAction extends InterMineAction
         WebResults webResults = executor.execute(pathQuery, returnBagQueryResults);
 
         String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), "link");
-        InterMineBag imBag = profile.createBag(bagName, className, "", im.getClassKeys());
         List<Integer> bagList = new ArrayList<Integer>();
 
         // There's only one node, get the first value
@@ -192,7 +191,7 @@ public class PortalQueryAction extends InterMineAction
 
         // Use custom converters
         Map<String, String []> additionalConverters =
-            bagQueryConfig.getAdditionalConverters(imBag.getType());
+            bagQueryConfig.getAdditionalConverters(className);
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
 
@@ -219,6 +218,8 @@ public class PortalQueryAction extends InterMineAction
                     if (converted.size() == 1) {
                         return goToReport(mapping, converted.get(0).toString());
                     }
+                    InterMineBag imBag = profile.createBag(bagName, className, "",
+                                                           im.getClassKeys());
                     return createBagAndGoToBagDetails(mapping, imBag, converted);
                 }
             }
@@ -237,6 +238,7 @@ public class PortalQueryAction extends InterMineAction
             return goToReport(mapping, bagList.get(0).toString());
         // Make a bag
         } else if (bagList.size() >= 1) {
+            InterMineBag imBag = profile.createBag(bagName, className, "", im.getClassKeys());
             return createBagAndGoToBagDetails(mapping, imBag, bagList);
         // No matches
         } else {
