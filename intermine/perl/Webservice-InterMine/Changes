@@ -124,6 +124,8 @@ Revision history for Webservice-InterMine
 0.9812: Added summarise method to runnable queries to get path summary information
 0.9813: Added support for the "status" field on lists, so you know if they need manual updating or not.
 0.9814: Fixed bug in simple service
+0.9815: Moved simple classes out to own distribution (See: Webservice::InterMine::Simple on CPAN).
+0.9816: Added list-tagging support
 
         
 

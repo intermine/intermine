@@ -61,6 +61,7 @@ use constant {
     INTERSECTION_PATH => '/lists/intersect/json',
     SUBTRACTION_PATH => '/lists/subtract/json',
     DIFFERENCE_PATH => '/lists/diff/json',
+    LIST_TAG_PATH => '/list/tags/json',
 };
 
 
@@ -408,11 +409,54 @@ sub new_list {
     return $self->parse_upload_response($resp);
 }
 
+sub add_tags {
+    my ($self, $list, @tags) = @_;
+    my %params = (
+        name => $list->name,
+        tags => join(";", @tags),
+    );
+    my @params = $self->service->build_params(%params);
+    my $uri = $self->service->root . LIST_TAG_PATH;
+    my $response = $self->service->post($uri, \@params);
+    $self->check_response_for_error($response);
+    my $data = $self->decode($response->content);
+    return @{ $data->{tags} };
+}
+
+sub remove_tags {
+    my ($self, $list, @tags) = @_;
+    my %params = (
+        name => $list->name,
+        tags => join(";", @tags),
+    );
+    my $uri = $self->service->build_uri(
+        $self->service_root . LIST_TAG_PATH, %params);
+    my $resp = $self->service->agent->request(
+        HTTP::Request::Common::DELETE($uri));
+    $self->check_response_for_error($resp);
+    my $data = $self->decode($resp->content);
+    return @{ $data->{tags} };
+}
+
+sub get_tags {
+    my ($self, $list) = @_;
+    my %params = (
+        name => $list->name,
+    );
+    my $uri = $self->service->build_uri(
+        $self->service_root . LIST_TAG_PATH, %params);
+    my $resp = $self->service->get($uri);
+    $self->check_response_for_error($resp);
+    my $data = $self->decode($resp->content);
+    return @{ $data->{tags} };
+}
+
 sub check_response_for_error {
     my ($self, $resp) = @_;
+    my $json;
     if ($resp->is_error) {
         my $error = eval {
-            my $json = $self->decode($resp->content);
+            $json = $self->decode($resp->content);
             return $json->{error};
         } || $resp->status_line . $resp->content;
         confess $error;

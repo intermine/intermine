@@ -84,10 +84,6 @@ lib/Webservice/InterMine/Role/Serviced.pm
 lib/Webservice/InterMine/Role/Showable.pm
 lib/Webservice/InterMine/Service.pm
 lib/Webservice/InterMine/ServiceResolver.pm
-lib/Webservice/InterMine/Simple.pm
-lib/Webservice/InterMine/Simple/Query.pm
-lib/Webservice/InterMine/Simple/Service.pm
-lib/Webservice/InterMine/Simple/Template.pm
 lib/Webservice/InterMine/SortOrder.pm
 lib/Webservice/InterMine/TemplateConstraintFactory.pm
 lib/Webservice/InterMine/TemplateFactory.pm

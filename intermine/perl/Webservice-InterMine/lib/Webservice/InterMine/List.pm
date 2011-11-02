@@ -623,6 +623,50 @@ sub append {
     return $self;
 }
 
+=head2 add_tags(@tags)
+
+Add the given tags to the list, updating this list on the server
+and changing the tags attribute of the object.
+
+=cut
+
+sub add_tags {
+    my $self = shift;
+    my @to_add = @_;
+    my @new_tags = $self->factory->add_tags($self, @to_add);
+    $self->tags->clear;
+    $self->tags->insert(@new_tags);
+}
+
+=head2 remove_tags(@tags)
+
+Remove the given tags from the list, updating this list on the server
+and changing the tags attribute of the object.
+
+=cut
+
+sub remove_tags {
+    my $self = shift;
+    my @to_remove = @_;
+    my @new_tags = $self->factory->remove_tags($self, @to_remove);
+    $self->tags->clear;
+    $self->tags->insert(@new_tags);
+}
+
+=head2 update_tags()
+
+Update the tags for this list to be up-to-date with those stored on
+the server.
+
+=cut
+
+sub update_tags {
+    my $self = shift;
+    my @new_tags = $self->factory->get_tags($self);
+    $self->tags->clear;
+    $self->tags->insert(@new_tags);
+}
+
 =head2 to_string
 
 Return a human readable string representation of this list. This consists of
