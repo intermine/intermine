@@ -27,6 +27,7 @@ public class XMLFormatter extends Formatter
     private final Stack<String> openElements = new Stack<String>();
 
     /** {@inheritDoc}} **/
+    @SuppressWarnings("rawtypes")
     @Override
     public String formatHeader(Map<String, Object> attributes) {
         StringBuilder sb = new  StringBuilder();
@@ -35,7 +36,13 @@ public class XMLFormatter extends Formatter
         sb.append("<ResultSet ");
         if (attributes != null) {
             for (String key : attributes.keySet()) {
-                sb.append(key + "=\"" + attributes.get(key) + "\" ");
+                if (attributes.get(key) instanceof Map) {
+                    for (Object subK: ((Map) attributes.get(key)).keySet()) {
+                        sb.append(subK + "=\"" + ((Map) attributes.get(key)).get(subK) + "\" ");
+                    }
+                } else {
+                    sb.append(key + "=\"" + attributes.get(key) + "\" ");
+                }
             }
         }
         sb.append(">");
