@@ -10,6 +10,7 @@ package org.intermine.webservice.server.widget;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.intermine.webservice.server.WebServiceInput;
@@ -23,9 +24,8 @@ import org.intermine.webservice.server.WebServiceInput;
 public class WidgetsServiceInput extends WebServiceInput
 {
     private String widgetId;
-    private String className;
-    private List<String> extraAttributes;
-    private List<String> ids;
+    private String bagName;
+    private List<String> extraAttributes = new ArrayList<String>();
 
     /**
      * Get the name or id of the widget
@@ -34,13 +34,15 @@ public class WidgetsServiceInput extends WebServiceInput
     public String getWidgetId() {
         return widgetId;
     }
+
     /**
      * Set the widget name or ID
      * @param widgetId the widgetId to set
      */
-    public void setWidgetId(String widgetId) {
+    void setWidgetId(String widgetId) {
         this.widgetId = widgetId;
     }
+
     /**
      * Get the List of extra attributes
      * @return the extraAttributes
@@ -48,40 +50,29 @@ public class WidgetsServiceInput extends WebServiceInput
     public List<String> getExtraAttributes() {
         return extraAttributes;
     }
+
     /**
      * Set the list of extra attributes
      * @param extraAttributes the extraAttributes to set
      */
-    public void setExtraAttributes(List<String> extraAttributes) {
+    void setExtraAttributes(List<String> extraAttributes) {
         this.extraAttributes = extraAttributes;
     }
+
     /**
      * Get the type of the bag
      * @return the className
      */
-    public String getClassName() {
-        return className;
+    public String getBagName() {
+        return bagName;
     }
+
     /**
      * Set the type of list
      * @param className the className to set
      */
-    public void setClassName(String className) {
-        this.className = className;
-    }
-    /**
-     * Get the list of ids
-     * @return the ids
-     */
-    public List<String> getIds() {
-        return ids;
-    }
-    /**
-     * set the list of Ids
-     * @param ids the ids to set
-     */
-    public void setIds(List<String> ids) {
-        this.ids = ids;
+    void setBagName(String className) {
+        this.bagName = className;
     }
 
 }
