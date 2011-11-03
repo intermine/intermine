@@ -58,7 +58,7 @@ public class WidgetsRequestParser
         String maxP = request.getParameter(MAXP);
         String errorCorrection = request.getParameter(ERROR_CORRECTION);
 
-        if (isBlank(widgetId) || isBlank(bagName) || isBlank(filter)
+        if (isBlank(widgetId) || isBlank(bagName)
                 || isBlank(maxP) || isBlank(errorCorrection)) {
             throw new BadRequestException("Bad parameters. I expected a value for each of "
                 + Arrays.asList(WIDGET_ID, BAG_NAME, FILTER, MAXP, ERROR_CORRECTION)
