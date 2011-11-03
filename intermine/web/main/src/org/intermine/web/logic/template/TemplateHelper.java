@@ -339,7 +339,10 @@ public final class TemplateHelper
     private static TemplateValue createTemplateValue(PathConstraint con, ConstraintInput input,
             SwitchOffAbility switchOffAbility) {
         TemplateValue value;
-        if (con instanceof PathConstraintLookup) {
+        if (PathConstraintBag.VALID_OPS.contains(input.getConstraintOp())) {
+            value = new TemplateValue(con, input.getConstraintOp(), input.getValue(),
+                TemplateValue.ValueType.BAG_VALUE, switchOffAbility);
+        } else if (con instanceof PathConstraintLookup) {
             value = new TemplateValue(con, input.getConstraintOp(), input.getValue(),
                     TemplateValue.ValueType.SIMPLE_VALUE, input.getExtraValue(), switchOffAbility);
         } else if (con instanceof PathConstraintBag) {
