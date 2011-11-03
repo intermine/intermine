@@ -17,17 +17,18 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
-import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathConstraint;
@@ -66,9 +67,21 @@ public class CreateTemplateAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
-        WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
+        String prevTemplateName = template.getName();
 
         boolean seenProblem = false;
+        TemplateSettingsForm tsf = (TemplateSettingsForm) form;
+        ActionErrors errors = tsf.validate(mapping, request);
+        saveErrors(request, (ActionMessages) errors);
+        if (errors != null) {
+            return mapping.findForward("query");
+        }
+        template.setDescription(tsf.getDescription());
+        template.setName(tsf.getName());
+        template.setTitle(tsf.getTitle());
+        template.setComment(tsf.getComment());
+
+        WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         // Check whether query has at least one constraint and at least one output
         if (template.getView().size() == 0) {
@@ -94,9 +107,8 @@ public class CreateTemplateAction extends InterMineAction
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null
             && ((Boolean) session.getAttribute(Constants.NEW_TEMPLATE)).booleanValue())
             ? true : false;
-        String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
         if (profile.getSavedTemplates().containsKey(template.getName())
-                && (isNewTemplate
+            && (isNewTemplate
                 || (prevTemplateName != null && !prevTemplateName.equals(template.getName())))) {
             recordError(new ActionMessage("errors.createtemplate.existing", template.getName()),
                     request);
@@ -163,7 +175,6 @@ public class CreateTemplateAction extends InterMineAction
             String oldTemplateName = (prevTemplateName != null)
                 ? prevTemplateName : template.getName();
             profile.updateTemplate(oldTemplateName, toSave);
-            session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
             im.getTrackerDelegate().updateTemplateName(oldTemplateName, template.getName());
         }
 
@@ -178,7 +189,6 @@ public class CreateTemplateAction extends InterMineAction
             }
         }
         session.removeAttribute(Constants.NEW_TEMPLATE);
-        session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
 
         SessionMethods.loadQuery(toSave, request.getSession(), response);
         return mapping.findForward("query");

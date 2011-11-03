@@ -8,6 +8,5 @@
 
 <tiles:get name="queryBuilder"/>
 <tiles:insert page="templateSettings.jsp"/>
-<tiles:insert page="queryBuilderTemplatePreview.jsp"/>
 <tiles:insert page="queryBuilderActions.jsp"/>
 <!-- /queryBuilderPage.jsp -->
