@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -32,6 +33,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.jfree.util.Log;
 
 /**
  * @author "Xavier Watkins"
@@ -40,6 +42,7 @@ import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 public class EnrichmentWidget extends Widget
 {
 
+    private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
     private int notAnalysed = 0;
     private InterMineBag bag;
     private ObjectStore os;
@@ -89,34 +92,35 @@ public class EnrichmentWidget extends Widget
 
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (NumberFormatException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (SecurityException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (NoSuchMethodException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List getElementInList() {
         return new Vector();
     }
@@ -142,17 +146,7 @@ public class EnrichmentWidget extends Widget
         return (!resultMaps.isEmpty() && resultMaps.get(0) != null && resultMaps.get(0).size() > 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<List<String>> getExportResults(String[]selected) throws Exception {
-
-        Map<String, BigDecimal> pvalues = resultMaps.get(0);
-        //Map<String, Long> totals = resultMaps.get(1);
-        Map<String, String> labelToId = resultMaps.get(2);
-        List<List<String>> exportResults = new ArrayList<List<String>>();
-        List<String> selectedIds = Arrays.asList(selected);
-
+    private Map<String, List<String>> getTermsToIds(List<String> selectedIds) throws Exception {
         Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
         Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
             ObjectStore.class, String.class});
@@ -174,6 +168,22 @@ public class EnrichmentWidget extends Widget
             }
             termsToIds.get(termId).add(id);
         }
+
+        return termsToIds;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<List<String>> getExportResults(String[] selected) throws Exception {
+
+        Map<String, BigDecimal> pvalues = resultMaps.get(0);
+        //Map<String, Long> totals = resultMaps.get(1);
+        Map<String, String> labelToId = resultMaps.get(2);
+        List<List<String>> exportResults = new ArrayList<List<String>>();
+        List<String> selectedIds = Arrays.asList(selected);
+
+        Map<String, List<String>> termsToIds = getTermsToIds(selectedIds);
 
         for (String id : selectedIds) {
             if (labelToId.get(id) != null) {
@@ -248,6 +258,26 @@ public class EnrichmentWidget extends Widget
             return flattenedResults;
         }
         return null;
+    }
+
+    public List<List<Object>> getResults() throws Exception {
+        List<List<Object>> results = new LinkedList<List<Object>>();
+        if (resultMaps != null && !resultMaps.isEmpty()) {
+            Map<String, BigDecimal> pvalues = resultMaps.get(0);
+            Map<String, Long> totals = resultMaps.get(1);
+            Map<String, String> labelToId = resultMaps.get(2);
+            for (String id : pvalues.keySet()) {
+                List<Object> row = new LinkedList<Object>();
+                row.add(id);
+                row.add(labelToId.get(id));
+                row.add(pvalues.get(id).doubleValue());
+                row.add(totals.get(id));
+                Map<String, List<String>> termsToIds = getTermsToIds(Arrays.asList(id));
+                row.add(termsToIds.get(id));
+                results.add(row);
+            }
+        }
+        return results;
     }
 
     /**
