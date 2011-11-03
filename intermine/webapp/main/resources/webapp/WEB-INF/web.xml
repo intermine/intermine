@@ -328,20 +328,6 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>ws-widgets</servlet-name>
-    <servlet-class>org.intermine.webservice.server.widget.WidgetsServlet</servlet-class>
-    <init-param>
-       <param-name>debug</param-name>
-       <param-value>true</param-value>
-    </init-param>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ws-widgets</servlet-name>
-    <url-pattern>/service/widgets</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
     <servlet-name>ws-version</servlet-name>
     <servlet-class>org.intermine.webservice.server.VersionServlet</servlet-class>
     <init-param>
@@ -370,7 +356,7 @@
   </servlet-mapping>
 
   <!-- NEW IN VERSION 6 -->
-  
+
   <servlet>
     <servlet-name>ws-possible-values</servlet-name>
     <servlet-class>org.intermine.webservice.server.path.PossibleValuesServlet</servlet-class>
@@ -400,7 +386,7 @@
   </servlet-mapping>
 
   <!-- NEW IN VERSION 7 -->
-  
+
   <servlet>
     <servlet-name>ws-summary-fields</servlet-name>
     <servlet-class>org.intermine.webservice.server.SummaryServlet</servlet-class>
@@ -443,6 +429,21 @@
     <url-pattern>/service/list/tags/*</url-pattern>
   </servlet-mapping>
 
+  <!-- NEW IN VERSION 8 -->
+
+  <servlet>
+  <servlet-name>ws-available-widgets</servlet-name>
+    <servlet-class>org.intermine.webservice.server.widget.AvailableWidgetsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-available-widgets</servlet-name>
+    <url-pattern>/service/widgets/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>ws-service-listing</servlet-name>
@@ -452,6 +453,20 @@
        <param-value>true</param-value>
     </init-param>
   </servlet>
+
+  <servlet>
+    <servlet-name>ws-widgets</servlet-name>
+    <servlet-class>org.intermine.webservice.server.widget.WidgetsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-widgets</servlet-name>
+    <url-pattern>/service/list/enrichment/*</url-pattern>
+  </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
