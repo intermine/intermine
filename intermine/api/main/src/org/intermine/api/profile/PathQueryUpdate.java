@@ -28,7 +28,13 @@ import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
-public class PathQueryUpdate {
+/**
+ * Update a pathquery with a new model
+ * @author butano
+ *
+ */
+public class PathQueryUpdate
+{
     protected PathQuery pathQuery;
     protected PathQuery newPathQuery;
     protected Model oldModel;
@@ -37,37 +43,57 @@ public class PathQueryUpdate {
     public PathQueryUpdate() {
     }
 
+    /**
+     * Construct a PathQueryUpdate to update a pathquery given i input with a new model
+     * @param pathQuery
+     * @param newModel
+     * @param oldModel
+     */
     public PathQueryUpdate(PathQuery pathQuery, Model newModel, Model oldModel) {
         this.pathQuery = pathQuery;
         this.oldModel = oldModel;
         this.newPathQuery = new PathQuery(newModel);
     }
 
+    /**
+     * Return a new pathquery updated to a new model
+     * @return the new pathquery
+     */
     public PathQuery getUpdatedPathQuery() {
         return newPathQuery;
     }
 
-    
+    /**
+     * Return true if the pathquery has been updated
+     * @return true if the pathquery has been updated, false otherwise
+     */
     public boolean isUpdated() {
         return isUpdated;
     }
 
+    /**
+     * Update path
+     * @param renamedClasses
+     * @param renamedFields
+     * @return
+     * @throws PathException
+     */
     public synchronized List<String> update(Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
-            // Update view paths
-            updateView(renamedClasses, renamedFields);
-            // Update constraints
-            updateConstraints(renamedClasses, renamedFields);
-            // Update outer join paths
-            updateOuterJoins(renamedClasses, renamedFields);
-            // Update description paths
-            updateDescriptionsPath(renamedClasses, renamedFields);
-            // Update order by paths
-            updateOrderByPath(renamedClasses, renamedFields);
+        // Update view paths
+        updateView(renamedClasses, renamedFields);
+        // Update constraints
+        updateConstraints(renamedClasses, renamedFields);
+        // Update outer join paths
+        updateOuterJoins(renamedClasses, renamedFields);
+        // Update description paths
+        updateDescriptionsPath(renamedClasses, renamedFields);
+        // Update order by paths
+        updateOrderByPath(renamedClasses, renamedFields);
 
-            List<String> problems = newPathQuery.verifyQuery();
-            return problems;
-        }
+        List<String> problems = newPathQuery.verifyQuery();
+        return problems;
+    }
 
     private void updateView (Map<String, String> renamedClasses, Map<String, String> renamedFields)
         throws PathException {
@@ -148,7 +174,8 @@ public class PathQueryUpdate {
             orderPath = orderElement.getOrderPath();
             newOrderPath = getPathUpdated(orderPath, renamedClasses, renamedFields);
             if (!newOrderPath.equals(orderPath)) {
-                newPathQuery.addOrderBy(new OrderElement(newOrderPath, orderElement.getDirection()));
+                newPathQuery.addOrderBy(new OrderElement(newOrderPath,
+                                        orderElement.getDirection()));
             } else {
                 newPathQuery.addOrderBy(orderElement);
             }
