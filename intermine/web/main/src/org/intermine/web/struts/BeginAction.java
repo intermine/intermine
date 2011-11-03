@@ -112,57 +112,54 @@ public class BeginAction extends InterMineAction
 
         List<ApiTemplate> templates = null;
 
-        // do we have popular templates cached?
-        if (bagOfTabs == null) {
-            // ...get begin/homepage popular templates in tabs
-            Properties props = PropertiesUtil.getPropertiesStartingWith("begin.tabs", properties);
-            if (props.size() != 0) {
-                props = PropertiesUtil.stripStart("begin.tabs", props);
-                int i = 1;
-                // init
-                bagOfTabs = new LinkedHashMap<String, HashMap<String, Object>>();
-                while (true) {
-                    if (props.containsKey(i + ".id")) {
-                        LinkedHashMap<String, Object> tab = new LinkedHashMap<String, Object>();
-                        String identifier;
+        //get begin/homepage popular templates in tabs
+        Properties props = PropertiesUtil.getPropertiesStartingWith("begin.tabs", properties);
+        if (props.size() != 0) {
+            props = PropertiesUtil.stripStart("begin.tabs", props);
+            int i = 1;
+            // init
+            bagOfTabs = new LinkedHashMap<String, HashMap<String, Object>>();
+            while (true) {
+                if (props.containsKey(i + ".id")) {
+                    LinkedHashMap<String, Object> tab = new LinkedHashMap<String, Object>();
+                    String identifier;
 
-                        // identifier, has to be present
-                        identifier = (String) props.get(i + ".id");
-                        tab.put("identifier", identifier);
-                        // (optional) description
-                        tab.put("description", props.containsKey(i + ".description")
-                                ? (String) props.get(i + ".description") : "");
-                        tab.put("description", props.containsKey(i + ".description")
-                                ? (String) props.get(i + ".description") : "");
-                        // (optional) custom name, otherwise use identifier
+                    // identifier, has to be present
+                    identifier = (String) props.get(i + ".id");
+                    tab.put("identifier", identifier);
+                    // (optional) description
+                    tab.put("description", props.containsKey(i + ".description")
+                            ? (String) props.get(i + ".description") : "");
+                    tab.put("description", props.containsKey(i + ".description")
+                            ? (String) props.get(i + ".description") : "");
+                    // (optional) custom name, otherwise use identifier
 
-                        tab.put("name", props.containsKey(i + ".name")
-                                ? (String) props.get(i + ".name") : identifier);
-                        // fetch the actual template queries
-                        TemplateManager tm = im.getTemplateManager();
-                        Profile profile = SessionMethods.getProfile(session);
-                        if (profile.isLoggedIn()) {
-                            templates = tm.getPopularTemplatesByAspect(
-                                    TagNames.IM_ASPECT_PREFIX + identifier,
-                                    MAX_TEMPLATES, profile.getUsername(),
-                                    session.getId());
-                        } else {
-                            templates = tm.getPopularTemplatesByAspect(
-                                    TagNames.IM_ASPECT_PREFIX + identifier,
-                                    MAX_TEMPLATES);
-                        }
-
-                        if (templates.size() > MAX_TEMPLATES) {
-                            templates = templates.subList(0, MAX_TEMPLATES);
-                        }
-
-                        tab.put("templates", templates);
-
-                        bagOfTabs.put(Integer.toString(i), tab);
-                        i++;
+                    tab.put("name", props.containsKey(i + ".name")
+                            ? (String) props.get(i + ".name") : identifier);
+                    // fetch the actual template queries
+                    TemplateManager tm = im.getTemplateManager();
+                    Profile profile = SessionMethods.getProfile(session);
+                    if (profile.isLoggedIn()) {
+                        templates = tm.getPopularTemplatesByAspect(
+                                TagNames.IM_ASPECT_PREFIX + identifier,
+                                MAX_TEMPLATES, profile.getUsername(),
+                                session.getId());
                     } else {
-                        break;
+                        templates = tm.getPopularTemplatesByAspect(
+                                TagNames.IM_ASPECT_PREFIX + identifier,
+                                MAX_TEMPLATES);
                     }
+
+                    if (templates.size() > MAX_TEMPLATES) {
+                        templates = templates.subList(0, MAX_TEMPLATES);
+                    }
+
+                    tab.put("templates", templates);
+
+                    bagOfTabs.put(Integer.toString(i), tab);
+                    i++;
+                } else {
+                    break;
                 }
             }
         }
