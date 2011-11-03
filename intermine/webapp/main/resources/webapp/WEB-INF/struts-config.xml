@@ -240,7 +240,7 @@
     <action path="/queryBuilderViewAction" name="emptyForm" type="org.intermine.web.struts.QueryBuilderViewAction">
       <forward name="waiting" redirect="false" path="/pollQuery.do"/>
     </action>
-    <action path="/createTemplate" type="org.intermine.web.struts.CreateTemplateAction">
+    <action path="/createTemplate" name="templateSettingsForm" type="org.intermine.web.struts.CreateTemplateAction" validate="false">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="query" redirect="true" path="/query.do"/>
     </action>
@@ -325,9 +325,6 @@
     </action>
     <action path="/requestPasswordAction" name="requestPasswordForm" type="org.intermine.web.struts.RequestPasswordAction" input="login" parameter="action">
       <forward name="login" path="login.page"/>
-    </action>
-    <action path="/templateSettingsAction" name="templateSettingsForm" type="org.intermine.web.struts.TemplateSettingsAction" scope="request" input="query" validate="false">
-      <forward name="query" redirect="true" path="/query.do"/>
     </action>
     <action path="/createAccountAction" name="createAccountForm" type="org.intermine.web.struts.CreateAccountAction" input="createAccount">
       <forward name="createAccount" path="createAccount.page"/>
