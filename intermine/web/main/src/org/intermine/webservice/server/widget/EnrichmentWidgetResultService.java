@@ -52,6 +52,7 @@ import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
@@ -112,22 +113,25 @@ public class EnrichmentWidgetResultService extends JSONService
         addOutputInfo("requestedAt", new Date().toGMTString());
 
         WebConfig webConfig = SessionMethods.getWebConfig(request);
-
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
 
-        if (widgetConfig instanceof TableWidgetConfig) {
-            ((TableWidgetConfig) widgetConfig).setClassKeys(this.im.getClassKeys());
+        if (widgetConfig == null || !(widgetConfig instanceof EnrichmentWidgetConfig)) {
+            throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
 
-        EnrichmentWidget widget = (EnrichmentWidget) widgetConfig.getWidget(
-                imBag, im.getObjectStore(), input.getExtraAttributes());
+        EnrichmentWidget widget = null;
+        try {
+            widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(), input.getExtraAttributes());
+        } catch (ClassCastException e) {
+            throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
+        }
 
         EnrichmentResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
             List<Object> row = it.next();
             List<String> processed = processor.formatRow(row);
-            if (it.hasNext()) {
+            if (!formatIsFlatFile() && it.hasNext()) {
                 processed.add("");
             }
             output.addResultItem(processed);
