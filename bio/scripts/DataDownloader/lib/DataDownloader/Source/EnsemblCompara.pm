@@ -83,9 +83,9 @@ sub fetch_all_data {
 
         while (my $homologue_info = shift @$homologues) {
             my $gene_list = $homologue_info->gene_list();
-            while ( my $member = shift @{$gene_list} ) {
-                my $taxon_id = $member->taxon_id;
-                my $stable_id = $member->stable_id;
+            while ( my $gene = shift @{$gene_list} ) {
+                my $taxon_id = $gene->taxon_id;
+                my $stable_id = $gene->stable_id;
                 
                 my $dblinks = $gene->get_all_DBLinks('Entrez%');
                 my @symbols;
