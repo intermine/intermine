@@ -191,7 +191,7 @@ public interface Constants
      * This constant must changed every time the API changes, either by addition
      * or deletion of features.
      */
-    int WEB_SERVICE_VERSION = 7;
+    int WEB_SERVICE_VERSION = 8;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
@@ -220,5 +220,5 @@ public interface Constants
     /** The name of the current open-id provider **/
     String PROVIDER = "PROVIDER";
 
-	String OPENID_PROVIDERS = "OPENID_PROVIDERS";
+    String OPENID_PROVIDERS = "OPENID_PROVIDERS";
 }
