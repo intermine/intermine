@@ -15,6 +15,7 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Request processor for WidgetsService that process request, validates it and returns
@@ -29,19 +30,12 @@ public class WidgetsRequestParser
     /**
      * The identifier for the widget config
      */
-    private static final String WIDGET_ID = "widgetId";
-    /**
-     * The type for building the list
-     */
-    private static final String CLASS_NAME = "className";
-    /**
-     * The list of extra attributed, depending on the type of WidgetConfig
-     */
-    private static final String EXTRA_ATTRIBUTES = "extraAttributes";
-    /**
-     * The list of ids for building the list
-     */
-    private static final String IDS = "ids";
+    private static final String WIDGET_ID = "widget";
+
+    private static final String BAG_NAME = "list";
+    private static final String FILTER = "filter";
+    private static final String MAXP = "maxp";
+    private static final String ERROR_CORRECTION = "correction";
 
     /**
      * ListsRequestProcessor constructor.
@@ -59,20 +53,20 @@ public class WidgetsRequestParser
         WidgetsServiceInput ret = new WidgetsServiceInput();
 
         String widgetId = request.getParameter(WIDGET_ID);
-        String className = request.getParameter(CLASS_NAME);
-        String extraAttributes = request.getParameter(EXTRA_ATTRIBUTES);
-        String ids = request.getParameter(IDS);
+        String bagName = request.getParameter(BAG_NAME);
+        String filter = request.getParameter(FILTER);
+        String maxP = request.getParameter(MAXP);
+        String errorCorrection = request.getParameter(ERROR_CORRECTION);
 
-        if (widgetId == null || widgetId.length() <= 0
-                        || className == null || className.length() <= 0
-                        || ids == null || ids.length() <= 0) {
-            throw new BadRequestException("Parameters: " + WIDGET_ID + ", " + CLASS_NAME + ", "
-                         + EXTRA_ATTRIBUTES + ", " + IDS + " are required.");
+        if (isBlank(widgetId) || isBlank(bagName) || isBlank(filter)
+                || isBlank(maxP) || isBlank(errorCorrection)) {
+            throw new BadRequestException("Bad parameters. I expected a value for each of "
+                + Arrays.asList(WIDGET_ID, BAG_NAME, FILTER, MAXP, ERROR_CORRECTION)
+                + " but I got these parameters instead: " + request.getParameterMap().keySet());
         }
-        ret.setClassName(className);
-        ret.setExtraAttributes(Arrays.asList(extraAttributes.split(",")));
-        ret.setIds(Arrays.asList(ids.split(",")));
+        ret.setBagName(bagName);
         ret.setWidgetId(widgetId);
+        ret.setExtraAttributes(Arrays.asList(filter, maxP, errorCorrection));
 
         return ret;
     }
