@@ -24,13 +24,11 @@ use constant {
 };
 
 use constant ORGANISMS => qw(
-    homo_sapiens danio_rerio mus_musculus caenorhabditis_elegans 
-    saccharomyces_cerevisiae drosophila_melanogaster rattus_norvegicus
+    9606 7955 10090 10116 4932 7227 6239
 );
 # only load genes if they are homologues of gene of organism of interest.  can be null
 use constant HOMOLOGUES => qw(
-    homo_sapiens danio_rerio mus_musculus caenorhabditis_elegans 
-    saccharomyces_cerevisiae drosophila_melanogaster rattus_norvegicus
+    9606 7955 10090 10116 4932 7227 6239
 );
 
 sub generate_version {
@@ -70,35 +68,27 @@ sub fetch_all_data {
 
         # Get a homologues object
         my ($org_a, $org_b) = $combination->members;
-        my $db_a = $genome_db->fetch_by_registry_name($org_a);
-        my $db_b = $genome_db->fetch_by_registry_name($org_b);
+        my $db_a = $genome_db->fetch_by_taxon_id($org_a);
+        my $db_b = $genome_db->fetch_by_taxon_id($org_b);
         my $species_set = $mlss->fetch_by_method_link_type_GenomeDBs(
             ENSEMBL_ORTHOLOGUES => [$db_a, $db_b]);
         my $homologues = $homology->fetch_all_by_MethodLinkSpeciesSet($species_set);
 
         # Open the file to write to
-        my $out_file = $dir->file($org_a . '-' . $org_b . '.tsv');
+        my $out_file = $dir->file($org_a . '_' . $org_b);
         $self->debug("Writing $out_file");
         my $out = $out_file->openw;
 
         while (my $homologue_info = shift @$homologues) {
             my $gene_list = $homologue_info->gene_list();
+            my %taxon_to_homologue = ();
+            
             while ( my $gene = shift @{$gene_list} ) {
                 my $taxon_id = $gene->taxon_id;
                 my $stable_id = $gene->stable_id;
-                
-                my $dblinks = $gene->get_all_DBLinks('Entrez%');
-                my @symbols;
-                my @secondaryIdentifiers;
-                while ( my $dbentry = shift @{$dblinks} ) {
-                    push @symbols, $dbentry->display_id;
-                    push @secondaryIdentifiers, $dbentry->primary_id;
-                }
-                my $symbol = join('|', uniq(@symbols));
-                my $sec_id = join('|', uniq(@secondaryIdentifiers));
-
-                $out->print(join("\t", $taxon_id, $stable_id, $symbol, $sec_id), "\n");
+                $taxon_to_homologue{$taxon_id} = $stable_id;  
             }
+            $out->print($taxon_to_homologue{$org_a} . "\t" . $taxon_to_homologue{$org_b} . "\n");
         }
         close $out;
     }
