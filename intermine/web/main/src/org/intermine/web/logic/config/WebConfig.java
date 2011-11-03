@@ -465,7 +465,7 @@ public class WebConfig
     }
 
     /**
-     * @return the widgets
+     * @return the widgets - a map from widget name to config details.
      */
     public Map<String, WidgetConfig> getWidgets() {
         return widgets;
