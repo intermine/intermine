@@ -83,7 +83,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <!-- other mines -->
             <c:forEach items="${minesForPathways}" var="entry">
                 <c:set var="mine" value="${entry.key}" />
-                <th class="loading"><span style="background-color: ${mine.bgcolor};" color:"${mine.frontcolor};">${mine.name}</span></th>
+                <th class="loading"><span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span></th>
             </c:forEach>
       </tr>
     </thead>
