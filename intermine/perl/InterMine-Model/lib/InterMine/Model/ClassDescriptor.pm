@@ -302,6 +302,13 @@ has parental_class_descriptors => (
     },
 );
 
+has _is_ready => (
+    is => 'ro',
+    isa => Bool,
+    default => 0,
+    writer => '_set_fixed',
+);
+
 =head1 INSTANCE METHODS
 
 =head2 new_object
@@ -373,6 +380,8 @@ sub add_field {
   }
 }
 
+use Moose::Util::TypeConstraints;
+
 sub _make_fields_into_attributes {
     my $self   = shift;
     my @fields = $self->fields;
@@ -386,6 +395,11 @@ sub _make_fields_into_attributes {
             predicate => "has" . $suffix,
             $field->_get_moose_options,
         };
+
+        my $isa = Moose::Util::TypeConstraints::find_type_constraint($options->{isa});
+        unless ($isa) {
+            $self->model->get_classdescriptor_by_name($field->referenced_type_name);
+        }
 
         $self->add_attribute($field->name, $options);
         $self->add_method($field->name, sub { my $self = shift; my $reader = $get . $suffix; return $self->$reader});
