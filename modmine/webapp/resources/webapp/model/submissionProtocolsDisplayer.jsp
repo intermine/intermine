@@ -147,6 +147,7 @@ jQuery(document).ready(function () {
                 <TD colspan=2 align="left" style="padding-bottom:10px">
                     <c:set var="dccNumber" value="${fn:substringAfter(DCCid,'modENCODE_')}"/>
                     <c:set var="geoUrl" value="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=" />
+                    <c:set var="srrUrl" value="http://www.ncbi.nlm.nih.gov/sites/entrez?db=sra&report=full&term=" />
 
                     <html:link linkName="#" styleId="bro" style="cursor:pointer">
                         <h3>Browse metadata for this submission (click to toggle)<img src="images/undisclosed.gif" id="oc"></h3>
@@ -237,6 +238,10 @@ jQuery(document).ready(function () {
                                                                         <c:when test="${fn:startsWith(fn:trim(resultElement.field), 'GSM')}">
                                                                             <a href="${geoUrl}${resultElement.field}" class="value extlink">
                                                                             <c:out value="${resultElement.field}" />
+                                                                        </c:when>
+                                                                        <c:when test="${fn:startsWith(fn:trim(resultElement.field), 'SRR')}">
+                                                                         <a href="${srrUrl}${resultElement.field}" class="value extlink">
+                                                                         <c:out value="${resultElement.field}" />
                                                                         </c:when>
                                                                         <c:when test="${isFile}">
                                                                             <c:out value="${resultElement.field}" />
