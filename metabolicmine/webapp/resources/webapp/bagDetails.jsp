@@ -484,7 +484,6 @@
 	    <%-- convert to a different type & orthologues --%>
 	    <div class="box grid_6" id="convertList">
 	      <div class="feature convert">
-	        <h3 class="goog">Convert to a different type</h3>
 	        <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
 	        <html:hidden property="bagName" value="${bag.name}"/>
 	          <tiles:insert name="convertBag.tile">

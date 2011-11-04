@@ -85,6 +85,8 @@ public class ConvertBagController extends TilesAction
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(imBag.getType());
+        
+        // e.g. {Organism=[A. gambiae, C. elegans, D. ananassae]}        
         Map<String, List> customConverters = new HashMap();
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {

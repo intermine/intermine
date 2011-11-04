@@ -236,15 +236,12 @@
 <!-- closing toolbar div -->
 
 <div id="convertList" class="listtoolbox" align="left">
-<h3 class="goog"><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert</h3>
-<p>
 <tiles:insert name="convertBag.tile">
      <tiles:put name="bag" beanName="bag" />
      <tiles:put name="idname" value="cp" />
      <tiles:put name="orientation" value="h" />
 </tiles:insert>
 </html:form>
-</p>
 
 <%-- BagDisplayers --%>
     <tiles:insert page="/bagDisplayers.jsp">

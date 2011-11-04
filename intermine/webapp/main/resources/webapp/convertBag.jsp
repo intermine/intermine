@@ -8,34 +8,63 @@
 
 <!-- convertBag.jsp -->
 <tiles:importAttribute />
-    <c:forEach items="${conversionTypes}" var="type">
-      <script type="text/javascript" charset="utf-8">
-        getConvertCountForBag('${bag.name}','${type}','${idname}');
-      </script>
-      <c:set var="nameForURL"/>
-      <str:encodeUrl var="nameForURL">${bag.name}</str:encodeUrl>
-      <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${nameForURL}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount_${idname}">&nbsp;</span><br>
-    </c:forEach>
-    <c:if test="${orientation!='h'}">
-      <hr/>
-    </c:if>
-    <c:if test="${orientation=='h'}">
-     <c:forEach items="${customConverters}" var="converterInfo">
-    <h3 class="goog"><%--<c:out value="${converterInfo.key}" />--%>Orthologues</h3>
-    <p>
-    <html:select property="extraFieldValue" styleId="extraConstraintSelect" >
-        <c:forEach items="${converterInfo.value}" var="value">
-         <html:option value="${value}">${value}</html:option>
-       </c:forEach>
-    </html:select>
-  &nbsp;
-    <html:submit property="convertToThing">Convert</html:submit>
-    </p>
-    </c:forEach>
-    </c:if>
 
-<c:if test="${empty conversionTypes}">
-    <div><i><fmt:message key="convert.noresults"/></i></div>
+<div id="convert-and-orthologues">
+
+<!-- convert e.g. Transcript, Protein etc. -->
+<c:if test="${!empty conversionTypes}">
+
+   <h3 class="goog"><img src="images/icons/convert.png" title="Convert objects in this bag to different type"/>&nbsp;Convert to a different type</h3>
+
+   <c:forEach items="${conversionTypes}" var="type">
+     <script type="text/javascript" charset="utf-8">
+       getConvertCountForBag('${bag.name}','${type}','${idname}');
+     </script>
+     <c:set var="nameForURL"/>
+     <str:encodeUrl var="nameForURL">${bag.name}</str:encodeUrl>
+     <html:link action="/modifyBagDetailsAction.do?convert=${type}&bagName=${nameForURL}">${type}</html:link>&nbsp;&nbsp;<span id="${type}_convertcount_${idname}">&nbsp;</span><br>
+   </c:forEach>
+
 </c:if>
+
+<!-- organism Orthologues -->
+<c:if test="${orientation=='h'}">
+
+  <div class="orthologues">
+  <c:forEach items="${customConverters}" var="converterInfo">
+	  <h3 class="goog">Orthologues</h3>
+	  <p>
+	  <c:forEach items="${converterInfo.value}" var="value">
+	  	<a href="#">${value}</a>
+	  </c:forEach>
+	  <html:select property="extraFieldValue" styleId="extraConstraintSelect" style="display:none;">
+	      <c:forEach items="${converterInfo.value}" var="value">
+	       <html:option value="${value}">${value}</html:option>
+	     </c:forEach>
+	  </html:select>
+		&nbsp;
+	  <html:submit property="convertToThing" style="display:none;">Convert</html:submit>
+	  </p>
+  </c:forEach>
+  </div>
+  
+</c:if>
+
+<script type="text/javascript">
+(function() {
+    jQuery('#convert-and-orthologues div.orthologues a').click(function() {
+    	var t 	  = jQuery(this).text(),
+    		ortho = jQuery(this).closest('div.orthologues');
+    	ortho.find('select option').each(function() {
+    		if (jQuery(this).text() == t) {
+    			jQuery(this).attr('selected', 'selected');
+    			ortho.find('input[name="convertToThing"]').click();
+    		}
+    	});
+    });
+})();
+</script>
+
+</div>
 
 <!-- /convertBag.jsp -->

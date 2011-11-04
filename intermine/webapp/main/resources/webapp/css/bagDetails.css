@@ -48,9 +48,6 @@ li {
 .listtoolbox h3, #bagDescriptionDiv h3 {
   color:#333; font-size:1.2em;}
 
-.listtoolbox p, #bagDescriptionDiv p {
-  margin:10px 0px 0px 20px;}
-
 table.listinfotable {
 }
 table.listinfotable tr td {
@@ -127,3 +124,5 @@ div.template.table div.templateDetails { margin:0 !important; width:100%; }
 #friendlyMines ul li a { background:url("../images/icons/external_link.png") no-repeat right; padding-right:10px;
   white-space:nowrap; }
 #friendlyMines ul li.toggler a { background:none; text-decoration:underline; }
+
+div.orthologues a { white-space:nowrap; margin-right:10px; }

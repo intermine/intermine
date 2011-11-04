@@ -200,6 +200,8 @@ div.template.table div.templateDetails { margin:0 !important; width:100%; }
   white-space:nowrap; }
 #friendlyMines ul li.toggler a { background:none; text-decoration:underline; }
 
+div.orthologues a { white-space:nowrap; margin-right:10px; }
+
 @media only screen and (max-width:1024px) {
     div.container_12 { width:100%; margin-left:0%; margin-right:0%; }
 }
