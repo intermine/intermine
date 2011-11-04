@@ -2,6 +2,9 @@
 
 use strict;
 use warnings;
+use Carp 'confess';
+
+$SIG{__DIE__} = \&Carp::confess;
 
 use Test::More tests => 11;
 use Test::Exception;

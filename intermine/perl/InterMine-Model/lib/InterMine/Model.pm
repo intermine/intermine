@@ -11,7 +11,7 @@ use Time::HiRes qw/gettimeofday/;
 
 use constant TYPE_PREFIX => "InterMine";
 
-our $VERSION = '0.9803';
+our $VERSION = '0.9804';
 
 =head1 NAME
 
@@ -172,21 +172,33 @@ use Moose::Meta::Class;
 # returns fields from base classes too
 sub _fix_class_descriptors {
     my $self = shift;
+#
+#    warn "BUILDING MODEL " . gettimeofday() if $ENV{DEBUG};
+#    for my $class_name (keys %{ $self->{class_hash} } ) {
+#        $self->_add_type_constraint_and_coercion($class_name);
+#    }
+#
+#    while ( my ( $class_name, $cd ) = each %{ $self->{class_hash} } ) {
+#        my @fields = $self->_get_fields($cd);
+#        for my $field (@fields) {
+#            $cd->add_field($field);
+#        }
+#        $cd->_make_fields_into_attributes();
+#        $cd->make_immutable;
+#    }
+#    warn "FINISHED BUILDING MODEL " . gettimeofday() if $ENV{DEBUG};
+}
 
-    warn "BUILDING MODEL " . gettimeofday() if $ENV{DEBUG};
-    for my $class_name (keys %{ $self->{class_hash} } ) {
-        $self->_add_type_constraint_and_coercion($class_name);
+sub _fix_cd {
+    my ($self, $name, $class) = @_;
+    $self->_add_type_constraint_and_coercion($name);
+    my @fields = $self->_get_fields($class);
+    for my $field (@fields) {
+        $class->add_field($field);
     }
-
-    while ( my ( $class_name, $cd ) = each %{ $self->{class_hash} } ) {
-        my @fields = $self->_get_fields($cd);
-        for my $field (@fields) {
-            $cd->add_field($field);
-        }
-        $cd->_make_fields_into_attributes();
-        $cd->make_immutable;
-    }
-    warn "FINISHED BUILDING MODEL " . gettimeofday() if $ENV{DEBUG};
+    $class->_make_fields_into_attributes();
+    #$class->make_immutable;
+    $class->_set_fixed(1);
 }
 
 sub _get_fields {
@@ -237,6 +249,9 @@ sub get_classdescriptor_by_name {
     my $class = $self->{class_hash}{$classname}
       || $self->{class_hash}{ $self->{package_name} . $classname };
     confess "$classname not in the model" unless $class;
+    unless ($class->_is_ready()) {
+        $self->_fix_cd($classname, $class);
+    }
     return $class;
 }
 
