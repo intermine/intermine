@@ -18,15 +18,16 @@ package org.intermine.bio.web.model;
  */
 public class GenomicRegion implements Comparable<GenomicRegion>
 {
+    private String organism;
     private String chr;
     private Integer start;
     private Integer end;
-
+    private Integer extendedRegionSize = new Integer(0); // user add region flanking
     private Integer extendedStart;
     private Integer extendedEnd;
-    private Integer extendedRegionSize = new Integer(0); // user add region flanking
 
-    // TODO should we add chromosome info to the model to make a genomic region unique?
+    //user identifier to tag the order of input e.g. X:7880589..7880644:5 is the 5th input
+    private Integer tag = null;
 
     /**
      * Default constructor
@@ -36,6 +37,21 @@ public class GenomicRegion implements Comparable<GenomicRegion>
     public GenomicRegion() {
 
     }
+
+    /**
+     * @param organism short name
+     */
+    public void setOrganism(String organism) {
+        this.organism = organism;
+    }
+
+    /**
+     * @return organism
+     */
+    public String getOrganism() {
+        return organism;
+    }
+
     /**
      * @return chr
      */
@@ -121,6 +137,20 @@ public class GenomicRegion implements Comparable<GenomicRegion>
     }
 
     /**
+     * @param tag as integer
+     */
+    public void setTag(Integer tag) {
+        this.tag = tag;
+    }
+
+    /**
+     * @return tag value
+     */
+    public Integer getTag() {
+        return tag;
+    }
+
+    /**
      * Make a string of orginal region if extended
      * @return chr:start..end
      */
@@ -132,10 +162,18 @@ public class GenomicRegion implements Comparable<GenomicRegion>
      * @return chr:extendedStart..extenededEnd
      */
     public String getExtendedRegion() {
+        return chr + ":" + extendedStart + ".." + extendedEnd;
+    }
+
+    /**
+     * @return chr:extendedStart..extenededEnd|chr:start..end
+     */
+    public String getFullRegionInfo() {
         if (extendedRegionSize == 0) {
-            return getOriginalRegion();
+            return chr + ":" + start + ".." + end + "|" + extendedRegionSize + "|" + organism;
         } else {
-            return chr + ":" + extendedStart + ".." + extendedEnd;
+            return chr + ":" + extendedStart + ".." + extendedEnd + "|" + chr
+                + ":" + start + ".." + end + "|" + extendedRegionSize + "|" + organism;
         }
     }
 
@@ -148,18 +186,13 @@ public class GenomicRegion implements Comparable<GenomicRegion>
         if (obj instanceof GenomicRegion) {
             GenomicRegion gr = (GenomicRegion) obj;
 
-            if (extendedRegionSize == 0) {
-                return (chr.equals(gr.getChr())
-                        && start.equals(gr.getStart())
-                        && end.equals(gr.getEnd()));
-            } else {
-                return (chr.equals(gr.getChr())
-                        && start.equals(gr.getStart())
-                        && end.equals(gr.getEnd())
-                        && extendedStart.equals(gr.getExtendedStart())
-                        && extendedEnd.equals(gr.getExtendedEnd())
-                        && extendedRegionSize.equals(gr.getExtendedRegionSize()));
-            }
+            // To uniquely identify a region
+            return (chr.equals(gr.getChr())
+                    && start.equals(gr.getStart())
+                    && end.equals(gr.getEnd())
+                    && organism.equals(gr.getOrganism())
+                    && extendedRegionSize.equals(gr.getExtendedRegionSize())
+                    && tag == gr.getTag());
         }
         return false;
     }
@@ -176,13 +209,11 @@ public class GenomicRegion implements Comparable<GenomicRegion>
      */
     @Override
     public int hashCode() {
-        if (extendedRegionSize == 0) {
-            return chr.hashCode() + start.hashCode() + end.hashCode();
-        } else {
-            return chr.hashCode() + start.hashCode() + end.hashCode()
-                    + extendedStart.hashCode() + extendedEnd.hashCode()
-                    + extendedRegionSize.hashCode();
-        }
+        return chr.hashCode()
+            + start.hashCode()
+            + end.hashCode()
+            + organism.hashCode()
+            + extendedRegionSize.hashCode();
     }
 
     @Override
@@ -191,8 +222,7 @@ public class GenomicRegion implements Comparable<GenomicRegion>
         final int eQUAL = 0;
         final int aFTER = 1;
 
-        //this optimization is usually worthwhile, and can
-        //always be added
+        //this optimization is usually worthwhile, and can always be added
         if (this == gr) {
             return eQUAL;
         }
@@ -229,7 +259,19 @@ public class GenomicRegion implements Comparable<GenomicRegion>
             }
         }
 
-
         return eQUAL;
+    }
+
+    /**
+     * Test if two regions are overlapped.
+     *
+     * @param gr GenomicRegion
+     * @return A boolean value
+     */
+    public boolean isOverlapped(GenomicRegion gr) {
+
+        // TODO use extended region?
+
+        return false;
     }
 }

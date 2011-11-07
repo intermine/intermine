@@ -74,8 +74,7 @@ import org.json.JSONObject;
 public class GenomicRegionSearchService
 {
     @SuppressWarnings("unused")
-    private static final Logger LOG = Logger
-            .getLogger(GenomicRegionSearchService.class);
+    private static final Logger LOG = Logger.getLogger(GenomicRegionSearchService.class);
 
     private InterMineAPI interMineAPI = null;
     private Model model = null;
@@ -96,6 +95,9 @@ public class GenomicRegionSearchService
     private static Map<String, List<String>> featureTypeToSOTermMap = null;
     private static Map<String, Integer> orgTaxonIdMap = null;
     private List<String> selectionInfo = new ArrayList<String>();
+
+    private static final String CHROMOSOME_LOCATION_MISSING =
+        "Chromosome location information is missing";
 
     /**
      * Constructor
@@ -135,8 +137,7 @@ public class GenomicRegionSearchService
         Set<String> chrOrgSet = getChromosomeInfomationMap().keySet();
 
         if (chrOrgSet == null || chrOrgSet.size() == 0) {
-            throw new RuntimeException(
-                    "Chromosome location information is missing...");
+            return CHROMOSOME_LOCATION_MISSING;
         } else {
             if (presetOrganisms == null || "".equals(presetOrganisms)) {
                 orgList = new ArrayList<String>(chrOrgSet);
@@ -572,13 +573,17 @@ public class GenomicRegionSearchService
 
             // The first time to create GenomicRegion object and set ExtendedRegionSize
             GenomicRegion aSpan = new GenomicRegion();
+            aSpan.setOrganism(grsc.getOrgName());
             aSpan.setExtendedRegionSize(grsc.getExtendedRegionSize());
 
             // Use regular expression to validate user's input:
-            String ddotsRegex = "[^:]+: ?\\d+\\.{2}\\d+$"; // "chr:start..end" - [^:]+:\d+\.{2,}\d+
-            String tabRegex = "[^\\t\\s]+\\t\\d+\\t\\d+"; // "chr:start-end" - [^:]+:\d+\-\d+
-            String dashRegex = "[^:]+: ?\\d+\\-\\d+$"; // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
-            String snpRegex = "[^:]+: ?\\d+$"; // "chr:singlePosition" - [^:]+:[\d]+$
+            String ddotsRegex = "^[^:]+: ?\\d+\\.{2}\\d+$"; // "chr:start..end" - [^:]+:\d+\.{2,}\d+
+            String ddotstagRegex = "^[^:]+: ?\\d+\\.{2}\\d+: ?\\d+$"; // "chr:start..end:tag"
+            String tabRegex = "^[^\\t\\s]+\\t\\d+\\t\\d+"; // "chr:start-end" - [^:]+:\d+\-\d+
+            // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
+            String dashRegex = "^[^:]+: ?\\d+\\-\\d+$";
+            String snpRegex = "^[^:]+: ?\\d+$"; // "chr:singlePosition" - [^:]+:[\d]+$
+            String emptyLine = "^\\s*$";
 
             if (Pattern.matches(ddotsRegex, spanStr)) {
                 aSpan.setChr((spanStr.split(":"))[0]);
@@ -590,6 +595,17 @@ public class GenomicRegionSearchService
                     aSpan.setStart(Integer.valueOf(start));
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
+            } else if (Pattern.matches(ddotstagRegex, spanStr)) {
+                aSpan.setChr((spanStr.split(":"))[0]);
+                String[] spanItems = (spanStr.split(":"))[1].split("\\..");
+                String start = spanItems[0].trim();
+                if ("isInterBaseCoordinate".equals(dataFormat)) {
+                    aSpan.setStart(Integer.valueOf(start) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(start));
+                }
+                aSpan.setEnd(Integer.valueOf(spanItems[1]));
+                aSpan.setTag(Integer.valueOf((spanStr.split(":"))[2]));
             } else if (Pattern.matches(tabRegex, spanStr)) {
                 String[] spanItems = spanStr.split("\t");
                 aSpan.setChr(spanItems[0]);
@@ -620,8 +636,10 @@ public class GenomicRegionSearchService
                 aSpan.setEnd(Integer.valueOf((spanStr.split(":"))[1].trim()));
 
             } else {
-                return new ActionMessage(
-                        "genomicRegionSearch.spanInWrongformat", spanStr);
+                if (!Pattern.matches(emptyLine, spanStr)) {
+                    return new ActionMessage(
+                            "genomicRegionSearch.spanInWrongformat", spanStr);
+                }
             }
             spanList.add(aSpan);
         }
@@ -713,9 +731,11 @@ public class GenomicRegionSearchService
 
     /**
      * Validate input genomic regions
+     *
      * @return resultMap
+     * @throws Exception with error message
      */
-    public Map<String, List<GenomicRegion>> validateGenomicRegions() {
+    public Map<String, List<GenomicRegion>> validateGenomicRegions() throws Exception {
         /* the Map has two key-value mappings
          * PASS-ArrayList<passedSpan>
          * ERROR-ArrayList<errorSpan>
@@ -727,7 +747,7 @@ public class GenomicRegionSearchService
         Map<String, ChromosomeInfo> chrInfo = chrInfoMap.get(grsc.getOrgName());
 
         if (chrInfo == null) { // this should not happen
-            return null;
+            throw new Exception("ChromosomeInfo map should not be null");
         }
 
         // Create passedSpanList
@@ -759,6 +779,8 @@ public class GenomicRegionSearchService
                     newSpan.setChr(ci.getChrPID()); // converted to the right case
                     newSpan.setStart(gr.getEnd());
                     newSpan.setEnd(gr.getStart());
+                    newSpan.setExtendedRegionSize(0);
+                    newSpan.setOrganism(grsc.getOrgName());
                     passedSpanList.add(newSpan);
                 } else {
                     gr.setChr(ci.getChrPID());
@@ -813,7 +835,7 @@ public class GenomicRegionSearchService
      * @param spanConstraintMap map of contraints
      * @return the flanking size
      */
-    public int getGenomicRegionFlankingSizeConstraint(String spanUUIDString,
+    public int getGenomicRegionExtendedSizeConstraint(String spanUUIDString,
             Map<GenomicRegionSearchConstraint, String> spanConstraintMap) {
 
         for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
@@ -829,30 +851,21 @@ public class GenomicRegionSearchService
      * Get a set of ids of a span's overlap features. for
      * GenomicRegionSearchAjaxAction use.
      *
-     * @param grString a genomic region in string
-     * @param flankingSize int value of extended genomic region size
+     * @param grInfo a genomic region in string array
      * @param resultMap map of search results
      * @return String feature ids joined by comma
+     * @throws Exception with error message
      */
-    public Set<Integer> getGenomicRegionOverlapFeaturesAsSet(String grString, int flankingSize,
-            Map<GenomicRegion, List<List<String>>> resultMap) {
+    public Set<Integer> getGenomicRegionOverlapFeaturesAsSet(String grInfo,
+            Map<GenomicRegion, List<List<String>>> resultMap) throws Exception {
 
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
 
-        GenomicRegion spanToExport = new GenomicRegion();
+        GenomicRegion grToExport = GenomicRegionSearchUtil
+            .generateGenomicRegion(Arrays.asList(new String[] {grInfo}))
+            .get(0);
 
-        // spanString is extended span
-        String[] temp = grString.split(":");
-        spanToExport.setChr(temp[0]);
-        temp = temp[1].split("\\.\\.");
-        spanToExport.setExtendedStart(Integer.parseInt(temp[0]));
-        spanToExport.setExtendedEnd(Integer.parseInt(temp[1]));
-        spanToExport.setExtendedRegionSize(flankingSize);
-        spanToExport.setStart(spanToExport.getExtendedStart()
-                + spanToExport.getExtendedRegionSize());
-        spanToExport.setEnd(spanToExport.getExtendedEnd() - spanToExport.getExtendedRegionSize());
-
-        for (List<String> sf : resultMap.get(spanToExport)) {
+        for (List<String> sf : resultMap.get(grToExport)) {
             // the first element (0) is InterMine Id, second (1) is PID
             featureIdSet.add(Integer.valueOf(sf.get(0)));
         }
@@ -864,31 +877,22 @@ public class GenomicRegionSearchService
      * Get a set of ids of a span's overlap features by given feature type. for
      * GenomicRegionSearchAjaxAction use.
      *
-     * @param grString a genomic region in string
-     * @param flankingSize int value of extended genomic region size
+     * @param grInfo a genomic region in string array
      * @param resultMap map of search results
      * @param featureType e.g. Gene
      * @return String feature ids joined by comma
+     * @throws Exception with error message
      */
-    public Set<Integer> getGenomicRegionOverlapFeaturesByType(String grString, int flankingSize,
-            Map<GenomicRegion, List<List<String>>> resultMap, String featureType) {
+    public Set<Integer> getGenomicRegionOverlapFeaturesByType(String grInfo,
+            Map<GenomicRegion, List<List<String>>> resultMap, String featureType) throws Exception {
 
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
 
-        GenomicRegion spanToExport = new GenomicRegion();
+        GenomicRegion grToExport = GenomicRegionSearchUtil
+                .generateGenomicRegion(Arrays.asList(new String[] {grInfo}))
+                .get(0);
 
-        // spanString is extended span
-        String[] temp = grString.split(":");
-        spanToExport.setChr(temp[0]);
-        temp = temp[1].split("\\.\\.");
-        spanToExport.setExtendedStart(Integer.parseInt(temp[0]));
-        spanToExport.setExtendedEnd(Integer.parseInt(temp[1]));
-        spanToExport.setExtendedRegionSize(flankingSize);
-        spanToExport.setStart(spanToExport.getExtendedStart()
-                + spanToExport.getExtendedRegionSize());
-        spanToExport.setEnd(spanToExport.getExtendedEnd() - spanToExport.getExtendedRegionSize());
-
-        for (List<String> sf : resultMap.get(spanToExport)) {
+        for (List<String> sf : resultMap.get(grToExport)) {
             // the first element (0) is InterMine Id, second (1) is PID, 4 featureType
             if (sf.get(3).equals(featureType)) {
                 featureIdSet.add(Integer.valueOf(sf.get(0)));
@@ -929,16 +933,15 @@ public class GenomicRegionSearchService
      * Get a comma separated string of a span's overlap features. for
      * GenomicRegionSearchAjaxAction use.
      *
-     * @param spanString span in string
-     * @param flankingSize int value of extended genomic region size
+     * @param grInfo a genomic region in string array
      * @param resultMap map of search results
      * @return String feature ids joined by comma
+     * @throws Exception with error message
      */
-    public String getGenomicRegionOverlapFeaturesAsString(String spanString, int flankingSize,
-            Map<GenomicRegion, List<List<String>>> resultMap) {
+    public String getGenomicRegionOverlapFeaturesAsString(String grInfo,
+            Map<GenomicRegion, List<List<String>>> resultMap) throws Exception {
 
-        Set<Integer> featureSet = getGenomicRegionOverlapFeaturesAsSet(
-                spanString, flankingSize, resultMap);
+        Set<Integer> featureSet = getGenomicRegionOverlapFeaturesAsSet(grInfo, resultMap);
 
         return StringUtil.join(featureSet, ",");
     }
@@ -1001,13 +1004,12 @@ public class GenomicRegionSearchService
      * @param fromIdx offsetStart
      * @param toIdx offsetEnd
      * @param session the current session
-     * @param orgName organism
      * @return a String of HTML
      */
     public String convertResultMapToHTML(
             Map<GenomicRegion, List<List<String>>> resultMap,
             List<GenomicRegion> genomicRegionList, int fromIdx, int toIdx,
-            HttpSession session, String orgName) {
+            HttpSession session) {
 
         String baseURL = webProperties.getProperty("webapp.baseurl");
         String path = webProperties.getProperty("webapp.path");
@@ -1028,9 +1030,10 @@ public class GenomicRegionSearchService
         sb.append("<tbody>");
 
         for (GenomicRegion s : subGenomicRegionList) {
-
-            String span = s.getExtendedRegion();
             List<List<String>> features = resultMap.get(s);
+
+            String span = s.getExtendedRegionSize() == 0 ? s
+                    .getOriginalRegion() : s.getExtendedRegion();
 
             // get list of featureTypes
             String ftHtml = categorizeFeatureTypes(features, s);
@@ -1067,9 +1070,15 @@ public class GenomicRegionSearchService
                 firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
                 // hack - feature name is null, use id
-                sb.append("<tr><td valign='top' rowspan='" + length + "'><b>" + span + "</b><br>");
 
-                if (s.getExtendedRegionSize() > 0) {
+
+                if (s.getExtendedRegionSize() == 0) {
+                    sb.append("<tr><td valign='top' rowspan='" + length
+                            + "'><b>" + span + "</b><br>");
+                } else {
+                    sb.append("<tr><td valign='top' rowspan='" + length
+                            + "'><b>" + span + "</b><br>");
+
                     String os = s.getOriginalRegion();
                     sb.append("<i>Original input: " + os + "</i><br>");
                 }
@@ -1087,23 +1096,23 @@ public class GenomicRegionSearchService
                         + "border='0' src='model/images/download.png' title='export data' "
                         + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
                         + "<a href='#javascript: exportFeatures(\""
-                        + span + "\", "
+                        + s.getFullRegionInfo() + "\", "
                         + "\"" + facet + "\", \"tab\");' class='ext_link'>TAB</a></li>"
                         + "<li class='csv'><a href='#javascript: exportFeatures(\""
-                        + span
+                        + s.getFullRegionInfo()
                         + "\", \"" + facet + "\", \"csv\");' class='ext_link'>CSV</a></li>"
                         + "<li class='gff'><a href='#javascript: exportFeatures(\""
-                        + span
+                        + s.getFullRegionInfo()
                         + "\", \"" + facet + "\", \"gff3\");' class='ext_link'>GFF3</a>"
                         + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
-                        + span
+                        + s.getFullRegionInfo()
                         + "\", \"" + facet + "\", \"sequence\");' class='ext_link'>SEQ</a>"
                         + "</li></ul></div>");
 
                 // Display galaxy export
                 if (!"false".equals(galaxyDisplay)) {
                     sb.append("<div style='align:center'>"
-                            + "<a href='javascript: exportToGalaxy(\"" + span + "\", \"" + orgName
+                            + "<a href='javascript: exportToGalaxy(\"" + s.getFullRegionInfo()
                             + "\");' class='ext_link'> Export to Galaxy <img border='0' "
                             + "title='Export to Galaxy' src='model/images/Galaxy_logo_small.png' "
                             + "class='arrow' style='height:5%; width:5%'></a></div>"
@@ -1210,8 +1219,8 @@ public class GenomicRegionSearchService
             return "";
         } else {
             String ftHtml = "<div>"
-                + "<a href=\"javascript: createList('" + s.getExtendedRegion() + "', '" + id + "');\">"
-                + "Create List by</a>"
+                + "<a href=\"javascript: createList('" + s.getFullRegionInfo()
+                + "', '" + id + "');\">" + "Create List by</a>"
                 + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
 
             for (String ft : ftSet) {
@@ -1228,8 +1237,8 @@ public class GenomicRegionSearchService
 
     /**
      * Get all feature types in a set
+     *
      * @param features list of sequence features
-     * @param s GenomicRegion
      * @return a set of feature types of a genomic region
      */
     public Set<String> getFeatureTypeSet(List<List<String>> features) {

@@ -11,8 +11,10 @@ package org.intermine.bio.web.logic;
  */
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -409,6 +411,144 @@ public final class GenomicRegionSearchUtil
         }
 
         return gr;
+    }
+
+    /**
+     * Generate a GenomicRegion object from region strings and relevant
+     * information
+     *
+     * @param genomicRegionStringCollection
+     *            a list of string such as 2L:14615455..14619002|0|D. melanogaster or
+     *            2L:14615456..14619003|2L:14615455..14619002|1|D. melanogaster
+     * @return a GenomicRegion object
+     * @throws Exception with error message
+     */
+    public static List<GenomicRegion> generateGenomicRegion(
+            Collection<String> genomicRegionStringCollection) throws Exception {
+
+        List<GenomicRegion> genomicRegionList = new ArrayList<GenomicRegion>();
+
+        for (String genomicRegionString : genomicRegionStringCollection) {
+
+            String original;
+            String extended;
+            String extenedSize;
+            String organism;
+
+            String[] grInfo = genomicRegionString.trim().split("\\|");
+
+            if (grInfo.length == 3) {
+                original = grInfo[0];
+                extended = null;
+                extenedSize = grInfo[1];
+                organism = grInfo[2];
+            } else if (grInfo.length == 4) {
+                original = grInfo[1];
+                extended = grInfo[0];
+                extenedSize = grInfo[2];
+                organism = grInfo[3];
+            } else {
+                throw new Exception("Genomic region info error: " + genomicRegionString);
+            }
+
+            GenomicRegion gr = new GenomicRegion();
+
+            if (organism == null || original == null) {
+                throw new Exception("Organism and Original genomic region string can not be null");
+            }
+
+            if (extended == null) {
+                Matcher m = DOT_DOT.matcher(original);
+                if (m.find()) {
+                    String chr = original.split(":")[0];
+                    String start = original.split(":")[1].split("\\.{2}")[0];
+                    String end = original.split(":")[1].split("\\.{2}")[1];
+
+                    gr.setOrganism(organism);
+                    gr.setChr(chr);
+                    gr.setStart(Integer.valueOf(start));
+                    gr.setEnd(Integer.valueOf(end));
+                    gr.setExtendedRegionSize(0);
+
+                    genomicRegionList.add(gr);
+                } else {
+                    throw new Exception("Not Dot-Dot format: " + original);
+                }
+            } else {
+                if (extenedSize == null) {
+                    throw new Exception("extenedSize can not be null");
+                } else {
+                    Matcher mo = DOT_DOT.matcher(original);
+                    Matcher me = DOT_DOT.matcher(extended);
+                    if (mo.find() && me.find()) {
+                        String chr = original.split(":")[0];
+                        String start = original.split(":")[1].split("\\.{2}")[0];
+                        String end = original.split(":")[1].split("\\.{2}")[1];
+                        String extStart = extended.split(":")[1].split("\\.{2}")[0];
+                        String extEnd = extended.split(":")[1].split("\\.{2}")[1];
+
+                        gr.setOrganism(organism);
+                        gr.setChr(chr);
+                        gr.setStart(Integer.valueOf(start));
+                        gr.setEnd(Integer.valueOf(end));
+                        gr.setExtendedStart(Integer.valueOf(extStart));
+                        gr.setExtendedEnd(Integer.valueOf(extEnd));
+                        gr.setExtendedRegionSize(Integer.valueOf(extenedSize));
+
+                        genomicRegionList.add(gr);
+                    } else {
+                        throw new Exception("Not Dot-Dot format: " + original);
+                    }
+                }
+            }
+        }
+
+        return genomicRegionList;
+    }
+
+    /**
+     * Look for genomic regions within or overlap an interval.
+     *
+     * @param interval the given interval
+     * @param regionSet a set of regions
+     * @return a list of genomic region objects
+     * @throws Exception with error message
+     */
+    public static List<GenomicRegion> groupGenomicRegionByInterval(
+            String interval, Set<GenomicRegion> regionSet) throws Exception {
+
+        // Parse the interval
+        Matcher m = DOT_DOT.matcher(interval);
+        if (m.find()) {
+            String chr = interval.split(":")[0];
+            int start = Integer.valueOf(interval.split(":")[1].split("\\.{2}")[0]);
+            int end = Integer.valueOf(interval.split(":")[1].split("\\.{2}")[1]);
+
+            List<GenomicRegion> filteredList = new ArrayList<GenomicRegion>();
+
+            for (GenomicRegion gr : regionSet) {
+                if (chr.equals(gr.getChr())) {
+                    if (gr.getExtendedRegionSize() > 0) {
+                        if (!((gr.getExtendedStart() < start && gr
+                                .getExtendedEnd() < end) && (gr
+                                .getExtendedStart() > start && gr
+                                .getExtendedEnd() > end))) {
+                            filteredList.add(gr);
+                        }
+                    } else {
+                        if (!((gr.getStart() < start && gr.getEnd() < end) && (gr
+                                .getStart() > start && gr.getEnd() > end))) {
+                            filteredList.add(gr);
+                        }
+                    }
+                }
+            }
+
+            return filteredList;
+
+        } else {
+            throw new Exception("Not Dot-Dot format: " + interval);
+        }
     }
 
 }
