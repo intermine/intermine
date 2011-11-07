@@ -61,7 +61,7 @@ public class PathQueryUpdateTest extends TestCase
         query.addOrderBy("CEOTest.sal", OrderDirection.ASC);
 
         PathQueryUpdate pathQueryUpdated = new PathQueryUpdate(query,
-            Model.getInstanceByName("testmodel"), Model.getInstanceByName("oldtestmodel"));
+            Model.getInstanceByName("oldtestmodel"));
         pathQueryUpdated.update(renamedClasses, renamedFields);
         PathQuery queryUpdated = pathQueryUpdated.getUpdatedPathQuery();
         //verify view

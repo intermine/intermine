@@ -25,7 +25,8 @@ import org.intermine.pathquery.PathQuery;
 
 import junit.framework.TestCase;
 
-public class TemplateQueryUpdateTest extends TestCase {
+public class TemplateQueryUpdateTest extends TestCase
+{
     private Map<String, String> renamedClasses = new HashMap<String, String>();
     private Map<String, String> renamedFields = new HashMap<String, String>();
 
@@ -47,11 +48,14 @@ public class TemplateQueryUpdateTest extends TestCase {
         query.addView("CEOTest.company.name");
         query.addView("CEOTest.sal");
         query.setDescription("CEOTest.name", "CEO name");
-        PathConstraint con1 = new PathConstraintAttribute("CEOTest.name", ConstraintOp.CONTAINS, "ploy");
+        PathConstraint con1 = new PathConstraintAttribute("CEOTest.name",
+                                  ConstraintOp.CONTAINS, "ploy");
         query.addConstraint(con1);
-        PathConstraint con2 = new PathConstraintAttribute("CEOTest.company.name", ConstraintOp.CONTAINS, "pany");
+        PathConstraint con2 = new PathConstraintAttribute("CEOTest.company.name",
+                                  ConstraintOp.CONTAINS, "pany");
         query.addConstraint(con2);
-        PathConstraint con3 = new PathConstraintLookup("CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1");
+        PathConstraint con3 = new PathConstraintLookup(
+            "CEOTest.company.CEOTest.department.company.CEOTest", "ttt", "DepartmentA1");
         query.addConstraint(con3);
         query.setOuterJoinStatus("CEOTest.company", OuterJoinStatus.OUTER);
         query.addOrderBy("CEOTest.name", OrderDirection.ASC);
@@ -62,7 +66,7 @@ public class TemplateQueryUpdateTest extends TestCase {
         templateQuery.setEditable(con1, true);
         templateQuery.setEditable(con2, true);
         TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(templateQuery,
-            Model.getInstanceByName("testmodel"), Model.getInstanceByName("oldtestmodel"));
+            Model.getInstanceByName("oldtestmodel"));
         templateQueryUpdate.update(renamedClasses, renamedFields);
         ApiTemplate newTemplateQuery = templateQueryUpdate.getNewTemplateQuery();
         assertEquals("test", newTemplateQuery.getName());
@@ -80,11 +84,13 @@ public class TemplateQueryUpdateTest extends TestCase {
         //verify constraint
         assertEquals(3, newTemplateQuery.getConstraints().size());
         assertEquals(1, newTemplateQuery.getConstraintsForPath("CEO.name").size());
-        PathConstraintAttribute constraint1 = (PathConstraintAttribute) newTemplateQuery.getConstraintsForPath("CEO.name").get(0);
+        PathConstraintAttribute constraint1 = (PathConstraintAttribute) newTemplateQuery
+                                              .getConstraintsForPath("CEO.name").get(0);
         assertEquals("ploy", constraint1.getValue());
         assertEquals(ConstraintOp.CONTAINS, constraint1.getOp().CONTAINS);
         assertEquals(1, newTemplateQuery.getConstraintsForPath("CEO.company.name").size());
-        PathConstraintAttribute constraint2 = (PathConstraintAttribute) newTemplateQuery.getConstraintsForPath("CEO.company.name").get(0);
+        PathConstraintAttribute constraint2 = (PathConstraintAttribute) newTemplateQuery
+                                              .getConstraintsForPath("CEO.company.name").get(0);
         assertEquals("pany", constraint2.getValue());
         assertEquals(ConstraintOp.CONTAINS, constraint2.getOp().CONTAINS);
         PathConstraintLookup constraint3 = (PathConstraintLookup) newTemplateQuery
@@ -98,11 +104,15 @@ public class TemplateQueryUpdateTest extends TestCase {
         assertEquals("CEO.name", newTemplateQuery.getOrderBy().get(0).getOrderPath());
         assertEquals("CEO.salary", newTemplateQuery.getOrderBy().get(1).getOrderPath());
         //verify switch off ability
-        assertEquals(org.intermine.template.SwitchOffAbility.ON, newTemplateQuery.getSwitchOffAbility(constraint1));
-        assertEquals(org.intermine.template.SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint2));
-        assertEquals(org.intermine.template.SwitchOffAbility.LOCKED, newTemplateQuery.getSwitchOffAbility(constraint3));
+        assertEquals(org.intermine.template.SwitchOffAbility.ON,
+            newTemplateQuery.getSwitchOffAbility(constraint1));
+        assertEquals(org.intermine.template.SwitchOffAbility.LOCKED,
+            newTemplateQuery.getSwitchOffAbility(constraint2));
+        assertEquals(org.intermine.template.SwitchOffAbility.LOCKED,
+            newTemplateQuery.getSwitchOffAbility(constraint3));
         //verify constraint descriptions
-        assertEquals("Description on constraint", newTemplateQuery.getConstraintDescription(constraint2));
+        assertEquals("Description on constraint",
+            newTemplateQuery.getConstraintDescription(constraint2));
         //verify editable constraints
         assertEquals(2, newTemplateQuery.getEditableConstraints().size());
         assertEquals(1, newTemplateQuery.getEditableConstraints("CEO.name").size());
