@@ -22,12 +22,13 @@ import org.intermine.pathquery.PathQuery;
 public class TemplateQueryUpdate extends PathQueryUpdate {
     private ApiTemplate templateQuery;
 
-    public TemplateQueryUpdate(ApiTemplate templateQuery, Model newModel, Model oldModel) {
+    public TemplateQueryUpdate(ApiTemplate templateQuery, Model oldModel) {
         super.pathQuery = templateQuery.getPathQuery();
         this.oldModel = oldModel;
         this.templateQuery = templateQuery;
         this.newPathQuery = new ApiTemplate(templateQuery.getName(),
-            templateQuery.getTitle(), templateQuery.getComment(), new PathQuery(newModel));
+            templateQuery.getTitle(), templateQuery.getComment(),
+            new PathQuery(pathQuery.getModel()));
     }
 
     public ApiTemplate getNewTemplateQuery() {

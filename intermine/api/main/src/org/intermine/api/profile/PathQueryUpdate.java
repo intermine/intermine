@@ -49,10 +49,10 @@ public class PathQueryUpdate
      * @param newModel
      * @param oldModel
      */
-    public PathQueryUpdate(PathQuery pathQuery, Model newModel, Model oldModel) {
+    public PathQueryUpdate(PathQuery pathQuery, Model oldModel) {
         this.pathQuery = pathQuery;
         this.oldModel = oldModel;
-        this.newPathQuery = new PathQuery(newModel);
+        this.newPathQuery = new PathQuery(pathQuery.getModel());
     }
 
     /**
