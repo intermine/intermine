@@ -303,8 +303,7 @@ public class ModelUpdate
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
                 if (!savedQuery.getName().contains(OLD) && !pathQuery.isValid()) {
-                    PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, model,
-                                                                          oldModel);
+                    PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, oldModel);
                     try {
                         problems = pathQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
@@ -336,7 +335,7 @@ public class ModelUpdate
                 PathQuery pathQuery = templateQuery.getPathQuery();
                 if (!templateQuery.getName().contains(OLD) && !pathQuery.isValid()) {
                     TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(
-                        templateQuery, model, oldModel);
+                        templateQuery, oldModel);
                     try {
                         problems = templateQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
@@ -361,7 +360,6 @@ public class ModelUpdate
                         continue;
                     }
                 }
-                profile.saveTemplate(templateQuery.getName(), templateQuery);
             }
         }
     }
