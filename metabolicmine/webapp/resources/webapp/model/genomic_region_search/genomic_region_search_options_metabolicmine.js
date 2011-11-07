@@ -268,7 +268,7 @@
                var dashRegex = /^[^:]+: ?\d+\-\d+$/;
                var snpRegex = /^[^:]+: ?\d+$/;
                var emptyLine = /^\s*$/;
-               var ddotstagRegex = /^[^:]+: ?\\d+\\.{2}\\d+: ?\\d+$/;
+               var ddotstagRegex = /^[^:]+: ?\d+\.\.\d+: ?\d+$/;
 
                var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
                var lineNum;
