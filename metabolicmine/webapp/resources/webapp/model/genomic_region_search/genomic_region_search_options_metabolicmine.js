@@ -263,10 +263,12 @@
 
          if (jQuery("#pasteInput").val() != "") {
                // Regex validation
-               var ddotsRegex = /[^:]+: ?\d+\.\.\d+$/;
-               var tabRegex = /[^\t]+\t\d+\t\d+$/;
-               var dashRegex = /[^:]+: ?\d+\-\d+$/;
-               var snpRegex = /[^:]+: ?\d+$/;
+               var ddotsRegex = /^[^:]+: ?\d+\.\.\d+$/;
+               var tabRegex = /^[^\t]+\t\d+\t\d+/;
+               var dashRegex = /^[^:]+: ?\d+\-\d+$/;
+               var snpRegex = /^[^:]+: ?\d+$/;
+               var emptyLine = /^\s*$/;
+               var ddotstagRegex = /^[^:]+: ?\\d+\\.{2}\\d+: ?\\d+$/;
 
                var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
                var lineNum;
@@ -276,7 +278,7 @@
                      alert("Line " + lineNum + " is empty...");
                      return false;
                  }
-                 if (!spanArray[i].match(ddotsRegex) && !spanArray[i].match(tabRegex) && !spanArray[i].match(dashRegex) && !spanArray[i].match(snpRegex)) {
+                 if (!spanArray[i].match(ddotsRegex) && !spanArray[i].match(ddotstagRegex) && !spanArray[i].match(tabRegex) && !spanArray[i].match(dashRegex) && !spanArray[i].match(snpRegex) && !spanArray[i].match(emptyLine)) {
                      alert(spanArray[i] + " doesn't match any supported format...");
                      return false;
                  }
