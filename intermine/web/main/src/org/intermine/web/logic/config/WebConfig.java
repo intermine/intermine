@@ -662,8 +662,8 @@ public class WebConfig
                         thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
                     }
 
-                    if (thisClassType.getWidgets().size() == 0
-                                    && superClassType.getWidgets() != null
+                    if (//thisClassType.getWidgets().size() == 0 &&
+                                    superClassType.getWidgets() != null
                                     && superClassType.getWidgets().size() > 0) {
                         @SuppressWarnings("rawtypes")
                         final Iterator widgetIter = superClassType.getWidgets().iterator();
