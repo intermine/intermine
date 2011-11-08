@@ -1,5 +1,14 @@
 [% FOREACH list IN lists %]
-    <option value="[% list.name %]">
+    <option value="[% list.name %]" listtype="[% list.type %]">
         [% list.name %] ([% list.size %] [% pluraliser(list.type) %]) 
     </option>
 [% END %]
+
+<script type="text/javascript">
+var listTypes = {
+    [% FOREACH list IN lists %]
+    "[% list.name %]": "[% list.type %]",
+    [% END %]
+};
+</script>
+
