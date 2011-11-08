@@ -83,7 +83,7 @@ public final class WidgetUtil
                 ResultsRow rr =  (ResultsRow) iter.next();
 
                 // id of annotation item (eg. GO term)
-                String id = (String) rr.get(0);
+                String id = String.valueOf(rr.get(0));
 
                 // count of item
                 Long count = (Long) rr.get(1);
@@ -92,7 +92,7 @@ public final class WidgetUtil
                 countMap.put(id, count);
 
                 // id & label
-                idMap.put(id, (String) rr.get(2));
+                idMap.put(id, String.valueOf(rr.get(2)));
 
             }
 
@@ -114,7 +114,7 @@ public final class WidgetUtil
 
                 ResultsRow rrAll =  (ResultsRow) itAll.next();
 
-                String id = (String) rrAll.get(0);
+                String id = String.valueOf(rrAll.get(0));
                 testCount++;
 
                 if (countMap.containsKey(id)) {
