@@ -197,7 +197,7 @@ public class GraphWidget extends Widget
                     true, true, false);
             PiePlot plot = (PiePlot) chart.getPlot();
             plot.setNoDataMessage("No data available");
-            plot.setCircular(false);
+            plot.setCircular(true);
             plot.setLabelGap(0.02);
             plot.setBackgroundPaint(Color.white);
             Font labelFont = new Font("SansSerif", Font.BOLD, 12);
