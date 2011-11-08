@@ -63,10 +63,10 @@ public class BagDetailsController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -115,7 +115,7 @@ public class BagDetailsController extends TilesAction
         Type type = webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         LinkedList<WidgetConfig> widgets = type.getWidgets();
-        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap();
+        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String, Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
             widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(imBag, os));
         }
@@ -204,12 +204,12 @@ public class BagDetailsController extends TilesAction
         // which fields shall we show in preview?
         List<String> showInPreviewTable = new ArrayList<String>();
         for (Entry<String, FieldConfig> entry : type.getFieldConfigMap().entrySet()) {
-        	if (entry.getValue().getShowInListAnalysisPreviewTable()) {
-        		showInPreviewTable.add(type.getDisplayName() + "." + entry.getKey());
-        	}
+            if (entry.getValue().getShowInListAnalysisPreviewTable()) {
+                showInPreviewTable.add(type.getDisplayName() + "." + entry.getKey());
+            }
         }
         request.setAttribute("showInPreviewTable", showInPreviewTable);
-        
+
         request.setAttribute("firstSelectedFields",
                              pagedResults.getFirstSelectedFields(os, classKeys));
         if (page == -1) {
