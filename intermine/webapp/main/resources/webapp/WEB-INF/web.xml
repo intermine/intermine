@@ -468,6 +468,20 @@
     <url-pattern>/service/list/enrichment/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-list-graphs</servlet-name>
+    <servlet-class>org.intermine.webservice.server.widget.GraphWidgetsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-list-graphs</servlet-name>
+    <url-pattern>/service/list/chart/*</url-pattern>
+  </servlet-mapping>
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
