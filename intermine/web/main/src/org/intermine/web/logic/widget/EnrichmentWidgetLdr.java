@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
@@ -51,6 +52,14 @@ public class EnrichmentWidgetLdr
     public Collection<String> getPopulationDescr() {
         // TODO this needs to be moved to bio
         return organisms;
+    }
+
+    /**
+     * Get the available filters for this class.
+     * @return The filters that this widget expects: by default an empty list.
+     */
+    public static List<String> getAvailableFilters() {
+        return Collections.EMPTY_LIST;
     }
 
     /**
