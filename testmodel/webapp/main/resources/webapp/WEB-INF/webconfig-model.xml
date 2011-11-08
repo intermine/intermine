@@ -107,6 +107,11 @@
                  domainLabel="Age"
                  rangeLabel="Seniority"
                  graphType="ScatterPlot"/>
+         <enrichmentwidgetdisplayer id="contractor_enrichment"
+                 typeClass="org.intermine.model.testmodel.Employee"
+                 dataSetLoader="org.intermine.model.testmodel.web.widget.ContractorEnrichmentLdr"
+                 title="Contractor Enrichment"
+                 label="Contractor"/>
      </widgets>
 
 </webconfig>
