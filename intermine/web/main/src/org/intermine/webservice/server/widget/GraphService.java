@@ -135,9 +135,9 @@ public class GraphService extends JSONService
         if (formatIsJSON()) {
             return GraphJSONProcessor.instance();
         } else if (formatIsXML()) {
-            return EnrichmentXMLProcessor.instance();
+            return new GraphXMLProcessor();
         } else {
-            return EnrichmentFlatFileProcessor.instance();
+            return FlatFileWidgetResultProcessor.instance();
         }
     }
     protected Output makeXMLOutput(PrintWriter out) {
