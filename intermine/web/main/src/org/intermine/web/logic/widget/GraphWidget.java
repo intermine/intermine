@@ -455,9 +455,12 @@ public class GraphWidget extends Widget
             }
             ret.add(headers);
             int ic = ds.getItemCount(0);
+            String graphType = ((GraphWidgetConfig) config).getGraphType();
+            boolean stringify = !"ScatterPlot".equals(graphType);
             for (int i = 0; i < ic; i++) {
                 List<Object> row = new LinkedList<Object>();
-                row.add(Double.toString(ds.getXValue(0, i)));
+                Double x = ds.getXValue(0, i);
+                row.add(stringify ? Double.toString(x) : x);
                 row.add(ds.getYValue(0, i));
                 ret.add(row);
             }
