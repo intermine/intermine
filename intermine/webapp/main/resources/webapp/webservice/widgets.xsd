@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="ResultSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="widget"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="widget">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element ref="title"/>
+        <xs:element ref="description"/>
+        <xs:element ref="widgetType"/>
+        <xs:element minOccurs="0" ref="chartType"/>
+        <xs:element maxOccurs="unbounded" ref="target"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="filter"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="name" type="xs:NCName"/>
+  <xs:element name="title" type="xs:string"/>
+  <xs:element name="description" type="xs:string"/>
+  <xs:element name="widgetType" type="xs:NCName"/>
+  <xs:element name="chartType" type="xs:NCName"/>
+  <xs:element name="target" type="xs:NCName"/>
+  <xs:element name="filter" type="xs:string"/>
+</xs:schema>
