@@ -11,8 +11,11 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
@@ -50,10 +53,10 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     private String dataset;
     private static final String KEGG = "KEGG pathways data set";
     private static final String REACTOME = "Reactome data set";
+    private static final Set<String> FILTERS = new HashSet<String>(Arrays.asList(KEGG, REACTOME));
 
     /**
-     * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
-     * or cellular_component)
+     * @param extraAttribute the main data-set to filter by (KEGG, or Reactome)
      * @param bag list of objects for this widget
      * @param os object store
      */
@@ -61,7 +64,23 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         this.bag = bag;
         taxonIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
         model = os.getModel();
-        dataset = extraAttribute;
+        if (extraAttribute == null) {
+            dataset = KEGG;
+        } else {
+            if (!FILTERS.contains(extraAttribute)) {
+                throw new RuntimeException("filter must be one of " + FILTERS
+                        + ", not \"" + extraAttribute + "\"");
+            }
+            dataset = extraAttribute;
+        }
+    }
+
+    /**
+     * Allows the webservice to provide the available filter values.
+     * @return A list of available filters.
+     */
+    public static List<String> getAvailableFilters() {
+        return new ArrayList<String>(FILTERS);
     }
 
     /**
