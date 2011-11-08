@@ -11,9 +11,13 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
+import static java.util.Arrays.asList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
+import static org.apache.commons.collections.CollectionUtils.collect;
+import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
@@ -46,8 +50,26 @@ public class GoStatLdr extends EnrichmentWidgetLdr
     private static final Logger LOG = Logger.getLogger(GoStatLdr.class);
     private Collection<String> taxonIds;
     private InterMineBag bag;
-    private String namespace;
+    private Filter namespace;
     private Model model;
+
+    private enum Filter {
+        BIOLOGICAL_PROCESS("go:0008150"), MOLECULAR_FUNCTION("go:0003674"), CELLULAR_COMPONENT("go:0005575");
+
+        private final String goId; // Ontology identifier.
+
+        Filter(String goId) {
+            this.goId = goId;
+        }
+
+        public String getGoId() {
+            return goId;
+        }
+
+        public String toString() {
+            return super.toString().toLowerCase();
+        }
+    };
 
     /**
      * @param extraAttribute the main ontology to filter by (biological_process, molecular_function,
@@ -57,18 +79,42 @@ public class GoStatLdr extends EnrichmentWidgetLdr
      */
     public GoStatLdr (InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-        namespace = extraAttribute;
+        if (extraAttribute == null) {
+            namespace = Filter.BIOLOGICAL_PROCESS;
+        } else {
+            try {
+                namespace = Filter.valueOf(extraAttribute.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("filter must be one of: " + getAvailableFilters()
+                        + ", not \"" + extraAttribute + "\"");
+            }
+        }
         taxonIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
         model = os.getModel();
     }
 
     // adds 3 main ontologies to array.  these 3 will be excluded from the query
     private String[] getOntologies() {
-        String[] ids = new String[3];
-        ids[0] = "go:0008150";  // biological_process
-        ids[1] = "go:0003674";  // molecular_function
-        ids[2] = "go:0005575";  // cellular_component
-        return ids;
+        Filter[] filters = Filter.values();
+        int filterLen = filters.length;
+        String[] ontologies = new String[filterLen];
+        for (int i = 0; i < filterLen; i++) {
+            ontologies[i] = filters[i].getGoId();
+        }
+        return ontologies;
+    }
+
+    /**
+     * Get the possible filter values for this data-loader.
+     * @return A list of the filter values this loader expects.
+     */
+    public static List<String> getAvailableFilters() {
+        List<String> strings = new LinkedList<String>();
+        for (Filter f: Filter.values()) {
+            strings.add(f.toString());
+        }
+        return strings;
+        //return (List<String>) collect(asList(Filter.values()), invokerTransformer("toString"));
     }
 
     /**
@@ -153,7 +199,7 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         // go term is of the specified namespace
         QueryExpression c7 = new QueryExpression(QueryExpression.LOWER, qfNamespace);
         cs.addConstraint(new SimpleConstraint(c7, ConstraintOp.EQUALS,
-                new QueryValue(namespace.toLowerCase())));
+                new QueryValue(namespace.toString())));
 
         Collection<Integer> taxonIdInts = new ArrayList<Integer>();
         // constrained only for memory reasons
@@ -258,17 +304,4 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         return q;
     }
 
-    /**
-     * @return the namespace
-     */
-    public String getNamespace() {
-        return namespace;
-    }
-
-    /**
-     * @param namespace the namespace to set
-     */
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
 }
