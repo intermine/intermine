@@ -1,4 +1,3 @@
-
 appname: "MineView"
 
 # configuration file for development environment
@@ -7,12 +6,8 @@ appname: "MineView"
 # console: log messages to STDOUT (your console where you started the
 #          application server)
 # file:    log message to a file in log/
-logger: "console"
-
-# the log level for this environement
-# core is the lowest, it shows Dancer's core log messages as well as yours
-# (debug, warning and error)
-log: "core"
+logger: "file"
+log: "debug"
 
 # should Dancer consider warnings as critical errors?
 warnings: 1
@@ -28,18 +23,14 @@ list_column_width: 3
 
 service_args:
     - "squirrel.flymine.org/intermine-test"
-    - 'intermine-test-user'
-    - 'intermine-test-user-password'
+    - "Z1a3D3U16cicCdS0T6y4bdN1SQh"
 
-list_tag: "mineview-test"
+list_tag: "foo"
 
 gene_list_names: 
     - "My-Favourite-Employees"
     - "The great unknowns"
     - "Umlaut holders"
-    - "Admin departments"
-    - "Bankrupt soon"
-    - "Rich ladies"
 
 mine_base_url: "http://squirrel.flymine.org/intermine-test"
 
