@@ -1,18 +1,17 @@
 package org.intermine.webservice.server.widget;
 
-import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.StreamedOutput;
 
-public class XMLWidgetProcessor implements WidgetProcessor {
+public class XMLWidgetProcessor extends WidgetProcessorImpl {
 
     private static final WidgetProcessor instance = new XMLWidgetProcessor();
 
@@ -26,24 +25,39 @@ public class XMLWidgetProcessor implements WidgetProcessor {
 
     @Override
     public List<String> process(String name, WidgetConfig widgetConfig) {
-        StringBuilder sb = new StringBuilder("<result>");
+        StringBuilder sb = new StringBuilder("<widget>");
         sb.append(formatCell("name", name));
         sb.append(formatCell("title", widgetConfig.getTitle()));
         sb.append(formatCell("description", widgetConfig.getDescription()));
+        String widgetType = getWidgetType(widgetConfig);
+        sb.append(formatCell("widgetType", widgetType));
+        if (widgetType.equals("chart")) {
+            sb.append(formatCell("chartType", 
+                    ((GraphWidgetConfig) widgetConfig).getGraphType()));
+            sb.append(formatCell("labels", getLabels((GraphWidgetConfig) widgetConfig)));
+        }
         sb.append(formatCell("target", getClasses(widgetConfig.getTypeClass())));
-        sb.append("</result>");
+        sb.append(formatCell("filter", getAvailableFilters(widgetConfig)));
+        sb.append("</widget>");
         return new LinkedList<String>(Arrays.asList(sb.toString()));
     }
 
+    @SuppressWarnings("rawtypes")
     private String formatCell(String name, Object contents) {
         StringBuffer sb = new StringBuffer();
-        if (contents instanceof List) {
-            for (Object o: (List) contents) {
+        if (contents instanceof Collection) {
+            for (Object o: (Collection) contents) {
                 sb.append(formatCell(name, o));
             }
-        } else {
+        }  else {
             sb.append("<" + name + ">");
-            sb.append(StringEscapeUtils.escapeXml(contents.toString()));
+            if (contents instanceof Map) {
+                for (Object k: ((Map) contents).keySet()) {
+                    sb.append(formatCell(k.toString(), ((Map) contents).get(k)));
+                }
+            } else {
+                sb.append(StringEscapeUtils.escapeXml(contents.toString()));
+            }
             sb.append("</" + name + ">");
         }
         return sb.toString();

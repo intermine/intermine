@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.json.JSONObject;
 
-public class JSONWidgetProcessor implements WidgetProcessor {
+public class JSONWidgetProcessor extends WidgetProcessorImpl
+{
 
     private static final WidgetProcessor instance = new JSONWidgetProcessor();
 
@@ -29,6 +31,14 @@ public class JSONWidgetProcessor implements WidgetProcessor {
         backingMap.put("title", widgetConfig.getTitle());
         backingMap.put("description", widgetConfig.getDescription());
         backingMap.put("targets", getClasses(widgetConfig.getTypeClass()));
+        backingMap.put("filters", getAvailableFilters(widgetConfig));
+        String widgetType = getWidgetType(widgetConfig);
+        backingMap.put("widgetType", widgetType);
+        if (widgetType.equals("chart")) {
+            backingMap.put("chartType", 
+                    ((GraphWidgetConfig) widgetConfig).getGraphType());
+            backingMap.put("labels", getLabels((GraphWidgetConfig) widgetConfig));
+        }
         return new LinkedList<String>(Arrays.asList(new JSONObject(backingMap).toString()));
     }
 

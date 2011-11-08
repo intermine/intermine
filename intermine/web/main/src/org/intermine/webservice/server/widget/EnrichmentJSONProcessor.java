@@ -8,15 +8,15 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-public class EnrichmentJSONProcessor implements EnrichmentResultProcessor {
+public class EnrichmentJSONProcessor implements WidgetResultProcessor {
 
-    private static final EnrichmentResultProcessor instance = new EnrichmentJSONProcessor();
+    private static final WidgetResultProcessor instance = new EnrichmentJSONProcessor();
 
     private EnrichmentJSONProcessor() {
         // Not to be instantiated.
     }
 
-    public static EnrichmentResultProcessor instance() {
+    public static WidgetResultProcessor instance() {
         return instance;
     }
 
