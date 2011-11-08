@@ -195,6 +195,10 @@ public class ServiceFactory
         return x;
     }
 
+    /**
+     * Return the WidgetService for retrieving widget information.
+     * @return widget service
+     */
     public WidgetService getWidgetService() {
         if (ws == null) {
             ws = new WidgetService(rootUrl, applicationName);
