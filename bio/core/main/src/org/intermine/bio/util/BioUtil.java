@@ -70,7 +70,8 @@ public final class BioUtil
         Model model = os.getModel();
         QueryClass qcObject = null;
         try {
-            qcObject  = new QueryClass(Class.forName(model.getPackageName() + "." + bag.getType()));
+            String className = model.getPackageName() + "." + bag.getType();
+            qcObject  = new QueryClass(Class.forName(className));
         } catch (ClassNotFoundException e) {
             return null;
         }
