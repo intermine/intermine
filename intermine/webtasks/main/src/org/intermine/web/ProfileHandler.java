@@ -185,7 +185,9 @@ class ProfileHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (subHandler != null && subHandler instanceof TemplateQueryHandler) {
+        if (subHandler != null
+            && (subHandler instanceof TemplateQueryHandler
+                || subHandler instanceof SavedQueryHandler)) {
             subHandler.characters(ch, start, length);
         }
     }
