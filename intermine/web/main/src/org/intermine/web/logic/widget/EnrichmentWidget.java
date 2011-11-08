@@ -114,6 +114,7 @@ public class EnrichmentWidget extends Widget
         } catch (InvocationTargetException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage(), e);
+            throw new RuntimeException(e.getCause().getMessage(), e.getCause());
         }
     }
 
