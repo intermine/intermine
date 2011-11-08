@@ -77,9 +77,9 @@ public class JSONFormatter extends Formatter {
             Map<String, String> kvPairs = (Map<String, String>) attributes.get(KEY_KV_PAIRS);
             for (Entry<String, String> pair: kvPairs.entrySet()) {
                 sb.append("\""
-                        + StringEscapeUtils.escapeJavaScript(pair.getKey())
+                        + StringEscapeUtils.escapeJava(pair.getKey())
                         + "\":"
-                        + quoteValue(StringEscapeUtils.escapeJavaScript(pair.getValue()))
+                        + quoteValue(StringEscapeUtils.escapeJava(pair.getValue()))
                         + ",");
             }
         }
