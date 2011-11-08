@@ -44,8 +44,8 @@ public class CurrentQueryAction extends InterMineAction
      *  an exception
      */
     @Override
-    public ActionForward execute(ActionMapping mapping, @SuppressWarnings("unused") ActionForm form,
-            HttpServletRequest request, @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         PathQuery query = SessionMethods.getQuery(session);

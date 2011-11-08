@@ -46,8 +46,8 @@ public class AddToBagAction extends InterMineAction
 
     @Override
     public ActionForward execute(ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) {
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         int id = Integer.parseInt(request.getParameter("object"));
         HttpSession session = request.getSession();
 
