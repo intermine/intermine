@@ -133,7 +133,7 @@ public class EnrichmentWidgetResultService extends JSONService
         } else if (formatIsXML()) {
             return EnrichmentXMLProcessor.instance();
         } else {
-            return EnrichmentFlatFileProcessor.instance();
+            return FlatFileWidgetResultProcessor.instance();
         }
     }
 
