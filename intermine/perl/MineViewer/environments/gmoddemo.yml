@@ -46,8 +46,8 @@ cache_file: './data/memoize_cache.db'
 cache_lifetime: 3600
 
 service_args:
-    - "www.flymine.org/query"
-    - 'u1O3J2eeQeOcx3K2faUfk1qXZEc'
+    - "squirrel.flymine.org/flymine"
+    - "x1C3F3k6q573Mb5bdfdcweNq8CS"
 
 list_tag: "gmoddemo"
 
@@ -58,7 +58,7 @@ gene_list_names:
     - "gmoddemo"
     - "example"
 
-mine_base_url: "http://www.flymine.org"
+mine_base_url: "http://squirrel.flymine.org/flymine"
 
 class_keys:
     Default: 

@@ -1,4 +1,4 @@
-
+<!-- lists-display.tt -->
 <div id="list-chrome" style="margin-bottom:10px;">
 
     <table style="border:none"><tr>
@@ -27,6 +27,10 @@
             <label for="grid">grid</label>
             <input type="radio" name="list-display-format" id="table">
             <label for="table">table</label>
+            [% IF service.version >= 8 %]
+            <input type="radio" name="list-display-format" id="widgets">
+            <label for="widgets">Analysis</label>
+            [% END %]
         </form>
     </span>
     </td>
@@ -37,6 +41,11 @@
     <div id="list-item-box" >
         [% INCLUDE list_items.tt %]
     </div>
+    [% IF service.version >= 8 %]
+    <div id="list-widget-box"  style="display:none;">
+        [% INCLUDE list_widgets.tt %]
+    </div>
+    [% END %]
     <div id="list-table-box" style="display:none;">
         <img src="[% proxy.uri_for('/images/loading-bar.gif') %]"/>
     </div>
@@ -95,8 +104,17 @@ jQuery(function() {
         if (format == "grid") {
             jQuery('#list-item-box').show();
             jQuery('#list-table-box').hide();
+            jQuery('#list-widget-box').hide();
+        } else if (format == "widgets") {
+            jQuery('#list-table-box').hide();
+            jQuery('#list-item-box').hide();
+            var $widgets = jQuery('#list-widget-box').show();
+            
+
+            var $table = $('<table>').appendTo($widgets);
         } else {
             jQuery('#list-item-box').hide();
+            jQuery('#list-widget-box').hide();
             jQuery('#list-table-box').show();
             // When authenticated queries are a reality
             // The following will suffice
@@ -132,6 +150,11 @@ function getCurrentList() {
     var current = 
         $('#lists').multiselect('getChecked').first().attr('value') 
         || $('#currentListName').text();
+    return current;
+}
+
+function getCurrentListType() {
+    var current = listTypes[getCurrentList()];
     return current;
 }
 
@@ -189,4 +212,5 @@ jQuery(function() {
 });
 </script>
         
+<!-- END lists-display.tt -->
 

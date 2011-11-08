@@ -34,9 +34,9 @@
 
 <link rel="stylesheet" type="text/css" title="light" href="http://intermine.org/lib/imbedding/0.2/style/light.css">
 
-<script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery-ui-1.8.13.custom.min.js') %]"></script>
+<script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery-ui-1.8.16.custom.min.js') %]"></script>
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/listcreation.js') %]"></script>
-<link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/css/smoothness/jquery-ui-1.8.13.custom.css') %]">
+<link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/css/smoothness/jquery-ui-1.8.16.custom.css') %]">
 <link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/javascripts/jquery.multiselect.css') %]">
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery.multiselect.js') %]"></script>
 <link rel="stylesheet" type="text/css" href="[% proxy.uri_for('/javascripts/jquery.multiselect.filter.css') %]">

@@ -37,6 +37,7 @@ a[icon ^="delete"] {
 
 #controls {
     margin-bottom: 15px;
+    font-size: 0.8em;
 }
 
 .ui-icon {
@@ -321,3 +322,64 @@ padding-right: 160px;
 font-family: sans-serif;
 font-size: 10px;
 }
+
+table.widget-display {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+}
+
+.widget-display ul {
+    border: 1px solid #ccc;
+    background-color: #eee;
+    padding: 0.5em;
+}
+
+.widget-display li {
+    list-style-type: none;
+}
+
+.match-count {
+    cursor: pointer;
+}
+
+.widget-display tr:nth-child(odd)    { background-color:#eee; }
+.widget-display tr:nth-child(even)    { background-color:#fff; }
+
+.widget-display td, #widget-display thead th {
+    border: 1px solid #ccc;
+    padding: 0.4em;
+}
+
+#max-p-value {
+    border: 0;
+    color: #f6931f;
+    font-weight: bold;
+}
+
+.widget-display thead th {
+    background: #aaa;
+    color: #444;
+}
+
+.widget-display tbody {
+    max-height: 400px;
+    width: 100%;
+    overflow: auto;
+}
+
+.widget-display tr {
+    width: 100%;
+}
+
+#enrichment-options {
+    margin-top: 0.5em;
+    padding: 1em;
+    border: 1px solid #ccc;
+}
+
+#widget-apology .types {
+    padding: 0.3em;
+    border: 1px solid #ccc;
+}
+
