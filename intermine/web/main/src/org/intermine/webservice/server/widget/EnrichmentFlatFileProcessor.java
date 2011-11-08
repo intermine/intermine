@@ -3,15 +3,15 @@ package org.intermine.webservice.server.widget;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EnrichmentFlatFileProcessor implements EnrichmentResultProcessor {
+public class EnrichmentFlatFileProcessor implements WidgetResultProcessor {
 
-    private static final EnrichmentResultProcessor instance = new EnrichmentFlatFileProcessor();
+    private static final WidgetResultProcessor instance = new EnrichmentFlatFileProcessor();
 
     private EnrichmentFlatFileProcessor() {
         // Do not instantiate.
     }
 
-    public static EnrichmentResultProcessor instance() {
+    public static WidgetResultProcessor instance() {
         return instance;
     }
 

@@ -7,7 +7,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
-public class FlatWidgetProcessor implements WidgetProcessor {
+public class FlatWidgetProcessor extends WidgetProcessorImpl
+{
 
     private static final WidgetProcessor instance = new FlatWidgetProcessor();
 
@@ -21,9 +22,12 @@ public class FlatWidgetProcessor implements WidgetProcessor {
 
     @Override
     public List<String> process(String name, WidgetConfig widgetConfig) {
+        String widgetType = getWidgetType(widgetConfig);
         return new LinkedList<String>(
-                Arrays.asList(name, widgetConfig.getTitle(), widgetConfig.getDescription(),
-                formatTypeClass(widgetConfig.getTypeClass())));
+                Arrays.asList(name, widgetConfig.getTitle(), 
+                    widgetConfig.getDescription(), widgetType,
+                    formatTypeClass(widgetConfig.getTypeClass()), 
+                    getAvailableFilters(widgetConfig).toString()));
     }
 
     private static String formatTypeClass(String tc) {

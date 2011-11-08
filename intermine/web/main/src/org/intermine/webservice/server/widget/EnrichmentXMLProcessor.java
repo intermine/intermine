@@ -6,15 +6,15 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-public class EnrichmentXMLProcessor implements EnrichmentResultProcessor {
+public class EnrichmentXMLProcessor implements WidgetResultProcessor {
 
-    private static final EnrichmentResultProcessor instance = new  EnrichmentXMLProcessor();
+    private static final WidgetResultProcessor instance = new  EnrichmentXMLProcessor();
 
     private EnrichmentXMLProcessor() {
         // Not to be instantiated.
     }
 
-    public static EnrichmentResultProcessor instance() {
+    public static WidgetResultProcessor instance() {
         return instance;
     }
 
