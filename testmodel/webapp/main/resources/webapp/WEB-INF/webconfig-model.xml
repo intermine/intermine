@@ -61,6 +61,52 @@
     </longdisplayers>
   </class>
 
+  <class className="org.intermine.model.testmodel.CEO"></class>
+
   <tableExportConfig id="employeeExporter" actionPath="/exportAction?type=employeeExporter"
                      className="org.intermine.model.testmodel.web.EmployeeExporter"/>
+
+     <widgets>
+         <graphdisplayer id="age_groups"
+                 dataSetLoader="org.intermine.model.testmodel.web.widget.AgeGroupLdr"
+                 typeClass="org.intermine.model.testmodel.Employee"
+                 title="Age Groups Distribution"
+                 description="Demographic distribution of employees by age group"
+                 domainLabel="Age Group"
+                 rangeLabel="Count"
+                 graphType="BarChart"/>
+         <graphdisplayer id="age_salary"
+                 dataSetLoader="org.intermine.model.testmodel.web.widget.AgeSalaryLdr"
+                 typeClass="org.intermine.model.testmodel.CEO"
+                 title="Age - Salary trend line"
+                 description="Relationship between age and salaries for CEOs"
+                 domainLabel="Age"
+                 rangeLabel="Salary"
+                 graphType="XYLineChart"/>
+         <graphdisplayer id="company_distribution"
+                 dataSetLoader="org.intermine.model.testmodel.web.widget.CompanyDistLdr"
+                 typeClass="org.intermine.model.testmodel.Employee"
+                 title="Company Affiliation"
+                 description="Percentage of employees belonging to each company"
+                 domainLabel="Company"
+                 rangeLabel="No. of employees"
+                 graphType="PieChart"/>
+         <graphdisplayer id="full_part_time"
+                 dataSetLoader="org.intermine.model.testmodel.web.widget.FullTimeLdr"
+                 typeClass="org.intermine.model.testmodel.CEO,org.intermine.model.testmodel.Company"
+                 title="Full-Time Status by Department"
+                 description="For each department associated with an item show the number of workers in that department in full or part-time employment"
+                 domainLabel="Department"
+                 rangeLabel="No. of employees"
+                 graphType="StackedBarChart"/>
+         <graphdisplayer id="age_seniority"
+                 dataSetLoader="org.intermine.model.testmodel.web.widget.AgeSeniorityLdr"
+                 typeClass="org.intermine.model.testmodel.Manager"
+                 title="Age versus Seniority"
+                 description="The relationship between age and seniority"
+                 domainLabel="Age"
+                 rangeLabel="Seniority"
+                 graphType="ScatterPlot"/>
+     </widgets>
+
 </webconfig>
