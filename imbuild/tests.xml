@@ -6,6 +6,11 @@
   
   <import file="${tests.xml.basedir}/library.xml"/>
   <import file="${tests.xml.basedir}/task.xml"/>
+
+  <target name="-init-live-test">
+    <property name="test.excludes" value=""/>
+  </target>
+
   
   <target name="-pre-init" depends="library.-pre-init">
     <!-- emma properties -->
@@ -79,7 +84,9 @@
       </report>
     </emma>
   </target>
-  
+
+  <target name="live-test" depends=" -init-live-test, -init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
+
   <target name="test" depends="-init-properties, init-test, library.default, -pre-test, instrument, do-test, test-report, coverage-report, -post-test"/>
   
   <target name="test-all" depends="init, -init-deps, jar">
@@ -117,6 +124,7 @@
   <!-- MACRO DEFINITIONS -->
   
   <target name="-init-macrodef-junit">
+    <echoproperties/>
     <macrodef name="junit" uri="http://www.intermine.org/ns/im-tests-proj/1">
     <attribute name="includes" default="${test.includes}"/>
     <attribute name="excludes" default="${test.excludes}"/>
