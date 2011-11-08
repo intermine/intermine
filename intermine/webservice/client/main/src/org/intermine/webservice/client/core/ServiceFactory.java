@@ -15,6 +15,7 @@ import org.intermine.webservice.client.services.ListService;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
 import org.intermine.webservice.client.services.TemplateService;
+import org.intermine.webservice.client.services.WidgetService;
 
 /**
  * The Class that should be used for creating services. You should never create instances of
@@ -116,6 +117,7 @@ public class ServiceFactory
     private TemplateService ts;
     private ListService ls;
     private ModelService ms;
+    private WidgetService ws;
 
     /**
      * Return a new QueryService for getting query results from.
@@ -191,5 +193,13 @@ public class ServiceFactory
         Service x = new Service(rootUrl, serviceRelativeUrl, applicationName);
         authoriseAndLink(x);
         return x;
+    }
+
+    public WidgetService getWidgetService() {
+        if (ws == null) {
+            ws = new WidgetService(rootUrl, applicationName);
+            authoriseAndLink(ws);
+        }
+        return ws;
     }
 }
