@@ -40,6 +40,7 @@ import org.intermine.pathquery.PathQuery;
  *
  * @author Mark Woodbridge
  * @author Thomas Riley
+ * @author Alex Kalderimis
  */
 public class TemplateQuery extends PathQuery
 {
@@ -55,7 +56,7 @@ public class TemplateQuery extends PathQuery
     protected PathQuery query = null;
     /** Whether this is an edited version of another template. */
     protected boolean edited = false;
-    
+
     /** List of those Constraints that are editable */
     protected List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
     /** Descriptions of constraints */
@@ -576,6 +577,7 @@ public class TemplateQuery extends PathQuery
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private String formatKVPair(String key, Object value) {
         if (value instanceof List) {
             StringBuffer sb = new StringBuffer("[");
