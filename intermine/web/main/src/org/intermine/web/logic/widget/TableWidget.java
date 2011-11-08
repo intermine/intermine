@@ -34,6 +34,7 @@ public class TableWidget extends Widget
     private InterMineBag bag;
     private ObjectStore os;
     private TableWidgetLdr bagWidgLdr;
+    @SuppressWarnings("rawtypes")
     private List bagContent = new Vector();
 
     /**
@@ -52,6 +53,7 @@ public class TableWidget extends Widget
     }
 
 
+    @SuppressWarnings("unchecked")
     private void createBagContent() {
 
         List<Integer> bagResults = bag.getContentsAsIds();
@@ -91,6 +93,7 @@ public class TableWidget extends Widget
      * checks if elem is in bag
      * @return true if elem is in bag
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List getElementInList() {
         return bagContent;
     }
@@ -115,6 +118,7 @@ public class TableWidget extends Widget
      * Get the flattened results
      * @return the List of flattened results
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List getFlattenedResults() {
         return bagWidgLdr.getFlattenedResults();
     }
@@ -151,6 +155,7 @@ public class TableWidget extends Widget
      * Get the columns
      * @return the columns
      */
+    @SuppressWarnings({ "rawtypes" })
     public List getColumns() {
         return bagWidgLdr.getColumns();
     }
