@@ -79,17 +79,17 @@ img.tinyQuestionMark {
 <c:choose>
 <c:when test="${fn:length(featureCounts) ge 1}">
 <div class="generated-features">
-  <table cellpadding="0" cellspacing="0" border="0" class="table" width="100%">
+  <table cellpadding="5" cellspacing="5" border="0" class="table" width="100%">
       <tr>
-        <th colspan="" style="padding-left: 6px;">Feature type</th>
-        <th colspan="" style="padding-left: 6px;" align="middle">View data</th>
-        <th colspan="4" style="padding-left: 6px;" align="left">Export</th>
-        <th colspan="" style="padding-left: 6px;" align="left">Action</th>
+        <th>Feature type</th>
+        <th>View data</th>
+        <th colspan="4" >Export</th>
+        <th>Action</th>
       </tr>
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>
           <tr>
-            <td width="15%">
+            <td>
               ${fc.key}
 
                 <c:forEach items="${expFeatDescription}" var="fdes" varStatus="fdes_status">
@@ -99,73 +99,110 @@ img.tinyQuestionMark {
                 </c:forEach>
             </td>
 
-            <td align="middle" width="8%">
-
-                <%-- TMP PATCH until data is corrected. it should be (otherwise)
-                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">${fc.value} </a>
-              --%>
-                 <%--
-                 <c:set var="sub" value="${object}"></c:set>
-                 <c:choose>
-                 <c:when test="${sub.dCCid == '2753'}">
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4230</a>
-                 </c:when>
-                 <c:when test="${sub.dCCid == '2754'}">
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4477</a>
-                 </c:when>
-                 <c:when test="${sub.dCCid == '2755'}">
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">5159</a>
-                 </c:when>
-                 <c:when test="${sub.dCCid == '2783'}">
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">7029</a>
-                 </c:when>
-                 <c:when test="${sub.dCCid == '2979'}">
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">5726</a>
-                 </c:when>
-                  <c:when test="${sub.dCCid == '3247'}">
-                     <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">540</a>
-                  </c:when>
-                  <c:when test="${sub.dCCid == '3251'}">
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">4366</a>
-                  </c:when>
-                  <c:when test="${sub.dCCid == '3253'}">
-                   <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${sub.dCCid}&feature=${fc.key}">6587</a>
-                  </c:when>
-
-                 <c:otherwise>
-                 --%>
-                    <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">${fc.value} </a>
-                 <%--
-                 </c:otherwise>
-                 </c:choose>
-                 --%>
-                 <%-- END patch --%>
+            <td align="middle" style="padding-left: 6px;">
+            <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">${fc.value} </a>
 
             </td>
-            <td align="left" width="5%">
+            <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
             </td>
-            <td align="left" width="5%">
+            <td align="left" style="padding-left: 6px;" >
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
             </td>
-            <td align="left" width="5%">
+            <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}" title="GFF3" style="text-decoration: none;">GFF3</a>
               (<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}&UCSC" title="GFF3 for UCSC" style="text-decoration: none;">for UCSC</a>)
             </td>
-            <td align="left" width="10%">
+            <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="FASTA" style="text-decoration: none;">SEQUENCE</a>
             </td>
-            <td align="left">
+            <td align="left" style="padding-left: 6px;" >
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="Create a list of ${fc.key}" style="text-decoration: none;">create LIST</a>
             </td>
           </tr>
         </c:if>
+        
+        
+        <%-- SOURCE FILE --%>
+        <c:forEach items="${subFeatFileSource}" var="subFFS" varStatus="subFFS_status">
+          <c:if test="${subFFS.key == object.dCCid}" >
+          <tr><th>Source file<td><td><td><td><td><td>
+          
+          <c:forEach items="${subFFS.value}" var="FFS" varStatus="FFS_status">
+          <c:if test="${FFS.key == fc.key}" >
+            <c:forEach items="${FFS.value}" var="FS" varStatus="FS_status">
+
+            
+            <c:if test="${FS.value != fc.value}" >
+            <tr><td>
+            ${fn:replace(FS.key, "_", " ")}
+            <td>
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
+<td>
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=tab">TAB</html:link>
+<td>
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=csv">CSV</html:link>
+            <c:set var="isUnloc" value="false"></c:set>
+            <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
+                <c:if test="${uft.key == object.dCCid}">
+                    <c:forEach items="${uft.value}" var="uftv" varStatus="uftv_status">
+                        <c:if test="${uftv == fc.key}">
+                            <c:set var="isUnloc" value="true">
+                            </c:set>
+                        </c:if>
+                    </c:forEach>
+                </c:if>
+            </c:forEach>
+
+            
+            <c:choose>
+            <c:when test="${isUnloc == 'true' }">
+              <td><i>GFF3</i><td><i>SEQUENCE</i>
+            </c:when>
+          <c:otherwise>
+         <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
+        (<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3&UCSC">for UCSC</html:link>)
+         <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQUENCE</html:link>
+         
+               </c:otherwise>
+            </c:choose>
+               <td>
+               <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">create&nbsp;LIST</html:link>
+          </c:if>
+          </c:forEach>
+          </c:if>
+        </c:forEach>
+        </c:if>
       </c:forEach>
+
+        
+        
+        
+        
+        
+        
+        
+        </c:forEach>
+      
+      
+
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+      
+      
       <!-- end submission loop -->
   </table>
 </div>
 <br>
-<div>
+<div border=1>
   <html:form action="/submissionOverlapsAction" method="post">
     <html:hidden property="submissionTitle" value="${object.title}" />
     <html:hidden property="submissionId" value="${object.id}" />

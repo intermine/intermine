@@ -30,6 +30,7 @@ import org.modmine.web.MetadataCache;
  *
  * @author julie sullivan
  * @author Fengyuan Hu
+ * @author sc
  *
  */
 public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
@@ -60,5 +61,16 @@ public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
         Map<String, String> expFeatureDescription =
             MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
+        
+        
+        Map<String, Map<String, Long>> expFeatEL =
+            MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
+        request.setAttribute("expFeatEL", expFeatEL);
+
+        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
+            MetadataCache.getSubFileSourceCounts(os);
+        request.setAttribute("subFeatFileSource", subFeatFileSource);
+
+        
 	}
 }

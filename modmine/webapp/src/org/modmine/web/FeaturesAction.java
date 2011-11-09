@@ -173,8 +173,8 @@ public class FeaturesAction extends InterMineAction
             }
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
-            sourceFile = request.getParameter("file");
-
+            sourceFile = request.getParameter("file").replace(" ", "+");
+            
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(dccId);
@@ -238,6 +238,8 @@ public class FeaturesAction extends InterMineAction
 
              // source file
                 if (sourceFile != null) {
+                    LOG.info("TOPATHQFF: " + sourceFile);
+                    
                     q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
                 }
 
