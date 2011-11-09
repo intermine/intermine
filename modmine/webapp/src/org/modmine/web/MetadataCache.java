@@ -1450,7 +1450,7 @@ public final class MetadataCache
         for (Object key : props.keySet()) {
             String keyString = (String) key;
             
-            String[] token = keyString.split("\\.");
+            String[] token = keyString.split("\\.", 3); // to preserve file suffix
             String dccId = token[0];
             String featName = token[1];
             String fileName = token[2];
