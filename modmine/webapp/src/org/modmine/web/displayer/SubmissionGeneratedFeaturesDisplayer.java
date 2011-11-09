@@ -10,6 +10,7 @@ package org.modmine.web.displayer;
  *
  */
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -71,6 +72,9 @@ public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
             MetadataCache.getSubFileSourceCounts(os);
         request.setAttribute("subFeatFileSource", subFeatFileSource);
 
+        Map<String, List<String>> unlocatedFeatureTypes =
+            MetadataCache.getUnlocatedFeatureTypes(os);
+        request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
         
 	}
 }
