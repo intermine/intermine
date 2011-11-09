@@ -109,6 +109,23 @@ img.tinyQuestionMark {
             <td align="left" style="padding-left: 6px;" >
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
             </td>
+            
+            <c:set var="isUnloc" value="false"></c:set>
+            <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
+                <c:if test="${uft.key == object.dCCid}">
+                    <c:forEach items="${uft.value}" var="uftv" varStatus="uftv_status">
+                        <c:if test="${uftv == fc.key}">
+                            <c:set var="isUnloc" value="true">
+                            </c:set>
+                        </c:if>
+                    </c:forEach>
+                </c:if>
+            </c:forEach>
+            <c:choose>
+            <c:when test="${isUnloc == 'true' }">
+              <td><i>GFF3</i><td><i>SEQUENCE</i>
+            </c:when>
+          <c:otherwise>
             <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}" title="GFF3" style="text-decoration: none;">GFF3</a>
               (<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=gff3&submission=${object.dCCid}&feature=${fc.key}&UCSC" title="GFF3 for UCSC" style="text-decoration: none;">for UCSC</a>)
@@ -116,6 +133,10 @@ img.tinyQuestionMark {
             <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="FASTA" style="text-decoration: none;">SEQUENCE</a>
             </td>
+            </c:otherwise>
+            </c:choose>
+
+            
             <td align="left" style="padding-left: 6px;" >
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="Create a list of ${fc.key}" style="text-decoration: none;">create LIST</a>
             </td>
