@@ -163,6 +163,7 @@ img.tinyQuestionMark {
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=tab">TAB</html:link>
 <td>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=csv">CSV</html:link>
+<%--
             <c:set var="isUnloc" value="false"></c:set>
             <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
                 <c:if test="${uft.key == object.dCCid}">
@@ -174,7 +175,7 @@ img.tinyQuestionMark {
                     </c:forEach>
                 </c:if>
             </c:forEach>
-
+--%>
             
             <c:choose>
             <c:when test="${isUnloc == 'true' }">
@@ -197,28 +198,9 @@ img.tinyQuestionMark {
       </c:forEach>
 
         
-        
-        
-        
-        
-        
-        
         </c:forEach>
       
-      
-
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          
-      
-      
+ 
       <!-- end submission loop -->
   </table>
 </div>
