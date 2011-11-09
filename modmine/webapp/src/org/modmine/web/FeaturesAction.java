@@ -173,7 +173,9 @@ public class FeaturesAction extends InterMineAction
             }
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
-            sourceFile = request.getParameter("file").replace(" ", "+");
+            if (request.getParameter("file") != null) {
+                sourceFile = request.getParameter("file").replace(" ", "+");
+            }
             
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
@@ -369,8 +371,8 @@ public class FeaturesAction extends InterMineAction
             q.addView(featureType + ".id");
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-            sourceFile = request.getParameter("file").replace(" ", "+");
-            if (sourceFile != null) {
+            if (request.getParameter("file") != null) {
+                sourceFile = request.getParameter("file").replace(" ", "+");
                 q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
             }
 
