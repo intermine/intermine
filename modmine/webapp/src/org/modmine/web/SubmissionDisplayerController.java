@@ -112,28 +112,28 @@ public class SubmissionDisplayerController extends TilesAction
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
-            Class<?> feat = (Class<?>) row.get(0);
+           Class<?> feat = (Class<?>) row.get(0);
             Long count = (Long) row.get(1);
 
             featureCounts.put(TypeUtil.unqualifiedName(feat.getName()), count);
         }
 
-        LOG.info("FC: " + featureCounts);
-
-
+//        LOG.info("FC: " + featureCounts);
+//
+//
         request.setAttribute("featureCounts", featureCounts);
+//
+//        Map<String, String> expFeatureDescription =
+//            MetadataCache.getFeatTypeDescription(servletContext);
+//        request.setAttribute("expFeatDescription", expFeatureDescription);
 
-        Map<String, String> expFeatureDescription =
-            MetadataCache.getFeatTypeDescription(servletContext);
-        request.setAttribute("expFeatDescription", expFeatureDescription);
-
-        Map<String, Map<String, Long>> expFeatEL =
-            MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
-        request.setAttribute("expFeatEL", expFeatEL);
-
-        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
-            MetadataCache.getSubFileSourceCounts(os);
-        request.setAttribute("subFeatFileSource", subFeatFileSource);
+//        Map<String, Map<String, Long>> expFeatEL =
+//            MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
+//        request.setAttribute("expFeatEL", expFeatEL);
+//
+//        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
+//            MetadataCache.getSubFileSourceCounts(os);
+//        request.setAttribute("subFeatFileSource", subFeatFileSource);
         
         return null;
     }
