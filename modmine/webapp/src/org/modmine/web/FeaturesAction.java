@@ -369,7 +369,7 @@ public class FeaturesAction extends InterMineAction
             q.addView(featureType + ".id");
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-            sourceFile = request.getParameter("file");
+            sourceFile = request.getParameter("file").replace(" ", "+");
             if (sourceFile != null) {
                 q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
             }
