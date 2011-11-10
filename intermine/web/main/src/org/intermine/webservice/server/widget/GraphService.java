@@ -102,7 +102,7 @@ public class GraphService extends JSONService
                     im.getObjectStore(), Arrays.asList(input.filter));
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find a graph widget called \""
-                    + input.widget + "\"");
+                    + input.widget + "\"", e);
         }
         if (widget == null) {
             throw new InternalErrorException("Problem loading widget");
