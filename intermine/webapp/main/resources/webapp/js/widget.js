@@ -147,19 +147,17 @@ function checkSelected(formName) {
      return true;
     }
   }
+  alert("Please select some items") 
   return false;
 }
 
 function submitWidgetForm(widgetId,type,extra) {
-    if (document.getElementById('selected_all' + widgetId) != null) {
-        var formName = 'widgetaction'+widgetId;
-        if(formName && !checkSelected(formName)) {
-            document.getElementById('selected_all' + widgetId).checked = true;
-            toggleAllChecks(formName, widgetId);
+    if(type == 'displayAll' || checkSelected('widgetaction'+widgetId)) { 
+        if (document.getElementById('selected_all' + widgetId) != null) {
+            $('action'+widgetId).value=type;
+            $('export' + widgetId).value=extra;
+            $('widgetaction' + widgetId).submit();
         }
-        $('action'+widgetId).value=type;
-        $('export' + widgetId).value=extra;
-        $('widgetaction' + widgetId).submit();
     }
 }
 
