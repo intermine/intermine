@@ -33,7 +33,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
-import org.jfree.util.Log;
 
 /**
  * @author "Xavier Watkins"
@@ -47,7 +46,7 @@ public class EnrichmentWidget extends Widget
     private InterMineBag bag;
     private ObjectStore os;
     private String filter;
-    private EnrichmentResults resultMaps = null;
+    private EnrichmentResults results;
     private String errorCorrection, max;
 
 
@@ -82,14 +81,10 @@ public class EnrichmentWidget extends Widget
 
             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
                 .newInstance(new Object[] {bag, os, filter});
-            resultMaps = WidgetUtil.statsCalc(os, ldr, bag, new Double(0 + max),
-                    errorCorrection);
-            int analysedTotal = 0;
-            if (resultMaps != null) {
-                analysedTotal = resultMaps.getAnalysedTotal();
-            }
-            setNotAnalysed(bag.getSize() - analysedTotal);
-
+            EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
+            Double maxValue = Double.parseDouble(max);
+            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection);
+            setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage(), e);
@@ -144,7 +139,7 @@ public class EnrichmentWidget extends Widget
      * {@inheritDoc}
      */
     public boolean getHasResults() {
-        return (resultMaps != null && resultMaps.getAnalysedTotal() > 0);
+        return results.getPValues().size() > 0;
     }
 
     private Map<String, List<String>> getTermsToIds(List<String> selectedIds) throws Exception {
@@ -178,25 +173,24 @@ public class EnrichmentWidget extends Widget
      */
     public List<List<String>> getExportResults(String[] selected) throws Exception {
 
-        Map<String, BigDecimal> pvalues = resultMaps.getPValues();
-        //Map<String, Long> totals = resultMaps.get(1);
-        Map<String, String> labelToId = resultMaps.getLabels();
+        Map<String, BigDecimal> pValues = results.getPValues();
+        Map<String, String> labels = results.getLabels();
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
 
         Map<String, List<String>> termsToIds = getTermsToIds(selectedIds);
 
         for (String id : selectedIds) {
-            if (labelToId.get(id) != null) {
+            if (labels.get(id) != null) {
 
                 List row = new LinkedList();
                 row.add(id);
-                String label = labelToId.get(id);
+                String label = labels.get(id);
                 if (!label.equals(id)) {
                     row.add(label);
                 }
 
-                BigDecimal bd = pvalues.get(id);
+                BigDecimal bd = pValues.get(id);
                 row.add(new Double(bd.doubleValue()));
 
                 List<String> ids = termsToIds.get(id);
@@ -219,18 +213,18 @@ public class EnrichmentWidget extends Widget
      * {@inheritDoc}
      */
     public List<List<String[]>> getFlattenedResults() {
-        if (getHasResults()) {
-            Map<String, BigDecimal> pvalues = resultMaps.getPValues();
-            Map<String, Integer> totals = resultMaps.getCounts();
-            Map<String, String> labelToId = resultMaps.getLabels();
+        if (results != null) {
+            Map<String, BigDecimal> pValues = results.getPValues();
+            Map<String, Integer> counts = results.getCounts();
+            Map<String, String> labels = results.getLabels();
             List<List<String[]>> flattenedResults = new LinkedList<List<String[]>>();
-            for (String id : pvalues.keySet()) {
+            for (String id : pValues.keySet()) {
                 List<String[]> row = new LinkedList<String[]>();
 
                 row.add(new String[] {"<input name=\"selected\" value=\"" + id
                         + "\" id=\"selected_" + id + "\" type=\"checkbox\">"});
 
-                String label = labelToId.get(id);
+                String label = labels.get(id);
                 if (config.getExternalLink() != null && !"".equals(config.getExternalLink())) {
                     label += " <a href=\"" + config.getExternalLink() + id
                              + "\" target=\"_new\" class=\"extlink\">[";
@@ -242,7 +236,7 @@ public class EnrichmentWidget extends Widget
                 }
                 row.add(new String[] {label});
 
-                BigDecimal bd = pvalues.get(id);
+                BigDecimal bd = pValues.get(id);
                 if (bd.compareTo(new BigDecimal(0.00000099)) <= 0) {
                     NumberFormat formatter = new DecimalFormat();
                     formatter = new DecimalFormat("0.####E0");
@@ -252,7 +246,7 @@ public class EnrichmentWidget extends Widget
                             .toEngineeringString()});
                 }
 
-                row.add(new String[] {totals.get(id).toString(), "widgetAction.do?key=" + id
+                row.add(new String[] {counts.get(id).toString(), "widgetAction.do?key=" + id
                         + "&bagName=" + bag.getName() + "&link=" + config.getLink()});
                 flattenedResults.add(row);
             }
@@ -262,23 +256,23 @@ public class EnrichmentWidget extends Widget
     }
 
     public List<List<Object>> getResults() throws Exception {
-        List<List<Object>> results = new LinkedList<List<Object>>();
-        if (getHasResults()) {
-            Map<String, BigDecimal> pvalues = resultMaps.getPValues();
-            Map<String, Integer> totals = resultMaps.getCounts();
-            Map<String, String> labelToId = resultMaps.getLabels();
-            for (String id : pvalues.keySet()) {
+        List<List<Object>> exportResults = new LinkedList<List<Object>>();
+        if (results != null) {
+            Map<String, BigDecimal> pValues = results.getPValues();
+            Map<String, Integer> counts = results.getCounts();
+            Map<String, String> labels = results.getLabels();
+            for (String id : pValues.keySet()) {
                 List<Object> row = new LinkedList<Object>();
                 row.add(id);
-                row.add(labelToId.get(id));
-                row.add(pvalues.get(id).doubleValue());
-                row.add(totals.get(id));
+                row.add(labels.get(id));
+                row.add(pValues.get(id).doubleValue());
+                row.add(counts.get(id));
                 Map<String, List<String>> termsToIds = getTermsToIds(Arrays.asList(id));
                 row.add(termsToIds.get(id));
-                results.add(row);
+                exportResults.add(row);
             }
         }
-        return results;
+        return exportResults;
     }
 
     /**
