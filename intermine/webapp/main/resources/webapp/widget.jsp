@@ -54,7 +54,7 @@
    <html:hidden property="externalLinkLabel${widget.id}" styleId="externalLinkLabel${widget.id}" value="${widget.externalLinkLabel}"/>
     <li>
     <label>Multiple Hypothesis Test Correction</label>
-    <select id="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
+    <select name="errorCorrection" id="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
       <option value="Holm-Bonferroni">Holm-Bonferroni</option>
       <option value="Benjamini Hochberg">Benjamini and Hochberg</option>
       <option value="Bonferroni">Bonferroni</option>
