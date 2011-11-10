@@ -48,7 +48,7 @@ public final class WidgetUtil
      * or Benjamini Hochberg or none
      * @return array of three results maps
      */
-    public static ArrayList statsCalc(ObjectStore os,
+    public static EnrichmentResults statsCalc(ObjectStore os,
                                       EnrichmentWidgetLdr ldr,
                                       InterMineBag bag,
                                       Double maxValue,
@@ -65,11 +65,11 @@ public final class WidgetUtil
 
         Results r = null;
 
-        HashMap<String, Long> countMap = new HashMap();
+        HashMap<String, Integer> countMap = new HashMap();
         HashMap<String, String> idMap = new HashMap();
         HashMap<String, BigDecimal> resultsMap = new HashMap();
-        Map dummy = new HashMap();
         Map<String, BigDecimal> sortedMap = new LinkedHashMap<String, BigDecimal>();
+        int widgetTotal = 0;
 
         // if the model has changed, the query might not be valid
         if (q != null && populationTotal > 0) {
@@ -86,7 +86,7 @@ public final class WidgetUtil
                 String id = String.valueOf(rr.get(0));
 
                 // count of item
-                Long count = (Long) rr.get(1);
+                Integer count = ((Long) rr.get(1)).intValue();
 
                 // id & count
                 countMap.put(id, count);
@@ -119,8 +119,8 @@ public final class WidgetUtil
 
                 if (countMap.containsKey(id)) {
 
-                    Long countBag = countMap.get(id);
-                    Long countAll = (java.lang.Long) rrAll.get(1);
+                    Integer countBag = countMap.get(id);
+                    Integer countAll = ((Long) rrAll.get(1)).intValue();
 
                     h.setNumberOfSuccesses(countAll.intValue());
                     double p = h.upperCumulativeProbability(countBag.intValue());
@@ -141,25 +141,14 @@ public final class WidgetUtil
                 }
             }
 
-            if (resultsMap.isEmpty()) {
-                // no results
-                dummy.put("widgetTotal", new Integer(0));
-            } else {
+            if (!resultsMap.isEmpty()) {
                 sortedMap = ErrorCorrection.adjustPValues(errorCorrection, resultsMap,
                         maxValue, testCount);
-                dummy.put("widgetTotal", new Integer(sampleTotal));
+                widgetTotal = sampleTotal;
             }
-        } else {
-            // no results
-            dummy.put("widgetTotal", new Integer(0));
         }
 
-        maps.add(0, sortedMap);
-        maps.add(1, countMap);
-        maps.add(2, idMap);
-        maps.add(3, dummy);
-
-        return maps;
+        return new EnrichmentResults(sortedMap, countMap, idMap, widgetTotal);
     }
 
     private static int calcTotal(ObjectStore os, EnrichmentWidgetLdr ldr, boolean calcTotal) {
