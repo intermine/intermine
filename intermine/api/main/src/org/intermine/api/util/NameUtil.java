@@ -146,17 +146,17 @@ public final class NameUtil
 
     /**
      * Generate a new name for a list.  Used in situations where the user has a new list without
-     * creating one via the upload form, eg. when copying or posting a list from another site
+     * creating one via the upload form, e.g. when copying or posting a list from another site
      * @param listName original name for the list
      * @param listNames a list of all lists
      * @return a unique name for the list
      */
     public static String generateNewName(Set<String> listNames, String listName) {
         int i = 1;
-        while (listNames.contains(listName + "_copy" + i)) {
+        while (listNames.contains(listName + "_" + i)) {
             i++;
         }
-        return listName + "_copy" + i;
+        return listName + "_" + i;
     }
 
     /**
