@@ -109,11 +109,13 @@ public class BioGridConverter extends BioFileConverter
         if (file == null) {
             throw new FileNotFoundException("No valid data files found.");
         }
+
         if (taxonIds != null || !taxonIds.isEmpty()) {
             if (!isValidOrganism(file.getName())) {
                 return;
             }
         }
+
         BioGridHandler handler = new BioGridHandler();
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -124,6 +126,11 @@ public class BioGridConverter extends BioFileConverter
     }
 
     private boolean isValidOrganism(String filename) {
+
+        // TODO BIOGRID-ORGANISM-Escherichia_coli_K12_MG1655-3.1.82.psi25.xml
+        // OrganismRepository doesn't contain E. coli substrains (only taxon id 562)
+        // in ecolimine project.xml, 562 must be included in biogrid source
+
         //BIOGRID-ORGANISM-Mus_musculus-3.1.76.psi25.xml:
         String organism = filename.substring(17);
         organism = organism.substring(0, organism.indexOf('-'));
@@ -135,6 +142,7 @@ public class BioGridConverter extends BioFileConverter
             return false;
         }
         OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
+
         if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
             return true;
         }
@@ -194,11 +202,13 @@ public class BioGridConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void close()  {
-        for (Item experiment : idsToExperiments.values()) {
-            try {
-                store(experiment);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
+        if (idsToExperiments != null) {
+            for (Item experiment : idsToExperiments.values()) {
+                try {
+                    store(experiment);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -472,6 +482,7 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setAttribute("name", interactionName);
                 interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
+                LOG.info("interaction >>> " + interaction);
                 key = interactionName + " " + h.eh.experimentRefId + " " + ih.role;
                 if (interactions.contains(key)) {
                     // TODO BioGRID now contains protein and genetic interactions thus creating
