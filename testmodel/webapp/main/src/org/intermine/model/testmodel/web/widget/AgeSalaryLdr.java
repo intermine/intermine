@@ -2,6 +2,8 @@ package org.intermine.model.testmodel.web.widget;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
@@ -23,10 +25,10 @@ import org.jfree.data.xy.XYDataset;
 
 public class AgeSalaryLdr implements DataSetLdr {
 
-    private final CategoryTableXYDataset dataset = new CategoryTableXYDataset();
     private final ObjectStore os;
     private Results results;
     private int total = 0;
+    private List<List<Object>> resultTable = new LinkedList<List<Object>>();
 
     public AgeSalaryLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
@@ -34,10 +36,17 @@ public class AgeSalaryLdr implements DataSetLdr {
         Query q = getQuery(bag);
         results = os.execute(q);
         Iterator<?> it = results.iterator();
+        List<Object> headers = new LinkedList<Object>();
+        headers.add("");
+        headers.add("Salary");
+        resultTable.add(headers);
         while (it.hasNext()) {
             ResultsRow<?> row = (ResultsRow<?>) it.next();
             CEO ceo = (CEO) row.get(0);
-            dataset.add(ceo.getAge(), ceo.getSalary(), "Salary");
+            List<Object> rowList = new LinkedList<Object>();
+            rowList.add(new Double(ceo.getAge()));
+            rowList.add(new Double(ceo.getSalary()));
+            resultTable.add(rowList);
             total++;
         }
     }
@@ -58,11 +67,6 @@ public class AgeSalaryLdr implements DataSetLdr {
     }
 
     @Override
-    public XYDataset getDataSet() {
-        return dataset;
-    }
-
-    @Override
     public Results getResults() {
         return results;
     }
@@ -70,6 +74,11 @@ public class AgeSalaryLdr implements DataSetLdr {
     @Override
     public int getWidgetTotal() {
         return total;
+    }
+
+    @Override
+    public List<List<Object>> getResultTable() {
+        return resultTable;
     }
 
 }
