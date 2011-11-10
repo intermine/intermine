@@ -31,9 +31,6 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.DataSetLdr;
 
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.Dataset;
-
 public class FullTimeLdr implements DataSetLdr
 {
     private static final Factory FAC = new Factory() {

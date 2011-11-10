@@ -20,8 +20,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.jfree.data.xy.CategoryTableXYDataset;
-import org.jfree.data.xy.XYDataset;
 
 public class AgeSalaryLdr implements DataSetLdr {
 

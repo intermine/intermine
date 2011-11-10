@@ -30,8 +30,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.general.DefaultPieDataset;
 
 public class CompanyDistLdr implements DataSetLdr {
 
