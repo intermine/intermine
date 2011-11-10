@@ -72,6 +72,7 @@ import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.TypeUtil;
@@ -560,20 +561,14 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
-     * Destroy method called at Servlet destroy
+     * Destroy method called at Servlet destroy. Close connection pool
      */
     public void destroy() {
-        try {
-            if (profileManager != null) {
-                profileManager.close();
-            }
-            if (trackerDelegate != null) {
-                trackerDelegate.close();
-            }
-            ((ObjectStoreInterMineImpl) os).close();
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException(e);
+        if (profileManager != null) {
+            ((ObjectStoreWriterInterMineImpl) profileManager.getProfileObjectStoreWriter())
+                .getDatabase().shutdown();
         }
+        ((ObjectStoreInterMineImpl) os).getDatabase().shutdown();
     }
 
 
