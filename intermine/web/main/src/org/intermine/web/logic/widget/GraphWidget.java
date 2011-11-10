@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -39,13 +40,15 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.urls.CategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
+import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
+import org.jfree.data.xy.CategoryTableXYDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -65,7 +68,7 @@ import org.jfree.ui.TextAnchor;
 
 /**
  * @author "Xavier Watkins"
- *
+ * @author "Alex Kalderimis"
  */
 public class GraphWidget extends Widget
 {
@@ -80,7 +83,8 @@ public class GraphWidget extends Widget
     private static final ChartColor BLUE = new ChartColor(47, 114, 255);
     private static final ChartColor LIGHT_BLUE = new ChartColor(159, 192, 255);
     private static final ChartColor DARK_BLUE = new ChartColor(39, 77, 216);
-    private Dataset graphDataSet;
+
+    public enum ChartType {ScatterPlot, BarChart, StackedBarChart, PieChart, XYLineChart };
 
     /**
      * @param config config for widget
@@ -106,12 +110,205 @@ public class GraphWidget extends Widget
         return new Vector();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void process() {
+    private JFreeChart createScatterChart() {
+        List<List<Object>> resultTable = dataSetLdr.getResultTable();
+        final CategoryTableXYDataset dataset = new CategoryTableXYDataset();
+        Iterator<List<Object>> it = resultTable.iterator();
+        List<Object> headerRow = it.next();
+        while (it.hasNext()) {
+            List<Object> row = it.next();
+            dataset.add((Double) row.get(0), (Double) row.get(1), (String) headerRow.get(1));
+        }
+        JFreeChart chart = ChartFactory.createScatterPlot(
+                config.getTitle(),
+                ((GraphWidgetConfig) config).getDomainLabel(),
+                ((GraphWidgetConfig) config).getRangeLabel(),
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+        XYPlot plot = chart.getXYPlot();
 
+        XYItemRenderer xyrenderer = plot.getRenderer();
+        StandardXYItemRenderer regressionRenderer
+            = new StandardXYItemRenderer();
+        regressionRenderer.setBaseSeriesVisibleInLegend(false);
+        plot.setDataset(1, regress(dataset));
+        plot.setRenderer(1, regressionRenderer);
+        xyrenderer.setSeriesStroke(0, new BasicStroke(3.0f));
+        xyrenderer.setSeriesStroke(1, new BasicStroke(3.0f));
+
+        xyrenderer.setSeriesPaint(0, BLUE);
+        xyrenderer.setSeriesPaint(1, LIGHT_BLUE);
+
+        plot.setBackgroundPaint(Color.white);
+        plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+        plot.setDomainGridlinesVisible(true);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+
+        DivNumberFormat formatter = new DivNumberFormat(1000);
+        NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+        axis.setNumberFormatOverride(formatter);
+        return chart;
+    }
+
+    private JFreeChart createLineChart() {
+        List<List<Object>> resultTable = dataSetLdr.getResultTable();
+        final CategoryTableXYDataset dataset = new CategoryTableXYDataset();
+        Iterator<List<Object>> it = resultTable.iterator();
+        List<Object> headerRow = it.next();
+        while (it.hasNext()) {
+            List<Object> row = it.next();
+            dataset.add((Double) row.get(0), (Double) row.get(1), (String) headerRow.get(1));
+        }
+        JFreeChart chart = ChartFactory.createXYLineChart(config.getTitle(),
+                ((GraphWidgetConfig) config).getDomainLabel(),
+                ((GraphWidgetConfig) config).getRangeLabel(),
+                dataset,
+                PlotOrientation.VERTICAL, true, true, false);
+
+        XYPlot plot = chart.getXYPlot();
+
+        XYItemRenderer xyrenderer = plot.getRenderer();
+        xyrenderer.setSeriesStroke(0, new BasicStroke(3.0f));
+        xyrenderer.setSeriesStroke(1, new BasicStroke(3.0f));
+
+        xyrenderer.setSeriesPaint(0, BLUE);
+        xyrenderer.setSeriesPaint(1, LIGHT_BLUE);
+
+        plot.setBackgroundPaint(Color.white);
+        plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
+        plot.setDomainGridlinesVisible(true);
+        plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
+
+        DivNumberFormat formatter = new DivNumberFormat(1000);
+        NumberAxis axis = (NumberAxis) plot.getRangeAxis();
+        axis.setNumberFormatOverride(formatter);
+        return chart;
+    }
+
+    private JFreeChart createPieChart() {
+        List<List<Object>> resultTable = dataSetLdr.getResultTable();
+        final DefaultPieDataset dataset = new DefaultPieDataset();
+        Iterator<List<Object>> it = resultTable.iterator();
+        List<Object> headerRow = it.next();
+        while (it.hasNext()) {
+            List<Object> row = it.next();
+            dataset.setValue((String) row.get(0), (Double) row.get(1));
+        }
+        JFreeChart chart = ChartFactory.createPieChart(
+                config.getTitle(), dataset,
+                true, true, false);
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setNoDataMessage("No data available");
+        plot.setCircular(true);
+        plot.setLabelGap(0.02);
+        plot.setBackgroundPaint(Color.white);
+        Font labelFont = new Font("SansSerif", Font.BOLD, 12);
+        plot.setLabelFont(labelFont);
+        plot.setMaximumLabelWidth(0.20d);
+        @SuppressWarnings("rawtypes")
+        List keys = dataset.getKeys();
+        int mod = (keys.size() % 3 == 1) ? 2 : 3;
+        int i = 0;
+        for (Object key: keys) {
+            Color paint;
+            switch (i++ % mod) {
+                case 0:
+                    paint = BLUE; break;
+                case 1:
+                    paint = LIGHT_BLUE; break;
+                case 2:
+                    paint = DARK_BLUE; break;
+                default:
+                    paint = BLUE;
+            }
+            plot.setSectionPaint((Comparable<?>) key, paint);
+        }
+        return chart;
+    }
+
+    private JFreeChart createBarChart() {
+        final List<List<Object>> resultTable = dataSetLdr.getResultTable();
+        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        Iterator<List<Object>> it = resultTable.iterator();
+        List<Object> headerRow = it.next();
+        while (it.hasNext()) {
+            List<Object> row = it.next();
+            for (int i = 1; i < row.size(); i++) {
+                dataset.addValue((Double) row.get(i), (Comparable<?>) headerRow.get(i),
+                        (Comparable<?>) row.get(0));
+            }
+        }
+
+        JFreeChart chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
+                ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
+                ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
+                dataset,
+                PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
+                false // URLs?
+        );
+        CategoryPlot categoryPlot = chart.getCategoryPlot();
+        CategoryItemRenderer categoryRenderer = categoryPlot.getRenderer();
+        categoryRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+                    ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
+        categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+                    ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
+
+        ((GraphWidgetConfig) config).setHeight(400);
+        formatBarCharts(categoryPlot);
+        setURLGen(categoryRenderer);
+        return chart;
+    }
+
+    private JFreeChart createColumnChart() {
+        final List<List<Object>> resultTable = dataSetLdr.getResultTable();
+        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        Iterator<List<Object>> it = resultTable.iterator();
+        List<Object> headerRow = it.next();
+        while (it.hasNext()) {
+            List<Object> row = it.next();
+            for (int i = 1; i < row.size(); i++) {
+                dataset.addValue((Double) row.get(i), (Comparable<?>) headerRow.get(i),
+                        (Comparable<?>) row.get(0));
+            }
+        }
+        JFreeChart chart = ChartFactory.createBarChart(config.getTitle(), // chart title
+                ((GraphWidgetConfig) config).getDomainLabel(),
+                ((GraphWidgetConfig) config).getRangeLabel(),
+                dataset, // data
+                PlotOrientation.VERTICAL, true, true, // tooltips?
+                false // URLs?
+        );
+
+        if (selectedExtraAttribute != null
+                && !selectedExtraAttribute.startsWith("any")) {
+            TextTitle subtitleText = new TextTitle(selectedExtraAttribute);
+            subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
+            chart.addSubtitle(subtitleText);
+        }
+        CategoryPlot categoryPlot = chart.getCategoryPlot();
+        CategoryItemRenderer categoryRenderer = new BarRenderer();
+        ((BarRenderer) categoryRenderer).setItemMargin(0);
+        categoryRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
+                ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
+        categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
+                ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
+        categoryPlot.setRenderer(categoryRenderer);
+
+        // rotate the category labels
+        categoryPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions
+                .createUpRotationLabelPositions(Math.PI / 6.0));
+
+        setURLGen(categoryRenderer);
+
+        ((BarRenderer) categoryRenderer).setNegativeItemLabelPositionFallback(
+                new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
+
+        formatBarCharts(categoryPlot);
+        return chart;
+    }
+
+    private void initDataset() {
         String dataSetLoader = config.getDataSetLoader();
         Class<?> clazz = TypeUtil.instantiate(dataSetLoader);
         try {
@@ -124,152 +321,37 @@ public class GraphWidget extends Widget
             err.printStackTrace();
             return;
         }
+    }
 
-        if (dataSetLdr == null || dataSetLdr.getDataSet() == null) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void process() {
+        initDataset();
+
+        if (dataSetLdr == null || dataSetLdr.getResultTable().isEmpty()) {
             LOG.error("No data found for graph widget");
             return;
         }
         BarRenderer.setDefaultShadowsVisible(false);
         JFreeChart chart = null;
-        graphDataSet = dataSetLdr.getDataSet();
-        String graphType = ((GraphWidgetConfig) config).getGraphType();
+        ChartType chartType = ChartType.valueOf(((GraphWidgetConfig) config).getGraphType());
         ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
 
-        
-        if (StringUtils.isNotEmpty(graphType) && "ScatterPlot".equals(graphType)) {
-            chart = ChartFactory.createScatterPlot(
-                    config.getTitle(),
-                    ((GraphWidgetConfig) config).getDomainLabel(),
-                    ((GraphWidgetConfig) config).getRangeLabel(), 
-                    (XYDataset) graphDataSet,
-                    PlotOrientation.VERTICAL,
-                    true, true, false);
-            XYPlot plot = chart.getXYPlot();
-
-            XYItemRenderer xyrenderer = plot.getRenderer();
-            StandardXYItemRenderer regressionRenderer 
-                = new StandardXYItemRenderer();
-            regressionRenderer.setBaseSeriesVisibleInLegend(false);
-            plot.setDataset(1, regress((XYDataset) graphDataSet));
-            plot.setRenderer(1, regressionRenderer);
-            xyrenderer.setSeriesStroke(0, new BasicStroke(3.0f));
-            xyrenderer.setSeriesStroke(1, new BasicStroke(3.0f));
-
-            xyrenderer.setSeriesPaint(0, BLUE);
-            xyrenderer.setSeriesPaint(1, LIGHT_BLUE);
-
-            plot.setBackgroundPaint(Color.white);
-            plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-            plot.setDomainGridlinesVisible(true);
-            plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-
-            DivNumberFormat formatter = new DivNumberFormat(1000);
-            NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-            axis.setNumberFormatOverride(formatter);
-
-        } else if (StringUtils.isNotEmpty(graphType) && "XYLineChart".equals(graphType)) {
-
-            chart = ChartFactory.createXYLineChart(config.getTitle(),
-                    ((GraphWidgetConfig) config).getDomainLabel(),
-                    ((GraphWidgetConfig) config).getRangeLabel(), (XYDataset) graphDataSet,
-                    PlotOrientation.VERTICAL, true, true, false);
-
-            XYPlot plot = chart.getXYPlot();
-
-            XYItemRenderer xyrenderer = plot.getRenderer();
-            xyrenderer.setSeriesStroke(0, new BasicStroke(3.0f));
-            xyrenderer.setSeriesStroke(1, new BasicStroke(3.0f));
-
-            xyrenderer.setSeriesPaint(0, BLUE);
-            xyrenderer.setSeriesPaint(1, LIGHT_BLUE);
-
-            plot.setBackgroundPaint(Color.white);
-            plot.setDomainGridlinePaint(Color.LIGHT_GRAY);
-            plot.setDomainGridlinesVisible(true);
-            plot.setRangeGridlinePaint(Color.LIGHT_GRAY);
-
-            DivNumberFormat formatter = new DivNumberFormat(1000);
-            NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-            axis.setNumberFormatOverride(formatter);
-        } else if (StringUtils.isNotEmpty(graphType) && "PieChart".equals(graphType)) {
-            chart = ChartFactory.createPieChart(
-                    config.getTitle(), (PieDataset) graphDataSet,
-                    true, true, false);
-            PiePlot plot = (PiePlot) chart.getPlot();
-            plot.setNoDataMessage("No data available");
-            plot.setCircular(true);
-            plot.setLabelGap(0.02);
-            plot.setBackgroundPaint(Color.white);
-            Font labelFont = new Font("SansSerif", Font.BOLD, 12);
-            plot.setLabelFont(labelFont);
-            plot.setMaximumLabelWidth(0.20d);
-            @SuppressWarnings("rawtypes")
-            List keys = ((PieDataset) graphDataSet).getKeys();
-            int mod = (keys.size() % 3 == 1) ? 2 : 3;
-            int i = 0;
-            for (Object key: keys) {
-                Color paint;
-                switch (i++ % mod) {
-                    case 0: paint = BLUE; break;
-                    case 1: paint = LIGHT_BLUE; break;
-                    case 2: paint = DARK_BLUE; break;
-                    default: paint = BLUE;
-                }
-                plot.setSectionPaint((Comparable<?>) key, paint);
-            }
-        } else if (StringUtils.isNotEmpty(graphType) && "StackedBarChart".equals(graphType)) {
-            chart = ChartFactory.createStackedBarChart(config.getTitle(), // chart title
-                    ((GraphWidgetConfig) config).getDomainLabel(), // domain axis label
-                    ((GraphWidgetConfig) config).getRangeLabel(), // range axis label
-                    (CategoryDataset) graphDataSet, // data
-                    PlotOrientation.HORIZONTAL, true, true, // include legend,tooltips?
-                    false // URLs?
-            );
-            CategoryPlot categoryPlot = chart.getCategoryPlot();
-            CategoryItemRenderer categoryRenderer = categoryPlot.getRenderer();
-            categoryRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-                        ItemLabelAnchor.OUTSIDE3, TextAnchor.CENTER_LEFT));
-            categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-                        ItemLabelAnchor.OUTSIDE9, TextAnchor.CENTER_RIGHT));
-
-            ((GraphWidgetConfig) config).setHeight(400);
-            formatBarCharts(categoryPlot);
-            setURLGen(categoryRenderer);
-        /* regular bar chart */
-        } else {
-            chart = ChartFactory.createBarChart(config.getTitle(), // chart title
-                                                ((GraphWidgetConfig) config).getDomainLabel(),
-                                                ((GraphWidgetConfig) config).getRangeLabel(),
-                                                (CategoryDataset) graphDataSet, // data
-                                                PlotOrientation.VERTICAL, true, true, // tooltips?
-                                                false // URLs?
-            );
-
-            if (selectedExtraAttribute != null
-                            && !selectedExtraAttribute.startsWith("any")) {
-                TextTitle subtitleText = new TextTitle(selectedExtraAttribute);
-                subtitleText.setFont(new Font("SansSerif", Font.ITALIC, 10));
-                chart.addSubtitle(subtitleText);
-            }
-            CategoryPlot categoryPlot = chart.getCategoryPlot();
-            CategoryItemRenderer categoryRenderer = new BarRenderer();
-            ((BarRenderer) categoryRenderer).setItemMargin(0);
-            categoryRenderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(
-                        ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER));
-            categoryRenderer.setBaseNegativeItemLabelPosition(new ItemLabelPosition(
-                        ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER));
-            categoryPlot.setRenderer(categoryRenderer);
-
-            // rotate the category labels
-            categoryPlot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions
-                    .createUpRotationLabelPositions(Math.PI / 6.0));
-
-            setURLGen(categoryRenderer);
-
-            ((BarRenderer) categoryRenderer).setNegativeItemLabelPositionFallback(
-                new ItemLabelPosition(ItemLabelAnchor.OUTSIDE3, TextAnchor.BASELINE_LEFT));
-
-            formatBarCharts(categoryPlot);
+        switch (chartType) {
+            case ScatterPlot:
+                chart = createScatterChart(); break;
+            case XYLineChart:
+                chart = createLineChart(); break;
+            case PieChart:
+                chart = createPieChart(); break;
+            case StackedBarChart:
+                chart = createBarChart(); break;
+            case BarChart:
+                chart = createColumnChart(); break;
+            default: // Should never happen.
+                throw new IllegalStateException("Unknown chart type");
         }
 
         if (chart.getTitle() != null) {
@@ -277,8 +359,6 @@ public class GraphWidget extends Widget
         }
 
         chart.setPadding(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-// this would speed up chart rendering, but it wouldn't look as nice.
-//        chart.setAntiAlias(false);
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
         // generate the image and imagemap
@@ -349,11 +429,6 @@ public class GraphWidget extends Widget
             categoryPlot.setDomainGridlinesVisible(true);
             categoryPlot.setRangeGridlinePaint(Color.LIGHT_GRAY);
 
-//            StandardChartTheme legacyTheme
-//            = (StandardChartTheme) StandardChartTheme.createLegacyTheme();
-//            legacyTheme.applyToCategoryPlot((CategoryPlot) categoryPlot);
-
-
         }
     }
 
@@ -418,70 +493,8 @@ public class GraphWidget extends Widget
         return sb.toString();
     }
 
-    @SuppressWarnings({ "rawtypes" })
     public List<List<Object>> getResults() {
-        Dataset dataSet = dataSetLdr.getDataSet();
-        if (dataSet == null) {
-            throw new RuntimeException("null dataset");
-        }
-        List<List<Object>> ret = new LinkedList<List<Object>>();
-        if (graphDataSet instanceof CategoryDataset) {
-            CategoryDataset ds = (CategoryDataset) dataSet;
-            List<Object> rowKeys = ds.getRowKeys();
-            List<Object> labels = new LinkedList<Object>();
-            labels.add(""); // Dummy label
-            labels.addAll(rowKeys);
-            ret.add(labels);
-            int colCount = ds.getColumnCount();
-            for (int i = 0; i < colCount; i++) {
-                List<Object> row = new LinkedList<Object>();
-                row.add(ds.getColumnKey(i));
-                for (Object rowKey: rowKeys) {
-                    int rIdx = ds.getRowIndex((Comparable) rowKey);
-                    row.add(ds.getValue(rIdx, i));
-                }
-                ret.add(row);
-            }
-        } else if (graphDataSet instanceof XYDataset) {
-            XYDataset ds = (XYDataset) graphDataSet;
-            List<Object> headers = new LinkedList<Object>();
-            headers.add("");
-            int sc = ds.getSeriesCount();
-            if (sc > 1) {
-                throw new RuntimeException("Can't do that, sorry");
-            }
-            for (int i = 0; i < sc; i++) {
-                headers.add(ds.getSeriesKey(i));
-            }
-            ret.add(headers);
-            int ic = ds.getItemCount(0);
-            String graphType = ((GraphWidgetConfig) config).getGraphType();
-            boolean stringify = !"ScatterPlot".equals(graphType);
-            for (int i = 0; i < ic; i++) {
-                List<Object> row = new LinkedList<Object>();
-                Double x = ds.getXValue(0, i);
-                row.add(stringify ? Double.toString(x) : x);
-                row.add(ds.getYValue(0, i));
-                ret.add(row);
-            }
-        } else if (graphDataSet instanceof PieDataset) {
-            PieDataset ds = (PieDataset) graphDataSet;
-            List<Object> headers = new LinkedList<Object>();
-            headers.add(((GraphWidgetConfig) config).getDomainLabel());
-            headers.add(((GraphWidgetConfig) config).getRangeLabel());
-            ret.add(headers);
-            int total = dataSetLdr.getWidgetTotal();
-            for (Object key: ds.getKeys()) {
-                List<Object> row = new LinkedList<Object>();
-                row.add(key.toString());
-                row.add(ds.getValue((Comparable) key)); 
-                ret.add(row);
-            }
-        } else {
-            throw new RuntimeException("Unknown data-set type");
-        }
-
-        return ret;
+        return dataSetLdr.getResultTable();
     }
 
     private static XYDataset regress(XYDataset data) {
