@@ -3,6 +3,8 @@ package org.intermine.model.testmodel.web.widget;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,9 +23,6 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.DataSetLdr;
 
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.Dataset;
-
 public class AgeGroupLdr implements DataSetLdr
 {
 
@@ -35,6 +34,7 @@ public class AgeGroupLdr implements DataSetLdr
     private static final String GROUP_4 = "50 to 59";
     private static final String GROUP_5 = "over 60";
     private static final Map<String, Integer> GROUP_LIMITS;
+
     static {
         Map<String, Integer> aMap = new LinkedHashMap<String, Integer>();
         aMap.put(GROUP_0, 20);
@@ -46,33 +46,41 @@ public class AgeGroupLdr implements DataSetLdr
         GROUP_LIMITS = aMap;
     }
 
-    private final DefaultCategoryDataset dataset;
     private Results results;
     private final ObjectStore os;
     private final int items;
+    private final List<List<Object>> resultTable = new LinkedList<List<Object>>();
 
     public AgeGroupLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
         this.os = os;
-        dataset = new DefaultCategoryDataset();
         Factory valueFactory = new Factory() {
             public Object create() {
                 return new int[] {0, 0, 0};
             }
         };
 
-        Map<String, int[]> resultTable
+        Map<String, int[]> resultMap
             = LazyMap.decorate(new HashMap<String, Integer>(), valueFactory);
 
-        int total = addExpected(resultTable, bag);
-        items = addActual(resultTable, bag);
+        int total = addExpected(resultMap, bag);
+        items = addActual(resultMap, bag);
 
         double ratio = Double.valueOf(items) / Double.valueOf(total);
 
+        List<Object> headerRow = new LinkedList<Object>();
+        headerRow.add("Age Group");
+        headerRow.add("Actual");
+        headerRow.add("Expected");
+        resultTable.add(headerRow);
+
         for (String ageGroup: GROUP_LIMITS.keySet()) {
-            int[] vals = resultTable.get(ageGroup);
-            dataset.addValue(vals[0], "Actual", ageGroup);
-            dataset.addValue(Double.valueOf(vals[1]) * ratio, "Expected", ageGroup);
+            int[] vals = resultMap.get(ageGroup);
+            List<Object> row = new LinkedList<Object>();
+            row.add(ageGroup);
+            row.add(Double.valueOf(vals[0]));
+            row.add(Double.valueOf(vals[1]) * ratio);
+            resultTable.add(row);
         }
 
     }
@@ -124,11 +132,6 @@ public class AgeGroupLdr implements DataSetLdr
     }
 
     @Override
-    public Dataset getDataSet() {
-        return dataset;
-    }
-
-    @Override
     public Results getResults() {
         return results;
     }
@@ -137,4 +140,10 @@ public class AgeGroupLdr implements DataSetLdr
     public int getWidgetTotal() {
         return items;
     }
+
+    @Override
+    public List<List<Object>> getResultTable() {
+        return resultTable;
+    }
+
 }

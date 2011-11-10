@@ -3,6 +3,8 @@ package org.intermine.model.testmodel.web.widget;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -40,18 +42,16 @@ public class FullTimeLdr implements DataSetLdr
         }
     };
 
-    private DefaultCategoryDataset dataset;
     private final ObjectStore os;
     private Results results;
     private int total = 0;
-    private final Map<String, int[]> resultTable = 
+    private final Map<String, int[]> resultMap =
         LazyMap.decorate(new TreeMap<String, int[]>(), FAC);
+    private final List<List<Object>> resultTable = new LinkedList<List<Object>>();
 
     public FullTimeLdr(InterMineBag bag, ObjectStore os, String extra) {
         super();
         this.os = os;
-        
-        dataset = new DefaultCategoryDataset();
 
         Query q = getQuery(bag);
 
@@ -67,19 +67,27 @@ public class FullTimeLdr implements DataSetLdr
             Employee emp = (Employee) resRow.get(1);
             depNames.add(dep.getName());
 
-            int[] vals = resultTable.get(dep.getName());
+            int[] vals = resultMap.get(dep.getName());
             vals[emp.getFullTime() ? 1 : 0]++;
-            resultTable.put(dep.getName(), vals);
+            resultMap.put(dep.getName(), vals);
         }
 
         total = depNames.size();
 
-        for (String depName: resultTable.keySet()) {
-            int[] vals = resultTable.get(depName);
-            dataset.addValue(0 - vals[0], "Part-Time", depName);
-            dataset.addValue(0 + vals[1], "Full-Time", depName);
+        List<Object> headerRow = new LinkedList<Object>();
+        headerRow.add("Department");
+        headerRow.add("Part-Time");
+        headerRow.add("Full-Time");
+        resultTable.add(headerRow);
+        for (String depName: resultMap.keySet()) {
+            int[] vals = resultMap.get(depName);
+            List<Object> row = new LinkedList<Object>();
+            row.add(depName);
+            row.add(new Double(0 - vals[0]));
+            row.add(new Double(0 + vals[1]));
+            resultTable.add(row);
         }
-        
+
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -96,20 +104,15 @@ public class FullTimeLdr implements DataSetLdr
             throw new IllegalArgumentException("Bag of unsuitable type: " + bag.getType());
         }
 
-        Map<String, InterMineBag> bags 
+        Map<String, InterMineBag> bags
             = new HashMap<String, InterMineBag>();
         bags.put(bag.getName(), bag);
         try {
-            return MainHelper.makeQuery(pq, bags, new HashMap(), 
+            return MainHelper.makeQuery(pq, bags, new HashMap(),
                     null, new HashMap());
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Error running query", e);
         }
-    }
-    
-    @Override
-    public Dataset getDataSet() {
-        return dataset;
     }
 
     @Override
@@ -121,4 +124,10 @@ public class FullTimeLdr implements DataSetLdr
     public int getWidgetTotal() {
         return total;
     }
+
+    @Override
+    public List<List<Object>> getResultTable() {
+        return resultTable;
+    }
+
 }
