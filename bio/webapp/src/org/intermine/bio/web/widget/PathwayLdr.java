@@ -53,7 +53,9 @@ public class PathwayLdr extends EnrichmentWidgetLdr
     private String dataset;
     private static final String KEGG = "KEGG pathways data set";
     private static final String REACTOME = "Reactome data set";
-    private static final Set<String> FILTERS = new HashSet<String>(Arrays.asList(KEGG, REACTOME));
+    private static final String ALL_DATASETS = "All datasets";
+    private static final Set<String> FILTERS
+        = new HashSet<String>(Arrays.asList(KEGG, REACTOME, ALL_DATASETS));
 
     /**
      * @param extraAttribute the main data-set to filter by (KEGG, or Reactome)
