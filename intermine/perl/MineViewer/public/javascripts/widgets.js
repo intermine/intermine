@@ -65,7 +65,6 @@ function getChartFilter() {
 }
 
 function displayChartWidget(widget_name, widget) {
-    console.log("in the right place");
     var request_data = {
         widget: widget_name,
         list: getCurrentList(),
