@@ -145,7 +145,8 @@ public abstract class LoginHandler extends InterMineAction
     public static Profile setUpProfile(HttpSession session, Profile profile) {
         SessionMethods.setProfile(session, profile);
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
-        if (profile.getUsername().equals(pm.getSuperuser())) {
+        String userName = profile.getUsername();
+        if (userName != null && userName.equals(pm.getSuperuser())) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
         SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
@@ -173,17 +174,17 @@ public abstract class LoginHandler extends InterMineAction
 
     private static class LoginException extends RuntimeException {
 
-    	/**
-		 * Default serial id.
-		 */
-		private static final long serialVersionUID = 1L;
+        /**
+         * Default serial id.
+         */
+        private static final long serialVersionUID = 1L;
 
-		private LoginException() {
-    		super();
-    	}
+        private LoginException() {
+            super();
+        }
 
-    	private LoginException(String message) {
-    		super(message);
-    	}
+        private LoginException(String message) {
+            super(message);
+        }
     }
 }
