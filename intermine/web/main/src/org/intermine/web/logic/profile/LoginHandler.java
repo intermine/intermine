@@ -142,15 +142,23 @@ public abstract class LoginHandler extends InterMineAction
         return setUpProfile(session, profile);
     }
 
+    /**
+     * Sets up a profile ready for a session in InterMine.
+     *
+     * @param session http session
+     * @param profile the user's profile (possibly anonymous and temporary)
+     * @return profile The profile all cleaned up and good to go.
+     */
     public static Profile setUpProfile(HttpSession session, Profile profile) {
         SessionMethods.setProfile(session, profile);
-        ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
-        String userName = profile.getUsername();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        final ProfileManager pm = im.getProfileManager();
+        final String userName = profile.getUsername();
         if (userName != null && userName.equals(pm.getSuperuser())) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
         SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         Connection con = null;
         try {
             con = ((ObjectStoreWriterInterMineImpl) pm.getProfileObjectStoreWriter())
@@ -160,7 +168,7 @@ public abstract class LoginHandler extends InterMineAction
                 new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
             }
         } catch (SQLException sqle) {
-            LOG.error("Problems retriving the connection", sqle);
+            LOG.error("Problems retrieving the connection", sqle);
         } finally {
             try {
                 if (con != null) {
