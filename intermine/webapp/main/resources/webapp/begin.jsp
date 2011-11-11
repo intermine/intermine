@@ -64,7 +64,14 @@
         </c:if>
 
                     <div class="textarea">
-                      <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+                      <c:choose>
+	                      <c:when test="${fn:startsWith(WEB_PROPERTIES['bag.example.identifiers'], 'e.g') == true}">
+	                      	<textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+	                      </c:when>
+	                      <c:otherwise>
+	                      	<textarea id="listInput" name="text">e.g. <c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+	                      </c:otherwise>
+                      </c:choose>
                     </div>
                     <div class="bottom">
                         <center>
