@@ -25,8 +25,17 @@
 <c:set var="uid" value="${fn:replace(placement, ' ', '_')}_${templateName}"/>
 <c:set var="placementAndField" value="${placement}_${templateName}"/>
 
+<c:choose>
+	<c:when test="${reportObject != null || interMineIdBag != null}">
+		<c:set var="tmlType" value="report"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="tmlType" value="aspect"/>
+	</c:otherwise>
+</c:choose>
+
 <div class="template" id="${fn:replace(uid, ":", "_")}">
-  <im:templateLine scope="${scope}" templateQuery="${templateQuery}" interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" />
+  <im:templateLine scope="${scope}" templateQuery="${templateQuery}" interMineObject="${interMineObject}" bagName="${interMineIdBag.name}" trail="${trail}" templateType="${tmlType}" />
   <p class="description" style="display:none;">${templateQuery.description}</p>
 
   <%-- JS target for the table --%>
