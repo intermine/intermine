@@ -611,6 +611,10 @@ public class Profile
      * @return
      */
     public String getSingleUseKey() {
-        return manager.generateSingleUseKey(this);
+        if (isLoggedIn()) {
+            return manager.generateSingleUseKey(this);
+        } else {
+            return "";
+        }
     }
 }
