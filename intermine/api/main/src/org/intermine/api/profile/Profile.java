@@ -606,4 +606,11 @@ public class Profile
         return this.isLocal;
     }
 
+    /**
+     * Return a single use API key for this profile
+     * @return
+     */
+    public String getSingleUseKey() {
+        return manager.generateSingleUseKey(this);
+    }
 }
