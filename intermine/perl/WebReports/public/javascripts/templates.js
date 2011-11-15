@@ -26,7 +26,8 @@ function addSummaryLine($container, mineName, noOfTemplates) {
 
 function addTemplateHeaderInfo($div, t, cons) {
     var text = t.title || t.name;
-    $('<h4>').text(text)
+
+    $('<h4>').html(text.replace("-->", "&rarr;"))
              .addClass("field-shower")
              .appendTo($div);
 }
