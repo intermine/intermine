@@ -191,7 +191,7 @@ public class HeatMapController extends TilesAction
         
         
         ExportResultsIterator result = executor.execute(query);
-        LOG.info("GGS QUERY: -->" + query + "<--");      
+        LOG.debug("GGS QUERY: -->" + query + "<--");      
         
         List<String> conditions = getConditionsList(conditionType);
         
@@ -232,7 +232,7 @@ public class HeatMapController extends TilesAction
         expressionScoreJSON = parseToJSON(StringUtils.capitalize(conditionType),
                 expressionScoreMap);
         
-        LOG.info("GGS JSON: " + expressionScoreJSON);      
+        LOG.debug("GGS JSON: " + expressionScoreJSON);      
         
         return expressionScoreJSON;
         
