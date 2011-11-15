@@ -94,7 +94,7 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
   </script>
 
   <%-- this has to live after jQuery.  do not move --%>
-  <c:if test="${pageName != 'report' && pageName != 'mymine'}">
+  <c:if test="${pageName != 'report' && pageName != 'mymine' && pageName != 'bagDetails'}">
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>
