@@ -53,7 +53,7 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class SubmissionProtocolsController extends TilesAction
 {
-    protected static final Logger LOG = Logger.getLogger(SubmissionDisplayerController.class);
+    protected static final Logger LOG = Logger.getLogger(SubmissionProtocolsController.class);
 
     /**
      * {@inheritDoc}
