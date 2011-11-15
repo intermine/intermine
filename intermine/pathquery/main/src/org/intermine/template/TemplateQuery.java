@@ -25,7 +25,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
@@ -33,6 +32,7 @@ import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 
 /**
  * A template query, which consists of a PathQuery, description, category,
@@ -60,7 +60,8 @@ public class TemplateQuery extends PathQuery
     /** List of those Constraints that are editable */
     protected List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
     /** Descriptions of constraints */
-    protected Map<PathConstraint, String> constraintDescriptions = new HashMap<PathConstraint, String>();
+    protected Map<PathConstraint, String> constraintDescriptions =
+        new HashMap<PathConstraint, String>();
     /** Configuration for switch-off-ability of constraints */
     protected Map<PathConstraint, SwitchOffAbility> constraintSwitchOffAbility =
         new HashMap<PathConstraint, SwitchOffAbility>();
@@ -525,8 +526,9 @@ public class TemplateQuery extends PathQuery
     @Override
     public synchronized String toString() {
         String res = super.toString();
-        res = getClass().getName() + "{ name: "  + getName() + ", title: " + getTitle() + ", comment: "
-                + getComment() + ", description: " + getDescription() +  ", " + res + "}";
+        res = getClass().getName() + "{ name: "  + getName() + ", title: " + getTitle()
+                + ", comment: " + getComment() + ", description: " + getDescription()
+                +  ", " + res + "}";
         return res;
     }
 
@@ -577,12 +579,11 @@ public class TemplateQuery extends PathQuery
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private String formatKVPair(String key, Object value) {
         if (value instanceof List) {
             StringBuffer sb = new StringBuffer("[");
             boolean needsSep = false;
-            for (Object obj: (List) value) {
+            for (Object obj: (List<?>) value) {
                 if (needsSep) {
                     sb.append(",");
                 }
@@ -658,5 +659,10 @@ public class TemplateQuery extends PathQuery
             return ((TemplateQuery) other).toXml().equals(this.toXml());
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toXml().hashCode();
     }
 }
