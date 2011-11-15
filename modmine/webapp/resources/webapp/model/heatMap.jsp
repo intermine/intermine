@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page import="java.net.URLEncoder" language="java" %>
 
 <!-- heatMap.jsp -->
@@ -61,8 +62,7 @@ jQuery(document).ready(function () {
           </i>
         </p>
         <br/>
-
-        
+       
         <html:link linkName="#" styleId="bro" style="cursor:pointer">
         <h3>
         <c:if test="${FeatureCount > 100}">
@@ -98,7 +98,7 @@ jQuery(document).ready(function () {
                     <canvas id="canvas_cl" width="525" height="550"></canvas>
                 </td>
                 <td>
-                     <div style="padding: 0px 0px 5px 25px;">
+                     <div style="padding: 0px 0px 5px 30px;">
                      <span>Developmental Stage Clustering - Hierarchical:</span>
                      <select id="ds-hc">
                          <option value="single" selected="selected">Single</option>
@@ -148,9 +148,9 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
 
 <script type="text/javascript">
 
-    if ('${expressionScoreDCCid}'=='') {
+    if ('${fn:length(expressionScoreJSONCellLine)}' < 10) {
         jQuery('#heatmap_div').remove();
-        jQuery('#expression_div').html('<i>Expression scores are not available</i>');
+        jQuery('#expression_div').html('<i>Expression scores are not available</i>'); 
      } else {
          jQuery("#description").hide();
 
@@ -164,8 +164,8 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
             });
 
            var feature_count = parseInt(${FeatureCount});
-
-            // hm - heatmap; cl - cellline; ds - developmentalstage; hc - hierarchical clustering; km - kmeans
+           
+           // hm - heatmap; cl - cellline; ds - developmentalstage; hc - hierarchical clustering; km - kmeans
             var hm_cl = new CanvasXpress('canvas_cl',
                                          ${expressionScoreJSONCellLine},
                                          {graphType: 'Heatmap',
@@ -218,7 +218,6 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
             } else {
                 jQuery("#cl-km").attr('disabled', 'disabled');
             }
-
             hm_cl.clusterVariables(); // clustering method will call draw action within it.
             // cx_cellline.kmeansVariables();
             hm_cl.draw();
