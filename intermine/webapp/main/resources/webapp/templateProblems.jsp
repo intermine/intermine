@@ -7,23 +7,12 @@
 
 <html:xhtml/>
 
-<c:if test="${param.scope == 'user'}">
-  <c:set var="template" value="${PROFILE.savedTemplates[param.name]}"/>
-</c:if>
-<c:if test="${param.scope == 'global'}">
-  <c:set var="template" value="${GLOBAL_TEMPLATE_QUERIES[param.name]}"/>
-</c:if>
-<c:if test="${param.scope == 'saved'}">
-  <c:set var="template" value="${PROFILE.savedQueries[param.name].pathQuery}"/>
-</c:if>
-
-
-<c:if test="${template != null}">
+<c:if test="${problems != null}">
   <div class="body">
   <fmt:message key="templateProblems.header"/>
   <ul>
-    <c:forEach items="${template.problems}" var="problem">
-      <li>${problem.message}</li>
+    <c:forEach items="${problems}" var="problem">
+      <li>${problem}</li>
     </c:forEach>
   </ul>
 </c:if>
