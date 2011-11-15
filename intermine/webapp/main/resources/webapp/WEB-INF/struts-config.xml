@@ -70,8 +70,10 @@
     </action>
     <action path="/contextHelp" forward="contextHelp.page">
     </action>
-    <action path="/templateProblems" forward="templateProblems.page">
-    </action>
+
+    <action path="/templateProblems" forward="templateProblems.page"/>
+    <action path="/initTemplateProblems" type="org.intermine.web.struts.TemplateProblemsController"/>
+
     <action path="/results" type="org.intermine.web.struts.ResultsAction">
         <forward name="success" redirect="false" path="results.page"/>
     </action>
