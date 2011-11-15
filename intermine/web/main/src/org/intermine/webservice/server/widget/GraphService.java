@@ -107,7 +107,7 @@ public class GraphService extends JSONService
         if (widget == null) {
             throw new InternalErrorException("Problem loading widget");
         }
-
+        addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
