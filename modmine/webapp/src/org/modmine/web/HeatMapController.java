@@ -17,12 +17,12 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -40,7 +40,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.json.JSONObject;
@@ -102,18 +101,14 @@ public class HeatMapController extends TilesAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ObjectStore os = im.getObjectStore();
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
-        DecimalFormat df = new DecimalFormat("#.##");
         
         Model model = im.getModel();
-        //        PathQuery query = new PathQuery(model);
-        
-        String dCCid = null;
         
         Profile profile = SessionMethods.getProfile(session);
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         
         try {
-            findExpression(request, model, bag, executor, dCCid, os, df);
+            findExpression(request, model, bag, executor, os);
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -124,19 +119,19 @@ public class HeatMapController extends TilesAction
     
     
     private void findExpression(HttpServletRequest request, Model model,
-            InterMineBag bag, PathQueryExecutor executor, String dCCid,
-            ObjectStore os, DecimalFormat df) throws ObjectStoreException {
+            InterMineBag bag, PathQueryExecutor executor,
+            ObjectStore os) throws ObjectStoreException {
 
+        DecimalFormat df = new DecimalFormat("#.##");
         
         String expressionType = bag.getType().toLowerCase();
         
-        LOG.info("GGS pre " + CELLLINE);      
         // get the 2 JSON strings
         String expressionScoreJSONCellLine = 
-            getJSONString(model, bag, executor, dCCid, expressionType, CELLLINE);
+            getJSONString(model, bag, executor, expressionType, CELLLINE);
         
         String expressionScoreJSONDevelopmentalStage = 
-            getJSONString(model, bag, executor, dCCid, expressionType, DEVSTAGE);
+            getJSONString(model, bag, executor, expressionType, DEVSTAGE);
         
         // set the attributes
         request.setAttribute("expressionScoreJSONCellLine",
@@ -164,12 +159,10 @@ public class HeatMapController extends TilesAction
         request.setAttribute("minExpressionScore", df.format(logExpressionScoreMin));
         request.setAttribute("maxExpressionScore", df.format(logExpressionScoreMax));
         request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logExpressionScoreMax));
-        request.setAttribute("expressionScoreDCCid", dCCid);
         request.setAttribute("ExpressionType", expressionType);
         request.setAttribute("FeatureCount", bag.getSize());
         // request.setAttribute("FeatureCount", geneExpressionScoreMapDevelopmentalStage.size());
     }
-    
     
     
     private List<String> getConditionsList(String conditionType) {
@@ -184,7 +177,7 @@ public class HeatMapController extends TilesAction
     
     
     private String getJSONString (Model model,
-            InterMineBag bag, PathQueryExecutor executor, String dCCid,
+            InterMineBag bag, PathQueryExecutor executor, 
             String expressionType, String conditionType) {
         
         String expressionScoreJSON = null;
@@ -194,24 +187,13 @@ public class HeatMapController extends TilesAction
             new LinkedHashMap<String, List<ExpressionScore>>();
         
         PathQuery query = new PathQuery(model);
-        
-        
-        // for Gene expression
-        if (expressionType.equalsIgnoreCase(GENE)) {
-            query = queryGeneExpressionScore(bag.getName(), conditionType, query);
-        }
-        if (expressionType.equalsIgnoreCase(EXON)) {
-            query = queryExonExpressionScore(bag.getName(), conditionType, query);
-        }
+        query = queryExpressionScore(bag, conditionType, query);
         
         
         ExportResultsIterator result = executor.execute(query);
-        LOG.info("GGS CT: " + conditionType);              
         LOG.info("GGS QUERY: -->" + query + "<--");      
         
         List<String> conditions = getConditionsList(conditionType);
-        
-        LOG.info("GGS CLIST: " + conditions);      
         
         while (result.hasNext()) {
             List<ResultElement> row = result.next();
@@ -220,19 +202,13 @@ public class HeatMapController extends TilesAction
             String symbol = (String) row.get(1).getField();
             Double score = (Double) row.get(2).getField();
             String condition = (String) row.get(3).getField();
-            dCCid = (String) row.get(4).getField();
+//            String dCCid = (String) row.get(4).getField();
             
             if (symbol == null) {
                 symbol = id;
             }
 
-            if (symbol.contains("(")) {
-                symbol = symbol.replace("(", "%28");
-            }
-
-            if (symbol.contains(")")) {
-                symbol = symbol.replace(")", "%29");
-            }
+            symbol = fixParenthesis(symbol);
             
             if (!expressionScoreMap.containsKey(symbol)) {
                 // Create a list with space for n (size of conditions) ExpressionScore
@@ -256,191 +232,90 @@ public class HeatMapController extends TilesAction
         expressionScoreJSON = parseToJSON(StringUtils.capitalize(conditionType),
                 expressionScoreMap);
         
-        LOG.info("GGS MAPSIZE: " + expressionScoreMap.size());      
         LOG.info("GGS JSON: " + expressionScoreJSON);      
         
         return expressionScoreJSON;
         
     }
 
-    
-    
-    private PathQuery queryGeneExpressionScore(String bagName, String conditionType, PathQuery query) {
-        
-        // Add views
-        query.addViews(
-                "GeneExpressionScore.gene.primaryIdentifier",
-                "GeneExpressionScore.gene.symbol",
-                "GeneExpressionScore.score",
-                "GeneExpressionScore." + conditionType + ".name",
-                "GeneExpressionScore.submission.DCCid"
-        );
-        
-        // Add orderby
-        query.addOrderBy("GeneExpressionScore.gene.primaryIdentifier", OrderDirection.ASC);
-        
-        // Add constraints and you can edit the constraint values below
-        query.addConstraint(Constraints.in("GeneExpressionScore.gene", bagName));
-        
-        return query;
-    }
-    
-    private PathQuery queryExonExpressionScore(String bagName, String conditionType, PathQuery query) {
-        
-        // Add views
-        query.addViews(
-                "ExonExpressionScore.exon.primaryIdentifier",
-                "ExonExpressionScore.exon.symbol",
-                "ExonExpressionScore.score",
-                "ExonExpressionScore." + conditionType + ".name",
-                "ExonExpressionScore.submission.DCCid"
-        );
-        
-        // Add orderby
-        query.addOrderBy("ExonExpressionScore.exon.primaryIdentifier", OrderDirection.ASC);
-        
-        // Add constraints and you can edit the constraint values below
-        query.addConstraint(Constraints.in("ExonExpressionScore.exon", bagName));
-        
-        return query;
-    }
 
     /**
-     * Create a path query to retrieve gene expression score.
-     *
-     * @param bagName the bag includes the query genes
-     * @param query a pathquery
-     * @return the pathquery
+     * To encode '(' and ')', which canvasExpress uses as separator in the cluster tree building
+     * @param symbol
+     * @return a fixed symbol
      */
-    private PathQuery queryExpressionScore(String bagName, String conditionType, PathQuery query) {
+    private String fixParenthesis(String symbol) {
+        if (symbol.contains("(")) {
+            symbol = symbol.replace("(", "%28");
+        }
+
+        if (symbol.contains(")")) {
+            symbol = symbol.replace(")", "%29");
+        }
+        return symbol;
+    }
+
+
+    private PathQuery queryExpressionScore(InterMineBag bag, String conditionType, PathQuery query) {
         
-        String incipit = StringUtils.capitalize(conditionType);
-//        getTableName(conditionType); 
+        String bagType = bag.getType();
+        String type = bagType.toLowerCase();
         
         // Add views
         query.addViews(
-                incipit + "ExpressionScore.gene.primaryIdentifier",
-                incipit + "ExpressionScore.gene.symbol",
-                incipit + "ExpressionScore.score",
-                incipit + "ExpressionScore.cellLine.name",
-                incipit + "ExpressionScore.developmentalStage.name",
-                incipit + "ExpressionScore.submission.DCCid"
+                bagType + "ExpressionScore." + type + ".primaryIdentifier",
+                bagType + "ExpressionScore." + type + ".symbol",
+                bagType + "ExpressionScore.score",
+                bagType + "ExpressionScore." + conditionType + ".name"
+//                ,bagType + "ExpressionScore.submission.DCCid"
         );
         
         // Add orderby
-        query.addOrderBy(incipit + "ExpressionScore.gene.primaryIdentifier", OrderDirection.ASC);
+        query.addOrderBy(bagType + "ExpressionScore." + type 
+                + ".primaryIdentifier", OrderDirection.ASC);
         
         // Add constraints and you can edit the constraint values below
-        query.addConstraint(Constraints.in(incipit + "ExpressionScore.gene", bagName));
-        
-        // Add join status
-        query.setOuterJoinStatus(incipit + "ExpressionScore.cellLine", OuterJoinStatus.OUTER);
-        query.setOuterJoinStatus(incipit + "ExpressionScore.developmentalStage", OuterJoinStatus.OUTER);
+        query.addConstraint(Constraints.in(bagType + "ExpressionScore." + type,
+                bag.getName()));
         
         return query;
     }
 
-    
-//    private void findExonExpression(HttpServletRequest request, Model model,
-//            InterMineBag bag, PathQueryExecutor executor, String dCCid,
-//            ObjectStore os, DecimalFormat df) throws ObjectStoreException {
-//        
-//        // get the 2 JSON strings
-//        String exonExpressionScoreJSONCellLine = 
-//            getJSONString(model, bag, executor, dCCid, EXON, CELLLINE);
-//        
-//        String exonExpressionScoreJSONDevelopmentalStage = 
-//            getJSONString(model, bag, executor, dCCid, EXON, DEVSTAGE);
-//        
-//        // set the attributes
-//        request.setAttribute("expressionScoreJSONCellLine",
-//                exonExpressionScoreJSONCellLine);
-//        request.setAttribute("expressionScoreJSONDevelopmentalStage",
-//                exonExpressionScoreJSONDevelopmentalStage);
-//        
-//        // To make a legend for the heat map
-//        Double logExpressionScoreMin =
-//            Math.log(ModMineUtil.getMinExonExpressionScore(os) + 1) / Math.log(2);
-//        Double logExpressionScoreMax =
-//            Math.log(ModMineUtil.getMaxExonExpressionScore(os) + 1) / Math.log(2);
-//        
-//        request.setAttribute("minExpressionScore", df.format(logExpressionScoreMin));
-//        request.setAttribute("maxExpressionScore", df.format(logExpressionScoreMax));
-//        request.setAttribute("maxExpressionScoreCeiling", Math.ceil(logExpressionScoreMax));
-//        request.setAttribute("expressionScoreDCCid", dCCid);
-//        request.setAttribute("ExpressionType", "exon");
-//        request.setAttribute("FeatureCount", bag.getSize());
-//        // request.setAttribute("FeatureCount", geneExpressionScoreMapDevelopmentalStage.size());
-//    }
-    
 
-
-
-    /**
-     * Create a path query to retrieve gene expression score.
-     *
-     * @param bagName the bag includes the query genes
-     * @param query a pathquery
-     * @return the pathquery
-     */
-    private PathQuery queryGeneExpressionScore(String bagName, PathQuery query) {
-        
-        // Add views
-        query.addViews(
-                "GeneExpressionScore.gene.primaryIdentifier",
-                "GeneExpressionScore.gene.symbol",
-                "GeneExpressionScore.score",
-                "GeneExpressionScore.cellLine.name",
-                "GeneExpressionScore.developmentalStage.name",
-                "GeneExpressionScore.submission.DCCid"
-        );
-        
-        // Add orderby
-        query.addOrderBy("GeneExpressionScore.gene.primaryIdentifier", OrderDirection.ASC);
-        
-        // Add constraints and you can edit the constraint values below
-        query.addConstraint(Constraints.in("GeneExpressionScore.gene", bagName));
-        
-        // Add join status
-        query.setOuterJoinStatus("GeneExpressionScore.cellLine", OuterJoinStatus.OUTER);
-        query.setOuterJoinStatus("GeneExpressionScore.developmentalStage", OuterJoinStatus.OUTER);
-        
-        return query;
-    }
-//
-//    
-//    
 //    /**
-//     * Create a path query to retrieve exon expression score.
+//     * Create a path query to retrieve gene expression score.
 //     *
-//     * @param bagName the bag includes the query exons
+//     * @param bagName the bag includes the query genes
 //     * @param query a pathquery
 //     * @return the pathquery
 //     */
-//    private PathQuery queryExonExpressionScore(String bagName, PathQuery query) {
+//    private PathQuery queryGeneExpressionScore(String bagName, PathQuery query) {
 //        
 //        // Add views
 //        query.addViews(
-//                "ExonExpressionScore.exon.primaryIdentifier",
-//                "ExonExpressionScore.exon.symbol",
-//                "ExonExpressionScore.score",
-//                "ExonExpressionScore.cellLine.name",
-//                "ExonExpressionScore.developmentalStage.name",
-//                "ExonExpressionScore.submission.DCCid"
+//                "GeneExpressionScore.gene.primaryIdentifier",
+//                "GeneExpressionScore.gene.symbol",
+//                "GeneExpressionScore.score",
+//                "GeneExpressionScore.cellLine.name",
+//                "GeneExpressionScore.developmentalStage.name",
+//                "GeneExpressionScore.submission.DCCid"
 //        );
 //        
 //        // Add orderby
-//        query.addOrderBy("ExonExpressionScore.exon.primaryIdentifier", OrderDirection.ASC);
+//        query.addOrderBy("GeneExpressionScore.gene.primaryIdentifier", OrderDirection.ASC);
 //        
 //        // Add constraints and you can edit the constraint values below
-//        query.addConstraint(Constraints.in("ExonExpressionScore.exon", bagName));
+//        query.addConstraint(Constraints.in("GeneExpressionScore.gene", bagName));
 //        
 //        // Add join status
-//        query.setOuterJoinStatus("ExonExpressionScore.cellLine", OuterJoinStatus.OUTER);
-//        query.setOuterJoinStatus("ExonExpressionScore.developmentalStage", OuterJoinStatus.OUTER);
+//        query.setOuterJoinStatus("GeneExpressionScore.cellLine", OuterJoinStatus.OUTER);
+//        query.setOuterJoinStatus("GeneExpressionScore.developmentalStage", OuterJoinStatus.OUTER);
 //        
 //        return query;
 //    }
+//
+//    
+//    
     
     /**
      * Parse expressionScoreMap to JSON string
