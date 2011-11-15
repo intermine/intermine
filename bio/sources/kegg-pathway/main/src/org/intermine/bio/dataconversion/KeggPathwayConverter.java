@@ -127,7 +127,13 @@ public class KeggPathwayConverter extends BioFileConverter
                 processPathway(line);
             } else if (matcher.find()) {
                 String organism = matcher.group(1);
-                String taxonId = config.get(organism)[0];
+
+                String[] orgConfig = config.get(organism);
+                if (orgConfig == null) {
+                    throw new RuntimeException("No config found for " + organism);
+                }
+
+                String taxonId = orgConfig[0];
                 // only process organisms set in project.xml
                 if (!taxonIds.isEmpty() && !taxonIds.contains(taxonId)) {
                     continue;
