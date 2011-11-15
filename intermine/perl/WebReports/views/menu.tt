@@ -6,9 +6,11 @@
                 <a href="[% proxy.uri_for('/') %]">Home</a>
             </li>
             [% END %]
+            <!--
             <li>
                 <a href="[% proxy.uri_for('/analytics') %]">Google Analytics Reports</a>
             </li>
+            -->
             <li>
                 <a href="[% proxy.uri_for('/models') %]">Model Comparison</a>
             </li>
