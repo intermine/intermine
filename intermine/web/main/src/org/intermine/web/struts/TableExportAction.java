@@ -97,7 +97,7 @@ public class TableExportAction extends InterMineAction
 
     private void checkTable(PagedTable pt) {
         if (pt == null) {
-            throw new ExportException("Export failed.");
+            throw new ExportException("Export failed: result is null.");
         }
 
         if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {

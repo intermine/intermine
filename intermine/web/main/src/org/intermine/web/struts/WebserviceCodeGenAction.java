@@ -226,8 +226,8 @@ public class WebserviceCodeGenAction extends InterMineAction
             String serviceRootURL, String projectTitle, String perlWSModuleVer,
             boolean isPublic, String user) {
 
-        WebserviceCodeGenInfo wsCodeGenInfo =
-            new WebserviceCodeGenInfo(query, serviceRootURL, projectTitle, perlWSModuleVer, isPublic, user);
+        WebserviceCodeGenInfo wsCodeGenInfo = new WebserviceCodeGenInfo(query,
+                serviceRootURL, projectTitle, perlWSModuleVer, isPublic, user);
         return wsCodeGenInfo;
     }
 
@@ -241,7 +241,8 @@ public class WebserviceCodeGenAction extends InterMineAction
     private void sendCode(String sourceCodeString, String extension, String filename,
             HttpServletResponse response) {
         response.setContentType("text/plain");
-        response.setHeader("Content-Disposition ", "inline; filename=" + filename + "." + extension);
+        response.setHeader("Content-Disposition ", "inline; filename="
+                + filename + "." + extension);
 
         PrintStream out;
         try {

@@ -50,6 +50,7 @@ public class TemplateManager
 
     private static final TemplateComparator TEMPLATE_COMPARATOR = new TemplateComparator();
     private final Profile superProfile;
+    @SuppressWarnings("unused")
     private final Model model;
     private final TagManager tagManager;
     private TemplateTracker templateTracker;
@@ -187,6 +188,7 @@ public class TemplateManager
      * @param allClasses the type of report page and superclasses
      * @return a list of template queries
      */
+    @SuppressWarnings("unchecked")
     public List<ApiTemplate> getReportPageTemplatesForAspect(String aspect,
             Set<String> allClasses) {
         List<ApiTemplate> templates = new ArrayList<ApiTemplate>();
