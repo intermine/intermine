@@ -28,11 +28,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.search.Scope;
 import org.intermine.api.tag.AspectTagUtil;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
@@ -43,15 +42,16 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class TemplateListController extends TilesAction
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(TemplateListController.class);
     /**
      * {@inheritDoc}
      */
     public ActionForward execute(ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         Model model = im.getModel();
