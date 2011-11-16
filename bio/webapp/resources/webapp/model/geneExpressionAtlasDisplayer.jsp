@@ -4,7 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <style>
-  #gene-expression-atlas div.chart { float:left; }
+  #gene-expression-atlas div.chart { float:left; min-width:500px; }
+  #gene-expression-atlas div.chart div.loading { background:url('images/icons/ajax-loader.gif') no-repeat top left; padding-left:28px;
+  	margin:0 auto; width:200px; margin-top:50px; font-weight:bold; letter-spacing:0.5px; }
   #gene-expression-atlas h3 { background-image:url("images/icons/ebi.gif"); background-position:6px 2px; background-repeat:no-repeat;
     line-height:20px; padding-left:28px; }
   #gene-expression-atlas div.wrap { overflow-x:auto; }
@@ -57,7 +59,9 @@
 
 <div class="wrap">
 <div class="inside">
-<div class="chart" id="gene-expression-atlas-chart"></div>
+<div class="chart" id="gene-expression-atlas-chart">
+	<div class="loading">Loading the chart...</div>
+</div>
 
   <script type="text/javascript">
     <%-- stuff this goodie bag --%>
