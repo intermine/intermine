@@ -71,6 +71,7 @@ if (!im.bagWorks) {
     	<table class="bag-table sortable-onload-2 rowstyle-alt no-arrow">
     	  <thead>
 	          <tr>
+	          	<th style="display:none;"></th>
 	            <th>
 	              <input type="checkbox" id="selected_bag"
 	                     onclick="selectColumnCheckbox(this.form, 'bag')">
