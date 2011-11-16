@@ -192,7 +192,7 @@ public class QueryExpression implements QueryEvaluable
         }
         if (arg.getType().equals(UnknownTypeValue.class)) {
             arg.youAreType(String.class);
-        } else if (!arg.getType().equals(String.class)) {
+        } else if (!arg.getType().equals(String.class) && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
             throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
                     + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
         }
