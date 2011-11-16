@@ -7,6 +7,7 @@ import base64
 import httplib
 import re
 import copy
+import UserDict
 
 # Use core json for 2.6+, simplejson for <=2.5
 try:
@@ -36,6 +37,73 @@ __author__ = "Alex Kalderimis"
 __organization__ = "InterMine"
 __license__ = "LGPL"
 __contact__ = "dev@intermine.org"
+
+class Registry(object, UserDict.DictMixin):
+    """
+    A Class representing an InterMine registry.
+    ===========================================
+
+    Registries are web-services that mines can automatically register themselves
+    with, and thus enable service discovery by clients.
+
+    SYNOPSIS
+    --------
+
+    example::
+
+        from intermine.webservice import Registry
+
+        # Connect to the default registry service
+        # at www.intermine.org/registry
+        registry = Registry()
+
+        # Find all the available mines:
+        for name, mine in registry.items():
+            print name, mine.version
+
+        # Dict-like interface for accessing mines.
+        flymine = registry["flymine"]
+
+        # The mine object is a Service
+        for gene in flymine.select("Gene.*").results():
+            process(gene)
+
+    This class is meant to aid with interoperation between
+    mines by allowing them to discover one-another, and 
+    allow users to always have correct connection information.
+    """
+
+    MINES_PATH = "/mines.json"
+
+    def __init__(self, registry_url="http://www.intermine.org/registry"):
+        self.registry_url = registry_url
+        opener = InterMineURLOpener()
+        data = opener.open(registry_url + Registry.MINES_PATH).read()
+        mine_data = json.loads(data)
+        self.__mine_dict = dict(( (mine["name"], mine) for mine in mine_data["mines"]))
+        self.__synonyms = dict(( (name.lower(), name) for name in self.__mine_dict.keys() ))
+        self.__mine_cache = {}
+
+    def __contains__(self, name):
+        return name.lower() in self.__synonyms
+
+    def __getitem__(self, name):
+        lc = name.lower()
+        if lc in self.__synonyms:
+            if lc not in self.__mine_cache:
+                self.__mine_cache[lc] = Service(self.__mine_dict[self.__synonyms[lc]]["webServiceRoot"])
+            return self.__mine_cache[lc]
+        else:
+            raise KeyError("Unknown mine: " + name)
+
+    def __setitem__(self, name, item):
+        raise NotImplementedError("You cannot add items to a registry")
+
+    def __delitem__(self, name): 
+        raise NotImplementedError("You cannot remove items from a registry")
+
+    def keys(self):
+        return self.__mine_dict.keys()
 
 class Service(object):
     """
