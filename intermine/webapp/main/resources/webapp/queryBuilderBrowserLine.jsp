@@ -158,10 +158,12 @@
                  height="13" title="constrain"/>
           </c:when>
           <c:otherwise>
-            <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
-                onclick="return addConstraint('${node.pathString}', '${imf:formatPathStr(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
-              <img class="arrow" src="images/constrain.gif" width="70" height="13"/>
-            </html:link>
+            <c:if test="${node.type != 'ClobAccess'}">
+	            <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
+	                onclick="return addConstraint('${node.pathString}', '${imf:formatPathStr(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
+	              <img class="arrow" src="images/constrain.gif" width="70" height="13"/>
+	            </html:link>
+            </c:if>
           </c:otherwise>
         </c:choose>
         <c:if test="${isNull}">
