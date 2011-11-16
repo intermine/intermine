@@ -1,0 +1,29 @@
+---
+test1:
+    dataSources:
+      - SourceA
+      - SourceB
+    description: A test example of a mine
+    homeUrl: http://somewhere.org
+    logo: http://somewhere.org/logo.png
+    name: Test1
+    organisms:
+        - S. smurfus
+        - F. roccius
+    version: 1.1
+    webServiceRoot: http://somewhere.org/service
+test2:
+    dataSources:
+      - SourceC
+      - SourceD
+    description: A test example of a mine
+    homeUrl: http://somewhere.else.org
+    logo: http://somewhere.else.org/logo.png
+    name: Test2
+    organisms:
+        - S. smurfus
+        - F. roccius
+    version: 1.2
+    webServiceRoot: http://somewhere.else.org/service
+
+
