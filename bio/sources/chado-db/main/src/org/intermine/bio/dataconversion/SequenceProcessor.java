@@ -288,17 +288,14 @@ public class SequenceProcessor extends ChadoProcessor
             setGeneSource(fdat, dataSourceName);
             
             if (dataSourceName.equalsIgnoreCase("modENCODE")) {
-//                fixedUniqueName = fdat.getUniqueName();                    
                 fixedUniqueName = fixIdentifier(fdat,fdat.getUniqueName());                    
-                LOG.debug("AAAsp2: " + fixedUniqueName);
             }        
         }
 
 
         Set<String> fieldValuesSet = new HashSet<String>();
-
         String fixedName = fixIdentifier(fdat, name);
-
+        
         // using the configuration, set a field to be the feature name
         if (!StringUtils.isBlank(fixedName)) {
             if (nameActionList == null || nameActionList.size() == 0) {
