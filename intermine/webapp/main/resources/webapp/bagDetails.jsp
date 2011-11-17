@@ -19,6 +19,7 @@
 <!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
   var detailsType = 'bag';
+  var service = "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/service/";
 //]]>-->
 </script>
 
