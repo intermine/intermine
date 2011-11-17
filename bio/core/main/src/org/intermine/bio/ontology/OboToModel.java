@@ -115,6 +115,7 @@ public final class OboToModel
 
         // sort classes by name for readability
         Comparator<ClassDescriptor> comparator = new Comparator<ClassDescriptor>() {
+            @Override
             public int compare(ClassDescriptor o1, ClassDescriptor o2) {
                 String fieldName1 = o1.getName().toLowerCase();
                 String fieldName2 = o2.getName().toLowerCase();

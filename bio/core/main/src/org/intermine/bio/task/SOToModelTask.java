@@ -54,6 +54,7 @@ public class SOToModelTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (soTermListFile == null || !soTermListFile.exists()) {
             throw new BuildException("Could not find file containing SO terms to add to the model,"

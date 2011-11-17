@@ -318,6 +318,7 @@ public class GFF3Converter extends DataConverter
      * Perform any necessary clean-up after post-conversion
      * @throws Exception if an error occurs
      */
+    @Override
     public void close() throws Exception {
         // empty - overridden as necessary
     }

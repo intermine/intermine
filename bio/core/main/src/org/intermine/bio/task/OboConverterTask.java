@@ -52,6 +52,7 @@ public class OboConverterTask extends ConverterTask
      * Set the objectstore name
      * @param osName the model name
      */
+    @Override
     public void setOsName(String osName) {
         this.osName = osName;
     }
@@ -78,6 +79,7 @@ public class OboConverterTask extends ConverterTask
      * Run the task
      * @throws BuildException if a problem occurs
      */
+    @Override
     public void execute() {
         if (file == null) {
             throw new BuildException("database attribute is not set");

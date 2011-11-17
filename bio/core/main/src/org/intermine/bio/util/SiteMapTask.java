@@ -69,6 +69,7 @@ public class SiteMapTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
 
         if (outputFile == null) {

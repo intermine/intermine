@@ -81,6 +81,7 @@ public class BioStoreHook implements DataConverterStoreHook
      * @param dataConverter converter where item was created
      * @param item item to be processed
      */
+    @Override
     public void processItem(DataConverter dataConverter, Item item) {
         setSOTerm(dataConverter, item, null, ontologyRefId);
         if (StringUtils.isNotEmpty(dataSetRefId)) {

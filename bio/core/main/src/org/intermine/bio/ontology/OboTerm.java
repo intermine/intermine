@@ -81,6 +81,7 @@ public class OboTerm
      * Create a string representation of the term.
      * @return a string representation of the term
      */
+    @Override
     public String toString() {
         return id + ", " + name;
     }
