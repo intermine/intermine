@@ -30,6 +30,7 @@ import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
+import org.intermine.objectstore.query.MultipleInBagConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
@@ -151,6 +152,13 @@ public class BagQuery
         if (q.getConstraint() instanceof BagConstraint) {
             ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
             nodes.put((QueryEvaluable) ((BagConstraint) q.getConstraint()).getQueryNode(), cs);
+            q.setConstraint(cs);
+        } else if (q.getConstraint() instanceof MultipleInBagConstraint) {
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.OR);
+            MultipleInBagConstraint c = (MultipleInBagConstraint) q.getConstraint();
+            for (QueryEvaluable qe : c.getEvaluables()) {
+                nodes.put(qe, cs);
+            }
             q.setConstraint(cs);
         } else {
             traverseConstraint(q.getConstraint(), nodes);
