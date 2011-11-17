@@ -240,8 +240,6 @@ public class FeaturesAction extends InterMineAction
 
              // source file
                 if (sourceFile != null) {
-                    LOG.info("TOPATHQFF: " + sourceFile);
-                    
                     q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
                 }
 
@@ -259,6 +257,7 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".dcpmBases");
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
+            q.addView("Submission.features.primaryIdentifier");
 
             q.addConstraint(Constraints.eq("Submission.DCCid", dccId));
         } else if ("expEL".equals(type)) {
@@ -274,6 +273,7 @@ public class FeaturesAction extends InterMineAction
             q.addView(path + ".dcpmBases");
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
+            q.addView("Experiment.submissions.features.primaryIdentifier");
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         } else if ("span".equals(type)) {
