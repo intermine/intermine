@@ -15,7 +15,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 96 );
+    plan( tests => 186 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -403,7 +403,7 @@ AUTHENTICATION: {
 
     my $template = $authenticated_service->template("private-template-1");
 
-    is($template->get_count, 48, "Can read a private template");
+    is($template->get_count, 53, "Can read a private template");
 
     my $token_service = Webservice::InterMine::Service->new($url, 'a1v3V1X0f3hdmaybq0l6b7Z4eVG');
 
@@ -411,7 +411,7 @@ AUTHENTICATION: {
 
     my $template2 = $authenticated_service->template("private-template-1");
 
-    is($template2->get_count, 48, "Can read a private template");
+    is($template2->get_count, 53, "Can read a private template");
 }
 
 
@@ -431,8 +431,8 @@ DBIX_SUGAR: {
 
     is(@results, 3, "Search returns result");
     is_deeply(
+        [ 'David Brent', 'Michael Scott', 'Gilles Triquet',], 
         [map {$_->getName} @results], 
-        ['Michael Scott', 'Gilles Triquet', 'David Brent'], 
         "And they have the expected content - reified objects"
     ) or diag explain(\@results);
 
@@ -442,8 +442,8 @@ TEST_IMPORTED_FNS: {
     my @results = resultset("Manager")->search({"department.name" => 'Sales'});
     is(@results, 3, "Can get results with search");
     is_deeply(
+        [ 'David Brent', 'Michael Scott', 'Gilles Triquet',], 
         [map {$_->getName} @results], 
-        ['Michael Scott', 'Gilles Triquet', 'David Brent'], 
         "And they have the expected content - reified objects"
     ) or diag explain(\@results);
     
@@ -467,5 +467,25 @@ TEST_LIST_STATUS: {
     my @lists = get_service("www.flymine.org/query")->get_lists();
     ok($lists[0]->has_status, "Status is provided");
     is($lists[0]->status, "CURRENT", "And list is current");
+}
+
+TEST_DEFAULT_FORMATS: {
+    my $query = resultset("Manager")->select("name", "department.name");
+    my $rr = "Webservice::InterMine::ResultRow";
+    while (my $row = <$query>) {
+        ok($row->isa($rr), "isa result-row");
+    }
+
+    my $ro = "Webservice::InterMine::ResultObject";
+    my $it = $query->iterator(as => 'ro');
+    while (my $row = <$it>) {
+        ok($row->isa($ro), "isa result-object");
+    }
+
+    my $class = "Manager";
+    $it = $query->iterator(as => 'objects');
+    while (my $row = <$it>) {
+        ok($row->isa($class), "isa Manager");
+    }
 }
 

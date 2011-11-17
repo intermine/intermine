@@ -66,9 +66,42 @@ The following options are available:
 
 =item * as => $format
 
-Possible values: (string|tsv|csv|arrayrefs|hashrefs|jsonobjects|jsonrows|count)
+Possible values: (rr|ro|objects|string|jsonobjects|jsonrows|count)
 
-The format to request results in. The default is C<arrayrefs>
+The format to request results in. 
+
+=over 8
+
+=item * C<rr> ResultRows (default)
+
+ResultRows are objects that represent a row of results, allowing both 
+hash-ref and array-ref access to their results. See 
+L<Webservice::InterMine::ResultRow>. 
+
+=item * C<ro> ResultObjects
+
+Inflated L<Webservice::InterMine::ResultObject>s will be returned  (it is a 
+synonym for C<< as => "jsonobjects", json => "inflate" >>). 
+
+=item * C<objects> Instantiated L<InterMine::Model> objects.
+
+Fully instantiated objects will be returned (see L<InterMine::Model::make_new>).
+
+=item * C<string> Unparsed TSV rows
+
+If "string" is selected, then the results will be unparsed tab delimited rows.
+
+=item * json[objects|rows] - raw data structures
+
+The two json formats allow low-level access to the data-structures returned
+by the webservice.
+
+=item * count - a single row containing the count
+
+In preference to using the iterator, it is recommended you use 
+L<Webservice::InterMine::Query::Roles::Runnable::count> instead.
+
+=back
 
 =item * size => $size
 
@@ -136,9 +169,18 @@ sub results_iterator {
     $self->validate;
 
     my $row_format  = delete($args{as})   || "rr";
-    $row_format = 'tab' if ($row_format eq 'string' || $row_format eq 'tsv');
-    $row_format = 'jsonrows' if $args{summaryPath};
-    my $json_format = delete($args{json}) || "perl";
+    my $json_format;
+    if ($row_format eq 'ro') {
+        $row_format = 'jsonobjects';
+        $json_format = 'inflate';
+    } elsif ($row_format eq 'objects') {
+        $row_format = 'jsonobjects';
+        $json_format = 'instantiate';
+    } else {
+        $row_format = 'tab' if ($row_format eq 'string' || $row_format eq 'tsv');
+        $row_format = 'jsonrows' if $args{summaryPath};
+        $json_format = delete($args{json}) || "perl";
+    }
     my $roles       = delete $args{with};
 
     my %query_form = $self->get_request_parameters;
@@ -202,6 +244,12 @@ sub summarise {
     }   
 }
 
+=head2 iterator
+
+A synonym for results_iterator. See L<Webservice::InterMine::Query::Roles::Runnable::results_iterator>.
+
+=cut
+
 sub iterator {
     goto &results_iterator;
 }
@@ -209,42 +257,11 @@ sub iterator {
 =head2 results( %options )
 
 returns the results from a query in the result format
-specified. 
+specified.
 
-The following options are available:
-
-=over 4
-
-=item * as => $format
-
-Possible values: (tsv|csv|arrayrefs|hashrefs|jsonobjects|jsonrows|count)
-
-The format to request results in. The default is C<arrayrefs>
-
-=item * size => $size
-
-The number of results to return. Leave undefined for "all" (default).
-
-=item * start => $start 
-
-The first result to return (starting at 0). The default is 0.
-
-=item * addheaders => 0/1/friendly/path
-
-Whether to return the column headers at the top of TSV/CSV results. The default is
-false. There are two styles - friendly: "Gene > pathways > name" and 
-path: "Gene.pathways.name". The default style is friendly if a true value is entered and
-it is not "path".
-
-=item * json => $json_processor
-
-Possible values: (inflate|instantiate|perl)
-
-What to do with JSON results. The results can be returned as inflated objects,
-full instantiated Moose objects, a raw json string, or as a perl
-data structure. (default is C<perl>).
-
-=back
+This method supports all the options of L<results_iterator>, but returns 
+a list (in list context) or an array-reference (in scalar context) of results
+instead.
 
 =cut
 
