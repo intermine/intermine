@@ -65,6 +65,7 @@ public class AffyProbesConverter extends BioFileConverter
      *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader)
         throws Exception {
 
@@ -106,6 +107,7 @@ public class AffyProbesConverter extends BioFileConverter
      *
      * {@inheritDoc}
      */
+    @Override
     public void close() throws Exception {
         for (ProbeSetHolder holder : holders.values()) {
             storeProbeSet(holder);
