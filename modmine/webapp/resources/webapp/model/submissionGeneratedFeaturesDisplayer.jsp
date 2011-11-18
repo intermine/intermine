@@ -5,8 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-  prefix="str"%>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str"%>
 
 <!-- submissionGeneratedFeaturesDisplayer.jsp -->
 
@@ -109,7 +108,7 @@ img.tinyQuestionMark {
             <td align="left" style="padding-left: 6px;" >
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
             </td>
-            
+
             <c:set var="isUnloc" value="false"></c:set>
             <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
                 <c:if test="${uft.key == object.dCCid}">
@@ -136,24 +135,40 @@ img.tinyQuestionMark {
             </c:otherwise>
             </c:choose>
 
-            
+
             <td align="left" style="padding-left: 6px;" >
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=whatever&action=list&format=sequence&submission=${object.dCCid}&feature=${fc.key}" title="Create a list of ${fc.key}" style="text-decoration: none;">create LIST</a>
             </td>
           </tr>
         </c:if>
-        
-        
+
+
+
+
+<c:forEach items="${subFeatEL}" var="subEL" varStatus="subEL_status">
+<c:if test="${subEL.key == object.dCCid}" >
+<c:forEach items="${subEL.value}" var="subELF" varStatus="subELF_status">
+<c:if test="${subELF.key == fc.key}" >
+<tr><td><i>Expression Levels</i>
+<td>
+
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}">${subELF.value} </html:link>
+
+</c:if>
+</c:forEach>
+</c:if>
+</c:forEach>
+
         <%-- SOURCE FILE --%>
         <c:forEach items="${subFeatFileSource}" var="subFFS" varStatus="subFFS_status">
           <c:if test="${subFFS.key == object.dCCid}" >
           <tr><th>Source file<td><td><td><td><td><td>
-          
+
           <c:forEach items="${subFFS.value}" var="FFS" varStatus="FFS_status">
           <c:if test="${FFS.key == fc.key}" >
             <c:forEach items="${FFS.value}" var="FS" varStatus="FS_status">
 
-            
+
             <c:if test="${FS.value != fc.value}" >
             <tr><td>
             ${fn:replace(FS.key, "_", " ")}
@@ -176,7 +191,7 @@ img.tinyQuestionMark {
                 </c:if>
             </c:forEach>
 --%>
-            
+
             <c:choose>
             <c:when test="${isUnloc == 'true' }">
               <td><i>GFF3</i><td><i>SEQUENCE</i>
@@ -185,7 +200,7 @@ img.tinyQuestionMark {
          <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
         (<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3&UCSC">for UCSC</html:link>)
          <td><html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQUENCE</html:link>
-         
+
                </c:otherwise>
             </c:choose>
                <td>
@@ -197,10 +212,10 @@ img.tinyQuestionMark {
         </c:if>
       </c:forEach>
 
-        
+
         </c:forEach>
-      
- 
+
+
       <!-- end submission loop -->
   </table>
 </div>
