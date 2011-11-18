@@ -286,7 +286,8 @@ public abstract class WebUtil {
         Path viewPath;
         try {
             viewPath = new Path(api.getModel(), pathString);
-        } catch (final PathException e) {
+        } catch (Throwable t) {
+            // In all error cases, return the original string.
             return pathString;
         }
         return formatPath(viewPath, webConfig);
