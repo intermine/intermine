@@ -53,7 +53,8 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Julie Sullivan
  */
 
-public abstract class WebUtil {
+public abstract class WebUtil
+{
     protected static final Logger LOG = Logger.getLogger(WebUtil.class);
 
     /**
@@ -377,6 +378,18 @@ public abstract class WebUtil {
         }
     }
 
+    /**
+     * Format a path represented as a string to the formatted fields, without
+     * the class name.
+     *
+     * So <code>Employee.department.manager.age<code> becomes
+     * <code>Department > Manager > Years Alive</code>
+     *
+     * @param s The path string
+     * @param api The InterMine API to use for model lookup.
+     * @param webConfig The class name configuration.
+     * @return A nicely formatted string.
+     */
     public static String formatFieldChain(final String s,
             final InterMineAPI api, final WebConfig webConfig) {
         final String fullPath = formatPath(s, api.getModel(), webConfig);
