@@ -367,7 +367,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (type.equals(CONFIG.getGeneDesignation())) {
                     entry.addGeneDesignation(getAttrValue(attrs, "value"));
                 } else if ("evidence".equals(type)) {
-                    entry.addGOEvidence(entry.getDbref(), type);
+                    entry.addGOEvidence(entry.getDbref(), getAttrValue(attrs, "value"));
                 }
             } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
@@ -802,6 +802,7 @@ public class UniprotConverter extends BioDirectoryConverter
                         goAnnotation.addToCollection("evidence", goEvidence);
                         gene.addToCollection("goAnnotation", goAnnotation);
                         try {
+                            store(goEvidence);
                             store(goAnnotation);
                         } catch (ObjectStoreException e) {
                             throw new SAXException(e);
