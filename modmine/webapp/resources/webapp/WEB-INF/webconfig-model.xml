@@ -1,8 +1,8 @@
 <webconfig>
-<!-- ============================================================ 
+<!-- ============================================================
        alphabetical order to facilitate comparison with flymine
        fields: summary in the qb
-     ============================================================ -->      
+     ============================================================ -->
   <class className="org.intermine.model.bio.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -301,7 +301,7 @@
   </class>
 
   <class className="org.intermine.model.bio.Lab">
-  <!-- modMine --> 
+  <!-- modMine -->
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="affiliation"/>
@@ -410,7 +410,7 @@
       <fieldconfig fieldExpr="allele.primaryIdentifier"/>
     </fields>
   </class>
-<!-- ************ 
+<!-- ************
   <class className="org.intermine.model.bio.Primer">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -626,7 +626,7 @@
   </class>
 
   <class className="org.intermine.model.bio.Tissue">
-  <!-- modMine -->   
+  <!-- modMine -->
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="species"/>
@@ -792,19 +792,19 @@
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
                      jspName="model/submissionPropertiesDisplayer.jsp"
                      replacesFields="properties,experimentalFactors,developmentalStages,arrays,antibodies,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts,tissues,cellLines"
-                     placement="modENCODE"
+                     placement="Conditions"
                      types="Submission"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGeneratedFeaturesDisplayer"
                      jspName="model/submissionGeneratedFeaturesDisplayer.jsp"
                      replacesFields=""
-                     placement="modENCODE"
+                     placement="Results"
                      types="Submission"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionExternalLinksDisplayer"
                      jspName="model/submissionExternalLinksDisplayer.jsp"
                      replacesFields="databaseRecords"
-                     placement="modENCODE"
+                     placement="Results"
                      types="Submission"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionFileDownloadDisplayer"
@@ -816,7 +816,7 @@
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
                      jspName="model/submissionProtocolsDisplayer.jsp"
                      replacesFields="protocols,appliedProtocols"
-                     placement="modENCODE"
+                     placement="Methods"
                      types="Submission"/>
 
 <!-- <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
