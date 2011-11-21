@@ -72,7 +72,13 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 
 </script>
 
-<h3>Pathways</h3>
+<h3>Pathways from Other Mines</h3>
+
+      <p>
+        <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
+        Pathway data from other Mines for homologues of this gene. 
+      </p>
+
     <!-- one column for each mine -->
     <table>
       <thead>
@@ -83,6 +89,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <!-- other mines -->
             <c:forEach items="${minesForPathways}" var="entry">
                 <c:set var="mine" value="${entry.key}" />
+                <c:set var="homologues" value="${entry.value}" />
                 <th class="loading"><span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span></th>
             </c:forEach>
       </tr>
@@ -120,7 +127,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <c:if test="${fn:length(style) > 0}">
               <script type="text/javascript">
                  var target = '#intermine_pathways_thisMine ul',
-                      i	= jQuery(target).find('li').length - 10;
+                      i = jQuery(target).find('li').length - 10;
               jQuery('<div/>', {
                'class': 'toggle',
                'style': 'margin-top:5px'
