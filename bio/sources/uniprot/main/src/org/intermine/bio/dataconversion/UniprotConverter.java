@@ -59,6 +59,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
+    private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private static final String GENUS_LOOKUP = "Drosophila";
 
     // don't allow duplicate identifiers
@@ -365,6 +366,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 String type = getAttrValue(attrs, "type");
                 if (type.equals(CONFIG.getGeneDesignation())) {
                     entry.addGeneDesignation(getAttrValue(attrs, "value"));
+                } else if ("evidence".equals(type)) {
+                    entry.addGOEvidence(entry.getDbref(), type);
                 }
             } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
@@ -373,7 +376,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 String pubmedString = getAttrValue(attrs, "attribute");
                 if (StringUtils.isNotEmpty(evidenceCode) && StringUtils.isNotEmpty(pubmedString)) {
                     String pubRefId = getEvidence(pubmedString);
-                    entry.addEvidence(evidenceCode, pubRefId);
+                    entry.addPubEvidence(evidenceCode, pubRefId);
                 }
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
                     || "isoform".equals(qName)
@@ -765,9 +768,6 @@ public class UniprotConverter extends BioDirectoryConverter
                         return;
                     }
                     setCrossReference(protein.getIdentifier(), identifier, key, false);
-                    if (creatego && "GO".equals(key)) {
-                        uniprotEntry.addGOTerm(getGoTerm(identifier));
-                    }
                 }
             }
         }
@@ -786,15 +786,27 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private void processGoAnnotation(UniprotEntry uniprotEntry, Item gene)
             throws SAXException {
-            for (String goTermRefId : uniprotEntry.getGOTerms()) {
-                Item goAnnotation = createItem("GOAnnotation");
-                goAnnotation.setReference("subject", gene);
-                goAnnotation.setReference("ontologyTerm", goTermRefId);
-                gene.addToCollection("goAnnotation", goAnnotation);
-                try {
-                    store(goAnnotation);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
+            Map<String, Set<String>> dbrefs = uniprotEntry.getDbrefs();
+            for (Map.Entry<String, Set<String>> dbref : dbrefs.entrySet()) {
+                String key = dbref.getKey();
+                Set<String> values = dbref.getValue();
+                if ("GO".equals(key)) {
+                    for (String goTerm : values) {
+                        String code = getGOEvidenceCode(entry.getGOEvidence(goTerm));
+                        Item goEvidence = createItem("GOEvidence");
+                        goEvidence.setReference("code", code);
+
+                        Item goAnnotation = createItem("GOAnnotation");
+                        goAnnotation.setReference("subject", gene);
+                        goAnnotation.setReference("ontologyTerm", getGoTerm(goTerm));
+                        goAnnotation.addToCollection("evidence", goEvidence);
+                        gene.addToCollection("goAnnotation", goAnnotation);
+                        try {
+                            store(goAnnotation);
+                        } catch (ObjectStoreException e) {
+                            throw new SAXException(e);
+                        }
+                    }
                 }
             }
         }
@@ -817,7 +829,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (StringUtils.isEmpty(identifier)) {
                     continue;
                 }
-                gene = createGene(protein, uniprotEntry, identifier, taxId,
+                gene = getGene(protein, uniprotEntry, identifier, taxId,
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
                 if (gene != null && hasMultipleGenes) {
@@ -843,7 +855,7 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
 
-        private Item createGene(Item protein, UniprotEntry uniprotEntry, String geneIdentifier,
+        private Item getGene(Item protein, UniprotEntry uniprotEntry, String geneIdentifier,
                 String taxId, String uniqueIdentifierField) {
             String identifier = resolveGene(taxId, geneIdentifier);
             if (identifier == null) {
@@ -1084,6 +1096,32 @@ public class UniprotConverter extends BioDirectoryConverter
             refId = item.getIdentifier();
         }
 
+        return refId;
+    }
+
+    // value is NAS:FlyBase
+    private String getGOEvidenceCode(String value)
+        throws SAXException {
+        String[] bits = value.split(":");
+        String code = "";
+        if (bits == null) {
+            code = value;
+        } else {
+            code = bits[0];
+        }
+        String refId = goEvidenceCodes.get(code);
+        if (refId == null) {
+            Item item = createItem("GOEvidenceCode");
+            item.setAttribute("code", code);
+            refId = item.getIdentifier();
+            goEvidenceCodes.put(code, refId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+
+        }
         return refId;
     }
 
