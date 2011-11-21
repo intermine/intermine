@@ -119,7 +119,7 @@ pageContext.setAttribute("now",now);
 
 
 <im:boxarea title="${exp.name}" stylename="gradientbox">
-  
+
   <table cellpadding="0" cellspacing="0" border="0" class="dbsources">
   <tr>
 
@@ -255,7 +255,7 @@ Expression Levels
             href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=experiment&action=export&experiment=${exp.name}&feature=${fc.featureType}&format=sequence"
             title="Download the sequences">SEQ</html:link>
 
-<%--            
+<%--
             <c:choose>
             <c:when test="${fn:contains(exp.unlocated, fc.featureType)}">
 <html:link
@@ -266,7 +266,7 @@ Expression Levels
                <i>SEQ</i>
             </c:otherwise>
             </c:choose>
-    --%>        
+    --%>
             </td>
        </c:otherwise>
        </c:choose>
@@ -592,7 +592,7 @@ All GBrowse tracks generated for this experiment:
 
       <td class="sorting">
       <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}">
-      <c:out value="${sub.title}"></c:out></html:link>
+      <c:out value="${fn:replace(sub.title, '_', ' ')}"></c:out></html:link>
       </td>
 
 <%-- FACTORS --%>
@@ -684,7 +684,10 @@ target:<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.
            </c:forEach>
       </td>
     </c:forEach>
-<!--
+
+
+
+    <!--
 <td class="sorting"><fmt:formatDate value="${sub.publicReleaseDate}" type="date"/></td>
 -->
 
@@ -780,6 +783,10 @@ ${fc.key}:
 Expression Levels:&nbsp;
 
   <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${sub.dCCid}&feature=${fc.key}">${subELF.value} </html:link>
+  &nbsp;&nbsp;export:
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=tab">TAB</html:link>
+  &nbsp;
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&submission=${sub.dCCid}&feature=${fc.key}&format=csv">CSV</html:link>
 
     </c:if>
   </c:forEach>
@@ -819,41 +826,13 @@ Expression Levels:&nbsp;
         <i>&nbsp;GFF3&nbsp;SEQ</i>
       </c:when>
     <c:otherwise>
-<%-- 
-    <c:set var="hasSeq" value="false"></c:set>
-    <c:forEach items="${sequencedFeat}" var="sft" varStatus="sft_status">
-      <c:if test="${sft.key == sub.dCCid}">
-      <c:forEach items="${sft.value}" var="sftv" varStatus="sftv_status">
-        <c:if test="${sftv == fc.key}">
-          <c:set var="hasSeq" value="true"></c:set>
-        </c:if>
-      </c:forEach>
-      </c:if>
-    </c:forEach>
---%>
 
    &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
    &nbsp;(<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3&UCSC">for UCSC</html:link>)
 
    &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
 
-   
-   <%-- 
-   <c:choose>
-      <c:when test="${hasSeq == 'true' }">
-      &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=sequence">SEQ</html:link>
-      </c:when>
-      <c:otherwise>
-        <i>&nbsp;SEQ</i>
-    </c:otherwise>
-    </c:choose>
---%>
 
- 
-
-<%--
-      &nbsp;<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${sub.dCCid}&feature=${fc.key}&file=${FS.key}&format=gff3">GFF3</html:link>
---%>
 
          </c:otherwise>
       </c:choose>
@@ -923,7 +902,7 @@ Expression Levels:&nbsp;
 
 <c:forEach items="${subRep}" var="rep" varStatus="rep_status">
    <c:if test="${rep.key == sub.dCCid}">
-     
+
       <c:forEach items="${rep.value}" var="aRef" varStatus="ref_status" begin="0" end="5">
 
 
