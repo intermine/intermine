@@ -162,17 +162,22 @@ Features
 <c:if test="${subELF.key == fc.key}" >
 <tr><td><i>Expression Levels</i>
 <td>
-
+<i>
 <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}">${subELF.value} </html:link>
-
+</i>
 </td>
 <td align="left" style="padding-left: 6px;">
-  <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
+<i>
+<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
+</i>
 </td>
 <td align="left" style="padding-left: 6px;" >
-  <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
-</td>
+<i>
+<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
+</i>
+  </td>
 
+</tr>
 
 </c:if>
 </c:forEach>
