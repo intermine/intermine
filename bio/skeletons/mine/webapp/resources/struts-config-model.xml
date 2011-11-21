@@ -4,9 +4,6 @@
 <action path="/sequenceExporter"
   type="org.intermine.bio.web.struts.SequenceExportAction" />
 
-<action path="/initAttributeLinkDisplayer"
-        type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
-
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 
