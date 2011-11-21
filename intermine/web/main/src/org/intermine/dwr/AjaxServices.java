@@ -1391,9 +1391,14 @@ public class AjaxServices
         return tagManager.getObjectTagNames(taggedObject, type, userName).contains(tag);
     }
 
-
     private static Profile getProfile(HttpServletRequest request) {
         return SessionMethods.getProfile(request.getSession());
+    }
+
+    public static String getSingleUseKey() {
+        HttpServletRequest request = getRequest();
+        Profile profile = SessionMethods.getProfile(request.getSession());
+        return profile.getSingleUseKey();
     }
 
     private static HttpServletRequest getRequest() {
