@@ -50,7 +50,7 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
       if (Chart) {
           viz = new Chart(targetElem);
           viz.draw(data, options);
-          //if (link != "") {
+          if (link != "") {
             google.visualization.events.addListener(viz, 'select', function() {
               var selection = viz.getSelection();
               for (var i = 0; i < selection.length; i++) {
@@ -67,7 +67,7 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
                 }
               }
             });
-          //}
+          }
       } else {
           alert("Don't know how to draw " + res.chartType + "s yet!");
       }
