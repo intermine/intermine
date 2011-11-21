@@ -71,14 +71,14 @@ img.tinyQuestionMark {
 
 </script>
 
-<h3>
-  Features
-</h3>
 
 <c:choose>
 <c:when test="${fn:length(featureCounts) ge 1}">
 <div class="generated-features">
-  <table cellpadding="5" cellspacing="5" border="0" class="table" width="100%">
+<h3>
+Features
+</h3>
+  <table cellpadding="5" cellspacing="5" border="0" class="resultstables" width="100%">
       <tr>
         <th>Feature type</th>
         <th>View data</th>
@@ -153,6 +153,15 @@ img.tinyQuestionMark {
 <td>
 
 <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}">${subELF.value} </html:link>
+
+</td>
+<td align="left" style="padding-left: 6px;">
+  <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
+</td>
+<td align="left" style="padding-left: 6px;" >
+  <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
+</td>
+
 
 </c:if>
 </c:forEach>
