@@ -99,7 +99,8 @@ public class FeaturesAction extends InterMineAction
 
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
-                && request.getParameter("gzip").equalsIgnoreCase("true")) {
+//                && request.getParameter("gzip").equalsIgnoreCase("true")) {
+            && "true".equalsIgnoreCase(request.getParameter("gzip"))) {
             doGzip = true;
         }
 
@@ -116,7 +117,7 @@ public class FeaturesAction extends InterMineAction
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
 
-            if (featureType.equalsIgnoreCase("all")) {
+            if ("all".equalsIgnoreCase(featureType)) {
                 // fixed query for the moment
                 String project = request.getParameter("project");
                 String rootChoice = getRootFeature(project);
@@ -184,7 +185,7 @@ public class FeaturesAction extends InterMineAction
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
 
-            if (featureType.equalsIgnoreCase("all")) {
+            if ("all".equalsIgnoreCase(featureType)) {
                 String project = request.getParameter("project");
                 String rootChoice = getRootFeature(project);
                 List<String> gffFeatures = new LinkedList<String>(gffFields.get(project));
@@ -398,7 +399,7 @@ public class FeaturesAction extends InterMineAction
      */
     private String getRootFeature(String project) {
         String rootChoice = null;
-        if (project.equalsIgnoreCase("Waterston")) {
+        if ("Waterston".equalsIgnoreCase(project)) {
             rootChoice = "Transcript";
         } else {
             rootChoice = "Gene";
@@ -499,10 +500,10 @@ public class FeaturesAction extends InterMineAction
     private Set<Integer> getTaxonIds(Set<String> organisms) {
         Set<Integer> taxIds = new HashSet<Integer>();
         for (String name : organisms) {
-            if (name.equalsIgnoreCase("D. melanogaster")) {
+            if ("D. melanogaster".equalsIgnoreCase(name)) {
                 taxIds.add(7227);
             }
-            if (name.equalsIgnoreCase("C. elegans")) {
+            if ("C. elegans".equalsIgnoreCase(name)) {
                 taxIds.add(6239);
             }
         }
