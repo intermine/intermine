@@ -176,7 +176,7 @@ public class FeaturesAction extends InterMineAction
             if (request.getParameter("file") != null) {
                 sourceFile = request.getParameter("file").replace(" ", "+");
             }
-            
+
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
                 MetadataCache.getUnlocatedFeatureTypes(os).get(dccId);
@@ -250,14 +250,14 @@ public class FeaturesAction extends InterMineAction
             q.addConstraint(Constraints.type("Submission.features", featureType));
 
             String path = "Submission.features.expressionLevels";
-            q.addView(path + ".name");
+            q.addView("Submission.features.primaryIdentifier");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
             q.addView(path + ".dcpm");
             q.addView(path + ".dcpmBases");
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
-            q.addView("Submission.features.primaryIdentifier");
+            q.addView(path + ".name");
 
             q.addConstraint(Constraints.eq("Submission.DCCid", dccId));
         } else if ("expEL".equals(type)) {
@@ -266,14 +266,14 @@ public class FeaturesAction extends InterMineAction
             q.addConstraint(Constraints.type("Experiment.submissions.features", featureType));
 
             String path = "Experiment.submissions.features.expressionLevels";
-            q.addView(path + ".name");
+            q.addView("Experiment.submissions.features.primaryIdentifier");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
             q.addView(path + ".dcpm");
             q.addView(path + ".dcpmBases");
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
-            q.addView("Experiment.submissions.features.primaryIdentifier");
+            q.addView(path + ".name");
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         } else if ("span".equals(type)) {
