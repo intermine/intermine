@@ -19,7 +19,8 @@
 <!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
   var detailsType = 'bag';
-  var service = "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/service/";
+  var webappUrl = "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/";
+  var service = webappUrl + "service/";
 //]]>-->
 </script>
 

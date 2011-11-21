@@ -54,7 +54,8 @@
    <html:hidden property="externalLinkLabel${widget.id}" styleId="externalLinkLabel${widget.id}" value="${widget.externalLinkLabel}"/>
     <li>
     <label>Multiple Hypothesis Test Correction</label>
-    <select id="errorCorrection${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');">
+    <select id="errorCorrection${widget.id}"
+      onchange="displayEnrichmentWidgetConfig('${widget.id}', '${widget.label}', '${bag.name}');">
       <option value="Holm-Bonferroni">Holm-Bonferroni</option>
       <option value="Benjamini Hochberg">Benjamini and Hochberg</option>
       <option value="Bonferroni">Bonferroni</option>
@@ -63,7 +64,8 @@
     </li>
     <li style="float:right">
     <label>Maximum value to display</label>
-    <select name="max" id="max${widget.id}" onchange="getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}')">
+    <select name="max" id="max${widget.id}"
+      onchange="displayEnrichmentWidgetConfig('${widget.id}', '${widget.label}', '${bag.name}');">
       <option value="0.05">0.05</option>
       <option value="0.10">0.10</option>
       <option value="1.00">1.00</option>
@@ -74,7 +76,12 @@
     <c:if test="${! empty entry.key && entry.key != 'Editable'}">
       <li>
         <label>${entry.key}:</label>
-        <select name="selectedExtraAttribute" id="widgetselect${widget.id}" onchange="getProcess${type}('${widget.id}','${bag.name}');">
+        <select name="selectedExtraAttribute" id="widgetselect${widget.id}"
+          onChange="<c:if test="${type == 'GraphWidgetConfig'}">display${type}('${widget.id}', '${widget.domainLabel}',
+          '${widget.rangeLabel}', '${widget.link}', '${bag.name}');</c:if>
+          <c:if test="${type ne 'GraphWidgetConfig'}">display${type}('${widget.id}', '${widget.label}',
+            '${bag.name}');</c:if>"
+          >
         <c:forEach items="${entry.value}" var="extraParams">
           <%--<c:choose>
             <c:when test="${widget.selectedExtraAttribute == extraParams}">
@@ -134,29 +141,23 @@
     <div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
   </c:if>
   <script language="javascript">
+  google.load('visualization', '1.0', {'packages':['corechart']});
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
-
-      getProcessGraphWidgetConfig('${widget.id}','${bag.name}');
-
+      google.setOnLoadCallback(function() {displayGraphWidgetConfig('${widget.id}', '${widget.domainLabel}',
+                              '${widget.rangeLabel}', '${widget.link}', '${bag.name}');});
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
-
       getProcessTableWidgetConfig('${widget.id}','${bag.name}');
-
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
-
-      getProcessEnrichmentWidgetConfig('${widget.id}','${bag.name}');
-
+      google.setOnLoadCallback(function() {displayEnrichmentWidgetConfig('${widget.id}', '${widget.label}',
+            '${bag.name}');});
     </c:when>
     <c:when test="${type == 'HTMLWidgetConfig'}" >
-
       getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
-
     </c:when>
   </c:choose>
-
   </script>
 </div>
 </form>
