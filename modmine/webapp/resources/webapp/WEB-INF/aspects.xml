@@ -4,10 +4,10 @@
     <icon-image>model/images/modENCODE_s.png</icon-image>
     <large-image>model/images/modENODE_s.png</large-image>
     <intro-text>
-      The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements 
-      (modENCODE) Project will try to identify all of the sequence-based functional elements in the 
-      Caenorhabditis elegans and Drosophila melanogaster genomes. 
-      The project is run as a Research Network. 
+      The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements
+      (modENCODE) Project will try to identify all of the sequence-based functional elements in the
+      Caenorhabditis elegans and Drosophila melanogaster genomes.
+      The project is run as a Research Network.
     </intro-text>
     <tile-name></tile-name>
     <aspect-source name="modENCODE project" url="http://www.modencode.org/"/>
@@ -120,4 +120,32 @@
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
   </aspect>
+
+  <aspect name="Conditions">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Conditions
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+  <aspect name="Results">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Results
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+  <aspect name="Methods">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Results
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
 </aspects>
