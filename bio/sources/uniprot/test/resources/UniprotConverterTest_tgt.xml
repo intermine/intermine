@@ -67,14 +67,20 @@
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="222222"/>
 </item>
-<item id="14_1" class="GOEvidenceCode">
-<attribute name="code" value="evidence"/>
-</item>
 <item id="16_5" class="GOAnnotation">
 <reference name="ontologyTerm" ref_id="17_2"/>
 <reference name="subject" ref_id="13_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="15_5"/></collection>
+</item>
+<item id="14_2" class="GOEvidenceCode">
+<attribute name="code" value="IMP"/>
+</item>
+<item id="15_5" class="GOEvidence">
+<reference name="code" ref_id="14_2"/>
+</item>
+<item id="15_2" class="GOEvidence">
+<reference name="code" ref_id="14_2"/>
 </item>
 <item id="13_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn0000002"/>
@@ -88,9 +94,18 @@
 <attribute name="type" value="similarity"/>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
+<item id="15_6" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
+</item>
 <item id="4_2" class="Comment">
 <attribute name="text" value="I'm a duplicate!"/>
 <attribute name="type" value="similarity"/>
+</item>
+<item id="15_4" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
+</item>
+<item id="15_3" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
 </item>
 <item id="12_1" class="CrossReference">
 <attribute name="identifier" value="NP_523670.2"/>
@@ -117,13 +132,13 @@
 <reference name="subject" ref_id="8_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="1_2" class="DataSource">
-<attribute name="name" value="RefSeq"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="19_3" class="Synonym">
 <attribute name="value" value="alternativeName - full"/>
 <reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_2" class="DataSource">
+<attribute name="name" value="RefSeq"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="16_4" class="GOAnnotation">
@@ -131,6 +146,9 @@
 <reference name="subject" ref_id="13_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="15_4"/></collection>
+</item>
+<item id="14_1" class="GOEvidenceCode">
+<attribute name="code" value="NAS"/>
 </item>
 <item id="7_2" class="UniProtFeature">
 <attribute name="begin" value="97"/>
@@ -149,18 +167,21 @@
 <reference name="subject" ref_id="8_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="15_1" class="GOEvidence">
+<reference name="code" ref_id="14_1"/>
+</item>
 <item id="5_1" class="OntologyTerm">
 <attribute name="name" value="keyword!"/>
 <reference name="ontology" ref_id="0_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="11_1" class="Component">
-<attribute name="name" value="full component name"/>
-<reference name="protein" ref_id="8_1"/>
-</item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="11_1" class="Component">
+<attribute name="name" value="full component name"/>
+<reference name="protein" ref_id="8_1"/>
 </item>
 <item id="19_2" class="Synonym">
 <attribute name="value" value="shortname"/>
