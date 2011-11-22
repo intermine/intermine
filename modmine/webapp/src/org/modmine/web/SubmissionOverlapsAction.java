@@ -104,7 +104,7 @@ public class SubmissionOverlapsAction extends InterMineAction
                     Constraints.eq("GeneFlankingRegion.overlappingFeatures.submissions.title",
                     submissionTitle));
 
-            if (!direction.equalsIgnoreCase("bothways")) {
+            if ("bothways".equalsIgnoreCase(direction)) {
                 q.addConstraint(Constraints.eq("GeneFlankingRegion.direction", direction));
             }
             q.addOrderBy("GeneFlankingRegion.gene.primaryIdentifier", OrderDirection.ASC);
