@@ -655,6 +655,7 @@ public class UniprotConverter extends BioDirectoryConverter
             Item item = createItem("Sequence");
             item.setAttribute("residues", uniprotEntry.getSequence());
             item.setAttribute("length", uniprotEntry.getLength());
+            item.setAttribute("md5checksum", uniprotEntry.getMd5checksum());
             try {
                 store(item);
             } catch (ObjectStoreException e) {
