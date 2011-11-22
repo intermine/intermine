@@ -37,7 +37,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -125,7 +124,8 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "name", "name");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "displayer", "displayer");
-        digester.addSetProperties("webconfig/class/fields/fieldconfig", "showInListAnalysisPreviewTable", "showInListAnalysisPreviewTable");
+        digester.addSetProperties("webconfig/class/fields/fieldconfig",
+                "showInListAnalysisPreviewTable", "showInListAnalysisPreviewTable");
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
 
         digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
