@@ -115,7 +115,8 @@ public class BagDetailsController extends TilesAction
         Type type = webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         LinkedList<WidgetConfig> widgets = type.getWidgets();
-        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String, Map<String, Collection<String>>>();
+        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String,
+                Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
             widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(imBag, os));
         }
@@ -173,8 +174,8 @@ public class BagDetailsController extends TilesAction
         boolean gotoHighlighted = false;
         String gotoHighlightedStr = request.getParameter("gotoHighlighted");
         if (gotoHighlightedStr != null
-            && (gotoHighlightedStr.equalsIgnoreCase("t")
-                || gotoHighlightedStr.equalsIgnoreCase("true"))) {
+            && ("t".equalsIgnoreCase(gotoHighlightedStr)
+                || "true".equalsIgnoreCase(gotoHighlightedStr))) {
             gotoHighlighted = true;
         }
         if (highlightId != null && gotoHighlighted) {
