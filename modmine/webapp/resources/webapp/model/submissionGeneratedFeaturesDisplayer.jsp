@@ -81,10 +81,10 @@ Features
   <table cellpadding="5" cellspacing="5" border="0" class="resultstables" width="100%">
   <thead>
   <tr>
-  <th>Feature type</th>
-  <th>View data</th>
-  <th colspan="4" >Export</th>
-  <th>Action</th>
+  <td>Feature type</td>
+  <td align="right">View data</td>
+  <td colspan="4" >Export</td>
+  <td>Action</td>
   </tr>
 </thead>
 <tbody>
@@ -187,7 +187,7 @@ Features
         <%-- SOURCE FILE --%>
         <c:forEach items="${subFeatFileSource}" var="subFFS" varStatus="subFFS_status">
           <c:if test="${subFFS.key == object.dCCid}" >
-          <tr><th>Source file<td><td><td><td><td><td>
+          <tr><td><i>Source files:</i><td><td><td><td><td><td>
 
           <c:forEach items="${subFFS.value}" var="FFS" varStatus="FFS_status">
           <c:if test="${FFS.key == fc.key}" >
@@ -195,9 +195,10 @@ Features
 
 
             <c:if test="${FS.value != fc.value}" >
-            <tr><td>
+            <tr><td align=right><i>
             ${fn:replace(FS.key, "_", " ")}
-            <td>
+            </i></td>
+            <td align="middle">
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
 <td>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=tab">TAB</html:link>
