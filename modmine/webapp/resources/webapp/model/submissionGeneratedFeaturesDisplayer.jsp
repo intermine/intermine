@@ -187,14 +187,15 @@ Features
         <%-- SOURCE FILE --%>
         <c:forEach items="${subFeatFileSource}" var="subFFS" varStatus="subFFS_status">
           <c:if test="${subFFS.key == object.dCCid}" >
-          <tr><td><i>Source files:</i><td><td><td><td><td><td>
-
           <c:forEach items="${subFFS.value}" var="FFS" varStatus="FFS_status">
           <c:if test="${FFS.key == fc.key}" >
             <c:forEach items="${FFS.value}" var="FS" varStatus="FS_status">
 
 
             <c:if test="${FS.value != fc.value}" >
+            <c:if test="${FS_status.first}" >
+            <tr><td><i>Source files:</i><td><td><td><td><td><td>
+            </c:if>
             <tr><td align=right><i>
             ${fn:replace(FS.key, "_", " ")}
             </i></td>
