@@ -32,10 +32,10 @@
     </source>
 
 
-<!--    <source name="go-annotation" type="go-annotation">
+   <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/users/rns/plant/go-annotation/"/>
-    </source>-->
+    </source>
     <source name="ensembl-plant-chr-fasta" type="fasta">
       <property name="fasta.taxonId" value="10090"/>
       <property name="fasta.dataSetTitle" value="Ensembl A. thaliana chromosome sequence"/>
