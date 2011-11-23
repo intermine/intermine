@@ -43,7 +43,7 @@
 jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\"/>');
 
 // append browser version into the message area
-var browser = jQuery.uaMatch(navigator.userAgent).browser + " " + jQuery.browser.version;
+var browser = navigator.userAgent;
 jQuery("form#contactForm textarea#fbcomment").val(jQuery("form#contactForm textarea#fbcomment").val() + "\n\n---- Browser: ----\n\n" + browser);
 
 // JS submit handler for the form
