@@ -276,7 +276,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         throws ObjectStoreException {
         for (org.biopax.paxtools.model.level2.xref xref : pathway.getXREF()) {
             String xrefId = xref.getID();
-            if (xrefId.startsWith(xrefPrefix)) {
+            if (!StringUtils.isEmpty(xrefId) && xrefId.startsWith(xrefPrefix)) {
                 String identifier = xrefId.substring(xrefPrefix.length());
                 String refId = pathways.get(identifier);
                 if (refId == null) {
