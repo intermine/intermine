@@ -43,7 +43,7 @@ EOF
 
 echo
 
-while getopts ":b" opt; do
+while getopts ":bm:P:" opt; do
 	case $opt in
 	b )  echo "- BATCH mode" ; INTERACT=n;;
 	m )  DBHOST=$OPTARG; echo "- Using db host $DBHOST";;
