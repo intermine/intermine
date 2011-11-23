@@ -33,3 +33,5 @@
 </definition>
 
 <!-- End of Genomic Region Search configuration -->
+
+<definition name="friendlyMineLinkDisplayer.tile" path="/model/friendlyMineLinkDisplayer.jsp" controllerUrl="/initFriendlyMineLinkDisplayer.do"/>
