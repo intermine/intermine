@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.intermine.bio.constants.ModMineCacheKeys;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.BindingSite;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Sequence;
@@ -53,15 +52,15 @@ import org.intermine.util.TypeUtil;
 public final class CreateModMineMetaDataCache
 {
     private static final Logger LOG = Logger.getLogger(CreateModMineMetaDataCache.class);
-    
+
     private CreateModMineMetaDataCache() {
         // don't
     }
 
-    
 
-    
-    
+
+
+
     /**
      * Run queries to generate summary information for the modMine database and store resulting
      * properties file in the database.
@@ -71,7 +70,7 @@ public final class CreateModMineMetaDataCache
      * @throws IOException if failure serialising properties file
      */
     public static void createCache(ObjectStore os)
-        throws IllegalAccessException, SQLException, IOException {
+        throws IllegalAccessException, SQLException, IOException, ClassNotFoundException {
 
         Properties props = new Properties();
 
@@ -82,7 +81,7 @@ public final class CreateModMineMetaDataCache
         readSubmissionLocatedFeature(os, props);
         readSubmissionSequencedFeature(os, props);
 
-        
+
         readSubmissionFileSourceCounts(os, props);
 
         Database db = ((ObjectStoreInterMineImpl) os).getDatabase();
@@ -392,7 +391,7 @@ public final class CreateModMineMetaDataCache
         LOG.info("Read experiment unique feature counts, took: " + timeTaken + "ms");
     }
 
-   
+
     private static void readSubmissionLocatedFeature(ObjectStore os, Properties props) {
 
         long startTime = System.currentTimeMillis();
@@ -500,11 +499,11 @@ public final class CreateModMineMetaDataCache
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read sequenced features types, took: " + timeTaken + " ms.");
     }
-    
- //======   
-    
-    
-    private static void readSubmissionFileSourceCounts(ObjectStore os, Properties props) {
+
+ //======
+
+
+    private static void readSubmissionFileSourceCounts(ObjectStore os, Properties props) throws ClassNotFoundException {
         long startTime = System.currentTimeMillis();
 
         Model model = os.getModel();
@@ -513,7 +512,8 @@ public final class CreateModMineMetaDataCache
 
         QueryClass qcSub = new QueryClass(model.getClassDescriptorByName(
                 "Submission").getType());
-        QueryClass qcLsf = new QueryClass(BindingSite.class);
+        QueryClass qcLsf = new QueryClass(Class.forName(model.getPackageName() + ".BindingSite"));
+//        QueryClass qcLsf = new QueryClass(BindingSite.class);
         // QueryClass qcLsf = new QueryClass(SequenceFeature.class);
         // QueryClass qcEL =
         // new
@@ -569,7 +569,7 @@ public final class CreateModMineMetaDataCache
             String key = ModMineCacheKeys.SUB_FILE_SOURCE_COUNT + "."
             + dccId + "." + TypeUtil.unqualifiedName(feat.getName()) + "."
             + fileName;
-            
+
             props.put(key, "" + count);
         }
 
@@ -579,7 +579,7 @@ public final class CreateModMineMetaDataCache
                 + "ms");
     }
 
-    
+
 //    private static void readSubmissionRepositoryEntries(ObjectStore os) {
 //        //
 //        long startTime = System.currentTimeMillis();
@@ -591,9 +591,9 @@ public final class CreateModMineMetaDataCache
 //            q.addFrom(qcSubmission);
 //            q.addToSelect(qfDCCid);
 //
-//            QueryClass qcRepositoryEntry = 
+//            QueryClass qcRepositoryEntry =
 //                new QueryClass((Class.forName(os.getModel().getPackageName() + ".DatabaseRecord")));
-//                       
+//
 //            QueryField qfDatabase = new QueryField(qcRepositoryEntry,
 //                    "database");
 //            QueryField qfAccession = new QueryField(qcRepositoryEntry,
@@ -656,8 +656,8 @@ public final class CreateModMineMetaDataCache
 //        LOG.info("Primed Repository entries cache, took: " + timeTaken
 //                + "ms size = " + submissionRepositedCache.size());
 //    }
- 
-    
-    
-    
+
+
+
+
 }
