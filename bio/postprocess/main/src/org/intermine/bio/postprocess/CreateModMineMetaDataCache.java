@@ -57,10 +57,6 @@ public final class CreateModMineMetaDataCache
         // don't
     }
 
-
-
-
-
     /**
      * Run queries to generate summary information for the modMine database and store resulting
      * properties file in the database.
@@ -68,6 +64,7 @@ public final class CreateModMineMetaDataCache
      * @throws IllegalAccessException if fields don't exist in data model
      * @throws SQLException if failure to write properties file to database
      * @throws IOException if failure serialising properties file
+     * @throws ClassNotFoundException if failure to find named class
      */
     public static void createCache(ObjectStore os)
         throws IllegalAccessException, SQLException, IOException, ClassNotFoundException {
@@ -80,7 +77,6 @@ public final class CreateModMineMetaDataCache
         readUniqueExperimentFeatureCounts(os, props);
         readSubmissionLocatedFeature(os, props);
         readSubmissionSequencedFeature(os, props);
-
 
         readSubmissionFileSourceCounts(os, props);
 
@@ -134,7 +130,7 @@ public final class CreateModMineMetaDataCache
 
         Results results = os.execute(q);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+        @SuppressWarnings({ "unchecked", "rawtypes" }) Iterator<ResultsRow> iter =
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
@@ -216,7 +212,7 @@ public final class CreateModMineMetaDataCache
 
         Results results = os.execute(superQ);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+        @SuppressWarnings({ "unchecked", "rawtypes" }) Iterator<ResultsRow> iter =
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
@@ -285,7 +281,7 @@ public final class CreateModMineMetaDataCache
 
         Results results = os.execute(q);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
+        @SuppressWarnings({ "unchecked", "rawtypes" }) Iterator<ResultsRow> iter =
             (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
@@ -355,7 +351,6 @@ public final class CreateModMineMetaDataCache
         cs.addConstraint(ccChrLoc);
 
         q.setConstraint(cs);
-
         q.setDistinct(true);
 
         Query superQ = new Query();
@@ -376,7 +371,8 @@ public final class CreateModMineMetaDataCache
 
         Results results = os.execute(superQ);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter = (Iterator) results.iterator();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Iterator<ResultsRow> iter = (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             String expName = fixSpaces((String) row.get(0));
@@ -430,8 +426,8 @@ public final class CreateModMineMetaDataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Iterator<ResultsRow> iter = (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             String dccId = (String) row.get(0);
@@ -484,8 +480,8 @@ public final class CreateModMineMetaDataCache
         Results results = os.execute(q);
 
         // for each classes set the values for jsp
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> iter =
-            (Iterator) results.iterator();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Iterator<ResultsRow> iter = (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
             String dccId = (String) row.get(0);
@@ -503,7 +499,8 @@ public final class CreateModMineMetaDataCache
  //======
 
 
-    private static void readSubmissionFileSourceCounts(ObjectStore os, Properties props) throws ClassNotFoundException {
+    private static void readSubmissionFileSourceCounts(ObjectStore os, Properties props)
+        throws ClassNotFoundException {
         long startTime = System.currentTimeMillis();
 
         Model model = os.getModel();
@@ -557,7 +554,7 @@ public final class CreateModMineMetaDataCache
 
         Results results = os.execute(q);
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         Iterator<ResultsRow> iter = (Iterator) results.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> row = iter.next();
@@ -567,12 +564,9 @@ public final class CreateModMineMetaDataCache
             Long count = (Long) row.get(3);
 
             String key = ModMineCacheKeys.SUB_FILE_SOURCE_COUNT + "."
-            + dccId + "." + TypeUtil.unqualifiedName(feat.getName()) + "."
-            + fileName;
-
+                    + dccId + "." + TypeUtil.unqualifiedName(feat.getName()) + "." + fileName;
             props.put(key, "" + count);
         }
-
 
         long timeTaken = System.currentTimeMillis() - startTime;
         LOG.info("Read submissionFileSourceCounts cache, took: " + timeTaken
@@ -592,7 +586,7 @@ public final class CreateModMineMetaDataCache
 //            q.addToSelect(qfDCCid);
 //
 //            QueryClass qcRepositoryEntry =
-//                new QueryClass((Class.forName(os.getModel().getPackageName() + ".DatabaseRecord")));
+//          new QueryClass((Class.forName(os.getModel().getPackageName() + ".DatabaseRecord")));
 //
 //            QueryField qfDatabase = new QueryField(qcRepositoryEntry,
 //                    "database");
