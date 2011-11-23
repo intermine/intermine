@@ -33,6 +33,14 @@
   <collection name="with" referenced-type="BioEntity"/>
   <reference name="evidence" referenced-type="GOEvidence" />
 </class>
+<class name="GOEvidenceCode" is-interface="true">
+  <attribute name="code" type="java.lang.String" />
+</class>
+<class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
+<class name="GOEvidence" is-interface="true">
+  <reference name="code" referenced-type="GOEvidenceCode"/>
+  <collection name="publications" referenced-type="Publication"/>
+</class>
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>
