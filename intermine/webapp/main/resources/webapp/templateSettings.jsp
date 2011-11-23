@@ -73,7 +73,7 @@
       </tr>
     </table>
     </div>
-    
+</html:form>
   <link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
 
   <imutil:disclosure id="template-preview" opened="true" styleClass="body">
@@ -103,14 +103,13 @@
             <c:if test="${PROFILE.loggedIn && !empty QUERY}">
                 <fmt:message key="${NEW_TEMPLATE != null ?
                     'templateBuilder.save' : 'templateBuilder.update'}" var="saveLabel"/>
-                <html:submit>${saveLabel}</html:submit>
+                <html:button value="${saveLabel}" property="saveTemplate" onclick="jQuery('#templateSettingsForm').submit();"/>
             </c:if>
           </td>
         </tr>
       </table>
       <br/>
     </div>
-  </html:form>
   </div>
 
 </c:if>
