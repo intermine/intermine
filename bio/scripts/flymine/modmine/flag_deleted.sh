@@ -15,7 +15,7 @@ INFILE=$DATADIR/all.dead
 DBHOST=modfast
 DBUSER=modmine
 
-#PRO="celnikerlai"
+#PRO="karpen"
 PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
 
 progname=$0
@@ -29,6 +29,7 @@ Usage:
 $progname [-b] 
 	-b: batch mode (all operations are executed without warning)
     -m: using the specified host (default: modfast)
+    -P: using a SINGLE specified project
 
 examples:
 
@@ -46,6 +47,7 @@ while getopts ":b" opt; do
 	case $opt in
 	b )  echo "- BATCH mode" ; INTERACT=n;;
 	m )  DBHOST=$OPTARG; echo "- Using db host $DBHOST";;
+    P )  PRO=$OPTARG; echo "- Using SINGLE project $PRO";;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
