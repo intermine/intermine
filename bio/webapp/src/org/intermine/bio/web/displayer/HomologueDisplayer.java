@@ -118,7 +118,9 @@ public class HomologueDisplayer extends ReportDisplayer
         q.addViews("Gene.homologues.homologue.organism.shortName",
                 "Gene.homologues.homologue.primaryIdentifier");
         q.addConstraint(Constraints.eq("Gene.id", "" + geneId));
-        q.addConstraint(Constraints.oneOfValues("Gene.homologues.dataSets.name", dataSets));
+        if (dataSets != null && !dataSets.isEmpty()) {
+            q.addConstraint(Constraints.oneOfValues("Gene.homologues.dataSets.name", dataSets));
+        }
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
         q.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
         return q;
