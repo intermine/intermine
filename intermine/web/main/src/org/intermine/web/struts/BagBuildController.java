@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -144,29 +142,29 @@ public class BagBuildController extends TilesAction
                 bbf.setExtraFieldValue(defaultValue);
             }
         }
-        
+
         // get example bag values
         String bagExampleIdentifiersPropertiesKey = "bag.example.identifiers";
         ServletContext servletContext = session.getServletContext();
         Properties properties = SessionMethods.getWebProperties(servletContext);
         Properties bagExampleIdentifiers = PropertiesUtil.getPropertiesStartingWith(
-        		bagExampleIdentifiersPropertiesKey, properties);
+                bagExampleIdentifiersPropertiesKey, properties);
         if (bagExampleIdentifiers.size() != 0) {
-        	Map<String, String> bagExampleIdentifiersMap = new HashMap<String, String>();
-        	Enumeration<?> e = bagExampleIdentifiers.propertyNames();
+            Map<String, String> bagExampleIdentifiersMap = new HashMap<String, String>();
+            Enumeration<?> e = bagExampleIdentifiers.propertyNames();
             while (e.hasMoreElements()) {
-              String key = (String) e.nextElement();
-              String value = bagExampleIdentifiers.getProperty(key);
-              if (key.equals(bagExampleIdentifiersPropertiesKey)) {
-            	  bagExampleIdentifiersMap.put("default", value);
-              } else {
-            	  bagExampleIdentifiersMap.put(key.replace(bagExampleIdentifiersPropertiesKey + ".", ""), value);
-              }
-              bagExampleIdentifiers.getProperty(key);
+                String key = (String) e.nextElement();
+                String value = bagExampleIdentifiers.getProperty(key);
+                if (key.equals(bagExampleIdentifiersPropertiesKey)) {
+                    bagExampleIdentifiersMap.put("default", value);
+                } else {
+                    bagExampleIdentifiersMap.put(key.replace(bagExampleIdentifiersPropertiesKey
+                            + ".", ""), value);
+                }
+                bagExampleIdentifiers.getProperty(key);
             }
-        	request.setAttribute("bagExampleIdentifiers", bagExampleIdentifiersMap);
+            request.setAttribute("bagExampleIdentifiers", bagExampleIdentifiersMap);
         }
-        
         return null;
     }
 

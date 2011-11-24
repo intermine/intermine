@@ -34,7 +34,6 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
@@ -51,6 +50,7 @@ public class ConvertBagController extends TilesAction
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionForward execute(ComponentContext context,
                                  ActionMapping mapping,
                                  ActionForm form,
@@ -85,8 +85,8 @@ public class ConvertBagController extends TilesAction
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
         Map<String, String []> additionalConverters =
             bagQueryConfig.getAdditionalConverters(imBag.getType());
-        
-        // e.g. {Organism=[A. gambiae, C. elegans, D. ananassae]}        
+
+        // e.g. {Organism=[A. gambiae, C. elegans, D. ananassae]}
         Map<String, List> customConverters = new HashMap();
         if (additionalConverters != null) {
             for (String converterClassName : additionalConverters.keySet()) {
