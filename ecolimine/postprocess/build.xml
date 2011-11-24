@@ -1,0 +1,7 @@
+<project name="ecolimine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for ecolimine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>
