@@ -21,7 +21,7 @@ All arguments are positional. The last two are optional.
 
 Arguments:
     * service version A
-    * service version B
+    * service version B (optional - service to compare to)
     * an email address to send email to (optional - print to std out if not present)
     * an email to mark as the sender (optional - defaults to the first email address)
 
@@ -43,8 +43,14 @@ rfc822_specials = '()<>@,;:\\"[]'
 
 #### ROUTINES ####
 
-def compare_templates(url_a, url_b, send_to=None, send_from=None):
+def compare_templates(url_a, url_b=None, send_to=None, send_from=None):
     """Main program logic"""
+
+    if url_b is None:
+        url_b = url_a
+    elif isAddressValid(url_b):
+        send_to = url_b
+        url_b = url_a
 
     if send_from is None:
         send_from = send_to
@@ -68,7 +74,14 @@ def fetch_results(url_a, url_b):
 
     start = time()
 
+    queried = set()
+
     for service in services:
+        if service.release in queried:
+            continue
+        else:
+            queried.add(service.release)
+
         for name in service.templates.keys():
             try:
                 template = service.get_template(name)
@@ -94,8 +107,11 @@ def report_results(results, send_to, send_from):
     if send_to is not None:
         print "Sending email to %s" % send_to
         msg = MIMEText(body)
-        rel_a, rel_b = results["rows_from"].keys()
-        msg['Subject'] = SUBJECT % (rel_a, rel_b, ctime(time()))
+        params = results["rows_from"].keys()
+        if len(params) == 1:
+            params.append("itself")
+        params.append(ctime(time()))
+        msg['Subject'] = SUBJECT % tuple(params)
         msg['From'] = send_from
         msg['To'] = send_to
         smtp = smtplib.SMTP('localhost')
@@ -104,7 +120,13 @@ def report_results(results, send_to, send_from):
 
 def create_message_body(results):
     """Analyse the data and present it as a string"""
-    rel_a, rel_b = results["rows_from"].keys()
+    releases = results["rows_from"].keys()
+    if len(releases) == 1:
+        rel_a = releases[0]
+        rel_b = rel_a
+    else:
+        rel_a, rel_b = releases
+
     body_params = {
         "rel_a": rel_a,
         "rel_b": rel_b,
@@ -123,7 +145,6 @@ def create_message_body(results):
             for name, reason in failures.items():
                 body += "%s: %s\n" % (name, reason)
 
-    body += "\nBY TEMPLATE:\n"
     successes_from = results["rows_from"]
     template_results = {}
     longest_template_name = 0
@@ -135,29 +156,30 @@ def create_message_body(results):
                 longest_template_name = len(name)
             template_results[name][rel] = count
 
-    fmt = "%-" + str(longest_template_name) + "s | %-6s | %-6s | %s\n" 
-    body += fmt % ("NAME", rel_a, rel_b, "CATEGORY")
-    body += "".ljust(100, "-") + "\n"
+    if len(releases) > 1:
+        body += "\nBY TEMPLATE:\n"
 
-    fmt = "%-" + str(longest_template_name) + "s | %6d | %6d | %s\n" 
-    for name, results_by_rel in template_results.items():
-        diff = abs(reduce(lambda x, y: x - y, results_by_rel.values()))
-        max_c = max(results_by_rel.values())
+        fmt = "%-" + str(longest_template_name) + "s | %-6s | %-6s | %s\n" 
+        body += fmt % ("NAME", rel_a, rel_b, "CATEGORY")
+        body += "".ljust(100, "-") + "\n"
 
-        if diff == 0:
-            category = "SAME"
-        else: 
-            proportion = float(diff) / float(max_c)
-            if proportion < 0.1:
-                category = "CLOSE"
-            elif proportion < 0.5:
-                category = "DIFFERENT"
+        fmt = "%-" + str(longest_template_name) + "s | %6d | %6d | %s\n" 
+        for name, results_by_rel in template_results.items():
+            diff = abs(reduce(lambda x, y: x - y, results_by_rel.values()))
+            max_c = max(results_by_rel.values())
+
+            if diff == 0:
+                category = "SAME"
             else: 
-                category = "VERY DIFFERENT"
+                proportion = float(diff) / float(max_c)
+                if proportion < 0.1:
+                    category = "CLOSE"
+                elif proportion < 0.5:
+                    category = "DIFFERENT"
+                else: 
+                    category = "VERY DIFFERENT"
 
-        body += fmt % (name, results_by_rel[rel_a], results_by_rel[rel_b], category)
-    
-    print body
+            body += fmt % (name, results_by_rel[rel_a], results_by_rel[rel_b], category)
 
     body += "\nALL SUCCESSES:\n"
     fmt = "%-" + str(longest_template_name) + "s | %6d\n"
@@ -166,7 +188,6 @@ def create_message_body(results):
         for name, count in successes.items():
             body += fmt % (name, count)
 
-    print body
     return body
 
 def isAddressValid(addr):
