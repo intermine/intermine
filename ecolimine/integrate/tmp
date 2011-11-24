@@ -1,0 +1,3 @@
+http://www.uniprot.org/uniprot/?format=xml&query=taxonomy%3A83333+AND+NOT+595496+AND+fragment%3Ano+AND+reviewed%3Ayes&compress=yesi
+
+http://www.uniprot.org/uniprot/?format=xml&query=taxonomy:83333+AND+fragment:no+AND+reviewed:yes+NOT+595496+NOT+316385+NOT+527799+NOT+316407&compressed=yes
