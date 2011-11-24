@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-import time
+from time import ctime, time
 import traceback
 import smtplib
 from email.mime.text import MIMEText
@@ -9,6 +9,8 @@ from collections import defaultdict
 from intermine.webservice import Service
 
 #### CONSTANTS ####
+
+PROGRAM_START = time()
 
 usage = """
 %s: Compare templates from two versions of the same webservice
@@ -29,8 +31,10 @@ SUBJECT = "The results of comparison between %s and %s at %s"
 BODY = """
 Template comparison run complete. 
 
-The template comparison run you requested between {rel_a} 
-and {rel_b} has been completed at {time}.
+The template comparison run you requested at {initial_time}
+between {rel_a} and {rel_b} has been completed at {time}
+(taking {duration:.2f} seconds).
+
 The results are as follows:
 
 """
@@ -62,7 +66,7 @@ def fetch_results(url_a, url_b):
         "rows_from": dict(( (service.release, {}) for service in services))
     }
 
-    start = time.time()
+    start = time()
 
     for service in services:
         for name in service.templates.keys():
@@ -78,7 +82,7 @@ def fetch_results(url_a, url_b):
             except Exception as e:
                 results["failures_from"][service.release][template.name] = str(e)
 
-    end = time.time()
+    end = time()
     total = end - start
     print "Finished fetching results: that took %d min, %d secs" % (total / 60, total % 60)
     return results
@@ -91,7 +95,7 @@ def report_results(results, send_to, send_from):
         print "Sending email to %s" % send_to
         msg = MIMEText(body)
         rel_a, rel_b = results["rows_from"].keys()
-        msg['Subject'] = SUBJECT % (rel_a, rel_b, time.ctime(time.time()))
+        msg['Subject'] = SUBJECT % (rel_a, rel_b, ctime(time()))
         msg['From'] = send_from
         msg['To'] = send_to
         smtp = smtplib.SMTP('localhost')
@@ -101,14 +105,23 @@ def report_results(results, send_to, send_from):
 def create_message_body(results):
     """Analyse the data and present it as a string"""
     rel_a, rel_b = results["rows_from"].keys()
-    body = BODY.format(rel_a=rel_a, rel_b=rel_b, time=time.ctime(time.time()))
+    body_params = {
+        "rel_a": rel_a,
+        "rel_b": rel_b,
+        "initial_time": ctime(PROGRAM_START),
+        "time": ctime(time()),
+        "duration": time() - PROGRAM_START
+    }
+
+    body = BODY.format(**body_params)
 
     body += "\nFAILURES:\n"
     failures_from = results['failures_from']
     for rel, failures in failures_from.items():
-        body += (rel + "\n").ljust(80, "=")  + "\n"
-        for name, reason in failures.items():
-            body += "%s: %s\n" % (name, reason)
+        if len(failures):
+            body += (rel + "\n").ljust(80, "=")  + "\n"
+            for name, reason in failures.items():
+                body += "%s: %s\n" % (name, reason)
 
     body += "\nBY TEMPLATE:\n"
     successes_from = results["rows_from"]
