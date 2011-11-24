@@ -73,14 +73,14 @@ def fetch_results(url_a, url_b):
             try:
                 template = service.get_template(name)
             except Exception as e:
-                results["failures_from"][service.release][template.name] = str(e)
+                results["failures_from"][service.release][name] = str(e) + "\nXML:\n" + str(service.templates[name])
 
             print "Querying %s for results for %s" % (service.release, name)
             try: 
                 c = template.count()
-                results["rows_from"][service.release][template.name] = c
+                results["rows_from"][service.release][name] = c
             except Exception as e:
-                results["failures_from"][service.release][template.name] = str(e)
+                results["failures_from"][service.release][name] = str(e)
 
     end = time()
     total = end - start
