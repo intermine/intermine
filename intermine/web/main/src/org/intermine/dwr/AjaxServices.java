@@ -1445,6 +1445,10 @@ public class AjaxServices
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
         ac.createRAMIndex(className + "." + field);
+        
+        // swap "-" for spaces, ticket #2357
+        suffix = suffix.replace("-", " ");
+        
         if (!wholeList && suffix.length() > 0) {
             String[] shortList = ac.getFastList(suffix, field, 31);
             return shortList;
