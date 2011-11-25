@@ -11,9 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.io.StringReader;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,10 +26,8 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.SearchRepository;
-import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.xml.TagBinding;
-import org.intermine.api.xml.TagHandler;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -71,7 +67,13 @@ public class ImportTagsAction extends InterMineAction
         StringReader reader = new StringReader(f.getXml());
         int count = 0;
         if (!StringUtils.isEmpty(f.getXml())) {
-            count = new TagBinding().unmarshal(pm, profile.getUsername(), reader);
+            try {
+                count = new TagBinding().unmarshal(pm, profile.getUsername(), reader);
+            } catch (Exception ex) {
+                SessionMethods.recordError(
+                    "Problems importing tags. Please check the XML structure.", session);
+                return mapping.findForward("importTag");
+            }
         }
         recordMessage(new ActionMessage("history.importedTags", new Integer(count)), request);
 
