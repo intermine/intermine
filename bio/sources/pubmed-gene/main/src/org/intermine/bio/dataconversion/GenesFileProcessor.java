@@ -305,7 +305,7 @@ public class GenesFileProcessor
             if (symbol != null) {
                 ncRNA.setAttribute("symbol", symbol);
             }
-//            ncRNA.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
+            ncRNA.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
             if (primaryIdentifier != null) {
                 ncRNA.setAttribute("primaryIdentifier", primaryIdentifier);
             }
@@ -318,7 +318,7 @@ public class GenesFileProcessor
                 || "miscRNA".equals(geneType)
                 || "rRNA".equals(geneType)) { // ecolimine case
             Item gene = createItem("Gene");
-//            gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
+            gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
 
             if (symbol != null) {
                 gene.setAttribute("symbol", symbol);
