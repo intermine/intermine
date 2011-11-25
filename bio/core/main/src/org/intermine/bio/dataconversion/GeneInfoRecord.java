@@ -30,6 +30,7 @@ public class GeneInfoRecord
     protected final String officialName;
     protected final String defaultName;
     protected final String mapLocation;
+    protected final String geneType;
     protected final Set<String> ensemblIds = new HashSet<String>();
     protected final Set<String> synonyms = new HashSet<String>();
 
@@ -42,9 +43,10 @@ public class GeneInfoRecord
      * @param officialName official name if present, e.g. from HGNC
      * @param defaultName NCBI name, may be the same as the officialName
      * @param mapLocation chromosome band of the gene, if known
+     * @param geneType e.g. protein-coding, ncRNA, etc.
      */
     public GeneInfoRecord(String taxon, String entrez, String officialSymbol, String defaultSymbol,
-            String officialName, String defaultName, String mapLocation) {
+            String officialName, String defaultName, String mapLocation, String geneType) {
         this.taxon = taxon;
         this.entrez = entrez;
         this.officialSymbol = filter(officialSymbol);
@@ -52,6 +54,7 @@ public class GeneInfoRecord
         this.defaultSymbol = filter(defaultSymbol);
         this.defaultName = filter(defaultName);
         this.mapLocation = filter(mapLocation);
+        this.geneType = filter(geneType);
     }
 
     /**
