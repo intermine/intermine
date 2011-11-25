@@ -62,7 +62,7 @@
 -->
       <property name="createinterpro" value="true"/>
     </source>
-    <source name="uniprot-keywords" type="uniprot-keywords">
+    <source name="uniprot-keywords" type="uniprot-keywords" dump="true">
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
