@@ -57,6 +57,8 @@ function renameElement(name, type, index){
         } else {
             document.getElementById('selected_user_' + type + '_' + index).value=str;
         }
+        // reload so that new "IDs" based on the name match
+        window.location.reload();
     });
 }
 
