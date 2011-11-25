@@ -48,14 +48,15 @@ public class NcbiGeneInfoParser
             String entrez = line[1];
             String defaultSymbol = line[2];
             String synonyms = line[4];
-            String xrefs = line[5];
+            String xrefs = line[5]; // ecoliMine case is DB identifier
             String mapLocation = line[7];
             String defaultName = line[8];
+            String geneType = line[9];
             String officialSymbol = line[10];
             String officialName = line[11];
 
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
-                    defaultSymbol, officialName, defaultName, mapLocation);
+                    defaultSymbol, officialName, defaultName, mapLocation, geneType);
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
 
             if (!"-".equals(synonyms)) {
