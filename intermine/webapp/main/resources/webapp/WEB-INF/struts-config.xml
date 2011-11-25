@@ -195,6 +195,7 @@
     </action>
     <action path="/importTags" name="importTagsForm" type="org.intermine.web.struts.ImportTagsAction">
       <forward name="success" redirect="true" path="/mymine.do"/>
+      <forward name="importTag" redirect="true" path="importTags.page"/>
     </action>
     <action path="/addToBagAction" type="org.intermine.web.struts.AddToBagAction">
       <forward name="report" redirect="true" path="/report.do"/>
