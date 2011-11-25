@@ -74,104 +74,104 @@ public class NcbiGeneConverter extends BioFileConverter
             }
             for (GeneInfoRecord record : records.get(taxonId)) {
                 // gene type - http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/entrezgene/entrezgene.asn
-                if (record.geneType == null) {
-                    continue;
-                } else if ("other".equals(record.geneType)) {
-
-                } else if ("unknown".equals(record.geneType)) {
-
-                } else if ("snRNA".equals(record.geneType)) {
-
-                } else if ("scRNA".equals(record.geneType)) {
-
-                } else if ("snoRNA".equals(record.geneType)) {
-
-                } else if ("transposon".equals(record.geneType)) {
-
-                } else if ("pseudo".equals(record.geneType)) {
-
-                } else if ("ncRNA".equals(record.geneType)) {
-
-                    Item ncRNA = createItem("NcRNA");
-                    ncRNA.setReference("organism", getOrganism(taxonId));
-                    ncRNA.setAttribute("ncbiGeneNumber", record.entrez);
-                    ncRNA.setAttribute("secondaryIdentifier", record.entrez);
-
-                    // SYMBOL
-                    if (record.officialSymbol != null) {
-                        ncRNA.setAttribute("symbol", record.officialSymbol);
-                        // if NCBI symbol is different add it as a synonym
-                        if (record.defaultSymbol != null &&
-                                !record.officialSymbol.equals(record.defaultSymbol)) {
-                            createSynonym(ncRNA, record.defaultSymbol, true);
-                            LOG.info("NcRNA official symbol " + record.officialSymbol
-                                    + " does not match " + record.defaultSymbol);
-                        }
-                    } else {
-                        if (parser.isUniqueSymbol(taxonId, record.defaultSymbol)) {
-                            ncRNA.setAttribute("symbol", record.defaultSymbol);
-                        } else {
-                            createSynonym(ncRNA, record.defaultSymbol, true);
-                        }
-                    }
-                    if (StringUtils.isBlank(record.officialSymbol)) {
-                        LOG.info("NcRNA has no official symbol: " + record.entrez + " "
-                                + record.defaultSymbol);
-                    }
-
-                    // NAME
-                    if (record.officialName != null) {
-                        ncRNA.setAttribute("name", record.officialName);
-                        if (record.defaultName != null &&
-                                !record.officialName.equals(record.defaultName)) {
-                            createSynonym(ncRNA, record.defaultName, true);
-                        }
-                    } else if (record.defaultName != null) {
-                        ncRNA.setAttribute("name", record.defaultName);
-                    }
-
-                    // ENSEMBL ID become primaryIdentifier or CrossReference
-                    // TODO this currently doesn't load any Ensembl ids.
-                    boolean loadEnsembl = false;
-                    if (loadEnsembl) {
-                        if (record.ensemblIds.size() == 1) {
-                            String ensemblId = record.ensemblIds.iterator().next();
-                            if (parser.isUniquelyMappedEnsemblId(taxonId, ensemblId)) {
-                                LOG.info("EnsemblId " + ensemblId + " is assigned to multiple genes, "
-                                        + "observed for: " + record.entrez + ", "
-                                        + ncRNA.getAttribute("symbol").getValue());
-                                ncRNA.setAttribute("primaryIdentifier", ensemblId);
-                            } else {
-                                createCrossReference(ncRNA, ensemblId, "Ensembl");
-                            }
-                        } else {
-                            // TODO this doesn't check for uniquely mapped ensembl ids, needs to log
-                            if (record.ensemblIds.size() > 0) {
-                                LOG.info("E2 Gene " + record.entrez + ", "
-                                        + ncRNA.getAttribute("symbol").getValue()
-                                        + " is assigned more than one Ensembl id: "
-                                        + record.ensemblIds);
-                            }
-                            for (String ensemblId : record.ensemblIds) {
-                                createCrossReference(ncRNA, ensemblId, "Ensembl");
-                            }
-                        }
-                    }
-
-                    // SYNONYMS
-                    for (String synonym : record.synonyms) {
-                        createSynonym(ncRNA, synonym, true);
-                    }
-
-                    // MAP LOCATION
-                    if (record.mapLocation != null) {
-                        ncRNA.setAttribute("mapLocation", record.mapLocation);
-                    }
-                    store(ncRNA);
-                } else if ("tRNA".equals(record.geneType)
-                        || "protein-coding".equals(record.geneType)
-                        || "miscRNA".equals(record.geneType)
-                        || "rRNA".equals(record.geneType)) { // ecolimine case
+//                if (record.geneType == null) {
+//                    continue;
+//                } else if ("other".equals(record.geneType)) {
+//
+//                } else if ("unknown".equals(record.geneType)) {
+//
+//                } else if ("snRNA".equals(record.geneType)) {
+//
+//                } else if ("scRNA".equals(record.geneType)) {
+//
+//                } else if ("snoRNA".equals(record.geneType)) {
+//
+//                } else if ("transposon".equals(record.geneType)) {
+//
+//                } else if ("pseudo".equals(record.geneType)) {
+//
+//                } else if ("ncRNA".equals(record.geneType)) {
+//
+//                    Item ncRNA = createItem("NcRNA");
+//                    ncRNA.setReference("organism", getOrganism(taxonId));
+//                    ncRNA.setAttribute("ncbiGeneNumber", record.entrez);
+//                    ncRNA.setAttribute("secondaryIdentifier", record.entrez);
+//
+//                    // SYMBOL
+//                    if (record.officialSymbol != null) {
+//                        ncRNA.setAttribute("symbol", record.officialSymbol);
+//                        // if NCBI symbol is different add it as a synonym
+//                        if (record.defaultSymbol != null &&
+//                                !record.officialSymbol.equals(record.defaultSymbol)) {
+//                            createSynonym(ncRNA, record.defaultSymbol, true);
+//                            LOG.info("NcRNA official symbol " + record.officialSymbol
+//                                    + " does not match " + record.defaultSymbol);
+//                        }
+//                    } else {
+//                        if (parser.isUniqueSymbol(taxonId, record.defaultSymbol)) {
+//                            ncRNA.setAttribute("symbol", record.defaultSymbol);
+//                        } else {
+//                            createSynonym(ncRNA, record.defaultSymbol, true);
+//                        }
+//                    }
+//                    if (StringUtils.isBlank(record.officialSymbol)) {
+//                        LOG.info("NcRNA has no official symbol: " + record.entrez + " "
+//                                + record.defaultSymbol);
+//                    }
+//
+//                    // NAME
+//                    if (record.officialName != null) {
+//                        ncRNA.setAttribute("name", record.officialName);
+//                        if (record.defaultName != null &&
+//                                !record.officialName.equals(record.defaultName)) {
+//                            createSynonym(ncRNA, record.defaultName, true);
+//                        }
+//                    } else if (record.defaultName != null) {
+//                        ncRNA.setAttribute("name", record.defaultName);
+//                    }
+//
+//                    // ENSEMBL ID become primaryIdentifier or CrossReference
+//                    // TODO this currently doesn't load any Ensembl ids.
+//                    boolean loadEnsembl = false;
+//                    if (loadEnsembl) {
+//                        if (record.ensemblIds.size() == 1) {
+//                            String ensemblId = record.ensemblIds.iterator().next();
+//                            if (parser.isUniquelyMappedEnsemblId(taxonId, ensemblId)) {
+//                                LOG.info("EnsemblId " + ensemblId + " is assigned to multiple genes, "
+//                                        + "observed for: " + record.entrez + ", "
+//                                        + ncRNA.getAttribute("symbol").getValue());
+//                                ncRNA.setAttribute("primaryIdentifier", ensemblId);
+//                            } else {
+//                                createCrossReference(ncRNA, ensemblId, "Ensembl");
+//                            }
+//                        } else {
+//                            // TODO this doesn't check for uniquely mapped ensembl ids, needs to log
+//                            if (record.ensemblIds.size() > 0) {
+//                                LOG.info("E2 Gene " + record.entrez + ", "
+//                                        + ncRNA.getAttribute("symbol").getValue()
+//                                        + " is assigned more than one Ensembl id: "
+//                                        + record.ensemblIds);
+//                            }
+//                            for (String ensemblId : record.ensemblIds) {
+//                                createCrossReference(ncRNA, ensemblId, "Ensembl");
+//                            }
+//                        }
+//                    }
+//
+//                    // SYNONYMS
+//                    for (String synonym : record.synonyms) {
+//                        createSynonym(ncRNA, synonym, true);
+//                    }
+//
+//                    // MAP LOCATION
+//                    if (record.mapLocation != null) {
+//                        ncRNA.setAttribute("mapLocation", record.mapLocation);
+//                    }
+//                    store(ncRNA);
+//                } else if ("tRNA".equals(record.geneType)
+//                        || "protein-coding".equals(record.geneType)
+//                        || "miscRNA".equals(record.geneType)
+//                        || "rRNA".equals(record.geneType)) { // ecolimine case
 
                     Item gene = createItem("Gene");
                     gene.setReference("organism", getOrganism(taxonId));
@@ -252,7 +252,7 @@ public class NcbiGeneConverter extends BioFileConverter
                 }
             }
         }
-    }
+//    }
 
     private void createCrossReference(Item subject, String identifier, String dataSource)
     throws ObjectStoreException {
