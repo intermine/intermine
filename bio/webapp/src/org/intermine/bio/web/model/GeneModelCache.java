@@ -122,6 +122,12 @@ public final class GeneModelCache
         return geneModels;
     }
 
+    /**
+     *
+     * @param organismName the organism name
+     * @param os the objectStore
+     * @return organism setting map
+     */
     public static GeneModelSettings getGeneModelOrganismSettings(String organismName,
             ObjectStore os) {
         if (!organismSettings.containsKey(organismName)) {
@@ -212,7 +218,7 @@ public final class GeneModelCache
     }
 
     private static boolean returnsResults(Query q, ObjectStore os) {
-        Results res = os.execute(q,1, true, false, false);
+        Results res = os.execute(q, 1, true, false, false);
         return res.iterator().hasNext();
     }
 
