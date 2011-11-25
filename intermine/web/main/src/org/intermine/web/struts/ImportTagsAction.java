@@ -83,6 +83,7 @@ public class ImportTagsAction extends InterMineAction
             sr.globalChange(TagTypes.TEMPLATE);
             sr.globalChange(TagTypes.BAG);
         }
+        f.reset();
         return mapping.findForward("success");
     }
 }
