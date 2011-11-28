@@ -20,8 +20,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
-public class PossibleValuesServlet extends HttpServlet {
+/**
+ * A servlet for routing requests to the possible values service.
+ * @author ajk59
+ *
+ */
+public class PossibleValuesServlet extends HttpServlet
+{
 
+    /**
+     * Generated serial ID.
+     */
+    private static final long serialVersionUID = 8496670709870861844L;
+
+    /**
+     *  Constructor.
+     */
     public PossibleValuesServlet() {
         // Empty constructor.
     }

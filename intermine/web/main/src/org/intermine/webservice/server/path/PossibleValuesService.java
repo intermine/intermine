@@ -1,14 +1,21 @@
 package org.intermine.webservice.server.path;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.split;
@@ -30,11 +37,17 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
-public class PossibleValuesService extends WebService {
+/**
+ * A service for retrieving the possible values for a path in the data model.
+ * @author Alex Kalderimis
+ *
+ */
+public class PossibleValuesService extends WebService
+{
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
     private Map<String, String> kvPairs = new HashMap<String, String>();
-    private static Logger logger 
+    private static Logger logger
         = Logger.getLogger(PossibleValuesService.class);
 
     /**
@@ -74,8 +87,7 @@ public class PossibleValuesService extends WebService {
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
         String pathString = request.getParameter("path");
 
         Map<String, Object> attributes = getHeaderAttributes();
@@ -83,7 +95,7 @@ public class PossibleValuesService extends WebService {
 
         if (isEmpty(pathString)) {
             throw new BadRequestException("No path provided");
-        } 
+        }
         attributes.put("path", pathString);
         kvPairs.put("path", pathString);
 
@@ -110,16 +122,16 @@ public class PossibleValuesService extends WebService {
                 path = new Path(model, pathString, typeMap);
             }
         } catch (PathException e) {
-           throw new BadRequestException("Bad path given: " + pathString, e);
+            throw new BadRequestException("Bad path given: " + pathString, e);
         }
 
         Query q = new Query();
 
-        attributes.put("class", 
+        attributes.put("class",
                 path.getLastClassDescriptor().getUnqualifiedName());
         attributes.put("field", path.getLastElement());
-        String type = 
-          ((AttributeDescriptor) path.getEndFieldDescriptor()).getType();
+        String type =
+            ((AttributeDescriptor) path.getEndFieldDescriptor()).getType();
         String[] parts = split(type, '.');
         reverse(parts);
         attributes.put("type", parts[0]);
@@ -145,6 +157,7 @@ public class PossibleValuesService extends WebService {
             Iterator<Object> iter = results.iterator();
 
             while (iter.hasNext()) {
+                @SuppressWarnings("rawtypes")
                 List row = (List) iter.next();
                 Map<String, Object> jsonMap = new HashMap<String, Object>();
                 jsonMap.put("value", row.get(0));
