@@ -38,8 +38,11 @@ public class PathQueryBuilder
 
     private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
 
-    protected PathQueryBuilder() {
-    	// empty constructor for testing
+    /**
+     * Constructor for testing.
+     */
+    PathQueryBuilder() {
+        // empty constructor for testing
     }
 
     /**
@@ -52,7 +55,13 @@ public class PathQueryBuilder
         buildQuery(xml, schemaUrl, savedBags);
     }
 
-    protected void buildQuery(String xml, String schemaUrl,
+    /**
+     * Perform the build operation.
+     * @param xml xml string from which will be PathQuery constructed
+     * @param schemaUrl url of XML Schema file, validation is performed according this file
+     * @param savedBags previously saved bags.
+     */
+    void buildQuery(String xml, String schemaUrl,
             Map<String, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
@@ -80,13 +89,14 @@ public class PathQueryBuilder
             }
             if (!missingBags.isEmpty()) {
                 throw new BadRequestException(
-                        "XML is well formatted but you do not have access to the "
-                        + "following mentioned lists: " + missingBags 
+                        "The query XML is well formatted but you do not have access to the "
+                        + "following mentioned lists: " + missingBags
                         + " query: " + xml);
             }
             if (!toUpgrade.isEmpty()) {
-                throw new InternalErrorException("XML is well formatted, but the following lists" +
-                		" are not 'current', and need to be manually upgraded: " + toUpgrade);
+                throw new InternalErrorException(
+                        "The query XML is well formatted, but the following lists"
+                        + " are not 'current', and need to be manually upgraded: " + toUpgrade);
             }
         } else {
             logger.debug("Received invalid xml: " + xml);

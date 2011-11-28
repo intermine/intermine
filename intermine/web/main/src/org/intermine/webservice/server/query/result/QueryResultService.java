@@ -18,9 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +26,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
@@ -55,6 +54,8 @@ import org.intermine.webservice.server.output.JSONSummaryProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
 import org.intermine.webservice.server.output.MemoryOutput;
+import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.ResultsIterator;
 import org.intermine.webservice.server.query.AbstractQueryService;
 
@@ -87,14 +88,11 @@ public class QueryResultService extends AbstractQueryService
 
     /**
      * Executes service specific logic.
-     *
-     * @param request request
-     * @param response response
      */
     @Override
-    protected void execute(HttpServletRequest request, HttpServletResponse response) {
+    protected void execute() {
         QueryResultInput input = getInput();
-        PathQueryBuilder builder = getQueryBuilder(input.getXml(), request);
+        PathQueryBuilder builder = getQueryBuilder(input.getXml());
         PathQuery query = builder.getQuery();
         setHeaderAttributes(query, input.getStart(), input.getMaxCount());
         runPathQuery(query, input.getStart(), input.getMaxCount(), null, null,
@@ -137,8 +135,6 @@ public class QueryResultService extends AbstractQueryService
      * @param pq The path query to be run
      * @param start The beginning of this set of results
      * @param size The size of this set of results
-     * @param title The title of this query
-     * @param description A description of this query
      */
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
         Map<String, Object> attributes = new HashMap<String, Object>();
@@ -326,6 +322,11 @@ public class QueryResultService extends AbstractQueryService
         return baseLink;
     }
 
+    @Override
+    protected Output makeJSONOutput(PrintWriter out) {
+        return new StreamedOutput(out, new JSONTableFormatter());
+    }
+
     /**
      * URL Encode an object. Null values are returned as the empty string, and encoding problems
      * throw runtime exceptions.
@@ -382,6 +383,7 @@ public class QueryResultService extends AbstractQueryService
             CountProcessor processor = new CountProcessor();
             processor.writeCount(count, output);
         } else {
+            boolean canGoFaster = false;
             Iterator<List<ResultElement>> it;
             String summaryPath = request.getParameter("summaryPath");
             if (!StringUtils.isBlank(summaryPath)) {
@@ -393,16 +395,23 @@ public class QueryResultService extends AbstractQueryService
                     throw new ServiceException("Problem getting summary.", e);
                 }
             } else {
+                canGoFaster = true;
                 executor.setBatchSize(BATCH_SIZE);
                 it = executor.execute(pathQuery, firstResult, maxResults);
             }
 
             ResultProcessor processor = makeResultProcessor();
-            try {
-                //resultIt.goFaster();
-                processor.write(it, output);
-            } finally {
-                //resultIt.releaseGoFaster();
+            if (it.hasNext()) { // Prime the batch fetching pumps
+                try {
+                    if (canGoFaster) {
+                        ((ExportResultsIterator) it).goFaster();
+                    }
+                    processor.write(it, output);
+                } finally {
+                    if (canGoFaster) {
+                        ((ExportResultsIterator) it).releaseGoFaster();
+                    }
+                }
             }
         }
         forward(pathQuery, title, description, input, mineLink, layout);
@@ -412,6 +421,12 @@ public class QueryResultService extends AbstractQueryService
         ResultProcessor processor;
         boolean summarising = !StringUtils.isBlank(request.getParameter("summaryPath"));
         switch(getFormat()) {
+            case WebService.JSON_FORMAT:
+                processor = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
+                break;
+            case WebService.JSONP_FORMAT:
+                processor = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
+                break;
             case WebService.JSON_OBJ_FORMAT:
                 processor = new JSONObjResultProcessor();
                 break;

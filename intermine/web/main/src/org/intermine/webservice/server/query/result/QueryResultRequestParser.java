@@ -10,12 +10,9 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
-import java.io.UnsupportedEncodingException;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.QueryRequestParser;
 
@@ -35,8 +32,6 @@ public class QueryResultRequestParser extends QueryRequestParser
 
     /** Layout parameter name. **/
     public static final String LAYOUT_PARAMETER = "layout";
-    
-    private static final Logger logger = Logger.getLogger(QueryResultRequestParser.class);
 
     /**
      * RequestProcessor constructor.
