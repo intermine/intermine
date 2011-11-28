@@ -1132,18 +1132,30 @@ public final class SessionMethods
         @SuppressWarnings("unchecked")
         Map<String, String> savedBagsStatus = new HashedMap();
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        for (InterMineBag bag : savedBags.values()) {
-            if (!bag.isCurrent()) {
-                savedBagsStatus.put(bag.getName(), bag.getState());
+        synchronized(savedBags) {
+            for (InterMineBag bag : savedBags.values()) {
+                if (!bag.isCurrent()) {
+                    savedBagsStatus.put(bag.getName(), bag.getState());
+                }
             }
         }
         session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
     }
 
+    /**
+     * Set the set of supported Open-ID providers to use.
+     * @param ctx The Servlet-Context
+     * @param providers The providers we accept.
+     */
     public static void setOpenIdProviders(ServletContext ctx, Set<String> providers) {
         ctx.setAttribute(Constants.OPENID_PROVIDERS, providers);
     }
 
+    /**
+     * Get the set of accepted Open-ID providers.
+     * @param session The session to use for lookups
+     * @return The set of open-id providers.
+     */
     public static Set<String> getOpenIdProviders(HttpSession session) {
         ServletContext ctx = session.getServletContext();
         return (Set<String>) ctx.getAttribute(Constants.OPENID_PROVIDERS);
