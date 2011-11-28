@@ -19,7 +19,7 @@ import java.util.List;
  * full code names of operations.
  * @author Jakub Kulaviak
  **/
-public class CodeTranslator
+public abstract class CodeTranslator
 {
 
     private static List<Operation> operations = new ArrayList<Operation>();
@@ -87,11 +87,11 @@ public class CodeTranslator
     private static class Operation
     {
 
-        private String  code;
+        private final String code;
 
-        private String abbrev;
+        private final String abbrev;
 
-        private String fullName;
+        private final String fullName;
 
         public Operation(String code, String abbrev, String fullName) {
             this.code = code;
@@ -120,24 +120,12 @@ public class CodeTranslator
             return code;
         }
 
-        public void setCode(String code) {
-            this.code = code;
-        }
-
         public String getAbbreviation() {
             return abbrev;
         }
 
-        public void setAbbreviation(String abbrev) {
-            this.abbrev = abbrev;
-        }
-
         public String getFullName() {
             return fullName;
-        }
-
-        public void setFullName(String fullName) {
-            this.fullName = fullName;
         }
     }
 
