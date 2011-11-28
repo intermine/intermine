@@ -17,6 +17,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.web.util.DevNullMap;
 
 /**
  * A null-object for profiles for use with the web services.
