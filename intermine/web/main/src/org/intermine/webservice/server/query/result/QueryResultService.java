@@ -422,10 +422,12 @@ public class QueryResultService extends AbstractQueryService
         boolean summarising = !StringUtils.isBlank(request.getParameter("summaryPath"));
         switch(getFormat()) {
             case WebService.JSON_FORMAT:
-                processor = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
+                processor
+                    = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
                 break;
             case WebService.JSONP_FORMAT:
-                processor = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
+                processor
+                    = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
                 break;
             case WebService.JSON_OBJ_FORMAT:
                 processor = new JSONObjResultProcessor();
