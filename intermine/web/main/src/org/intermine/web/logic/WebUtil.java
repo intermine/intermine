@@ -314,6 +314,12 @@ public abstract class WebUtil
         }
     }
 
+    /**
+     * Formats a class name, using the web-config to produce configured labels.
+     * @param cd The class to display.
+     * @param config The web-configuration.
+     * @return A nicely labelled string.
+     */
     public static String formatClass(ClassDescriptor cd, WebConfig config) {
         Type type = config.getTypes().get(cd.getName());
         if (type == null) {
@@ -377,6 +383,12 @@ public abstract class WebUtil
         }
     }
 
+    /**
+     * Format a sequence of fields in a chain.
+     * @param p The path representing the fields to format.
+     * @param config The web-configuration.
+     * @return A formatted string, without the root class.
+     */
     public static String formatFieldChain(final Path p, final WebConfig config) {
         if (p == null) {
             return "";
@@ -408,8 +420,10 @@ public abstract class WebUtil
             thisPart = FieldConfig.getFormattedName(fd.getName());
         }
         if (elems.size() > 1) {
-            String newRoot = ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getUnqualifiedName();
-            String nextPathString = newRoot + "." + StringUtils.join(p.getElements().subList(1, elems.size()), ".");
+            String newRoot
+                = ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getUnqualifiedName();
+            String nextPathString
+                = newRoot + "." + StringUtils.join(p.getElements().subList(1, elems.size()), ".");
             Path newPath;
             try {
                 newPath = new Path(p.getModel(), nextPathString);
@@ -501,7 +515,7 @@ public abstract class WebUtil
         final String withLabels = formatPath(p, config);
         final List<String> labeledParts = Arrays.asList(StringUtils
                 .splitByWholeSeparator(withLabels, " > "));
-        
+
         if (descriptions.isEmpty()) {
             return StringUtils.join(labeledParts, " > ");
         }
@@ -534,8 +548,10 @@ public abstract class WebUtil
             returners.addAll(replacedParts.subList(0, partsToTakeFromReplaced));
         }
         if (partsToKeepFromOriginal > 0) {
-            final int start = Math.max(0, labeledParts.size() - partsToKeepFromOriginal);
-            final int end = start + partsToKeepFromOriginal - (originalPartsSize - labeledParts.size());
+            final int start
+                = Math.max(0, labeledParts.size() - partsToKeepFromOriginal);
+            final int end
+                = start + partsToKeepFromOriginal - (originalPartsSize - labeledParts.size());
             returners.addAll(labeledParts.subList(start, end));
         }
 
