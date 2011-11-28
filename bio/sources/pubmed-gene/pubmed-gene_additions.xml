@@ -1,3 +1,6 @@
 <?xml version="1.0"?>
 <classes>
+  <class name="NcRNA" is-interface="true">
+    <attribute name="ncbiGeneNumber" type="java.lang.String"/>
+  </class>
 </classes>
