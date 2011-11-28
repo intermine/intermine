@@ -83,22 +83,33 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
+     * Copy constructor.
+     * Construct a new template that is the same in all respects as the one
+     * passed to the constructor.
+     * @param prototype The template to copy.
+     */
+    public TemplateQuery(TemplateQuery prototype) {
+        super(prototype);
+        this.name = prototype.name;
+        this.title = prototype.title;
+        this.comment = prototype.comment;
+        this.edited = prototype.edited;
+        this.editableConstraints
+            = new ArrayList<PathConstraint>(prototype.editableConstraints);
+        this.constraintDescriptions
+            = new HashMap<PathConstraint, String>(prototype.constraintDescriptions);
+        this.constraintSwitchOffAbility =
+            new HashMap<PathConstraint, SwitchOffAbility>(prototype.constraintSwitchOffAbility);
+    }
+
+    /**
      * Clone this TemplateQuery.
      *
      * @return a TemplateQuery
      */
     @Override
     public synchronized TemplateQuery clone() {
-        TemplateQuery t = (TemplateQuery) super.clone();
-        t.name = name;
-        t.title = title;
-        t.comment = comment;
-        t.edited = edited;
-        t.editableConstraints = new ArrayList<PathConstraint>(editableConstraints);
-        t.constraintDescriptions = new HashMap<PathConstraint, String>(constraintDescriptions);
-        t.constraintSwitchOffAbility =
-            new HashMap<PathConstraint, SwitchOffAbility>(constraintSwitchOffAbility);
-        return t;
+        return new TemplateQuery(this);
     }
 
     /**
