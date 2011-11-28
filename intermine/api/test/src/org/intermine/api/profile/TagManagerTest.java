@@ -78,6 +78,35 @@ public class TagManagerTest extends InterMineAPITestCase
         assertEquals(createdTag.getUserProfile().getUsername(), "bob");
     }
 
+    public void testAddWithProfile() throws Exception {
+        Tag createdTag = manager.addTag("wowTag", "list1", "bag", bobProfile);
+        Tag retrievedTag = manager.getTags("wowTag", "list1", "bag", "bob").get(0);
+        assertEquals(createdTag, retrievedTag);
+        assertEquals(createdTag.getTagName(), "wowTag");
+        assertEquals(createdTag.getObjectIdentifier(), "list1");
+        assertEquals(createdTag.getType(), "bag");
+        assertEquals(createdTag.getUserProfile().getUsername(), "bob");
+    }
+
+    public void testAddPermissionProblems() throws Exception {
+        try {
+            manager.addTag("im:wowTag", "list1", "bag", bobProfile);
+            fail("Expected exception");
+        } catch (TagManager.TagNamePermissionException e) {
+            //Bob is not allowed to add im tags, because he is not the superuser
+        }
+    }
+
+    public void testAddNameProblems() throws Exception {
+        try {
+            manager.addTag("An illegal tag name!", "list1", "bag", bobProfile);
+            fail("Expected exception");
+        } catch (TagManager.TagNameException e) {
+            //That name is illegal!
+        }
+    }
+
+
     public void testGetTagById() {
         Tag tag = manager.addTag("list1Tag", "list1", "bag", "bob");
         Tag retrievedTag = manager.getTagById(tag.getId());
