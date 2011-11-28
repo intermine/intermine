@@ -16,6 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -63,20 +66,20 @@ public class JSONRowIterator implements Iterator<JSONArray>
     /**
      * Get the JSONObject that represents each cell in the results row
      * @param cell The result element with the data
-     * @param path The path that represents the view column
      * @return A JSONObject
      */
-    protected JSONObject makeCell(ResultElement cell, Path path) {
+    protected JSONObject makeCell(ResultElement cell) {
         Map<String, Object> mapping = new HashMap<String, Object>();
         if (cell == null || cell.getId() == null) {
             mapping.put(CELL_KEY_URL, null);
             mapping.put(CELL_KEY_VALUE, null);
         } else {
+            String link = null;
             if (im.getLinkRedirector() != null) {
                 mapping.put(CELL_KEY_URL,
                     im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject()));
             }
-            if (mapping.get(CELL_KEY_URL) == null) {
+            if (link == null) {
                 mapping.put(CELL_KEY_URL, PortalHelper.generateReportPath(cell));
             }
             mapping.put(CELL_KEY_CLASS, cell.getType());
@@ -89,11 +92,10 @@ public class JSONRowIterator implements Iterator<JSONArray>
 
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
-        List<JSONObject> jsonRow = new ArrayList<JSONObject>();
+        List<Object> jsonRow = new ArrayList<Object>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement re = row.get(i);
-            Path column = viewPaths.get(i);
-            jsonRow.add(makeCell(re, column));
+            jsonRow.add(makeCell(re));
         }
         JSONArray next = new JSONArray(jsonRow);
         return next;
