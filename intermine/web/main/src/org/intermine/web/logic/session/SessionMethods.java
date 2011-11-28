@@ -1098,7 +1098,7 @@ public final class SessionMethods
     /**
      * Return true if exists blocking errors
      * @param servletContext the ServletContext
-     * @return
+     * @return Whether or not there are blocking errors.
      */
     public static boolean isErrorOnInitialiser(ServletContext servletContext) {
         Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
@@ -1132,7 +1132,7 @@ public final class SessionMethods
         @SuppressWarnings("unchecked")
         Map<String, String> savedBagsStatus = new HashedMap();
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        synchronized(savedBags) {
+        synchronized (savedBags) {
             for (InterMineBag bag : savedBags.values()) {
                 if (!bag.isCurrent()) {
                     savedBagsStatus.put(bag.getName(), bag.getState());
