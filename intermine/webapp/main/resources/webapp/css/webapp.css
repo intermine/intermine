@@ -1490,6 +1490,8 @@ div.floatRight { float:right; }
 #permalink div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
 #permalink div.popup input { width:392px; }
 
+/* timedate formatting */
+.im-timedate { white-space:nowrap; }
 
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */

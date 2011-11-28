@@ -271,6 +271,27 @@ im.getCookie = function(key) {
 	}
 };
 
+// format system timestamps from the client's perspective 
+im.timestampFormat = function() {
+	function pad(value) {
+		return (value < 10) ? "0" + value : value;
+	}
+	
+	jQuery(".intermine.timestamp").each(function() {
+		var timestamp = parseInt(jQuery(this).text());
+		// convert to Date and shift from current timezone in minutes
+		var d = new Date(timestamp - new Date().getTimezoneOffset() * 60 * 1000);
+		// format
+		var formattedTime = d.getFullYear() + "-" +
+			pad(d.getMonth()) + "-" +
+			pad(d.getDate()) + " " +
+			pad(d.getHours()) + ":" +
+			pad(d.getMinutes());
+		
+		jQuery(this).text(formattedTime);
+	});
+};
+
 // jQuery extensions
 jQuery.fn.extend({
 	exists: function() {
@@ -308,4 +329,6 @@ jQuery(document).ready(function() {
 	im.alternatingColors();
 	// persistent table headers
 	im.persistentTableHeaders();
+	// timestamp formatting
+	im.timestampFormat();
 });
