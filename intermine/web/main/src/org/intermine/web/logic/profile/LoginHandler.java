@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,8 +29,6 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.DatabaseUtil;
 import org.intermine.web.logic.Constants;
@@ -41,23 +38,24 @@ import org.intermine.web.struts.InterMineAction;
 /**
  * @author Xavier Watkins
  *
+ *
+ * Abstract class containing the methods for login in and copying current
+ * history, bags,... into profile.
+ *
  */
 public abstract class LoginHandler extends InterMineAction
 {
     private static final Logger LOG = Logger.getLogger(LoginHandler.class);
+
     /**
-     * Abstract class containing the methods for login in and copying current
-     * history, bags,... into profile
-     *
+     * Log-in a user.
      * @param request The HttpServletRequest
-     * @param response The HttpServletResponse
-     * @param session The session
-     * @param pm The profile manager
      * @param username The username
      * @param password The password
      * @return the map containing the renamed bags the user created before they were logged in
      */
-    public Map<String, String> doLogin(HttpServletRequest request, String username, String password) {
+    public Map<String, String> doLogin(HttpServletRequest request,
+            String username, String password) {
         Map<String, String> renamedBags = doStaticLogin(request, username, password);
         HttpSession session = request.getSession();
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
@@ -71,6 +69,13 @@ public abstract class LoginHandler extends InterMineAction
         return renamedBags;
     }
 
+    /**
+     * Merge two profiles together. This is mainly of use when a new user registers and we need
+     * to save their current anonymous session into their new profile.
+     * @param fromProfile The profile to take information from.
+     * @param toProfile The profile to merge into.
+     * @return A map of bags, from old name to new name.
+     */
     public static Map<String, String> mergeProfiles(Profile fromProfile, Profile toProfile) {
         Map<String, SavedQuery> mergeQueries = Collections.emptyMap();
         Map<String, InterMineBag> mergeBags = Collections.emptyMap();
@@ -104,12 +109,19 @@ public abstract class LoginHandler extends InterMineAction
         return renamedBags;
     }
 
-    public static Map<String, String> doStaticLogin(HttpServletRequest request, String username, String password) {
+    /**
+     * Main log-in logic.
+     * @param request The current request.
+     * @param username The current user's login name.
+     * @param password The current user's password.
+     * @return A map of renamed-bags from old to new name.
+     */
+    public static Map<String, String> doStaticLogin(HttpServletRequest request,
+            String username, String password) {
         // Merge current history into loaded profile
 
         Profile currentProfile = SessionMethods.getProfile(request.getSession());
         HttpSession session = request.getSession();
-        ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
         Profile profile = setUpProfile(session, username, password);
         Map<String, String> renamedBags = new HashMap<String, String>();
 
@@ -122,13 +134,12 @@ public abstract class LoginHandler extends InterMineAction
     }
 
     /**
-     * Retrieves profile (creates or gets from ProfileManager) and saves it to session.
+     * Initialises a profile for the current user based on their user name and password.
      *
-     * @param session http session
-     * @param pm profile manager
+     * @param session HTTP session
      * @param username user name
      * @param password password
-     * @return profile
+     * @return profile, fully ready to use.
      */
     public static Profile setUpProfile(HttpSession session, String username, String password) {
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -142,6 +153,12 @@ public abstract class LoginHandler extends InterMineAction
         return setUpProfile(session, profile);
     }
 
+    /**
+     * Initialise the profile in the session.
+     * @param session The current HTTP session.
+     * @param profile The current user's profile.
+     * @return The profile, fully ready to use.
+     */
     public static Profile setUpProfile(HttpSession session, Profile profile) {
         SessionMethods.setProfile(session, profile);
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
@@ -159,7 +176,7 @@ public abstract class LoginHandler extends InterMineAction
                 new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
             }
         } catch (SQLException sqle) {
-            LOG.error("Problems retriving the connection", sqle);
+            LOG.error("Problems retrieving the connection", sqle);
         } finally {
             try {
                 if (con != null) {
@@ -171,7 +188,8 @@ public abstract class LoginHandler extends InterMineAction
         return profile;
     }
 
-    private static class LoginException extends RuntimeException {
+    private static final class LoginException extends RuntimeException
+    {
 
         /**
          * Default serial id.
