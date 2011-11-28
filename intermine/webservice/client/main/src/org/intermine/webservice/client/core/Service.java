@@ -36,8 +36,6 @@ public class Service
 
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
 
-    private static Logger logger = Logger.getLogger(Service.class);
-
     protected URL resourceUrl;
 
     private String rootUrl;
@@ -144,7 +142,6 @@ public class Service
         applyAuthentication(request);
         HttpConnection connection = new HttpConnection(request);
         connection.setTimeout(timeout);
-        logger.debug("Executing request: " + request);
         connection.connect();
         return connection;
     }
