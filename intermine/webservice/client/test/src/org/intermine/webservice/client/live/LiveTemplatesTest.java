@@ -21,7 +21,7 @@ import org.junit.Test;
 public class LiveTemplatesTest {
 
     private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "Z1a3D3U16cicCdS0T6y4bdN1SQh";
+    private static final String authToken = "test-user-token";
     private static TemplateService authorised = new ServiceFactory(baseUrl, authToken).getTemplateService();
     private static TemplateService unauthorised = new ServiceFactory(baseUrl).getTemplateService();
     private static final Page subset = new Page(1, 2);
@@ -101,7 +101,7 @@ public class LiveTemplatesTest {
         assertEquals(5, unauthorised.getCount("CEO_Rivals", params));
         List<List<String>> results = unauthorised.getResults("CEO_Rivals", params, subset);
         assertEquals(2, results.size());
-        assertEquals("7984146", results.get(1).get(1));
+        assertEquals("497964", results.get(1).get(1));
     }
 
     @Test
@@ -112,7 +112,7 @@ public class LiveTemplatesTest {
         assertEquals(5, unauthorised.getCount(ceoRivals));
         List<List<String>> results = unauthorised.getResults(ceoRivals, subset);
         assertEquals(2, results.size());
-        assertEquals("7984146", results.get(1).get(1));
+        assertEquals("497964", results.get(1).get(1));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class LiveTemplatesTest {
         params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
         List<JSONObject> results = unauthorised.getJSONResults("CEO_Rivals", params, subset);
         assertEquals(2, results.size());
-        assertEquals(7984146, results.get(1).getInt("salary"));
+        assertEquals(497964, results.get(1).getInt("salary"));
         assertEquals("Wernham-Hogg", results.get(1).getJSONObject("company").getString("name"));
     }
 
@@ -160,7 +160,7 @@ public class LiveTemplatesTest {
                 Constraints.neq("CEO.name", "Charles Miner"));
         List<JSONObject> results = unauthorised.getJSONResults(ceoRivals, subset);
         assertEquals(2, results.size());
-        assertEquals(7984146, results.get(1).getInt("salary"));
+        assertEquals(497964, results.get(1).getInt("salary"));
         assertEquals("Wernham-Hogg", results.get(1).getJSONObject("company").getString("name"));
     }
 

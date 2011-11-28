@@ -21,12 +21,20 @@ import org.junit.Test;
 
 public class LiveQueryTest {
 
+    private static final String EMP_NAME_1B = "EmployeeA1";
+    private static final String EMP_NAME_2B = "Bernard Giraud";
+    private static final String EMP_NAME_2 = "Kai D\u00F6rfler";
+    private static final String EMP_NAME_1 = "Ampersand &";
     static Map<String, PathQuery> queries;
     private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "Z1a3D3U16cicCdS0T6y4bdN1SQh";
+    private static final String authToken = "test-user-token";
     private static final QueryService authorised = new ServiceFactory(baseUrl, authToken).getQueryService();
     private static final QueryService unauthorised = new ServiceFactory(baseUrl).getQueryService();
     private static final Page middle = new Page(5, 5);
+    private static final int EXP_COUNT_1 = 9;
+    private static final int EXP_COUNT_2 = 4;
+    private static final int EXP_COUNT_3 = 5;
+    private static final int EXP_AGE = 29;
 
     @BeforeClass
     public static void oneTimeSetup() {
@@ -37,167 +45,167 @@ public class LiveQueryTest {
     @Test
     public void count() {
         PathQuery test1 = queries.get("test1");
-        assertEquals(15, unauthorised.getCount(test1.toXml()));
+        assertEquals(EXP_COUNT_1, unauthorised.getCount(test1.toXml()));
 
-        assertEquals(15, unauthorised.getCount(test1));
+        assertEquals(EXP_COUNT_1, unauthorised.getCount(test1));
     }
 
     @Test
     public void count2() {
         PathQuery test2 = queries.get("test2");
-        assertEquals(4, authorised.getCount(test2.toXml()));
+        assertEquals(EXP_COUNT_2, authorised.getCount(test2.toXml()));
 
-        assertEquals(4, authorised.getCount(test2));
+        assertEquals(EXP_COUNT_2, authorised.getCount(test2));
     }
 
     @Test(expected=ServiceException.class)
     public void count3() {
         PathQuery test2 = queries.get("test2");
-        assertEquals(4, unauthorised.getCount(test2));
+        assertEquals(EXP_COUNT_2, unauthorised.getCount(test2));
     }
 
     @Test
     public void allJSON() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getAllJSONResults(test1);
-        assertEquals(15, results.size());
-        assertEquals("EmployeeA1", results.get(0).getString("name"));
-        assertEquals(29, results.get(14).getInt("age"));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1B, results.get(0).getString("name"));
+        assertEquals(EXP_AGE, results.get(EXP_COUNT_1 - 1).getInt("age"));
     }
 
     @Test
     public void allJSON2() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getAllJSONResults(test1.toXml());
-        assertEquals(15, results.size());
-        assertEquals("EmployeeA1", results.get(0).getString("name"));
-        assertEquals(29, results.get(14).getInt("age"));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1B, results.get(0).getString("name"));
+        assertEquals(EXP_AGE, results.get(EXP_COUNT_1 - 1).getInt("age"));
     }
 
     @Test
     public void someJSON() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getJSONResults(test1, middle);
-        assertEquals(5, results.size());
-        assertEquals("Kai D\u00f6rfler", results.get(0).getString("name"));
-        assertEquals(28, results.get(4).getInt("age"));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2B, results.get(0).getString("name"));
+        assertEquals(EXP_AGE, results.get(EXP_COUNT_2 - 1).getInt("age"));
     }
 
     @Test
     public void someJSON2() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getJSONResults(test1.toXml(), middle);
-        assertEquals(5, results.size());
-        assertEquals("Kai D\u00f6rfler", results.get(0).getString("name"));
-        assertEquals(28, results.get(4).getInt("age"));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2B, results.get(0).getString("name"));
+        assertEquals(EXP_AGE, results.get(EXP_COUNT_2 - 1).getInt("age"));
     }
 
     @Test
     public void allStrings() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getAllResults(test1);
-        assertEquals(15, results.size());
-        assertEquals("Andy Bernard", results.get(0).get(0));
-        assertEquals("29", results.get(14).get(1));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1, results.get(0).get(0));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_1 - 1).get(1));
     }
 
     @Test
     public void allStrings2() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getAllResults(test1.toXml());
-        assertEquals(15, results.size());
-        assertEquals("Andy Bernard", results.get(0).get(0));
-        assertEquals("29", results.get(14).get(1));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1, results.get(0).get(0));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_1 - 1).get(1));
     }
 
     @Test
     public void someStrings() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getResults(test1, middle);
-        assertEquals(5, results.size());
-        assertEquals("EmployeeA2", results.get(0).get(0));
-        assertEquals("25", results.get(4).get(1));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2, results.get(0).get(0));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_2 - 1).get(1));
     }
 
     @Test
     public void someStrings2() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getResults(test1.toXml(), middle);
-        assertEquals(5, results.size());
-        assertEquals("EmployeeA2", results.get(0).get(0));
-        assertEquals("25", results.get(4).get(1));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2, results.get(0).get(0));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_2 - 1).get(1));
     }
 
     @Test
     public void allObjects() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1);
-        assertEquals(15, results.size());
-        assertEquals("Andy Bernard", (String) results.get(0).get(0));
-        assertEquals(new Integer(29), (Integer) results.get(14).get(1));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1, (String) results.get(0).get(0));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get(1));
     }
 
     @Test
     public void allObjects2() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1.toXml());
-        assertEquals(15, results.size());
-        assertEquals("Andy Bernard", (String) results.get(0).get(0));
-        assertEquals(new Integer(29), (Integer) results.get(14).get(1));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1, (String) results.get(0).get(0));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get(1));
     }
 
     @Test
     public void someObjects() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1, middle);
-        assertEquals(5, results.size());
-        assertEquals("EmployeeA2", (String) results.get(0).get(0));
-        assertEquals(new Integer(25), (Integer) results.get(4).get(1));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2, (String) results.get(0).get(0));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get(1));
     }
 
     @Test
     public void someObjects2() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1.toXml(), middle);
-        assertEquals(5, results.size());
-        assertEquals("EmployeeA2", (String) results.get(0).get(0));
-        assertEquals(new Integer(25), (Integer) results.get(4).get(1));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2, (String) results.get(0).get(0));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get(1));
     }
 
     @Test
     public void allMaps() {
         PathQuery test1 = queries.get("test1");
         List<Map<String, Object>> results = unauthorised.getRowsAsMaps(test1);
-        assertEquals(15, results.size());
-        assertEquals("Andy Bernard", (String) results.get(0).get("name"));
-        assertEquals(new Integer(29), (Integer) results.get(14).get("age"));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1, (String) results.get(0).get("name"));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get("age"));
     }
 
     @Test
     public void allMaps2() {
         PathQuery test1 = queries.get("test1");
         List<Map<String, Object>> results = unauthorised.getRowsAsMaps(test1.toXml());
-        assertEquals(15, results.size());
-        assertEquals("Andy Bernard", (String) results.get(0).get("name"));
-        assertEquals(new Integer(29), (Integer) results.get(14).get("age"));
+        assertEquals(EXP_COUNT_1, results.size());
+        assertEquals(EMP_NAME_1, (String) results.get(0).get("name"));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get("age"));
     }
 
     @Test
     public void someMaps() {
         PathQuery test1 = queries.get("test1");
         List<Map<String, Object>> results = unauthorised.getRowsAsMaps(test1, middle);
-        assertEquals(5, results.size());
-        assertEquals("EmployeeA2", (String) results.get(0).get("name"));
-        assertEquals(new Integer(25), (Integer) results.get(4).get("age"));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2, (String) results.get(0).get("name"));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get("age"));
     }
 
     @Test
     public void someMaps2() {
         PathQuery test1 = queries.get("test1");
         List<Map<String, Object>> results = unauthorised.getRowsAsMaps(test1.toXml(), middle);
-        assertEquals(5, results.size());
-        assertEquals("EmployeeA2", (String) results.get(0).get("name"));
-        assertEquals(new Integer(25), (Integer) results.get(4).get("age"));
+        assertEquals(EXP_COUNT_2, results.size());
+        assertEquals(EMP_NAME_2, (String) results.get(0).get("name"));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get("age"));
     }
 
     @Test
@@ -207,8 +215,8 @@ public class LiveQueryTest {
         assertEquals("Employee.age", summary.getColumn());
         assertEquals(29, summary.getMax(), 0.0001);
         assertEquals(10, summary.getMin(), 0.0001);
-        assertEquals(25.86666666, summary.getAverage(), 0.0001);
-        assertEquals(4.983783225, summary.getStandardDeviation(), 0.0001);
+        assertEquals(24.55555555, summary.getAverage(), 0.0001);
+        assertEquals(6.1259919, summary.getStandardDeviation(), 0.0001);
     }
 
     @Test
