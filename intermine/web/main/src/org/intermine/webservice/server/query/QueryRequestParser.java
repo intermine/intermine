@@ -14,10 +14,8 @@ import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.webservice.server.WebServiceRequestParser;
-import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Processes query request parameters. The main function of this
@@ -28,9 +26,9 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  **/
 public class QueryRequestParser extends WebServiceRequestParser
 {
-	
-	protected HttpServletRequest request;
-	
+
+    protected HttpServletRequest request;
+
     /**
      * RequestProcessor constructor.
      * @param request request
@@ -39,33 +37,35 @@ public class QueryRequestParser extends WebServiceRequestParser
         this.request = request;
     }
 
-    private static final Logger logger = Logger.getLogger(QueryRequestParser.class);
-	private static final String QUERY_PARAMETER = "query";
+    private static final String QUERY_PARAMETER = "query";
 
     /**
      * Function for dealing with encoding issues with various
      * inputs.
+     * @param latin1 XML in latin1 encoding.
+     * @return The fixed string.
      */
-    public static String fixEncoding(String latin1) {
+    private static String fixEncoding(String latin1) {
         try {
             byte[] bytes = latin1.getBytes("ISO-8859-1");
-            if (!validUTF8(bytes))
-                return latin1;   
-            return new String(bytes, "UTF-8");  
+            if (!validUTF8(bytes)) {
+                return latin1;
+            }
+            return new String(bytes, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // Impossible, throw unchecked
-            throw new IllegalStateException("No Latin1 or UTF-8: " + e.getMessage());
+            throw new IllegalStateException("Neither Latin1 nor UTF-8: " + e.getMessage());
         }
 
     }
 
-    public static boolean validUTF8(byte[] input) {
+    private static boolean validUTF8(byte[] input) {
         int i = 0;
         // Check for BOM
         if (input.length >= 3 && (input[0] & 0xFF) == 0xEF
                 && (input[1] & 0xFF) == 0xBB & (input[2] & 0xFF) == 0xBF) {
             i = 3;
-                }
+        }
 
         int end;
         for (int j = input.length; i < j; ++i) {
@@ -98,11 +98,14 @@ public class QueryRequestParser extends WebServiceRequestParser
         return true;
     }
 
+    /**
+     * Get query XML from a request.
+     * @param req The request to get the XML from.
+     * @return The XML string version of the query, in the correct encoding.
+     */
     public static String getQueryXml(HttpServletRequest req) {
         String xmlQuery = req.getParameter(QUERY_PARAMETER);
-        logger.debug("Unfixed: " + xmlQuery);
         xmlQuery = fixEncoding(xmlQuery);
-        logger.debug("Fixed: " + xmlQuery);
         return xmlQuery;
     }
 }

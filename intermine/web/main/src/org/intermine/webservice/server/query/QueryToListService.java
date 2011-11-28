@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.query;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -15,6 +24,7 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.CompletelyFalseException;
@@ -26,6 +36,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
@@ -35,7 +46,8 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  * @author Alex Kalderimis
  *
  */
-public class QueryToListService extends AbstractQueryService {
+public class QueryToListService extends AbstractQueryService
+{
 
     private static final String XML_PARAM = "query";
     private static final String NAME_PARAM = "listName";
@@ -55,19 +67,21 @@ public class QueryToListService extends AbstractQueryService {
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
+    protected void validateState() {
         if (!isAuthenticated()) {
-            throw new BadRequestException("Not authenticated.");
+            throw new ServiceForbiddenException("All requests to list operation services must"
+                    + " be authenticated.");
         }
+    }
+
+    @Override
+    protected void execute() throws Exception {
 
         Profile profile = SessionMethods.getProfile(request.getSession());
 
         String name = request.getParameter(NAME_PARAM);
         String description = request.getParameter(DESC_PARAM);
         String[] tags = StringUtils.split(request.getParameter("tags"), ';');
-        @SuppressWarnings("unchecked")
         List<String> tagList = (tags == null) ? Collections.EMPTY_LIST : Arrays.asList(tags);
 
         if (StringUtils.isEmpty(name)) {
@@ -94,7 +108,7 @@ public class QueryToListService extends AbstractQueryService {
             throw new BadRequestException("query is blank");
         }
 
-        PathQueryBuilder builder = getQueryBuilder(xml, request);
+        PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
         if (pq.getView().size() != 1) {
             throw new BadRequestException(
@@ -131,9 +145,16 @@ public class QueryToListService extends AbstractQueryService {
         String type = viewPath.getLastClassDescriptor().getUnqualifiedName();
 
         try {
-            InterMineBag newList = profile.createBag(tempName, type, description, im.getClassKeys());
+            InterMineBag newList =
+                    profile.createBag(tempName, type, description, im.getClassKeys());
             newList.addToBagFromQuery(q);
-            im.getBagManager().addTagsToBag(tags, newList, profile);
+            try {
+                im.getBagManager().addTagsToBag(tags, newList, profile);
+            } catch (TagManager.TagNameException e) {
+                throw new BadRequestException(e.getMessage());
+            } catch (TagManager.TagNamePermissionException e) {
+                throw new ServiceForbiddenException(e.getMessage());
+            }
             profile.renameBag(tempName, name);
 
             output.addResultItem(Arrays.asList("" + newList.size()));
@@ -165,7 +186,7 @@ public class QueryToListService extends AbstractQueryService {
         } catch (ObjectStoreException e) {
             throw new InternalErrorException(e);
         }
-       return ret;
+        return ret;
     }
 
     /**
