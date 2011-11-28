@@ -1,5 +1,16 @@
 package org.intermine.webservice.server.widget;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+
 import java.io.PrintWriter;
 
 import java.util.Arrays;
@@ -41,17 +52,6 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
-/*
- * Copyright (C) 2002-2011 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-
 public class GraphService extends JSONService
 {
 
@@ -65,14 +65,17 @@ public class GraphService extends JSONService
 
     }
 
+    /**
+     * Constructor
+     * @param im The InterMine application object.
+     */
     public GraphService(InterMineAPI im) {
         super(im);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) {
+    protected void execute() {
         GraphInput input = new GraphInput(request);
         Profile profile = SessionMethods.getProfile(request.getSession());
 
@@ -131,7 +134,7 @@ public class GraphService extends JSONService
         return attributes;
     }
 
-    private WidgetResultProcessor getProcessor() {
+    protected WidgetResultProcessor getProcessor() {
         if (formatIsJSON()) {
             return GraphJSONProcessor.instance();
         } else if (formatIsXML()) {
