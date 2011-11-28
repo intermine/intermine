@@ -173,17 +173,17 @@ public abstract class LoginHandler extends InterMineAction
 
     private static class LoginException extends RuntimeException {
 
-    	/**
-		 * Default serial id.
-		 */
-		private static final long serialVersionUID = 1L;
+        /**
+         * Default serial id.
+         */
+        private static final long serialVersionUID = 1L;
 
-		private LoginException() {
-    		super();
-    	}
+        private LoginException() {
+            super();
+        }
 
-    	private LoginException(String message) {
-    		super(message);
-    	}
+        private LoginException(String message) {
+            super(message);
+        }
     }
 }
