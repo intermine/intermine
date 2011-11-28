@@ -92,8 +92,7 @@ public class BEDQueryService extends AbstractQueryService
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
         PathQuery pathQuery = getQuery();
 
         HttpSession session = request.getSession();
@@ -167,7 +166,7 @@ public class BEDQueryService extends AbstractQueryService
             throw new BadRequestException("query is blank");
         }
 
-        PathQueryBuilder builder = getQueryBuilder(xml, request);
+        PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
 
         List<String> newView = new ArrayList<String>();

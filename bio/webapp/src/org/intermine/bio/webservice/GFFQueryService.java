@@ -93,8 +93,7 @@ public class GFFQueryService extends AbstractQueryService
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         // get the project title to be written in GFF3 records
@@ -191,7 +190,7 @@ public class GFFQueryService extends AbstractQueryService
             throw new BadRequestException("query is blank");
         }
 
-        PathQueryBuilder builder = getQueryBuilder(xml, request);
+        PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
 
         List<String> newView = new ArrayList<String>();
