@@ -104,7 +104,8 @@ public class ServicesListingsServlet extends HttpServlet
         }
     }
 
-    private void setHeaders(String format, HttpServletRequest request, HttpServletResponse response) {
+    private void setHeaders(String format, HttpServletRequest request,
+            HttpServletResponse response) {
         if ("text".equalsIgnoreCase(format)) {
             ResponseUtil.setPlainTextHeader(response, FILENAME);
         } else {
