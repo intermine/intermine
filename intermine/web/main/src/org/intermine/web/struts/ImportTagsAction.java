@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.profile.TagHandler;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
