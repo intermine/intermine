@@ -77,8 +77,7 @@ public class EnrichmentWidgetResultService extends JSONService
      */
     @SuppressWarnings("deprecation")
     @Override
-    protected void execute(HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
+    protected void execute() throws Exception {
         WidgetsServiceInput input = getInput();
         Profile profile = SessionMethods.getProfile(request.getSession());
 

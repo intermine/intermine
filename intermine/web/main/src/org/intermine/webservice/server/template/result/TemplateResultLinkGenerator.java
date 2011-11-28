@@ -45,11 +45,22 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
 
     private String error;
 
-
+    /**
+     * Get a link that takes the user to a results page in the originating mine.
+     * @param baseUrl The mine's base URL.
+     * @param tq The template.
+     * @return A URL.
+     */
     public String getMineResultsLink(String baseUrl, TemplateQuery tq) {
         return baseUrl + getMineResultsPath(tq, false);
     }
 
+    /**
+     * Get a link that takes the user to a results page in the originating mine.
+     * @param tq The template.
+     * @param highlighted Whether or not to highlight certain parameters.
+     * @return The path section of a URL.
+     */
     public String getMineResultsPath(TemplateQuery tq, boolean highlighted) {
         String ret = "/loadTemplate.do?";
         ret += getTemplateParameterQueryString(tq, highlighted);
@@ -62,7 +73,6 @@ public class TemplateResultLinkGenerator extends LinkGeneratorBase
      * @param baseUrl base url that doesn't terminate with '/' ,
      * e.g. http://www.flymine.org/release-12.0
      * @param template template for which the link is generated
-     * @param hl Whether or not to highlight the parameters of this link.
      * @return generated link
      */
     public String getHtmlLink(String baseUrl, TemplateQuery template) {

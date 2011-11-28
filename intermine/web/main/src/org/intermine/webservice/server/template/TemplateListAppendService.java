@@ -18,12 +18,15 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 /**
  * A class to append items from a set of template results to a
@@ -56,7 +59,13 @@ public class TemplateListAppendService extends TemplateToListService
         InterMineBag list = profile.getSavedBags().get(name);
         try {
             list.addToBagFromQuery(q);
-            im.getBagManager().addTagsToBag(tags, list, profile);
+            try {
+                im.getBagManager().addTagsToBag(tags, list, profile);
+            } catch (TagManager.TagNameException e) {
+                throw new BadRequestException(e.getMessage());
+            } catch (TagManager.TagNamePermissionException e) {
+                throw new ServiceForbiddenException(e.getMessage());
+            }
         } finally {
             output.addResultItem(Arrays.asList("" + list.size()));
         }
