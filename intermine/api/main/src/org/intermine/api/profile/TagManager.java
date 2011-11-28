@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
+import org.intermine.api.tag.TagNames;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -39,6 +40,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 
 /**
@@ -50,7 +52,11 @@ public class TagManager
 {
     private static final Logger LOG = Logger.getLogger(TagManager.class);
     protected ObjectStoreWriter osWriter;
-    private HashMap<MultiKey, List<Tag>> tagCache = null;
+    private CacheMap<MultiKey, List<Tag>> tagCache = null;
+
+    public static final String INVALID_NAME_MSG = "Invalid name. "
+            + "Names may only contain letters, "
+            + "numbers, spaces, full stops, hyphens and colons.";
 
     /**
      * Constructor. Use TagManagerFactory for creating tag manager.
@@ -284,7 +290,7 @@ public class TagManager
 
     private Map<MultiKey, List<Tag>> getTagCache() {
         if (tagCache == null) {
-            tagCache  = new HashMap<MultiKey, List<Tag>>();
+            tagCache  = new CacheMap<MultiKey, List<Tag>>();
         }
         return tagCache;
     }
@@ -297,12 +303,49 @@ public class TagManager
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userName the name of the UserProfile to associate this tag with
+     * @param profile The Profile of the user to associate this tag with.
      * @return the new Tag
+     * @throws TagNameException If the tag name is invalid.
+     * @throws TagNamePermissionException If the user does not have the required
+     *         permissions to add this tag.
      */
     public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
-                                   String userName) {
-        checkUserExists(userName);
+            Profile profile)
+        throws TagNameException, TagNamePermissionException {
+
+        if (profile == null) {
+            throw new IllegalArgumentException("profile cannot be null");
+        }
+        if (tagName == null) {
+            throw new IllegalArgumentException("tagName cannot be null");
+        }
+        if (tagName.startsWith(TagNames.IM_PREFIX) && !profile.isSuperuser()) {
+            throw new TagNamePermissionException();
+        }
+        if (!isValidTagName(tagName)) {
+            throw new TagNameException();
+        }
+
+        return addTag(tagName, objectIdentifier, type, profile.getUsername());
+    }
+
+    /**
+     * Add a new tag. This method is meant to only be used from
+     * XML unmarshalling. Unlike the publicly visible addTag, it performs its operation,
+     * even if the name is invalid.
+     *
+     *
+     * @param tagName the tag name - any String
+     * @param objectIdentifier an object identifier that is appropriate for the given tag type
+     * (eg. "Department.name" for the "collection" type)
+     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
+     * @param username The username of the user to associate this tag with.
+     * @return the new Tag
+     */
+    synchronized Tag addTag(String tagName, String objectIdentifier,
+            String type, String username) {
+
+        checkUserExists(username);
         checkTagType(type);
         tagCache = null;
         if (tagName == null) {
@@ -314,12 +357,8 @@ public class TagManager
         if (type == null) {
             throw new IllegalArgumentException("type cannot be null");
         }
-        if (userName == null) {
-            throw new IllegalArgumentException("userName cannot be null");
-        }
 
-        UserProfile userProfile = getUserProfile(userName);
-
+        UserProfile userProfile = getUserProfile(username);
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);
@@ -388,6 +427,30 @@ public class TagManager
         List<Tag> tags = getTags(null, taggedObject, type, userName);
         for (Tag tag : tags) {
             deleteTag(tag);
+        }
+    }
+
+    public static class TagException extends Exception {
+        public TagException(String message) {
+            super(message);
+        }
+    }
+
+    public static class TagNameException extends TagException {
+
+            public TagNameException() {
+                super(INVALID_NAME_MSG);
+            }
+    }
+
+    public static class TagNamePermissionException extends TagException {
+
+        private static final String PERMISSION_MESSAGE = "You cannot add a tag starting with "
+                + TagNames.IM_PREFIX + ", "
+                + "that is a reserved word.";
+
+        public TagNamePermissionException() {
+            super(PERMISSION_MESSAGE);
         }
     }
 }

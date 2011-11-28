@@ -167,7 +167,7 @@ public class PathQueryExecutor extends QueryExecutor
 
         return makeQuery(pq, returnBagQueryResults, pathToQueryNode);
     }
-    
+
     /**
      * Check that the lists in the query are all current. Wait up to 20 seconds
      * (or the value of MAX_WAIT_TIME) for them to become current.
@@ -176,14 +176,15 @@ public class PathQueryExecutor extends QueryExecutor
     private void checkListStatus(PathQuery pq) {
         Set<String> listNames = pq.getBagNames();
         Set<InterMineBag> lists = new HashSet<InterMineBag>();
+        Map<String, InterMineBag> availableBags = bagManager.getUserAndGlobalBags(profile);
         for (String listName : listNames) {
-            lists.add(bagManager.getUserOrGlobalBag(profile, listName));
+            lists.add(availableBags.get(listName));
         }
 
         Date maximumWaitUntil = new Date(System.currentTimeMillis() + MAX_WAIT_TIME);
         boolean canContinue = false;
-        
-        LISTCHECKS:
+
+    LISTCHECKS:
         while (new Date().before(maximumWaitUntil) && !canContinue) {
             canContinue = true;
             for (InterMineBag list : lists) {
@@ -206,7 +207,7 @@ public class PathQueryExecutor extends QueryExecutor
             }
         }
         if (!listsWithIssues.isEmpty()) {
-            throw new RuntimeException("Cannot run this query, " 
+            throw new RuntimeException("Cannot run this query, "
                     + "as the following lists are not current: "
                     + StringUtils.join(listsWithIssues, ", "));
         }

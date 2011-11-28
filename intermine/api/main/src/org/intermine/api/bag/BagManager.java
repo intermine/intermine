@@ -25,6 +25,8 @@ import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManager.TagNameException;
+import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
@@ -112,29 +114,29 @@ public class BagManager
 
     /**
      * Give me profile bags matching a set of tags
-     * @param profile
-     * @param tags
-     * @return
+     * @param profile The profile these bags must belong to.
+     * @param tags The tags each bag must have.
+     * @return The bags of a profile with all of the required tags.
      */
     protected Map<String, InterMineBag> getBagsWithTags(Profile profile, List<String> tags) {
         Map<String, InterMineBag> bagsWithTags = new HashMap<String, InterMineBag>();
 
-        outer:
-            for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
+    outer:
+        for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
             // gimme the bag
             InterMineBag bag = entry.getValue();
             // bag's tags
             List<Tag> bagTags = getTagsForBag(bag);
             // do we have a winner?
-            inner:
-                for (String requiredTag : tags) {
-                    for (Tag bagTag : bagTags) {
-                        if (bagTag.getTagName().equals(requiredTag)) {
-                            continue inner;
-                        }
+        inner:
+            for (String requiredTag : tags) {
+                for (Tag bagTag : bagTags) {
+                    if (bagTag.getTagName().equals(requiredTag)) {
+                        continue inner;
                     }
-                    continue outer;
                 }
+                continue outer;
+            }
             bagsWithTags.put(entry.getKey(), entry.getValue());
         }
         return bagsWithTags;
@@ -145,10 +147,13 @@ public class BagManager
      * @param tags A list of tag names to add
      * @param bag The bag to add them to
      * @param profile The profile this bag belongs to
+     * @throws TagNamePermissionException If the profile is not allowed to apply this tag.
+     * @throws TagNameException If the tag name itself is illegal.
      */
-    public void addTagsToBag(Collection<String> tags, InterMineBag bag, Profile profile) {
+    public void addTagsToBag(Collection<String> tags, InterMineBag bag, Profile profile)
+        throws TagNameException, TagNamePermissionException {
         for (String tag: tags) {
-            tagManager.addTag(tag, bag.getName(), TagTypes.BAG, profile.getUsername());
+            tagManager.addTag(tag, bag.getName(), TagTypes.BAG, profile);
         }
     }
 
@@ -213,7 +218,10 @@ public class BagManager
 
         allBags.putAll(getGlobalBags());
         if (profile != null) {
-            allBags.putAll(profile.getSavedBags());
+            Map<String, InterMineBag> savedBags = profile.getSavedBags();
+            synchronized (savedBags) {
+                allBags.putAll(savedBags);
+            }
         }
 
         return allBags;
