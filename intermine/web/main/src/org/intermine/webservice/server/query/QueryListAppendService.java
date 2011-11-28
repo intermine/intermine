@@ -85,8 +85,8 @@ public class QueryListAppendService extends QueryToListService
         ClassDescriptor queryClass = path.getLastClassDescriptor();
         String type = list.getQualifiedType();
         if (!queryClass.getAllSuperclassNames().contains(type)) {
-            throw new BadRequestException("This query is not compatible with '" + list.getName() +
-                    "' as the type of its result set (" + queryClass.getUnqualifiedName()
+            throw new BadRequestException("This query is not compatible with '" + list.getName()
+                    + "' as the type of its result set (" + queryClass.getUnqualifiedName()
                     + ") is not a " + list.getType());
         }
     }

@@ -25,7 +25,8 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Alex Kalderimis
  *
  */
-public class QueryToListServlet extends HttpServlet {
+public class QueryToListServlet extends HttpServlet
+{
 
     /**
      * Eclipse made me do it!!

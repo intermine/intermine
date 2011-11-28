@@ -25,7 +25,8 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author Alex Kalderimis
  *
  */
-public class QueryListAppendServlet extends HttpServlet {
+public class QueryListAppendServlet extends HttpServlet
+{
 
     /**
      * Eclipse made me do it!!
@@ -54,15 +55,15 @@ public class QueryListAppendServlet extends HttpServlet {
      * {@inheritDoc}
      */
     @Override
-    public void doPut(HttpServletRequest request, 
+    public void doPut(HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException, IOException {
         runService(request, response);
     }
 
-    private void runService(HttpServletRequest request, 
+    private void runService(HttpServletRequest request,
         HttpServletResponse response) {
-        final InterMineAPI im 
+        final InterMineAPI im
             = SessionMethods.getInterMineAPI(request.getSession());
         new QueryListAppendService(im).service(request, response);
     }
