@@ -1,13 +1,8 @@
 package org.intermine.api.template;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.intermine.api.search.WebSearchable;
-import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.model.userprofile.SavedTemplateQuery;
-import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
 
 /**
@@ -20,19 +15,14 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
 
     /** SavedTemplateQuery object in the UserProfile database, so we can update summaries. */
     protected SavedTemplateQuery savedTemplateQuery = null;
-    
+
     public ApiTemplate(String name, String title, String comment,
             PathQuery query) {
         super(name, title, comment, query);
     }
-    
+
     public ApiTemplate(TemplateQuery template) {
-        super(template.getName(), template.getTitle(), template.getComment(), template);
-        this.edited = template.isEdited();
-        this.editableConstraints = new ArrayList<PathConstraint>(template.getEditableConstraints());
-        this.constraintDescriptions = new HashMap<PathConstraint, String>(template.getConstraintDescriptions());
-        this.constraintSwitchOffAbility =
-            new HashMap<PathConstraint, SwitchOffAbility>(template.getConstraintSwitchOffAbility());
+        super(template);
     }
 
     /**
@@ -40,11 +30,11 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
      */
     @Override
     public synchronized ApiTemplate clone() {
-        ApiTemplate t = (ApiTemplate) super.clone();
+        ApiTemplate t = new ApiTemplate(this);
         t.savedTemplateQuery = null;
         return t;
     }
-    
+
     /**
      * Sets the saved template query object.
      *
@@ -63,7 +53,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
     public SavedTemplateQuery getSavedTemplateQuery() {
         return savedTemplateQuery;
     }
-    
+
     // ApiTemplates should compare with strict object equality, to avoid one user's templates clobbering
     // another's.
     @Override

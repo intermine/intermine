@@ -47,12 +47,13 @@ public class Profile
     protected Integer userId;
     protected String password;
     protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
-    protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
+    protected Map<String, InterMineBag> savedBags
+        = Collections.synchronizedMap(new TreeMap<String, InterMineBag>());
     protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
     protected Map<String, InterMineBag> savedInvalidBags = new TreeMap<String, InterMineBag>();
     protected Map queryHistory = new ListOrderedMap();
-    private boolean savingDisabled;
+    protected boolean savingDisabled;
     private final SearchRepository searchRepository;
     private String token;
 
@@ -236,7 +237,7 @@ public class Profile
      * Get the users saved templates
      * @return saved templates
      */
-    public Map<String, ApiTemplate> getSavedTemplates() {
+    public synchronized Map<String, ApiTemplate> getSavedTemplates() {
         return Collections.unmodifiableMap(savedTemplates);
     }
 
@@ -362,7 +363,7 @@ public class Profile
      * Get the value of savedBags
      * @return the value of savedBags
      */
-    public Map<String, InterMineBag> getSavedBags() {
+    public synchronized Map<String, InterMineBag> getSavedBags() {
         return Collections.unmodifiableMap(savedBags);
     }
 
@@ -537,7 +538,13 @@ public class Profile
         TagManager tagManager = getTagManager();
         List<Tag> tags = tagManager.getTags(null, oldTaggedObj, type, username);
         for (Tag tag : tags) {
-            tagManager.addTag(tag.getTagName(), newTaggedObj, type, username);
+            try {
+                tagManager.addTag(tag.getTagName(), newTaggedObj, type, this);
+            } catch (TagManager.TagNameException e) {
+                throw new IllegalStateException("Existing tag is illegal: " + tag.getTagName(), e);
+            } catch (TagManager.TagNamePermissionException e) {
+                throw new IllegalStateException("Object tagged with " + tag.getTagName(), e);
+            }
             tagManager.deleteTag(tag);
         }
     }
@@ -594,7 +601,9 @@ public class Profile
      */
     public void setApiKey(String token) {
         this.token = token;
-        manager.saveProfile(this);
+        if (manager != null && !savingDisabled) {
+            manager.saveProfile(this);
+        }
     }
 
     /**

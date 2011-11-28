@@ -30,6 +30,8 @@ public final class NameUtil
         // don't
     }
 
+    public static final String INVALID_NAME_MSG = "Names for lists and queries may only contain "
+            + "A-Z, a-z, 0-9, underscores and dashes.";
     private static final String QUERY_NAME_PREFIX = "query_";
     private static final Map<String, String> SPEC_CHAR_TO_TEXT = new HashMap<String, String>();
     // A-Z, a-z, 0-9, underscores and dashes.  And spaces.  And dots.
