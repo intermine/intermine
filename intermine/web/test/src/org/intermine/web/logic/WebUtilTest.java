@@ -71,6 +71,16 @@ public class WebUtilTest extends TestCase {
         expected = "Firma > Abteilungen > Angestellter";
         assertEquals(expected, WebUtil.formatPath(
                 "Company.departments.employees", model, config));
+
+        // Check composite attribute labelling
+        p = new Path(model, "Employee.department.name");
+        expected = "Angestellter > Abteilung";
+        assertEquals(expected, WebUtil.formatPath(p, config));
+
+        // Check composite attribute labelling, from a reference.
+        p = new Path(model, "Manager.department.employees.department.name");
+        expected = "Manager > Department > Angestellter > Abteilung";
+        assertEquals(expected, WebUtil.formatPath(p, config));
     }
 
     public void testFormatField() throws PathException {
@@ -108,8 +118,20 @@ public class WebUtilTest extends TestCase {
 
         assertEquals("DEPARTMENT", WebUtil.formatPathDescription(
                 "Employee.department", pq, config));
+    }
 
-        assertEquals("DEPARTMENT > Name", WebUtil.formatPathDescription(
+    public void testCompositePathDescriptions() {
+        final PathQuery pq = new PathQuery(model);
+        pq.setDescription("Employee.department.company", "COMPANY");
+        pq.setDescription("Employee.department", "DEPARTMENT");
+        pq.setDescription("Employee.address", "RESIDENCE");
+        pq.setDescription("Employee", "EMPLOYEE");
+
+        assertEquals("RESIDENCE > Address", WebUtil.formatPathDescription(
+                "Employee.address.address", pq, config));
+
+        // Obeys existing composite rules for attributes.
+        assertEquals("DEPARTMENT", WebUtil.formatPathDescription(
                 "Employee.department.name", pq, config));
 
         assertEquals("DEPARTMENT > Manager > Name",
@@ -141,7 +163,7 @@ public class WebUtilTest extends TestCase {
                 "Employee.department.company.contractors.oldComs.vatNumber");
 
         final List<String> expected = Arrays.asList("EMPLOYEE > Name", "EMPLOYEE > Full Time",
-                "DEPARTMENT > Name", "COMPANY > Contractors > Companies they used to work for > VAT Number");
+                "DEPARTMENT", "COMPANY > Contractors > Companies they used to work for > VAT Number");
         assertEquals(expected, WebUtil.formatPathQueryView(pq, config));
     }
 
