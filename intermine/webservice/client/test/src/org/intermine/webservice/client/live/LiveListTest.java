@@ -30,7 +30,7 @@ public class LiveListTest {
 
     private static final Logger LOGGER = Logger.getLogger(LiveListTest.class);
     private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "Z1a3D3U16cicCdS0T6y4bdN1SQh";
+    private static final String authToken = "test-user-token";
     private static ListService testmine = new ServiceFactory(baseUrl, authToken).getListService();
     private static final List<ItemList> tempLists = new ArrayList<ItemList>();
     private static int initialSize = 0;
@@ -83,7 +83,7 @@ public class LiveListTest {
         ItemList favs = testmine.getList("My-Favourite-Employees");
         Item timo = favs.get(1);
         assertEquals("Timo Becker", timo.getString("name"));
-        assertEquals(Integer.valueOf(293149), timo.getInt("seniority"));
+        assertEquals(Integer.valueOf(56224), timo.getInt("seniority"));
         assertTrue(timo.isa("Manager"));
         assertTrue(timo.isa("Employee"));
         assertTrue(! timo.isa("Department"));
@@ -439,7 +439,7 @@ public class LiveListTest {
         assertNotNull(david);
         assertEquals("David Brent", david.getString("name"));
         assertFalse(david.getBoolean("fullTime"));
-        assertEquals(new Integer(339996), david.getInt("seniority"));
+        assertEquals(new Integer(81361), david.getInt("seniority"));
 
         List<Item> hasAnO = favs.find(new HashMap<String, Object>() {{ put("name", "*o*"); }});
         assertEquals(3, hasAnO.size());
