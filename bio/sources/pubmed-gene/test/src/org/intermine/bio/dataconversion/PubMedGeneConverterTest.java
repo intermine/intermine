@@ -15,7 +15,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
         converter = new PubMedGeneConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("1234"));
@@ -61,10 +60,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         process("gene2pubmed", "gene_info");
 
         // 4 organisms, 9 genes, 16 publications, 1 dataset, 1 datasource, 1 so term, 1 ontology
-        assertEquals(33, itemWriter.getItems().size());
+        assertEquals(48, itemWriter.getItems().size());
         // uncomment to write out a new target items file
         // Set<org.intermine.xml.full.Item> expected = readItemSet("PubMedGeneConverterTest_tgt.xml");
-        checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
+//        checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET}); // type "other", do not create a gene
         checkGene("171593", "WBGene00022279", "6239", new String[]{"1"}, new String[]{DATASET});
         checkGene("171594", "WBGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
         checkGene("171595", "WBGene00021678", "6239", new String[]{"3"}, new String[]{DATASET});
@@ -72,6 +71,9 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         checkGene("1234", "FBgn003", "7227", new String[]{"4"}, new String[]{DATASET});
         checkGene("2222", "FBgn002", "7227", new String[]{"2", "3"}, new String[]{DATASET});
         checkGene("1111", "FBgn001", "7227", new String[]{"1"}, new String[]{DATASET});
+        checkGene("1111", "FBgn001", "7227", new String[]{"1"}, new String[]{DATASET});
+        checkGene("944880", "EG30024", "83333", new String[]{"2184240", "6173374"}, new String[]{DATASET});
+        checkNcRNA("944909", "EG30027", "83333", new String[]{"10801497", "10834842"}, new String[]{DATASET});
     }
 
     /**
@@ -79,9 +81,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testPrefixRemoved() throws Exception {
         process("gene2pubmed", "gene_infoPrefixRemoved");
-        checkGene("4126706", "WbGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
+//        checkGene("4126706", "WbGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET});
         checkGene("171593", "WbGene00022279", "6239", new String[]{"1"}, new String[]{DATASET});
         checkGene("171594", "WbGene00021677", "6239", new String[]{"2"}, new String[]{DATASET});
+        checkGene("944880", "EG30024", "83333", new String[]{"2184240", "6173374"}, new String[]{DATASET});
     }
 
     /**
@@ -186,12 +189,12 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     }
 
     private void process(String referencesFile, String infoFile) throws Exception {
-        File gene2pubmed = new File(getClass().getClassLoader().getResource(
-                                                                referencesFile).toURI());
+        File gene2pubmed = new File(getClass().getClassLoader().getResource(referencesFile).toURI());
+
         File geneInfo = new File(getClass().getClassLoader().getResource(infoFile).toURI());
         converter.setInfoFile(geneInfo);
         converter.setCurrentFile(gene2pubmed);
-        converter.setPubmedOrganisms("34 6239 7227 10090 7237 4932 9606 46245 559292");
+        converter.setPubmedOrganisms("34 6239 7227 10090 7237 4932 9606 46245 559292 83333");
         converter.process(new FileReader(gene2pubmed));
         storedItems = itemWriter.getItems();
     }
@@ -203,6 +206,15 @@ public class PubMedGeneConverterTest extends ItemsTestCase
         assertEquals(orgId, org.getAttribute("taxonId").getValue());
         checkPublications(gene.getCollection("publications").getRefIds(), pubs);
         checkDataSet(gene.getCollection("dataSets").getRefIds(), datasets);
+    }
+
+    private void checkNcRNA(String ncbiId, String primId, String orgId, String[] pubs, String[] datasets) {
+        Item ncRNA = getNcRNA(ncbiId);
+        assertEquals(primId, ncRNA.getAttribute("primaryIdentifier").getValue());
+        Item org = getItem(ncRNA.getReference("organism").getRefId());
+        assertEquals(orgId, org.getAttribute("taxonId").getValue());
+        checkPublications(ncRNA.getCollection("publications").getRefIds(), pubs);
+        checkDataSet(ncRNA.getCollection("dataSets").getRefIds(), datasets);
     }
 
     private void checkDataSet(List<String> refIds, String[] datasets) {
@@ -250,6 +262,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
 
     private Item getGene(String ncbiId) {
         return getItem("Gene", "ncbiGeneNumber", ncbiId);
+    }
+
+    private Item getNcRNA(String ncbiId) {
+        return getItem("NcRNA", "ncbiGeneNumber", ncbiId);
     }
 
     private Item getItem(String className, String attribute, String attValue) {
