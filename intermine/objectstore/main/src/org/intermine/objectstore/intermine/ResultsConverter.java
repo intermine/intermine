@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,10 +95,17 @@ public final class ResultsConverter
         try {
             List<ResultsRow<Object>> retval = new ArrayList<ResultsRow<Object>>();
             HashSet<Integer> idsToFetch = new HashSet<Integer>();
+
+            // populate aliases map once - ensure keys are Java object ids not the hashCode
+            Map<QuerySelectable, String> aliases = new IdentityHashMap<QuerySelectable, String>();
+            for (QuerySelectable node : q.getSelect()) {
+                aliases.put(node, DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(node)));
+            }
+
             while (sqlResults.next()) {
                 ResultsRow<Object> row = new ResultsRow<Object>();
                 for (QuerySelectable node : q.getSelect()) {
-                    String alias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(node));
+                    String alias = aliases.get(node);
                     if (node instanceof QueryClass) {
                         Integer idField = null;
                         Object obj = null;
