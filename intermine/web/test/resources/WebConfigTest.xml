@@ -3,7 +3,7 @@
     <fields>
       <fieldconfig fieldExpr="name"
                    showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="department.name"
+      <fieldconfig fieldExpr="department.name" label="Abteilung"
                    showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
   </class>
