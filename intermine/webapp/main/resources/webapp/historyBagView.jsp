@@ -68,7 +68,7 @@ if (!im.bagWorks) {
 			</c:when>
 		</c:choose>
 		
-    	<table class="bag-table sortable-onload-2 rowstyle-alt no-arrow">
+    	<table class="bag-table sortable-onload-2 rowstyle-alt colstyle-alt no-arrow">
     	  <thead>
 	          <tr>
 	          	<th style="display:none;"></th>
@@ -176,8 +176,35 @@ if (!im.bagWorks) {
 
     </c:otherwise>
   </c:choose>
+  
 <script type="text/javascript">
 (function() {
+	jQuery(window).load(function(){
+		<%-- sort bags by a remembered column --%>
+		var order = im.getCookie("mymine.lists.order");
+		if (order && parseInt(order)) {
+			<%-- traverse all tables and call them custom sort --%>
+			jQuery('table.bag-table').each(function() {
+				fdTableSort.jsWrapper(jQuery(this).attr("id"), order);
+			});
+		}
+		
+		<%-- callback saving sort order of tables into a cookie --%>
+		jQuery('table.bag-table').each(function() {
+			var id = jQuery(this).attr("id"),
+				that = this;
+			window["sortCompleteCallback" + id] = function() {
+				var th = jQuery(that).find("th.forwardSort");
+				if (!jQuery(th).exists()) {
+					th = jQuery(that).find("th.reverseSort");
+				}
+				im.setCookie("mymine.lists.order", th.attr("class").replace(/[^0-9.]/g, ""));
+			};
+		});
+	});
+	
+	<%-- ##### --%>
+	
 	<%-- attach handler to select all in a table --%>
 	jQuery('table.bag-table th input[type="checkbox"]').click(function() {
 		jQuery(this).closest('table').find('tr td input[type="checkbox"]').attr('checked', jQuery(this).is(':checked'));
