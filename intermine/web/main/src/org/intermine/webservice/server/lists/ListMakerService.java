@@ -15,9 +15,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
@@ -69,8 +66,7 @@ public abstract class ListMakerService extends AuthenticatedListService
     protected abstract String getNewListType(ListInput input);
 
     @Override
-    protected void execute(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    protected void execute() throws Exception {
         final Profile profile = SessionMethods.getProfile(request.getSession());
         final ListInput input = getInput(request);
 

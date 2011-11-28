@@ -1,15 +1,36 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Collection;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagOperations;
+import static org.intermine.api.bag.BagOperations.subtract;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 
-public class ListDifferenceService extends CommutativeOperationService {
+/**
+ * A service for performing a symmetric difference operation on a collection
+ * of lists.
+ * @author Alex Kalderimis
+ *
+ */
+public class ListDifferenceService extends CommutativeOperationService
+{
 
+    /**
+     * Constructor
+     * @param im The InterMine application object.
+     */
     public ListDifferenceService(InterMineAPI im) {
         super(im);
     }
@@ -34,7 +55,7 @@ public class ListDifferenceService extends CommutativeOperationService {
         Collection<InterMineBag> diffBags = ListServiceUtils.castBagsToCommonType(
                 input.getLists(), type, temporaryBagNamesAccumulator, profile, im.getClassKeys());
 
-        int sizeOfDifference = BagOperations.subtract(diffBags, tempName, profile, im.getClassKeys());
+        int sizeOfDifference = subtract(diffBags, tempName, profile, im.getClassKeys());
         return sizeOfDifference;
     }
 

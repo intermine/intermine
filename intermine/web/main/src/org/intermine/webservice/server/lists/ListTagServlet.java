@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -11,7 +21,13 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
 
-public class ListTagServlet extends HttpServlet {
+/**
+ * A servlet for routing list tag requests based on HTTP method.
+ * @author Alex Kalderimis
+ *
+ */
+public class ListTagServlet extends HttpServlet
+{
 
     /**
      * Generated serial id.
