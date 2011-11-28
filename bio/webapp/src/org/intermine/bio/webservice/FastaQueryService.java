@@ -84,8 +84,7 @@ public class FastaQueryService extends AbstractQueryService
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
         HttpSession session = request.getSession();
 
         PathQuery pathQuery = getQuery();
@@ -128,7 +127,7 @@ public class FastaQueryService extends AbstractQueryService
             throw new BadRequestException("query is blank");
         }
 
-        PathQueryBuilder builder = getQueryBuilder(xml, request);
+        PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
 
         if (pq.getView().size() > 1) {
