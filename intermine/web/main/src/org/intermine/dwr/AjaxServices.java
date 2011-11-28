@@ -114,8 +114,7 @@ public class AjaxServices
 {
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
-    private static final String INVALID_NAME_MSG = "Invalid name.  Names may only contain letters, "
-        + "numbers, spaces, and underscores.";
+
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -137,7 +136,12 @@ public class AjaxServices
                 tagManager.deleteTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
             // not a favourite.  turning on.
             } else {
-                tagManager.addTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
+                try {
+                    tagManager.addTag(TagNames.IM_FAVOURITE, nameCopy, type, profile);
+                } catch (TagManager.TagException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         } catch (RuntimeException e) {
             processException(e);
@@ -243,7 +247,7 @@ public class AjaxServices
             }
             // TODO get error text from properties file
             if (!NameUtil.isValidName(newName)) {
-                return INVALID_NAME_MSG;
+                return NameUtil.INVALID_NAME_MSG;
             }
             if ("history".equals(type)) {
                 if (profile.getHistory().get(name) == null) {
@@ -868,7 +872,7 @@ public class AjaxServices
             }
 
             if (!NameUtil.isValidName(bagName)) {
-                return INVALID_NAME_MSG;
+                return TagManager.INVALID_NAME_MSG;
             }
 
             if (profile.getSavedBags().get(bagName) != null) {
@@ -929,7 +933,7 @@ public class AjaxServices
                 if (("".equals(bagName) || (bagName.equalsIgnoreCase(defaultName)))) {
                     return "New list name is required";
                 } else if (!NameUtil.isValidName(bagName)) {
-                    return INVALID_NAME_MSG;
+                    return NameUtil.INVALID_NAME_MSG;
                 }
             }
             return "";
@@ -1292,17 +1296,15 @@ public class AjaxServices
                 if (tagExists(tagName, taggedObject, type)) {
                     return "Already tagged with this tag.";
                 }
-                if (!TagManager.isValidTagName(tagName)) {
-                    return INVALID_NAME_MSG;
-                }
-                if (tagName.startsWith(TagNames.IM_PREFIX)
-                        && !SessionMethods.isSuperUser(session)) {
-                    return "You cannot add a tag starting with " + TagNames.IM_PREFIX + ", "
-                        + "that is a reserved word.";
-                }
 
                 TagManager tagManager = getTagManager();
-                tagManager.addTag(tagName, taggedObject, type, profile.getUsername());
+                try {
+                    tagManager.addTag(tagName, taggedObject, type, profile);
+                } catch (TagManager.TagNameException e) {
+                    return e.getMessage();
+                } catch (TagManager.TagNamePermissionException e) {
+                    return e.getMessage();
+                }
 
                 ServletContext servletContext = session.getServletContext();
                 if (SessionMethods.isSuperUser(session)) {
