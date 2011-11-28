@@ -22,7 +22,7 @@ import java.util.Set;
  * @param <K> The key type
  * @param <V> The value type
  */
-class DevNullMap<K, V> extends AbstractMap<K, V>
+public class DevNullMap<K, V> extends AbstractMap<K, V>
 {
 
     @Override
