@@ -54,7 +54,7 @@ tr[class="alt"] td {
         background: #F5FAFA url(../images/td_alt.jpg) no-repeat;border-width: 1px 1px 1px 1px;}
 
 td[class~="alt"]{
-        background: #fff url(../images/col_alt.jpg) no-repeat !important; border-width: 1px 1px 1px 1px;}
+        background: #EDF3F3 !important; border-width: 1px 1px 1px 1px;}
         
 .sorting {
     padding: 6px 12px 6px 12px;

@@ -243,6 +243,34 @@ im.queue = {
 	}
 };
 
+// set a key value cookie for a period of days
+im.setCookie = function(key, value, days) {
+	var cookie = key + "=" + escape(value);
+		days   = (days) ? parseInt(days): 9999,
+		expires = new Date();
+
+	expires.setDate(expires.getDate() + days);
+	cookie += ";expires=" + expires.toGMTString() + ";";
+	document.cookie = cookie;
+};
+
+// retrieve a cookie by its key
+im.getCookie = function(key) {
+	var cookies = document.cookie.split(";"),
+		i 		 = 0,
+		l 		 = cookies.length;
+	
+	for (i; i < l; i++) {
+      var cookie     = cookies[i],
+	  	  p       	 = cookie.indexOf("="),
+	  	  currentKey = cookie.substr(0, p).replace(/^\s+|\s+$/g,"");
+	  
+	  if (currentKey == key) {
+	    return unescape(cookie.substr(p+1));
+	  }
+	}
+};
+
 // jQuery extensions
 jQuery.fn.extend({
 	exists: function() {
@@ -265,6 +293,12 @@ jQuery.fn.extend({
 	},
 	highlight: function() {
 		return im.highlight(this);
+	},
+	setCookie: function(key, value, days) {
+		im.setCookie(key, value, days);
+	},
+	getCookie: function(key) {
+		return im.getCookie(key);
 	}
 });
 

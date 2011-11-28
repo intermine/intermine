@@ -60,7 +60,7 @@
 
         <html:form action="/modifyQuery">
         <input type="hidden" name="type" value="${type}"/>
-        <table class="sortable-onload-3-reverse rowstyle-alt no-arrow" cellspacing="0">
+        <table class="sortable-onload-3-reverse rowstyle-alt colstyle-alt no-arrow" cellspacing="0">
         <thead>
           <tr>
             <th>
@@ -226,6 +226,28 @@
           <fmt:message key="begin.importQuery" />
         </html:link>
 
+
+<script type="text/javascript">
+(function() {
+	jQuery(window).load(function(){
+		<%-- sort queries by a remembered column --%>
+		var order = im.getCookie("mymine.queries.order");
+		if (order && parseInt(order)) {
+			fdTableSort.jsWrapper(jQuery("form#modifyQueryForm table").attr("id"), order);
+		}
+		
+		<%-- callback saving sort order of tables into a cookie --%>
+		window.sortCompleteCallback = function() {
+			var table = jQuery("form#modifyQueryForm table");
+			var th = table.find("th.forwardSort");
+			if (!jQuery(th).exists()) {
+				th = table.find("th.reverseSort");
+			}
+			im.setCookie("mymine.queries.order", th.attr("class").replace(/[^0-9.]/g, ""));
+		};
+	});
+})();
+</script>
 
 
   </im:body>
