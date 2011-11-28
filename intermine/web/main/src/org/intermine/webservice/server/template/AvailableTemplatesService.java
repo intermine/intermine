@@ -17,15 +17,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
@@ -42,7 +38,6 @@ import org.intermine.webservice.server.output.StreamedOutput;
 public class AvailableTemplatesService extends WebService
 {
 
-    private static final String DEFAULT_CALLBACK = "analyseTemplates";
     private static final String FILE_BASE_NAME = "templates";
 
     /**
@@ -65,8 +60,7 @@ public class AvailableTemplatesService extends WebService
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
 
         TemplateManager templateManager = im.getTemplateManager();
         Map<String, ApiTemplate> templates;
