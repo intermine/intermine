@@ -157,6 +157,9 @@ public abstract class WebService
     /** JSONP data table format constant **/
     public static final int JSONP_DATA_TABLE_FORMAT = 31;
 
+    private static final String COMPRESS = "compress";
+    private static final String GZIP = "gzip";
+    private static final String ZIP = "zip";
     private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
     private static final Logger LOG = Logger.getLogger(WebService.class);
     private static final String FORWARD_PATH = "/webservice/table.jsp";
@@ -446,15 +449,15 @@ public abstract class WebService
         return new StreamedOutput(out, new XMLFormatter());
     }
 
+    /**
+     * Make the default JSON output given the HttpResponse's PrintWriter.
+     * @param out The PrintWriter from the HttpResponse.
+     * @return An Output that produces good JSON.
+     */
     protected Output makeJSONOutput(PrintWriter out) {
-        Output output = new StreamedOutput(out, new JSONFormatter());
-        return output;
+        return new StreamedOutput(out, new JSONFormatter());
     }
 
-
-    private static final String COMPRESS = "compress";
-    private static final String GZIP = "gzip";
-    private static final String ZIP = "zip";
 
     /**
      * @return Whether or not this request wants gzipped data.
@@ -836,8 +839,6 @@ public abstract class WebService
      * services else you can overwrite doGet method in your web service class
      * and manage all the things alone.
      *
-     * @param request request
-     * @param response response
      * @throws Exception if some error occurs
      */
     protected abstract void execute() throws Exception;
