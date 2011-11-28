@@ -21,15 +21,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
-  * Report whether a requested service is implementented on this 
+  * Report whether a requested service is implementented on this
   * mine. This is intended to be used for non-core, primarily
-  * biological services. 
-  * 
+  * biological services.
+  *
   * @author Alexis Kalderimis
   */
 public class AvailableServicesServlet extends HttpServlet
@@ -38,6 +37,9 @@ public class AvailableServicesServlet extends HttpServlet
     private static final Logger LOGGER = Logger.getLogger(VersionServlet.class);
 
     private static final long serialVersionUID = 1L;
+
+    private static final String NOT_SUPPORTED_MSG =
+            "This webservice does not support this resource";
 
     /**
      * {@inheritDoc}}
@@ -66,25 +68,27 @@ public class AvailableServicesServlet extends HttpServlet
     private void runService(HttpServletRequest request,
             HttpServletResponse response) {
         String pathFromUrl = request.getPathInfo();
-        String resourcePath = getResourcePath(pathFromUrl, request);
+
         try {
+            String resourcePath = getResourcePath(pathFromUrl, request);
             response.getWriter().print(resourcePath);
         } catch (IOException e) {
             LOGGER.error(e);
+        } finally {
+            request.getSession().invalidate();
         }
     }
 
     private String getResourcePath(String resource, HttpServletRequest request) {
         if (resource != null) {
             resource = StringUtil.trimSlashes(resource);
-            Properties webProperties = 
+            Properties webProperties =
                 SessionMethods.getWebProperties(request.getSession().getServletContext());
             String resourcePath = webProperties.getProperty("resource.path." + resource);
             if (!StringUtils.isEmpty(resourcePath)) {
                 return resourcePath;
-            } 
+            }
         }
-        LOGGER.error("Could not find resource: " + resource);
-        throw new ResourceNotFoundException("This webservice does not support this resource: " + resource);
+        throw new ResourceNotFoundException(NOT_SUPPORTED_MSG + resource);
     }
 }
