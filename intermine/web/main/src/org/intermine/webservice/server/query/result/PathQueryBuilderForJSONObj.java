@@ -1,7 +1,14 @@
-/**
+package org.intermine.webservice.server.query.result;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-package org.intermine.webservice.server.query.result;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,12 +27,22 @@ import org.intermine.pathquery.PathQuery;
  * @author Alexis Kalderimis
  *
  */
-public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
+public class PathQueryBuilderForJSONObj extends PathQueryBuilder
+{
 
-
+    /**
+     * Constructor.
+     */
     protected PathQueryBuilderForJSONObj() {
         // empty constructor for testing
     }
+
+    /**
+     * Constructor
+     * @param xml The XML to build into a query.
+     * @param schemaUrl The schema to validate against.
+     * @param savedBags A map of bags this query may contain.
+     */
     public PathQueryBuilderForJSONObj(String xml, String schemaUrl,
             Map<String, InterMineBag> savedBags) {
         super(xml, schemaUrl, savedBags);
@@ -51,6 +68,12 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
         return processQuery(beforeChanges);
     }
 
+    /**
+     * Transform a query from a standard one into one that conforms to the requirements
+     * of JSON objects.
+     * @param beforeChanges The query to transform.
+     * @return A transformed query.
+     */
     public static PathQuery processQuery(PathQuery beforeChanges) {
         PathQuery afterChanges = beforeChanges.clone();
         afterChanges.clearView();
@@ -59,6 +82,11 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
         return afterChanges;
     }
 
+    /**
+     * Get the views for the transformed query.
+     * @param pq The original query.
+     * @return Its new views.
+     */
     public static List<String> getAlteredViews(PathQuery pq) {
         List<String> originalViews = pq.getView();
         List<Path> viewPaths = new ArrayList<Path>();
@@ -74,8 +102,9 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
         Set<Path> classesWithAttributes = new HashSet<Path>();
 
         for (Path p : viewPaths) {
-            if (! p.endIsAttribute()) {
-                throw new RuntimeException("The view can only contain attribute paths - Got: '" + p.toStringNoConstraints() + "'");
+            if (!p.endIsAttribute()) {
+                throw new RuntimeException("The view can only contain attribute paths - Got: '"
+                        + p.toStringNoConstraints() + "'");
             }
             newViews.addAll(getNewViewStrings(classesWithAttributes, p));
 
@@ -83,13 +112,13 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
         return newViews;
     }
 
-    public static List<String> getNewViewStrings(Set<Path> classesWithAttributes, Path p) {
+    private static List<String> getNewViewStrings(Set<Path> classesWithAttributes, Path p) {
         // The prefix automatically has an attribute, since its child is in the view
         classesWithAttributes.add(p.getPrefix());
         List<Path> composingPaths = p.decomposePath();
         List<String> newParts = new ArrayList<String>();
         for (Path cp : composingPaths) {
-            if (! cp.endIsAttribute() && ! classesWithAttributes.contains(cp)) {
+            if (!cp.endIsAttribute() && !classesWithAttributes.contains(cp)) {
                 newParts.add(getNewAttributeNode(classesWithAttributes, cp));
             }
         }
@@ -97,7 +126,14 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder {
         return newParts;
     }
 
-    public static String getNewAttributeNode(Set<Path> classesWithAttributes, Path p) {
+    /**
+     * Get a new attribute node, adding the class it belongs to the to set of classes
+     * with attributes.
+     * @param classesWithAttributes The accumulator.
+     * @param p The path to add an id attribute to.
+     * @return The new path.
+     */
+    static String getNewAttributeNode(Set<Path> classesWithAttributes, Path p) {
         String retVal;
         try {
             retVal = p.append("id").toStringNoConstraints();
