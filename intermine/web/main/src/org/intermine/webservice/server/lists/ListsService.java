@@ -64,11 +64,10 @@ public class ListsService extends AvailableListsService
 
     /**
      * Executes service specific logic.
-     * @param request request
      * @return The lists relevant to this request.
      */
     @Override
-    protected Collection<InterMineBag> getLists(final HttpServletRequest request) {
+    protected Collection<InterMineBag> getLists() {
 
         final ListsServiceInput input = getInput();
 

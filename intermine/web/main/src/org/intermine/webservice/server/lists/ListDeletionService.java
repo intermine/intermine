@@ -1,12 +1,24 @@
 package org.intermine.webservice.server.lists;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.web.logic.session.SessionMethods;
 
+/**
+ * A service for deleting lists from the user-profile database.
+ * @author Alex Kalderimis
+ *
+ */
 public class ListDeletionService extends AuthenticatedListService
 {
 
@@ -21,13 +33,16 @@ public class ListDeletionService extends AuthenticatedListService
         + "name: the name of the list to delete\n"
         + "NOTE: All requests to this service must authenticate to a valid user account\n";
 
+    /**
+     * Constructor.
+     * @param im The InterMine application object.
+     */
     public ListDeletionService(InterMineAPI im) {
         super(im);
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
         Profile profile = SessionMethods.getProfile(request.getSession());
         ListInput input = getInput(request);
         addOutputInfo(LIST_NAME_KEY, input.getListName());
