@@ -187,7 +187,8 @@ public final class ResultsConverter
                                 && (currentColumn instanceof Integer)) {
                             int i = ((Integer) currentColumn).intValue();
                             currentColumn = new Short((short) i);
-                        } else if (ClobAccess.class.equals(node.getType())) {
+                        } else if (ClobAccess.class.equals(node.getType())
+                                && currentColumn != null) {
                             currentColumn = ClobAccess.decodeDbDescription(os,
                                     (String) currentColumn);
                         }
