@@ -1059,7 +1059,7 @@ public class PathQuery implements Cloneable
             }
         }
         for (String desc : getDescriptions().keySet()) {
-            if (isPathUnder(path, desc)) {
+            if (isPathUnder(desc, path) && !isAnyViewWithPathUnder(desc)) {
                 setDescription(desc, null);
             }
         }
@@ -1070,6 +1070,15 @@ public class PathQuery implements Cloneable
             return true;
         }
         return child.startsWith(parent + ".");
+    }
+
+    private boolean isAnyViewWithPathUnder(String parent) {
+        for (String v : getView()) {
+            if (parent.equals(v) || v.startsWith(parent + ".")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
