@@ -9,8 +9,8 @@ use Ouch;
 
 use constant {
     TITLE       => 'Worm Identifiers',
-    DESCRIPTION => 'Wormbase identifiers from modMine',
-    SOURCE_LINK => 'http://intermine.modencode.org',
+    DESCRIPTION => 'Wormbase identifiers from biomart',
+    SOURCE_LINK => 'http://www.biomart.org',
     SOURCE_DIR  => 'worm-identifiers',
     BIOMART_SERVER => 'http://www.biomart.org/biomart/martservice',
     COMPARE     => 1,
