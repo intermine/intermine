@@ -45,6 +45,7 @@ public class BagUploadConfirmAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
@@ -56,7 +57,7 @@ public class BagUploadConfirmAction extends InterMineAction
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
-        String bagName = (! "".equals(confirmForm.getNewBagName()))
+        String bagName = (!"".equals(confirmForm.getNewBagName()))
                          ? confirmForm.getNewBagName()
                          : request.getParameter("upgradeBagName");
 
@@ -85,7 +86,8 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        //if upgradeBagName is null we are creating a new bag, otherwise we are upgrading an existing bag
+        //if upgradeBagName is null we are creating a new bag,
+        // otherwise we are upgrading an existing bag
         if (request.getParameter("upgradeBagName") == null) {
             InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
             bag.addIdsToBag(contents, bagType);
@@ -97,7 +99,8 @@ public class BagUploadConfirmAction extends InterMineAction
             InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
             bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
-            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName, BagState.CURRENT.toString());
+            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName,
+                    BagState.CURRENT.toString());
         }
 
         ForwardParameters forwardParameters

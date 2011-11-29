@@ -30,6 +30,9 @@ public final class NameUtil
         // don't
     }
 
+    /**
+     * error message for bad names.  should come from properties file instead, really
+     */
     public static final String INVALID_NAME_MSG = "Names for lists and queries may only contain "
             + "A-Z, a-z, 0-9, underscores and dashes.";
     private static final String QUERY_NAME_PREFIX = "query_";
