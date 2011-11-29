@@ -84,7 +84,7 @@ public class SequenceProcessor extends ChadoProcessor
             "gene", "mRNA", "transcript", "CDS", "intron", "exon", "EST",
             "five_prime_untranslated_region", "five_prime_UTR", "three_prime_untranslated_region",
             "three_prime_UTR", "origin_of_replication"
-            );
+    );
 
     // default chromosome-like feature types - ie those types of features that occur in the
     // srcfeature column of the featureloc table
@@ -196,7 +196,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException
      */
     private void processFeatureTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         Set<String> chromosomeFeatureTypesSet = new HashSet<String>(getChromosomeFeatureTypes());
         ResultSet res = getFeatureTableResultSet(connection);
         int count = 0;
@@ -256,15 +256,15 @@ public class SequenceProcessor extends ChadoProcessor
             String name, int seqlen, String residues,
             String md5checksum, String chadoType,
             Integer organismId)
-                    throws ObjectStoreException {
+        throws ObjectStoreException {
 
         if (featureMap.containsKey(featureId)) {
             return false;
         }
 
         FeatureData fdat =
-                makeFeatureData(featureId.intValue(), chadoType, uniqueName, name, md5checksum, seqlen,
-                        organismId.intValue());
+                makeFeatureData(featureId.intValue(), chadoType, uniqueName, name, md5checksum,
+                        seqlen, organismId.intValue());
 
         if (fdat == null) {
             return false;
@@ -390,13 +390,12 @@ public class SequenceProcessor extends ChadoProcessor
 
     // to remove, substituted by the next one
     protected void setGeneSource(Integer imObjectId, String dataSourceName)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         // for gene in modENCODE
         ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
         if (cd.getFieldDescriptorByName("source") != null) {
             // if it is there (e.g. modmine) let's set it
             setAttribute(imObjectId, "source", dataSourceName);
-
         }
     }
 
@@ -407,7 +406,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException os exception
      */
     protected void setGeneSource(FeatureData fdat, String dataSourceName)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         // for gene in modENCODE
         ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
         if (cd.getFieldDescriptorByName("source") != null) {
@@ -569,7 +568,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException if there is a database problem
      */
     protected void earlyExtraProcessing(Connection connection)
-            throws ObjectStoreException, SQLException {
+        throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
 
@@ -580,9 +579,8 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      * @throws SQLException if there is a problem
      */
-    protected void extraProcessing(Connection connection,
-            Map<Integer, FeatureData> featureDataMap)
-                    throws ObjectStoreException, SQLException {
+    protected void extraProcessing(Connection connection, Map<Integer, FeatureData> featureDataMap)
+        throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
 
@@ -594,7 +592,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected void finishedProcessing(Connection connection,
             Map<Integer, FeatureData> featureDataMap)
-                    throws SQLException {
+        throws SQLException {
         // connection will be null for tests
         if (connection != null) {
             String query = "DROP TABLE " + tempFeatureTableName;
@@ -613,7 +611,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      */
     protected void processLocationTable(Connection connection, ResultSet res)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         int count = 0;
         int featureWarnings = 0;
         while (res.next()) {
@@ -709,7 +707,7 @@ public class SequenceProcessor extends ChadoProcessor
     // modMine overrides in subclass
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
             FeatureData featureData, int taxonId)
-                    throws ObjectStoreException {
+        throws ObjectStoreException {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
                 featureData.getItemIdentifier(),
                 start, end, strand, taxonId);
@@ -721,7 +719,7 @@ public class SequenceProcessor extends ChadoProcessor
      * features.
      */
     private void processRelationTable(Connection connection, boolean subjectFirst)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getFeatureRelationshipResultSet(connection, subjectFirst);
         Integer lastSubjectId = null;
 
@@ -821,7 +819,7 @@ public class SequenceProcessor extends ChadoProcessor
     private boolean processCollectionData(Integer chadoSubjectId,
             Map<String, Map<String, List<FeatureData>>> relTypeMap,
             int collectionWarnings, boolean subjectIsFirst)
-                    throws ObjectStoreException {
+        throws ObjectStoreException {
         FeatureData subjectData = featureMap.get(chadoSubjectId);
         if (subjectData == null) {
             if (collectionWarnings < 20) {
@@ -862,7 +860,8 @@ public class SequenceProcessor extends ChadoProcessor
 
                 if (actionList != null) {
                     if (actionList.size() == 0
-                            || actionList.size() == 1 && actionList.get(0) instanceof DoNothingAction) {
+                            || actionList.size() == 1
+                            && actionList.get(0) instanceof DoNothingAction) {
                         // do nothing
                         continue;
                     }
@@ -1013,7 +1012,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     @SuppressWarnings("boxing")
     private void processDbxrefTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
 
         ResultSet res = getDbxrefResultSet(connection);
         Set<String> existingAttributes = new HashSet<String>();
@@ -1101,7 +1100,7 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     private void processFeaturePropTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getFeaturePropResultSet(connection);
         int count = 0;
         while (res.next()) {
@@ -1173,7 +1172,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     @SuppressWarnings("unused")
     private void processLibraryFeatureTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryFeatureResultSet(connection);
         while (res.next()) {
 
@@ -1222,7 +1221,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if somethign goes wrong
      */
     protected String makeAnatomyTerm(String identifier)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         // override in subclasses as necessary
         return null;
     }
@@ -1233,7 +1232,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     @SuppressWarnings("unused")
     private void processLibraryCVTermTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getLibraryCVTermResultSet(connection);
 
         while (res.next()) {
@@ -1281,7 +1280,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @param connection the Connection
      */
     private void processFeatureCVTermTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getFeatureCVTermResultSet(connection);
         int count = 0;
         Integer previousFeatureId = null;
@@ -1402,7 +1401,7 @@ public class SequenceProcessor extends ChadoProcessor
      * reference or collection of the object.
      */
     private void processCVTermRefCols(Integer chadoObjectId, Map<String, List<Item>> dataMap)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
 
         FeatureData fdat = featureMap.get(chadoObjectId);
         String interMineType = fdat.getInterMineType();
@@ -1444,7 +1443,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     @SuppressWarnings("boxing")
     private void processSynonymTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getSynonymResultSet(connection);
         Set<String> existingAttributes = new HashSet<String>();
         Integer currentFeatureId = null;
@@ -1477,7 +1476,8 @@ public class SequenceProcessor extends ChadoProcessor
                 FeatureData fdat = featureMap.get(featureId);
                 identifier = fixIdentifier(fdat, identifier);
                 MultiKey key =
-                        new MultiKey("synonym", fdat.getInterMineType(), synonymTypeName, isCurrent);
+                        new MultiKey("synonym", fdat.getInterMineType(),
+                                synonymTypeName, isCurrent);
                 int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig = getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
@@ -1527,7 +1527,6 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                 }
             }
-
             currentFeatureId = featureId;
         }
 
@@ -1559,7 +1558,7 @@ public class SequenceProcessor extends ChadoProcessor
     }
 
     private void processPubTable(Connection connection)
-            throws SQLException, ObjectStoreException {
+        throws SQLException, ObjectStoreException {
         ResultSet res = getPubResultSet(connection);
 
         List<String> currentPublicationIds = new ArrayList<String>();
@@ -1632,7 +1631,7 @@ public class SequenceProcessor extends ChadoProcessor
      * Set the publications collection of the feature with the given (chado) feature id.
      */
     private void makeFeaturePublications(Integer featureId, List<String> argPublicationIds)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         FeatureData fdat = featureMap.get(featureId);
         if (fdat == null) {
             throw new RuntimeException("feature " + featureId + " not found in features Map");
@@ -1655,7 +1654,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getFeatureTableResultSet(Connection connection)
-            throws SQLException {
+        throws SQLException {
         String query = "SELECT * FROM " + tempFeatureTableName;
         LOG.info("executing getFeatureTableResultSet(): " + query);
         Statement stmt = connection.createStatement();
@@ -1708,13 +1707,13 @@ public class SequenceProcessor extends ChadoProcessor
 
         String query =
                 "CREATE TEMPORARY TABLE " + tempFeatureTableName + " AS"
-                        + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
-                        + "        is_analysis, residues, md5checksum, organism_id"
-                        + "    FROM feature, cvterm"
-                        + "    WHERE cvterm.name IN (" + featureTypesString  + ")"
+                        + " SELECT feature_id, feature.name, uniquename, cvterm.name as type,"
+                        + " seqlen, is_analysis, residues, md5checksum, organism_id"
+                        + " FROM feature, cvterm"
+                        + " WHERE cvterm.name IN (" + featureTypesString  + ")"
                         + orgConstraintForQuery
-                        + "        AND NOT feature.is_obsolete"
-                        + "        AND feature.type_id = cvterm.cvterm_id "
+                        + " AND NOT feature.is_obsolete"
+                        + " AND feature.type_id = cvterm.cvterm_id "
                         + (getExtraFeatureConstraint() != null
                         ? " AND (" + getExtraFeatureConstraint() + ")"
                                 : "");
@@ -1827,24 +1826,24 @@ public class SequenceProcessor extends ChadoProcessor
     private String getGenesProteinsQuery() {
         String partOfConstraints = makePartOfConstraints("fr1type.name");
         return " UNION ALL SELECT 0, f1.feature_id AS feature1_id, f3.feature_id AS  feature2_id, "
-        + "               'producedby' "
-        + "   FROM feature f1, cvterm f1type, feature_relationship fr1, cvterm fr1type, "
-        + "        feature f2, cvterm f2type, feature_relationship fr2, cvterm fr2type, "
-        + "        feature f3, cvterm f3type "
-        + "  WHERE fr1.subject_id = fr2.object_id "
-        + "    AND fr1.type_id = fr1type.cvterm_id "
-        + "    AND (" + partOfConstraints  + ") "
-        + "    AND fr2.type_id = fr2type.cvterm_id "
-        + "    AND fr2type.name = 'producedby' "
-        + "    AND f1.feature_id = fr1.object_id "
-        + "    AND f2.feature_id = fr1.subject_id "
-        + "    AND f3.feature_id = fr2.subject_id "
-        + "    AND f1.type_id = f1type.cvterm_id "
-        + "    AND f2.type_id = f2type.cvterm_id "
-        + "    AND f3.type_id = f3type.cvterm_id "
-        + "    AND f1type.name = 'gene' "
-        + "    AND f2type.name = 'mRNA' "
-        + "    AND f3type.name = 'protein'";
+            + " 'producedby' "
+            + " FROM feature f1, cvterm f1type, feature_relationship fr1, cvterm fr1type, "
+            + " feature f2, cvterm f2type, feature_relationship fr2, cvterm fr2type, "
+            + " feature f3, cvterm f3type "
+            + " WHERE fr1.subject_id = fr2.object_id "
+            + " AND fr1.type_id = fr1type.cvterm_id "
+            + " AND (" + partOfConstraints  + ") "
+            + " AND fr2.type_id = fr2type.cvterm_id "
+            + " AND fr2type.name = 'producedby' "
+            + " AND f1.feature_id = fr1.object_id "
+            + " AND f2.feature_id = fr1.subject_id "
+            + " AND f3.feature_id = fr2.subject_id "
+            + " AND f1.type_id = f1type.cvterm_id "
+            + " AND f2.type_id = f2type.cvterm_id "
+            + " AND f3.type_id = f3type.cvterm_id "
+            + " AND f1type.name = 'gene' "
+            + " AND f2type.name = 'mRNA' "
+            + " AND f3type.name = 'protein'";
     }
 
     /**
@@ -1869,15 +1868,15 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getFeatureLocResultSet(Connection connection) throws SQLException {
         String query =
                 "SELECT featureloc_id, feature_id, srcfeature_id, fmin, is_fmin_partial,"
-                        + "     fmax, is_fmax_partial, strand"
-                        + "   FROM featureloc"
-                        + "   WHERE feature_id IN"
-                        + "         (" + getFeatureIdQuery() + ")"
-                        + "     AND feature_id NOT IN"
-                        + "         (" + getChromosomeFeatureIdQuery() + ")"
-                        + "     AND srcfeature_id IN"
-                        + "         (" + getChromosomeFeatureIdQuery() + ")"
-                        + "     AND locgroup = 0";
+                        + " fmax, is_fmax_partial, strand"
+                        + " FROM featureloc"
+                        + " WHERE feature_id IN"
+                        + " (" + getFeatureIdQuery() + ")"
+                        + " AND feature_id NOT IN"
+                        + " (" + getChromosomeFeatureIdQuery() + ")"
+                        + " AND srcfeature_id IN"
+                        + " (" + getChromosomeFeatureIdQuery() + ")"
+                        + " AND locgroup = 0";
         LOG.info("executing getFeatureLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1895,28 +1894,29 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getMatchLocResultSet(Connection connection) throws SQLException {
         String query =
-                "SELECT f1loc.featureloc_id, f1loc.srcfeature_id as feature_id, f2loc.srcfeature_id AS "
-                        + "     srcfeature_id, f2loc.fmin,"
-                        + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
-                        + "   FROM feature match, featureloc f1loc, featureloc f2loc,"
-                        + "        cvterm mt"
-                        + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
-                        + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
-                        + "    AND f1loc.srcfeature_id <> f2loc.srcfeature_id"
-                        + "    AND f1loc.srcfeature_id IN (" + getFeatureIdQuery() + ")"
-                        + "    AND f2loc.srcfeature_id IN (" + getChromosomeFeatureIdQuery() + ")";
+                "SELECT f1loc.featureloc_id, f1loc.srcfeature_id as feature_id,"
+                        + " f2loc.srcfeature_id AS srcfeature_id, f2loc.fmin,"
+                        + " false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial,"
+                        + " f2loc.strand"
+                        + " FROM feature match, featureloc f1loc, featureloc f2loc, cvterm mt"
+                        + " WHERE match.feature_id = f1loc.feature_id"
+                        + " AND match.feature_id = f2loc.feature_id"
+                        + " AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
+                        + " AND f1loc.srcfeature_id <> f2loc.srcfeature_id"
+                        + " AND f1loc.srcfeature_id IN (" + getFeatureIdQuery() + ")"
+                        + " AND f2loc.srcfeature_id IN (" + getChromosomeFeatureIdQuery() + ")";
 
         // Previous query included feature table three times
-        //        "SELECT f1loc.featureloc_id, f1.feature_id, f2.feature_id AS srcfeature_id, f2loc.fmin,"
-        //        + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
-        //        + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc,"
-        //        + "        cvterm mt"
-        //        + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
-        //        + "    AND f1loc.srcfeature_id = f1.feature_id AND f2loc.srcfeature_id = f2.feature_id"
-        //        + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
-        //        + "    AND f1.feature_id <> f2.feature_id"
-        //        + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
-        //        + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
+        // "SELECT f1loc.featureloc_id, f1.feature_id, f2.feature_id AS srcfeature_id, f2loc.fmin,"
+        //  + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
+        //  + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc,"
+        //  + "        cvterm mt"
+        //  + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
+        //  + "    AND f1loc.srcfeature_id = f1.feature_id AND f2loc.srcfeature_id = f2.feature_id"
+        //  + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
+        //  + "    AND f1.feature_id <> f2.feature_id"
+        //  + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
+        //  + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
         LOG.info("executing getMatchLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1978,12 +1978,13 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getLibraryFeatureResultSet(Connection connection) throws SQLException {
         String query =
                 "select f.feature_id, lp.value, lp_type.name AS type_name "
-                        + "FROM feature f, library_feature lf, library l, libraryprop lp, cvterm lp_type "
-                        + "WHERE  f.feature_id=lf.feature_id "
-                        + "     AND lf.library_id=l.library_id "
-                        + "     AND l.library_id=lp.library_id "
-                        + "     AND lp.type_id=lp_type.cvterm_id "
-                        + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+                        + "FROM feature f, library_feature lf, library l, libraryprop lp,"
+                        + " cvterm lp_type "
+                        + " WHERE  f.feature_id=lf.feature_id "
+                        + " AND lf.library_id=l.library_id "
+                        + " AND l.library_id=lp.library_id "
+                        + " AND lp.type_id=lp_type.cvterm_id "
+                        + " AND f.feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing getLibraryFeatureResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2001,13 +2002,13 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getLibraryCVTermResultSet(Connection connection) throws SQLException {
         String query =
                 "select f.feature_id, d.accession AS term_identifier "
-                        + "FROM feature f, library_feature lf, library l, library_cvterm lcvt, cvterm cvt, cv, "
-                        + "     dbxref d "
-                        + "WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "
-                        + "     AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id "
-                        + "     AND lcvt.cvterm_id=cvt.cvterm_id "
-                        + "     AND cvt.dbxref_id = d.dbxref_id "
-                        + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+                        + " FROM feature f, library_feature lf, library l, library_cvterm lcvt,"
+                        + " cvterm cvt, cv, dbxref d "
+                        + " WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "
+                        + " AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id "
+                        + " AND lcvt.cvterm_id=cvt.cvterm_id "
+                        + " AND cvt.dbxref_id = d.dbxref_id "
+                        + " AND f.feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing getLibraryFeatureResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2026,11 +2027,11 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getFeatureCVTermResultSet(Connection connection) throws SQLException {
         String query =
                 "SELECT DISTINCT feature_id, cvterm.cvterm_id, cvterm.name AS cvterm_name,"
-                        + "              cv.name AS cv_name "
-                        + "  FROM feature_cvterm, cvterm, cv "
+                        + " cv.name AS cv_name "
+                        + " FROM feature_cvterm, cvterm, cv "
                         + " WHERE feature_id IN (" + getFeatureIdQuery() + ")"
-                        + "   AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
-                        + "   AND cvterm.cv_id = cv.cv_id "
+                        + " AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
+                        + " AND cvterm.cv_id = cv.cv_id "
                         + " ORDER BY feature_id";
         LOG.info("executing getFeatureCVTermResultSet(): " + query);
         Statement stmt = connection.createStatement();
@@ -2048,12 +2049,12 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
         String query =
                 "SELECT DISTINCT feature_id, synonym.name AS synonym_name,"
-                        + "              cvterm.name AS type_name, is_current"
-                        + "  FROM feature_synonym, synonym, cvterm"
-                        + "  WHERE feature_synonym.synonym_id = synonym.synonym_id"
-                        + "     AND synonym.type_id = cvterm.cvterm_id"
-                        + "     AND feature_id IN (" + getFeatureIdQuery() + ")"
-                        + "  ORDER BY is_current DESC";
+                        + " cvterm.name AS type_name, is_current"
+                        + " FROM feature_synonym, synonym, cvterm"
+                        + " WHERE feature_synonym.synonym_id = synonym.synonym_id"
+                        + " AND synonym.type_id = cvterm.cvterm_id"
+                        + " AND feature_id IN (" + getFeatureIdQuery() + ")"
+                        + " ORDER BY is_current DESC";
         LOG.info("executing getSynonymResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2070,14 +2071,14 @@ public class SequenceProcessor extends ChadoProcessor
     protected ResultSet getPubResultSet(Connection connection) throws SQLException {
         String query =
                 "SELECT DISTINCT feature_pub.feature_id, dbxref.accession as pub_db_identifier"
-                        + "  FROM feature_pub, dbxref, db, pub, pub_dbxref"
-                        + "  WHERE feature_pub.pub_id = pub.pub_id"
-                        + "    AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
-                        + "    AND dbxref.db_id = db.db_id"
-                        + "    AND pub.pub_id = pub_dbxref.pub_id"
-                        + "    AND db.name = 'pubmed'"
-                        + "    AND feature_id IN (" + getFeatureIdQuery() + ")"
-                        + "  ORDER BY feature_pub.feature_id";
+                        + " FROM feature_pub, dbxref, db, pub, pub_dbxref"
+                        + " WHERE feature_pub.pub_id = pub.pub_id"
+                        + " AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
+                        + " AND dbxref.db_id = db.db_id"
+                        + " AND pub.pub_id = pub_dbxref.pub_id"
+                        + " AND db.name = 'pubmed'"
+                        + " AND feature_id IN (" + getFeatureIdQuery() + ")"
+                        + " ORDER BY feature_pub.feature_id";
         LOG.info("executing getPubResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2093,7 +2094,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      */
     protected Item createSynonym(FeatureData fdat, String identifier)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
             String msg = "feature identifier " + identifier + " is already a synonym for: "
                     + fdat.getExistingSynonyms();
