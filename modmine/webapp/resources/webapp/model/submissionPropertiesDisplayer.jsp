@@ -104,8 +104,8 @@
            <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.id}" style="text-decoration: none;"><strong>${antibody.name}</strong></a>
            /
            <c:choose>
-               <c:when test="${not empty antibody.target}">
-                 <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.target.id}" style="text-decoration: none;"><strong>${antibody.targetName}</strong></a>
+               <c:when test="${not empty antibody.targetName}">
+                 <a href="${antibody.wikiLink}" style="text-decoration: none;" class="value extlink"><strong>${antibody.targetName}</strong></a>
                </c:when>
                <c:otherwise>
                  <i>target not available</i>
