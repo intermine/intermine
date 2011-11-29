@@ -48,10 +48,9 @@ public class TemplatesImportAction extends InterMineAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -73,7 +72,8 @@ public class TemplatesImportAction extends InterMineAction
             Set<String> templateNames = new HashSet<String>(profile.getSavedTemplates().keySet());
             if (tif.isOverwriting() && templateNames.size() > 0) {
                 for (String templateName : templateNames) {
-                    profile.deleteTemplate(templateName, im.getTrackerDelegate(), tif.isDeleteTracks());
+                    profile.deleteTemplate(templateName, im.getTrackerDelegate(),
+                            tif.isDeleteTracks());
                     deleted++;
                 }
             }
