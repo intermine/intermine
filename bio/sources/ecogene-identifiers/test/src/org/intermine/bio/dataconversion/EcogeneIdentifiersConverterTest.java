@@ -36,6 +36,10 @@ public class EcogeneIdentifiersConverterTest extends ItemsTestCase
                 + "b4053\t"
                 + "g1790487\t"
                 + "JW4013\t"
+                + "aa\t"
+                + "Clockwise\t"
+                + "4263805\t"
+                + "4264884\t"
                 + "None";
 
         String record2 = "EG10012\t"
@@ -45,6 +49,10 @@ public class EcogeneIdentifiersConverterTest extends ItemsTestCase
             + "b0886\t"
             + "g1787112\t"
             + "JW0869\t"
+            + "aa\t"
+            + "Counterclockwise\t"
+            + "926697\t"
+            + "928418\t"
             + "mdrA, mdrH, surB, ycaB";
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
