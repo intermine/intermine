@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Data structure to hold information from one row of an NCBI Entrex gene_info file.
+ *
  * @author Richard Smith
  *
  */
@@ -43,7 +43,7 @@ public class GeneInfoRecord
      * @param officialName official name if present, e.g. from HGNC
      * @param defaultName NCBI name, may be the same as the officialName
      * @param mapLocation chromosome band of the gene, if known
-     * @param geneType e.g. protein-coding, ncRNA, etc.
+     * @param geneType e.g. protein-coding, ncrna, etc.
      */
     public GeneInfoRecord(String taxon, String entrez, String officialSymbol, String defaultSymbol,
             String officialName, String defaultName, String mapLocation, String geneType) {

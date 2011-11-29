@@ -44,19 +44,20 @@ public class NcbiGeneInfoParser
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
 
-            String taxonId = line[0];
-            String entrez = line[1];
-            String defaultSymbol = line[2];
-            String synonyms = line[4];
-            String xrefs = line[5]; // ecoliMine case is DB identifier
-            String mapLocation = line[7];
-            String defaultName = line[8];
-            String geneType = line[9];
-            String officialSymbol = line[10];
-            String officialName = line[11];
+            String taxonId = line[0].trim();
+            String entrez = line[1].trim();
+            String defaultSymbol = line[2].trim();
+            String synonyms = line[4].trim();
+            String xrefs = line[5].trim(); // dbIdentifier
+            String mapLocation = line[7].trim();
+            String defaultName = line[8].trim();
+            String geneType = line[9].trim();
+            String officialSymbol = line[10].trim();
+            String officialName = line[11].trim();
 
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
                     defaultSymbol, officialName, defaultName, mapLocation, geneType);
+
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
 
             if (!"-".equals(synonyms)) {
