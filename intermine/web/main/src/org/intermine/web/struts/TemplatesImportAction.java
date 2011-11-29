@@ -88,7 +88,7 @@ public class TemplatesImportAction extends InterMineAction
                     apiTemplate = renameTemplate(updatedName, apiTemplate);
                 }
                 if (validateLookupConstraints(template)) {
-                    profile.saveTemplate(template.getName(), apiTemplate);
+                    profile.saveTemplate(apiTemplate.getName(), apiTemplate);
                     imported++;
                 } else {
                     validConstraints = false;
