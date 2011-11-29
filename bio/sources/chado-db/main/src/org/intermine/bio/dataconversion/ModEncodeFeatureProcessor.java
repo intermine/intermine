@@ -70,7 +70,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "SL1_acceptor_site", "SL2_acceptor_site"
             , "transcription_end_site", "TSS", "under-replicated-region"
             , "full_transcript", "polypeptide_region", "peptide_collection"
-            );
+    );
     // the FB name for the mitochondrial genome
     private static final String MITOCHONDRION = "dmel_mitochondrion_genome";
     // ...
@@ -87,6 +87,10 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     "read_count",
                     "transcribed")));
     private static final String SUB_3154_TITLE = "MXEMB_N2_RNA_EXPRESSION";
+
+    private Set<Integer> locatedCommonFeatures = new HashSet<Integer>();
+
+
     //    private static final String MODENCODE_SOURCE_NAME = "modENCODE";
     /**
      * Create a new ModEncodeFeatureProcessor.
@@ -163,7 +167,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      */
     @Override
     protected void extraProcessing(Connection connection, Map<Integer, FeatureData> featureDataMap)
-            throws ObjectStoreException, SQLException {
+        throws ObjectStoreException, SQLException {
         // TODO: check if there is already a method to get all the match types
         // (and merge the methods)
         // also: add match to query and do everything here
@@ -187,6 +191,38 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         // adding sources (result files) for binding sites
         processPeaksSources(connection);
     }
+
+
+    /**
+     * Make a Location between a SequenceFeature and a Chromosome.
+     * @param start the start position
+     * @param end the end position
+     * @param strand the strand
+     * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
+     * @param featureData the FeatureData for the SequenceFeature
+     * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @return the new Location object
+     * @throws ObjectStoreException if there is a problem while storing
+     */
+    @Override
+    protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
+            FeatureData featureData, int taxonId)
+        throws ObjectStoreException {
+        // if in commonfeatures, do it only if not done already..
+        Integer imOjectId = featureData.getIntermineObjectId();
+        if (locatedCommonFeatures.contains(imOjectId)) {
+            return null;
+        }
+        if (commonFeaturesMap.containsValue(featureData)) {
+            locatedCommonFeatures.add(imOjectId);
+        }
+        Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
+                featureData.getItemIdentifier(),
+                start, end, strand, taxonId);
+        return location;
+    }
+
+
     /**
      * Method to set the source for gene
      * for modencode datasources it will add the title
@@ -202,7 +238,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     //        setAttribute(imObjectId, "source", source);
     //    }
     protected void setGeneSource(FeatureData fdat, String dataSourceName)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         String source = dataSourceName + "-" + title;
         Integer imObjectId = fdat.getIntermineObjectId();
         setAttribute(imObjectId, "source", source);
@@ -239,8 +275,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     }
     /**
      * Return the match types, used to determine which additional query to run
-     * This is a protected method so that it can be overriden for testing
-     * @param connection the db connection
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the database connection
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
@@ -259,14 +295,14 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * from the featureloc and feature tables.
      *
      * feature<->featureloc<->match_feature<->featureloc<->feature
-     * This is a protected method so that it can be overriden for testing
-     * @param connection the db connection
+     * This is a protected method so that it can be overridden for testing
+     * @param connection the database connection
      * @param featType the type of feature (EST,UST, etc)
      * @return the SQL result set
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getMatchLocResultSet(Connection connection, String featType)
-            throws SQLException {
+        throws SQLException {
         String query =
                 "SELECT -1 AS featureloc_id, feat.feature_id, chrloc.fmin, "
                         + " chrloc.srcfeature_id AS srcfeature_id, chrloc.fmax, "
@@ -509,7 +545,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     @Override
     protected void finishedProcessing(Connection connection,
             Map<Integer, FeatureData> featureDataMap)
-                    throws SQLException {
+        throws SQLException {
         super.finishedProcessing(connection, featureDataMap);
         String query = "DROP TABLE " + SUBFEATUREID_TEMP_TABLE_NAME;
         Statement stmt = connection.createStatement();
@@ -766,4 +802,5 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("QUERY TIME expression levels: " + (System.currentTimeMillis() - bT));
         return res;
     }
+
 }
