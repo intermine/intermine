@@ -344,9 +344,9 @@ coerce SavedQueryFactory, from Str, via {
 # RESULT ITERATION
 
 role_type RowParser, {role => "Webservice::InterMine::Parser"};
-enum RowFormat, ['arrayrefs', 'hashrefs', 'xml', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'jsondatatable', 'count'];
+enum RowFormat, ['arrayrefs', 'hashrefs', 'xml', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'jsondatatable', 'count', 'json'];
 enum JsonFormat, ['perl', 'inflate', 'instantiate'];
-enum RequestFormat, ['tab', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml', 'jsondatatable'];
+enum RequestFormat, ['tab', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml', 'jsondatatable', 'json'];
 subtype TSVFormat, as Str, where {/^tsv$/i};
 
 class_type ResultIterator, {class => 'Webservice::InterMine::ResultIterator'};

@@ -15,7 +15,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 186 );
+    plan( tests => 190 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -134,7 +134,7 @@ $q->add_constraint(
     value => "CompanyA"
 );
 
-#diag($q2->url, "=>\n" , $q2->results(as => 'string'));
+note("Querying for results");
 
 lives_ok(
     sub {$res = $q->results},
@@ -172,8 +172,18 @@ lives_ok(
 );
 
 is(@$res, 3, "Gets the right number of records");
-is($res->[1]->{'Employee.age'}, "20", "with the right fields - Int");
+is($res->[1]->{'Employee.age'}, 20, "with the right fields - Int");
 is($res->[1]->{'Employee.address.address'}, "Employee Street, AVille", "with the right fields - Str");
+
+lives_ok(
+    sub {$res = $q->results(as => 'arrayrefs')},
+    "Queries for results as arrayrefs",
+);
+
+is(@$res, 3, "Gets the right number of records");
+is($res->[1][1], 20, "with the right fields - Int");
+is($res->[1][3], "Employee Street, AVille", "with the right fields - Str");
+
 
 lives_ok(
     sub {$res = $q->results(as => 'jsonobjects', json => 'perl')},
@@ -224,7 +234,7 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $q->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > Name\tEmployee > Years Alive\tEmployee > Works Full Time\tEmployee > Address > Address\tEmployee > Department > Name\tEmployee > Department > Company > Name\tEmployee > Department > Manager > Name
+    my $expected = qq|Employee > Name\tEmployee > Years Alive\tEmployee > Works Full Time?\tEmployee > Lives At\tEmployee > Works In\tEmployee > Works For\tEmployee > Works Under
 EmployeeA1\t10\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
 EmployeeA2\t20\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
 EmployeeA3\t30\tfalse\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
@@ -388,30 +398,38 @@ is($res->[0][1], $exp_res->[0][1], "Can get results for queries loaded from xml"
 AUTHENTICATION: {
     require Webservice::InterMine::Service;
     my $authenticated_service;
+    my @password_credentials = ("intermine-test-user", "intermine-test-user-password");
+    my $token = "test-user-token";
+
+    my $token_service = Webservice::InterMine::Service->new($url, $token);
+
+    is($token_service->token, $token, "Interprets arguments correctly as token");
+
+    my $template2 = $token_service->template("private-template-1");
+
+    is($template2->get_count, 53, "Can read a private template using a token service");
     
+    my $foolish_auth_method = sub {
+        $authenticated_service = Webservice::InterMine::Service->new($url, @password_credentials);
+    };
+
     SKIP: {
         unless (eval "require Test::Warn;") {
-            eval {no warnings; $authenticated_service = Webservice::InterMine::Service->new($url, "intermine-test-user", "intermine-test-user-password");};
+            eval {
+                no warnings; 
+                $foolish_auth_method->();
+            };
             skip "Test Warn not installed", 1;
         } else {
-            Test::Warn::warning_like(
-                sub {$authenticated_service = Webservice::InterMine::Service->new($url, "intermine-test-user", "intermine-test-user-password");},
-                qr/API token/, "Warns people who are not careful with their passwords"
+            Test::Warn::warning_like($foolish_auth_method, qr/API token/, 
+                "Warns people who are not careful with their passwords"
             );
         }
     }
 
     my $template = $authenticated_service->template("private-template-1");
 
-    is($template->get_count, 53, "Can read a private template");
-
-    my $token_service = Webservice::InterMine::Service->new($url, 'a1v3V1X0f3hdmaybq0l6b7Z4eVG');
-
-    is($token_service->token, 'a1v3V1X0f3hdmaybq0l6b7Z4eVG', "Interprets arguments correctly as token");
-
-    my $template2 = $authenticated_service->template("private-template-1");
-
-    is($template2->get_count, 53, "Can read a private template");
+    is($template->get_count, 53, "Can read a private template using username/password credentials");
 }
 
 

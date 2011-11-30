@@ -105,9 +105,15 @@ sub get_value {
     unless (looks_like_number($idx)) {
         $idx = $self->_index_for($idx);
     } 
-    my $cell = $self->cells->[$idx]
-        or die "$idx out of range";
-    return $cell->{value};
+    my $len = @{ $self->cells };
+    if ($idx <= -$len || $idx >= $len) {
+        # We don't want the default behaviour, 
+        # because we want "not in array" and "undef" to 
+        # be distinct.
+        die "Index Error: $idx out of range";
+    }
+    my $cell = $self->cells->[$idx];
+    return ((ref $cell eq "HASH") ? $cell->{value} : $cell);
 }
 
 =head2 to_aref
@@ -123,7 +129,7 @@ sub to_aref {
     if (my $aref = $aref{$id}) {
         return $aref;
     } else {
-        my $aref = [map {$_->{value}} @{$self->cells}];
+        my $aref = [map {ref($_) eq 'HASH' ? $_->{value} : $_} @{$self->cells}];
         return $aref{$id} = $aref;
     }
 }

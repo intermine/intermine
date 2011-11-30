@@ -49,7 +49,8 @@ override process => sub {
     for my $col (0 .. $#{$row}) {
         my $view = $self->view->[$col] 
             or confess "There is no view for column number $col";
-        $ret->{$view} = $row->[$col]->{value};
+        my $cell = $row->[$col];
+        $ret->{$view} = (ref $cell eq 'HASH') ? $cell->{value} : $cell;
     }
     unless (keys(%{$ret}) == @{$self->view}) {
         confess "There is not an output column for each view";
