@@ -1530,6 +1530,10 @@ div.collection-table.results div.selected-fields { padding:8px 0; }
 div.collection-table.results table { border-top-width:1px; border-top-style:solid; }
 div.collection-table.results table thead th { padding-top:6px; }
 div.collection-table.results table th:not(:last-child) { border-right-width:1px; border-right-style:solid; }
+div.collection-table div.header { padding:2px 6px; border-top-width:1px; border-top-style:solid; }
+div.collection-table div.header a { text-decoration:underline; }
+div.collection-table div.header a.active { text-decoration:none; font-weight:bold; }
+div.collection-table div.header h3 { padding:0 0 4px 0; border:0; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.basic-table div.right { display:inline; float:right; font-size:13px; }

@@ -352,6 +352,11 @@ div.collection-table.column-border table tbody tr td.left-column-border { border
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#F7F5DA; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-color:#F7F5DA; }
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#F7F5DA; }
+div.collection-table div.header { background:#F7F1EE; border-top-color:#662F2E; }
+div.collection-table div.header h3 { text-shadow: 1px 1px 1px #FFFFFF; }
+div.collection-table div.header a,
+div.collection-table div.header a:hover,
+div.collection-table div.header a:visited { color:#662F2E; }
 /* collection table on results pages */
 div.collection-table.results table { border-top-color:#662F2E; }
 /* basic tables (on displayers etc.) */
