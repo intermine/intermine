@@ -14,6 +14,7 @@
         <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
         Genome features that overlap coordinates of this ${reportObject.type}
       </p>
+	      
       <div class="switchers">
         <c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
           <%-- TODO: potential fail if key has spaces --%>
@@ -21,7 +22,8 @@
       </div>
     </div>
 
-  <c:if test="${!empty featureTables}">
+<c:choose>
+  <c:when test="${!empty featureTables}">
     <c:forEach items="${featureTables}" var="entry">
       <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
         <h3><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
@@ -50,7 +52,14 @@
         Show all in a table &raquo;
       </html:link>
     </div>
-  </c:if>
+  </c:when>
+  <c:otherwise>
+	<p>There was a problem rendering the displayer.</p>
+	<script type="text/javascript">
+		jQuery('#overlapping-features').addClass('warning');
+	</script>
+  </c:otherwise>
+</c:choose>
 
   <script type="text/javascript">
     // switcher between tables this displayer haz
