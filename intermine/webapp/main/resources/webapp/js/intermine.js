@@ -273,14 +273,15 @@ im.getCookie = function(key) {
 
 // format system timestamps from the client's perspective 
 im.timestampFormat = function() {
-	function pad(value) {
-		return (value < 10) ? "0" + value : value;
-	}
+	var offset = new Date().getTimezoneOffset() * 60 * 1000,
+		pad = function(value) {
+			return (value < 10) ? "0" + value : value;
+		};
 	
 	jQuery(".intermine.timestamp").each(function() {
 		var timestamp = parseInt(jQuery(this).text());
 		// convert to Date and shift from current timezone in minutes
-		var d = new Date(timestamp - new Date().getTimezoneOffset() * 60 * 1000);
+		var d = new Date(timestamp - offset);
 		// format
 		var formattedTime = d.getFullYear() + "-" +
 			pad(d.getMonth()) + "-" +
@@ -288,7 +289,7 @@ im.timestampFormat = function() {
 			pad(d.getHours()) + ":" +
 			pad(d.getMinutes());
 		
-		jQuery(this).text(formattedTime);
+		jQuery(this).text(formattedTime).removeClass('intermine');
 	});
 };
 

@@ -1491,7 +1491,8 @@ div.floatRight { float:right; }
 #permalink div.popup input { width:392px; }
 
 /* timedate formatting */
-.im-timedate { white-space:nowrap; }
+.intermine.timestamp { white-space:nowrap; display:none; }
+.timestamp { display:inline-block; }
 
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */
