@@ -72,12 +72,14 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 
 </script>
 
+<div class="header">
 <h3>Pathways from Other Mines</h3>
 
       <p>
         <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
         Pathway data from other Mines for homologues of this gene. 
       </p>
+</div>
 
     <!-- one column for each mine -->
     <table>
