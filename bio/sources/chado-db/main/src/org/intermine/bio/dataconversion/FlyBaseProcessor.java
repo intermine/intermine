@@ -461,14 +461,15 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
 
     /**
+     * note: featureId is needed only by modMine
      * {@inheritDoc}
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                              FeatureData featureData, int taxonId)
+                              FeatureData featureData, int taxonId, int featureId)
         throws ObjectStoreException {
         Item location =
-            super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
+            super.makeLocation(start, end, strand, srcFeatureData, featureData, taxonId, 0);
         processItem(location, new Integer(taxonId));
         return location;
     }

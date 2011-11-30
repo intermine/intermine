@@ -59,7 +59,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
-    // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
+    // a map from chado feature id to FeatureData objects, populated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
     protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
 
@@ -631,7 +631,8 @@ public class SequenceProcessor extends ChadoProcessor
                     FeatureData featureData = featureMap.get(featureId);
                     int taxonId = featureData.organismData.getTaxonId();
                     Item location =
-                            makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
+                            makeLocation(start, end, strand, srcFeatureData, featureData, taxonId,
+                                    featureId);
                     // location could be null for common features (modmine)
                     if (location != null) {
                         getChadoDBConverter().store(location);
@@ -706,7 +707,7 @@ public class SequenceProcessor extends ChadoProcessor
      */
     // modMine overrides in subclass
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, int taxonId)
+            FeatureData featureData, int taxonId, int featureId)
         throws ObjectStoreException {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
                 featureData.getItemIdentifier(),
