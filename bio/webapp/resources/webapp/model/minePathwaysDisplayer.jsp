@@ -75,11 +75,14 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 <div class="header">
 <h3>Pathways from Other Mines</h3>
 
+<c:choose>
+	<c:when test="${minesForPathways != null && !empty(minesForPathways) && gene != null && !empty(gene)}">
+
       <p>
         <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
         Pathway data from other Mines for homologues of this gene. 
       </p>
-</div>
+      </div>
 
     <!-- one column for each mine -->
     <table>
@@ -163,5 +166,16 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
       </tr>
       </tbody>
     </table>
+    
+	</c:when>
+	<c:otherwise>
+	</div>
+		<p>There was a problem rendering the displayer.</p>
+		<script type="text/javascript">
+			jQuery('#mine-pathway-displayer').addClass('warning');
+		</script>
+	</c:otherwise>
+    
+</c:choose>
 </div>
 <!-- /publicationCountsDisplayer.jsp -->

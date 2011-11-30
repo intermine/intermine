@@ -12,6 +12,9 @@
 <div id="mine-rat-disease" class="collection-table">
 <h3 class="loading">Diseases (from RatMine)</h3>
 
+<c:choose>
+	<c:when test="${ratGenes != null && !empty(ratGenes)}">
+
 <table>
   <tbody>
   <tr>
@@ -58,6 +61,15 @@ function generateDiseases(jSONObject, target) {
 })();
 
 </script>
+
+</c:when>
+<c:otherwise>
+	<p>There was a problem rendering the displayer.</p>
+	<script type="text/javascript">
+		jQuery('#mine-rat-displayer').addClass('warning');
+	</script>
+</c:otherwise>
+</c:choose>
 
 </div>
 <!-- /diseaseDisplayer.jsp -->

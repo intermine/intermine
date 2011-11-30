@@ -5,8 +5,11 @@
 
 <!-- homologueDisplayer.jsp -->
 
-<div class="basic-table">
+<div id="homologue-displayer" class="basic-table">
 <h3>Homologues</h3>
+
+<c:choose>
+<c:when test="${homologues != null && !empty homologues}">
 <table class="tiny-font">
   <thead>
   <tr>
@@ -35,6 +38,14 @@
 	  </tr>
   </tbody>
 </table>
+</c:when>
+<c:otherwise>
+	<p>There was a problem rendering the displayer.</p>
+	<script type="text/javascript">
+		jQuery('#homologue-displayer').addClass('warning');
+	</script>
+</c:otherwise>
+</c:choose>
 </div>
 
 <!-- /homologueDisplayer.jsp -->

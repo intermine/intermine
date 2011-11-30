@@ -20,36 +20,45 @@
       <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher"><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/><c:if test="${entry.value != 1}">s</c:if></a>: ${entry.value}</c:forEach>
     </div>
   </div>
-  <c:if test="${!empty regionTables}">
-    <c:forEach items="${regionTables}" var="entry">
-      <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
-        <h3 class=""><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
-        <div class="clear"></div>
-
-        <c:set var="inlineResultsTable" value="${entry.value}" />
-        <tiles:insert page="/reportCollectionTable.jsp">
-           <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
-           <tiles:put name="object" beanName="reportObject.object" />
-           <tiles:put name="fieldName" value="${entry.key}" />
-        </tiles:insert>
-        <div class="toggle">
-          <a style="float:right;" class="less"><span>Hide</span></a>
-        </div>
-        <div class="show-in-table">
-          <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
-            Show all in a table &raquo;
-          </html:link>
-        </div>
-      <br/>
-      </div>
-      <div class="clear"></div>
-    </c:forEach>
-    <div class="show-in-table outer">
-      <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
-        Show all in a table &raquo;
-      </html:link>
-    </div>
-  </c:if>
+  
+  <c:choose>
+	  <c:when test="${!empty regionTables}">
+	    <c:forEach items="${regionTables}" var="entry">
+	      <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
+	        <h3 class=""><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
+	        <div class="clear"></div>
+	
+	        <c:set var="inlineResultsTable" value="${entry.value}" />
+	        <tiles:insert page="/reportCollectionTable.jsp">
+	           <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
+	           <tiles:put name="object" beanName="reportObject.object" />
+	           <tiles:put name="fieldName" value="${entry.key}" />
+	        </tiles:insert>
+	        <div class="toggle">
+	          <a style="float:right;" class="less"><span>Hide</span></a>
+	        </div>
+	        <div class="show-in-table">
+	          <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
+	            Show all in a table &raquo;
+	          </html:link>
+	        </div>
+	      <br/>
+	      </div>
+	      <div class="clear"></div>
+	    </c:forEach>
+	    <div class="show-in-table outer">
+	      <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
+	        Show all in a table &raquo;
+	      </html:link>
+	    </div>
+	  </c:when>
+	  <c:otherwise>
+		<p>There was a problem rendering the displayer.</p>
+		<script type="text/javascript">
+			jQuery('#regulatory-regions').addClass('warning');
+		</script>
+	  </c:otherwise>
+  </c:choose>
 
   <script type="text/javascript">
     // switcher between tables this displayer haz

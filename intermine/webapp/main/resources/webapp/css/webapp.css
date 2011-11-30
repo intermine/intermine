@@ -1573,6 +1573,17 @@ div.collection-table h3.loading { background-image:url('../images/icons/ajax-loa
 .one-line * { display:block; }
 .tiny-font * { font-size:11px; }
 .loading-spinner { background:url('../images/icons/ajax-loader.gif') no-repeat center; display:inline-block; width:16px; height:11px; }
+/* error warning */
+div.collection-table.warning h3,
+div.collection-of-collections.warning h3,
+div.basic-table.warning h3 { background-image:url('../images/icons/alert.png'); background-position:99% 3px; background-repeat:no-repeat;
+	background-color:#FFF4D1; border-color:#C77C39; color:#C77C39; text-shadow:1px 1px 1px #FFE194 !important; }
+div.collection-table.warning,
+div.collection-of-collections.warning,
+div.basic-table.warning,
+div.collection-table.warning div.header,
+div.collection-of-collections.warning div.header,
+div.basic-table.warning div.header { background:#FFF4D1; border-color:#C77C39; }
 
 table.summary.results {
   border-collapse: collapse;
