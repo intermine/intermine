@@ -87,11 +87,8 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                     "read_count",
                     "transcribed")));
     private static final String SUB_3154_TITLE = "MXEMB_N2_RNA_EXPRESSION";
-
-    private Set<Integer> locatedCommonFeatures = new HashSet<Integer>();
-
-
     //    private static final String MODENCODE_SOURCE_NAME = "modENCODE";
+
     /**
      * Create a new ModEncodeFeatureProcessor.
      * @param chadoDBConverter     the parent converter
@@ -201,20 +198,17 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
      * @param srcFeatureData the FeatureData for the src feature (the Chromosome)
      * @param featureData the FeatureData for the SequenceFeature
      * @param taxonId the taxon id to use when finding the Chromosome for the Location
+     * @param featureId the chado feature id, key to our commonFeaturesMap
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */
     @Override
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-            FeatureData featureData, int taxonId)
+            FeatureData featureData, int taxonId, int featureId)
         throws ObjectStoreException {
-        // if in commonfeatures, do it only if not done already..
-        Integer imOjectId = featureData.getIntermineObjectId();
-        if (locatedCommonFeatures.contains(imOjectId)) {
+        // if a common feature, do it only once..
+        if (commonFeaturesMap.containsKey(featureId)) {
             return null;
-        }
-        if (commonFeaturesMap.containsValue(featureData)) {
-            locatedCommonFeatures.add(imOjectId);
         }
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
                 featureData.getItemIdentifier(),
