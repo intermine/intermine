@@ -25,7 +25,7 @@ my $id_file = 't/data/test-identifiers.list';
 use_ok($module);
 
 $service = Webservice::InterMine->get_service(
-    'squirrel.flymine.org/intermine-test', 'Z1a3D3U16cicCdS0T6y4bdN1SQh');
+    'localhost:8080/intermine-test', 'test-user-token');
 
 $initial_list_count = $service->list_count;
 
@@ -320,7 +320,7 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $list->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > Years Alive\tEmployee > End\tEmployee > Works Full Time\tEmployee > Name
+    my $expected = qq|Employee > Years Alive\tEmployee > End\tEmployee > Works Full Time?\tEmployee > Name
 37\t4\tfalse\tKarim
 41\t""\tfalse\tDavid Brent
 44\t""\tfalse\tFrank Möllers

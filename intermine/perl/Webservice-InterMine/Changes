@@ -128,6 +128,10 @@ Revision history for Webservice-InterMine
 0.9816: Added list-tagging support
 0.9817: Updated tests for new fixture set. Added select method to consumers of the HasQuery role.
 0.9818: Some more documentation of result formats, and some tests to go with them.
+0.9819: Added support for redirected webservice urls.
+0.9900: Use of new json format where available
+        Support for redirection and private ports
+        Use of POST where possible.
 
         
 

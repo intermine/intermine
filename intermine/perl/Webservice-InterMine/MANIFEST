@@ -121,6 +121,7 @@ t/10_acceptance/02_lists_with_tokens.t
 t/10_acceptance/03_service_resolution.t
 t/10_acceptance/04_paths.t
 t/10_acceptance/05_summaries.t
+t/10_acceptance/06_redirection.t
 t/data/bad_templates.xml
 t/data/bad_xml.txt
 t/data/default-template-queries.xml

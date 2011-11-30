@@ -820,7 +820,7 @@ sub search {
             $self->add_constraint($path, $con);
         }
     } else {
-        carp "Bad argument: '$constraints' should be a hashref or an array ref with an even number of elements";
+        croak "Bad argument: '$constraints' should be a hashref or an array ref with an even number of elements";
     }
 
     if (wantarray) {
