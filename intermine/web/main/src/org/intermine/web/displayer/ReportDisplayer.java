@@ -61,6 +61,9 @@ public abstract class ReportDisplayer
 
         try {
             display(request, reportObject);
+        } catch (ReportDisplayerNoResultsException e) {
+            request.setAttribute("displayerName", getClass().getSimpleName());
+            request.setAttribute("jspPage", "reportDisplayerNoResults.jsp");
         } catch (Exception e) {
             // failed to display so put an error message in place instead
             LOG.error("Error rendering report displayer " + getClass() + " for "
@@ -83,7 +86,7 @@ public abstract class ReportDisplayer
      * @param request request for displaying a report page
      * @param reportObject the object being displayed
      */
-    public abstract void display(HttpServletRequest request, ReportObject reportObject);
+    public abstract void display(HttpServletRequest request, ReportObject reportObject) throws ReportDisplayerNoResultsException;
 
     /**
      * The JSP page that will be called with the request to render output.
