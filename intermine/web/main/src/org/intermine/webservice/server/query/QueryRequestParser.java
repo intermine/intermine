@@ -14,7 +14,10 @@ import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.intermine.webservice.server.WebServiceRequestParser;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Processes query request parameters. The main function of this
@@ -104,7 +107,9 @@ public class QueryRequestParser extends WebServiceRequestParser
      */
     public static String getQueryXml(HttpServletRequest req) {
         String xmlQuery = req.getParameter(QUERY_PARAMETER);
-        xmlQuery = fixEncoding(xmlQuery);
-        return xmlQuery;
+        if (StringUtils.isBlank(xmlQuery)) {
+            throw new BadRequestException("The 'query' parameter must not be blank");
+        }
+        return fixEncoding(xmlQuery);
     }
 }
