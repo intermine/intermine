@@ -73,6 +73,7 @@ public final class BagHelper
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
             String bagDescription, String pathString, Profile profile, InterMineAPI im)
         throws ObjectStoreException {
+        pathQuery = pathQuery.clone(); // Since we may be changing its view.
         String bagType = pathString;
         try {
             Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
