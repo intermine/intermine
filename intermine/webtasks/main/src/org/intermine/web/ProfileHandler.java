@@ -105,7 +105,8 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, TemplateHelper.upcast(savedTemplates), apiKey, isLocal);
+                                     savedBags, TemplateHelper.upcast(savedTemplates),
+                                     apiKey, isLocal);
         return retval;
     }
 
