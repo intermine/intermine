@@ -16,3 +16,6 @@ t/data/testmodel_model.xml
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
+Makefile.PL
+META.yml
+META.json
