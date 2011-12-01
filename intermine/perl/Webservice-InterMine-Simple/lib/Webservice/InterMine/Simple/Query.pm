@@ -280,7 +280,7 @@ rows into array references based using a failure-prone "tab" split.
 
 sub results_table {
     my $self = shift;
-    my $results = $self->results(as => 'tab');
+    my $results = $self->results(as => 'tab', @_);
     my @lines = map {[split /\t/]} split(/\n/, $results);
     return @lines;
 }
