@@ -22,14 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.api.template.ApiTemplate;
@@ -41,7 +42,6 @@ import org.intermine.model.testmodel.Employee;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.StoreDataTestCase;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.ProfileBinding;
 import org.intermine.web.ProfileManagerBinding;
@@ -169,65 +169,59 @@ public class ProfileManagerTest extends InterMineAPITestCase
             throw new RuntimeException(e);
         }
 
+
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTest.xml");
-        BufferedReader bis = new BufferedReader(new InputStreamReader(is));
+        String expectedXml = IOUtils.toString(is);
 
-        StringBuffer sb = new StringBuffer();
+        String actualXml = sw.toString().trim();
 
-        String line = null;
-        while ((line = bis.readLine()) != null) {
-            sb.append(line.trim());
-        }
-        //String expectedXml = sb.toString();
-        //String actualXml = sw.toString().trim();
-        //System.out.println("expected: " + expectedXml);
-        //System.out.println("actual: " + actualXml);
-        // TODO this doesn't work because the ids don't match in the bag (as they are retrieved from
-        // the database.
-//        assertXMLEqual("XML doesn't match", expectedXml, actualXml);
-        assertEquals("I am a good test that works properly", false);
+        assertEquals(massage(expectedXml), massage(actualXml));
     }
 
-
+    private static String massage(String x) {
+        return x.replaceAll(">\\s*<", "><") // Ignore whitespace between elements
+                .replaceAll("\n", "")       // Remove all new-lines
+                .replaceAll("\\s*/>", "/>") // Remove whitespace before />
+                .replaceAll("\\s{2,}", " ") // Collapse white space to single space
+                .replaceAll("date-created=\"\\d+\"", "date-created=\"XXXX\""); // Ignore all dates
+    }
 
     public void testXMLRead() throws Exception {
         InputStream is =
             getClass().getClassLoader().getResourceAsStream("ProfileManagerBindingTestNewIDs.xml");
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-        ProfileManagerBinding.unmarshal(reader, pm, pm.getProfileObjectStoreWriter());
+        ProfileManagerBinding.unmarshal(reader, pm, os.getNewWriter());
 
-        // TODO change this test to not use sally and bob, but to use testUser
         assertEquals(4, pm.getProfileUserNames().size());
 
-        assertTrue(pm.getProfileUserNames().contains("bob"));
+        assertTrue(pm.getProfileUserNames().contains("Unmarshall-1"));
 
-        Profile sallyProfile = pm.getProfile("sally", sallyPass);
+        Profile stored2 = pm.getProfile("Unmarshall-2", "querty");
+
+        assertEquals("token2", stored2.getApiKey());
 
         Employee employeeEx = new Employee();
         employeeEx.setName("EmployeeA3");
         Set<String> fieldNames = new HashSet<String>();
         fieldNames.add("name");
-        Employee employeeA3 = (Employee) os.getObjectByExample(employeeEx, fieldNames);
-        Employee employeeEx2 = new Employee();
-        employeeEx2.setName("EmployeeB2");
-        Employee employeeB2 = (Employee) os.getObjectByExample(employeeEx2, fieldNames);
 
-
-        System.out.println("Testing profile with hashCode " + System.identityHashCode(sallyProfile));
-        assertEquals(3, sallyProfile.getSavedBags().size());
+        assertEquals("Wrong number of bags!", 3, stored2.getSavedBags().size());
         Set<Integer> expectedBagContents = new HashSet<Integer>();
         //when we read xml file, we load data into savedbag and bagvalues table but not in the
         //osbag_int loaded after user login
-        assertEquals(expectedBagContents, (sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsIds());
+        assertEquals(expectedBagContents, (stored2.getSavedBags().get("stored_2_3")).getContentsAsIds());
 
-        List<InterMineBag.BagValue> contentsAsKey = (sallyProfile.getSavedBags().get("sally_bag3")).getContentsAsKeyFieldAndExtraValue();
-        assertEquals("EmployeeA3", contentsAsKey.get(0).value);
-        assertEquals("EmployeeB2", contentsAsKey.get(1).value);
+        List<InterMineBag.BagValue> contentsAsKey = (stored2.getSavedBags().get("stored_2_1")).getContentsAsKeyFieldAndExtraValue();
+        assertEquals("DepartmentA1", contentsAsKey.get(0).value);
 
-        assertEquals(1, sallyProfile.getSavedQueries().size());
-        assertEquals(1, sallyProfile.getSavedTemplates().size());
+        List<InterMineBag.BagValue> contentsAsKey2 = (stored2.getSavedBags().get("stored_2_3")).getContentsAsKeyFieldAndExtraValue();
+        assertEquals("EmployeeA3", contentsAsKey2.get(0).value);
+        assertEquals("EmployeeB2", contentsAsKey2.get(1).value);
+
+        assertEquals(1, stored2.getSavedQueries().size());
+        assertEquals(1, stored2.getSavedTemplates().size());
 
         Set<Tag> expectedTags = new HashSet<Tag>();
         Tag tag1 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
@@ -235,32 +229,32 @@ public class ProfileManagerTest extends InterMineAPITestCase
         tag1.setTagName("test-tag");
         tag1.setObjectIdentifier("Department.company");
         tag1.setType("reference");
-        tag1.setUserProfile(pm.getUserProfile("bob"));
+        tag1.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
         Tag tag2 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag2.setTagName("test-tag2");
         tag2.setObjectIdentifier("Department.name");
         tag2.setType("attribute");
-        tag2.setUserProfile(pm.getUserProfile("bob"));
+        tag2.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
         Tag tag3 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag3.setTagName("test-tag2");
         tag3.setObjectIdentifier("Department.company");
         tag3.setType("reference");
-        tag3.setUserProfile(pm.getUserProfile("bob"));
+        tag3.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
         Tag tag4 = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag4.setTagName("test-tag2");
         tag4.setObjectIdentifier("Department.employees");
         tag4.setType("collection");
-        tag4.setUserProfile(pm.getUserProfile("bob"));
+        tag4.setUserProfile(pm.getUserProfile("Unmarsall-1"));
 
         expectedTags.add(tag1);
         expectedTags.add(tag2);
         expectedTags.add(tag3);
         expectedTags.add(tag4);
 
-        Set<Tag> actualTags = new HashSet<Tag>(im.getTagManager().getTags(null, null, null, "bob"));
+        Set<Tag> actualTags = new HashSet<Tag>(im.getTagManager().getTags(null, null, null, "Unmarshall-1"));
 
         assertEquals(expectedTags.size(), actualTags.size());
 
@@ -277,7 +271,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
                 if (actualTag.getTagName().equals(expectedTag.getTagName())
                     && actualTag.getObjectIdentifier().equals(expectedTag.getObjectIdentifier())
                     && actualTag.getType().equals(expectedTag.getType())
-                    && "bob".equals(actualTag.getUserProfile().getUsername())) {
+                    && "Unmarshall-1".equals(actualTag.getUserProfile().getUsername())) {
                     continue ACTUAL;
                 }
             }
@@ -300,7 +294,6 @@ public class ProfileManagerTest extends InterMineAPITestCase
         assertEquals(sally.getApiKey(), "ANOTHER-TOKEN");
     }
 
-    // this test takes ~60 seconds
     public void testGetRWPermission() throws Exception {
         setUpUserProfiles();
         ApiPermission permission = null;
@@ -332,30 +325,33 @@ public class ProfileManagerTest extends InterMineAPITestCase
             //
         }
 
-        String[] keys = new String[1000];
+        int limit = 100;
+
+        String[] keys = new String[limit];
         Set<String> uniqueKeys = new HashSet<String>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < limit; i++) {
             keys[i] = pm.generateApiKey(bobProfile);
             uniqueKeys.add(keys[i]);
         }
 
-        assertEquals(uniqueKeys.size(), 1000);
+        assertEquals(uniqueKeys.size(), limit);
 
-        // It's not ok to have many single use keys
-        for (int j = 0; j < 999; j++) {
+        // Only the last key is valid
+        permission = pm.getPermission(keys[limit - 1], classKeys);
+        assertNotNull(permission);
+        assertTrue(permission.isRW());
+        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
+
+        // All other keys are invalid
+        for (int i = 0; i < (limit - 1); i++) {
             try {
-                pm.getPermission(keys[j], classKeys);
+                pm.getPermission(keys[i], classKeys);
                 fail("expected authentication exception");
             } catch (AuthenticationException e) {
                 // expected
             }
         }
 
-        // Only the last key is valid
-        permission = pm.getPermission(keys[999], classKeys);
-        assertNotNull(permission);
-        assertTrue(permission.isRW());
-        assertEquals(permission.getProfile().getUsername(), bobProfile.getUsername());
     }
 
     public void testGetROPermission() throws Exception {
