@@ -2280,6 +2280,7 @@ public final class SqlGenerator
         } else if (node instanceof QueryValue) {
             QueryValue nodeV = (QueryValue) node;
             Object value = nodeV.getValue();
+
             objectToString(buffer, value);
         } else if (node instanceof QueryCast) {
             buffer.append("(");
@@ -2507,7 +2508,12 @@ public final class SqlGenerator
         return retval.toString();
     }
 
-    private static class State
+    /**
+     * Internal representation of the State of the query as it is build up.
+     * @author Matthew
+     *
+     */
+    protected static class State
     {
         private StringBuffer whereText = new StringBuffer();
         private StringBuffer havingText = new StringBuffer();
