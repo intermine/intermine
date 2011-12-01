@@ -76,19 +76,19 @@ public class NcbiGeneConverter extends BioFileConverter
                 // gene type - http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/entrezgene/entrezgene.asn
                 if (record.geneType == null) {
                     continue;
-                } else if ("other".equals(record.geneType)) {
-
-                } else if ("unknown".equals(record.geneType)) {
-
-                } else if ("snRNA".equals(record.geneType)) {
-
-                } else if ("scRNA".equals(record.geneType)) {
-
-                } else if ("snoRNA".equals(record.geneType)) {
-
-                } else if ("transposon".equals(record.geneType)) {
-
-                } else if ("pseudo".equals(record.geneType)) {
+//                } else if ("other".equals(record.geneType)) {
+//
+//                } else if ("unknown".equals(record.geneType)) {
+//
+//                } else if ("snRNA".equals(record.geneType)) {
+//
+//                } else if ("scRNA".equals(record.geneType)) {
+//
+//                } else if ("snoRNA".equals(record.geneType)) {
+//
+//                } else if ("transposon".equals(record.geneType)) {
+//
+//                } else if ("pseudo".equals(record.geneType)) {
 
                 } else if ("ncRNA".equals(record.geneType)) {
 
@@ -166,9 +166,9 @@ public class NcbiGeneConverter extends BioFileConverter
                     }
 
                     // MAP LOCATION
-                    if (record.mapLocation != null) {
-                        ncRNA.setAttribute("mapLocation", record.mapLocation);
-                    }
+//                    if (record.mapLocation != null) {
+//                        ncRNA.setAttribute("mapLocation", record.mapLocation);
+//                    }
                     store(ncRNA);
                 } else if ("tRNA".equals(record.geneType)
                         || "protein-coding".equals(record.geneType)
