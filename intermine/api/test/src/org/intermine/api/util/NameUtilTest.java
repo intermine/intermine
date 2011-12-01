@@ -10,7 +10,7 @@ import junit.framework.TestCase;
 
 public class NameUtilTest extends TestCase {
 
-    String[] names = {"newList_copy1", "name2"};
+    String[] names = {"name2"};
 
     public void testIsValidName() {
         assertFalse(NameUtil.isValidName(""));
@@ -35,11 +35,14 @@ public class NameUtilTest extends TestCase {
     public void testGenerateNewName() {
 
         String listName = "newList";
-        String newListName = NameUtil.generateNewName(new HashSet<String>(Arrays.asList(names)), listName);
-        assertEquals("newList_copy2", newListName);
+        Set<String> currentNames = new HashSet<String>(Arrays.asList(names));
+        String newListName = NameUtil.generateNewName(currentNames, listName);
+        assertEquals("newList_1", newListName);
+        currentNames.add(newListName);
+        assertEquals("newList_2", NameUtil.generateNewName(currentNames, listName));
 
         newListName = NameUtil.generateNewName(new HashSet(), listName);
-        assertEquals("newList_copy1", newListName);
+        assertEquals("newList_1", newListName);
     }
 
     public void testValidateName() {
