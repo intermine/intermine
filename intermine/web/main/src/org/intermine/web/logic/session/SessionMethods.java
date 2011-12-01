@@ -959,6 +959,16 @@ public final class SessionMethods
     }
 
     /**
+     * Returns the PathQuery on the session.
+     *
+     * @param request The the current request.
+     * @return a PathQuery for the current user from the session
+     */
+    public static PathQuery getQuery(HttpServletRequest request) {
+        return (PathQuery) request.getSession().getAttribute(Constants.QUERY);
+    }
+
+    /**
      * Set the current query on the session.
      *
      * @param session a HttpSession object
