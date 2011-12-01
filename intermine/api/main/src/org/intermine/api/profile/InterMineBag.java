@@ -302,7 +302,7 @@ public class InterMineBag implements WebSearchable, Cloneable
                 conn = uos.getConnection();
                 stm = conn.createStatement();
                 String sql = "SELECT value, extra FROM " + BAG_VALUES + " WHERE savedbagid = "
-                             + savedBagId;
+                             + savedBagId + " order by value";
                 rs = stm.executeQuery(sql);
                 while (rs.next()) {
                     primaryIdentifiersList.add(new BagValue(rs.getString(1),
