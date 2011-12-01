@@ -504,12 +504,54 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryValue v2 = new QueryValue("Hello");
         QueryValue v3 = new QueryValue(new Date(1046275720000l));
         QueryValue v4 = new QueryValue(Boolean.TRUE);
+
         StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, v1, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, v2, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, v3, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, v4, null, null);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+
+        SqlGenerator.queryEvaluableToString(buffer, v1, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, v2, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, v3, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, v4, null, state);
         assertEquals("5'Hello'1046275720000'true'", buffer.toString());
+    }
+
+    /** Expect Underscores to not be escaped in LIKE queries **/
+    public void testQueryValueUnderscoreInMatch() throws Exception {
+        QueryValue right = new QueryValue("%Hello_World");
+        QueryValue left  = new QueryValue("Hello-World");
+        SimpleConstraint con = new SimpleConstraint(left, ConstraintOp.MATCHES, right);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        StringBuffer buffer = state.getWhereBuffer();
+        SqlGenerator.simpleConstraintToString(state, buffer, con, null);
+        assertEquals("'Hello-World' LIKE '%Hello_World'", buffer.toString());
+    }
+
+    /** Expect Underscores to not be escaped in LIKE queries **/
+    public void testQueryValueEscapedOpsInMatch() throws Exception {
+        QueryValue right = new QueryValue("\\%Hello_Under\\_Score%");
+        QueryValue left  = new QueryValue("%Hello-Under_Score!");
+        SimpleConstraint con = new SimpleConstraint(left, ConstraintOp.MATCHES, right);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        StringBuffer buffer = state.getWhereBuffer();
+        SqlGenerator.simpleConstraintToString(state, buffer, con, null);
+        String expected = "'%Hello-Under_Score!' LIKE E'\\\\%Hello_Under\\\\_Score%'";
+        assertEquals(expected, buffer.toString());
+    }
+
+    /** Expect underscores to be unescaped in other queries **/
+    public void testQueryValueUnderscoreInEquals() throws Exception {
+        QueryValue right = new QueryValue("Hello_World");
+        QueryValue left  = new QueryValue("HelloXWorld");
+        SimpleConstraint con = new SimpleConstraint(left, ConstraintOp.EQUALS, right);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+
+        StringBuffer buffer = state.getWhereBuffer();
+        SqlGenerator.simpleConstraintToString(state, buffer, con, null);
+        assertEquals("'HelloXWorld' = 'Hello_World'", buffer.toString());
     }
 
     public void testSelectQueryExpression() throws Exception {
@@ -520,10 +562,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryExpression e3 = new QueryExpression(v1, QueryExpression.MULTIPLY, v2);
         QueryExpression e4 = new QueryExpression(v1, QueryExpression.DIVIDE, v2);
         StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, e1, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, e2, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, e3, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, e4, null, null);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, e2, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, e3, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, e4, null, state);
         assertEquals("(5 + 7)(5 - 7)(5 * 7)(5 / 7)", buffer.toString());
     }
 
@@ -533,7 +577,9 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryValue v3 = new QueryValue(new Integer(5));
         QueryExpression e1 = new QueryExpression(v1, v2, v3);
         StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, e1, null, null);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
         assertEquals("SUBSTR('Hello', 3, 5)", buffer.toString());
     }
 
