@@ -28,17 +28,18 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Action to handle events related to displaying inline templates.
@@ -81,7 +82,7 @@ public class ModifyDetails extends DispatchAction
                 Integer objectId = new Integer(idForLookup);
                 ObjectStore os = im.getObjectStore();
                 InterMineObject object = os.getObjectById(objectId);
-                template = template.removeDirectAttributesFromView();
+                template = TemplateHelper.removeDirectAttributesFromView(template);
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, object);
             } else {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template, bag);
