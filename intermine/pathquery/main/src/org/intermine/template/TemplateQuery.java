@@ -24,13 +24,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 
@@ -44,16 +40,12 @@ import org.intermine.template.xml.TemplateQueryBinding;
  */
 public class TemplateQuery extends PathQuery
 {
-    private static final Logger LOG = Logger.getLogger(TemplateQuery.class);
-
     /** Template query name. */
     protected String name;
     /** Template query title. */
     protected String title;
     /** The private comment for this query. */
     protected String comment;
-    /** The path query itself. */
-    protected PathQuery query = null;
     /** Whether this is an edited version of another template. */
     protected boolean edited = false;
 
@@ -79,7 +71,6 @@ public class TemplateQuery extends PathQuery
         this.name = name;
         this.title = title;
         this.comment = comment;
-        this.query = query;
     }
 
     /**
@@ -507,13 +498,6 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * @return the path query
-     */
-    public PathQuery getPathQuery() {
-        return query;
-    }
-
-    /**
      * Convert a template query to XML.
      *
      * @param version the version number of the XML format
@@ -627,38 +611,6 @@ public class TemplateQuery extends PathQuery
      */
     public void setEdited(boolean edited) {
         this.edited = edited;
-    }
-
-    /**
-     * Removed from the view all the direct attributes that aren't editable constraints
-     * @return altered template query
-     */
-    public TemplateQuery removeDirectAttributesFromView() {
-        TemplateQuery templateQuery = (TemplateQuery) super.clone();
-        List<String> viewPaths = templateQuery.getView();
-        PathQuery pathQuery = templateQuery.getPathQuery();
-        String rootClass = null;
-        try {
-            rootClass = templateQuery.getRootClass();
-            for (String viewPath : viewPaths) {
-                Path path = pathQuery.makePath(viewPath);
-                if (path.getElementClassDescriptors().size() == 1
-                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
-                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
-                        templateQuery.removeView(viewPath);
-                        for (OrderElement oe : templateQuery.getOrderBy()) {
-                            if (oe.getOrderPath().equals(viewPath)) {
-                                templateQuery.removeOrderBy(viewPath);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (PathException pe) {
-            LOG.error("Error updating the template's view", pe);
-        }
-        return templateQuery;
     }
 
     @Override
