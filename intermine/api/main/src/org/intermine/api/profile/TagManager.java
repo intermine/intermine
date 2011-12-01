@@ -12,7 +12,6 @@ package org.intermine.api.profile;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -40,6 +40,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.template.TemplateQuery;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 
@@ -54,6 +55,7 @@ public class TagManager
     protected ObjectStoreWriter osWriter;
     private CacheMap<MultiKey, List<Tag>> tagCache = null;
 
+    /** What we tell users when they give us an invalid tag name **/
     public static final String INVALID_NAME_MSG = "Invalid name. "
             + "Names may only contain letters, "
             + "numbers, spaces, full stops, hyphens and colons.";
@@ -174,6 +176,22 @@ public class TagManager
     }
 
     /**
+     * Helper method for getTags.
+     * @param cs The constraint set being built up.
+     * @param qc The class the constrain on.
+     * @param fieldName The field to constrain.
+     * @param value The value to constrain to.
+     */
+    private static void constrain(ConstraintSet cs, QueryClass qc, String fieldName, String value) {
+        if (value != null) {
+            QueryValue qv = new QueryValue(value);
+            QueryField qf = new QueryField(qc, fieldName);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            cs.addConstraint(c);
+        }
+    }
+
+    /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
      * wildcards.
      * @param tagName the tag name - any String
@@ -214,33 +232,16 @@ public class TagManager
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        if (tagName != null) {
-            QueryValue qv = new QueryValue(tagName);
-            QueryField qf = new QueryField(qc, "tagName");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (taggedObjectId != null) {
-            QueryValue qv = new QueryValue(taggedObjectId);
-            QueryField qf = new QueryField(qc, "objectIdentifier");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (type != null) {
-            QueryValue qv = new QueryValue(type);
-            QueryField qf = new QueryField(qc, "type");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
+        constrain(cs, qc, "tagName", tagName);
+        constrain(cs, qc, "objectIdentifier", taggedObjectId);
+        constrain(cs, qc, "type", type);
 
         if (userName != null) {
             QueryClass userProfileQC = new QueryClass(UserProfile.class);
             q.addFrom(userProfileQC);
             QueryValue qv = new QueryValue(userName);
             QueryField qf = new QueryField(userProfileQC, "username");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
             cs.addConstraint(c);
 
             QueryObjectReference qr = new QueryObjectReference(qc, "userProfile");
@@ -327,6 +328,16 @@ public class TagManager
         }
 
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
+    }
+
+    public synchronized Tag addTag(String tagName, InterMineBag bag, Profile profile)
+            throws TagNameException, TagNamePermissionException {
+        return addTag(tagName, bag.getName(), TagTypes.BAG, profile);
+    }
+
+    public synchronized Tag addTag(String tagName, TemplateQuery template, Profile profile)
+            throws TagException {
+        return addTag(tagName, template.getName(), TagTypes.TEMPLATE, profile);
     }
 
     /**
