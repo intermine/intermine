@@ -40,7 +40,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 
@@ -95,7 +94,7 @@ public class WebserviceCodeGenAction extends InterMineAction
 
             WebserviceCodeGenInfo info = null;
             if ("templateQuery".equals(source)) {
-                TemplateQuery template = getTemplateQuery(im, profile, request, session);
+                TemplateQuery template = getTemplateQuery(profile, request);
                 info = getWebserviceCodeGenInfo(
                         template,
                         serviceBaseURL,
@@ -135,21 +134,20 @@ public class WebserviceCodeGenAction extends InterMineAction
      * @param session HttpSession object
      * @return PathQuery object
      */
-    private TemplateQuery getTemplateQuery(InterMineAPI im, Profile profile,
-            HttpServletRequest request, HttpSession session) {
+    private TemplateQuery getTemplateQuery(Profile profile, HttpServletRequest request) {
 
         String name = request.getParameter("name");
         String scope = request.getParameter("scope");
         String originalTemplate = request.getParameter("originalTemplate");
 
-        TemplateManager templateManager = im.getTemplateManager();
+        TemplateManager templateManager = SessionMethods.getInterMineAPI(request).getTemplateManager();
         if (name == null) {
             throw new IllegalArgumentException("Cannot find a template in context "
                                                    + scope);
         } else {
             TemplateQuery template = (originalTemplate != null)
                                      ? templateManager.getTemplate(profile, name, scope)
-                                     : (TemplateQuery) SessionMethods.getQuery(session);
+                                     : (TemplateQuery) SessionMethods.getQuery(request);
             if (template != null) {
                 return template;
             } else {
@@ -165,15 +163,12 @@ public class WebserviceCodeGenAction extends InterMineAction
      * @return PathQuery object
      */
     private PathQuery getPathQuery(HttpSession session) {
-        // path query name is empty
         PathQuery query =  SessionMethods.getQuery(session);
 
         if (query != null) {
-            // If Class is Template, convert it to PathQuery
-            if ("TemplateQuery".equals(TypeUtil.unqualifiedName(query.getClass().toString()))) {
-                query = ((TemplateQuery) query).getPathQuery();
-            }
-            return query;
+            // Use copy constructor, as we need to return an object of this exact type,
+            // since the CodeGenerators use the class to determine how to generate code.
+            return new PathQuery(query);
         } else {
             throw new IllegalArgumentException("Cannot find a query");
         }
