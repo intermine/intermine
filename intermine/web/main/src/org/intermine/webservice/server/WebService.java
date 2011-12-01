@@ -202,20 +202,17 @@ public abstract class WebService
         try {
 
             this.request = request;
-            this.response = response;
-            initOutput(response);
-            response.setHeader("Access-Control-Allow-Origin", "*"); // Allow cross domain requests.
             try {
                 request.setCharacterEncoding("UTF-8");
             } catch (UnsupportedEncodingException ex) {
                 LOG.error(ex);
             }
-            Properties webProperties = SessionMethods.getWebProperties(request
-                    .getSession().getServletContext());
-            if ("true".equalsIgnoreCase(webProperties
-                    .getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
-                throw new ServiceForbiddenException("Web service is disabled.");
-            }
+            this.response = response;
+            response.setHeader("Access-Control-Allow-Origin", "*"); // Allow cross domain requests.
+
+            initOutput(response);
+
+            checkEnabled();
 
             authenticate();
             initState();
@@ -233,12 +230,21 @@ public abstract class WebService
 
         try {
             cleanUp();
-            // Do not persist sessions. All requests should be state-less.
-            request.getSession().invalidate();
         } catch (Throwable t) {
             LOG.error("Error cleaning up", t);
         }
+        // Do not persist sessions. All requests should be state-less.
+        request.getSession().invalidate();
 
+    }
+
+    private void checkEnabled() {
+        Properties webProperties = SessionMethods.getWebProperties(request
+                .getSession().getServletContext());
+        if ("true".equalsIgnoreCase(webProperties
+                .getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
+            throw new ServiceForbiddenException("Web service is disabled.");
+        }
     }
 
     /**
@@ -269,8 +275,6 @@ public abstract class WebService
      * profile in session. User was authenticated. It uses HTTP basic access
      * authentication.
      * {@link "http://en.wikipedia.org/wiki/Basic_access_authentication"}
-     *
-     * @param request request
      */
     private void authenticate() {
 
