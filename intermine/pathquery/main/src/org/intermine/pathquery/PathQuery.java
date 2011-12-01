@@ -1788,14 +1788,17 @@ public class PathQuery implements Cloneable
                 Class<?> parentClassType = subclassPath.getEndClassDescriptor().getType();
                 Class<?> subclassType = (subclassDesc == null ? null : subclassDesc.getType());
                 if (subclassType == null) {
-                    problems.add("Subclass " + subclass.getType() + " (for path " + subclass.getPath()
+                    problems.add("Subclass " + subclass.getType()
+                            + " (for path " + subclass.getPath()
                             + ") is not in the model");
                     continue;
                 }
                 if (!parentClassType.isAssignableFrom(subclassType)) {
                     problems.add("Subclass constraint on path " + subclass.getPath() + " (type "
-                            + DynamicUtil.getFriendlyName(parentClassType) + ") restricting to type "
-                            + DynamicUtil.getFriendlyName(subclassType) + " is not possible, as it is "
+                            + DynamicUtil.getFriendlyName(parentClassType)
+                            + ") restricting to type "
+                            + DynamicUtil.getFriendlyName(subclassType)
+                            + " is not possible, as it is "
                             + "not a subclass");
                     continue;
                 }
