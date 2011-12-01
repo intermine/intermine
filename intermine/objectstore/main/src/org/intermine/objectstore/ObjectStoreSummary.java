@@ -10,8 +10,11 @@ package org.intermine.objectstore;
  *
  */
 
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -151,6 +154,18 @@ public class ObjectStoreSummary
                         Set<String> emptyAttributes = emptyAttributesMap.get(cld.getName());
                         emptyAttributes.add(fieldName);
                     }
+                    Collections.sort(fieldValues, new Comparator<Object>() {
+                        @Override
+                        public int compare(Object arg0, Object arg1) {
+                            if (arg0 == null) {
+                                return arg1 == null ? 0 : 1;
+                            }
+                            if (arg1 == null) {
+                                return arg0 == null ? 0 : -1;
+                            }
+                            return arg0.toString().compareTo(arg1.toString());
+                        }
+                    });
                     fieldValuesMap.put(clsFieldName, fieldValues);
                     LOG.info("Adding " + fieldValues.size() + " values for "
                             + cld.getUnqualifiedName() + "." + fieldName);
@@ -308,11 +323,11 @@ public class ObjectStoreSummary
      * Get a list of reference and collection names that are always null or empty.
      *
      * @return Set of null references and empty collection names mapped to class names
-     */    
+     */
     public Map<String, Set<String>> getAllNullReferencesAndCollections() {
-    	return emptyFieldsMap;
-    }    
-    
+        return emptyFieldsMap;
+    }
+
     /**
      * Get a list of the attributes that, for a given class, are always null or empty.
      *
@@ -320,18 +335,18 @@ public class ObjectStoreSummary
      * @return Set of null attribute names
      */
     public Set<String> getNullAttributes(String className) {
-    	return emptyAttributesMap.get(className);
+        return emptyAttributesMap.get(className);
     }
-    
+
     /**
      * Get a list of the attributes that are always null or empty.
      *
      * @return Set of null attribute names mapped to class names
-     */    
+     */
     public Map<String, Set<String>> getAllNullAttributes() {
-    	return emptyAttributesMap;
+        return emptyAttributesMap;
     }
-    
+
     /**
      * Convert this summary to a properties object
      * @return the properties
@@ -362,7 +377,20 @@ public class ObjectStoreSummary
         }
         for (Map.Entry<String, Set<String>> entry: emptyFieldsMap.entrySet()) {
             String key = entry.getKey();
-            Set<String> value = entry.getValue();
+            List<String> value = new  ArrayList<String>(entry.getValue());
+            Collections.sort(value, new Comparator<Object>() {
+                @Override
+                public int compare(Object arg0, Object arg1) {
+                    if (arg0 == null) {
+                        return arg1 == null ? 0 : 1;
+                    }
+                    if (arg1 == null) {
+                        return arg0 == null ? 0 : -1;
+                    }
+                    return arg0.toString().compareTo(arg1.toString());
+                }
+            });
+
             if (value.size() > 0) {
                 String fields = StringUtil.join(value, FIELD_DELIM);
                 properties.put(key + NULL_FIELDS_SUFFIX, fields);
