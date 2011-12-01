@@ -122,7 +122,7 @@ public class LoadTemplateAction extends DispatchAction
         String path = request.getParameter("path");
         String bagName = template.getName() + "_results";
         bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
-        BagHelper.createBagFromPathQuery(template.getPathQuery(), bagName,
+        BagHelper.createBagFromPathQuery(template, bagName,
                 template.getDescription(), path, profile, im);
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
