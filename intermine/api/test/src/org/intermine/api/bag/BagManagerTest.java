@@ -9,16 +9,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManager.TagNameException;
+import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Address;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 
 public class BagManagerTest extends InterMineAPITestCase
@@ -75,6 +79,40 @@ public class BagManagerTest extends InterMineAPITestCase
 
         expected = Collections.EMPTY_MAP;
         assertEquals(expected, bagManager.getBagsWithTag(superUser, TagNames.IM_HIDDEN));
+    }
+
+    public void testGetBagsWithTagsDashCollisions() throws ObjectStoreException, TagNameException, TagNamePermissionException {
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+        InterMineBag listA = superUser.createBag("list-a", "Employee", "", classKeys);
+        InterMineBag list_A = superUser.createBag("list_a", "Employee", "", classKeys);
+
+        tagManager.addTag("FOO", listA, superUser);
+
+        Map<String, InterMineBag> expected = createExpected(listA);
+        assertEquals(expected, bagManager.getBagsWithTag(superUser, "FOO"));
+
+    }
+
+    public void testGetBagsWithTagsUnderscoreCollisions() throws ObjectStoreException, TagNameException, TagNamePermissionException {
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+        InterMineBag listA = superUser.createBag("listX", "Employee", "", classKeys);
+        InterMineBag list_A = superUser.createBag("list_", "Employee", "", classKeys);
+
+        tagManager.addTag("FOO", listA, superUser);
+
+        Map<String, InterMineBag> expected = createExpected(listA);
+        assertEquals(expected, bagManager.getBagsWithTag(superUser, "FOO"));
+    }
+
+    public void testGetBagsWithTagsCaseCollisions() throws ObjectStoreException, TagNameException, TagNamePermissionException {
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+        InterMineBag listb = superUser.createBag("list-b", "Employee", "", classKeys);
+        InterMineBag listB = superUser.createBag("list-B", "Employee", "", classKeys);
+
+        tagManager.addTag("BAR", listb, superUser);
+
+        Map<String, InterMineBag> expectedB = createExpected(listb);
+        assertEquals(expectedB, bagManager.getBagsWithTag(superUser, "BAR"));
     }
 
 
