@@ -4,11 +4,11 @@
 
 <!-- gbrowseDisplayer.jsp -->
 
-<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
+<c:choose>
+<c:when test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || className == 'Chromosome') && className != 'ChromosomeBand'}">
 
-<div id="gBrowse" class="feature">
-
+<div id="gBrowse" class="feature basic-table">
   <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
   <c:set var="type" value="${className}s"/>
@@ -69,17 +69,48 @@
   </c:if>
   <c:choose>
   <c:when test="${WEB_PROPERTIES['gbrowse.database.source'] != null}">
-    <div align="center">
-      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=750"></html:link>
+    <div class="loading">
+      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};name=${name};width=600"></html:link>
     </div>
+	<script type="text/javascript">
+	  jQuery(document).ready(function() {
+	      var img = new Image();
+	      // wrap our new image in jQuery
+	      jQuery(img)
+	        // once the image has loaded, execute this code
+	        .load(function() {
+	          // 'remove' loading
+	          jQuery("#gBrowse div").removeClass('loading');
+	          // attach image
+	          jQuery('#gBrowse a').html(this);
+	        })
+	        .error(function() {
+	          // 'remove' loading
+	          jQuery("#gBrowse div").removeClass('loading');
+	          // notify the user that the image could not be loaded
+	          jQuery('#gBrowse').addClass('warning').append(jQuery('</p>', { 'text': 'There was a problem rendering the displayer, image could not be fetched.' }));
+	        })
+	        // set the attributes of the image
+	        .attr('src', "${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?source=${WEB_PROPERTIES['gbrowse.database.source']};label=${label};type=${type};name=${name};width=600;b=1")
+	        .attr('style', 'border:1px solid #000;')
+	        .attr('title', 'GBrowse');
+	  });
+	</script>
   </c:when>
   <c:otherwise>
-    <p class="gbrowse-not-configured"><i>GBrowse is not configured in web.properties</i></p>
+   	<p>There was a problem rendering the displayer, check: <code>WEB_PROPERTIES['gbrowse.database.source']</code>.</p>
+	<script type="text/javascript">
+		jQuery('#gBrowse').addClass('warning');
+	</script>
   </c:otherwise>
   </c:choose>
-
-<br/>
 </div>
-
-</c:if>
+</c:when>
+<c:otherwise>
+<div id="gBrowse" class="feature basic-table warning">
+  <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
+  <p>There was a problem rendering the displayer.</p>
+</div>
+</c:otherwise>
+</c:choose>
 <!-- /gbrowseDisplayer.jsp -->
