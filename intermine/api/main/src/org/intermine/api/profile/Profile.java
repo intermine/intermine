@@ -587,8 +587,7 @@ public class Profile
 
 
     /**
-     * Get the user's API key token.
-     * @return
+     * @return the user's API key token.
      */
     public String getApiKey() {
         return token;
