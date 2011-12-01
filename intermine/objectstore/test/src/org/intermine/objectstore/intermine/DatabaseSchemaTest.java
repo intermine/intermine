@@ -102,6 +102,7 @@ public class DatabaseSchemaTest extends TestCase
         companyAttributes.add(company.getFieldDescriptorByName("vatNumber"));
         companyReferences.add(company.getFieldDescriptorByName("CEO"));
         companyReferences.add(company.getFieldDescriptorByName("address"));
+        companyReferences.add(company.getFieldDescriptorByName("bank"));
         got = schema.getTableFields(company);
         assertEquals(companyAttributes, got.getAttributes());
         assertEquals(companyReferences, got.getReferences());
@@ -156,6 +157,7 @@ public class DatabaseSchemaTest extends TestCase
         companyAttributes.add(company.getFieldDescriptorByName("vatNumber"));
         companyReferences.add(company.getFieldDescriptorByName("CEO"));
         companyReferences.add(company.getFieldDescriptorByName("address"));
+        companyReferences.add(company.getFieldDescriptorByName("bank"));
         got = schema.getTableFields(company);
         assertEquals(companyAttributes, got.getAttributes());
         assertEquals(companyReferences, got.getReferences());
@@ -250,6 +252,7 @@ public class DatabaseSchemaTest extends TestCase
         companyAttributes.add(company.getFieldDescriptorByName("vatNumber"));
         companyReferences.add(company.getFieldDescriptorByName("CEO"));
         companyReferences.add(company.getFieldDescriptorByName("address"));
+        companyReferences.add(company.getFieldDescriptorByName("bank"));
         got = schema.getTableFields(company);
         assertEquals(companyAttributes, got.getAttributes());
         assertEquals(companyReferences, got.getReferences());
@@ -304,6 +307,7 @@ public class DatabaseSchemaTest extends TestCase
         companyAttributes.add(company.getFieldDescriptorByName("vatNumber"));
         companyReferences.add(company.getFieldDescriptorByName("CEO"));
         companyReferences.add(company.getFieldDescriptorByName("address"));
+        companyReferences.add(company.getFieldDescriptorByName("bank"));
         got = schema.getTableFields(company);
         assertEquals(companyAttributes, got.getAttributes());
         assertEquals(companyReferences, got.getReferences());
