@@ -521,10 +521,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             } catch (Exception e) {
                 // ignore
             }
+
             conn = null;
             connInUse = true;
             // remove reference to this writer from the parent ObjectStore
             this.os.writers.remove(this);
+
             notifyAll();
         }
     }
