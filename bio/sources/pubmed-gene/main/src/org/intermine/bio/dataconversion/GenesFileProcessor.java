@@ -88,7 +88,6 @@ public class GenesFileProcessor
     public void processGenes(Map<Integer, List<String>> geneToPub, Integer orgToProcessId,
             String organismRefId, Set<String> taxonIds)
         throws IOException {
-
         String line;
         while ((line = getLine()) != null) {
             lineCounter++;
@@ -111,12 +110,10 @@ public class GenesFileProcessor
                 continue;
             }
             Integer organismId, ncbiGeneId;
-            String symbol, geneType;
             try {
                 organismId = new Integer(parts[0].trim());
                 ncbiGeneId = new Integer(parts[1].trim());
-                symbol = parts[2].trim();
-                geneType = parts[9].trim();
+                ncbiGeneId = new Integer(parts[1].trim());
             } catch (NumberFormatException ex) {
                 throw new GenesProcessorException("Invalid identifiers at line " + line);
             }
@@ -127,10 +124,10 @@ public class GenesFileProcessor
             }
 
             //String identifier = parts[3].trim();
-            String primaryId = parts[5].trim();
+            String pubMedId = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
-                processGeneInfo(ncbiGeneId, organismId, primaryId, geneToPub.get(ncbiGeneId),
-                        organismRefId, symbol, geneType);
+                processGeneInfo(ncbiGeneId, organismId, pubMedId, geneToPub.get(ncbiGeneId),
+                        organismRefId);
                 geneToPub.remove(ncbiGeneId);
             } else {
                 // new organism found, we're done processing, store all
@@ -190,8 +187,7 @@ public class GenesFileProcessor
     }
 
     private void processGeneInfo(Integer ncbiGeneId, Integer taxonId, String primaryIdentifier,
-                                 List<String> publications, String organismRefId, String symbol,
-                                 String geneType) {
+                                 List<String> publications, String organismRefId) {
 
         String primIdentifier = primaryIdentifier;
         Integer organismId = BioUtil.replaceStrain(taxonId);
@@ -226,26 +222,21 @@ public class GenesFileProcessor
                 primIdentifier = null;
             }
 
-            Item gene = createGene(ncbiGeneId, primIdentifier, symbol, organismRefId, geneType);
-
-            if (gene != null) {
-                for (String writerPubId : publications) {
-                    gene.addToCollection("publications", writerPubId);
-                }
-                // checks gene duplicates - if there are two or more same genes
-                // with the same primIdentifier but different ncbi gene id then
-                // all these genes are removed
-                if (primIdentifier != null) {
-                    if (genes.get(primIdentifier) == null) {
-                        genes.put(primIdentifier, gene);
-                    } else {
-                        genesToRemove.add(primIdentifier);
-                    }
-                } else if (!setPrimaryIdentifier(organismId.toString())) {
-                    genes.put("" + ncbiGeneId, gene);
-                }
+            Item gene = createGene(ncbiGeneId, primIdentifier, organismRefId);
+            for (String writerPubId : publications) {
+                gene.addToCollection("publications", writerPubId);
             }
-
+            // checks gene duplicates - if there are two or more same genes with
+            // the same primIdentifier but different ncbi gene id then all these genes are removed
+            if (primIdentifier != null) {
+                if (genes.get(primIdentifier) == null) {
+                    genes.put(primIdentifier, gene);
+                } else {
+                    genesToRemove.add(primIdentifier);
+                }
+            } else if (!setPrimaryIdentifier(organismId.toString())) {
+                genes.put("" + ncbiGeneId, gene);
+            }
             alreadyProcessedGenes.add(ncbiGeneId);
         }
     }
@@ -282,60 +273,15 @@ public class GenesFileProcessor
         return "10090".equals(taxonId);
     }
 
-    private Item createGene(Integer ncbiGeneId, String primaryIdentifier,
-            String symbol, String organismRefId, String geneType) {
-
-        if (geneType == null || "-".equals(geneType)) {
-
-        } else if ("other".equals(geneType)) {
-
-        } else if ("unknown".equals(geneType)) {
-
-        } else if ("snRNA".equals(geneType)) {
-
-        } else if ("scRNA".equals(geneType)) {
-
-        } else if ("snoRNA".equals(geneType)) {
-
-        } else if ("transposon".equals(geneType)) {
-
-        } else if ("pseudo".equals(geneType)) {
-
-        } else if ("ncRNA".equals(geneType)) {
-            Item ncRNA = createItem("NcRNA");
-            if (symbol != null) {
-                ncRNA.setAttribute("symbol", symbol);
-            }
-            ncRNA.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
-            if (primaryIdentifier != null) {
-                ncRNA.setAttribute("primaryIdentifier", primaryIdentifier);
-            }
-            ncRNA.setReference("organism", organismRefId);
-            ncRNA.setCollection("dataSets",
-                    new ArrayList<String>(Collections.singleton(datasetRefId)));
-            return ncRNA;
-        } else if ("tRNA".equals(geneType)
-                || "protein-coding".equals(geneType)
-                || "miscRNA".equals(geneType)
-                || "rRNA".equals(geneType)) { // ecolimine case
-            Item gene = createItem("Gene");
-            gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
-
-            if (symbol != null) {
-                gene.setAttribute("symbol", symbol);
-            }
-
-            if (primaryIdentifier != null) {
-                gene.setAttribute("primaryIdentifier", primaryIdentifier);
-            }
-
-            gene.setReference("organism", organismRefId);
-            gene.setCollection("dataSets",
-                    new ArrayList<String>(Collections.singleton(datasetRefId)));
-            return gene;
+    private Item createGene(Integer ncbiGeneId, String primaryIdentifier, String organismRefId) {
+        Item gene = createItem("Gene");
+        gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
+        if (primaryIdentifier != null) {
+            gene.setAttribute("primaryIdentifier", primaryIdentifier);
         }
-
-        return null;
+        gene.setReference("organism", organismRefId);
+        gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
+        return gene;
     }
 
     private String removeDatabasePrefix(String id) {
@@ -362,8 +308,6 @@ public class GenesFileProcessor
             }
             LOG.warn("Not using mouse identifier in pubmed gene file:" + id);
             return null;
-        } else if (dbId.toUpperCase().startsWith("ECOGENE:")) {
-            dbId = dbId.substring(8);
         }
         return dbId;
     }

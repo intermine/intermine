@@ -94,20 +94,19 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testGeneWithoutPublications() throws Exception {
         process("gene2pubmedWithoutPublications", "gene_info");
-        // three genes, one ncRNA, one other
-        assertEquals(3, getGenes().size());
+        // only one gene, others don't  have publications
+        assertEquals(1, getGenes().size());
     }
 
     /**
      * Test case when primary identifier is invalid, for example
      * is  like WbGene308375|WbGene3083343 that denotes that
      * gene with specific ncbi id corresponds more WB genes but
-     * for us it is invalid gene and is not processed. FLYBASE:FBgn009
-     * and FLYBASE:FBgn0085189 are not resolved by flybase gene resolver.
+     * for us it is invalid gene and is not processed
      */
     public void  testInvalidIdsRemoved() throws Exception {
         process("gene2pubmed", "gene_infoInvalidIdsRemoved");
-        assertEquals(10, getGenes().size());
+        assertEquals(8, getGenes().size());
     }
 
     /**
@@ -118,7 +117,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testTwoPrimaryIdentifiers() throws Exception {
         process("gene2pubmedTwoPrimaryIdentifiers", "gene_infoTwoPrimaryIdentifiers");
-        assertEquals(3, getGenes().size());
+        assertEquals(4, getGenes().size());
     }
 
     /**
@@ -128,6 +127,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testStrain() throws Exception {
         process("gene2pubmed_strain", "gene_info_strain");
+        System.out.println(getGenes().toString());
         assertEquals(6, getGenes().size());
 
         checkGene("3111", "FBgn3111", "4932", new String[]{"2"}, new String[]{DATASET});
