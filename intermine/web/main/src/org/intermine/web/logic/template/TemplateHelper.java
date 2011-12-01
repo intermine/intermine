@@ -27,14 +27,19 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
@@ -54,6 +59,8 @@ public final class TemplateHelper
     private static final String VALUE_PARAMETER = "value";
     private static final String ID_PARAMETER = "constraint";
     private static final String CODE_PARAMETER = "code";
+
+    public static Logger LOG = Logger.getLogger(TemplateHelper.class);
 
     private TemplateHelper() {
         // don't
@@ -84,6 +91,37 @@ public final class TemplateHelper
             throw new RuntimeException(e);
         }
         return sw.toString();
+    }
+
+    /**
+     * Removed from the view all the direct attributes that aren't editable constraints
+     * @return altered template query
+     */
+    public static TemplateQuery removeDirectAttributesFromView(TemplateQuery tq) {
+        TemplateQuery templateQuery = tq.clone();
+        List<String> viewPaths = templateQuery.getView();
+        String rootClass = null;
+        try {
+            rootClass = templateQuery.getRootClass();
+            for (String viewPath : viewPaths) {
+                Path path = templateQuery.makePath(viewPath);
+                if (path.getElementClassDescriptors().size() == 1
+                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
+                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
+                        templateQuery.removeView(viewPath);
+                        for (OrderElement oe : templateQuery.getOrderBy()) {
+                            if (oe.getOrderPath().equals(viewPath)) {
+                                templateQuery.removeOrderBy(viewPath);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (PathException pe) {
+            LOG.error("Error updating the template's view", pe);
+        }
+        return templateQuery;
     }
 
     public static String apiTemplateMapToXml(Map<String, ApiTemplate> templates, int version) {
