@@ -22,8 +22,8 @@ project:
 list_column_width: 3
 
 service_args:
-    - "squirrel.flymine.org/intermine-test"
-    - "Z1a3D3U16cicCdS0T6y4bdN1SQh"
+    - "squirrel.flymine.org/ws-widgets"
+    - "c1H3J3TaA7l3j6x3W8o227iMx55"
 
 list_tag: "foo"
 
@@ -32,7 +32,7 @@ gene_list_names:
     - "The great unknowns"
     - "Umlaut holders"
 
-mine_base_url: "http://squirrel.flymine.org/intermine-test"
+mine_base_url: "http://squirrel.flymine.org/ws-widgets"
 
 class_keys:
     Default:

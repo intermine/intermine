@@ -43,6 +43,7 @@
 <script type="text/javascript" src="[% proxy.uri_for('/javascripts/jquery.multiselect.filter.js') %]"></script>
 <link rel="stylesheet" href="[% proxy.uri_for('/css/style.css') %]"/>
 <script src="[% proxy.uri_for('/') %]javascripts/underscore-min.js" type="text/javascript"></script>
+<script src="[% proxy.uri_for('/') %]javascripts/flot/jquery.flot.js" type="text/javascript"></script>
 
 [% TRY %]
     [% env = settings.environment %]
