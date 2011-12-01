@@ -66,7 +66,7 @@ function generateDiseases(jSONObject, target) {
 <c:otherwise>
 	<p>There was a problem rendering the displayer.</p>
 	<script type="text/javascript">
-		jQuery('#mine-rat-displayer').addClass('warning');
+		jQuery('#mine-rat-disease').addClass('warning');
 	</script>
 </c:otherwise>
 </c:choose>
