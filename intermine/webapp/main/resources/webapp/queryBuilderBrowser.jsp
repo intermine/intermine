@@ -5,8 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-
-
 <!-- queryBuilderBrowser.jsp -->
 
 <html:xhtml/>

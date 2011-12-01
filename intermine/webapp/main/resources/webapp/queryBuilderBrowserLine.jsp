@@ -23,7 +23,8 @@
         </c:forEach>
       </c:if>
       <a name="${node.pathString}">&nbsp;</a>
-      <c:set var="isNull" value="${EMPTY_FIELD_MAP[node.parentType][node.fieldName]}"/>
+      <!-- empty collection/reference -->
+      <c:set var="isNull" value="${node.isNull}"/>
       <c:if test="${isNull}">
         <span class="nullStrike">
       </c:if>
