@@ -604,7 +604,7 @@ public class Path
     public Model getModel() {
         return model;
     }
-    
+
     /**
      * Return true if the first element in the path has the class given in input as type
      * @param cls the class
