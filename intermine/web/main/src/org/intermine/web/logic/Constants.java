@@ -137,11 +137,6 @@ public interface Constants
     String TABLE_MAP = "TABLE_MAP";
 
     /**
-     * Session attribute that holds a map from class name to map from field name to Boolean.TRUE.
-     */
-    String EMPTY_FIELD_MAP = "EMPTY_FIELD_MAP";
-
-    /**
      * Session attribute.  A Map from query id to QueryMonitor.
      */
     String RUNNING_QUERIES = "RUNNING_QUERIES";
