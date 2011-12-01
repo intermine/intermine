@@ -305,6 +305,34 @@ public class ObjectStoreSummary
     }
 
     /**
+     * Get a list of reference and collection names that are always null or empty.
+     *
+     * @return Set of null references and empty collection names mapped to class names
+     */    
+    public Map<String, Set<String>> getAllNullReferencesAndCollections() {
+    	return emptyFieldsMap;
+    }    
+    
+    /**
+     * Get a list of the attributes that, for a given class, are always null or empty.
+     *
+     * @param className the class name to look up
+     * @return Set of null attribute names
+     */
+    public Set<String> getNullAttributes(String className) {
+    	return emptyAttributesMap.get(className);
+    }
+    
+    /**
+     * Get a list of the attributes that are always null or empty.
+     *
+     * @return Set of null attribute names mapped to class names
+     */    
+    public Map<String, Set<String>> getAllNullAttributes() {
+    	return emptyAttributesMap;
+    }
+    
+    /**
      * Convert this summary to a properties object
      * @return the properties
      */

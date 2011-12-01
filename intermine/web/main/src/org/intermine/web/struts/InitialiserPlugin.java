@@ -508,20 +508,6 @@ public class InitialiserPlugin implements PlugIn
             subclassesMap.put(TypeUtil.unqualifiedName(cld.getName()), subclasses);
         }
         servletContext.setAttribute(Constants.SUBCLASSES, subclassesMap);
-        // Map from class name to Map from reference name to Boolean.TRUE if empty ref/collection
-        Map emptyFields = new HashMap();
-        for (Iterator iter = model.getClassNames().iterator(); iter.hasNext();) {
-            String classname = (String) iter.next();
-            Set nullFields = oss.getNullReferencesAndCollections(classname);
-            Map boolMap = new HashMap();
-            emptyFields.put(TypeUtil.unqualifiedName(classname), boolMap);
-            if (nullFields != null && nullFields.size() > 0) {
-                for (Iterator fiter = nullFields.iterator(); fiter.hasNext();) {
-                    boolMap.put(fiter.next(), Boolean.TRUE);
-                }
-            }
-        }
-        servletContext.setAttribute(Constants.EMPTY_FIELD_MAP, emptyFields);
     }
 
 

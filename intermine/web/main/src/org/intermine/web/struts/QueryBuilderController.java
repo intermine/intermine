@@ -37,8 +37,10 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.query.MetadataNode;
 import org.intermine.web.logic.querybuilder.ModelBrowserHelper;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.objectstore.ObjectStoreSummary;
 
 /**
  * Controller for the main query builder tile. Generally, request attributes that are required by
@@ -52,7 +54,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class QueryBuilderController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(QueryBuilderController.class);
-
+    
     /**
      * {@inheritDoc}
      */
@@ -107,9 +109,14 @@ public class QueryBuilderController extends TilesAction
             if (path == null) {
                 path = prefix;
             }
-            request.setAttribute("nodes", ModelBrowserHelper.makeSelectedNodes(path, prefix, model,
+            
+            // nodes for the model browser
+            Collection<MetadataNode> nodes = ModelBrowserHelper.makeSelectedNodes(path, prefix, model,
                     isSuperUser, query, webConfig, im.getClassKeys(), im.getBagManager(),
-                    SessionMethods.getProfile(session)));
+                    SessionMethods.getProfile(session), im.getObjectStoreSummary());
+            
+            // set nodes
+            request.setAttribute("nodes", nodes);
 
             Map<String, String> prefixes = getViewPathLinkPaths(query);
             request.setAttribute("viewPathLinkPrefixes", prefixes);
