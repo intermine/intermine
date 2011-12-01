@@ -30,9 +30,7 @@ public class ApiTemplate extends TemplateQuery implements WebSearchable {
      */
     @Override
     public synchronized ApiTemplate clone() {
-        ApiTemplate t = new ApiTemplate(this);
-        t.savedTemplateQuery = null;
-        return t;
+        return new ApiTemplate(this);
     }
 
     /**
