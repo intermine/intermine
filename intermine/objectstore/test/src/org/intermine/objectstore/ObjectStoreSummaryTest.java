@@ -67,7 +67,7 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
     }
 
-    public void testToProperties() throws Exception {
+    public void testPropertiesRoundTrip() throws Exception {
         Properties config = new Properties();
         config.put("max.field.value", "10");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
