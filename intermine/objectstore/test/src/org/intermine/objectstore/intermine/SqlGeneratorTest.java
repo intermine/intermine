@@ -99,7 +99,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2 = new MustBeDifferentMap(new HashMap());
         results.put("SelectSimpleObject", "SELECT intermine_Alias.id AS \"intermine_Aliasid\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
-        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
+        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.bankId AS intermine_ArraybankId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
         results2.put("SubQuery", Collections.singleton("Company"));
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
         results2.put("WhereSimpleEquals", Collections.singleton("Company"));
@@ -151,7 +151,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "OldComsOldContracts", "InterMineObject"})));
         results.put("ContainsNotMN", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results2.put("ContainsNotMN", NO_RESULT);
-        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results2.put("SimpleGroupBy", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("MultiJoin", "SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id, a4_.id AS a4_id FROM Company AS a1_, Department AS a2_, Manager AS a3_, Address AS a4_ WHERE a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1' ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
         results2.put("MultiJoin", new HashSet(Arrays.asList(new String[] {"Department", "Manager", "Company", "Address", "InterMineObject"})));
@@ -723,7 +723,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals("SQL incorrect.", getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
         SqlGenerator.registerOffset(q, 5, schema, db, new Integer(10), new HashMap());
         assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
         assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
@@ -812,7 +812,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     public void testForPrecomp() throws Exception {
         DatabaseSchema schema = getSchema();
         Query q = (Query) queries.get("SelectSimpleObject");
-        assertEquals(precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
+        assertEquals("SQL incorrect.", precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
     }
 
     public void testInvalidSafenesses() throws Exception {
@@ -891,6 +891,6 @@ public class SqlGeneratorTest extends SetupDataTestCase
         return "WHERE";
     }
     public String precompTableString() {
-        return "SELECT intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id";
+        return "SELECT intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.bankId AS \"intermine_Aliasbankid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id";
     }
 }
