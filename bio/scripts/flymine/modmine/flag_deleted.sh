@@ -30,12 +30,14 @@ $progname [-b]
 	-b: batch mode (all operations are executed without warning)
     -m: using the specified host (default: modfast)
     -P: using a SINGLE specified project
+    -f: using a file with deleted submission id
 
 examples:
 
 $progname
 $progname -b idem, batch mode (careful!)
 $progname -m modprod1 using dbhost modprod1
+$progname -P waterstonpiano -f remove_these 
 
 EOF
 	exit 0
@@ -43,11 +45,12 @@ EOF
 
 echo
 
-while getopts ":bm:P:" opt; do
+while getopts ":bm:P:f:" opt; do
 	case $opt in
 	b )  echo "- BATCH mode" ; INTERACT=n;;
 	m )  DBHOST=$OPTARG; echo "- Using db host $DBHOST";;
     P )  PRO=$OPTARG; echo "- Using SINGLE project $PRO";;
+    f )  INFILE=$OPTARG; echo "- Using file with deleted id $f";;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
