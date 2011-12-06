@@ -134,9 +134,10 @@ if (!im.bagWorks) {
               <td class="sorting"><im:displaypath path="${savedBag.value.type}"/></td>
               <td id="size_${savedBag.value.name}" class="sorting" align="right">
                 <c:out value="${savedBag.value.size}"/>&nbsp;<c:choose>
-                  <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">objects</c:when>
-                  <c:otherwise>values</c:otherwise>
+                  <c:when test="${fn:endsWith(savedBag.value.class.name, 'InterMineIdBag')}">object</c:when>
+                  <c:otherwise>value</c:otherwise>
                 </c:choose>
+                <c:if test="${savedBag.value.size != 1}">s</c:if>
               </td>
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
               
@@ -256,6 +257,13 @@ if (!im.bagWorks) {
 	            						'class': 'bagToUpgrade'
 	            					}))
 	            					.appendTo(newList);
+	            				} else if (list['status'] == 'CURRENT') {
+	            					var listSize = list['size'];
+	            					if (listSize != undefined) {
+	            						newList.find('td[id^="size"]').text(function() {
+	            							return listSize + " value" + ((listSize != 1) ? 's' : '');
+	            						});
+	            					}
 	            				}
 	            				
 	            				newList.prependTo(jQuery('div.status-table.' + list['status'] + ' table tbody'))
