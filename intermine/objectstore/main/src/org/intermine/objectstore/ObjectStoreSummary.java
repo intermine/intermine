@@ -60,7 +60,8 @@ public class ObjectStoreSummary
     private final Map<String, Integer> classCountsMap = new HashMap<String, Integer>();
     private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
-    private final Map<String, Set<String>> emptyAttributesMap = new HashMap<String, Set<String>>();
+    protected final Map<String, Set<String>> emptyAttributesMap =
+        new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
     // This should be overwritten by MAX_FIELD_VALUES from properties
     protected int maxValues = DEFAULT_MAX_VALUES;
@@ -68,6 +69,7 @@ public class ObjectStoreSummary
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
     static final String FIELDS_SUFFIX = ".fieldValues";
+    static final String EMPTY_ATTRIBUTES_SUFFIX = ".emptyAttributes";
     static final String NULL_MARKER = "___NULL___";
     static final String FIELD_DELIM = "$_^";
     static final String MAX_FIELD_VALUES = "max.field.values";
@@ -98,11 +100,10 @@ public class ObjectStoreSummary
 
         Model model = os.getModel();
 
-        //classCounts - number of objects of each type in the database
+        // classCounts - number of objects of each type in the database
         LOG.info("Collecting class counts...");
         for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
             nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
-            emptyAttributesMap.put(cld.getName(), new HashSet<String>());
 
             if (!classCountsMap.containsKey(cld.getName())) {
                 int classCount = countClass(os, cld.getType());
@@ -155,6 +156,10 @@ public class ObjectStoreSummary
                     }
                     if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
                         Set<String> emptyAttributes = emptyAttributesMap.get(cld.getName());
+                        if (emptyAttributes == null) {
+                            emptyAttributes = new HashSet<String>();
+                            emptyAttributesMap.put(cld.getName(), emptyAttributes);
+                        }
                         emptyAttributes.add(fieldName);
                     }
                     Collections.sort(fieldValues, new Comparator<Object>() {
@@ -282,6 +287,10 @@ public class ObjectStoreSummary
                 String className = key.substring(0, key.lastIndexOf("."));
                 List<String> fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
                 emptyFieldsMap.put(className, new TreeSet<String>(fieldNames));
+            }  else if (key.endsWith(EMPTY_ATTRIBUTES_SUFFIX)) {
+                String className = key.substring(0, key.lastIndexOf("."));
+                List<String> attributeNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
+                emptyAttributesMap.put(className, new TreeSet<String>(attributeNames));
             } else if (key.equals(MAX_FIELD_VALUES)) {
                 this.maxValues = Integer.parseInt(value);
             }
@@ -330,7 +339,10 @@ public class ObjectStoreSummary
      * @return Set of null reference and empty collection names
      */
     public Set<String> getNullReferencesAndCollections(String className) {
-        return emptyFieldsMap.get(className);
+        if (emptyFieldsMap.containsKey(className)) {
+            return Collections.unmodifiableSet(emptyFieldsMap.get(className));
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -339,7 +351,7 @@ public class ObjectStoreSummary
      * @return Set of null references and empty collection names mapped to class names
      */
     public Map<String, Set<String>> getAllNullReferencesAndCollections() {
-        return emptyFieldsMap;
+        return Collections.unmodifiableMap(emptyFieldsMap);
     }
 
     /**
@@ -349,7 +361,10 @@ public class ObjectStoreSummary
      * @return Set of null attribute names
      */
     public Set<String> getNullAttributes(String className) {
-        return emptyAttributesMap.get(className);
+        if (emptyAttributesMap.containsKey(className)) {
+            return Collections.unmodifiableSet(emptyAttributesMap.get(className));
+        }
+        return Collections.emptySet();
     }
 
     /**
@@ -358,7 +373,7 @@ public class ObjectStoreSummary
      * @return Set of null attribute names mapped to class names
      */
     public Map<String, Set<String>> getAllNullAttributes() {
-        return emptyAttributesMap;
+        return Collections.unmodifiableMap(emptyAttributesMap);
     }
 
     /**
@@ -390,7 +405,18 @@ public class ObjectStoreSummary
             }
             properties.put(key + FIELDS_SUFFIX, sb.toString());
         }
-        for (Map.Entry<String, Set<String>> entry: emptyFieldsMap.entrySet()) {
+        // emptyFieldsMap contains empty references and collections
+        writeEmptyMapToProperties(properties, NULL_FIELDS_SUFFIX, emptyFieldsMap);
+
+        // emptyAttributesMap contains empty attributes only
+        writeEmptyMapToProperties(properties, EMPTY_ATTRIBUTES_SUFFIX, emptyAttributesMap);
+
+        return properties;
+    }
+
+    private void writeEmptyMapToProperties(Properties properties, String keySuffix,
+            Map<String, Set<String>> emptyMap) {
+        for (Map.Entry<String, Set<String>> entry: emptyMap.entrySet()) {
             String key = entry.getKey();
             List<String> value = new  ArrayList<String>(entry.getValue());
             Collections.sort(value, new Comparator<Object>() {
@@ -408,10 +434,9 @@ public class ObjectStoreSummary
 
             if (value.size() > 0) {
                 String fields = StringUtil.join(value, FIELD_DELIM);
-                properties.put(key + NULL_FIELDS_SUFFIX, fields);
+                properties.put(key + keySuffix, fields);
             }
         }
-        return properties;
     }
 
     private Results getFieldSummary(ClassDescriptor cld, String fieldName, ObjectStore os) {

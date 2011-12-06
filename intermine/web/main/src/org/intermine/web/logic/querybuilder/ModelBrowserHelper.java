@@ -60,7 +60,7 @@ public final class ModelBrowserHelper
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
-     * @param objectStoreSummary to determine which collections/references/attributes are empty
+     * @param oss to determine which collections/references/attributes are empty
      * @throws PathException if the query is not valid
      */
     public static Collection<MetadataNode> makeSelectedNodes(String stringPath, String prefix,
@@ -68,8 +68,8 @@ public final class ModelBrowserHelper
             Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
             ObjectStoreSummary oss)
         throws PathException {
-    	
-    	// Gene.crossReferences, ...
+
+        // Gene.crossReferences, ...
         Collection<MetadataNode> nodes = makeNodes(stringPath, model, isSuperUser,
                 query.getSubclasses(), query, classKeys, bagManager, profile, oss);
         List<String> view = query.getView();
@@ -127,13 +127,14 @@ public final class ModelBrowserHelper
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
-     * @param objectStoreSummary to determine which nodes are null
+     * @param oss to determine which nodes are null
      */
     public static Collection<MetadataNode> makeNodes(String path, Model model, boolean isSuperUser,
-            Map<String, String> subclasses, PathQuery query, Map<String, List<FieldDescriptor>> classKeys,
-            BagManager bagManager, Profile profile, ObjectStoreSummary oss) {   	
-    	
-    	String className, subPath;
+            Map<String, String> subclasses, PathQuery query, Map<String,
+            List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
+            ObjectStoreSummary oss) {
+
+        String className, subPath;
         if (path.indexOf(".") == -1) {
             className = path;
             subPath = "";
@@ -141,7 +142,7 @@ public final class ModelBrowserHelper
             className = path.substring(0, path.indexOf("."));
             subPath = path.substring(path.indexOf(".") + 1);
         }
-        
+
         Map<String, MetadataNode> nodes = new LinkedHashMap<String, MetadataNode>();
         List<String> empty = Collections.emptyList();
         nodes.put(className, new MetadataNode(className, empty, query, classKeys, bagManager,
@@ -168,20 +169,20 @@ public final class ModelBrowserHelper
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
-     * @param objectStoreSummary to determine which nodes are null
+     * @param oss to determine which nodes are null
      */
     protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
             Map<String, MetadataNode> nodes, boolean isSuperUser, List<String> structure,
             Map<String, String> subclasses, String reverseFieldName, PathQuery query,
             Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
             ObjectStoreSummary oss) {
-        
-    	// null atrtributes, references and collections
-    	Set<String> nullAttr = oss.getNullAttributes(cld.getName());
-    	Set<String> nullRefsCols = oss.getNullReferencesAndCollections(cld.getName());
-    	
-    	List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
-    	
+
+        // null atrtributes, references and collections
+        Set<String> nullAttr = oss.getNullAttributes(cld.getName());
+        Set<String> nullRefsCols = oss.getNullReferencesAndCollections(cld.getName());
+
+        List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
+
         // compare FieldDescriptors by name
         Comparator<FieldDescriptor> comparator = new Comparator<FieldDescriptor>() {
             public int compare(FieldDescriptor o1, FieldDescriptor o2) {
@@ -249,11 +250,10 @@ public final class ModelBrowserHelper
                 newStructure.add("ell");
             }
             MetadataNode parent = nodes.get(currentPath);
-            
+
             // is the field null/empty
-            Boolean isNull = ((nullAttr != null && ! nullAttr.isEmpty() && nullAttr.contains(fieldName)) ||
-            		(nullRefsCols != null && ! nullRefsCols.isEmpty() && nullRefsCols.contains(fieldName)));
-            
+            Boolean isNull = (nullAttr.contains(fieldName) || nullRefsCols.contains(fieldName));
+
             MetadataNode node = new MetadataNode(parent, fieldName, button, newStructure, query,
                     classKeys, bagManager, profile, isNull);
             node.setModel(cld.getModel());

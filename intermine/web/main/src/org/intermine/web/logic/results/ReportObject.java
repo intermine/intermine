@@ -603,7 +603,7 @@ public class ReportObject
 
         String refName = ref.getName();
         // do not bother with 'em if they WILL be size 0
-        if (nullRefsCols == null || !nullRefsCols.contains(refName)) {
+        if (!nullRefsCols.contains(refName)) {
             // check whether reference is null without dereferencing
             Object proxyObject = null;
             ProxyReference proxy = null;
@@ -642,7 +642,7 @@ public class ReportObject
 
         String colName = fd.getName();
         // do not bother with 'em if they WILL be size 0
-        if (nullRefsCols == null || !nullRefsCols.contains(colName)) {
+        if (!nullRefsCols.contains(colName)) {
             Object fieldValue = null;
             try {
                 fieldValue = object.getFieldValue(colName);
