@@ -109,7 +109,8 @@ public class ContactForm extends ValidatorForm
 
         ActionErrors errors = super.validate(mapping, request);
 
-        if ((errors == null || errors.size() == 0) && getMonkey().indexOf('@') == -1) {
+        if ((errors == null || errors.size() == 0) && getMonkey() != null
+                && getMonkey().indexOf('@') == -1) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
@@ -149,7 +150,8 @@ public class ContactForm extends ValidatorForm
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
                     new ActionMessage("errors.contact.invalidmessage"));
-            request.setAttribute("response", "Please check that you have provided your message."); // ajax
+            // ajax
+            request.setAttribute("response", "Please check that you have provided your message.");
         }
 
         return errors;
