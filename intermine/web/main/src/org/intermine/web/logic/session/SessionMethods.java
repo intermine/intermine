@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.util.MessageResources;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
@@ -66,6 +67,7 @@ import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
+import org.json.JSONException;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -1123,8 +1125,8 @@ public final class SessionMethods
      * @param session session
      * @return SavedBagsStatus
      */
-    public static Map<String, String> getNotCurrentSavedBagsStatus(HttpSession session) {
-        return (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
+    public static Map<String, Map<String, Object>> getNotCurrentSavedBagsStatus(HttpSession session) {
+        return (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
     }
 
     /**
@@ -1140,12 +1142,22 @@ public final class SessionMethods
      */
     public static void setNotCurrentSavedBagsStatus(HttpSession session, Profile profile) {
         @SuppressWarnings("unchecked")
-        Map<String, String> savedBagsStatus = new HashedMap();
+        Map<String, Map<String, Object>> savedBagsStatus = new HashedMap();
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         synchronized (savedBags) {
             for (InterMineBag bag : savedBags.values()) {
                 if (!bag.isCurrent()) {
-                    savedBagsStatus.put(bag.getName(), bag.getState());
+                	Map<String, Object> bagAttributes = new HashMap<String, Object>();
+                	String bagState = bag.getState();
+                	bagAttributes.put("status", bagState);
+                	if (bagState.equals(BagState.CURRENT.toString())) {
+                		try {
+                			bagAttributes.put("size", bag.getSize());
+                		} catch (ObjectStoreException e) {
+                			// nothing serious happens here...
+                		}
+                	}
+                    savedBagsStatus.put(bag.getName(), bagAttributes);
                 }
             }
         }

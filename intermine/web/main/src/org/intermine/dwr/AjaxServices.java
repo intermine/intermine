@@ -1466,23 +1466,32 @@ public class AjaxServices
         return defaultList;
     }
 
+    /**
+     * This method gets the latest bags from the session (SessionMethods) and returns them in JSON
+     * @return JSON serialized to a String
+     * @throws JSONException
+     */
     @SuppressWarnings("unchecked")
     public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
         @SuppressWarnings("unchecked")
-        Map<String, String> savedBagStatus =
-            (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
+        Map<String, Map<String, Object>> savedBagStatus =
+            (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
 
         // this is where my lists go
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
-            for (Map.Entry<String, String> entry : savedBagStatus.entrySet()) {
+            for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
+            	Map<String, Object> listAttributes = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
-                if (entry.getValue().equals(BagState.CURRENT.toString()) ||
-                        entry.getValue().equals(BagState.TO_UPGRADE.toString())) {
+                if (listAttributes.get("status").equals(BagState.CURRENT.toString()) ||
+                		listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
-                    list.put("status", entry.getValue());
+                    list.put("status", listAttributes.get("status"));
+                    if (listAttributes.containsKey("size")) {
+                    	list.put("size", listAttributes.get("size"));
+                    }
                     lists.add(list);
                 }
             }
