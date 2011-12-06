@@ -658,7 +658,6 @@ public class GenomicRegionSearchService
         return GenomicRegionSearchUtil.createQueryList(
             grsc.getGenomicRegionList(),
             grsc.getExtendedRegionSize(),
-            getChromosomeInfomationMap().get(grsc.getOrgName()),
             grsc.getOrgName(),
             grsc.getFeatureTypes());
     }
@@ -770,22 +769,28 @@ public class GenomicRegionSearchService
                 }
             }
 
-            if ((gr.getStart() >= 1 && gr.getStart() <= ci
-                    .getChrLength())
-                    && (gr.getEnd() >= 1 && gr.getEnd() <= ci
-                            .getChrLength())) {
-                if (gr.getStart() > gr.getEnd()) { // Start must be smaller than End
-                    GenomicRegion newSpan = new GenomicRegion();
-                    newSpan.setChr(ci.getChrPID()); // converted to the right case
-                    newSpan.setStart(gr.getEnd());
-                    newSpan.setEnd(gr.getStart());
-                    newSpan.setExtendedRegionSize(0);
-                    newSpan.setOrganism(grsc.getOrgName());
-                    passedSpanList.add(newSpan);
+            if (gr.getStart() > gr.getEnd()) {
+                GenomicRegion newSpan = new GenomicRegion();
+                newSpan.setChr(ci.getChrPID()); // converted to the right case
+
+                if (gr.getEnd() < 1) {
+                    newSpan.setStart(1);
                 } else {
-                    gr.setChr(ci.getChrPID());
-                    passedSpanList.add(gr);
+                    newSpan.setStart(gr.getEnd());
                 }
+
+                newSpan.setEnd(gr.getStart());
+                newSpan.setExtendedRegionSize(0);
+                newSpan.setOrganism(grsc.getOrgName());
+                passedSpanList.add(newSpan);
+            } else {
+                gr.setChr(ci.getChrPID());
+
+                if (gr.getStart() < 1) {
+                    gr.setStart(1);
+                }
+
+                passedSpanList.add(gr);
             }
         }
 
@@ -1066,7 +1071,12 @@ public class GenomicRegionSearchService
                 // translatedClassName
                 String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
                         webConfig);
-                String firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
+
+                String firstSoTermDes = firstFeatureType;
+                if (featureTypeToSOTermMap.get(firstFeatureType) != null) {
+                    firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
+                }
+
                 firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
                 // hack - feature name is null, use id
@@ -1123,18 +1133,21 @@ public class GenomicRegionSearchService
                     + "</td><td><a target='' title='' href='" + baseURL + "/" + path
                     + "/report.do?id=" + firstId + "'>");
 
-                if (firstSymbol == null || "".equals(firstSymbol)) {
-                    sb.append("<strong><i>unknown symbol</i></strong>");
-                } else {
+                if ((firstSymbol == null || "".equals(firstSymbol))
+                        && (firstPid == null || "".equals(firstPid))) {
+                    sb.append("<i>unknown identifier</i>");
+                } else if ((firstSymbol == null || "".equals(firstSymbol))
+                        && (firstPid != null && "".equals(firstPid))) {
+                    sb.append("<span style='font-size: 11px;'>" + firstPid
+                            + "</span>");
+                } else if ((firstSymbol != null && "".equals(firstSymbol))
+                        && (firstPid == null || "".equals(firstPid))) {
                     sb.append("<strong>" + firstSymbol + "</strong>");
-                }
-
-                sb.append(" ");
-
-                if (firstPid == null || "".equals(firstPid)) {
-                    sb.append("<span style='font-size: 11px;'><i>unknown DB identifier</i></span>");
                 } else {
-                    sb.append("<span style='font-size: 11px;'>" + firstPid + "</span>");
+                    sb.append("<strong>" + firstSymbol + "</strong>")
+                            .append(" ")
+                            .append("<span style='font-size: 11px;'>"
+                                    + firstPid + "</span>");
                 }
 
                 sb.append("</a></td><td>" + firstSoTerm
@@ -1159,7 +1172,12 @@ public class GenomicRegionSearchService
 
                     String soTerm = WebUtil.formatPath(featureType, interMineAPI,
                             webConfig);
-                    String soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
+
+                    String soTermDes = featureType;
+                    if (featureTypeToSOTermMap.get(featureType) != null) {
+                        soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
+                    }
+
                     soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
                     String location = chr + ":" + start + ".." + end;
@@ -1167,19 +1185,21 @@ public class GenomicRegionSearchService
                     sb.append("<tr><td><a target='' title='' href='"
                             + baseURL + "/" + path + "/report.do?id="  + id + "'>");
 
-                    if (symbol == null || "".equals(symbol)) {
-                        sb.append("<strong><i>unknown symbol</i></strong>");
-                    } else {
+                    if ((symbol == null || "".equals(symbol))
+                            && (pid == null || "".equals(pid))) {
+                        sb.append("<i>unknown identifier</i>");
+                    } else if ((symbol == null || "".equals(symbol))
+                            && (pid != null && "".equals(pid))) {
+                        sb.append("<span style='font-size: 11px;'>" + pid
+                                + "</span>");
+                    } else if ((symbol != null && "".equals(symbol))
+                            && (pid == null || "".equals(pid))) {
                         sb.append("<strong>" + symbol + "</strong>");
-                    }
-
-                    sb.append(" ");
-
-                    if (pid == null || "".equals(pid)) {
-                        sb.append("<span style='font-size: 11px;'>"
-                                +  "<i>unknown DB identifier</i></span>");
                     } else {
-                        sb.append("<span style='font-size: 11px;'>" + pid + "</span>");
+                        sb.append("<strong>" + symbol + "</strong>")
+                                .append(" ")
+                                .append("<span style='font-size: 11px;'>"
+                                        + pid + "</span>");
                     }
 
                     sb.append("</a></td><td>"
