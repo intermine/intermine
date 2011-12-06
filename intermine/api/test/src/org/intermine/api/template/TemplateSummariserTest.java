@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -27,6 +28,7 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreFactory;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.StoreDataTestCase;
@@ -118,8 +120,10 @@ public class TemplateSummariserTest extends StoreDataTestCase
     }
 
     public void test1() throws Exception {
+        Properties ossConfig = new Properties();
+        ObjectStoreSummary oss = new ObjectStoreSummary(ossConfig);
         ApiTemplate t = profile.getSavedTemplates().get("template");
-        TemplateSummariser summariser = new TemplateSummariser(os, uosw);
+        TemplateSummariser summariser = new TemplateSummariser(os, uosw, oss);
         assertFalse(summariser.isSummarised(t));
         summariser.summarise(t);
         assertTrue(summariser.isSummarised(t));

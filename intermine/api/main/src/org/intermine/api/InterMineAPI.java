@@ -94,7 +94,7 @@ public class InterMineAPI
         this.templateManager = new TemplateManager(superUser, model,
                 trackerDelegate.getTemplateTracker());
         this.templateSummariser = new TemplateSummariser(objectStore,
-                profileManager.getProfileObjectStoreWriter());
+                profileManager.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
         this.trackerDelegate = trackerDelegate;
