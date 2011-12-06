@@ -234,7 +234,6 @@ public final class GenomicRegionSearchUtil
      *
      * @param genomicRegions list of gr
      * @param extension the flanking
-     * @param chromInfo chr info map
      * @param organismName org short name
      * @param featureTypes ft
      * @return map of gr-query
@@ -242,10 +241,9 @@ public final class GenomicRegionSearchUtil
     public static Map<GenomicRegion, Query> createQueryList(
             Collection<GenomicRegion> genomicRegions,
             int extension,
-            Map<String, ChromosomeInfo> chromInfo,
             String organismName,
             Set<Class<?>> featureTypes) {
-        return createRegionQueries(genomicRegions, extension, chromInfo, organismName,
+        return createRegionQueries(genomicRegions, extension, organismName,
                 featureTypes, false);
     }
 
@@ -265,13 +263,13 @@ public final class GenomicRegionSearchUtil
             Map<String, ChromosomeInfo> chromInfo,
             String organismName,
             Set<Class<?>> featureTypes) {
-        return createRegionQueries(genomicRegions, extension, chromInfo, organismName,
+        return createRegionQueries(genomicRegions, extension, organismName,
                 featureTypes, true);
     }
 
     private static Map<GenomicRegion, Query> createRegionQueries(
             Collection<GenomicRegion> genomicRegions,
-                int extension, Map<String, ChromosomeInfo> chromInfo, String organismName,
+                int extension, String organismName,
                 Set<Class<?>> featureTypes, boolean idOnly) {
 
         Map<GenomicRegion, Query> queryMap = new LinkedHashMap<GenomicRegion, Query>();
@@ -282,7 +280,7 @@ public final class GenomicRegionSearchUtil
             Integer end;
 
             if (extension > 0) {
-                aSpan = extendGenomicRegion(aSpan, extension, chromInfo);
+                aSpan = extendGenomicRegion(aSpan, extension);
                 start = aSpan.getExtendedStart();
                 end = aSpan.getExtendedEnd();
             } else {
@@ -384,12 +382,8 @@ public final class GenomicRegionSearchUtil
      * @param gr GenomicRegion
      * @return GenomicRegion
      */
-    private static GenomicRegion extendGenomicRegion(GenomicRegion gr, int extension,
-            Map<String, ChromosomeInfo> chromInfo) {
+    private static GenomicRegion extendGenomicRegion(GenomicRegion gr, int extension) {
 
-//        gr.setExtendedRegionSize(extension);
-
-        int max = chromInfo.get(gr.getChr().toLowerCase()).getChrLength();
         int min = 1;
 
         int start = gr.getStart();
@@ -404,11 +398,7 @@ public final class GenomicRegionSearchUtil
             gr.setExtendedStart(extendedStart);
         }
 
-        if (extendedEnd > max) {
-            gr.setExtendedEnd(max);
-        } else {
-            gr.setExtendedEnd(extendedEnd);
-        }
+        gr.setExtendedEnd(extendedEnd);
 
         return gr;
     }

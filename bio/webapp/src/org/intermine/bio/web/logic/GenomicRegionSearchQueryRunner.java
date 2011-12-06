@@ -229,15 +229,14 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 // Add orgName to HashSet to filter out duplication
                 orgSet.add(org);
 
+                ChromosomeInfo chrInfo = new ChromosomeInfo();
+                chrInfo.setOrgName(org);
+                chrInfo.setChrPID(chrPID);
                 if (chrLength != null) {
-                    ChromosomeInfo chrInfo = new ChromosomeInfo();
-                    chrInfo.setOrgName(org);
-                    chrInfo.setChrPID(chrPID);
                     chrInfo.setChrLength(chrLength);
-
-                    // Add ChromosomeInfo to Arraylist
-                    chrInfoList.add(chrInfo);
                 }
+                // Add ChromosomeInfo to Arraylist
+                chrInfoList.add(chrInfo);
             }
 
             // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
