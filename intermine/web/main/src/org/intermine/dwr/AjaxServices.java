@@ -893,13 +893,17 @@ public class AjaxServices
 
     /**
      * validation that happens before new bag is saved
-     * @param bagName name of new bag
+     * @param listName name of new bag
      * @param selectedBags bags involved in operation
      * @param operation which operation is taking place - delete, union, intersect or subtract
      * @return error msg, if any
      */
-    public static String validateBagOperations(String bagName, String[] selectedBags,
+    public static String validateBagOperations(String listName, String[] selectedBags,
                                                String operation) {
+        String bagName = null;
+        if (!StringUtils.isEmpty(listName)) {
+            bagName = listName.trim();
+        }
 
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
