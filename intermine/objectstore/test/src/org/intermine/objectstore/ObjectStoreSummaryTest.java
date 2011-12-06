@@ -11,7 +11,9 @@ package org.intermine.objectstore;
  */
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.Test;
 
@@ -74,8 +76,8 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
 
         Properties out = oss.toProperties();
-        oss = new ObjectStoreSummary(out);
+        ObjectStoreSummary ossFromProps = new ObjectStoreSummary(out);
 
-        assertEquals(out, oss.toProperties());
+        assertEquals(out, ossFromProps.toProperties());
     }
 }
