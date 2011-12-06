@@ -10,7 +10,6 @@ package org.intermine.objectstore;
  *
  */
 
-import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,7 +68,7 @@ public class ObjectStoreSummary
     static final String FIELDS_SUFFIX = ".fieldValues";
     static final String NULL_MARKER = "___NULL___";
     static final String FIELD_DELIM = "$_^";
-
+    static final String MAX_FIELD_VALUES = "max.field.values";
     /**
      * The default number of values to make available for UI dropdowns - attributes with more values
      * will not become dropdowns.
@@ -104,6 +103,7 @@ public class ObjectStoreSummary
 
             if (!classCountsMap.containsKey(cld.getName())) {
                 int classCount = countClass(os, cld.getType());
+                LOG.info("Adding class count: " + cld.getUnqualifiedName() + " = " + classCount);
                 classCountsMap.put(cld.getName(), new Integer(classCount));
 
                 // if this class is empty all subclasses MUST be empty as well
@@ -240,8 +240,9 @@ public class ObjectStoreSummary
                             if ((superCld.getReferenceDescriptorByName(fieldName, true) != null)
                                     || (superCld.getCollectionDescriptorByName(fieldName,
                                             true) != null)) {
-                                LOG.info("Pushing empty ref/col from " + cld.getUnqualifiedName()
-                                        + "." + fieldName + " to " + superCld.getUnqualifiedName());
+                                LOG.info("Pushing not empty ref/col from "
+                                        + cld.getUnqualifiedName() + "." + fieldName + " to "
+                                        + superCld.getUnqualifiedName());
                                 notEmptyFields.add(superClsField);
                             }
                         }
@@ -278,7 +279,9 @@ public class ObjectStoreSummary
                 String className = key.substring(0, key.lastIndexOf("."));
                 List<String> fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
                 emptyFieldsMap.put(className, new TreeSet<String>(fieldNames));
-            }
+            } //else if (key.equals(MAX_SUMMARY_COUNT)) {
+              //  this.maxValues = Integer.parseInt(value);
+            //}
         }
     }
 
@@ -424,6 +427,8 @@ public class ObjectStoreSummary
         // This is much faster using a sub query and SubQueryExistsConstraint than just selecting
         // one row from the joined tables.  Probably because all queries have to be ordered for
         // batching to work.
+
+        LOG.info("Querying for empty: " + cld.getUnqualifiedName() + "." + ref.getName());
         Query q = new Query();
         q.setDistinct(false);
 
@@ -458,7 +463,7 @@ public class ObjectStoreSummary
         Results results = os.execute(q2, 1, false, false, false);
         boolean empty = !results.iterator().hasNext();
 
-        LOG.debug("Query for empty " + cld.getUnqualifiedName() + "." + ref.getName() + " took "
+        LOG.info("Query for empty " + cld.getUnqualifiedName() + "." + ref.getName() + " took "
                 + (System.currentTimeMillis() - startTime) + "ms.");
         return empty;
     }
