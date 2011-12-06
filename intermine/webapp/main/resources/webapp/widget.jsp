@@ -18,7 +18,7 @@
 <c:set var="type" value="${split[fn:length(split)-1]}"/>
 
 <html:xhtml/>
-<form action="widgetAction.do" id="widgetaction${widget.id}">
+<form action="widgetAction.do" id="widgetaction${widget.id}" method="post">
 <html:hidden property="link" value="${widget.link}"/>
 <html:hidden property="bagType" value="${bag.type}"/>
 <html:hidden property="bagName" value="${bag.name}" />
@@ -98,30 +98,16 @@
         <!-- View in results table button -->
         <li id="tool_bar_li_display_widget_${widget.id}" class="tb_button">
           <span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button"
-          onclick="jQuery('#tool_bar_item_display_widget_${widget.id}').toggle();return false;"
-          >View in results table</span>
+            onclick="javascript:submitWidgetForm('${widget.id}','display','null');return false;" 
+          >View</span>
         </li>
         <li id="tool_bar_li_export_widget_${widget.id}" class="tb_button">
           <span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button"
-          onclick="jQuery('#tool_bar_item_export_widget_${widget.id}').toggle();return false;"
+            onclick="javascript:submitWidgetForm('${widget.id}','export','tab');return false;" 
           >Download</span>
         </li>
     </ul>
   </div> 
-       <!-- View in results table table --> 
-       <div id="tool_bar_item_display_widget_${widget.id}" style="display:none;width:200px;text-align:left" class="tool_bar_item"> 
-         <a href="javascript:submitWidgetForm('${widget.id}','display',null)">Display checked items in results table</a><br/> 
-         <a href="javascript:submitWidgetForm('${widget.id}','displayAll',null)">Display all items in results table</a> 
-         <hr/> 
-         <a href="#" onclick="jQuery('#tool_bar_item_display_widget_${widget.id}').toggle();return false;">Cancel</a> 
-       </div> 
-      
-       <div id="tool_bar_item_export_widget_${widget.id}" style="display:none;width:230px;text-align:left" class="tool_bar_item"> 
-         <a href="javascript:submitWidgetForm('${widget.id}','export','csv')">Export selected as comma separated values</a><br/> 
-         <a href="javascript:submitWidgetForm('${widget.id}','export','tab')">Export selected as tab separated values</a> 
-         <hr/> 
-       <a href="#" onclick="jQuery('#tool_bar_item_export_widget_${widget.id}').toggle();return false;">Cancel</a> 
-</div>
  </c:if>
 
 <%-- output different widget containers if it's a graph widget because flyatlas widget is too tall --%>
