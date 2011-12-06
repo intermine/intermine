@@ -186,7 +186,7 @@ public final class NameUtil
                 i++;
             }
         }
-        return newName;
+        return newName.trim();
     }
 
     /**
