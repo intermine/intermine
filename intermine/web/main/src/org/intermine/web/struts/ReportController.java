@@ -124,6 +124,13 @@ public class ReportController extends InterMineAction
                             placedInlineLists.put(tagName, listsForAspect);
                         }
                         listsForAspect.add(list);
+                    } else if (tagName.equals(TagNames.IM_SUMMARY)) {
+                        List<InlineList> summaryLists = placedInlineLists.get(tagName);
+                        if (summaryLists == null) {
+                        	summaryLists = new ArrayList<InlineList>();
+                            placedInlineLists.put(tagName, summaryLists);
+                        }
+                        summaryLists.add(list);
                     }
                 }
             }
@@ -156,6 +163,10 @@ public class ReportController extends InterMineAction
                     reportObject.getRefsAndCollections());
             placementRefsAndCollections.put(TagNames.IM_ASPECT_MISC, miscRefs);
 
+            // summary refs and colls
+            Map<String, DisplayField> summaryRefsCols = new TreeMap<String, DisplayField>();
+            placementRefsAndCollections.put(TagNames.IM_SUMMARY, summaryRefsCols);            
+            
             for (Iterator<Entry<String, DisplayField>> iter
                     = reportObject.getRefsAndCollections().entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, DisplayField> entry = iter.next();
@@ -300,7 +311,12 @@ public class ReportController extends InterMineAction
                     miscRefs.remove(fd.getName());
                 }
             } else if (tagName.equals(TagNames.IM_SUMMARY)) {
-                //miscRefs.remove(fd.getName());
+            	Map<String, DisplayField> summary = placementRefsAndCollections.get(TagNames.IM_SUMMARY);
+                if (summary != null) {
+                	summary.put(fd.getName(), dispRef);
+                	miscRefs.remove(fd.getName());
+                }
+	            miscRefs.remove(fd.getName());
             }
         }
     }
