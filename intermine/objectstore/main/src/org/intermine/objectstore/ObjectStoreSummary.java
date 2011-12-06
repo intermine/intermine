@@ -62,6 +62,8 @@ public class ObjectStoreSummary
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> emptyAttributesMap = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
+    // This should be overwritten by MAX_FIELD_VALUES from properties
+    protected int maxValues = DEFAULT_MAX_VALUES;
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
@@ -69,6 +71,7 @@ public class ObjectStoreSummary
     static final String NULL_MARKER = "___NULL___";
     static final String FIELD_DELIM = "$_^";
     static final String MAX_FIELD_VALUES = "max.field.values";
+
     /**
      * The default number of values to make available for UI dropdowns - attributes with more values
      * will not become dropdowns.
@@ -120,8 +123,8 @@ public class ObjectStoreSummary
         // fieldValues - find all attributes with few unique values for populating dropdowns,
         // also look for any attributes that are empty.
         LOG.info("Summarising field values...");
-        String maxValuesString = (String) configuration.get("max.field.values");
-        int maxValues =
+        String maxValuesString = (String) configuration.get(MAX_FIELD_VALUES);
+        maxValues =
             (maxValuesString == null ? DEFAULT_MAX_VALUES : Integer.parseInt(maxValuesString));
 
         Set<String> doneFields = new HashSet<String>();
@@ -279,10 +282,18 @@ public class ObjectStoreSummary
                 String className = key.substring(0, key.lastIndexOf("."));
                 List<String> fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
                 emptyFieldsMap.put(className, new TreeSet<String>(fieldNames));
-            } //else if (key.equals(MAX_SUMMARY_COUNT)) {
-              //  this.maxValues = Integer.parseInt(value);
-            //}
+            } else if (key.equals(MAX_FIELD_VALUES)) {
+                this.maxValues = Integer.parseInt(value);
+            }
         }
+    }
+
+    /**
+     * Return the configured maximum number of values to show in a dropdown.
+     * @return the maximum number of values to show in a dropdown
+     */
+    public int getMaxValues() {
+        return maxValues;
     }
 
     /**
@@ -356,6 +367,7 @@ public class ObjectStoreSummary
      */
     public Properties toProperties() {
         Properties properties = new Properties();
+        properties.put(MAX_FIELD_VALUES, "" + maxValues);
         for (Map.Entry<String, Integer> entry: classCountsMap.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();

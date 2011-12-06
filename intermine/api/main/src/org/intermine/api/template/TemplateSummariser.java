@@ -24,6 +24,7 @@ import org.intermine.model.userprofile.SavedTemplateQuery;
 import org.intermine.model.userprofile.TemplateSummary;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -47,17 +48,19 @@ public class TemplateSummariser
     protected ObjectStoreWriter osw;
     protected Map<TemplateQuery, HashMap<String, List<Object>>> possibleValues
         = new IdentityHashMap<TemplateQuery, HashMap<String, List<Object>>>();
-    private static final int MAX_SUMMARY = 200;
+    private final int maxSummaryValues;
 
     /**
      * Construct a TemplateSummariser.
      *
      * @param os ObjectStore containing production data
      * @param osw ObjectStoreWriter containing ProfileManager data
+     * @param oss A summary of the ObjectStore
      */
-    public TemplateSummariser(ObjectStore os, ObjectStoreWriter osw) {
+    public TemplateSummariser(ObjectStore os, ObjectStoreWriter osw, ObjectStoreSummary oss) {
         this.os = os;
         this.osw = osw;
+        this.maxSummaryValues = oss.getMaxValues();
     }
 
     /**
@@ -81,9 +84,9 @@ public class TemplateSummariser
             }
             Query q = TemplatePrecomputeHelper.getPrecomputeQuery(templateQuery, null, node);
             LOG.info("Summarising template " + templateQuery.getName() + " by running query: " + q);
-            List<ResultsRow<Object>> results = os.execute(q, 0, MAX_SUMMARY, true, false,
+            List<ResultsRow<Object>> results = os.execute(q, 0, maxSummaryValues, true, false,
                     ObjectStore.SEQUENCE_IGNORE);
-            if (results.size() < MAX_SUMMARY) {
+            if (results.size() < maxSummaryValues) {
                 if (path.endIsAttribute() || results.isEmpty()) {
                     List<Object> values = new ArrayList<Object>();
                     for (ResultsRow<Object> row : results) {

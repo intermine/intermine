@@ -11,9 +11,7 @@ package org.intermine.objectstore;
  */
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 import junit.framework.Test;
 
@@ -69,9 +67,27 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         assertNull(oss.getFieldValues("org.intermine.model.InterMineObject", "id"));
     }
 
+    public void testMaxValues() throws Exception {
+        Properties config = new Properties();
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
+
+        // nothing in config
+        assertEquals(ObjectStoreSummary.DEFAULT_MAX_VALUES, oss.getMaxValues());
+
+        // config should overwrite
+        config.put("max.field.values", "10");
+        oss = new ObjectStoreSummary(os, config);
+        assertEquals(10, oss.getMaxValues());
+
+        // value should be written and read from properties
+        ObjectStoreSummary ossFromProps = new ObjectStoreSummary(oss.toProperties());
+        assertEquals(10, ossFromProps.getMaxValues());
+    }
+
     public void testPropertiesRoundTrip() throws Exception {
         Properties config = new Properties();
-        config.put("max.field.value", "10");
+        config.put("max.field.values", "10");
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
 
@@ -79,5 +95,7 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         ObjectStoreSummary ossFromProps = new ObjectStoreSummary(out);
 
         assertEquals(out, ossFromProps.toProperties());
+        assertEquals(10, oss.maxValues);
+        assertEquals(10, ossFromProps.maxValues);
     }
 }

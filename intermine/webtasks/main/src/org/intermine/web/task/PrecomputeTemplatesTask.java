@@ -221,7 +221,7 @@ public class PrecomputeTemplatesTask extends Task
             throw new BuildException(e);
         }
 
-        TemplateSummariser summariser = new TemplateSummariser(os, userProfileOS);
+        TemplateSummariser summariser = new TemplateSummariser(os, userProfileOS, oss);
         for (ApiTemplate template : toSummarise) {
             if (doSummarise) {
                 try {
