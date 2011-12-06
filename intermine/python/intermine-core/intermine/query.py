@@ -299,6 +299,7 @@ class Query(object):
     LOGIC_SPLIT_PATTERN = re.compile("\s*(?:and|or|\(|\))\s*", re.I)
     TRAILING_OP_PATTERN = re.compile("\s*(and|or)\s*$", re.I)
     LEADING_OP_PATTERN = re.compile("^\s*(and|or)\s*", re.I)
+    ORPHANED_OP_PATTERN = re.compile("(?:\(\s*(?:and|or)\s*|\s*(?:and|or)\s*\))", re.I)
     LOGIC_OPS = ["and", "or"]
     LOGIC_PRODUCT = [(x, y) for x in LOGIC_OPS for y in LOGIC_OPS]
 
@@ -388,7 +389,9 @@ class Query(object):
         f.close()
 
         queries = doc.getElementsByTagName('query')
-        assert len(queries) == 1, "wrong number of queries in xml"
+        if len(queries) != 1:
+            raise QueryParseError("wrong number of queries in xml. "
+                + "Only one <query> element is allowed. Found %d" % len(queries))
         q = queries[0]
         obj.name = q.getAttribute('name')
         obj.description = q.getAttribute('description')
@@ -452,20 +455,29 @@ class Query(object):
                         obj.add_sort_order(path, direction)
 
         if q.getAttribute('constraintLogic') is not None:
-            logic = q.getAttribute('constraintLogic')
-            used_codes = set(obj.constraint_dict.keys())
-            logic_codes = set(Query.LOGIC_SPLIT_PATTERN.split(logic))
-            if "" in logic_codes:
-                logic_codes.remove("")
-            irrelevant_codes = logic_codes - used_codes
-            for c in irrelevant_codes:
-                pattern = re.compile("((and|or)\s+)?\\b" + c + "\\b(\s+(and|or))?", re.I)
-                logic = pattern.sub("", logic)
-            # Remove empty groups
-            logic = re.sub("\(\s*\)", "", logic)
-            # Remove trailing and leading opertators
-            logic = Query.LEADING_OP_PATTERN.sub("", logic)
-            logic = Query.TRAILING_OP_PATTERN.sub("", logic)
+            obj._set_questionable_logic(q.getAttribute('constraintLogic'))
+
+        obj.verify()        
+
+        return obj
+
+    def _set_questionable_logic(self, questionable_logic):
+        """Attempts to sanity check the logic argument before it is set"""
+        logic = questionable_logic
+        used_codes = set(self.constraint_dict.keys())
+        logic_codes = set(Query.LOGIC_SPLIT_PATTERN.split(questionable_logic))
+        if "" in logic_codes:
+            logic_codes.remove("")
+        irrelevant_codes = logic_codes - used_codes
+        for c in irrelevant_codes:
+            pattern = re.compile("\\b" + c + "\\b", re.I)
+            logic = pattern.sub("", logic)
+        # Remove empty groups
+        logic = re.sub("\((:?and|or|\s)*\)", "", logic)
+        # Remove trailing and leading operators
+        logic = Query.LEADING_OP_PATTERN.sub("", logic)
+        logic = Query.TRAILING_OP_PATTERN.sub("", logic)
+        for x in range(2): # repeat, as this process can leave doubles
             for left, right in Query.LOGIC_PRODUCT:
                 if left == right:
                     repl = left
@@ -473,16 +485,19 @@ class Query(object):
                     repl = "and"
                 pattern = re.compile(left + "\s*" + right, re.I)
                 logic = pattern.sub(repl, logic)
-            logic = logic.strip().lstrip()
-            try: 
-                if len(logic) > 0:
-                    obj.set_logic(logic)
-            except Exception, e:
-                raise Exception("Error parsing " + q.getAttribute('constraintLogic') + " => " + repr(logic) + " with views: " + repr(used_codes) + e.message)
-
-        obj.verify()        
-
-        return obj
+        logic = Query.ORPHANED_OP_PATTERN.sub(lambda x: "(" if "(" in x.group(0) else ")", logic)
+        logic = logic.strip().lstrip()
+        logic = Query.LEADING_OP_PATTERN.sub("", logic)
+        logic = Query.TRAILING_OP_PATTERN.sub("", logic)
+        try: 
+            if len(logic) > 0 and logic not in ["and", "or"]:
+                self.set_logic(logic)
+        except Exception, e:
+            raise Exception("Error parsing logic string " 
+                + repr(questionable_logic) 
+                + " (which is " + repr(logic) + " after irrelevant codes have been removed)"
+                + " with available codes: " + repr(list(used_codes)) 
+                + " because: " + e.message)
 
     def __str__(self):
         """Return the XML serialisation of this query"""
@@ -607,11 +622,12 @@ class Query(object):
     
     def prefix_path(self, path):
         if self.root is None:
-            if path.endswith(".*"):
-                trimmed = re.sub("\.\*$", "", path)
-            else: 
-                trimmed = path
-            self.root = self.model.make_path(trimmed, self.get_subclass_dict()).root
+            if self.do_verification: # eg. not when building from XML
+                if path.endswith(".*"):
+                    trimmed = re.sub("\.\*$", "", path)
+                else: 
+                    trimmed = path
+                self.root = self.model.make_path(trimmed, self.get_subclass_dict()).root
             return path
         else:
             if path.startswith(self.root.name):
@@ -696,14 +712,10 @@ class Query(object):
         Add a constraint to the query
         =============================
 
-        In contrast to add_constraint, this method also adds all attributes to the query 
-        if no view has been set, and returns self to support method chaining.
+        In contrast to add_constraint, this method returns self to support method chaining.
 
         Also available as Query.filter
         """
-        if len(self.views) == 0:
-            self.add_view(self.root)
-
         self.add_constraint(*args, **kwargs)
         return self
 
@@ -1106,17 +1118,55 @@ class Query(object):
 
         Usage::
 
+          >>> query = service.model.Gene.select("symbol", "length")
+          >>> total = 0
           >>> for gene in query.results():
-          ...    print gene.symbol
+          ...    print gene.symbol           # handle strings
+          ...    total += gene.length        # handle numbers
+          >>> for row in query.results(row="rr"):
+          ...    print row["symbol"]         # handle strings by dict index
+          ...    total += row["length"]      # handle numbers by dict index
+          ...    print row["Gene.symbol"]    # handle strings by full dict index
+          ...    total += row["Gene.length"] # handle numbers by full dict index
+          ...    print row[0]                # handle strings by list index
+          ...    total += row[1]             # handle numbers by list index
+          >>> for d in query.results(row="dict"):
+          ...    print row["Gene.symbol"]    # handle strings
+          ...    total += row["Gene.length"] # handle numbers
+          >>> for l in query.results(row="list"):
+          ...    print row[0]                # handle strings
+          ...    total += row[1]             # handle numbers
+          >>> import csv
+          >>> csv_reader = csv.reader(q.results(row="csv"), delimiter=",", quotechar='"')
+          >>> for row in csv_reader:
+          ...    print row[0]                # handle strings
+          ...    length_sum += int(row[1])   # handle numbers
+          >>> tsv_reader = csv.reader(q.results(row="tsv"), delimiter="\t")
+          >>> for row in tsv_reader:
+          ...    print row[0]                # handle strings
+          ...    length_sum += int(row[1])   # handle numbers
 
-        Note that if your query contains any kind of collection, 
-        it is highly likely that start and size won't do what 
+        This is the general method that allows access to any of the available
+        result formats. The example above shows the ways these differ in terms 
+        of accessing fields of the rows, as well as dealing with different
+        data types. Results can either be retrieved as typed values (jsonobjects, 
+        rr ['ResultRows'], dict, list), or as lists of strings (csv, tsv) which then require 
+        further parsing. The default format for this method is "objects", where
+        information is grouped by its relationships. The other main format is 
+        "rr", which stands for 'ResultRows', and can be accessed directly through 
+        the L{rows} method.
+
+        Note that when requesting object based results (the default), if your query 
+        contains any kind of collection, it is highly likely that start and size won't do what 
         you think, as they operate only on the underlying
         rows used to build up the returned objects. If you want rows
         back, you are recommeded to use the simpler rows method.
+
+        If no views have been specified, all attributes of the root class 
+        are selected for output.
         
-        @param row: the format for the row. Defaults to "object". Valid options are 
-            "rr", "dict", "list", "jsonrows", "object", jsonobjects", "tsv", "csv". 
+        @param row: The format for each result. One of "object", "rr", 
+                    "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
         @type row: string
         @param start: the index of the first result to return (default = 0)
         @type start: int
@@ -1132,17 +1182,24 @@ class Query(object):
 
         @raise WebserviceError: if the request is unsuccessful
         """
-        path = self.get_results_path()
-        params = self.to_query_params()
+
+        to_run = self.clone()
+
+        if len(to_run.views) == 0:
+            to_run.add_view(to_run.root)
+
+        path = to_run.get_results_path()
+        params = to_run.to_query_params()
         params["start"] = start
         if size:
             params["size"] = size
         if summary_path:
-            params["summaryPath"] = self.prefix_path(summary_path)
+            params["summaryPath"] = to_run.prefix_path(summary_path)
             row = "jsonrows" 
-        view = self.views
-        cld = self.root
-        return self.service.get_results(path, params, row, view, cld)
+
+        view = to_run.views
+        cld = to_run.root
+        return to_run.service.get_results(path, params, row, view, cld)
 
     def rows(self, start=0, size=None):
         """
@@ -1347,6 +1404,12 @@ class Query(object):
         @rtype: list
         """
         return sum([self.path_descriptions, self.joins, self.constraints], [])
+
+    def to_query(self):
+        """
+        Return the query to allow equivalent treatment of lists and queries.
+        """
+        return self
         
     def to_query_params(self):
         """
@@ -1447,7 +1510,7 @@ class Query(object):
         @return: same class as caller
         """
         newobj = self.__class__(self.model)
-        for attr in ["joins", "views", "_sort_order_list", "_logic", "path_descriptions", "constraint_dict"]:
+        for attr in ["joins", "views", "_sort_order_list", "_logic", "path_descriptions", "constraint_dict", "uncoded_constraints"]:
             setattr(newobj, attr, deepcopy(getattr(self, attr)))
 
         for attr in ["name", "description", "service", "do_verification", "constraint_factory", "root"]:

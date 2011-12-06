@@ -86,5 +86,15 @@ Changes:
 0.98.13: Added query column summary support
 0.98.14: Added status property to list objects
 0.98.15: Added lazy-reference fetching for result objects, and list-tagging support
+0.98.16: Fixed bug with XML parsing and subclasses where the subclass is mentioned in the first view.
+         better result format documentation and tests
+         added len() to results iterators
+         added ability to parse xml from the service object (see new_query())
+         improved service.select() - now accepts plain class names which work equally well for results and lists
+         Allowed lists to be generated from queries with unambiguous selected classes.
+         Fixed questionable constraint parsing bug which lead to failed template parsing
+0.99.00  Fixed bug with subclasses not being included in clones 
+         Added support for new json format for ws versions >= 8.
+
 
 
