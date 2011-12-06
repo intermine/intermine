@@ -48,7 +48,7 @@ public class TemplateSummariser
     protected ObjectStoreWriter osw;
     protected Map<TemplateQuery, HashMap<String, List<Object>>> possibleValues
         = new IdentityHashMap<TemplateQuery, HashMap<String, List<Object>>>();
-    private final int maxSummaryValues;
+    protected final int maxSummaryValues;
 
     /**
      * Construct a TemplateSummariser.
