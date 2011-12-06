@@ -15,19 +15,73 @@ class LiveListTest(unittest.TestCase):
         results = self.SERVICE.select("Department.*").results()
         managers = map(lambda x: x.manager.name, results)
         expected = [
-            'EmployeeA1', 'EmployeeB1', 'EmployeeB3', 
-            'David Brent', 'Keith Bishop', 'Glynn Williams', 'Neil Godwin', 
-            u'Sinan Tur\xe7ulu', 'Bernd Stromberg', 'Timo Becker', 'Dr. Stefan Heinemann', 'Burkhardt Wutke', u'Frank M\xf6llers', 
-            'Michael Scott', 'Angela', 'Lonnis Collins', 'Meredith Palmer', 
-            'Gilles Triquet', 'Jacques Plagnol Jacques', u'Didier Legu\xe9lec', 'Joel Liotard', 
-            'Quote Leader', 'Separator Leader', 'Slash Leader', 'XML Leader']
+            'EmployeeA1',
+            'EmployeeB1',
+            'EmployeeB3',
+            'Jennifer Taylor-Clarke',
+            'David Brent',
+            'Keith Bishop',
+            'Glynn Williams',
+            'Neil Godwin',
+            'Tatjana Berkel',
+            u'Sinan Tur\xe7ulu',
+            'Bernd Stromberg',
+            'Timo Becker',
+            'Dr. Stefan Heinemann',
+            'Burkhardt Wutke',
+            u'Frank M\xf6llers',
+            'Charles Miner',
+            'Michael Scott',
+            'Angela',
+            'Lonnis Collins',
+            'Meredith Palmer',
+            'Juliette Lebrac',
+            'Gilles Triquet',
+            'Jacques Plagnol Jacques',
+            u'Didier Legu\xe9lec',
+            'Joel Liotard',
+            "Bwa'h Ha Ha",
+            'Quote Leader',
+            'Separator Leader',
+            'Slash Leader',
+            'XML Leader']
 
         self.assertEqual(expected, managers)
 
     def testLazyCollectionFetching(self):
         results = self.SERVICE.select("Department.*").results()
         age_sum = reduce(lambda x, y: x + reduce(lambda a, b: a + b.age, y.employees, 0), results, 0)
-        self.assertEqual(5798, age_sum)
+        self.assertEqual(5924, age_sum)
+
+    def testAllFormats(self):
+        q = self.SERVICE.select("Manager.age")
+
+        expected_sum = 1383
+
+        self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="object"))))
+        self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="objects"))))
+        self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="jsonobjects"))))
+        
+        self.assertEqual(expected_sum, sum(map(lambda x: x["age"], q.results(row="rr"))))
+        self.assertEqual(expected_sum, sum(map(lambda x: x[0], q.results(row="rr"))))
+
+        self.assertEqual(expected_sum, sum(map(lambda x: x["Manager.age"], q.results(row="dict"))))
+        self.assertEqual(expected_sum, sum(map(lambda x: x[0], q.results(row="list"))))
+
+        self.assertEqual(expected_sum, sum(map(lambda x: x[0]["value"], q.results(row="jsonrows"))))
+
+        import csv
+        csvReader = csv.reader(q.results(row="csv"), delimiter=",", quotechar='"')
+        self.assertEqual(expected_sum, sum(map(lambda x: int(x[0]), csvReader)))
+        tsvReader = csv.reader(q.results(row="tsv"), delimiter="\t")
+        self.assertEqual(expected_sum, sum(map(lambda x: int(x[0]), tsvReader)))
+
+    def testModelClassAutoloading(self):
+        q = self.SERVICE.model.Manager.select("name", "age")
+        expected_sum = 1383
+
+        self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="object"))))
+
 
 if __name__ == '__main__':
     unittest.main()

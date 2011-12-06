@@ -81,15 +81,19 @@ class TestTemplates(WebserviceTest): # pragma: no cover
         self.assertEqual(str(t.get_logic()), "A or B or C")
 
         xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B and (D and E) or C">
-                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/><constraint path="Employee.fullTime" op="=" value="true"/>
+                <constraint path="Employee.name" op="IS NULL"/>
+                <constraint path="Employee.age" op="IS NOT NULL"/>
+                <constraint path="Employee.fullTime" op="=" value="true"/>
                 </query>
             </template>'''
         t = Template.from_xml(xml, model)
         self.assertEqual(str(t.get_logic()), "(A or B) and C")
 
         xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B or (D and E) and C">
-                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/>
-                <constraint path="Employee.fullTime" op="=" value="true"/><constraint path="Employee.name" op="IS NULL"/>
+                <constraint path="Employee.name" op="IS NULL"/>
+                <constraint path="Employee.age" op="IS NOT NULL"/>
+                <constraint path="Employee.fullTime" op="=" value="true"/>
+                <constraint path="Employee.name" op="IS NULL"/>
                 </query>
             </template>'''
         t = Template.from_xml(xml, model)
