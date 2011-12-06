@@ -139,25 +139,4 @@ public class InitialiserPluginTest extends TestCase
             userProfileOSW.delete(o);
         }
     }
-
-
-    public void testCleanTags() throws Exception {
-        setUpUserProfiles();
-        TagManager tagManager = new TagManagerFactory(userProfileOSW).getTagManager();
-        tagManager.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
-        tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
-        tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
-
-        List tags = tagManager.getTags("test_tag_", null, "class", null);
-        assertEquals(3, tags.size());
-
-        // test that these go away
-        tagManager.addTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
-        tagManager.addTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
-
-        InitialiserPlugin.cleanTags(tagManager);
-
-        tags = tagManager.getTags("test_tag%", null, "class", null);
-        assertEquals(3, tags.size());
-    }
 }
