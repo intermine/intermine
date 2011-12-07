@@ -172,7 +172,7 @@ public final class NameUtil
      * @return a validated name for the query
      */
     public static String validateName(Collection<String> names, String name) {
-        String newName = name;
+        String newName = name.trim();
         if (!isValidName(name)) {
             newName = replaceSpecialChars(name);
         }
@@ -186,7 +186,7 @@ public final class NameUtil
                 i++;
             }
         }
-        return newName.trim();
+        return newName;
     }
 
     /**
