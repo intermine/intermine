@@ -347,6 +347,7 @@ class Path(object):
         @type subclasses: dict
         """
         self.model = weakref.proxy(model)
+        self.subclasses = subclasses
         if isinstance(path, Class):
             self._string = path.name
             self.parts = [path]
@@ -359,6 +360,39 @@ class Path(object):
 
     def __repr__(self):
         return '<' + self.__module__ + "." + self.__class__.__name__ + ": " + self._string + '>'
+
+    def prefix(self):
+        """
+        The path one step above this path.
+        ==================================
+
+          >>> p1 = Path("Gene.exons.name", model)
+          >>> p2 = p1.prefix()
+          >>> print p2
+          ... Gene.exons
+
+        """
+        parts = self.parts
+        parts.pop()
+        if len(parts) < 1:
+            raise PathParseError(str(self) + " does not have a prefix")
+        s = ".".join(map(lambda x: x.name, parts))
+        return Path(s, self.model._unproxied(), self.subclasses)
+
+    def append(self, *elements):
+        """
+        Construct a new path by adding elements to the end of this one.
+        ===============================================================
+
+          >>> p1 = Path("Gene.exons", model)
+          >>> p2 = p1.append("name")
+          >>> print p2
+          ... Gene.exons.name
+
+        This is the inverse of prefix.
+        """
+        s = str(self) + "." + ".".join(elements)
+        return Path(s, self.model._unproxied(), self.subclasses)
 
     @property
     def root(self):
@@ -391,6 +425,7 @@ class Path(object):
             return self.end.type_class
         else:
             return None
+
     end_class = property(get_class)
     
     def is_reference(self):
@@ -417,6 +452,13 @@ class Path(object):
         @rtype: boolean
         """
         return isinstance(self.end, Attribute)
+
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __hash__(self):
+        i = hash(str(self))
+        return reduce(lambda a, b: a ^ b, [hash(k) ^ hash(v) for k, v in self.subclasses.items()], i) 
 
 class Column(object):
     """
@@ -783,6 +825,9 @@ class Model(object):
                 current_class = None
      
         return descriptors 
+
+    def _unproxied(self):
+        return self
 
 class ModelError(ReadableException):
     pass

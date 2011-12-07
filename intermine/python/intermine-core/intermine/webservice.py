@@ -753,7 +753,7 @@ class ResultIterator(object):
                 "dict"        : lambda: JSONIterator(con, lambda x: self.row(x, self.view).to_d()),
                 "jsonobjects" : lambda: JSONIterator(con, lambda x: ResultObject(x, self.cld))
             }.get(self.rowformat)()
-        except Exception as e:
+        except Exception, e:
             raise Exception("Couldn't get iterator for "  + self.rowformat + str(e))
         return reader
 
