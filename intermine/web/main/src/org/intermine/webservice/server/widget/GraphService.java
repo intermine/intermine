@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -52,10 +51,16 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
+/**
+ * Service for presenting from Graph Widgets.
+ * @author Alex Kalderimis
+ *
+ */
 public class GraphService extends JSONService
 {
 
-    private class GraphXMLFormatter extends XMLFormatter {
+    private class GraphXMLFormatter extends XMLFormatter
+    {
 
         @Override
         public String formatResult(List<String> resultRow) {
@@ -134,6 +139,10 @@ public class GraphService extends JSONService
         return attributes;
     }
 
+    /**
+     * Get the widget processor to use to present the data.
+     * @return A processor for the results.
+     */
     protected WidgetResultProcessor getProcessor() {
         if (formatIsJSON()) {
             return GraphJSONProcessor.instance();
@@ -143,6 +152,8 @@ public class GraphService extends JSONService
             return FlatFileWidgetResultProcessor.instance();
         }
     }
+
+    @Override
     protected Output makeXMLOutput(PrintWriter out) {
         ResponseUtil.setXMLHeader(response, "result.xml");
         return new StreamedOutput(out, new GraphXMLFormatter());
