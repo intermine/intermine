@@ -69,11 +69,9 @@ public class AttributeLinksController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context, ActionMapping mapping,
+                                 ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ServletContext servletContext = request.getSession().getServletContext();
@@ -128,7 +126,8 @@ public class AttributeLinksController extends TilesAction
         Properties webProperties =
             (Properties) servletContext.getAttribute(Constants.WEB_PROPERTIES);
         final String regexp = "attributelink\\.([^.]+)\\." + geneOrgKey
-            + "\\.([^.]+)(\\.list)?\\.(url|text|imageName|usePost|delimiter|enctype|dataset)";
+            + "\\.([^.]+)(\\.list)?\\"
+            + ".(url|text|imageName|usePost|delimiter|enctype|dataset|useCheckbox)";
         Pattern p = Pattern.compile(regexp);
         String className = null;
         String taxId = null;
@@ -175,7 +174,7 @@ public class AttributeLinksController extends TilesAction
                             attrValue = imo.getFieldValue(attrName);
                         } else { //it's a bag!
                             attrValue = BagHelper.getIdList(bag, os, dbName, attrName);
-                            if (!taxId.equalsIgnoreCase("*")) {
+                            if (!"*".equalsIgnoreCase(taxId)) {
                                 taxIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
 
                                 //don't display link if
@@ -222,6 +221,8 @@ public class AttributeLinksController extends TilesAction
                     config.put("enctype", value);
                 } else if ("dataset".equals(propType)) {
                     config.put("dataset", value);
+                } else if ("useCheckbox".equals(propType)) {
+                    config.put("useCheckbox", value);
                 } else if ("text".equals(propType)) {
                     config.put("title", value.replaceAll("[^A-Za-z0-9 ]", "")
                             .replaceFirst("attributeValue", ""));
