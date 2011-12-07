@@ -900,11 +900,10 @@ public class AjaxServices
      */
     public static String validateBagOperations(String listName, String[] selectedBags,
                                                String operation) {
-        String bagName = null;
-        if (!StringUtils.isEmpty(listName)) {
-            bagName = listName.trim();
+        if (StringUtils.isEmpty(listName)) {
+            return "New list name is required";
         }
-
+        String bagName = listName.trim();
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
@@ -934,7 +933,7 @@ public class AjaxServices
             } else if (!"copy".equals(operation)) {
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 String defaultName = properties.getProperty("lists.input.example");
-                if (("".equals(bagName) || (bagName.equalsIgnoreCase(defaultName)))) {
+                if (bagName.equalsIgnoreCase(defaultName)) {
                     return "New list name is required";
                 } else if (!NameUtil.isValidName(bagName)) {
                     return NameUtil.INVALID_NAME_MSG;
