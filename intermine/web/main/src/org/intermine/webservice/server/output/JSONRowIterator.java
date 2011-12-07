@@ -59,6 +59,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
+    @Override
     public boolean hasNext() {
         return subIter.hasNext();
     }
@@ -76,12 +77,12 @@ public class JSONRowIterator implements Iterator<JSONArray>
         } else {
             String link = null;
             if (im.getLinkRedirector() != null) {
-                mapping.put(CELL_KEY_URL,
-                    im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject()));
+                link = im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject());
             }
             if (link == null) {
-                mapping.put(CELL_KEY_URL, PortalHelper.generateReportPath(cell));
+                link = PortalHelper.generateReportPath(cell);
             }
+            mapping.put(CELL_KEY_URL, link);
             mapping.put(CELL_KEY_CLASS, cell.getType());
             mapping.put(CELL_KEY_ID, cell.getId());
             mapping.put(CELL_KEY_VALUE, cell.getField());
@@ -90,6 +91,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return ret;
     }
 
+    @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
         List<Object> jsonRow = new ArrayList<Object>();
@@ -101,6 +103,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return next;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported for this implementation");
     }
