@@ -39,7 +39,7 @@
                     <c:set var="paramName" value="${par.key}" />
                     <c:set var="paramValue" value="${par.value}" />
                 <c:choose>
-                    <c:when test="${checkbox == paramName}">
+                    <c:when test="${useCheckbox == paramName}">
                         <c:set var="paramArray" value="${fn:split(paramValue, ',')}" />
                         <c:forEach var="identifier" items="${paramArray}">
                             <input type="checkbox" checked="checked" value="${identifier}" name="${paramName}"/>
