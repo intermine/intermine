@@ -313,10 +313,12 @@ class TestQuery(WebserviceTest): # pragma: no cover
         self.q.add_sort_order("Employee.fullTime", "desc")
         self.assertEqual(str(self.q.get_sort_order()), "Employee.fullTime desc")
         self.q.add_sort_order("Employee.age", "asc")
-        self.assertEqual(str(self.q.get_sort_order()), "Employee.fullTime desc,Employee.age asc")
+        self.assertEqual(str(self.q.get_sort_order()), "Employee.fullTime desc Employee.age asc")
+        self.q.add_sort_order("Employee.end", "desc")
+        self.assertEqual(str(self.q.get_sort_order()), "Employee.fullTime desc Employee.age asc Employee.end desc")
         self.assertRaises(ModelError, self.q.add_sort_order, "Foo", "asc")
         self.assertRaises(TypeError,  self.q.add_sort_order, "Employee.name", "up")
-        self.assertRaises(QueryError, self.q.add_sort_order, "Employee.id", "desc")
+        self.assertRaises(QueryError, self.q.add_sort_order, "Employee.department.name", "desc")
 
     def testUCSortOrder(self):
         """Sort-Order directions should be accepted in upper case"""
@@ -324,7 +326,7 @@ class TestQuery(WebserviceTest): # pragma: no cover
         self.q.add_sort_order("Employee.age", "ASC")
         self.assertEqual(str(self.q.get_sort_order()), "Employee.age asc")
         self.q.add_sort_order("Employee.fullTime", "DESC")
-        self.assertEqual(str(self.q.get_sort_order()), "Employee.age asc,Employee.fullTime desc")
+        self.assertEqual(str(self.q.get_sort_order()), "Employee.age asc Employee.fullTime desc")
 
     def testConstraintPathProblems(self):
         """Queries should not add constraints with bad paths to themselves"""

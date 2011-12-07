@@ -1080,11 +1080,22 @@ class Query(object):
         """
         if not so_elems:
             so_elems = self._sort_order_list
-        
+        from_paths = self._from_paths()
         for so in so_elems:
-            self.model.validate_path(so.path, self.get_subclass_dict())
-            if so.path not in self.views:
-                raise QueryError("Sort order element is not in the view: " + so.path)
+            p = self.model.make_path(so.path, self.get_subclass_dict())
+            if p.prefix() not in from_paths:
+                raise QueryError("Sort order element %s is not in the query" % so.path)
+
+    def _from_paths(self):
+        scd = self.get_subclass_dict()
+        froms = set(map(lambda x: self.model.make_path(x, scd).prefix(), self.views))
+        for c in self.constraints:
+            p = self.model.make_path(c.path, scd)
+            if p.is_attribute():
+                froms.add(p.prefix())
+            else:
+                froms.add(p)
+        return froms
 
     def get_subclass_dict(self):
         """

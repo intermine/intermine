@@ -95,6 +95,8 @@ Changes:
          Fixed questionable constraint parsing bug which lead to failed template parsing
 0.99.00  Fixed bug with subclasses not being included in clones 
          Added support for new json format for ws versions >= 8.
+0.99.01  Better representation of multiple sort-orders.
+0.99.02  Allow sort-orders which are not in the view but are on selected classes
 
 
 
