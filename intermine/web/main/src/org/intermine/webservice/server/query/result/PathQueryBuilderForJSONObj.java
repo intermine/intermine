@@ -22,6 +22,8 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathLengthComparator;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.OrderDirection;
 
 /**
  * @author Alexis Kalderimis
@@ -77,7 +79,10 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
     public static PathQuery processQuery(PathQuery beforeChanges) {
         PathQuery afterChanges = beforeChanges.clone();
         afterChanges.clearView();
-        afterChanges.addViews(getAlteredViews(beforeChanges));
+        afterChanges.clearOrderBy();
+        List<String> newViews = getAlteredViews(beforeChanges);
+        afterChanges.addOrderBy(new OrderElement(newViews.get(0), OrderDirection.ASC));
+        afterChanges.addViews(newViews);
 
         return afterChanges;
     }
@@ -101,6 +106,8 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
         List<String> newViews = new ArrayList<String>();
         Set<Path> classesWithAttributes = new HashSet<Path>();
 
+        String idPath = viewPaths.get(0).getStartClassDescriptor().getUnqualifiedName() + ".id";
+
         for (Path p : viewPaths) {
             if (!p.endIsAttribute()) {
                 throw new RuntimeException("The view can only contain attribute paths - Got: '"
@@ -108,6 +115,13 @@ public class PathQueryBuilderForJSONObj extends PathQueryBuilder
             }
             newViews.addAll(getNewViewStrings(classesWithAttributes, p));
 
+        }
+        int idPos = newViews.indexOf(idPath);
+        if (idPos != 0) {
+            if (idPos > 0) {
+                newViews.remove(idPos);
+            }
+            newViews.add(0, idPath);
         }
         return newViews;
     }
