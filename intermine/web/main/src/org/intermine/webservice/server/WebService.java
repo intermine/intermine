@@ -356,7 +356,7 @@ public abstract class WebService
         ps.flush();
 
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
-            LOG.error("Service failed by internal error. Request parameters: \n"
+            LOG.debug("Service failed by internal error. Request parameters: \n"
                             + requestParametersToString() + b.toString());
         } else {
             LOG.debug("Service didn't succeed. It's not an internal error. "
