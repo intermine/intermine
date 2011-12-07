@@ -66,14 +66,27 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         this.bag = bag;
         taxonIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
         model = os.getModel();
+        dataset = null;
         if (extraAttribute == null) {
             dataset = KEGG;
         } else {
-            if (!FILTERS.contains(extraAttribute)) {
-                throw new RuntimeException("filter must be one of " + FILTERS
-                        + ", not \"" + extraAttribute + "\"");
+            if (FILTERS.contains(extraAttribute)) {
+                dataset = extraAttribute;
+            } else {
+                // Accept any initial substring of the data-set names
+                // so "reactome", "kegg", and "all" are valid
+                for (String ds : FILTERS) {
+                    if (ds.toLowerCase().startsWith(extraAttribute.toLowerCase())) {
+                        dataset = ds;
+                        break;
+                    }
+                }
             }
-            dataset = extraAttribute;
+        }
+
+        if (dataset == null) {
+            throw new RuntimeException("filter must be one of " + FILTERS
+                    + ", not \"" + extraAttribute + "\"");
         }
     }
 
