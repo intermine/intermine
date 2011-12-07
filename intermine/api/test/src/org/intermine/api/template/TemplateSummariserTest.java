@@ -59,6 +59,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
         super(arg);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -97,7 +98,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
         SimpleConstraint sc = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(username));
         q.setConstraint(sc);
         SingletonResults res = uosw.executeSingleton(q);
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
             uosw.delete(o);
