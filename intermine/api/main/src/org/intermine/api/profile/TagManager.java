@@ -25,6 +25,9 @@ import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -330,14 +333,64 @@ public class TagManager
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
 
+    /**
+     * Associate a bag with a certain tag.
+     * @param tagName The tag we want to give this bag.
+     * @param bag The bag to tag.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
     public synchronized Tag addTag(String tagName, InterMineBag bag, Profile profile)
-            throws TagNameException, TagNamePermissionException {
+        throws TagNameException, TagNamePermissionException {
         return addTag(tagName, bag.getName(), TagTypes.BAG, profile);
     }
 
+    /**
+     * Associate a template with a certain tag.
+     * @param tagName The tag we want to give this template.
+     * @param template The template to tag.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
     public synchronized Tag addTag(String tagName, TemplateQuery template, Profile profile)
-            throws TagException {
+        throws TagNameException, TagNamePermissionException {
         return addTag(tagName, template.getName(), TagTypes.TEMPLATE, profile);
+    }
+
+    /**
+     * Associate a class with a certain tag.
+     * @param tagName The tag we want to give this class.
+     * @param cld The descriptor for this class.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
+    public synchronized Tag addTag(String tagName, ClassDescriptor cld, Profile profile)
+        throws TagNameException, TagNamePermissionException {
+        return addTag(tagName, cld.getName(), TagTypes.CLASS, profile);
+    }
+
+    /**
+     * Associate a reference with a certain tag.
+     * @param tagName The tag we want to give this reference.
+     * @param ref the reference.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
+    public synchronized Tag addTag(String tagName, ReferenceDescriptor ref, Profile profile)
+        throws TagNameException, TagNamePermissionException {
+        if (ref instanceof CollectionDescriptor) {
+            return addTag(tagName, ref.getReferencedClassName() + "." + ref.getName(), TagTypes.COLLECTION, profile);
+        } else {
+            return addTag(tagName, ref.getReferencedClassName() + "." + ref.getName(), TagTypes.REFERENCE, profile);
+        }
     }
 
     /**
