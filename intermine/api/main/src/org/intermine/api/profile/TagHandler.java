@@ -29,6 +29,7 @@ public class TagHandler extends DefaultHandler
     private String tagType;
     private ProfileManager profileManager;
     private String userName;
+    @SuppressWarnings("rawtypes")
     private Set tags;
     private int count;
 
@@ -37,7 +38,7 @@ public class TagHandler extends DefaultHandler
      * @param userName the name of the user whose profile is being read
      * @param tags will be populated with any tags to add to the target profile
      */
-    public TagHandler(String userName, Set tags) {
+    public TagHandler(String userName, @SuppressWarnings("rawtypes") Set tags) {
         this.userName = userName;
         this.tags = tags;
         reset();
@@ -72,6 +73,7 @@ public class TagHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
