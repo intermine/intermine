@@ -59,7 +59,6 @@ public class Registrar extends Thread
 
     /**
      * Constructor
-     * @param api The InterMineAPI object that holds configuration information.
      * @param webProperties The properties to configure this mine.
      */
     public Registrar(Properties webProperties) {
@@ -153,7 +152,7 @@ public class Registrar extends Thread
             String response = sb.toString();
 
             // Handle the response
-            LOG.info("Registration response: " + response);
+            LOG.debug("Registration response: " + response);
             JSONObject jo = new JSONObject(response);
             String status = jo.getString("status");
             if (CREATED.equals(status)) {
@@ -179,8 +178,7 @@ public class Registrar extends Thread
         } catch (UnsupportedEncodingException e) {
             handleProblem("Could not encode query string for parameters: " + params);
         } catch (MalformedURLException e) {
-            handleProblem("Could not connect to registry - bad address: "
-                            + registryAddress);
+            handleProblem("Could not connect to registry - bad address: " + registryAddress);
         } catch (JSONException e) {
             handleProblem("Problem registering mine - server returned bad response: " + e);
         } catch (IOException e) {
