@@ -237,7 +237,9 @@ coerce Service, from Str, via {
 };
 
 subtype ServiceVersion, as Int, where {$_ > 0}, 
-    message {'I could not get the version number for this service - please check the url and make sure the service is available'};
+    message {'I could not get the version number for this service - please check the url and make sure the service is available. I expected a number, but got ' . $_};
+
+coerce ServiceVersion, from Str, via {s/\s*//g;$_};
 
 subtype ServiceRootUri, as Uri, where {$_->path =~ m|/service$| && $_->scheme},
     message { "Uri does not look like a service url: got $_" };
