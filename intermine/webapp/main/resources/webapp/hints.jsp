@@ -13,6 +13,11 @@
 		onclick="javascript:jQuery('#hints').hide('slow');return false">Hide</a>
 	<p><c:out value="${hint}" /></p>
 	</div>
+	<script type="text/javascript">
+		if (jQuery('div.topBar:visible').exists()) {
+			jQuery('#hints.information').hide();
+		}
+	</script>
 <!--	
 	<div id="hintsDiv">
 	  <div class="topBar hints"> <%-- IE table width bug --%>
