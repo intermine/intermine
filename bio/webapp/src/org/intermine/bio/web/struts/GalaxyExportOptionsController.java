@@ -137,13 +137,22 @@ public class GalaxyExportOptionsController extends TilesAction
             request.setAttribute("table", tableName);
             PagedTable pt = SessionMethods.getResultsTable(session, tableName);
 
+            // Null check to page table, maybe session timeout?
+            if (pt == null) {
+                LOG.error("Page table is NULL...");
+                return null;
+            }
+
             // Check if can export as BED
             TableHttpExporter tableExporter = new BEDHttpExporter();
 
             try {
                 canExportAsBED = tableExporter.canExport(pt);
             } catch (Exception e) {
+                canExportAsBED = false;
+
                 LOG.error("Caught an error running canExport() for: BEDHttpExporter. " + e);
+                e.printStackTrace();
             }
 
             LinkedHashMap<Path, Integer> exportClassPathsMap = getExportClassPaths(pt);
