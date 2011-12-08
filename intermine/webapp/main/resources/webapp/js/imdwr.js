@@ -795,8 +795,9 @@ function setConstraintLogic(expression) {
 
 function reDrawConstraintLogic() {
   AjaxServices.getConstraintLogic(function(expression) {
-      expression = expression.replace('[','');
-      jQuery('#constraintLogic').text(expression.replace(']',''));
+      expression = expression.replace('[','').replace(']','').replace(',',' and');
+      jQuery('#constraintLogic').text(expression);
+      jQuery('span#editConstraintLogic input#expr').val(expression);
   });
 }
 
