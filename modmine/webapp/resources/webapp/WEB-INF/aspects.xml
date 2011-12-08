@@ -143,7 +143,25 @@
     <subtitle></subtitle>
     <icon-image></icon-image>
     <large-image></large-image>
-    <intro-text>Results
+    <intro-text>Methods
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+  <aspect name="Functions">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Functions
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+  <aspect name="Regulation">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Regulation
     </intro-text>
     <tile-name></tile-name>
   </aspect>
