@@ -154,9 +154,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
 
         Query q = new Query();
 
-        if ("KEGG".equals(dataset) || "Reactome".equals(dataset)) {
-
-            String datasetTitle = ("KEGG".equals(dataset) ? KEGG : REACTOME);
+        if (KEGG.equals(dataset) || REACTOME.equals(dataset)) {
 
             QueryClass qcDataset = new QueryClass(DataSet.class);
             QueryField qfDataset = new QueryField(qcDataset, "name");
@@ -167,7 +165,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             // dataset (if user selects)
             QueryExpression c10 = new QueryExpression(QueryExpression.LOWER, qfDataset);
             cs.addConstraint(new SimpleConstraint(c10, ConstraintOp.EQUALS,
-                                                  new QueryValue(datasetTitle.toLowerCase())));
+                                                  new QueryValue(dataset.toLowerCase())));
 
             q.addFrom(qcDataset);
         }
