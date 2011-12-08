@@ -32,7 +32,6 @@ public class LiveQueryTest {
     private static final Page middle = new Page(5, 5);
     private static final int EXP_COUNT_1 = 9;
     private static final int EXP_COUNT_2 = 4;
-    private static final int EXP_COUNT_3 = 5;
     private static final int EXP_AGE = 26;
 
     @BeforeClass
