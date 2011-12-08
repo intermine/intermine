@@ -54,6 +54,7 @@ import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.output.XMLFormatter;
@@ -112,6 +113,9 @@ public abstract class WebService
 
     /** Count format constant **/
     public static final int COUNT_FORMAT = 4;
+
+    /** Text format constant **/
+    public static final int TEXT_FORMAT = 5;
 
     // FORMAT CONSTANTS BETWEEN 20-40 ARE RESERVED FOR JSON FORMATS!!
 
@@ -543,8 +547,15 @@ public abstract class WebService
                 }
                 break;
             case COUNT_FORMAT:
-                output = new StreamedOutput(out, new TabFormatter());
-                filename = "resultcount.txt";
+                output = new StreamedOutput(out, new PlainFormatter());
+                filename = "count.txt";
+                if (isUncompressed()) {
+                    ResponseUtil.setPlainTextHeader(response, filename);
+                }
+                break;
+            case TEXT_FORMAT:
+                output = new StreamedOutput(out, new PlainFormatter());
+                filename = "result.txt";
                 if (isUncompressed()) {
                     ResponseUtil.setPlainTextHeader(response, filename);
                 }
