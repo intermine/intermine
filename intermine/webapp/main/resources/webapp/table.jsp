@@ -170,7 +170,7 @@
 
   <%-- Page size controls --%>
   <span style="float:left;padding:4px 5px 0 10px;"><fmt:message key="results.changepagesize"/></span>
-    <html:select property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
+    <html:select style="float:left;" property="pageSize" onchange="changePageSize()" value="${resultsTable.pageSize}">
     <html:option value="10">10</html:option>
     <html:option value="25">25</html:option>
     <html:option value="50">50</html:option>
