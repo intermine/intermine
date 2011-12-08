@@ -271,15 +271,7 @@ public class TagManager
 
         cache.put(key, new ArrayList<Tag>(results));
 
-        int keyNullPartCount = 0;
-
-        for (int i = 0; i < 4; i++) {
-            if (key.getKey(i) == null) {
-                keyNullPartCount++;
-            }
-        }
-
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         while (resIter.hasNext()) {
             Tag tag = (Tag) resIter.next();
