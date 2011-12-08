@@ -941,6 +941,16 @@ public final class SessionMethods
     }
 
     /**
+     * Returns the web properties.
+     *
+     * @param request The current HTTP request.
+     * @return a Properties object
+     */
+    public static Properties getWebProperties(HttpServletRequest request) {
+        return getWebProperties(request.getSession().getServletContext());
+    }
+
+    /**
      * Sets the web properties in the session.
      *
      * @param servletContext a ServletContext object
