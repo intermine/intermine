@@ -204,6 +204,7 @@ public class TagManager
      * @param userName the use name this tag is associated with
      * @return the matching Tags
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
         if (type != null) {
@@ -495,25 +496,57 @@ public class TagManager
         }
     }
 
-    public static class TagException extends Exception {
+    /**
+     * Class for reporting exceptions from tag manipulation actions.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class TagException extends Exception
+    {
+        private static final long serialVersionUID = 8400582347265920471L;
+
+        /**
+         * Constructor.
+         * @param message The message to report to the user.
+         */
         public TagException(String message) {
             super(message);
         }
     }
 
-    public static class TagNameException extends TagException {
+    /**
+     * Class for representing errors due to the use of illegal tag names.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class TagNameException extends TagException
+    {
 
-            public TagNameException() {
-                super(INVALID_NAME_MSG);
-            }
+        private static final long serialVersionUID = 120037828345744006L;
+
+        /**
+         * Constructor.
+         */
+        public TagNameException() {
+            super(INVALID_NAME_MSG);
+        }
     }
 
-    public static class TagNamePermissionException extends TagException {
-
+    /**
+     * Class for representing errors due to the restricted nature of some tags.
+     * @author Alex Kalderimis.
+     *
+     */
+    public static class TagNamePermissionException extends TagException
+    {
+        private static final long serialVersionUID = -7843016338063884403L;
         private static final String PERMISSION_MESSAGE = "You cannot add a tag starting with "
                 + TagNames.IM_PREFIX + ", "
                 + "that is a reserved word.";
 
+        /**
+         * Constructor.
+         */
         public TagNamePermissionException() {
             super(PERMISSION_MESSAGE);
         }
