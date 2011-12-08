@@ -1,6 +1,6 @@
 package org.intermine.webservice.client.live;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -14,6 +14,7 @@ import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.results.Page;
 import org.intermine.webservice.client.services.QueryService;
 import org.intermine.webservice.client.services.QueryService.NumericSummary;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.BeforeClass;
@@ -21,10 +22,8 @@ import org.junit.Test;
 
 public class LiveQueryTest {
 
-    private static final String EMP_NAME_1B = "EmployeeA1";
-    private static final String EMP_NAME_2B = "Bernard Giraud";
-    private static final String EMP_NAME_2 = "Kai D\u00F6rfler";
-    private static final String EMP_NAME_1 = "Ampersand &";
+    private static final String EMP_NAME_2 = "Madge Madsen";
+    private static final String EMP_NAME_1 = "EmployeeA1";
     static Map<String, PathQuery> queries;
     private static final String baseUrl = "http://localhost/intermine-test/service";
     private static final String authToken = "test-user-token";
@@ -34,7 +33,7 @@ public class LiveQueryTest {
     private static final int EXP_COUNT_1 = 9;
     private static final int EXP_COUNT_2 = 4;
     private static final int EXP_COUNT_3 = 5;
-    private static final int EXP_AGE = 29;
+    private static final int EXP_AGE = 26;
 
     @BeforeClass
     public static void oneTimeSetup() {
@@ -65,11 +64,27 @@ public class LiveQueryTest {
     }
 
     @Test
+    public void testJSONObjectCoherence() throws Exception {
+        PathQuery test3 = queries.get("test3");
+        PathQuery test4 = queries.get("test4");
+        List<JSONObject> resultsA = unauthorised.getAllJSONResults(test3);
+        List<JSONObject> resultsB = unauthorised.getAllJSONResults(test4);
+        assertEquals(resultsA.size(), resultsB.size());
+        int empCount = unauthorised.getCount(queries.get("emps-with-deps"));
+        int nestedEmpCount = 0;
+        for (JSONObject dep: resultsB) {
+            JSONArray emps = dep.getJSONArray("employees");
+            nestedEmpCount += emps.length();
+        }
+        assertEquals(empCount, nestedEmpCount);
+    }
+
+    @Test
     public void allJSON() throws JSONException {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getAllJSONResults(test1);
         assertEquals(EXP_COUNT_1, results.size());
-        assertEquals(EMP_NAME_1B, results.get(0).getString("name"));
+        assertEquals(EMP_NAME_1, results.get(0).getString("name"));
         assertEquals(EXP_AGE, results.get(EXP_COUNT_1 - 1).getInt("age"));
     }
 
@@ -78,7 +93,7 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getAllJSONResults(test1.toXml());
         assertEquals(EXP_COUNT_1, results.size());
-        assertEquals(EMP_NAME_1B, results.get(0).getString("name"));
+        assertEquals(EMP_NAME_1, results.get(0).getString("name"));
         assertEquals(EXP_AGE, results.get(EXP_COUNT_1 - 1).getInt("age"));
     }
 
@@ -87,7 +102,7 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getJSONResults(test1, middle);
         assertEquals(EXP_COUNT_2, results.size());
-        assertEquals(EMP_NAME_2B, results.get(0).getString("name"));
+        assertEquals(EMP_NAME_2, results.get(0).getString("name"));
         assertEquals(EXP_AGE, results.get(EXP_COUNT_2 - 1).getInt("age"));
     }
 
@@ -96,7 +111,7 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<JSONObject> results = unauthorised.getJSONResults(test1.toXml(), middle);
         assertEquals(EXP_COUNT_2, results.size());
-        assertEquals(EMP_NAME_2B, results.get(0).getString("name"));
+        assertEquals(EMP_NAME_2, results.get(0).getString("name"));
         assertEquals(EXP_AGE, results.get(EXP_COUNT_2 - 1).getInt("age"));
     }
 
@@ -105,8 +120,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getAllResults(test1);
         assertEquals(EXP_COUNT_1, results.size());
-        assertEquals(EMP_NAME_1, results.get(0).get(0));
-        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_1 - 1).get(1));
+        assertEquals(EMP_NAME_1, results.get(0).get(1));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_1 - 1).get(2));
     }
 
     @Test
@@ -114,8 +129,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getAllResults(test1.toXml());
         assertEquals(EXP_COUNT_1, results.size());
-        assertEquals(EMP_NAME_1, results.get(0).get(0));
-        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_1 - 1).get(1));
+        assertEquals(EMP_NAME_1, results.get(0).get(1));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_1 - 1).get(2));
     }
 
     @Test
@@ -123,8 +138,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getResults(test1, middle);
         assertEquals(EXP_COUNT_2, results.size());
-        assertEquals(EMP_NAME_2, results.get(0).get(0));
-        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_2 - 1).get(1));
+        assertEquals(EMP_NAME_2, results.get(0).get(1));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_2 - 1).get(2));
     }
 
     @Test
@@ -132,8 +147,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<String>> results = unauthorised.getResults(test1.toXml(), middle);
         assertEquals(EXP_COUNT_2, results.size());
-        assertEquals(EMP_NAME_2, results.get(0).get(0));
-        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_2 - 1).get(1));
+        assertEquals(EMP_NAME_2, results.get(0).get(1));
+        assertEquals("" + EXP_AGE, results.get(EXP_COUNT_2 - 1).get(2));
     }
 
     @Test
@@ -141,8 +156,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1);
         assertEquals(EXP_COUNT_1, results.size());
-        assertEquals(EMP_NAME_1, (String) results.get(0).get(0));
-        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get(1));
+        assertEquals(EMP_NAME_1, (String) results.get(0).get(1));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get(2));
     }
 
     @Test
@@ -150,8 +165,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1.toXml());
         assertEquals(EXP_COUNT_1, results.size());
-        assertEquals(EMP_NAME_1, (String) results.get(0).get(0));
-        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get(1));
+        assertEquals(EMP_NAME_1, (String) results.get(0).get(1));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_1 - 1).get(2));
     }
 
     @Test
@@ -159,8 +174,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1, middle);
         assertEquals(EXP_COUNT_2, results.size());
-        assertEquals(EMP_NAME_2, (String) results.get(0).get(0));
-        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get(1));
+        assertEquals(EMP_NAME_2, (String) results.get(0).get(1));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get(2));
     }
 
     @Test
@@ -168,8 +183,8 @@ public class LiveQueryTest {
         PathQuery test1 = queries.get("test1");
         List<List<Object>> results = unauthorised.getRowsAsLists(test1.toXml(), middle);
         assertEquals(EXP_COUNT_2, results.size());
-        assertEquals(EMP_NAME_2, (String) results.get(0).get(0));
-        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get(1));
+        assertEquals(EMP_NAME_2, (String) results.get(0).get(1));
+        assertEquals(new Integer(EXP_AGE), (Integer) results.get(EXP_COUNT_2 - 1).get(2));
     }
 
     @Test
