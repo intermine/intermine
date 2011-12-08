@@ -9,9 +9,9 @@
     <h3>${displayerName}</h3>
     <p>There was a problem rendering the displayer.</p>
     <c:if test="${!empty exception}">
-      <a onclick="jQuery('#${displayerName}_error').toggle('slow');">show error</a>
+      <p><a href="#" onclick="jQuery('#${displayerName}_error').slideDown();">show error</a></p>
       <div id="${displayerName}_error" style="display:none;">
-        ${exception}
+        <pre>${exception}</pre>
       </div>
     </c:if>
   </div>
