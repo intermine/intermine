@@ -125,14 +125,14 @@ public class JSONFormatter extends Formatter {
         Iterator<String> iter = resultRow.iterator();
         String first = iter.next();
         if (shouldQuote && !"".equals(first)) {
-            first = "\"" + first + "\"";
+            first = quoteValue(first);
         }
 
         StringBuffer buffer = new StringBuffer(first);
         while (iter.hasNext()) {
             String next = iter.next();
             if (shouldQuote && !"".equals(next)) {
-                next = "\"" + next + "\"";
+                next = quoteValue(next);
             }
             buffer.append(",").append(next);
         }
