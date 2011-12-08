@@ -794,6 +794,7 @@ public class PathQuery implements Cloneable
      * @param logic the constraint logic
      */
     public synchronized void setConstraintLogic(String logic) {
+    	// TODO method does not work properly allowing (A and B) or C on Outer Joins
         deVerify();
         if (constraints.isEmpty()) {
             this.logic = null;

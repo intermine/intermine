@@ -800,6 +800,28 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
     }
 
+    public void testTicket2636() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+                
+        // Add views
+        q.addView("Company.CEO.address.address");
+        // Add constraints and you can edit the constraint values below
+        q.addConstraint(Constraints.lookup("Company", "Capitol Versicherung AG", ""), "A");
+        q.addConstraint(Constraints.lessThan("Company.vatNumber", "392018"), "B");
+        q.addConstraint(Constraints.eq("Company.departments.name", "Accounting"), "C");
+        // Add join status
+        q.setOuterJoinStatus("Company.CEO", OuterJoinStatus.OUTER);
+        // Add constraintLogic
+        q.setConstraintLogic("(A and B) or C");
+        assertEquals(false, q.isValid());
+        
+        q.fixUpForJoinStyle();
+        assertNotNull(q.getConstraintLogic());
+        assertEquals("A and B and C", q.getConstraintLogic());
+        assertEquals(true, q.isValid());
+    }    
+    
     public void testValidQueries() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
