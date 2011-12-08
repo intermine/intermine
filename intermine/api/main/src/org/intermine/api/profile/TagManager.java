@@ -386,10 +386,11 @@ public class TagManager
      */
     public synchronized Tag addTag(String tagName, ReferenceDescriptor ref, Profile profile)
         throws TagNameException, TagNamePermissionException {
+        String objIdentifier = ref.getReferencedClassName() + "." + ref.getName();
         if (ref instanceof CollectionDescriptor) {
-            return addTag(tagName, ref.getReferencedClassName() + "." + ref.getName(), TagTypes.COLLECTION, profile);
+            return addTag(tagName, objIdentifier, TagTypes.COLLECTION, profile);
         } else {
-            return addTag(tagName, ref.getReferencedClassName() + "." + ref.getName(), TagTypes.REFERENCE, profile);
+            return addTag(tagName, objIdentifier, TagTypes.REFERENCE, profile);
         }
     }
 
