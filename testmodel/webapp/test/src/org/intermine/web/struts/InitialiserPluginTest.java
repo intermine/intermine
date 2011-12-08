@@ -19,9 +19,11 @@ import junit.framework.TestCase;
 
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.SneakyTagAdder;
 import org.intermine.api.profile.TagChecker;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
@@ -138,5 +140,32 @@ public class InitialiserPluginTest extends TestCase
             InterMineObject o = (InterMineObject) resIter.next();
             userProfileOSW.delete(o);
         }
+    }
+
+    public void testCleanTags() throws Exception {
+        setUpUserProfiles();
+        TagManager tagManager = new TagManagerFactory(userProfileOSW).getTagManager();
+
+        int bobsTagsClasses = tagManager.getTags(null, null, "class", "bob").size();
+
+        Model m = Model.getInstanceByName("testmodel");
+        ClassDescriptor dep = m.getClassDescriptorByName("Department");
+        tagManager.addTag("test-tag1", dep, bobProfile);
+        tagManager.addTag("test-tag2", dep, bobProfile);
+        tagManager.addTag("test-tag2", dep, bobProfile);
+
+        List tags = tagManager.getTags(null, null, "class", "bob");
+        assertEquals(bobsTagsClasses + 3, tags.size());
+
+        SneakyTagAdder sta = new SneakyTagAdder(tagManager);
+
+        // test that these go away
+        sta.sneakilyAddTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
+        sta.sneakilyAddTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
+
+        InitialiserPlugin.cleanTags(tagManager);
+
+        tags = tagManager.getTags(null, null, "class", "bob");
+        assertEquals(bobsTagsClasses + 3, tags.size());
     }
 }
