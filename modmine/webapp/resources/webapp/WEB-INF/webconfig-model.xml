@@ -890,7 +890,7 @@
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=" />
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
                                  link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
