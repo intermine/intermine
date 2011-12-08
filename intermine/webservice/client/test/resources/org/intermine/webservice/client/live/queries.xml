@@ -1,8 +1,13 @@
 <queries>
-    <query name="test1" model="testmodel" view="Employee.name Employee.age Employee.department.name">
+    <query name="test1" model="testmodel" view="Employee.id Employee.name Employee.age Employee.department.name">
         <constraint path="Employee.age" op="&lt;" value="30"/>
     </query>
     <query name="test2" model="testmodel" view="Employee.name Employee.age">
         <constraint path="Employee" op="IN" value="My-Favourite-Employees"/>
     </query>
+    <query name="test3" model="testmodel" view="Department.name">
+    </query>
+    <query name="test4" model="testmodel" view="Department.name Department.employees.name">
+    </query>
+    <query name="emps-with-deps" model="testmodel" view="Employee.name Employee.department.name"/>
 </queries>
