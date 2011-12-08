@@ -391,7 +391,7 @@ sub new_list {
                 description => $description,
                 tags => $tag_list,
                 path => $path, # needed by templates - ignored by queries 
-                $content->get_request_parameters,
+                $content->get_list_request_parameters,
             };
             return $self->service->post($uri, $params);
         },

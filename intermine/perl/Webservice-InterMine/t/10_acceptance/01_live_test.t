@@ -484,7 +484,8 @@ TEST_IMPORTED_FNS: {
 TEST_LIST_STATUS: {
     my @lists = get_service("www.flymine.org/query")->get_lists();
     ok($lists[0]->has_status, "Status is provided");
-    is($lists[0]->status, "CURRENT", "And list is current");
+    my %possible_statuses = (CURRENT => 1, TO_UPGRADE => 1);
+    ok($possible_statuses{$lists[0]->status}, "And list is one of the possible statuses");
 }
 
 TEST_DEFAULT_FORMATS: {

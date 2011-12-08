@@ -534,6 +534,11 @@ sub get_request_parameters {
     return $self->to_query->get_request_parameters;
 }
 
+sub get_list_request_parameters {
+    my $self = shift;
+    return $self->to_query->get_list_request_parameters;
+}
+
 =head2 build_query
 
 Return a L<Webservice::InterMine::Query> representing the elements of this

@@ -86,31 +86,31 @@ sub setup : Test(setup) {
     my $obj = $test->class->new($test->args);
     $obj->add_view($test->def_view);
     $obj->add_constraint(
-	path => 'Employee.department.name',
-	op => '=',
-	value => 'Sandwich Distribution',
-	code => 'A',
+        path => 'Employee.department.name',
+        op => '=',
+        value => 'Sandwich Distribution',
+        code => 'A',
     );
     $obj->add_constraint(
-	path => 'Employee.age',
-	op => '<',
-	value => 18,
-	code => 'B',
+        path => 'Employee.age',
+        op => '<',
+        value => 18,
+        code => 'B',
     );
     $obj->add_constraint(
-	path => 'Employee.name',
-	op => 'ONE OF',
-	values => [qw/Tom Dick Harry/],
-	code => 'C',
+        path => 'Employee.name',
+        op => 'ONE OF',
+        values => [qw/Tom Dick Harry/],
+        code => 'C',
     );
     $obj->add_constraint(
-	path => 'Employee',
-	type => 'Manager',
+        path => 'Employee',
+        type => 'Manager',
     );
     $obj->add_join('Employee.name');
     $obj->add_pathdescription(
-	path => 'Employee.name',
-	description => 'The name of the employee',
+        path => 'Employee.name',
+        description => 'The name of the employee',
     );
     $test->{filled_obj} = $obj;
 }

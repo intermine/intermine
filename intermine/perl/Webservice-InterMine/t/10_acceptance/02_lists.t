@@ -15,7 +15,7 @@ my($service, $initial_list_count);
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 130 );
+    plan( tests => 132 );
 
 my $module = 'Webservice::InterMine';
 my $id_file = 't/data/test-identifiers.list';
@@ -405,6 +405,15 @@ RENAME_DELETE: {
     is $service->list("my_renamed_list"), undef, "Deleting a list makes it inaccessible through the service object";
 
     dies_ok {$list += "Corinne"} "Attempts to use the list throw exceptions";
+}
+
+LIST_CREATION_WITH_NON_ID_VIEW: {
+    my $query = $service->resultset("Manager")->where(age => {gt => 30}, age => {lt => 40});
+    my $ambiguous = $service->resultset("Manager")->select("*", "department.*");
+    my $list = $service->new_list(content => $query);
+    is ($list->size, 5, "Can create a list with new style queries")
+        or diag $list->to_string;
+    dies_ok {$service->new_list(content => $ambiguous)}, "Dies on ambiguous queries";
 }
 
 note "\nNo of lists made: " . ($service->list_count - $initial_list_count);

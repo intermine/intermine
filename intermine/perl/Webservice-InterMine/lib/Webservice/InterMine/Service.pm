@@ -196,6 +196,7 @@ which serves to validate the webservice.
 has version => (
     is       => 'ro',
     isa      => ServiceVersion,
+    coerce   => 1,
     required => 1,
     default  => sub {
         my $self = shift;

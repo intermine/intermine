@@ -295,17 +295,5 @@ around _validate => sub {
     return $self->$orig(@errs);
 };
 
-sub clone {
-    my $self  = shift;
-    my $clone = bless {%$self}, ref $self;
-    $clone->{constraints} = [];
-    $clone->suspend_validation;
-    for my $con ($self->all_constraints) {
-        $clone->add_constraint(%$con);
-    }
-    $clone->resume_validation;
-    return $clone;
-}
-    
     
 1;
