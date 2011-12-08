@@ -23,7 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XMLResultHandler extends DefaultHandler
 {
     private List<String> currentResult;
-    private String currentResultItem;
+    private StringBuffer currentResultItem;
     private List<List<String>> results;
     private Attributes rootAttributes;
 
@@ -40,7 +40,7 @@ public class XMLResultHandler extends DefaultHandler
         } else if ("Result".equals(name)) {
             currentResult = new ArrayList<String>();
         } else if ("i".equals(name)) {
-            currentResultItem = "";
+            currentResultItem = new StringBuffer();
         }
     }
 
@@ -50,15 +50,17 @@ public class XMLResultHandler extends DefaultHandler
         if ("Result".equals(name)) {
             results.add(currentResult);
         } else if ("i".equals(name)) {
-            currentResult.add(currentResultItem);
+            currentResult.add(currentResultItem.toString().trim());
+            currentResultItem = null;
         }
     }
 
     @Override
     public void characters(char[] ch, int start, int length)
             throws SAXException {
-        currentResultItem = new String(ch, start, length);
-        currentResultItem = currentResultItem.trim();
+        if (currentResultItem != null) {
+            currentResultItem.append(ch, start, length);
+        }
     }
 
     public List<List<String>> getResults() {
