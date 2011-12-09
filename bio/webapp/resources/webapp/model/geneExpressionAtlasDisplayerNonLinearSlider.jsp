@@ -59,7 +59,8 @@
 </div>
 
 <script type="text/javascript">
-(function() {
+geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier} = {};
+geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier}.init = function() {
   <%-- init the slider --%>
   new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
     <%-- derive value from slider --%>
@@ -82,7 +83,7 @@
     });
   }
   });
-
+  
   adjustSliderPosition();
   <%-- derive slider position from value --%>
   function adjustSliderPosition() {
@@ -126,5 +127,5 @@
     jQuery("#${sliderIdentifier}.slider-wrap input.value").val(jQuery(this).attr('title'));
     adjustSliderPosition();
   });
-})();
+};
 </script>
