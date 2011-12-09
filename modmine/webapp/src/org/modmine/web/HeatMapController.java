@@ -232,8 +232,6 @@ public class HeatMapController extends TilesAction
         expressionScoreJSON = parseToJSON(StringUtils.capitalize(conditionType),
                 expressionScoreMap);
 
-        LOG.debug("GGS JSON: " + expressionScoreJSON);
-
         return expressionScoreJSON;
 
     }
@@ -327,6 +325,11 @@ public class HeatMapController extends TilesAction
      */
     private String parseToJSON(String conditionType,
             Map<String, List<ExpressionScore>> expressionScoreMap) {
+
+        // if no scores returns an empty JSON string
+        if (expressionScoreMap.size() == 0) {
+            return "{}";
+        }
 
         // vars - conditions
         // smps - genes/exons
