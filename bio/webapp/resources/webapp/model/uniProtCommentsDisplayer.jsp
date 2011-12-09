@@ -2,11 +2,17 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <html:xhtml/>
+
 <%-- one element hash map --%>
 <c:forEach var="type" items="${response}">
-  <c:if test="${not empty type}">
-    <div class="collection-table">
-      <h3>Curated comments from UniProt</h3>
+  <c:if test="${not empty type}">  
+    <div id="uniprotCommentsDisplayer" class="collection-table">
+    
+	<style>
+		#uniprotCommentsDisplayer .brotein { display:none; }
+	</style>    
+    
+      <h3><c:if test="${type.key == 'gene'}"><div class="right"><a href="#">Show proteins</a></div></c:if>Curated comments from UniProt</h3>
       <table>
 
           <c:choose>
@@ -16,7 +22,7 @@
             <tr>
                   <th>Type</th>
                   <th>Comment</th>
-                  <th>Proteins</th>
+                  <th class="brotein">Proteins</th>
                 </tr>
                 </thead>
         <tbody>
@@ -36,7 +42,7 @@
                           </c:when>
                           <c:when test="${bag.key == 'proteins'}">
                             <!-- comment 'proteins' List -->
-                            <td class="${tdStyle}">
+                            <td class="${tdStyle} brotein">
                               <c:forEach var="protein" items="${bag.value}" varStatus="looptyLoop">
                                 <!-- protein: id => primaryIdentifier -->
                                 <html:link action="/report?id=${protein.key}&amp;trail=|${protein.key}">
@@ -80,6 +86,23 @@
           </c:choose>
 
       </table>
+      
+      <script type="text/javascript">
+      (function() {
+      	jQuery('#uniprotCommentsDisplayer h3 div.right a').click(function(e) {
+      		if (jQuery('#uniprotCommentsDisplayer table th.brotein:visible').exists()) {
+      			jQuery('#uniprotCommentsDisplayer table .brotein').hide();
+      			jQuery(this).text('Show proteins');
+      		} else {
+      			jQuery('#uniprotCommentsDisplayer table .brotein').show();
+      			jQuery(this).text('Hide proteins');
+      		}
+      		
+      		e.preventDefault();
+      	});
+      })();
+      </script>
+      
     </div>
   </c:if>
 </c:forEach>
