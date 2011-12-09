@@ -61,7 +61,8 @@
 </div>
 
 <script type="text/javascript">
-  (function() {
+geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier} = {};
+geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier}.init = function() {
     <%-- fill in the t-stat values based on the absolute maximum of the source expressions --%>
     var maxValue = geneExpressionAtlasDisplayer.peaks.global += 10 - (geneExpressionAtlasDisplayer.peaks.global % 10),
         piece = maxValue / 10;
@@ -133,5 +134,5 @@
       jQuery("#${sliderIdentifier}.slider-wrap input.value").val(jQuery(this).attr('title'));
       adjustSliderPosition();
     });
-  })();
+};
 </script>

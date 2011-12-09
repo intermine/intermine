@@ -30,16 +30,21 @@
   #gene-expression-atlas div.sidebar div.legend span { border:1px solid #000; display:inline-block; height:15px; width:20px; }
   #gene-expression-atlas div.sidebar div.legend span.up { background:#59BB14; }
   #gene-expression-atlas div.sidebar div.legend span.down { background:#0000FF; }
+  #gene-expression-atlas div.sidebar div.legend span.confidence { background:url('model/images/low-confidence.png') no-repeat center;
+  	margin-top:10px; }
   #gene-expression-atlas div.sidebar input.update { font-weight:bold; }
   #gene-expression-atlas div.sidebar input.update.inactive { font-weight:normal; }
   #gene-expression-atlas div.sidebar div.settings { margin-bottom:20px; }
+  #gene-expression-atlas div.sidebar div.collection-of-collections { min-width:430px; }
+  #gene-expression-atlas div.sidebar table { text-align:left; }
+  #gene-expression-atlas div.sidebar div.pane { padding:5px; }
   #gene-expression-atlas div.settings ul.sort { margin-bottom:10px; }
   #gene-expression-atlas div.settings ul.sort li { margin-left:10px !important; background:url('images/icons/sort-up.gif') no-repeat center left;
     padding-left:16px; cursor:pointer; }
   #gene-expression-atlas div.settings ul.sort li.active { background:url('images/icons/sort.gif') no-repeat center left; font-weight:bold; }
   #gene-expression-atlas fieldset { border:0; width:300px; }
   #gene-expression-atlas fieldset input[type="checkbox"] { margin-right:10px; vertical-align:bottom }
-  #gene-expression-atlas div.collection-table { display:none; }
+  #gene-expression-atlas div.data-table { display:none; margin-top:20px; }
   #gene-expression-atlas input.toggle-table { margin-bottom:20px; }
   
   #gene-expression-atlas-chart span { text-align:center; display:block; margin-left:50%; color:#1F7492; font-size:11px;
@@ -158,81 +163,91 @@
 
   <%-- sidebar --%>
   <div class="sidebar">
-    <div class="legend">
-      <strong>Expression</strong>
-      <ul class="expression">
-        <li><span class="up"></span> Upregulation</li>
-        <li><span class="down"></span> Downregulation</li>
-      </ul>
-    </div>
-
-    <div class="settings">
-      <strong>Sort</strong>
-      <ul class="sort">
-        <li title="byName">By tissue name</li>
-        <li class="active" title="byTStatistic">By t-statistic</li>
-        <li title="byPValue">By p-value</li>
-      </ul>
-
-      <strong>1) Show regulation type</strong>
-      <fieldset class="regulation-type">
-        <label for="upregulation-check">Upregulation:</label>
-        <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
-        <label for="downregulation-check">Downregulation:</label>
-        <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
-      </fieldset>
-
-      <strong>2) Adjust the p-value**</strong>
-      <fieldset class="p-value">
-        <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
-          <tiles:put name="sliderIdentifier" value="p-value" />
-          <tiles:put name="defaultValue" value="${defaultPValue}" />
-        </tiles:insert>
-      </fieldset>
-
-      <strong>3) Adjust the t-statistic*</strong>
-      <fieldset class="t-statistic">
-        <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
-          <tiles:put name="sliderIdentifier" value="t-statistic" />
-          <tiles:put name="defaultValue" value="${defaultTValue}" />
-        </tiles:insert>
-      </fieldset>
-
-      <strong>4)</strong>
-      <input class="update inactive" type="button" value="Update" title="Update the chart"></input>
-    </div>
-    
-    <input class="toggle-table" type="button" value="Toggle table">
-    
-    <div class="description preview">
-	    <div class="content">
-		    <div class="overlay"></div>
-		    <h4>* Moderated t-statistic</h4>
-		    <p class="small">The basic statistic used for significance analysis is the moderated
-			t-statistic, which is computed for each probe and for each contrast.
-			This has the same interpretation as an ordinary t-statistic except
-			that the standard errors have been moderated across genes, i.e.,
-			shrunk towards a common value, using a simple Bayesian model. This has
-			the effect of borrowing information from the ensemble of genes to aid
-			with inference about each individual gene.<br />
-			The moderated t-statistic (t) is the ratio of the log fold change to
-			its standard error.</p>
-			
-			<h4>** p-value</h4>
-			<p class="small">The p-value (p-value) is obtained from the moderated t-statistic,
-			usually after adjustment for multiple testing: "fdr" which is
-			Benjamini and Hochberg's method to control the false discovery rate.</p>
+	<div class="collection-of-collections">
+	  <div class="header">
+	    <div class="switchers">
+	      <a href="#" title="key" class="active">Key</a> <a href="#" title="controls">Controls</a> <a href="#" title="halp">Help</a>
+	    </div>
+	  </div>
+	  <div class="pane key">
+		<div class="legend">
+		   <strong>Expression</strong>
+		   <ul class="expression">
+		     <li><span class="up"></span> Upregulation</li>
+		     <li><span class="down"></span> Downregulation</li>
+		     <li><span class="confidence"></span> Low confidence</li>
+		   </ul>
+		 </div>
+	  </div>
+	  <div class="pane controls" style="display:none;">
+	    <div class="settings">
+	      <strong>Sort</strong>
+	      <ul class="sort">
+	        <li title="byName">By tissue name</li>
+	        <li class="active" title="byTStatistic">By t-statistic</li>
+	        <li title="byPValue">By p-value</li>
+	      </ul>
+	
+	      <strong>1) Show regulation type</strong>
+	      <fieldset class="regulation-type">
+	        <label for="upregulation-check">Upregulation:</label>
+	        <input type="checkbox" id="upregulation-check" title="UP" checked="checked" autocomplete="off" />
+	        <label for="downregulation-check">Downregulation:</label>
+	        <input type="checkbox" id="downregulation-check" title="DOWN" checked="checked" autocomplete="off" />
+	      </fieldset>
+	
+		  <script type="text/javascript">
+		  	geneExpressionAtlasDisplayer.dragdealers = {};
+		  </script>
+	      <strong>2) Adjust the p-value**</strong>
+	      <fieldset class="p-value">
+	        <tiles:insert name="geneExpressionAtlasDisplayerNonLinearSlider.jsp">
+	          <tiles:put name="sliderIdentifier" value="pValue" />
+	          <tiles:put name="defaultValue" value="${defaultPValue}" />
+	        </tiles:insert>
+	      </fieldset>
+	
+	      <strong>3) Adjust the t-statistic*</strong>
+	      <fieldset class="t-statistic">
+	        <tiles:insert name="geneExpressionAtlasDisplayerLinearSlider.jsp">
+	          <tiles:put name="sliderIdentifier" value="tStatistic" />
+	          <tiles:put name="defaultValue" value="${defaultTValue}" />
+	        </tiles:insert>
+	      </fieldset>
+	
+	      <strong>4)</strong>
+	      <input class="update inactive" type="button" value="Update" title="Update the chart"></input>
+	    </div>
+	    
+	    <input class="toggle-table" type="button" value="Toggle table">
+	  </div>
+	  <div class="pane halp" style="display:none;">
+	    <div class="description">
+		    <%--<div class="content">--%>
+			    <%--<div class="overlay"></div>--%>
+			    <h4>* Moderated t-statistic</h4>
+			    <p class="small">The basic statistic used for significance analysis is the moderated
+				t-statistic, which is computed for each probe and for each contrast.
+				This has the same interpretation as an ordinary t-statistic except
+				that the standard errors have been moderated across genes, i.e.,
+				shrunk towards a common value, using a simple Bayesian model. This has
+				the effect of borrowing information from the ensemble of genes to aid
+				with inference about each individual gene.<br />
+				The moderated t-statistic (t) is the ratio of the log fold change to
+				its standard error.</p>
+				
+				<h4>** p-value</h4>
+				<p class="small">The p-value (p-value) is obtained from the moderated t-statistic,
+				usually after adjustment for multiple testing: "fdr" which is
+				Benjamini and Hochberg's method to control the false discovery rate.</p>
+			<%--</div>--%>
+			<%--<div class="wrap"><a class="more">Read more</a></div>--%>
 		</div>
-		<div class="wrap"><a class="more">Read more</a></div>
+	  </div>
 	</div>
   </div>
 
-  <script type="text/javascript">
-  	<%-- toggler for the sidebar description --%>
-  	jQuery('#gene-expression-atlas div.sidebar div.description.preview').click(function() {
-  		jQuery(this).removeClass('preview');
-  	});
-  
+  <script type="text/javascript">  
     <%-- call me to draw me --%>
     function drawChart(liszt, redraw) {
       if (liszt.length > 0) {
@@ -504,6 +519,39 @@
         geneExpressionAtlasDisplayer.settingsUpdated();
       }
     });
+    
+    // switcher between tables this displayer haz
+    jQuery("#gene-expression-atlas div.sidebar div.collection-of-collections div.switchers a").each(function(i) {
+      jQuery(this).bind(
+        "click",
+        function(e) {
+            // hide anyone (!) that is shown
+            jQuery("#gene-expression-atlas div.sidebar div.collection-of-collections div.pane:visible").each(function(j) {
+              jQuery(this).hide();
+            });
+
+            // show the one we want
+            jQuery("#gene-expression-atlas div.sidebar div.collection-of-collections div." + jQuery(this).attr('title') + ".pane").show();
+
+            // switchers all off
+            jQuery("#gene-expression-atlas div.sidebar div.collection-of-collections div.switchers a.active").each(function(j) {
+              jQuery(this).toggleClass('active');
+            });
+
+         	// init Dragdealers?
+            if (jQuery(this).attr('title') == 'controls') {
+            	geneExpressionAtlasDisplayer.dragdealers.pValue.init();
+            	geneExpressionAtlasDisplayer.dragdealers.tStatistic.init();
+            }
+            
+            // we are active
+            jQuery(this).toggleClass('active');
+
+            // no linking on my turf
+            e.preventDefault();
+        }
+      );
+    });
   </script>
 
 <div style="clear:both;"></div>
@@ -511,7 +559,7 @@
 </div>
 
 <%-- collection table --%>
-<div class="collection-table">
+<div class="data-table collection-table">
 	<h3>Table</h3>
 	<c:set var="inlineResultsTable" value="${collection}" />
 	<tiles:insert page="/reportCollectionTable.jsp">
