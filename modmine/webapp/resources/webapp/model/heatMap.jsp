@@ -22,7 +22,7 @@ jQuery(document).ready(function () {
     } else {
         jQuery("#heatmapGraph").show();
     }
-    
+
     jQuery("#bro").click(function () {
        if(jQuery("#heatmapGraph").is(":hidden")) {
          jQuery("#oc").attr("src", "images/disclosed.gif");
@@ -62,23 +62,23 @@ jQuery(document).ready(function () {
           </i>
         </p>
         <br/>
-       
+
         <html:link linkName="#" styleId="bro" style="cursor:pointer">
         <h3>
         <c:if test="${FeatureCount > 100}">
-        Your list is big and there could be issues with the display: 
+        Your list is big and there could be issues with the display:
         </c:if>
         <b>Click to see/hide</b> the expression maps<img src="images/undisclosed.gif" id="oc"></h3>
         </html:link>
 
-        
+
         <div id="heatmapGraph" style="display: block">
 
-        <c:if test="${FeatureCount > 300}">
-        Please note that clustering functions are not available for lists with more than 300 elements. 
+        <c:if test="${FeatureCount > 50}">
+        Please note that clustering functions are not available for lists with more than 50 elements.
         <br>
         </c:if>
-        
+
         <div id="heatmapContainer">
             <table>
               <tr>
@@ -147,11 +147,18 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
 
 
 <script type="text/javascript">
+var feature_count = parseInt(${FeatureCount});
 
     if ('${fn:length(expressionScoreJSONCellLine)}' < 10) {
         jQuery('#heatmap_div').remove();
-        jQuery('#expression_div').html('<i>Expression scores are not available</i>'); 
+        jQuery('#expression_div').html('<i>Expression scores are not available</i>');
      } else {
+
+         if (feature_count > 300) {
+             jQuery('#heatmap_div').remove();
+             jQuery('#expression_div').html('<i>Too many elements, please select a subset to see the heat maps.</i>');
+         }
+
          jQuery("#description").hide();
 
          jQuery("#description_div").click(function () {
@@ -163,8 +170,7 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
                jQuery("#description").toggle("slow");
             });
 
-           var feature_count = parseInt(${FeatureCount});
-           
+
            // hm - heatmap; cl - cellline; ds - developmentalstage; hc - hierarchical clustering; km - kmeans
             var hm_cl = new CanvasXpress('canvas_cl',
                                          ${expressionScoreJSONCellLine},
@@ -204,7 +210,7 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
                                                   }}
                                          );
 
-            if (feature_count > 3 && feature_count < 300) {
+            if (feature_count > 3 && feature_count <= 50) {
                 hm_cl.clusterSamples();
                 hm_cl.kmeansSamples();
 
@@ -218,7 +224,9 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
             } else {
                 jQuery("#cl-km").attr('disabled', 'disabled');
             }
-            hm_cl.clusterVariables(); // clustering method will call draw action within it.
+            if (feature_count <= 50) {
+                hm_cl.clusterVariables(); // clustering method will call draw action within it.
+            }
             // cx_cellline.kmeansVariables();
             hm_cl.draw();
 
@@ -259,7 +267,7 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
                                                   }}
                                          );
 
-            if (feature_count > 3 && feature_count < 300) {
+            if (feature_count > 3 && feature_count <= 50) {
                 hm_ds.clusterSamples();
                 hm_ds.kmeansSamples();
 
