@@ -217,12 +217,6 @@
             jQuery("#protein-atlas-displayer div.sidebar div.collection-of-collections div.switchers a.active").each(function(j) {
               jQuery(this).toggleClass('active');
             });
-
-         	// init Dragdealers?
-            if (jQuery(this).attr('title') == 'controls') {
-            	geneExpressionAtlasDisplayer.dragdealers.pValue.init();
-            	geneExpressionAtlasDisplayer.dragdealers.tStatistic.init();
-            }
             
             // we are active
             jQuery(this).toggleClass('active');
