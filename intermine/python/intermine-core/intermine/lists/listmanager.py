@@ -112,8 +112,7 @@ class ListManager(object):
         self._temp_lists.add(name)
         return name
 
-
-    def _create_list_from_queryable(self, queryable, name, description, tags):
+    def _get_listable_query(self, queryable):
         q = queryable.to_query()
         if not q.views:
             q.add_view(q.root.name + ".id")
@@ -122,7 +121,10 @@ class ListManager(object):
             up_to_attrs = set((v[0:v.rindex(".")] for v in q.views))
             if len(up_to_attrs) == 1:
                 q.select(up_to_attrs.pop() + ".id")
+        return q
 
+    def _create_list_from_queryable(self, queryable, name, description, tags):
+        q = self._get_listable_query(queryable)
         uri = q.get_list_upload_uri()
         params = q.to_query_params()
         params["listName"] = name

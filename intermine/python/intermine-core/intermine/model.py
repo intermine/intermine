@@ -473,15 +473,28 @@ class Column(object):
         self._model = model
         self._query = query
         self._subclasses = subclasses
+        self.filter = self.where
         if isinstance(path, Path):
             self._path = path
         else:
             self._path = model.make_path(path, subclasses)
 
     def select(self, *cols):
+        """
+        Create a new query with this column as the base class, selecting the given fields.
+        """
         q = self._model.service.new_query(str(self))
         q.select(*cols)
         return q
+
+    def where(self, *args, **kwargs):
+        """
+        Create a new query based on this column, filtered with the given constraint.
+
+        also available as "filter"
+        """
+        q = self._model.service.new_query(str(self))
+        return q.where(*args, **kwargs)
 
     def __getattr__(self, name):
         cld = self._path.get_class()
@@ -516,6 +529,10 @@ class Column(object):
             return (str(self), "ONE OF", other)
         elif isinstance(other, List):
             return (str(self), "IN", other.name)
+        elif hasattr(other, "to_query"):
+            q = other.to_query()
+            l = q.service.create_list(q)
+            return(str(self), "IN", l.name)
         else:
             return (str(self), "=", other)
 
@@ -528,13 +545,43 @@ class Column(object):
             return (str(self), "NONE OF", other)
         elif isinstance(other, List):
             return (str(self), "NOT IN", other.name)
+        elif hasattr(other, "to_query"):
+            q = other.to_query()
+            l = q.service.create_list(q)
+            return(str(self), "NOT IN", l.name)
         else:
             return (str(self), "!=", other)
 
+    def __xor__(self, other):
+        if hasattr(other, "to_query"):
+            q = other.to_query()
+            l = q.service.create_list(q)
+            return(str(self), "NOT IN", l.name)
+        elif isinstance(other, List):
+            return (str(self), "NOT IN", other.name)
+        elif isinstance(other, list):
+            return (str(self), "NONE OF", other)
+
     def __lt__(self, other):
+        if hasattr(other, "to_query"):
+            q = other.to_query()
+            l = q.service.create_list(q)
+            return(str(self), "IN", l.name)
+        elif isinstance(other, List):
+            return (str(self), "IN", other.name)
+        elif isinstance(other, list):
+            return (str(self), "ONE OF", other)
         return (str(self), "<", other)
 
     def __le__(self, other):
+        if hasattr(other, "to_query"):
+            q = other.to_query()
+            l = q.service.create_list(q)
+            return(str(self), "IN", l.name)
+        elif isinstance(other, List):
+            return (str(self), "IN", other.name)
+        elif isinstance(other, list):
+            return (str(self), "ONE OF", other)
         return (str(self), "<=", other)
 
     def __gt__(self, other):

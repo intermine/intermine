@@ -97,6 +97,10 @@ Changes:
          Added support for new json format for ws versions >= 8.
 0.99.01  Better representation of multiple sort-orders.
 0.99.02  Allow sort-orders which are not in the view but are on selected classes
+0.99.03  Allow query construction from Columns with "where" and "filter"
+         Allow list and query objects as the value in an add_constraint call with "IN" and "NOT IN" operators.
+         Ensure lists and queries share the same overloading
+0.99.04  Merged list.to_query and list.to_attribute_query in response to the changes in list upload behaviour.
 
 
 
