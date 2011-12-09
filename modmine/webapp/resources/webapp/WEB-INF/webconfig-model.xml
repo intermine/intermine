@@ -696,7 +696,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
                      replacesFields="goAnnotation,ontologyAnnotations"
-                     placement="Function"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
@@ -768,13 +768,13 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.RegulatoryRegionsDisplayer"
                      jspName="model/regulatoryRegionsDisplayer.jsp"
                      replacesFields="regulatoryRegions"
-                     placement="Regulation"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.flymine.web.displayer.RNAiDisplayer"
                      jspName="model/rnaiDisplayer.jsp"
                      replacesFields="rnaiResults"
-                     placement="Regulation"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
@@ -828,7 +828,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
                      replacesFields="comments"
-                     placement="Function"
+                     placement="summary"
                      types="Protein"/>
 
 
