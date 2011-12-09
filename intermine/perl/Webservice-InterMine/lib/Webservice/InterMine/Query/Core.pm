@@ -13,9 +13,11 @@ use List::MoreUtils qw/uniq natatime/;
 use Scalar::Util qw/blessed/;
 use Perl6::Junction qw/any/;
 
-use MooseX::Types::Moose qw/Str Bool/;
-use InterMine::Model::Types qw/PathList PathHash PathString/;
+use MooseX::Types::Moose qw/Str Bool ArrayRef Undef/;
+use Moose::Util::TypeConstraints qw(match_on_type);
+use InterMine::Model::Types qw/PathList PathHash PathString ClassDescriptor/;
 use Webservice::InterMine::Types qw(
+  ListOperable Path CanTreatAsList
   SortOrder SortOrderList
   ConstraintList LogicOrStr JoinList
   QueryName PathDescriptionList
@@ -915,6 +917,7 @@ constraints to be understood.
 =cut
 
 sub parse_constraint_string {
+    confess "No arguments given!" unless @_;
     if ( @_ > 1 ) {
         if ( @_ % 2 == 0 ) {
             my %args = @_;
@@ -937,6 +940,7 @@ sub parse_constraint_string {
                     %args = (path => $path, %$con);
                 } else {
                     %args = (path => $path);
+
                 }
 
                 my $value = $con;
@@ -949,25 +953,35 @@ sub parse_constraint_string {
                     }
                 }
 
-                if ($args{type}) {
-                    # Ignore
-                } elsif (not defined $value) {
-                    $args{op} = 'IS NULL'     if (grep {$args{op} eq $_} '=', 'eq', 'is');
-                    $args{op} = 'IS NOT NULL' if (grep {$args{op} eq $_} '!=', 'ne', 'isnt');
-                } elsif (ref $value eq 'ARRAY') {
-                    $args{op} ||= 'ONE OF';
-                    $args{values} = $value;
-                } elsif (blessed $value and $value->isa('Webservice::InterMine::List')) {
-                    $args{op} ||= 'IN';
-                    $args{value} = $value;
-                } elsif (blessed $value and $value->isa('Webservice::InterMine::Path')) {
-                    $args{op} ||= 'IS';
-                    $args{loop_path} = $value;
-                } elsif (blessed $value and $value->isa('InterMine::Model::ClassDescriptor')) {
-                    $args{type} ||= $value;
-                } else {
-                    $args{op} ||= '=';
-                    $args{value} = $value;
+                unless ($args{type}) {
+                    match_on_type $value => (
+                        ListOperable|CanTreatAsList, sub {
+                            $args{op} ||= "IN";
+                            $args{value} = $value;
+                        },
+                        ArrayRef, sub {
+                            $args{op} ||= "ONE OF";
+                            $args{values} = $value;
+                        },
+                        Undef, sub {
+                            if (not defined $args{op} || $args{op} eq any('=', 'eq', 'is')) {
+                                $args{op} = "IS NULL";
+                            } elsif ($args{op} eq any('!=', 'ne', 'isnt')) {
+                                $args{op} = "IS NOT NULL";
+                            }
+                        },
+                        ClassDescriptor, sub {
+                            $args{type} = $value;
+                        },
+                        Path, sub {
+                            $args{op} ||= 'IS',
+                            $args{loop_path} = $value;
+                        },
+                        sub {
+                            $args{op} ||= '=';
+                            $args{value} = $value;
+                        }
+                    );
                 }
                 return %args;
             }

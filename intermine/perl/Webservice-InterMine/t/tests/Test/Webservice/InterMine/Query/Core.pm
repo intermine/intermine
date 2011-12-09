@@ -5,7 +5,9 @@ use warnings;
 use base qw(Test::Class);
 use List::MoreUtils qw(uniq);
 use Test::More;
+use Test::MockObject;
 use Test::Exception;
+use Set::CrossProduct;
 use InterMine::Model::TestModel;
 use Webservice::InterMine::ConstraintFactory;
 sub class {'Webservice::InterMine::Query::Core'}
@@ -238,6 +240,50 @@ sub add_ternary_constraint:Test(15) {
     is("LOOKUP", $con->op);
     is("Foo", $con->value);
     is("WH", $con->extra_value);
+}
+
+sub add_list_constraint:Tests {
+    my $test = shift;
+    my $obj = $test->{object};
+
+    # Mock objects
+    my $list_obj = Test::MockObject->new();
+    $list_obj->set_isa("Webservice::InterMine::List");
+    $list_obj->mock(name => sub {"Some List"});
+    my $sub_query = Test::MockObject->new();
+    $sub_query->set_isa("Webservice::InterMine::Query");
+    $sub_query->mock(to_list_name => sub {"Some List"});
+    my %expected_ops = (in => "IN", not_in => "NOT IN", "" => "IN");
+    my $iterator = Set::CrossProduct->new([
+            ["Some List", $list_obj, $sub_query],
+            ["IN", "NOT IN", "in", "not_in", ""],
+            ["list", "pair"],
+        ]);
+    while (my $combination = $iterator->get) {
+        my @args;
+        if ($combination->[2] eq "list") {
+            @args = ("Employee", $combination->[1] || "IN", $combination->[0]);
+        } else {
+            if ($combination->[1]) {
+                @args = ("Employee" => {$combination->[1] => $combination->[0]});
+            } else {
+                next unless (ref $combination->[0]);
+                @args = ("Employee" => $combination->[0]);
+            }
+        }
+        my $op = $expected_ops{$combination->[1]} || $combination->[1];
+
+        my $con;
+
+        lives_ok(
+            sub {$con = $obj->add_constraint(@args)},
+            "Can add a list constraint",
+        );
+        isa_ok($con, "Webservice::InterMine::Constraint::List", "And it")
+            or (diag explain $combination);
+        is($op, $con->op, "It has the right operator");
+        is("Some List", $con->value, "It has the right value");
+    }
 }
 
 sub add_subclass_constraint:Test(5) {
