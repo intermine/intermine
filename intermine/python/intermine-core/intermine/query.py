@@ -363,6 +363,32 @@ class Query(object):
         """Return the number of rows this query will return."""
         return self.count()
 
+    def __sub__(self, other):
+        """Construct a new list from the symmetric difference of these things"""
+        return self.service._list_manager.subtract([self], [other])
+
+    def __xor__(self, other):
+        """Calculate the symmetric difference of this query and another"""
+        return self.service._list_manager.xor([self, other])
+
+    def __and__(self, other):
+        """
+        Intersect this query and another query or list
+        """
+        return self.service._list_manager.intersect([self, other])
+
+    def __or__(self, other):
+        """ 
+        Return the union of this query and another query or list.
+        """
+        return self.service._list_manager.union([self, other])
+
+    def __add__(self, other):
+        """ 
+        Return the union of this query and another query or list
+        """
+        return self.service._list_manager.union([self, other])
+
     @classmethod
     def from_xml(cls, xml, *args, **kwargs):
         """

@@ -148,7 +148,7 @@ class Service(object):
       list_on_server = service.get_list("On server")
       in_both = new_list & list_on_server
       in_both.name = "Intersection of these lists"
-      for row in in_both.to_attribute_query().results():
+      for row in in_both:
         do_something_with(row)
         ...
       
@@ -269,7 +269,8 @@ class Service(object):
 
     # Delegated list methods
 
-    LIST_MANAGER_METHODS = frozenset(["get_list", "get_all_lists", "get_all_list_names",
+    LIST_MANAGER_METHODS = frozenset(["get_list", "get_all_lists", 
+        "get_all_list_names",
         "create_list", "get_list_count", "delete_lists", "l"])
 
     def __getattribute__(self, name):

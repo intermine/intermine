@@ -1,12 +1,12 @@
-import sys
 import os
+import sys
 sys.path.insert(0, os.getcwd())
 
 import unittest
 from intermine.webservice import Service
 
 def emp_rows_without_ids(bag):
-    return [row[:3] + row[4:] for row in bag.to_attribute_query().rows()]
+    return [row[:3] + row[4:] for row in bag.to_query().rows()]
 
 
 # This is coded all as one enormous test so that we can do
@@ -51,8 +51,9 @@ class LiveListTest(unittest.TestCase):
     def testListsFromFlyMine(self):
         s = Service("www.flymine.org/query")
         all_lists = s.get_all_lists()
-        possible_statuses = set(["CURRENT", "TO_UPGRADE"])
-        self.assertTrue(set((l.status for l in all_lists)) <= possible_statuses)
+        possible_statuses = set(["CURRENT", "TO_UPGRADE", "NOT_CURRENT"])
+        got = set((l.status for l in all_lists)) 
+        self.assertTrue(got <= possible_statuses)
 
     def testListTagAdding(self):
         s = self.SERVICE
@@ -133,7 +134,7 @@ class LiveListTest(unittest.TestCase):
             LiveListTest.JEAN_MARC, LiveListTest.JENNIFER_SCHIRRMANN
         ]
 
-        got = [row[:3] + row[4:] for row in l.to_attribute_query().rows()]
+        got = [row[:3] + row[4:] for row in l.to_query().rows()]
         self.assertEqual(got, expected)
 
         # Test iteration:
@@ -186,7 +187,7 @@ class LiveListTest(unittest.TestCase):
             LiveListTest.BRENDA, LiveListTest.KEITH, LiveListTest.GARETH,
             LiveListTest.CAROL
         ]
-        got = [row[:3] + row[4:] for row in union.to_attribute_query().rows()]
+        got = [row[:3] + row[4:] for row in union.to_query().rows()]
         self.assertEqual(got, expected)
 
         union = listA + listB
@@ -308,7 +309,7 @@ class LiveListTest(unittest.TestCase):
         expected = [
              LiveListTest.VINCENT, LiveListTest.ALEX, LiveListTest.KEITH,LiveListTest.GARETH
         ]
-        got = [row[:3] + row[4:] for row in subtr.to_attribute_query().rows()]
+        got = [row[:3] + row[4:] for row in subtr.to_query().rows()]
         self.assertEqual(got, expected)
 
         prev_name = listA.name
@@ -319,6 +320,38 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
+        
+        # Test subqueries
+        with_cc_q = s.model.Bank.where("corporateCustomers.id", "IS NOT NULL")
+        with_cc_l = s.create_list(with_cc_q)
+
+        self.assertEqual(2, s.model.Bank.where(s.model.Bank ^ with_cc_q).count())
+        self.assertEqual(2, s.model.Bank.where(s.model.Bank ^ with_cc_l).count())
+
+        self.assertEqual(3, s.model.Bank.where(s.model.Bank < with_cc_q).count())
+        self.assertEqual(3, s.model.Bank.where(s.model.Bank < with_cc_l).count())
+
+        boring_q = s.new_query("Bank")
+        boring_q.add_constraint("Bank", "NOT IN", with_cc_q)
+        self.assertEqual(2, boring_q.count())
+
+        boring_q = s.new_query("Bank")
+        boring_q.add_constraint("Bank", "NOT IN", with_cc_l)
+        self.assertEqual(2, boring_q.count())
+
+        # Test query overloading
+
+        no_comps = s.new_query("Bank") - with_cc_q
+        self.assertEqual(2, no_comps.size)
+
+        no_comps = s.new_query("Bank") - with_cc_l
+        self.assertEqual(2, no_comps.size)
+
+        all_b = s.new_query("Bank") | with_cc_q
+        self.assertEqual(5, all_b.size)
+
+        all_b = s.new_query("Bank") | with_cc_l
+        self.assertEqual(5, all_b.size)
 
     def tearDown(self):
         s = self.SERVICE

@@ -537,7 +537,14 @@ class ListConstraint(CodedConstraint):
      """
     OPS = set(['IN', 'NOT IN'])
     def __init__(self, path, op, list_name, code="A"):
-        self.list_name = list_name
+        if hasattr(list_name, 'to_query'):
+            q = list_name.to_query()
+            l = q.service.create_list(q)
+            self.list_name = l.name
+        elif hasattr(list_name, "name"):
+            self.list_name = list_name.name
+        else:
+            self.list_name = list_name
         super(ListConstraint, self).__init__(path, op, code)
 
     def to_string(self):
