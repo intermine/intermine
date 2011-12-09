@@ -908,6 +908,7 @@
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
                                  typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
+<!--
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
@@ -927,8 +928,6 @@
                          columnTitle="Interactions"
                          style="height:431px;"/>
 
-
-<!--
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
                       content="Have an idea for a widget?  Contact us at help [at] modencode.org!"
