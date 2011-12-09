@@ -62,8 +62,8 @@ use MooseX::Types -declare => [
     qw(
         Constraint ConstraintList ConstraintFactory
         ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator
-        TernaryOperator MultiOperator LoopOperator ListOperator
-        LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator LCMultiOperator 
+        TernaryOperator MultiOperator LoopOperator ListOperator NotInWithUnderScores
+        LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator NotQuiteMulti 
         XmlLoopOperators NoSpaceLoopOperator
 
         LogicOperator LogicGroup LogicOrStr
@@ -86,7 +86,7 @@ use MooseX::Types -declare => [
 
         SavedQuery SavedQueryFactory
 
-        ListFactory List ListName
+        ListFactory List ListName CanTreatAsList
         ListOfLists ListOfListableQueries
 
         ListOperable ListOfListOperables 
@@ -161,6 +161,8 @@ coerce LoopOperator, from NoSpaceLoopOperator, via {'IS NOT'};
 
 enum ListOperator,   [ 'IN', 'NOT IN',];
 enum LCListOperator, [ 'in', 'not in', ];
+enum NotInWithUnderScores, [ 'not_in', 'NOT_IN' ];
+coerce ListOperator, from NotInWithUnderScores, via {'NOT IN'};
 coerce ListOperator, from LCListOperator, via {uc($_)};
 
 subtype TernaryOperator, as Str, where {$_ eq 'LOOKUP'};
@@ -168,8 +170,8 @@ subtype LCTernaryOperator, as Str, where {$_ eq 'lookup'};
 coerce TernaryOperator, from LCTernaryOperator, via {uc($_)};
 
 enum MultiOperator, [ 'ONE OF', 'NONE OF', ];
-enum LCMultiOperator, [ 'one of', 'none of', ];
-coerce MultiOperator, from LCMultiOperator, via {uc($_)};
+subtype NotQuiteMulti, as Str, where {/^n?one[ _-]of$/i};
+coerce MultiOperator, from NotQuiteMulti, via {s/[_-]/ /g;uc($_)};
 
 class_type Constraint, { class => 'Webservice::InterMine::Constraint' };
 subtype ConstraintList, as ArrayRef [Constraint];
@@ -305,6 +307,7 @@ coerce TemplateFactory, from ArrayRef, via {
 class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
 class_type List, {class => 'Webservice::InterMine::List'};
 subtype ListName, as Str;
+duck_type CanTreatAsList, ['to_list_name'];
 subtype ListOfLists, as ArrayRef[List];
 
 subtype ListOperable, as List|ListableQuery;
@@ -316,17 +319,14 @@ coerce ListFactory, from HashRef, via {
 };
 
 coerce ListName, from ListableQuery, via {
-    require Webservice::InterMine::Path;
     my $service = $_->service;
-    if ($_->view_size != 1) {
-        confess "Cannot convert this query to a list";
+    my $list = eval {$service->new_list(content => $_)};
+    if (my $e = $@) {
+        confess "Cannot coerce this query into a list, because:\n" . $e;
     }
-    my $path = $_->view->[0];
-    my $type = Webservice::InterMine::Path::last_class_type($_->model, $path);
-
-    my $list = $service->new_list(type => $type, content => $_);
     return $list->name;
 };
+coerce ListName, from CanTreatAsList, via {$_->to_list_name};
 coerce ListName, from List, via {$_->name};
 
 # SAVED QUERIES
