@@ -85,8 +85,10 @@ public abstract class ReportDisplayer
      * put on the request.
      * @param request request for displaying a report page
      * @param reportObject the object being displayed
+     * @throws ReportDisplayerNoResultsException if something goes wrong
      */
-    public abstract void display(HttpServletRequest request, ReportObject reportObject) throws ReportDisplayerNoResultsException;
+    public abstract void display(HttpServletRequest request, ReportObject reportObject)
+        throws ReportDisplayerNoResultsException;
 
     /**
      * The JSP page that will be called with the request to render output.
