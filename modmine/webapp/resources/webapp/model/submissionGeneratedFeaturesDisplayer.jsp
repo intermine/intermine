@@ -288,8 +288,34 @@ Find overlapping features:
         Find Genes that have
                <html:select styleId="typeSelector" property="flankingFeatureType">
                  <c:forEach items="${featureCounts}" var="fc" varStatus="status">
-                   <c:if test='${fc.key != "Chromosome"}'>
-                     <html:option value="${fc.key}">${fc.key}</html:option>
+                 <%-- For some features is not reasonable to look for overlapping genes, list of
+                 relevant ones compiled by rachel. TODO add check for unlocated features?
+                         TFBindingSite
+                         BindingSite
+                         InsulatorBindingSite
+                         ProteinBindingSite
+                         HistoneBindingSite
+                         TranscriptionEndSite
+                         PolyASite
+                         SL1AcceptorSite
+                         SL2AcceptorSite
+
+                         FivePrimeUTR
+                         ThreePrimeUTR
+                         ThreePrimeUST
+                         ThreePrimeRST
+
+                         CopyNumberVariation
+                         TSS
+                         PolyASignalSequence
+                         --%>
+                 <c:if test="${fn:endsWith(fc.key, 'Site') || fn:contains(fc.key, 'Prime')
+                 		|| fc.key == 'CopyNumberVariation' || fc.key == 'TSS'
+                 		|| fc.key == 'PolyASignalSequence'}">
+<%--
+                 <c:if test='${fc.key != "Chromosome"}'>
+--%>
+<html:option value="${fc.key}">${fc.key}</html:option>
                    </c:if>
                  </c:forEach>
                </html:select>
