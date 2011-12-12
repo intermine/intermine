@@ -12,22 +12,22 @@ package org.intermine.web.displayer;
 
 @SuppressWarnings("serial")
 class ReportDisplayerNoResultsException extends Exception {
-  
-	String mistake;
 
-	public ReportDisplayerNoResultsException() {
-		super();
-		mistake = "The displayer has no results to show";
-	}
-  
-	public ReportDisplayerNoResultsException(String err) {
-		// a super error...
-		super(err);
-		mistake = err;
-	}
-  
-	public String getError() {
-		return mistake;
-	}
-	
+    String mistake;
+
+    public ReportDisplayerNoResultsException() {
+        super();
+        mistake = "The displayer has no results to show";
+    }
+
+    public ReportDisplayerNoResultsException(String err) {
+        // a super error...
+        super(err);
+        mistake = err;
+    }
+
+    public String getError() {
+        return mistake;
+    }
+
 }
