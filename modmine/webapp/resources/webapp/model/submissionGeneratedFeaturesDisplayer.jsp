@@ -280,35 +280,46 @@ Find overlapping features:
 </tbody>
 </table>
 
-        <h3>Find nearby genes:</h3>
 
+<%-- OVERLAPPING GENES
+
+For some features is not reasonable to look for overlapping genes, list of
+relevant ones compiled by rachel. TODO add check for unlocated features?
+        TFBindingSite
+        BindingSite
+        InsulatorBindingSite
+        ProteinBindingSite
+        HistoneBindingSite
+        TranscriptionEndSite
+        PolyASite
+        SL1AcceptorSite
+        SL2AcceptorSite
+
+        FivePrimeUTR
+        ThreePrimeUTR
+        ThreePrimeUST
+        ThreePrimeRST
+
+        CopyNumberVariation
+        TSS
+        PolyASignalSequence
+        --%>
+<c:forEach items="${featureCounts}" var="fc" varStatus="status">
+<c:if test="${fn:endsWith(fc.key, 'Site') || fn:contains(fc.key, 'Prime')
+       || fc.key == 'CopyNumberVariation' || fc.key == 'TSS'
+       || fc.key == 'PolyASignalSequence'}">
+<c:set var="gffeat" value ='true' />
+</c:if>
+</c:forEach>
+
+<c:if test="${gffeat == 'true'}">
+        <h3>Find nearby genes:</h3>
         <table>
         <tbody>
 <tr><td>
         Find Genes that have
                <html:select styleId="typeSelector" property="flankingFeatureType">
                  <c:forEach items="${featureCounts}" var="fc" varStatus="status">
-                 <%-- For some features is not reasonable to look for overlapping genes, list of
-                 relevant ones compiled by rachel. TODO add check for unlocated features?
-                         TFBindingSite
-                         BindingSite
-                         InsulatorBindingSite
-                         ProteinBindingSite
-                         HistoneBindingSite
-                         TranscriptionEndSite
-                         PolyASite
-                         SL1AcceptorSite
-                         SL2AcceptorSite
-
-                         FivePrimeUTR
-                         ThreePrimeUTR
-                         ThreePrimeUST
-                         ThreePrimeRST
-
-                         CopyNumberVariation
-                         TSS
-                         PolyASignalSequence
-                         --%>
                  <c:if test="${fn:endsWith(fc.key, 'Site') || fn:contains(fc.key, 'Prime')
                  		|| fc.key == 'CopyNumberVariation' || fc.key == 'TSS'
                  		|| fc.key == 'PolyASignalSequence'}">
@@ -335,9 +346,11 @@ Find overlapping features:
                 </html:select>
 
             <html:submit property="flanking" styleClass="query">Show Results</html:submit>
-  </html:form>
 </tbody>
 </table>
+</c:if>
+
+</html:form>
 
   </div>
   </c:when>
