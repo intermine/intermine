@@ -8,7 +8,7 @@ package org.intermine.objectstore.dummy;
  * be distributed with the code.  See the LICENSE file for more
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
- */ 
+ */
 
 /**
  * @author Alexis Kalderimis
@@ -18,22 +18,22 @@ package org.intermine.objectstore.dummy;
 public class MethodNotMockedException extends UnsupportedOperationException {
 
 	/**
-	 * Default serial id 
+	 * Default serial id
 	 */
 	private static final long serialVersionUID = 1L;
 
 	public MethodNotMockedException() {
 		// empty constructor
 	}
-	
+
 	public MethodNotMockedException(String message) {
 		super(message);
 	}
-	
+
 	public MethodNotMockedException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
+
 	public MethodNotMockedException(Throwable cause) {
 		super(cause);
 	}
