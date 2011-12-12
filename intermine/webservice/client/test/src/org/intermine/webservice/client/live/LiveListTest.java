@@ -23,6 +23,8 @@ import org.intermine.webservice.client.lists.ItemList;
 import org.intermine.webservice.client.results.Item;
 import org.intermine.webservice.client.services.ListService;
 import org.intermine.webservice.client.services.ListService.ListCreationInfo;
+import org.intermine.webservice.client.services.ListService.ListCreationInfo;
+import org.intermine.webservice.client.exceptions.ServiceException;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -484,6 +486,36 @@ public class LiveListTest {
         Item company = department.getReference("company");
         assertNotNull(company);
         assertEquals("Capitol Versicherung AG", company.getString("name"));
+    }
+
+    @Test
+    public void illegalTagNames() {
+        ItemList favs = testmine.getList("My-Favourite-Employees");
+        try {
+            testmine.addTags(favs, "!£$%^&*(");
+            fail("Should not have been allowed to add that tag");
+        } catch (ServiceException e) {
+            String message = e.getMessage() != null ? e.getMessage() : "";
+            if (e.getCause() != null) {
+                message += e.getCause().getMessage();
+            }
+            assertTrue( "Message (" + message + ") should be informative", message.indexOf("Invalid name") >= 0);
+        }
+    }
+
+    @Test
+    public void forbiddenTagNames() {
+        ItemList favs = testmine.getList("My-Favourite-Employees");
+        try {
+            testmine.addTags(favs, "im:foo");
+            fail("Should not have been allowed to add that tag");
+        } catch (ServiceException e) {
+            String message = e.getMessage() != null ? e.getMessage() : "";
+            if (e.getCause() != null) {
+                message += e.getCause().getMessage();
+            }
+            assertTrue( "Message (" + message + ") should be informative", message.indexOf("starting with im") >= 0);
+        }
     }
 
     @Test

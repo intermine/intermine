@@ -149,8 +149,8 @@ public class LiveTemplatesTest {
         params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
         List<JSONObject> results = unauthorised.getJSONResults("CEO_Rivals", params, subset);
         assertEquals(2, results.size());
-        assertEquals(497964, results.get(1).getInt("salary"));
-        assertEquals("Wernham-Hogg", results.get(1).getJSONObject("company").getString("name"));
+        assertEquals(333836, results.get(1).getInt("salary"));
+        assertEquals("Capitol Versicherung AG", results.get(1).getJSONObject("company").getString("name"));
     }
 
     @Test
@@ -160,8 +160,8 @@ public class LiveTemplatesTest {
                 Constraints.neq("CEO.name", "Charles Miner"));
         List<JSONObject> results = unauthorised.getJSONResults(ceoRivals, subset);
         assertEquals(2, results.size());
-        assertEquals(497964, results.get(1).getInt("salary"));
-        assertEquals("Wernham-Hogg", results.get(1).getJSONObject("company").getString("name"));
+        assertEquals(333836, results.get(1).getInt("salary"));
+        assertEquals("Capitol Versicherung AG", results.get(1).getJSONObject("company").getString("name"));
     }
 
     @Test
