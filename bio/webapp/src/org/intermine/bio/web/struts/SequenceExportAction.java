@@ -11,8 +11,6 @@ package org.intermine.bio.web.struts;
  */
 
 import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +53,7 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SequenceExportAction extends InterMineAction
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
 
     /**
