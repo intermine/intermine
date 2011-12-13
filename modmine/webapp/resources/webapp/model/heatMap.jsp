@@ -34,8 +34,15 @@ jQuery(document).ready(function () {
 })
 </script>
 
+<c:set var="MAX_CLUSTER" value="150" />
+<c:set var="MAX_MAP" value="300" />
+<c:set var="MAX_DEFAULT_OPEN" value="100" />
 
-
+<%--
+<hr>
+${expressionScoreJSONCellLine}
+<hr>
+--%>
     <div id="heatmap_div">
         <p>
           <h2>
@@ -65,7 +72,7 @@ jQuery(document).ready(function () {
 
         <html:link linkName="#" styleId="bro" style="cursor:pointer">
         <h3>
-        <c:if test="${FeatureCount > 100}">
+        <c:if test="${FeatureCount > MAX_DEFAULT_OPEN}">
         Your list is big and there could be issues with the display:
         </c:if>
         <b>Click to see/hide</b> the expression maps<img src="images/undisclosed.gif" id="oc"></h3>
@@ -74,8 +81,8 @@ jQuery(document).ready(function () {
 
         <div id="heatmapGraph" style="display: block">
 
-        <c:if test="${FeatureCount > 50}">
-        Please note that clustering functions are not available for lists with more than 50 elements.
+        <c:if test="${FeatureCount > MAX_CLUSTER}">
+        Please note that clustering functions are not available for lists with more than ${MAX_CLUSTER} elements.
         <br>
         </c:if>
 
@@ -148,13 +155,15 @@ modENCODE submission</a>, with links to the original score files for <a href="ht
 
 <script type="text/javascript">
 var feature_count = parseInt(${FeatureCount});
+var max_cluster = parseInt(${MAX_CLUSTER});
+var max_map = parseInt(${MAX_MAP});
 
     if ('${fn:length(expressionScoreJSONCellLine)}' < 10) {
         jQuery('#heatmap_div').remove();
         jQuery('#expression_div').html('<i>Expression scores are not available</i>');
      } else {
 
-         if (feature_count > 300) {
+         if (feature_count > max_map) {
              jQuery('#heatmap_div').remove();
              jQuery('#expression_div').html('<i>Too many elements, please select a subset to see the heat maps.</i>');
          }
@@ -210,7 +219,7 @@ var feature_count = parseInt(${FeatureCount});
                                                   }}
                                          );
 
-            if (feature_count > 3 && feature_count <= 50) {
+            if (feature_count > 3 && feature_count <= max_cluster) {
                 hm_cl.clusterSamples();
                 hm_cl.kmeansSamples();
 
@@ -224,7 +233,7 @@ var feature_count = parseInt(${FeatureCount});
             } else {
                 jQuery("#cl-km").attr('disabled', 'disabled');
             }
-            if (feature_count <= 50) {
+            if (feature_count <= max_cluster) {
                 hm_cl.clusterVariables(); // clustering method will call draw action within it.
             }
             // cx_cellline.kmeansVariables();
@@ -267,7 +276,7 @@ var feature_count = parseInt(${FeatureCount});
                                                   }}
                                          );
 
-            if (feature_count > 3 && feature_count <= 50) {
+            if (feature_count > 3 && feature_count <= max_cluster) {
                 hm_ds.clusterSamples();
                 hm_ds.kmeansSamples();
 
