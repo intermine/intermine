@@ -127,7 +127,7 @@
       </script></li>
     </ol>
     </fieldset>
-      <fieldset class="submit"><html:submit property="submit">${exportSubmitMessage}</html:submit></fieldset>
+      <fieldset class="submit"><html:submit property="submit" onclick="if((jQuery.trim(jQuery('#pathsList').html()) == '')){ alert('Please add some columns...');return false;}">${exportSubmitMessage}</html:submit></fieldset>
     </html:form>
   </c:otherwise>
 </c:choose>
