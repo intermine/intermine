@@ -63,6 +63,7 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
@@ -76,11 +77,11 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -99,7 +100,6 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.web.util.InterMineLinkGenerator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -674,44 +674,11 @@ public class AjaxServices
      * remote mine.
      *
      * @param mineName name of mine to query
-     * @param organismName gene.organism
-     * @param primaryIdentifier identifier for gene
-     * @param symbol identifier for gene or NULL
+     * @param organisms gene.organism
+     * @param identifiers identifiers for gene
      * @return the links to friendly intermines
      */
-    public static String getFriendlyMineReportLinks(String mineName, String organismName,
-            String primaryIdentifier, String symbol) {
-        HttpSession session = WebContextFactory.get().getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager fmm = im.getFriendlyMineManager();
-        InterMineLinkGenerator linkGen = null;
-        Class<?> clazz
-            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineReportLinkGenerator");
-        Constructor<?> constructor;
-        try {
-            constructor = clazz.getConstructor(new Class[] {});
-            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
-        } catch (Exception e) {
-            LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
-            return null;
-        }
-        Collection<JSONObject> results = linkGen.getLinks(fmm, mineName, organismName,
-                primaryIdentifier);
-        if (results == null || results.isEmpty()) {
-            return null;
-        }
-        return results.toString();
-    }
-
-    /**
-     * For LIST ANALYSIS page - For a mine, test if that mine has orthologues
-     *
-     * @param mineName name of a friendly mine
-     * @param organisms list of organisms for genes in this list
-     * @param identifiers list of identifiers of genes in this list
-     * @return the links to friendly intermines or an error message
-     */
-    public static String getFriendlyMineListLinks(String mineName, String organisms,
+    public static String getFriendlyMineLinks(String mineName, String organisms,
             String identifiers) {
         if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
                 || StringUtils.isEmpty(identifiers)) {
@@ -719,27 +686,24 @@ public class AjaxServices
         }
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        FriendlyMineManager fmm = im.getFriendlyMineManager();
         InterMineLinkGenerator linkGen = null;
         Class<?> clazz
-            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
+            = TypeUtil.instantiate("org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
         Constructor<?> constructor;
-        Collection<JSONObject> results = null;
         try {
             constructor = clazz.getConstructor(new Class[] {});
             linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
-            // runs remote templates (possibly)
-            results = linkGen.getLinks(linkManager, mineName, organisms, identifiers);
         } catch (Exception e) {
-            LOG.error("Failed to instantiate FriendlyMineListLinkGenerator because: " + e);
+            LOG.error("Failed to instantiate FriendlyMineLinkGenerator because: " + e);
             return null;
         }
+        Collection<JSONObject> results = linkGen.getLinks(fmm, mineName, organisms, identifiers);
         if (results == null || results.isEmpty()) {
             return null;
         }
         return results.toString();
     }
-
 
     /**
      * used on REPORT page
@@ -1450,10 +1414,10 @@ public class AjaxServices
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
         ac.createRAMIndex(className + "." + field);
-        
+
         // swap "-" for spaces, ticket #2357
         suffix = suffix.replace("-", " ");
-        
+
         if (!wholeList && suffix.length() > 0) {
             String[] shortList = ac.getFastList(suffix, field, 31);
             return shortList;
@@ -1481,15 +1445,15 @@ public class AjaxServices
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
             for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
-            	Map<String, Object> listAttributes = entry.getValue();
+                Map<String, Object> listAttributes = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
                 if (listAttributes.get("status").equals(BagState.CURRENT.toString()) ||
-                		listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
+                        listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
                     list.put("status", listAttributes.get("status"));
                     if (listAttributes.containsKey("size")) {
-                    	list.put("size", listAttributes.get("size"));
+                        list.put("size", listAttributes.get("size"));
                     }
                     lists.add(list);
                 }

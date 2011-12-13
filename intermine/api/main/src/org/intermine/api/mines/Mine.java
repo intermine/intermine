@@ -10,10 +10,7 @@ package org.intermine.api.mines;
  *
  */
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,10 +28,6 @@ public class Mine
     protected String bgcolor, frontcolor;
     protected Set<String> defaultValues = new HashSet<String>();
     protected String releaseVersion = null;
-    // holds a set of values available to query for this mine
-    private Set<String> mineValues;
-    // holds a map of values available to query for this mine, eg. dept --> employee,gene --> ortho
-    private Map<String, Set<String>> mineMap;
 
     /**
      * Constructor
@@ -110,41 +103,6 @@ public class Mine
     }
 
     /**
-     * @return the mineValues
-     */
-    public Set<String> getMineValues() {
-        return mineValues;
-    }
-
-    /**
-     * @param mineValues the mineValues to set
-     */
-    public void setMineValues(Set<String> mineValues) {
-        this.mineValues = mineValues;
-    }
-
-    /**
-     * @return true if this mine has queryable values
-     */
-    public boolean hasValues() {
-        return mineValues != null && !mineValues.isEmpty();
-    }
-
-    /**
-     * @return the mineMap
-     */
-    public Map<String, Set<String>> getMineMap() {
-        return mineMap;
-    }
-
-    /**
-     * @param mineMap the mineMap to set
-     */
-    public void setMineMap(Map<String, Set<String>> mineMap) {
-        this.mineMap = mineMap;
-    }
-
-    /**
      * @return the releaseVersion
      */
     public String getReleaseVersion() {
@@ -165,6 +123,7 @@ public class Mine
     }
 
     /**
+     * get first default value.  used in querybuilder to select default extra value
      * @return the defaultValue
      */
     public String getDefaultValue() {
@@ -175,7 +134,6 @@ public class Mine
         return values[0].toString();
     }
 
-
     /**
      * @param defaultValue the defaultValues to set, comma delim
      */
@@ -185,61 +143,4 @@ public class Mine
             defaultValues.add(bit);
         }
     }
-
-    /**
-     * Search through the map held by this mine for matching values.  eg. look in the map for
-     * entries with values equal to the organism name provided.
-     *
-     * For a Dmel list, finds in this mine:
-     *
-     *   D. rerio --> Dmel
-     *
-     * @param remoteKeys keys from other mine
-     * @param values values to query for
-     * @return list of keys for values provided
-     */
-    public Set<String> getMatchingMapKeys(Set<String> remoteKeys, List<String> values) {
-        if (mineMap != null && !mineMap.isEmpty()) {
-            Set<String> results = new HashSet<String>();
-            for (Map.Entry<String, Set<String>> entry : mineMap.entrySet()) {
-                String key = entry.getKey();
-                Set<String> currentMineValues = entry.getValue();
-                for (String otherMineValue : values) {
-                    if (currentMineValues.contains(otherMineValue)) {
-                        if (remoteKeys == null || remoteKeys.contains(key)) {
-                            results.add(key);
-                        }
-                    }
-                }
-            }
-            return results;
-        }
-        return Collections.emptySet();
-    }
-
-    /**
-     * finds Dmel (organism in list) --> D. rerio (organism for remote mine)
-     *
-     * @param remoteKeys keys for remote mine
-     * @param values values to test for
-     * @return list of values (organisms)
-     */
-    public Set<String> getMatchingMapValues(Set<String> remoteKeys, List<String> values) {
-        if (mineMap != null && !mineMap.isEmpty()) {
-            Set<String> results = new HashSet<String>();
-            for (String value : values) {
-                Set<String> localValues = mineMap.get(value);
-                if (localValues != null) {
-                    for (String key : remoteKeys) {
-                        if (localValues.contains(key)) {
-                            results.add(key);
-                        }
-                    }
-                }
-            }
-            return results;
-        }
-        return Collections.emptySet();
-    }
-
 }

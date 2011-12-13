@@ -10,24 +10,21 @@
 
 <script type="text/javascript" charset="utf-8">
 
-function getFriendlyMineLinks(mine, url, organisms, identifierList) {
-
-    AjaxServices.getFriendlyMineListLinks(mine, organisms, identifierList, function(mineString) {
+function getFriendlyMineLinks(mine, url, organisms, identifiers) {
+    AjaxServices.getFriendlyMineLinks(mine, organisms, identifiers, function(mineString) {
         // switch off loading img
         jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
         if (mineString) {
-            // parse to JSON (requires jQuery 1.4.1+)
             var jSONObject = jQuery.parseJSON(mineString);
-            // TODO can be many identifiers, need to post
-            // [{"identifiers":["ENSRNOG00000001410","ENSRNOG00000001575"],"isHomologue":false,"shortName":"R. norvegicus"}]
-            generate(jSONObject, "#intermine_orthologue_links_" + mine, url);
+            // [{"genes":["ENSRNOG00000001410","ENSRNOG00000001575"],"isHomologue":false,"shortName":"R. norvegicus"}]
+            generate(jSONObject, "#intermine_orthologue_links_" + mine, url, organisms);
         } else {
             jQuery("#intermine_orthologue_links_" + mine).html("No results found.");
         }
     });
 }
 
-  function generate(jSONObject, target, url) {
+  function generate(jSONObject, target, url, organism) {
     jQuery('<ul/>', {
         'class': 'organisms'
       })
@@ -39,7 +36,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       jQuery.each(jSONObject, function(key, entry) {
         if (entry['identifiers'] != undefined) {
             var homologue;
-            if (entry['isHomologue'] == true) {
+            if (entry['shortName'] != organism) {
               homologue = jQuery('<input/>', {
                 'name': 'orthologue',
                 'value': entry['shortName']
@@ -114,7 +111,7 @@ function getFriendlyMineLinks(mine, url, organisms, identifierList) {
       <span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span>
       <div id="intermine_orthologue_links_${mine.name}" class="loading"></div>
       <script type="text/javascript" charset="utf-8">
-        getFriendlyMineLinks('${mine.name}', '${mine.url}', '${organisms}', '${identifierList}');
+        getFriendlyMineLinks('${mine.name}', '${mine.url}', '${organisms}', '${identifiers}');
       </script>
     </div>
   </c:forEach>
