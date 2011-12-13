@@ -12,26 +12,14 @@ package org.intermine.api.mines;
 
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.config.Constants;
-import org.intermine.api.profile.ProfileManager;
-import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.api.results.ResultElement;
-import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.util.Util;
 
 /**
  * Class to manage orthologue linkouts to other intermines on the list analysis page
@@ -115,7 +103,7 @@ public class FriendlyMineManager
         if (timeSinceLastRefresh > ONE_HOUR || !cached || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
-            FriendlyMineQueryRunner.updateData(mines);
+            FriendlyMineQueryRunner.updateReleaseVersion(mines);
         }
     }
 
@@ -139,6 +127,7 @@ public class FriendlyMineManager
             String bgcolor = mineProps.getProperty("bgcolor");
             String frontcolor = mineProps.getProperty("frontcolor");
 
+            // TODO I don't think we need a logo
             if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
                     || StringUtils.isEmpty(logo)) {
                 String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
@@ -170,7 +159,6 @@ public class FriendlyMineManager
             localMine.setBgcolor(bgcolor);
             localMine.setFrontcolor(frontcolor);
             localMine.setDefaultValues(defaultValues);
-            setLocalValues(im);
         }
     }
 
@@ -183,51 +171,6 @@ public class FriendlyMineManager
         mine.setFrontcolor(frontcolor);
         mine.setDefaultValues(defaultValues);
         mines.put(mineId, mine);
-    }
-
-    // running templates run in setValues() and setMaps() for the local mine
-    private void setLocalValues(InterMineAPI im) {
-        TemplateManager templateManager = im.getTemplateManager();
-        ProfileManager profileManager = im.getProfileManager();
-        processLocalValues(profileManager, templateManager);
-        processLocalMap(profileManager, templateManager);
-    }
-
-    // get values associated with this mine (eg. gene.organism)
-    private void processLocalValues(ProfileManager profileManager,
-            TemplateManager templateManager) {
-        String templateName = Constants.VALUES_TEMPLATE;
-        TemplateQuery q = templateManager.getGlobalTemplate(templateName);
-        if (q == null) {
-            LOG.error(templateName + " template not found, unable to process intermine links");
-            return;
-        }
-        PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
-        ExportResultsIterator it = executor.execute(q);
-        Set<String> results = new HashSet<String>();
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            results.add((String) row.get(0).getField());
-        }
-        localMine.setMineValues(results);
-    }
-
-    private void processLocalMap(ProfileManager profileManager,
-            TemplateManager templateManager) {
-        String templateName = Constants.MAP_TEMPLATE;
-        TemplateQuery q = templateManager.getGlobalTemplate(templateName);
-        if (q == null) {
-            LOG.error(templateName + " template not found, unable to process intermine links");
-            return;
-        }
-        PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
-        ExportResultsIterator it = executor.execute(q);
-        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            Util.addToSetMap(map, row.get(0).getField(), row.get(2).getField());
-        }
-        localMine.setMineMap(map);
     }
 
     /**

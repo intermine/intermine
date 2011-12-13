@@ -34,6 +34,7 @@ import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Gets list of friendly intermines to show on list analysis page.
+ * TODO merge with OtherMinesController
  *
  * @author Julie Sullivan
  */
@@ -60,7 +61,7 @@ public class FriendlyMineLinkController  extends TilesAction
         }
         String identifierField = getIdentifierField(bag);
         String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
-        request.setAttribute("identifierList", identifierList);
+        request.setAttribute("identifiers", identifierList);
         if (StringUtils.isNotEmpty(organisms)) {
             request.setAttribute("organisms", organisms);
         }

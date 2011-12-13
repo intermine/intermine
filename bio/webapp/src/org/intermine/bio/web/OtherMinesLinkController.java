@@ -11,6 +11,7 @@ package org.intermine.bio.web;
  */
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +24,9 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -39,20 +41,20 @@ public class OtherMinesLinkController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) {
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        // we only want to display the links on a Gene Report Page
         InterMineObject o = (InterMineObject) request.getAttribute("object");
-        if ("Gene".equals(DynamicUtil.getSimpleClass(o.getClass()).getSimpleName())) {
+        Model model = im.getModel();
+        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(o.getClass());
+        ClassDescriptor gene = model.getClassDescriptorByName("org.intermine.model.bio.Gene");
+        if (classDescriptors.contains(gene)) {
             FriendlyMineManager linkManager = im.getFriendlyMineManager();
             Collection<Mine> mines = linkManager.getFriendlyMines();
             request.setAttribute("otherMines", mines);
         }
         return null;
     }
+
 }
