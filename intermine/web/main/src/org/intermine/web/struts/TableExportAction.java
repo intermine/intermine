@@ -72,6 +72,17 @@ public class TableExportAction extends InterMineAction
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TableExportForm tef = (TableExportForm) form;
+
+        if (tef.getPathsString().trim().isEmpty()) {
+            response.setContentType("text/plain");
+            OutputStream out = response.getOutputStream();
+            PrintWriter writer = new PrintWriter(out);
+            writer.println(ERROR_MSG + " No columns added.");
+            writer.flush();
+            writer.close();
+            return null;
+        }
+
         String type = tef.getType();
         String table = tef.getTable();
         PagedTable pt = null;
@@ -146,17 +157,17 @@ public class TableExportAction extends InterMineAction
         }
         for (Entry<String, Boolean> outerEntry : newPathQuery.getOuterMap().entrySet()) {
             if (outerEntry.getValue().equals(Boolean.TRUE)) {
-               String joinPath = outerEntry.getKey();
-               boolean outherJoinStatusRelevant = false;
-               for (String viewPath : newPathQuery.getView()) {
-                   if (viewPath.startsWith(joinPath)) {
-                       outherJoinStatusRelevant = true;
-                       break;
-                   }
-               }
-               if (!outherJoinStatusRelevant) {
-                   newPathQuery.setOuterJoinStatus(joinPath, null);
-               }
+                String joinPath = outerEntry.getKey();
+                boolean outherJoinStatusRelevant = false;
+                for (String viewPath : newPathQuery.getView()) {
+                    if (viewPath.startsWith(joinPath)) {
+                        outherJoinStatusRelevant = true;
+                        break;
+                    }
+                }
+                if (!outherJoinStatusRelevant) {
+                    newPathQuery.setOuterJoinStatus(joinPath, null);
+                }
             }
         }
         Profile profile = SessionMethods.getProfile(session);
