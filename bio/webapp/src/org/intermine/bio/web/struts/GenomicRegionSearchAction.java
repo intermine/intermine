@@ -100,8 +100,8 @@ public class GenomicRegionSearchAction extends InterMineAction
 
                 LiftOverService los = new LiftOverService();
                 Map<String, List<GenomicRegion>> liftedGenomicRegionMap = los.doLiftOver(
-                        grsService.getConstraint().getGenomicRegionList(),
-                        organism, genomeVersionSource, genomeVersionTarget, liftOverServiceUrl);
+                        grsService.getConstraint(), organism, genomeVersionSource,
+                        genomeVersionTarget, liftOverServiceUrl);
 
                 // TODO verbose
                 if (liftedGenomicRegionMap == null) {

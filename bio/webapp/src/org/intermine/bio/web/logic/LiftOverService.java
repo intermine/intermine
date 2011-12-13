@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.bio.web.model.GenomicRegionSearchConstraint;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -50,7 +51,7 @@ public class LiftOverService
     /**
      * Send a HTTP POST request to liftOver service.
      *
-     * @param genomicRegionList the old coords
+     * @param grsc the Genomic Region Search constraint
      * @param org human or mouse
      * @param genomeVersionSource older genome version
      * @param genomeVersionTarget intermine genome version
@@ -58,10 +59,11 @@ public class LiftOverService
      * @return a list of GenomicRegion
      */
     public Map<String, List<GenomicRegion>> doLiftOver(
-            List<GenomicRegion> genomicRegionList, String org,
+            GenomicRegionSearchConstraint grsc, String org,
             String genomeVersionSource, String genomeVersionTarget,
             String liftOverServerURL) {
 
+        List<GenomicRegion> genomicRegionList = grsc.getGenomicRegionList();
         Map<String, List<GenomicRegion>> liftedGenomicRegionMap =
             new HashMap<String, List<GenomicRegion>>();
 
@@ -103,6 +105,8 @@ public class LiftOverService
                     String coord = (String) liftedArray.get(i);
                     coord.trim();
                     GenomicRegion gr = new GenomicRegion();
+                    gr.setOrganism(organism);
+                    gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
                     gr.setChr(coord.split("\t")[0].trim());
                     gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
                     gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
@@ -114,6 +118,8 @@ public class LiftOverService
                     String coord = (String) unmappedArray.get(i);
                     coord.trim();
                     GenomicRegion gr = new GenomicRegion();
+                    gr.setOrganism(organism);
+                    gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
                     gr.setChr(coord.split("\t")[0].trim());
                     gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
                     gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
