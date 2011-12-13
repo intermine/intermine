@@ -9,9 +9,6 @@
     <query message="searching synonyms for all types" matchesAreIssues="true" runBeforeDefault="false">
         SELECT DISTINCT a1_.id as a3_, a2_.value as a4_ FROM BioEntity AS a1_, Synonym AS a2_ WHERE (a1_.synonyms CONTAINS a2_ AND lower(a2_.value) in ?)
     </query>
-    <query message="searching proteins for all types" matchesAreIssues="true" runBeforeDefault="false">
-        SELECT DISTINCT a1_.id as a2_, a1_.primaryAccession as a3_ FROM Protein AS a1_ WHERE (lower(a1_.primaryAccession) in ?)
-    </query>
   </bag-type>
     <additional-converter
         class-name="org.intermine.bio.web.logic.OrthologueConverter"
