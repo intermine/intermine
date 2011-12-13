@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -29,6 +32,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.DynamicUtil;
+import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
@@ -115,12 +119,14 @@ public class HtmlHeadController extends TilesAction
 
                 InterMineObject object = os.getObjectById(id);
                 if (object == null) {
+                    request.setAttribute("htmlPageTitle", htmlPageTitle);
                     return null;
                 }
-                ReportObject dobj = reportObjects.get(object);
 
-                // TODO this shouldn't happen will be fixed by #2660
-                if (dobj == null || dobj.getAttributes() == null) {
+                ReportObject dobj = reportObjects.get(object);
+                if (dobj == null || dobj.getObject() == null || dobj.getAttributes() == null) {
+                    // why would this happen?
+                    request.setAttribute("htmlPageTitle", htmlPageTitle);
                     return null;
                 }
 
@@ -157,8 +163,7 @@ public class HtmlHeadController extends TilesAction
                     htmlPageTitle = className + " report for " + idForPageTitle;
                 }
             } catch (Exception e) {
-                request.setAttribute("htmlPageTitle", "FlyMine");
-                return null;
+                LOG.warn("Could not correctly set the page title for object ID - " + objectId);
             }
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
