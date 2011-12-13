@@ -492,7 +492,7 @@ public class LiveListTest {
     public void illegalTagNames() {
         ItemList favs = testmine.getList("My-Favourite-Employees");
         try {
-            testmine.addTags(favs, "!£$%^&*(");
+            testmine.addTags(favs, "!$%^&*(");
             fail("Should not have been allowed to add that tag");
         } catch (ServiceException e) {
             String message = e.getMessage() != null ? e.getMessage() : "";
