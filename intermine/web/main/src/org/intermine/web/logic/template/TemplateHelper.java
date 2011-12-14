@@ -63,7 +63,10 @@ public final class TemplateHelper
     private static final String ID_PARAMETER = "constraint";
     private static final String CODE_PARAMETER = "code";
 
-    public static Logger LOG = Logger.getLogger(TemplateHelper.class);
+    /**
+     * A logger.
+     */
+    private static final Logger LOG = Logger.getLogger(TemplateHelper.class);
 
     private TemplateHelper() {
         // don't
@@ -98,6 +101,7 @@ public final class TemplateHelper
 
     /**
      * Removed from the view all the direct attributes that aren't editable constraints
+     * @param tq The template to remove attributes from.
      * @return altered template query
      */
     public static TemplateQuery removeDirectAttributesFromView(TemplateQuery tq) {
@@ -127,6 +131,12 @@ public final class TemplateHelper
         return templateQuery;
     }
 
+    /**
+     * Serialse a map of templates to XML.
+     * @param templates The templates to serialise.
+     * @param version The UserProfile version to use.
+     * @return An XML serialise.
+     */
     public static String apiTemplateMapToXml(Map<String, ApiTemplate> templates, int version) {
         return templateMapToXml(downCast(templates), version);
     }
@@ -139,6 +149,11 @@ public final class TemplateHelper
         return ret;
     }
 
+    /**
+     * Transform a map of templates into a map of API templates.
+     * @param templates The original, non-api templates.
+     * @return templates brought into the realm of the API.
+     */
     public static Map<String, ApiTemplate> upcast(Map<String, TemplateQuery> templates) {
         Map<String, ApiTemplate> ret = new HashMap<String, ApiTemplate>();
         for (Entry<String, TemplateQuery> pair: templates.entrySet()) {
@@ -147,6 +162,11 @@ public final class TemplateHelper
         return ret;
     }
 
+    /**
+     * Routine for serialising map of templates to JSON.
+     * @param templates The templates to serialise.
+     * @return A JSON string.
+     */
     public static String templateMapToJson(Map<String, TemplateQuery> templates) {
         StringBuilder sb = new StringBuilder("{");
         Iterator<String> keys = templates.keySet().iterator();
@@ -162,6 +182,11 @@ public final class TemplateHelper
         return result;
     }
 
+    /**
+     * Helper routine for serialising a map of templates to JSON.
+     * @param templates The map of templates to serialise.
+     * @return A JSON string.
+     */
     public static String apiTemplateMapToJson(Map<String, ApiTemplate> templates) {
         return templateMapToJson(downCast(templates));
     }
@@ -279,8 +304,8 @@ public final class TemplateHelper
         }
         allIdParameters.removeAll(processedIds);
         if (allIdParameters.size() > 0) {
-            throw new IllegalArgumentException("Maximum number of template parameters (" +
-                    PathQuery.MAX_CONSTRAINTS
+            throw new IllegalArgumentException("Maximum number of template parameters ("
+                    + PathQuery.MAX_CONSTRAINTS
                     + ") exceeded. "
                     + "The extra values were :"
                     + allIdParameters);
@@ -292,7 +317,8 @@ public final class TemplateHelper
         ConstraintOp ret = ConstraintOp.getConstraintOp(CodeTranslator.getCode(parValue));
         if (parValue != null && ret == null) {
             throw new IllegalArgumentException(
-                    "Problem with parameter '" + parName + "': '" + parValue + "' is not a valid operator.");
+                    "Problem with parameter '" + parName
+                    + "': '" + parValue + "' is not a valid operator.");
         }
         return ret;
     }
@@ -413,7 +439,8 @@ public final class TemplateHelper
         } else {
             if (PathConstraintMultiValue.VALID_OPS.contains(input.getConstraintOp())) {
                 value = new TemplateValue(con, input.getConstraintOp(),
-                        TemplateValue.ValueType.SIMPLE_VALUE, input.getMultivalues(), switchOffAbility);
+                        TemplateValue.ValueType.SIMPLE_VALUE,
+                        input.getMultivalues(), switchOffAbility);
             } else if (input.getValue() != null) {
                 value = new TemplateValue(con, input.getConstraintOp(), input.getValue(),
                     TemplateValue.ValueType.SIMPLE_VALUE, switchOffAbility);
