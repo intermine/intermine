@@ -1,0 +1,2 @@
+<query name="" model="testmodel" view="Employee.name Employee.end" sortOrder="Employee.department.name desc">
+</query>
