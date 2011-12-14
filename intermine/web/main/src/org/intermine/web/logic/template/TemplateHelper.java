@@ -14,12 +14,15 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLOutputFactory;
@@ -186,12 +189,15 @@ public final class TemplateHelper
      * @return map of constraints and values to be used to populate template.
      */
     public static Map<String, List<ConstraintInput>> parseConstraints(HttpServletRequest request) {
-        // Maximum of constraints is 50, it should be enough
+        // Maximum number of constraints is determined by the valid code range
+        // on PathQueries.
         Map<String, List<ConstraintInput>> ret = new HashMap<String, List<ConstraintInput>>();
-        for (int i = 0; i < 50; i++) {
+        Set<String> processedIds = new HashSet<String>();
+        for (int i = 1; i <= PathQuery.MAX_CONSTRAINTS; i++) {
 
             String idParameter = ID_PARAMETER + i;
             String id = request.getParameter(idParameter);
+            processedIds.add(idParameter);
 
             String opParameter = OPERATION_PARAMETER + i;
             String opString = request.getParameter(opParameter);
@@ -260,6 +266,24 @@ public final class TemplateHelper
                 }
                 ret.get(id).add(load);
             }
+        }
+        // Make sure there aren't any extra parameters hanging around.
+        // Use the id parameters (eg. constraint1, constraint2, ...) as a proxy
+        // for the whole constraint.
+        Set<String> allIdParameters = new HashSet<String>();
+        for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+            String next = e.nextElement();
+            if (next.startsWith("constraint")) {
+                allIdParameters.add(next);
+            }
+        }
+        allIdParameters.removeAll(processedIds);
+        if (allIdParameters.size() > 0) {
+            throw new IllegalArgumentException("Maximum number of template parameters (" +
+                    PathQuery.MAX_CONSTRAINTS
+                    + ") exceeded. "
+                    + "The extra values were :"
+                    + allIdParameters);
         }
         return ret;
     }
