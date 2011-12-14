@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -75,10 +76,10 @@ public class BeginAction extends InterMineAction
 
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
+        Map<String, String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
         if (errorKeys != null && !errorKeys.isEmpty()) {
-            for (String errorKey : errorKeys) {
-                recordError(new ActionMessage(errorKey), request);
+            for (String errorKey : errorKeys.keySet()) {
+                recordError(new ActionMessage(errorKey, errorKeys.get(errorKey)), request);
             }
             return mapping.findForward("blockingError");
         }

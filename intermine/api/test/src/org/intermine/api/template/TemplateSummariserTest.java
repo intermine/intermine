@@ -68,7 +68,7 @@ public class TemplateSummariserTest extends StoreDataTestCase
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         pm = new ProfileManager(os, uosw);
         profile = new Profile(pm, "testUser", null, "password", new HashMap(),
-                new HashMap(), new HashMap(), null, true);
+                new HashMap(), new HashMap(), null, true, false);
         pm.createProfile(profile);
 
         TemplateQuery twoConstraints = new TemplateQuery("twoConstraints", "twoConstraints", "", new PathQuery(model));

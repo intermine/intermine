@@ -96,7 +96,7 @@ public class OpenIDAuthenticator extends HttpServlet {
 			String identity = auth.getIdentity();
 			if (!profileManager.hasProfile(identity)) {
 				profileManager.createProfile(new Profile(profileManager, identity, null, null, new HashMap(), new HashMap(),
-		                new HashMap(), null, false));
+		                new HashMap(), null, false, false));
 			}
 			Map<String, String> renamedBags = LoginHandler.doStaticLogin(request, identity, null);
 			response.sendRedirect(loginUrl);

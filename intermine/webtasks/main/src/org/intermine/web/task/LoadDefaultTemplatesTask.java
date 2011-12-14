@@ -131,7 +131,7 @@ public class LoadDefaultTemplatesTask extends Task
                 LOG.info("Creating profile for " + username);
                 profileDest = new Profile(pm, username, null, password,
                         new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                        new HashMap<String, ApiTemplate>(), null, true);
+                        new HashMap<String, ApiTemplate>(), null, true, true);
                 profileDest.disableSaving();
                 pm.createProfile(profileDest);
             } else {

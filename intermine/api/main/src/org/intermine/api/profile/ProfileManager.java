@@ -56,7 +56,6 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PasswordHasher;
-import org.intermine.util.PropertiesUtil;
 
 /**
  * Class to manage and persist user profile data such as saved bags
@@ -82,8 +81,21 @@ public class ProfileManager
      */
     public ProfileManager(ObjectStore os, ObjectStoreWriter userProfileOS) {
         this.os = os;
-        superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
         this.uosw = userProfileOS;
+        //retrieve the super user
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setSuperuser(true);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("superuser");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            if (superuserProfile != null) {
+                superuser = superuserProfile.getUsername();
+            }
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
+
         try {
             String versionString = MetadataManager.retrieve(((ObjectStoreInterMineImpl) uosw)
                 .getDatabase(), MetadataManager.PROFILE_FORMAT_VERSION);
@@ -356,7 +368,7 @@ public class ProfileManager
         }
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
                 savedQueries, savedBags, savedInvalidBags, savedTemplates, userProfile.getApiKey(),
-                userProfile.getLocalAccount());
+                userProfile.getLocalAccount(), userProfile.getSuperuser());
         profileCache.put(username, profile);
         return profile;
     }
@@ -452,6 +464,7 @@ public class ProfileManager
         if (profile.isLocal()) {
             userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
         }
+        userProfile.setSuperuser(profile.isSuperUser);
 
         try {
             uosw.store(userProfile);
@@ -524,7 +537,7 @@ public class ProfileManager
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
         userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
-
+        userProfile.setSuperuser(profile.isSuperUser);
         try {
             uosw.store(userProfile);
             profile.setUserId(userProfile.getId());
@@ -597,13 +610,6 @@ public class ProfileManager
      */
     public String getSuperuser() {
         return superuser;
-    }
-
-    /**
-     * @param superuser the superuser name to set
-     */
-    public void setSuperuser(String superuser) {
-        this.superuser = superuser;
     }
 
     /**
