@@ -533,7 +533,7 @@ public class PathQuery implements Cloneable
      * already present in the query with the same constraint code, then this method will do nothing.
      *
      * @param constraint the PathConstraint to add to this query
-     * @param code the constraint code to associate with this constraint. This must be a one character 
+     * @param code the constraint code to associate with this constraint. This must be a
      *             string consisting of one of the following characters "A","B","C","D","E","F","G",
      *             "H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z".
      * @throws NullPointerException if the constraint or the code is null
@@ -806,7 +806,7 @@ public class PathQuery implements Cloneable
      * @param logic the constraint logic
      */
     public synchronized void setConstraintLogic(String logic) {
-    	// TODO method does not work properly allowing (A and B) or C on Outer Joins
+        // TODO method does not work properly allowing (A and B) or C on Outer Joins
         deVerify();
         if (constraints.isEmpty()) {
             this.logic = null;
