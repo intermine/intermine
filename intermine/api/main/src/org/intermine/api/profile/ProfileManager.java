@@ -115,7 +115,7 @@ public class ProfileManager
                 QueryClass qc = new QueryClass(SavedQuery.class);
                 q.addFrom(qc);
                 q.addToSelect(qc);
-                List results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
+                List<?> results = uosw.execute(q, 0, 1, false, false, ObjectStore.SEQUENCE_IGNORE);
                 if (results.isEmpty()) {
                     q = new Query();
                     qc = new QueryClass(SavedTemplateQuery.class);
@@ -296,8 +296,8 @@ public class ProfileManager
         try {
             // TODO ig
             Results bags = uosw.execute(q, 1000, false, false, true);
-            for (Iterator i = bags.iterator(); i.hasNext();) {
-                ResultsRow row = (ResultsRow) i.next();
+            for (Iterator<?> i = bags.iterator(); i.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) i.next();
                 Integer bagId = (Integer) row.get(0);
                 SavedBag savedBag = (SavedBag) row.get(1);
                 if (StringUtils.isBlank(savedBag.getName())) {
@@ -326,11 +326,12 @@ public class ProfileManager
             new HashMap<String, org.intermine.api.profile.SavedQuery>();
         for (SavedQuery query : userProfile.getSavedQuerys()) {
             try {
-                Map queries =
-                    SavedQueryBinding.unmarshal(new StringReader(query.getQuery()), savedBags,
+                Map queries = SavedQueryBinding.unmarshal(
+                            new StringReader(query.getQuery()), savedBags,
                             version);
                 if (queries.size() == 0) {
-                    queries = PathQueryBinding.unmarshalPathQueries(new StringReader(query.getQuery()),
+                    queries = PathQueryBinding.unmarshalPathQueries(
+                            new StringReader(query.getQuery()),
                             version);
                     if (queries.size() == 1) {
                         Map.Entry entry = (Map.Entry) queries.entrySet().iterator().next();
@@ -352,7 +353,7 @@ public class ProfileManager
         for (SavedTemplateQuery template : userProfile.getSavedTemplateQuerys()) {
             try {
                 StringReader sr = new StringReader(template.getTemplateQuery());
-                Map<String, TemplateQuery> templateMap = 
+                Map<String, TemplateQuery> templateMap =
                         TemplateQueryBinding.unmarshalTemplates(sr, version);
                 String templateName = templateMap.keySet().iterator().next();
                 TemplateQuery templateQuery = templateMap.get(templateName);
@@ -393,7 +394,7 @@ public class ProfileManager
             UserProfile userProfile = getUserProfile(userId);
 
             if (userProfile != null) {
-            	userProfile.setApiKey(profile.getApiKey());
+                userProfile.setApiKey(profile.getApiKey());
                 for (Iterator i = userProfile.getSavedQuerys().iterator(); i.hasNext();) {
                     uosw.delete((InterMineObject) i.next());
                 }
