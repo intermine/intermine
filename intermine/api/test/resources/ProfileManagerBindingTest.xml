@@ -32,7 +32,7 @@
     <bags>
       <bag name="bag2" type="Employee" date-created="1322666095854"
         description="description" status="CURRENT">
-        <bagValue value="EmployeeB1" extra="" />
+        <bagValue value="EmployeeB1" extra="DepartmentB1" />
       </bag>
     </bags>
     <queries>
