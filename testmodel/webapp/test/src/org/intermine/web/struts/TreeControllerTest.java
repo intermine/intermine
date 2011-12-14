@@ -50,7 +50,7 @@ public class TreeControllerTest extends MockStrutsTestCase
         //necessary to work-round struts test case not invoking our SessionListener
         getSession().setAttribute(Constants.PROFILE,
                                   new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
+                                              new HashMap(), new HashMap(), new HashMap(), true, false));
 
         actionPerform();
         verifyNoActionErrors();
