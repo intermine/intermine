@@ -1855,6 +1855,14 @@ public class PathQuery implements Cloneable
     }
 
     /**
+     * Returns true if the query has no features yet.
+     * @return whether or not this query is empty.
+     */
+    public synchronized boolean isEmpty() {
+        return view.isEmpty() && constraints.isEmpty();
+    }
+
+    /**
      * Returns all bag names used in constraints on this query.
      *
      * @return the bag names used in this query or an empty set
