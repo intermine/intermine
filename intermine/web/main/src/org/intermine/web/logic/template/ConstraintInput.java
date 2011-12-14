@@ -1,4 +1,4 @@
- package org.intermine.web.logic.template;
+package org.intermine.web.logic.template;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
@@ -90,11 +90,12 @@ public class ConstraintInput
      * @param code constraint code
      * @param op constraint operation
      * @param value value restricting result
+     * @param multivalues The list of values in the case of a multivalue operator.
      * @param extraValue optional extra value used for lookup, automatically restricts
      * results according other criterion, for example for Gene there can specified organism name,
      * restricts resulted genes to specified organism
      */
-    public ConstraintInput(String parameterName, 
+    public ConstraintInput(String parameterName,
             String pathId, String code, ConstraintOp op,
             String value, List<String> multivalues, String extraValue) {
         this.code = code;
@@ -170,5 +171,72 @@ public class ConstraintInput
      */
     public void setExtraValue(String extraValue) {
         this.extraValue = extraValue;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuffer("<" + getClass().getName())
+                     .append(" parameterName=" + parameterName)
+                     .append(" pathId=" + pathId)
+                     .append(" code=" + code)
+                     .append(" value=" + value)
+                     .append(" multivalues=" + multivalues)
+                     .append(" extraValue=" + extraValue)
+                     .append(">")
+                     .toString();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (other instanceof ConstraintInput) {
+            ConstraintInput o = (ConstraintInput) other;
+            boolean eq = parameterName.equals(o.getParameterName());
+            eq = eq && (value == null) ? o.getValue() == null : value.equals(o.getValue());
+            eq = eq && (code == null) ? o.getCode() == null : code.equals(o.getCode());
+            eq = eq && (pathId == null) ? o.getPathId() == null : pathId.equals(o.getPathId());
+            eq = eq && (extraValue == null)
+                    ? o.getExtraValue() == null
+                    : extraValue.equals(o.getExtraValue());
+            if (multivalues == null) {
+                eq = eq && o.getMultivalues() == null;
+            } else {
+                boolean multisAreEqual = o.getMultivalues() != null;
+                if (multisAreEqual) {
+                    for (String mv: multivalues) {
+                        multisAreEqual = multisAreEqual && o.getMultivalues().contains(mv);
+                    }
+                    multisAreEqual = multisAreEqual
+                            && multivalues.size() == o.getMultivalues().size();
+                }
+                eq = eq && multisAreEqual;
+            }
+            return eq;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        if (value != null) {
+            hash *= 19 * value.hashCode();
+        }
+        if (code != null) {
+            hash *= 27 * code.hashCode();
+        }
+        if (pathId != null) {
+            hash *= 33 * pathId.hashCode();
+        }
+        if (multivalues != null) {
+            hash *= 37 * multivalues.hashCode();
+        }
+        if (extraValue != null) {
+            hash *= 43 * extraValue.hashCode();
+        }
+        return hash;
     }
 }
