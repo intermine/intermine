@@ -70,8 +70,7 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    @Override public void startElement(@SuppressWarnings("unused") String uri,
-            @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
+    @Override public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (valueBuffer != null) {
             throw new SAXException("Cannot have any tags inside a value tag");
@@ -281,8 +280,8 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    @Override public void endElement(@SuppressWarnings("unused") String uri,
-            @SuppressWarnings("unused") String localName, String qName) throws SAXException {
+    @Override public void endElement(String uri, String localName, String qName)
+        throws SAXException {
         if ("query".equals(qName)) {
             if (constraintLogic != null) {
                 query.setConstraintLogic(constraintLogic);
