@@ -100,6 +100,7 @@ public class TemplateQuery extends PathQuery
      */
     @Override
     public synchronized TemplateQuery clone() {
+        super.clone();
         return new TemplateQuery(this);
     }
 
