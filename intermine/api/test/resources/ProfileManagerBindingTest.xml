@@ -1,6 +1,6 @@
 <userprofiles>
   <userprofile password="bob_pass" username="bob" apikey="BOBKEY"
-    localAccount="true">
+    localAccount="true" superUser="false">
     <bags>
       <bag name="bag1" type="Department" date-created="1322666095693"
         description="This is some description" status="CURRENT">
@@ -28,11 +28,11 @@
     </tags>
   </userprofile>
   <userprofile password="sally_pass" username="sally"
-    localAccount="true">
+    localAccount="true" superUser="false">
     <bags>
       <bag name="bag2" type="Employee" date-created="1322666095854"
         description="description" status="CURRENT">
-        <bagValue value="EmployeeB1" extra="DepartmentB1" />
+        <bagValue value="EmployeeB1" extra="" />
       </bag>
     </bags>
     <queries>
