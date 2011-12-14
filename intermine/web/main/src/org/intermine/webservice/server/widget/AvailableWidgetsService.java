@@ -84,7 +84,7 @@ public class AvailableWidgetsService extends JSONService
     }
 
     @Override
-    protected Output makeXMLOutput(PrintWriter out) {
+    protected Output makeXMLOutput(PrintWriter out, String separator) {
         ResponseUtil.setXMLHeader(response, "result.xml");
         return new StreamedOutput(out, new WidgetXMLFormatter());
     }
