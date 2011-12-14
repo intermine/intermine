@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -37,6 +38,7 @@ import org.intermine.web.util.URLGenerator;
  **/
 public final class PortalHelper
 {
+    private static final Logger LOG = Logger.getLogger(PortalHelper.class);
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
 
@@ -165,7 +167,14 @@ public final class PortalHelper
      */
     public static String generatePermaLink(FastPathObject obj, String baseUrl,
             Map<String, List<FieldDescriptor>> classKeys) {
-        return  baseUrl + generatePermaPath(obj, classKeys);
+        String newBase = null;
+
+        if (baseUrl.contains("release")) {
+            newBase = baseUrl.replaceFirst("release-\\d*", "query");
+        } else {
+            newBase=baseUrl;
+        }
+        return  newBase + generatePermaPath(obj, classKeys);
     }
 
     /**
