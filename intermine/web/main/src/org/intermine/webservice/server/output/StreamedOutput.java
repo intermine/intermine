@@ -32,6 +32,8 @@ public class StreamedOutput extends Output
 
     private boolean headerPrinted = false;
 
+    private final String separator;
+
     /** Constructor.
      * @param writer writer where the data will be printed
      * @param formatter associated formatter that formats data
@@ -40,17 +42,33 @@ public class StreamedOutput extends Output
     public StreamedOutput(PrintWriter writer, Formatter formatter) {
         this.writer = writer;
         this.formatter = formatter;
+        this.separator = null;
+    }
+
+    public StreamedOutput(PrintWriter writer, Formatter formatter, String separator) {
+        this.writer = writer;
+        this.formatter = formatter;
+        this.separator = separator;
     }
 
     private void ensureHeaderIsPrinted() {
         if (!headerPrinted) {
             String header = formatter.formatHeader(getHeaderAttributes());
             if (header != null && header.length() > 0) {
-                writer.println(header);
+                writeLn(header);
             }
             headerPrinted = true;
         }
         return;
+    }
+
+    private void writeLn(String s) {
+        writer.print(s);
+        if (separator == null) {
+            writer.println();
+        } else {
+            writer.print(separator);
+        }
     }
 
     /** Forwards data to associated writer
@@ -59,7 +77,7 @@ public class StreamedOutput extends Output
     @Override
     public void addResultItem(List<String> item) {
         ensureHeaderIsPrinted();
-        writer.println(formatter.formatResult(item));
+        writeLn(formatter.formatResult(item));
         resultsCount++;
     }
 
