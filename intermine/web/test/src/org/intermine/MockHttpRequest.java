@@ -226,7 +226,11 @@ public class MockHttpRequest implements HttpServletRequest
 
     @Override
     public String getParameter(String name) {
-        return parameters.get(name)[0];
+        String[] all = parameters.get(name);
+        if (all != null) {
+            return all[0];
+        }
+        return null;
     }
 
     @Override
@@ -343,6 +347,8 @@ public class MockHttpRequest implements HttpServletRequest
 
     public static class UnmockedException extends RuntimeException
     {
+        private static final long serialVersionUID = 962046232556269912L;
+
         public UnmockedException() {
             super("No implementation provided for " + new Exception().getStackTrace()[1].getMethodName());
         }
