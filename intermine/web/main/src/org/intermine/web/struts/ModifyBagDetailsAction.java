@@ -25,9 +25,8 @@ import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.WebResults;
-import org.intermine.metadata.Model;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
@@ -53,10 +52,9 @@ public class ModifyBagDetailsAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
