@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * Util methods for HttpServletRequest.
  * @author Jakub Kulaviak
  **/
-public class RequestUtil
+public abstract class RequestUtil
 {
     /**
      * @param request request
