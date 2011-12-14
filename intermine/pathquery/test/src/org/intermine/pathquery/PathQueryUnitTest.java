@@ -134,7 +134,8 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(Collections.EMPTY_LIST, q2.verifyQuery());
         assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.age\"></query>", PathQueryBinding.marshal(q2, "test", "testmodel", 1));
         PathQuery q3 = new PathQuery(model);
-        assertEquals("Queries with empty views are not valid", Arrays.asList("No columns selected for output"), q3.verifyQuery());
+        assertEquals("Queries with empty views are not valid",
+                Arrays.asList("No columns selected for output"), q3.verifyQuery());
     }
 
     public void testOrderBy() throws Exception {
