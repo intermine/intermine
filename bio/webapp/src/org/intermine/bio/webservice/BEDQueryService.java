@@ -77,9 +77,9 @@ public class BEDQueryService extends AbstractQueryService
     protected PrintWriter pw;
 
     @Override
-    protected Output getDefaultOutput(PrintWriter pw, OutputStream os) {
+    protected Output getDefaultOutput(PrintWriter pw, OutputStream os, String separator) {
         this.pw = pw;
-        output = new StreamedOutput(pw, new TabFormatter());
+        output = new StreamedOutput(pw, new TabFormatter(), separator);
         if (isUncompressed()) {
             ResponseUtil.setPlainTextHeader(response, getDefaultFileName());
         }

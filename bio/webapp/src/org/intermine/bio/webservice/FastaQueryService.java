@@ -68,9 +68,9 @@ public class FastaQueryService extends AbstractQueryService
     protected OutputStream os;
 
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String sep) {
         this.os = os;
-        output = new StreamedOutput(out, new TabFormatter());
+        output = new StreamedOutput(out, new TabFormatter(), sep);
         if (isUncompressed()) {
             ResponseUtil.setPlainTextHeader(response,
                     getDefaultFileName());
