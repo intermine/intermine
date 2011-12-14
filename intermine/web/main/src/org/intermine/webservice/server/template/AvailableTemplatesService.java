@@ -49,9 +49,9 @@ public class AvailableTemplatesService extends WebService
     }
 
     @Override
-    protected Output makeXMLOutput(PrintWriter out) {
+    protected Output makeXMLOutput(PrintWriter out, String separator) {
         ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
-        return new StreamedOutput(out, new PlainFormatter());
+        return new StreamedOutput(out, new PlainFormatter(), separator);
     }
 
     @Override
