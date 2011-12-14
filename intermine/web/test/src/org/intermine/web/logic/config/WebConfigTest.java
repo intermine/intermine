@@ -53,6 +53,7 @@ public class WebConfigTest extends XMLTestCase
         employeeType.addFieldConfig(df1);
         final FieldConfig df2 = new FieldConfig();
         df2.setFieldExpr("department.name");
+        df2.setLabel("Abteilung");
         df2.setShowInInlineCollection(true);
         df2.setShowInResults(true);
         df2.setShowInSummary(true);
