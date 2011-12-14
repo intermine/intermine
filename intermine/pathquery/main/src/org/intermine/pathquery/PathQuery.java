@@ -49,6 +49,15 @@ public class PathQuery implements Cloneable
     /** Version number for the userprofile and PathQuery XML format. */
     public static final int USERPROFILE_VERSION = 2;
 
+    /** The lowest code value a constraint may be assigned. **/
+    public static final char MIN_CODE = 'A';
+
+    /** The highest code value a constraint may be assigned. **/
+    public static final char MAX_CODE = 'Z';
+
+    /** The maximum number of coded constraints a PathQuery may hold. **/
+    public static final int MAX_CONSTRAINTS = MAX_CODE - MIN_CODE;
+
     private final Model model;
     private List<String> view = new ArrayList<String>();
     private List<OrderElement> orderBy = new ArrayList<OrderElement>();
@@ -524,7 +533,9 @@ public class PathQuery implements Cloneable
      * already present in the query with the same constraint code, then this method will do nothing.
      *
      * @param constraint the PathConstraint to add to this query
-     * @param code the constraint code to associate with this constraint
+     * @param code the constraint code to associate with this constraint. This must be a one character 
+     *             string consisting of one of the following characters "A","B","C","D","E","F","G",
+     *             "H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z".
      * @throws NullPointerException if the constraint or the code is null
      * @throws IllegalStateException if the constraint is already associated with a different code,
      * or the code is already associated with a different constraint
@@ -543,12 +554,13 @@ public class PathQuery implements Cloneable
         if (code == null) {
             throw new NullPointerException("Cannot use a null code for a constraint in this query");
         }
-        if ((code.length() != 1) || (code.charAt(0) > 'Z') || (code.charAt(0) < 'A')) {
+        if ((code.length() != 1) || (code.charAt(0) > MAX_CODE) || (code.charAt(0) < MIN_CODE)) {
             throw new IllegalArgumentException("The constraint code must be a single plain latin "
                     + "uppercase character");
         }
         if (constraints.containsKey(constraint)) {
             if (code.equals(constraints.get(constraint))) {
+                // Trying to add an identical constraint at the same code.
                 return;
             } else {
                 throw new IllegalStateException("Given constraint is already associated with code "
