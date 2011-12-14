@@ -82,10 +82,12 @@ public class InterMineAPITestCase extends TestCase {
         props.put("superuser.account", "superUser");
 
         ProfileManager pmTmp = new ProfileManager(os, uosw);
-        Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(), new HashMap(), new HashMap(), true);
+        Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(),
+                                        new HashMap(), new HashMap(), true, true);
         pmTmp.createProfile(superUser);
 
-        testUser = new Profile(pmTmp, "testUser", null, "password", new HashMap(), new HashMap(), new HashMap(), true);
+        testUser = new Profile(pmTmp, "testUser", null, "password", new HashMap(), new HashMap(),
+                               new HashMap(), true, false);
         pmTmp.createProfile(testUser);
 
         String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",

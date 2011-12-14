@@ -36,7 +36,7 @@ final class AnonProfile extends Profile
     public AnonProfile() {
         super(null, null, null, null,
                 new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                new HashMap<String, ApiTemplate>(), null, true);
+                new HashMap<String, ApiTemplate>(), null, true, false);
         savedQueries = new DevNullMap<String, SavedQuery>();
         savedBags = new DevNullMap<String, InterMineBag>();
         savedTemplates = new DevNullMap<String, ApiTemplate>();

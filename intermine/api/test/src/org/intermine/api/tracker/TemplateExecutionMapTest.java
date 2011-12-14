@@ -101,7 +101,7 @@ public class TemplateExecutionMapTest extends TestCase
                                                            "osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
         Profile profile = new Profile(pm, "user", null, "password", new HashMap(),
-                new HashMap(), new HashMap(), null, true);
+                new HashMap(), new HashMap(), null, true, false);
         pm.createProfile(profile);
         return profile;
     }

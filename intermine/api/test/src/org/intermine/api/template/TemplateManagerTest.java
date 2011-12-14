@@ -34,7 +34,8 @@ public class TemplateManagerTest extends InterMineAPITestCase {
         // superUser profile already exists
         superUser = pm.getSuperuserProfile();
 
-        emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(), new HashMap(), "token", true);
+        emptyUser = new Profile(pm, "emptyUser", null, "password", new HashMap(), new HashMap(),
+                                new HashMap(), "token", true, false);
         pm.createProfile(emptyUser);
         setUpTemplatesAndTags();
     }

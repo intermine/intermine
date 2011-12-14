@@ -461,7 +461,7 @@ public final class SessionMethods
         ProfileManager pm = im.getProfileManager();
         session.setAttribute(Constants.PROFILE, new Profile(pm, null, null, null,
                     new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                    new HashMap<String, ApiTemplate>(), null, true));
+                    new HashMap<String, ApiTemplate>(), null, true, false));
         session.setAttribute(Constants.RESULTS_TABLE_SIZE, Constants.DEFAULT_TABLE_SIZE);
     }
 
@@ -1100,9 +1100,10 @@ public final class SessionMethods
      * Sets the blocking error codes into the servlet context.
      *
      * @param servletContext the ServletContext
-     * @param errorKey the Set of error codes
+     * @param errorKey the Map of error codes and replacement value
      */
-    public static void setErrorOnInitialiser(ServletContext servletContext, Set<String> errorKey) {
+    public static void setErrorOnInitialiser(ServletContext servletContext,
+                                             Map<String, String> errorKey) {
         servletContext.setAttribute(Constants.INITIALISER_KEY_ERROR, errorKey);
     }
 
@@ -1110,11 +1111,12 @@ public final class SessionMethods
      * Gets the blocking error codes from the servlet context.
      *
      * @param servletContext the ServletContext
-     * @return a Set of blocking error codes
+     * @return a Map of blocking error codes and replacement value
      */
-    public static Set<String> getErrorOnInitialiser(ServletContext servletContext) {
+    public static Map<String, String> getErrorOnInitialiser(ServletContext servletContext) {
         return (servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) != null)
-               ? (Set<String>) servletContext.getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
+               ? (Map<String, String>) servletContext
+                 .getAttribute(Constants.INITIALISER_KEY_ERROR) : null;
     }
 
     /**
@@ -1123,7 +1125,7 @@ public final class SessionMethods
      * @return Whether or not there are blocking errors.
      */
     public static boolean isErrorOnInitialiser(ServletContext servletContext) {
-        Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
+        Map<String, String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
         if (errorKeys != null && !errorKeys.isEmpty()) {
             return true;
         }

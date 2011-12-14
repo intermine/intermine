@@ -10,10 +10,14 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -36,7 +39,14 @@ import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionServlet;
 import org.apache.struts.action.PlugIn;
@@ -64,6 +74,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -73,8 +84,11 @@ import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
@@ -84,6 +98,10 @@ import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.query.result.XMLValidator;
+import org.jfree.util.Log;
+import org.xml.sax.SAXException;
 
 /**
  * Initialiser for the InterMine web application.
@@ -99,7 +117,7 @@ public class InitialiserPlugin implements PlugIn
     ProfileManager profileManager;
     TrackerDelegate trackerDelegate;
     ObjectStore os;
-    Set<String> blockingErrorKeys;
+    Map<String, String> blockingErrorKeys;
     /** The list of tags that mark something as public */
     public static final List<String> PUBLIC_TAG_LIST = Arrays.asList(TagNames.IM_PUBLIC);
 
@@ -120,13 +138,14 @@ public class InitialiserPlugin implements PlugIn
         // webapp to fail to deploy with no error message.
 
         final ServletContext servletContext = servlet.getServletContext();
-        blockingErrorKeys = new LinkedHashSet<String>();
-        SessionMethods.setErrorOnInitialiser(servletContext, blockingErrorKeys);
+        initBlockingErrors(servletContext);
 
         // initialise properties
         Properties webProperties = loadWebProperties(servletContext);
-        SessionMethods.setWebProperties(servletContext, webProperties);
 
+        // read in additional webapp specific information and put in servletContext
+        loadAspectsConfig(servletContext);
+        loadClassDescriptions(servletContext);
         loadOpenIDProviders(servletContext);
 
         // get link redirector
@@ -134,73 +153,101 @@ public class InitialiserPlugin implements PlugIn
 
         // set up core InterMine application
         os = getProductionObjectStore(webProperties);
+        WebConfig webConfig = null;
+        if (os != null) {
+            webConfig = loadWebConfig(servletContext, os);
+        }
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
 
         //verify if intermine_state exists in the savedbag table and if it has the right type
-        if (!verifyListTables(userprofileOSW)) {
-            return;
+        if (userprofileOSW != null) {
+            if (!verifyTablesExist(userprofileOSW)) {
+                return;
+            }
+            if (!verifyListTables(userprofileOSW)) {
+                return;
+            }
+            //verify if we the webapp needs to upgrade the lists
+            verifyListUpgrade(userprofileOSW);
         }
-        //verify if we the webapp needs to upgrade the lists
-        verifyListUpgrade(userprofileOSW);
 
         final ObjectStoreSummary oss = summariseObjectStore(servletContext);
-        final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
-        final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
-        trackerDelegate = initTrackers(webProperties, userprofileOSW);
-        final InterMineAPI im;
-        try {
-            im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
-                oss, trackerDelegate, redirect);
-        } catch (UserNotFoundException unfe) {
-            blockingErrorKeys.add("errors.superuser");
-            return;
+
+        if (webProperties != null && userprofileOSW != null) {
+            trackerDelegate = initTrackers(webProperties, userprofileOSW);
         }
-        SessionMethods.setInterMineAPI(servletContext, im);
 
-        // need a global reference to ProfileManager so it can be closed cleanly on destroy
-        profileManager = im.getProfileManager();
+        if (os != null && webProperties != null) {
+            final Map<String, List<FieldDescriptor>> classKeys = loadClassKeys(os.getModel());
+            final BagQueryConfig bagQueryConfig = loadBagQueries(servletContext, os, webProperties);
 
-        // read in additional webapp specific information and put in servletContext
-        WebConfig webConfig = loadWebConfig(servletContext, os);
-
-        loadAspectsConfig(servletContext);
-        loadClassDescriptions(servletContext);
-
-        // index global webSearchables
-        final Profile superProfile = im.getProfileManager().getSuperuserProfile();
-        SearchRepository searchRepository =
-            new SearchRepository(superProfile, Scope.GLOBAL);
-        SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
-
-        servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
-
-        loadAutoCompleter(servletContext, os);
-
-        cleanTags(im.getTagManager());
-
-        Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
-        for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
-            boolean keyless = true;
-            for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
-                if ((fc.getDisplayer() == null) && fc.getShowInSummary()) {
-                    keyless = false;
-                    break;
+            if (userprofileOSW != null) {
+                final InterMineAPI im;
+                try {
+                    im = new InterMineAPI(os, userprofileOSW, classKeys, bagQueryConfig,
+                                          oss, trackerDelegate, redirect);
+                } catch (UserNotFoundException unfe) {
+                    blockingErrorKeys.put("errors.init.superuser", null);
+                    return;
                 }
-            }
-            if (keyless) {
-                keylessClasses.put(TypeUtil.unqualifiedName(cld.getName()), Boolean.TRUE);
+                SessionMethods.setInterMineAPI(servletContext, im);
+
+                // need a global reference to ProfileManager so it can be closed cleanly on destroy
+                profileManager = im.getProfileManager();
+
+                //verify superuser setted in the db matches with the user in the properties file
+                final Profile superProfile = im.getProfileManager().getSuperuserProfile();
+                if (!superProfile.getUsername()
+                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account"))) {
+                    blockingErrorKeys.put("errors.init.superuser", null);
+                }
+                // index global webSearchables
+                SearchRepository searchRepository =
+                     new SearchRepository(superProfile, Scope.GLOBAL);
+                SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
+
+                servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
+
+                loadAutoCompleter(servletContext, os);
+
+                cleanTags(im.getTagManager());
+
+                if (webConfig != null) {
+                    Map<String, Boolean> keylessClasses = new HashMap<String, Boolean>();
+                    for (ClassDescriptor cld : os.getModel().getClassDescriptors()) {
+                        boolean keyless = true;
+                        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig,
+                                                                                     cld)) {
+                            if ((fc.getDisplayer() == null) && fc.getShowInSummary()) {
+                                keyless = false;
+                                break;
+                            }
+                        }
+                        if (keyless) {
+                            keylessClasses.put(TypeUtil.unqualifiedName(cld.getName()),
+                                                                        Boolean.TRUE);
+                        }
+                    }
+                    servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
+                }
+
+                if (oss != null) {
+                    setupClassSummaryInformation(servletContext, oss, os.getModel());
+                }
+
+                doRegistration(webProperties);
+
+                FriendlyMineManager friendlyMineManager
+                    = FriendlyMineManager.getInstance(im, webProperties);
+                im.setFriendlyMineManager(friendlyMineManager);
             }
         }
-        servletContext.setAttribute(Constants.KEYLESS_CLASSES_MAP, keylessClasses);
+    }
 
-        setupClassSummaryInformation(servletContext, oss, os.getModel());
-
-        doRegistration(webProperties);
-
-        FriendlyMineManager friendlyMineManager
-            = FriendlyMineManager.getInstance(im, webProperties);
-        im.setFriendlyMineManager(friendlyMineManager);
+    private void initBlockingErrors(ServletContext servletContext) {
+        blockingErrorKeys = new HashMap<String, String>();
+        SessionMethods.setErrorOnInitialiser(servletContext, blockingErrorKeys);
     }
 
     private void doRegistration(Properties webProperties) {
@@ -208,37 +255,83 @@ public class InitialiserPlugin implements PlugIn
         reg.start();
     }
 
-    private ObjectStore getProductionObjectStore(Properties webProperties) throws ServletException {
+    private ObjectStore getProductionObjectStore(Properties webProperties) {
         String osAlias = (String) webProperties.get("webapp.os.alias");
         try {
             os = ObjectStoreFactory.getObjectStore(osAlias);
         } catch (Exception e) {
-            Throwable cause = e.getCause();
-            if (cause != null) {
-                cause.printStackTrace();
-            }
-            throw new ServletException("Unable to instantiate ObjectStore " + osAlias, e);
+            LOG.error("Unable to create ObjectStore - " + osAlias + " " + e.getMessage() , e);
+            blockingErrorKeys.put("errors.init.objectstoreconnection", e.getMessage());
         }
         return os;
     }
 
     private void loadAspectsConfig(ServletContext servletContext) {
-        InputStream is = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
-        if (is == null) {
+        InputStream xmlInputStream = servletContext.getResourceAsStream("/WEB-INF/aspects.xml");
+        InputStream xmlInputStreamForValidate = servletContext
+            .getResourceAsStream("/WEB-INF/aspects.xml");
+        if (xmlInputStream == null) {
             LOG.info("Unable to find /WEB-INF/aspects.xml, there will be no aspects");
             SessionMethods.setAspects(servletContext, Collections.EMPTY_MAP);
             SessionMethods.setCategories(servletContext, Collections.EMPTY_SET);
         } else {
-            Map<String, Aspect> aspects;
+            StringWriter writer = new StringWriter();
             try {
-                aspects = AspectBinding.unmarhsal(is);
-            } catch (Exception e) {
-                throw new RuntimeException("problem while reading aspect configuration file", e);
+                IOUtils.copy(xmlInputStreamForValidate, writer);
+            } catch (IOException ioe) {
+                LOG.error("Problems converting xmlInputStream into a String ", ioe);
+                blockingErrorKeys.put("errors.init.aspects.generic", ioe.getMessage());
+                return;
             }
-            SessionMethods.setAspects(servletContext, aspects);
-            SessionMethods.setCategories(servletContext, Collections.unmodifiableSet(aspects
-                        .keySet()));
+            String xml = writer.toString();
+            String xmlSchemaUrl = "";
+            try {
+                xmlSchemaUrl = servletContext.getResource("/WEB-INF/aspects.xsd").toString();
+            } catch (MalformedURLException mue) {
+                LOG.warn("Problems retrieving url fo aspects.xsd ", mue);
+            }
+            Map<String, Aspect> aspects;
+            if (validateXML(xml, xmlSchemaUrl, "errors.init.aspects.validation")) {
+                try {
+                    aspects = AspectBinding.unmarhsal(xmlInputStream);
+                } catch (Exception e) {
+                    LOG.error("problem while reading aspect configuration file", e);
+                    blockingErrorKeys.put("errors.init.aspects", e.getMessage());
+                    return;
+                }
+                SessionMethods.setAspects(servletContext, aspects);
+                SessionMethods.setCategories(servletContext, Collections.unmodifiableSet(aspects
+                                            .keySet()));
+            }
         }
+    }
+
+    private boolean validateXML(String xml, String schemaUrl, String errorCode) {
+/*        Source xmlFile = new StreamSource(xmlInputStream);
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        try {
+            Schema schema = schemaFactory.newSchema(new StreamSource(xsdInputStream));
+            Validator validator = schema.newValidator();
+            try {
+                validator.validate(xmlFile);
+                return true;
+            } catch (SAXException se) {
+                LOG.error(xmlFile.getSystemId() + " is NOT valid");
+                blockingErrorKeys.put(errorCode, se.getMessage());
+            } catch (IOException ioe) {
+                LOG.error("Problems find file ", ioe);
+            }
+        } catch (SAXException se) {
+            LOG.error("Problems parsing xsd file", se);
+        }
+        return false;*/
+        XMLValidator validator = new XMLValidator();
+        validator.validate(xml, schemaUrl);
+        if (validator.getErrorsAndWarnings().size() == 0) {
+            return true;
+        }
+        blockingErrorKeys.put(errorCode, validator.getErrorsAndWarnings().get(0));
+        return false;
     }
 
     private void loadAutoCompleter(ServletContext servletContext,
@@ -267,29 +360,62 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Object and widget display configuration
      */
-    private WebConfig loadWebConfig(ServletContext servletContext, ObjectStore os)
-        throws ServletException {
-        try {
-            WebConfig retval = WebConfig.parse(servletContext, os.getModel());
-            SessionMethods.setWebConfig(servletContext, retval);
-            return retval;
-        } catch (Exception e) {
-            LOG.error("Problem generating WebConfig", e);
-            throw new ServletException(e);
+    private WebConfig loadWebConfig(ServletContext servletContext, ObjectStore os) {
+        WebConfig retval = null;
+        InputStream xmlInputStream = servletContext
+            .getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        InputStream xmlInputStreamForValidation = servletContext
+        .getResourceAsStream("/WEB-INF/webconfig-model.xml");
+        if (xmlInputStream == null) {
+            LOG.error("Unable to find /WEB-INF/webconfig-model.xml.");
+            blockingErrorKeys.put("errors.init.webconfig.notfound", null);
+        } else {
+            StringWriter writer = new StringWriter();
+            try {
+                IOUtils.copy(xmlInputStreamForValidation, writer);
+            } catch (IOException ioe) {
+                LOG.error("Problems converting xmlInputStream into a String ", ioe);
+                blockingErrorKeys.put("errors.init.webconfig.generic", ioe.getMessage());
+            }
+            String xml = writer.toString();
+            String xmlSchemaUrl = "";
+            try {
+                xmlSchemaUrl = servletContext.getResource("/WEB-INF/webconfig-model.xsd")
+                                             .toString();
+            } catch (MalformedURLException mue) {
+                LOG.warn("Problems retrieving url fo aspects.xsd ", mue);
+            }
+            if (validateXML(xml, xmlSchemaUrl, "errors.init.webconfig.validation")) {
+                try {
+                    retval = WebConfig.parse(servletContext, os.getModel());
+                    SessionMethods.setWebConfig(servletContext, retval);
+                } catch (FileNotFoundException fnf) {
+                    LOG.error("Problem to find the webconfig-model.xml file.", fnf);
+                    blockingErrorKeys.put("errors.init.webconfig.notfound", null);
+                } catch (ClassNotFoundException cnf) {
+                    LOG.error("Classes mentioned in the webconfig-model.xml"
+                            + " file aren't in the Model", cnf);
+                    blockingErrorKeys.put("errors.init.webconfig.classnotfound", cnf.getMessage());
+                } catch (Exception e) {
+                    LOG.error("Problem to parse the webconfig-model.xml file", e);
+                    blockingErrorKeys.put("errors.init.webconfig.parsing", e.getMessage());
+                }
+            }
         }
+        return retval;
     }
 
     /**
      *  Load user-friendly class description
      */
-    private void loadClassDescriptions(ServletContext servletContext)
-        throws ServletException {
+    private void loadClassDescriptions(ServletContext servletContext) {
         Properties classDescriptions = new Properties();
         try {
             classDescriptions.load(servletContext
                     .getResourceAsStream("/WEB-INF/classDescriptions.properties"));
         } catch (Exception e) {
-            throw new ServletException("Error loading class descriptions", e);
+            LOG.error("Error loading class descriptions", e);
+            blockingErrorKeys.put("errors.init.classDescriptions", null);
         }
         servletContext.setAttribute("classDescriptions", classDescriptions);
     }
@@ -297,13 +423,14 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Load keys that describe how objects should be uniquely identified
      */
-    private Map<String, List<FieldDescriptor>> loadClassKeys(Model model) throws ServletException {
+    private Map<String, List<FieldDescriptor>> loadClassKeys(Model model) {
         Properties classKeyProps = new Properties();
         try {
             classKeyProps.load(InitialiserPlugin.class.getClassLoader()
                     .getResourceAsStream("class_keys.properties"));
         } catch (Exception e) {
-            throw new ServletException("Error loading class descriptions", e);
+            LOG.error("Error loading class descriptions", e);
+            blockingErrorKeys.put("errors.init.classkeys", null);
         }
         Map<String, List<FieldDescriptor>>  classKeys =
             ClassKeyHelper.readKeys(model, classKeyProps);
@@ -314,14 +441,15 @@ public class InitialiserPlugin implements PlugIn
      * Load keys that describe how objects should be uniquely identified
      */
     private BagQueryConfig loadBagQueries(ServletContext servletContext, ObjectStore os,
-        Properties webProperties) throws ServletException {
+        Properties webProperties) {
         BagQueryConfig bagQueryConfig = null;
         InputStream is = servletContext.getResourceAsStream("/WEB-INF/bag-queries.xml");
         if (is != null) {
             try {
                 bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
             } catch (Exception e) {
-                throw new ServletException("Error loading class bag queries", e);
+                Log.error("Error loading class bag queries. ", e);
+                blockingErrorKeys.put("errors.init.bagqueries", e.getMessage());
             }
             InputStream isBag = getClass().getClassLoader()
                 .getResourceAsStream("extraBag.properties");
@@ -336,10 +464,12 @@ public class InitialiserPlugin implements PlugIn
                     bagQueryConfig.setConstrainField(bagProperties
                         .getProperty("extraBag.constrainField"));
                 } catch (IOException e) {
-                    throw new ServletException(e);
+                    Log.error("Error loading extraBag.properties. ", e);
+                    blockingErrorKeys.put("errors.init.extrabagloading", null);
                 }
             } else {
                 LOG.error("Could not find extraBag.properties file");
+                blockingErrorKeys.put("errors.init.extrabag", null);
             }
         } else {
             // can used defaults so just log a warning
@@ -351,14 +481,16 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Read in the webapp configuration properties
      */
-    private Properties loadWebProperties(ServletContext servletContext) throws ServletException {
+    private Properties loadWebProperties(ServletContext servletContext) {
         Properties webProperties = new Properties();
         InputStream globalPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
         try {
             webProperties.load(globalPropertiesStream);
         } catch (Exception e) {
-            throw new ServletException("Unable to find global.web.properties", e);
+            LOG.error("Unable to find global.web.properties", e);
+            blockingErrorKeys.put("errors.init.globalweb", null);
+            return webProperties;
         }
 
         LOG.info("Looking for extra property files");
@@ -374,7 +506,9 @@ public class InitialiserPlugin implements PlugIn
             try {
                 webProperties.load(otherResourceStream);
             } catch (Exception e) {
-                throw new ServletException("Unable to load " + resource, e);
+                LOG.error("Unable to load " + resource, e);
+                blockingErrorKeys.put("errors.init.globalweb", null);
+                return webProperties;
             }
         }
 
@@ -387,14 +521,16 @@ public class InitialiserPlugin implements PlugIn
             try {
                 webProperties.load(modelPropertiesStream);
             } catch (Exception e) {
-                throw new ServletException("Unable to find web.properties", e);
+                LOG.error("Unable to load web.properties", e);
+                blockingErrorKeys.put("errors.init.webproperties", null);
+                return webProperties;
             }
         }
-
+        SessionMethods.setWebProperties(servletContext, webProperties);
         return webProperties;
     }
 
-    private void loadOpenIDProviders(ServletContext context) throws ServletException {
+    private void loadOpenIDProviders(ServletContext context) {
         Set<String> providers = new HashSet<String>();
         Properties providerProps = new Properties();
 
@@ -409,10 +545,14 @@ public class InitialiserPlugin implements PlugIn
             try {
                 providerProps.load(is);
             } catch (IOException e) {
-                throw new ServletException(e);
+                LOG.error("Could not load openid-providers.properties", e);
+                blockingErrorKeys.put("errors.init.openidprovidersloading", null);
+                return;
             }
         } else {
             LOG.error("Could not find openid-providers.properties");
+            blockingErrorKeys.put("errors.init.openidproviders", null);
+            return;
         }
 
         for (Object key: providerProps.keySet()) {
@@ -460,19 +600,20 @@ public class InitialiserPlugin implements PlugIn
     /**
      * Summarize the ObjectStore to get class counts
      */
-    private ObjectStoreSummary summariseObjectStore(ServletContext servletContext)
-        throws ServletException {
+    private ObjectStoreSummary summariseObjectStore(ServletContext servletContext) {
         Properties objectStoreSummaryProperties = new Properties();
         InputStream objectStoreSummaryPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/objectstoresummary.properties");
         if (objectStoreSummaryPropertiesStream == null) {
             // there are no model specific properties
-            throw new ServletException("Unable to find objectstoresummary.properties");
+            LOG.error("Unable to find objectstoresummary.properties");
+            blockingErrorKeys.put("errors.init.objectstoresummary", null);
         }
         try {
             objectStoreSummaryProperties.load(objectStoreSummaryPropertiesStream);
         } catch (Exception e) {
-            throw new ServletException("Unable to read objectstoresummary.properties", e);
+            LOG.error("Unable to read objectstoresummary.properties", e);
+            blockingErrorKeys.put("errors.init.objectstoresummary.loading", null);
         }
 
         final ObjectStoreSummary oss = new ObjectStoreSummary(objectStoreSummaryProperties);
@@ -480,7 +621,7 @@ public class InitialiserPlugin implements PlugIn
     }
 
     private void setupClassSummaryInformation(ServletContext servletContext, ObjectStoreSummary oss,
-            final Model model) throws ServletException {
+            final Model model) {
         Map<String, String> classes = new LinkedHashMap<String, String>();
         Map<String, Integer> classCounts = new LinkedHashMap<String, Integer>();
 
@@ -491,7 +632,8 @@ public class InitialiserPlugin implements PlugIn
             try {
                 classCounts.put(className, new Integer(oss.getClassCount(className)));
             } catch (Exception e) {
-                throw new ServletException("Unable to get class count for " + className, e);
+                LOG.error("Unable to get class count for " + className, e);
+                blockingErrorKeys.put("errors.init.objectstoresummary.classcount", e.getMessage());
             }
         }
         servletContext.setAttribute("classes", classes);
@@ -510,26 +652,25 @@ public class InitialiserPlugin implements PlugIn
         servletContext.setAttribute(Constants.SUBCLASSES, subclassesMap);
     }
 
-
-    private ObjectStoreWriter getUserprofileWriter(Properties webProperties)
-        throws ServletException {
-        ObjectStoreWriter userprofileOSW;
+    private ObjectStoreWriter getUserprofileWriter(Properties webProperties) {
+        ObjectStoreWriter userprofileOSW = null;
         try {
             String userProfileAlias = (String) webProperties.get("webapp.userprofile.os.alias");
             userprofileOSW = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
         } catch (ObjectStoreException e) {
-            LOG.error("Unable to create userprofile - please check that the "
-                    + "userprofile database is available", e);
-            throw new ServletException("Unable to create profile manager - please check that "
-                    + "the userprofile database is available", e);
+            LOG.error("Unable to create userprofile - " + e.getMessage(), e);
+            blockingErrorKeys.put("errors.init.userprofileconnection", e.getMessage());
+            return userprofileOSW;
         }
 
-        applyUserProfileUpgrades(userprofileOSW);
+        applyUserProfileUpgrades(userprofileOSW, blockingErrorKeys);
         return userprofileOSW;
     }
 
-    private void applyUserProfileUpgrades(ObjectStoreWriter osw) throws ServletException {
+    private void applyUserProfileUpgrades(ObjectStoreWriter osw,
+                                          Map<String, String> blockingErrorKeys) {
         Connection con = null;
+        boolean setSuperUser = false;
         try {
             con = ((ObjectStoreInterMineImpl) osw).getConnection();
             DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
@@ -538,11 +679,35 @@ public class InitialiserPlugin implements PlugIn
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "localaccount", true);
             }
+            if (!DatabaseUtil.columnExists(con, "userprofile", "superuser")) {
+                DatabaseUtil.addColumn(con, "userprofile", "superuser",
+                        DatabaseUtil.Type.boolean_type);
+                DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
+                setSuperUser = true;
+            }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
-            throw new ServletException("Unable to upgrade UserProfile DB");
+            blockingErrorKeys.put("errors.init.userprofileconnection", sqle.getMessage());
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
+        }
+        if (setSuperUser) {
+            setSuperUser(osw);
+        }
+    }
+
+    private void setSuperUser(ObjectStoreWriter uosw) {
+        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setUsername(superuser);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("username");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            superuserProfile.setSuperuser(true);
+            uosw.store(superuserProfile);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
         }
     }
 
@@ -601,7 +766,7 @@ public class InitialiserPlugin implements PlugIn
     private TrackerDelegate initTrackers(Properties webProperties,
             ObjectStoreWriter userprofileOSW) {
         if (!verifyTrackTables(userprofileOSW.getObjectStore())) {
-            blockingErrorKeys.add("errors.tracktable.runAnt");
+            blockingErrorKeys.put("errors.init.tracktable.runAnt", null);
         }
         return getTrackerDelegate(webProperties, userprofileOSW);
     }
@@ -649,17 +814,41 @@ public class InitialiserPlugin implements PlugIn
         return null;
     }
 
+    private boolean verifyTablesExist(ObjectStore uos) {
+        Connection con = null;
+        Set<ClassDescriptor> classDescritpors = uos.getModel().getClassDescriptors();
+        try {
+            con = ((ObjectStoreInterMineImpl) uos).getConnection();
+            for (ClassDescriptor cd : classDescritpors) {
+                if (!cd.isInterface()) {
+                    String tableNameToVerify = cd.getSimpleName().toLowerCase();
+                    if (!DatabaseUtil.tableExists(con, tableNameToVerify)) {
+                        LOG.error("In the userprofile database, the table " + tableNameToVerify
+                            + " doesn't exist.");
+                        blockingErrorKeys.put("errors.init.tablesNotExisting", tableNameToVerify);
+                        return false;
+                    }
+                }
+            }
+        } catch (SQLException sqle) {
+            LOG.error("Probelm retrieving connection", sqle);
+        } finally {
+            ((ObjectStoreInterMineImpl) uos).releaseConnection(con);
+        }
+        return true;
+    }
+
     private boolean verifyListTables(ObjectStore uos) {
         Connection con = null;
         try {
             con = ((ObjectStoreInterMineImpl) uos).getConnection();
             if (!DatabaseUtil.tableExists(con, "bagvalues")) {
-                blockingErrorKeys.add("errors.savedbagtable.runLoadBagValuesTableAnt");
+                blockingErrorKeys.put("errors.init.savedbagtable.runLoadBagValuesTableAnt", null);
                 return false;
             } else {
                 if (!DatabaseUtil.columnExists(con, "bagvalues", "extra")
                     || DatabaseUtil.columnExists(con, "savedbag", "intermine_current")) {
-                    blockingErrorKeys.add("errors.savedbagtable.runListTablesAnt");
+                    blockingErrorKeys.put("errors.init.savedbagtable.runListTablesAnt", null);
                     return false;
                 }
             }

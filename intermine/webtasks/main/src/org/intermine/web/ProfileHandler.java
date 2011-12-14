@@ -52,6 +52,7 @@ class ProfileHandler extends DefaultHandler
     private int version;
     private String apiKey = null;
     private boolean isLocal = true;
+    private boolean isSuperUser;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -105,8 +106,8 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, TemplateHelper.upcast(savedTemplates),
-                                     apiKey, isLocal);
+                                     savedBags, TemplateHelper.upcast(savedTemplates), apiKey,
+                                     isLocal, isSuperUser);
         return retval;
     }
 
@@ -143,6 +144,9 @@ class ProfileHandler extends DefaultHandler
             }
             if (attrs.getValue("localAccount") != null) {
                 isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
+            }
+            if (attrs.getValue("superUser") != null) {
+                isSuperUser = Boolean.parseBoolean(attrs.getValue("superUser"));
             }
         }
         if ("bags".equals(qName)) {

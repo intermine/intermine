@@ -69,10 +69,11 @@ public class WebConfig
      * @return a WebConfig object
      * @throws SAXException if there is an error in the XML file
      * @throws IOException if there is an error reading the XML file
+     * @throws FileNotFoundException if the XML file doesn't exist
      * @throws ClassNotFoundException if a class is mentioned in the XML that isn't in the model
      */
     public static WebConfig parse(final ServletContext context, final Model model)
-        throws IOException, SAXException, ClassNotFoundException {
+        throws IOException, FileNotFoundException, SAXException, ClassNotFoundException {
 
         BasicConfigurator.configure();
 

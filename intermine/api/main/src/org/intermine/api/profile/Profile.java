@@ -46,6 +46,7 @@ public class Profile
     protected String username;
     protected Integer userId;
     protected String password;
+    protected boolean isSuperUser;
     protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
     protected Map<String, InterMineBag> savedBags
         = Collections.synchronizedMap(new TreeMap<String, InterMineBag>());
@@ -73,15 +74,18 @@ public class Profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
      * @param token The token to use as an API key
+     * @param isSuperUser true if the user is a super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal) {
+                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
+                   boolean isSuperUser) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
         this.password = password;
         this.isLocal = isLocal;
+        this.isSuperUser = isSuperUser;
         if (savedQueries != null) {
             this.savedQueries.putAll(savedQueries);
         }
@@ -106,13 +110,15 @@ public class Profile
      * @param savedInvalidBags the saved bags which type doesn't match with the model
      * @param savedTemplates the saved templates for this profile
      * @param token The token to use as an API key
+     * @param isSuperUser the flag identifying the super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
                    Map<String, InterMineBag> savedInvalidBags,
-                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal) {
+                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
+                   boolean isSuperUser) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates, token,
-            isLocal);
+            isLocal, isSuperUser);
         this.savedInvalidBags = savedInvalidBags;
     }
 
@@ -128,9 +134,9 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-            Map<String, ApiTemplate> savedTemplates, boolean isLocal) {
+            Map<String, ApiTemplate> savedTemplates, boolean isLocal, boolean isSuperUser) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates,
-                null, isLocal);
+                null, isLocal, isSuperUser);
     }
 
     /**
@@ -179,10 +185,7 @@ public class Profile
      * @return Return true if superuser
      */
     public boolean isSuperuser() {
-        if (username != null && manager.getSuperuser().equals(username)) {
-            return true;
-        }
-        return false;
+        return isSuperUser;
     }
 
     /**
