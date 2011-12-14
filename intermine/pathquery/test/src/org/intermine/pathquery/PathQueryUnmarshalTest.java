@@ -45,12 +45,28 @@ public class PathQueryUnmarshalTest extends  TestCase
 
     public void testInvalidView() {
         PathQuery query = createQuery("InvalidView.xml");
-        assertTrue(query.verifyQuery().size() == 1);
+        assertEquals(1, query.verifyQuery().size());
+    }
+
+    public void testEmptyView() {
+        PathQuery query = createQuery("emptyView.xml");
+        assertFalse("Viewless queries should be invalid", query.isValid());
+        assertEquals(1, query.verifyQuery().size());
     }
 
     public void testInvalidSortOrder() {
         PathQuery query = createQuery("InvalidSortOrder.xml");
-        assertTrue(query.verifyQuery().size() == 0);
+        assertTrue("Invalid sort orders are not tolerated", !query.isValid());
+    }
+
+    public void testOrderlessSortOrder() {
+        PathQuery query = createQuery("OrderlessSortOrder.xml");
+        assertTrue("Orderless sort orders are tolerated", query.isValid());
+    }
+
+    public void testIrrelevantSortOrder() {
+        PathQuery query = createQuery("IrrelevantSortOrder.xml");
+        assertEquals(Arrays.asList("Order by element for path Employee.department.name is not relevant to the query"), query.verifyQuery());
     }
 
     public void testInvalidConstraintLogic() {
