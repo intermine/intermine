@@ -32,7 +32,6 @@ import org.intermine.objectstore.query.ResultsBatches;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.TypeUtil;
 
