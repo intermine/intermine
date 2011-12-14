@@ -244,4 +244,16 @@ public class LiveQueryTest {
         }
         assertEquals(sum, unauthorised.getCount(test1));
     }
+
+    /// Bug tests
+
+    @Test
+    public void ticket2446() {
+        PathQuery test1 = queries.get("lookup-quotes");
+        PathQuery test2 = queries.get("multi-values");
+
+        assertEquals("These queries should be equivalent",
+                unauthorised.getCount(test1),
+                unauthorised.getCount(test2));
+    }
 }
