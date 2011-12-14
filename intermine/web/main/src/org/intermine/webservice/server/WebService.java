@@ -38,6 +38,8 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.RequestUtil;
+import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.web.logic.session.SessionMethods;
@@ -452,9 +454,9 @@ public abstract class WebService
      * @param out The PrintWriter from the HttpResponse.
      * @return An Output that produces good XML.
      */
-    protected Output makeXMLOutput(PrintWriter out) {
+    protected Output makeXMLOutput(PrintWriter out, String separator) {
         ResponseUtil.setXMLHeader(response, "result.xml");
-        return new StreamedOutput(out, new XMLFormatter());
+        return new StreamedOutput(out, new XMLFormatter(), separator);
     }
 
     /**
@@ -462,8 +464,8 @@ public abstract class WebService
      * @param out The PrintWriter from the HttpResponse.
      * @return An Output that produces good JSON.
      */
-    protected Output makeJSONOutput(PrintWriter out) {
-        return new StreamedOutput(out, new JSONFormatter());
+    protected Output makeJSONOutput(PrintWriter out, String separator) {
+        return new StreamedOutput(out, new JSONFormatter(), separator);
     }
 
 
@@ -502,6 +504,12 @@ public abstract class WebService
     }
 
     private void initOutput(HttpServletResponse response) {
+        final String separator;
+        if (RequestUtil.isWindowsClient(request)) {
+            separator = Exporter.WINDOWS_SEPARATOR;
+        } else {
+            separator = Exporter.UNIX_SEPARATOR;
+        }
         int format = getFormat();
 
         // HTML is a special case
@@ -530,118 +538,118 @@ public abstract class WebService
         String filename = getDefaultFileName();
         switch (format) {
             case XML_FORMAT:
-                output = makeXMLOutput(out);
+                output = makeXMLOutput(out, separator);
                 break;
             case TSV_FORMAT:
-                output = new StreamedOutput(out, new TabFormatter());
+                output = new StreamedOutput(out, new TabFormatter(), separator);
                 filename = "result.tsv";
                 if (isUncompressed()) {
                     ResponseUtil.setTabHeader(response, filename);
                 }
                 break;
             case CSV_FORMAT:
-                output = new StreamedOutput(out, new CSVFormatter());
+                output = new StreamedOutput(out, new CSVFormatter(), separator);
                 filename = "result.csv";
                 if (isUncompressed()) {
                     ResponseUtil.setCSVHeader(response, filename);
                 }
                 break;
             case COUNT_FORMAT:
-                output = new StreamedOutput(out, new PlainFormatter());
+                output = new StreamedOutput(out, new PlainFormatter(), separator);
                 filename = "count.txt";
                 if (isUncompressed()) {
                     ResponseUtil.setPlainTextHeader(response, filename);
                 }
                 break;
             case TEXT_FORMAT:
-                output = new StreamedOutput(out, new PlainFormatter());
+                output = new StreamedOutput(out, new PlainFormatter(), separator);
                 filename = "result.txt";
                 if (isUncompressed()) {
                     ResponseUtil.setPlainTextHeader(response, filename);
                 }
                 break;
             case JSON_FORMAT:
-                output = makeJSONOutput(out);
+                output = makeJSONOutput(out, separator);
                 filename = "result.json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename);
                 }
                 break;
             case JSONP_FORMAT:
-                output = makeJSONOutput(out);
+                output = makeJSONOutput(out, separator);
                 filename = "result.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
                 }
                 break;
             case JSON_OBJ_FORMAT:
-                output = new StreamedOutput(out, new JSONObjectFormatter());
+                output = new StreamedOutput(out, new JSONObjectFormatter(), separator);
                 filename = "result.json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename);
                 }
                 break;
             case JSONP_OBJ_FORMAT:
-                output = new StreamedOutput(out, new JSONObjectFormatter());
+                output = new StreamedOutput(out, new JSONObjectFormatter(), separator);
                 filename = "result.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
                 }
                 break;
             case JSON_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter());
+                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
                 filename = "resulttable.json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename);
                 }
                 break;
             case JSONP_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter());
+                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
                 filename = "resulttable.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
                 }
                 break;
             case JSON_DATA_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter());
+                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
                 filename = "resulttable.json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename);
                 }
                 break;
             case JSONP_DATA_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter());
+                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
                 filename = "resulttable.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
                 }
                 break;
             case JSON_ROW_FORMAT:
-                output = new StreamedOutput(out, new JSONRowFormatter());
+                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
                 ResponseUtil.setJSONHeader(response,
                         "result.json" + getExtension());
                 break;
             case JSONP_ROW_FORMAT:
-                output = new StreamedOutput(out, new JSONRowFormatter());
+                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
                 ResponseUtil.setJSONPHeader(response,
                         "result.json" + getExtension());
                 break;
             case JSON_COUNT_FORMAT:
-                output = new StreamedOutput(out, new JSONCountFormatter());
+                output = new StreamedOutput(out, new JSONCountFormatter(), separator);
                 filename = "resultcount.json";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONHeader(response, filename);
                 }
                 break;
             case JSONP_COUNT_FORMAT:
-                output = new StreamedOutput(out, new JSONCountFormatter());
+                output = new StreamedOutput(out, new JSONCountFormatter(), separator);
                 filename = "resultcount.jsonp";
                 if (isUncompressed()) {
                     ResponseUtil.setJSONPHeader(response, filename);
                 }
                 break;
             default:
-                output = getDefaultOutput(out, os);
+                output = getDefaultOutput(out, os, separator);
         }
         if (!isUncompressed()) {
             filename += getExtension();
@@ -669,8 +677,8 @@ public abstract class WebService
      * @param os The Response's output stream.
      * @return An Output. (default = new StreamedOutput(out, new TabFormatter()))
      */
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
-        output = new StreamedOutput(out, new TabFormatter());
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
+        output = new StreamedOutput(out, new TabFormatter(), separator);
         ResponseUtil.setTabHeader(response, getDefaultFileName());
         return output;
     }
