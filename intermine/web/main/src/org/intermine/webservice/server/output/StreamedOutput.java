@@ -45,6 +45,12 @@ public class StreamedOutput extends Output
         this.separator = null;
     }
 
+    /** Constructor.
+     * @param writer writer where the data will be printed
+     * @param formatter associated formatter that formats data
+     * before printing
+     * @param separator Platform specific line-separator for the request.
+     */
     public StreamedOutput(PrintWriter writer, Formatter formatter, String separator) {
         this.writer = writer;
         this.formatter = formatter;
