@@ -71,7 +71,7 @@ public final class ModelBrowserHelper
 
         // Gene.crossReferences, ...
         Collection<MetadataNode> nodes = makeNodes(stringPath, model, isSuperUser,
-                query.getSubclasses(), query, classKeys, bagManager, profile, oss);
+                query, classKeys, bagManager, profile, oss);
         List<String> view = query.getView();
         for (MetadataNode node : nodes) {
             // Update view nodes
@@ -128,11 +128,20 @@ public final class ModelBrowserHelper
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
      * @param oss to determine which nodes are null
+     * @throws PathException if the query is invalid.
      */
     public static Collection<MetadataNode> makeNodes(String path, Model model, boolean isSuperUser,
-            Map<String, String> subclasses, PathQuery query, Map<String,
+            PathQuery query, Map<String,
             List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
-            ObjectStoreSummary oss) {
+            ObjectStoreSummary oss)
+        throws PathException {
+
+        Map<String, String> subclasses;
+        if (query.isEmpty()) {
+            subclasses = Collections.EMPTY_MAP;
+        } else {
+            subclasses = query.getSubclasses();
+        }
 
         String className, subPath;
         if (path.indexOf(".") == -1) {
