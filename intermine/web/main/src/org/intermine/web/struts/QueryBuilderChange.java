@@ -322,7 +322,8 @@ public class QueryBuilderChange extends DispatchAction
         if (path.isRootPath() || path.endIsReference() || path.endIsCollection()) {
             ClassDescriptor cld = path.getEndClassDescriptor();
             for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cld)) {
-                Path pathToAdd = query.makePath(path.toStringNoConstraints() + "." + fc.getFieldExpr());
+                Path pathToAdd = query.makePath(path.toStringNoConstraints()
+                        + "." + fc.getFieldExpr());
 
                 if (pathToAdd.endIsAttribute()
                         && (!query.getView().contains(pathToAdd.getNoConstraintsString()))
