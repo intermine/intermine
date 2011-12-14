@@ -192,7 +192,7 @@
                 <span id="operandEditSpan${index-1}">
                   <c:choose>
                   <%-- inputfield for an autocompletion --%>
-                  <c:when test="${!empty dec.autoCompleter}">
+                  <c:when test="${!empty dec.autoCompleter && empty dec.possibleValues}">
                     <input name="attributeValues(${index})" id="attributeId_${index}" size="45"
                       style="background: #ffffc8"
                       value="${dec.selectedValue}"
