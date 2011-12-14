@@ -208,7 +208,7 @@ public class HeatMapController extends TilesAction
                 symbol = id;
             }
 
-            symbol = fixParenthesis(symbol);
+            symbol = fixSymbol(symbol);
 
             if (!expressionScoreMap.containsKey(symbol)) {
                 // Create a list with space for n (size of conditions) ExpressionScore
@@ -239,17 +239,15 @@ public class HeatMapController extends TilesAction
 
     /**
      * To encode '(' and ')', which canvasExpress uses as separator in the cluster tree building
+     * also ':' that gives problem in the clustering
      * @param symbol
      * @return a fixed symbol
      */
-    private String fixParenthesis(String symbol) {
-        if (symbol.contains("(")) {
+    private String fixSymbol(String symbol) {
             symbol = symbol.replace("(", "%28");
-        }
-
-        if (symbol.contains(")")) {
             symbol = symbol.replace(")", "%29");
-        }
+            symbol = symbol.replace(":", "%3A");
+
         return symbol;
     }
 
