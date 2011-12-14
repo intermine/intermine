@@ -23,12 +23,12 @@ public class TemplateComparator implements Comparator<TemplateQuery>
      * identical.
      * {@inheritDoc}
      */
-    public int compare(TemplateQuery arg0, TemplateQuery arg1) {
+    public int compare(TemplateQuery t0, TemplateQuery t1) {
 
-        if (arg0.getTitle().equals(arg1.getTitle())) {
-            return arg0.getName().compareTo(arg1.getName());
+        if (t0.getTitle().equals(t1.getTitle())) {
+            return t0.getName().compareTo(t1.getName());
         } else {
-            return arg0.getTitle().compareTo(arg1.getTitle());
+            return t0.getTitle().compareTo(t1.getTitle());
         }
     }
 }
