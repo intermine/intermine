@@ -16,11 +16,6 @@
       <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Full Time?"/>
       <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Lives at"/>
     </fields>
-    <bagdisplayers>
-      <bagtabledisplayer title="Department information" type="Department" collectionName="department"
-      urlGen="org.intermine.model.testmodel.web.widget.EmployeeURLQuery"
-      description="Most popular Departments for this bag" />
-    </bagdisplayers>
   </class>
 
   <!-- exists to test that displayers for base classes (in this case
