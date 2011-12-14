@@ -133,6 +133,8 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(Arrays.asList("Employee.name", "Employee.age"), q2.getView());
         assertEquals(Collections.EMPTY_LIST, q2.verifyQuery());
         assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.age\"></query>", PathQueryBinding.marshal(q2, "test", "testmodel", 1));
+        PathQuery q3 = new PathQuery(model);
+        assertEquals("Queries with empty views are not valid", Arrays.asList("No columns selected for output"), q3.verifyQuery());
     }
 
     public void testOrderBy() throws Exception {
@@ -250,6 +252,7 @@ public class PathQueryUnitTest extends TestCase
     public void testAttributeConstraints() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
+        q.addViews("Employee.age");
         assertEquals(Collections.EMPTY_MAP, q.getConstraints());
         PathConstraintAttribute c = new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "Fred");
         String code = q.addConstraint(c);
@@ -395,13 +398,14 @@ public class PathQueryUnitTest extends TestCase
             fail("Expected NullPointerException");
         } catch (NullPointerException e) {
         }
-        assertEquals(Collections.EMPTY_MAP, q.getConstraints());
-        assertEquals("", q.getConstraintLogic());
+        assertEquals("q should not have any constraints at this point", Collections.EMPTY_MAP, q.getConstraints());
+        assertEquals("q's logic should equally be empty", "", q.getConstraintLogic());
         q.addConstraints(c, c2);
-        assertEquals(new HashSet<PathConstraint>(Arrays.asList(c, c2)), q.getConstraints().keySet());
+        assertEquals("The constraints we add turn up as keys of the getConstraints map",
+                new HashSet<PathConstraint>(Arrays.asList(c, c2)), q.getConstraints().keySet());
         q.clearConstraints();
-        assertEquals(Collections.EMPTY_MAP, q.getConstraints());
-        assertEquals("", q.getConstraintLogic());
+        assertEquals("Clearing the constraints brings us back to the pristine state", Collections.EMPTY_MAP, q.getConstraints());
+        assertEquals("Logic is cleared too", "", q.getConstraintLogic());
         Collection<PathConstraint> col = new ArrayList<PathConstraint>();
         col.add(c);
         col.add(c2);
@@ -413,12 +417,12 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(new HashSet<PathConstraint>(Arrays.asList(c, c2)), q.getConstraints().keySet());
         assertEquals(Collections.EMPTY_MAP, q2.getConstraints());
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         assertEquals(new HashSet<PathConstraint>(Arrays.asList(c, c2)), q3.getConstraints().keySet());
         assertEquals(Collections.EMPTY_LIST, q3.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q3, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q3, "test", "testmodel", 1));
         q.replaceConstraint(c2, new PathConstraintAttribute("Employee.flibble", ConstraintOp.EQUALS, "Flobble"));
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.flibble\" code=\"B\" op=\"=\" value=\"Flobble\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.flibble\" code=\"B\" op=\"=\" value=\"Flobble\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         try {
             q3.replaceConstraint(c2, null);
             fail("Expected exception");
@@ -564,9 +568,26 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(new HashSet<String>(Arrays.asList("Employee", "Employee.department.employees", "Employee.department.company.departments.employees")), q.getCandidateLoops("Employee.department.employees.department.employees"));
         q.clearView();
         q.clearOuterJoinStatus();
-        assertEquals(new HashSet<String>(Arrays.asList("Employee", "Employee.department.employees")), q.getCandidateLoops("Employee.department.employees.department.employees"));
+        assertEquals("Clearing the view means that there are no candidate loops",
+                Collections.emptySet(), q.getCandidateLoops("Employee.department.employees.department.employees"));
     }
-    
+
+    public void testCandidateLoopsNoViewNoOuterJoins() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+        assertEquals("There are no candidate loops on a freshly minted query",
+                Collections.emptySet(), q.getCandidateLoops("Employee.department.employees.department.employees"));
+    }
+
+    public void testCandidateLoopsOneViewNoOuterJoins() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+        q.addView("Employee.age");
+        assertEquals("A rooted query will report candidate loops",
+                new HashSet<String>(Arrays.asList("Employee", "Employee.department.employees")),
+                q.getCandidateLoops("Employee.department.employees.department.employees"));
+    }
+
     public void testDescription() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
@@ -803,7 +824,7 @@ public class PathQueryUnitTest extends TestCase
     public void testTicket2636() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
-                
+
         // Add views
         q.addView("Company.CEO.address.address");
         // Add constraints and you can edit the constraint values below
@@ -814,14 +835,40 @@ public class PathQueryUnitTest extends TestCase
         q.setOuterJoinStatus("Company.CEO", OuterJoinStatus.OUTER);
         // Add constraintLogic
         q.setConstraintLogic("(A and B) or C");
-        assertEquals(false, q.isValid());
-        
-        q.fixUpForJoinStyle();
+        assertTrue("The query is now invalid", !q.isValid());
+
+        List<String> messages = q.fixUpForJoinStyle();
+        assertTrue("We should get a message that the logic was changed",
+                messages.size() == 1 && messages.get(0).contains("Changed constraint logic"));
         assertNotNull(q.getConstraintLogic());
         assertEquals("A and B and C", q.getConstraintLogic());
-        assertEquals(true, q.isValid());
-    }    
-    
+        assertTrue("The query is now valid", q.isValid());
+    }
+
+    public void testFixingConstraintLogicWhilePreservingWhatWeCan() throws Exception {
+        Model model = Model.getInstanceByName("testmodel");
+        PathQuery q = new PathQuery(model);
+
+        q.addViews("Employee.name",
+                "Employee.department.manager.name",
+                "Employee.department.manager.address.address");
+        q.addConstraint(Constraints.eq("Employee.age", "28"));
+        q.addConstraint(Constraints.eq("Employee.fullTime", "true"));
+        q.addConstraint(Constraints.eq("Employee.department.manager.name", "David"));
+        q.addConstraint(Constraints.eq("Employee.department.manager.address.address", "123 Some St."));
+
+        q.setOuterJoinStatus("Employee.department.manager", OuterJoinStatus.OUTER);
+        q.setConstraintLogic("A or B or C or D");
+
+        List<String> messages = q.fixUpForJoinStyle();
+        assertTrue("We should get a message that the logic was changed",
+                messages.size() == 1 && messages.get(0).contains("Changed constraint logic"));
+        assertNotNull(q.getConstraintLogic());
+        assertEquals("(A or B) and (C or D)", q.getConstraintLogic());
+        assertTrue("The query is now valid", q.isValid());
+
+    }
+
     public void testValidQueries() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
@@ -893,7 +940,7 @@ public class PathQueryUnitTest extends TestCase
         } catch (PathException e) {
         }
     }
-    
+
     public void testGetConstraintCodes() {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
@@ -911,7 +958,7 @@ public class PathQueryUnitTest extends TestCase
         expected.add("B");
         assertEquals(expected, q.getConstraintCodes());
     }
-    
+
     public void testRemoveSubclass() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = PathQueryBinding.unmarshalPathQuery(new StringReader("<query name=\"\" model=\"testmodel\" view=\"Department.name Department.employees.name Department.employees.company.name Department.employees.title Department.employees.company.departments.name\" sortOrder=\"Department.employees.company.name asc Department.name asc\" constraintLogic=\"A and B and C and D\"><join path=\"Department.employees.address\" style=\"INNER\"/><join path=\"Department.employees\" style=\"INNER\"/><join path=\"Department.employees.company\" style=\"INNER\"/><pathDescription pathString=\"Department\" description=\"wurble\"/><pathDescription pathString=\"Department.employees.company\" description=\"flibble\"/><constraint path=\"Department.employees.address.address\" code=\"A\" op=\"=\" value=\"sdfsg\"/><constraint path=\"Department.employees\" type=\"CEO\"/><constraint path=\"Department.employees.company.vatNumber\" code=\"B\" op=\"=\" value=\"435\"/><constraint path=\"Department\" code=\"C\" op=\"=\" loopPath=\"Department.employees.company.departments\"/><constraint path=\"Department\" code=\"D\" op=\"=\" loopPath=\"Department.company.departments\"/></query>"), 1);
@@ -929,7 +976,7 @@ public class PathQueryUnitTest extends TestCase
         }
     }
 
-    
+
     public void testSortConstraints() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
         PathQuery q = new PathQuery(model);
@@ -979,7 +1026,7 @@ public class PathQueryUnitTest extends TestCase
         }
         return actual;
     }
-    
+
     public static class PathConstraintInvalid extends PathConstraint
     {
         public PathConstraintInvalid(String path) {
