@@ -14,23 +14,21 @@ import java.util.Comparator;
 
 /**
  * Comparator used for ordering templates by title
- * @author kmr
+ * @author Kim Rutherford
  */
-public class TemplateComparator implements Comparator
+public class TemplateComparator implements Comparator<TemplateQuery>
 {
     /**
-     * Compare two TemplateQuery objects by title.
+     * Compare two TemplateQuery objects by title, falling back to name if the titles are
+     * identical.
      * {@inheritDoc}
      */
-    public int compare(Object arg0, Object arg1) {
+    public int compare(TemplateQuery arg0, TemplateQuery arg1) {
 
-        TemplateQuery template0 = (TemplateQuery) arg0;
-        TemplateQuery template1 = (TemplateQuery) arg1;
-
-        if (template0.getTitle().equals(template1.getTitle())) {
-            return template0.getName().compareTo(template1.getName());
+        if (arg0.getTitle().equals(arg1.getTitle())) {
+            return arg0.getName().compareTo(arg1.getName());
         } else {
-            return template0.getTitle().compareTo(template1.getTitle());
+            return arg0.getTitle().compareTo(arg1.getTitle());
         }
     }
 }
