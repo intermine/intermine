@@ -18,6 +18,8 @@ package org.intermine.template;
 public class TemplatePopulatorException extends RuntimeException
 {
 
+    private static final long serialVersionUID = -2453270391799250660L;
+
     /**
      * Constructs an TemplatePopulatorException with the specified detail message.
      *
