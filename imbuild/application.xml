@@ -87,7 +87,7 @@
                             userProfileAlias="${userprofile.objectstorewriter.name}"
                             superuserPassword="${superuser.initialPassword}"/>
   </target>
-	
+
   <target name="dump-default-templates" depends="-init-properties, -init-build-db">
     <dump-default-templates fileName="${default.template.queries}"
                             username="${superuser.account}" osAlias="${objectstore.name}"
