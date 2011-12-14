@@ -323,8 +323,8 @@ public class QueryResultService extends AbstractQueryService
     }
 
     @Override
-    protected Output makeJSONOutput(PrintWriter out) {
-        return new StreamedOutput(out, new JSONTableFormatter());
+    protected Output makeJSONOutput(PrintWriter out, String separator) {
+        return new StreamedOutput(out, new JSONTableFormatter(), separator);
     }
 
     /**
