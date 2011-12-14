@@ -87,6 +87,7 @@ public class PathQuery implements Cloneable
      * constraint logic */
     private boolean doNotVerifyLogic = false;
 
+    private static final String NO_VIEW_ERROR = "No columns selected for output";
 
     // See http://intrac.flymine.org/wiki/PathQueryRefactor
 
@@ -1728,26 +1729,30 @@ public class PathQuery implements Cloneable
     }
 
     private Set<String> validateView(List<String> problems, Set<String> validMainPaths) {
-        for (String viewPath : view) {
-            try {
-                Path path = new Path(model, viewPath, subclasses);
-                if (!path.endIsAttribute()) {
-                    problems.add("Path " + viewPath + " in view list must be an attribute");
-                    continue;
-                }
-                if (rootClass == null) {
-                    rootClass = path.getStartClassDescriptor().getUnqualifiedName();
-                } else {
-                    String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
-                    if (!rootClass.equals(newRootClass)) {
-                        problems.add("Multiple root classes in query: " + rootClass + " and "
-                                + newRootClass);
+        if (view.isEmpty()) {
+            problems.add(NO_VIEW_ERROR);
+        } else {
+            for (String viewPath : view) {
+                try {
+                    Path path = new Path(model, viewPath, subclasses);
+                    if (!path.endIsAttribute()) {
+                        problems.add("Path " + viewPath + " in view list must be an attribute");
                         continue;
                     }
+                    if (rootClass == null) {
+                        rootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                    } else {
+                        String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                        if (!rootClass.equals(newRootClass)) {
+                            problems.add("Multiple root classes in query: " + rootClass + " and "
+                                    + newRootClass);
+                            continue;
+                        }
+                    }
+                    addValidPaths(validMainPaths, path.getPrefix());
+                } catch (PathException e) {
+                    problems.add("Path " + viewPath + " in view list is not in the model");
                 }
-                addValidPaths(validMainPaths, path.getPrefix());
-            } catch (PathException e) {
-                problems.add("Path " + viewPath + " in view list is not in the model");
             }
         }
         return validMainPaths;
@@ -1828,7 +1833,8 @@ public class PathQuery implements Cloneable
      */
     public synchronized String getRootClass() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        // For the purposes of this method, we will permit empty views.
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return rootClass;
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -1873,7 +1879,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Map<String, String> getOuterJoinGroups() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableMap(new LinkedHashMap<String, String>(outerJoinGroups));
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -1888,7 +1894,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Set<String> getExistingLoops() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableSet(new HashSet<String>(existingLoops));
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -1966,6 +1972,9 @@ public class PathQuery implements Cloneable
         Set<String> toAdd = new HashSet<String>();
         while (!(groups.containsKey(groupPath.getNoConstraintsString()))) {
             toAdd.add(groupPath.toStringNoConstraints());
+            if (groupPath.isRootPath()) {
+                break;
+            }
             groupPath = groupPath.getPrefix();
         }
         String group = groups.get(groupPath.getNoConstraintsString());
@@ -1980,7 +1989,7 @@ public class PathQuery implements Cloneable
                 Path entryPath = makePath(entry.getKey());
                 if (type.isAssignableFrom(entryPath.getEndType())
                     || entryPath.getEndType().isAssignableFrom(type)) {
-                    if (group.equals(entry.getValue())) {
+                    if (group != null && group.equals(entry.getValue())) {
                         String desc = stringPath.compareTo(entry.getKey()) > 0
                                 ? entry.getKey() + " -- " + stringPath
                                 : stringPath + " -- " + entry.getKey();
