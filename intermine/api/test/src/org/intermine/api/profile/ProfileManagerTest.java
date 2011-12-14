@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -87,8 +87,10 @@ public class ProfileManagerTest extends InterMineAPITestCase
 
         // bob's details
         String bobName = "bob";
+        List<String> classKeys = new ArrayList<String>();
+        classKeys.add("name");
         InterMineBag bag = new InterMineBag("bag1", "Department", "This is some description",
-                new Date(), BagState.CURRENT, os, bobId, uosw);
+                new Date(), BagState.CURRENT, os, bobId, uosw, classKeys);
 
         Department deptEx = new Department();
         deptEx.setName("DepartmentA1");
@@ -131,7 +133,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         CEO ceoB1 = (CEO) os.getObjectByExample(ceoEx, fieldNames);
 
         InterMineBag objectBag = new InterMineBag("bag2", "Employee", "description",
-                new Date(), BagState.CURRENT, os, sallyId, uosw);
+                new Date(), BagState.CURRENT, os, sallyId, uosw, classKeys);
         objectBag.addIdToBag(ceoB1.getId(), "CEO");
 
         template = new ApiTemplate("template", "ttitle", "tcomment",
@@ -162,8 +164,10 @@ public class ProfileManagerTest extends InterMineAPITestCase
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("userprofiles");
-            ProfileBinding.marshal(bobProfile, os, writer, PathQuery.USERPROFILE_VERSION, classKeys);
-            ProfileBinding.marshal(sallyProfile, os, writer, PathQuery.USERPROFILE_VERSION, classKeys);
+            ProfileBinding.marshal(bobProfile, os, writer,
+                                   PathQuery.USERPROFILE_VERSION, classKeys);
+            ProfileBinding.marshal(sallyProfile, os, writer,
+                                   PathQuery.USERPROFILE_VERSION, classKeys);
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
@@ -211,12 +215,15 @@ public class ProfileManagerTest extends InterMineAPITestCase
         Set<Integer> expectedBagContents = new HashSet<Integer>();
         //when we read xml file, we load data into savedbag and bagvalues table but not in the
         //osbag_int loaded after user login
-        assertEquals(expectedBagContents, (stored2.getSavedBags().get("stored_2_3")).getContentsAsIds());
+        assertEquals(expectedBagContents,
+                    (stored2.getSavedBags().get("stored_2_3")).getContentsAsIds());
 
-        List<InterMineBag.BagValue> contentsAsKey = (stored2.getSavedBags().get("stored_2_1")).getContentsAsKeyFieldAndExtraValue();
+        List<InterMineBag.BagValue> contentsAsKey = (stored2.getSavedBags()
+                .get("stored_2_1")).getContentsAsKeyFieldAndExtraValue();
         assertEquals("DepartmentA1", contentsAsKey.get(0).value);
 
-        List<InterMineBag.BagValue> contentsAsKey2 = (stored2.getSavedBags().get("stored_2_3")).getContentsAsKeyFieldAndExtraValue();
+        List<InterMineBag.BagValue> contentsAsKey2 = (stored2.getSavedBags()
+                .get("stored_2_3")).getContentsAsKeyFieldAndExtraValue();
         assertEquals("EmployeeA3", contentsAsKey2.get(0).value);
         assertEquals("EmployeeB2", contentsAsKey2.get(1).value);
 
@@ -254,7 +261,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
         expectedTags.add(tag3);
         expectedTags.add(tag4);
 
-        Set<Tag> actualTags = new HashSet<Tag>(im.getTagManager().getTags(null, null, null, "Unmarshall-1"));
+        Set<Tag> actualTags = new HashSet<Tag>(im.getTagManager()
+                .getTags(null, null, null, "Unmarshall-1"));
 
         assertEquals(expectedTags.size(), actualTags.size());
 
