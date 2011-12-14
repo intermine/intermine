@@ -197,9 +197,9 @@ public class ConstraintInput
             eq = eq && (value == null) ? o.getValue() == null : value.equals(o.getValue());
             eq = eq && (code == null) ? o.getCode() == null : code.equals(o.getCode());
             eq = eq && (pathId == null) ? o.getPathId() == null : pathId.equals(o.getPathId());
-            eq = eq && (extraValue == null)
+            eq = eq && ((extraValue == null)
                     ? o.getExtraValue() == null
-                    : extraValue.equals(o.getExtraValue());
+                    : extraValue.equals(o.getExtraValue()));
             if (multivalues == null) {
                 eq = eq && o.getMultivalues() == null;
             } else {
