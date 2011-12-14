@@ -110,9 +110,13 @@ public class PathQueryHandler extends DefaultHandler
                 }
                 query.addViewSpaceSeparated(view);
             }
-            if (attrs.getValue("sortOrder") != null
-                    && !StringUtils.isBlank(attrs.getValue("sortOrder"))) {
-                query.addOrderBySpaceSeparated(attrs.getValue("sortOrder"));
+            String so = attrs.getValue("sortOrder");
+            if (!StringUtils.isBlank(so)) {
+                if (so.indexOf(' ') < 0) {
+                    // be accomodating of input as possible - assume asc.
+                    so += " asc";
+                }
+                query.addOrderBySpaceSeparated(so);
             }
             constraintLogic = attrs.getValue("constraintLogic");
             questionableSubclasses = new ArrayList<PathConstraintSubclass>();
