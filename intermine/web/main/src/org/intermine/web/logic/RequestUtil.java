@@ -25,6 +25,9 @@ public class RequestUtil
      */
     public static boolean isWindowsClient(HttpServletRequest request) {
         String header = request.getHeader("User-Agent");
-        return header.matches(".*(.*Windows.*).*");
+        if (header != null) {
+            return header.matches(".*(.*Windows.*).*");
+        }
+        return false;
     }
 }
