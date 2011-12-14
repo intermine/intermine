@@ -1,11 +1,20 @@
 package org.intermine.web.filters;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 // This class is taken directly from an example provided with the Tomcat6
-// distribution. It is originally distributed under the Apache License, as
+// distribution. It was originally distributed under the Apache License, as
 // follows:
 
 /*
-
 * Licensed to the Apache Software Foundation (ASF) under one or more
 * contributor license agreements.  See the NOTICE file distributed with
 * this work for additional information regarding copyright ownership.
@@ -107,21 +116,23 @@ public class SetCharacterEncodingFilter implements Filter
      * interpret request parameters for this request.
      *
      * @param request The servlet request we are processing
-     * @param result The servlet response we are creating
+     * @param response The servlet response we are creating
      * @param chain The filter chain we are processing
      *
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain)
-    throws IOException, ServletException {
+        throws IOException, ServletException {
 
         // Conditionally select and set the character encoding to be used
         if (ignore || (request.getCharacterEncoding() == null)) {
-            String encoding = selectEncoding(request);
-            if (encoding != null)
-                request.setCharacterEncoding(encoding);
+            String selected = selectEncoding(request);
+            if (selected != null) {
+                request.setCharacterEncoding(selected);
+            }
         }
 
     // Pass control on to the next filter
@@ -134,26 +145,26 @@ public class SetCharacterEncodingFilter implements Filter
      * Place this filter into service.
      *
      * @param filterConfig The filter configuration object
+     * @throws ServletException if something goes wrong.
      */
     public void init(FilterConfig filterConfig) throws ServletException {
 
-    this.filterConfig = filterConfig;
+        this.filterConfig = filterConfig;
         this.encoding = filterConfig.getInitParameter("encoding");
         String value = filterConfig.getInitParameter("ignore");
-        if (value == null)
+        if (value == null) {
             this.ignore = true;
-        else if (value.equalsIgnoreCase("true"))
+        } else if (value.equalsIgnoreCase("true")) {
             this.ignore = true;
-        else if (value.equalsIgnoreCase("yes"))
+        } else if (value.equalsIgnoreCase("yes")) {
             this.ignore = true;
-        else
+        } else {
             this.ignore = false;
+        }
 
     }
 
-
     // ------------------------------------------------------ Protected Methods
-
 
     /**
      * Select an appropriate character encoding to be used, based on the
@@ -166,6 +177,7 @@ public class SetCharacterEncodingFilter implements Filter
      * filter.
      *
      * @param request The servlet request we are processing
+     * @return the selected encoding.
      */
     protected String selectEncoding(ServletRequest request) {
 
