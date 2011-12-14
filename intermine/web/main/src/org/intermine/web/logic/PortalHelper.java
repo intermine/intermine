@@ -31,7 +31,6 @@ import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.util.URLGenerator;
 
-
 /**
  * Util methods for the portal
  * @author Julie Sullivan
@@ -115,8 +114,9 @@ public final class PortalHelper
 
         if (bagConverter == null) {
             try {
-                Class clazz = Class.forName(converterClassName);
-                Constructor constructor = clazz.getConstructor(InterMineAPI.class, WebConfig.class);
+                Class<?> clazz = Class.forName(converterClassName);
+                Constructor<?> constructor
+                    = clazz.getConstructor(InterMineAPI.class, WebConfig.class);
                 bagConverter = (BagConverter) constructor.newInstance(im, webConfig);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to construct bagconverter for "
@@ -135,6 +135,7 @@ public final class PortalHelper
      * @param im the InterMineApi
      * @param request the request object
      * @return a portal URL to the object or null
+     * @see generatePermaLink
      */
     public static String generatePortalLink(FastPathObject obj, InterMineAPI im,
             HttpServletRequest request) {
@@ -143,6 +144,13 @@ public final class PortalHelper
         return generatePermaLink(obj, baseUrl, classKeys);
     }
 
+    /**
+     * Generate an external portal link (perma-link) for an InterMine object.
+     * @param obj The object to link to.
+     * @param im The InterMine API configuration bundle.
+     * @return A path, beginning with "/" suitable for appending to a base URL.
+     * @see generatePermaPath
+     */
     public static String generatePortalPath(FastPathObject obj, InterMineAPI im) {
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         return generatePermaPath(obj, classKeys);
@@ -160,7 +168,16 @@ public final class PortalHelper
         return  baseUrl + generatePermaPath(obj, classKeys);
     }
 
-    public static String generatePermaPath(FastPathObject obj, Map<String, List<FieldDescriptor>> classKeys) {
+    /**
+     * Generate a link suitable for use as an external, permanent link, in that the link should work
+     * between rebuilds of the database.
+     * @param obj The object to link to.
+     * @param classKeys The class-key configuration for determining which fields to
+     * use for identification.
+     * @return A path, beginning with "/" suitable for appending to a base url.
+     */
+    public static String generatePermaPath(FastPathObject obj, Map<String,
+            List<FieldDescriptor>> classKeys) {
         String url = null;
         Object externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys);
         if (externalId != null) {
@@ -187,6 +204,13 @@ public final class PortalHelper
         return baseUrl + generateReportPath(elem);
     }
 
+    /**
+     * Get the path fragment (starting with "/") for the report page for an object in the mine.
+     * @param elem The element containing data related to this object.
+     * @return A path fragment suitable for appending to a base URL.
+     * The generated path is not suitable for permanent
+     * links, as it will include the internal id, which is liable to change between releases.
+     */
     public static String generateReportPath(ResultElement elem) {
         String url = null;
         StringBuilder sb = new StringBuilder();
@@ -196,6 +220,12 @@ public final class PortalHelper
         return url;
     }
 
+
+    /**
+     * Get the base url for this web-app. This includes the host and context path fragment.
+     * @param request An incoming request.
+     * @return The base URL.
+     */
     public static String getBaseUrl(HttpServletRequest request) {
         if (portalBaseUrl == null) {
             portalBaseUrl = new URLGenerator(request).getPermanentBaseURL();
@@ -203,6 +233,12 @@ public final class PortalHelper
         return portalBaseUrl;
     }
 
+    /**
+     * URL encode a string. This method wraps java.net.URLEncoder's method,
+     * returning the input string in the case of failure.
+     * @param s The string to encode.
+     * @return A legally encoded UTF-8 string, conforming to RFC3986.
+     */
     private static String encode(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");
