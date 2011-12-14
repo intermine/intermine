@@ -77,9 +77,9 @@ public class GFFQueryService extends AbstractQueryService
     protected PrintWriter pw;
 
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String sep) {
         this.pw = out;
-        output = new StreamedOutput(out, new TabFormatter());
+        output = new StreamedOutput(out, new TabFormatter(), sep);
         if (isUncompressed()) {
             ResponseUtil.setPlainTextHeader(response,
                     getDefaultFileName());
