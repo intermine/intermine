@@ -157,11 +157,15 @@
 
                     var id = value[j].id;
                     var name = value[j].name;
-
-                    if (j == size-1) {
-                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>";
+                    // if the prop is target gene, let's link to the gene
+                    if (type == "target gene") {
+                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=" + name + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>";
                     } else {
-                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>, ";
+                        html = html + "<a href=\"/${WEB_PROPERTIES['webapp.path']}/report.do?id=" + id + "\" style='text-decoration: none;'><strong>" + name + "</strong></a>";
+                    }
+
+                    if (j < size-1) {
+                        html = html + ", ";
                     }
                 }
             }
