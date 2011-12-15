@@ -34,8 +34,8 @@ jQuery(document).ready(function () {
 })
 </script>
 
-<c:set var="MAX_CLUSTER" value="150" />
-<c:set var="MAX_MAP" value="300" />
+<c:set var="MAX_CLUSTER" value="250" />
+<c:set var="MAX_MAP" value="800" />
 <c:set var="MAX_DEFAULT_OPEN" value="100" />
 
 <%--
@@ -218,6 +218,10 @@ var max_map = parseInt(${MAX_MAP});
                                                    // window.open('/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Gene&externalids=' + o.y.smps);
                                                   }}
                                          );
+            // cluster on gene/exons
+            if (feature_count > max_cluster) {
+                jQuery("#cl-hc").attr('disabled', 'disabled');
+            }
 
             if (feature_count > 3 && feature_count <= max_cluster) {
                 hm_cl.clusterSamples();
@@ -233,11 +237,14 @@ var max_map = parseInt(${MAX_MAP});
             } else {
                 jQuery("#cl-km").attr('disabled', 'disabled');
             }
+
+            // cluster on conditions
             if (feature_count <= max_cluster) {
                 hm_cl.clusterVariables(); // clustering method will call draw action within it.
+                hm_cl.draw();
             }
             // cx_cellline.kmeansVariables();
-            hm_cl.draw();
+//            hm_cl.draw();
 
             var hm_ds = new CanvasXpress('canvas_ds',
                                          ${expressionScoreJSONDevelopmentalStage},
@@ -276,6 +283,9 @@ var max_map = parseInt(${MAX_MAP});
                                                   }}
                                          );
 
+            if (feature_count > max_cluster) {
+                jQuery("#ds-hc").attr('disabled', 'disabled');
+            }
             if (feature_count > 3 && feature_count <= max_cluster) {
                 hm_ds.clusterSamples();
                 hm_ds.kmeansSamples();
@@ -288,7 +298,6 @@ var max_map = parseInt(${MAX_MAP});
                 }
 
             } else {
-                jQuery("#ds-hc").attr('disabled', 'disabled');
                 jQuery("#ds-km").attr('disabled', 'disabled');
             }
 
