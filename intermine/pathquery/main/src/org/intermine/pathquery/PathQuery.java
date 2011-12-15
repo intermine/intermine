@@ -1351,7 +1351,7 @@ public class PathQuery implements Cloneable
         return new Path(model, path, lSubclasses);
     }
 
-    private synchronized void deVerify() {
+    public synchronized void deVerify() {
         isVerified = false;
     }
 
