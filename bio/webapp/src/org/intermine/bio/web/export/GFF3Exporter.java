@@ -13,6 +13,7 @@ package org.intermine.bio.web.export;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.export.ExportException;
@@ -161,7 +163,8 @@ public class GFF3Exporter implements Exporter
      */
 
 
-    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt,
+            Collection<Path> pathCollection) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }

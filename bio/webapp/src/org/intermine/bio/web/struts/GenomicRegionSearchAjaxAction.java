@@ -433,7 +433,7 @@ public class GenomicRegionSearchAjaxAction extends Action
                         .setUcscCompatibleCheck(ucscCompatibleCheck);
             }
 
-            exporter.export(pt, request, response, exportForm);
+            exporter.export(pt, request, response, exportForm, null);
         }
     }
 

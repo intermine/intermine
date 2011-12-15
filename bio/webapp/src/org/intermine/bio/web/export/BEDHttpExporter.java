@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
@@ -63,7 +64,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
      * {@inheritDoc}
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-                       TableExportForm form) {
+                       TableExportForm form, Collection<Path> pathCollection) {
         boolean doGzip = (form != null) && form.getDoGzip();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -115,7 +116,7 @@ public class BEDHttpExporter extends HttpExporterBase implements TableHttpExport
             try {
                 iter = getResultRows(pt, request);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, pathCollection);
                 if (out instanceof GZIPOutputStream) {
                     try {
                         ((GZIPOutputStream) out).finish();

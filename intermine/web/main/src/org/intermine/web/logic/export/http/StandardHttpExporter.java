@@ -13,16 +13,17 @@ package org.intermine.web.logic.export.http;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -42,6 +43,7 @@ import org.intermine.web.struts.TableExportForm;
  **/
 public abstract class StandardHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
+    protected static final Logger LOG = Logger.getLogger(StandardHttpExporter.class);
 
     /**
      * Constructor.
@@ -63,10 +65,13 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
      * @param request request
      * @param response response
      * @param form the form
+     * @param pathCollection columns paths
      */
     @Override
     public void export(final PagedTable pt, final HttpServletRequest request,
-                       final HttpServletResponse response, final TableExportForm form) {
+            final HttpServletResponse response, final TableExportForm form,
+            final Collection<Path> pathCollection) {
+
         final boolean doGzip = form != null && form.getDoGzip();
         OutputStream out = null;
         try {
@@ -86,14 +91,14 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
         List<String> headers = null;
         if (form != null && form.getIncludeHeaders()) {
-            headers = getHeaders(pt, SessionMethods.getWebConfig(request));
+            headers = getHeaders(pt, SessionMethods.getWebConfig(request), pathCollection);
         }
         final Exporter exporter = getExporter(out, separator, headers);
         ExportResultsIterator iter = null;
         try {
             iter = getResultRows(pt, request);
             iter.goFaster();
-            exporter.export(iter);
+            exporter.export(iter, pathCollection);
             if (out instanceof GZIPOutputStream) {
                 try {
                     ((GZIPOutputStream) out).finish();
@@ -119,17 +124,27 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
      * @param webConfig The web application's display configuration.
      * @return A list of headers.
      */
-    private List<String> getHeaders(final PagedTable pt, final WebConfig webConfig) {
-
-        final PathQuery pq = pt.getPathQuery();
-        if (pq != null) {
-            return WebUtil.formatPathQueryView(pq, webConfig);
-        }
+    private List<String> getHeaders(final PagedTable pt, final WebConfig webConfig,
+            final Collection<Path> pathCollection) {
 
         final List<String> headers = new ArrayList<String>();
-        for (final Column col: pt.getColumns()) {
-            headers.add(WebUtil.formatPath(col.getPath(), webConfig));
+
+        List<Column> ptCols = pt.getColumns();
+        List<Path> colPathList = new ArrayList<Path>();
+        for (final Column col: ptCols) {
+            colPathList.add(col.getPath());
         }
+
+        if (pathCollection != null && colPathList.containsAll(pathCollection)) {
+            for (final Path p : pathCollection) {
+                headers.add(WebUtil.formatPath(p, webConfig));
+            }
+        } else {
+            for (final Column col: pt.getColumns()) {
+                headers.add(WebUtil.formatPath(col.getPath(), webConfig));
+            }
+        }
+
         return headers;
     }
 

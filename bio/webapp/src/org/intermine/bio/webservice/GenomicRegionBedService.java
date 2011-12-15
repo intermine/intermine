@@ -10,25 +10,32 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.export.BEDExporter;
 import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
-import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 
-public class GenomicRegionBedService extends AbstractRegionExportService {
-
+/**
+ *
+ * @author Alexis Kalderimis.
+ *
+ */
+public class GenomicRegionBedService extends AbstractRegionExportService
+{
     protected static final String SUFFIX = ".fasta";
     private static final String UCSC_COMPATIBLE = "ucscCompatible";
     private static final String TRACK_DESCRIPTION = "trackDescription";
-    
+
+    /**
+     * Constructor.
+     * @param im A reference to an InterMine API settings bundle.
+     */
     public GenomicRegionBedService(InterMineAPI im) {
         super(im);
     }
@@ -75,7 +82,7 @@ public class GenomicRegionBedService extends AbstractRegionExportService {
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pq, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, null);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();

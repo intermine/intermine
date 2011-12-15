@@ -12,6 +12,7 @@ package org.intermine.bio.web.export;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.intermine.bio.io.bed.BEDRecord;
 import org.intermine.bio.web.logic.OrganismGenomeBuildLookup;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
@@ -90,7 +92,8 @@ public class BEDExporter implements Exporter
     }
 
     @Override
-    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt,
+            Collection<Path> pathCollection) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }

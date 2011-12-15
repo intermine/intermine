@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,7 +68,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      * {@inheritDoc}
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-                       TableExportForm form) {
+                       TableExportForm form, Collection<Path> pathCollection) {
         boolean doGzip = (form != null) && form.getDoGzip();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -120,7 +121,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             try {
                 iter = getResultRows(pt, request);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, pathCollection);
                 if (out instanceof GZIPOutputStream) {
                     try {
                         ((GZIPOutputStream) out).finish();

@@ -19,8 +19,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -141,7 +139,7 @@ public class BEDQueryService extends AbstractQueryService
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, null);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();

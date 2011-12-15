@@ -11,32 +11,54 @@ package org.intermine.web.logic.export;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
-
+import org.intermine.pathquery.Path;
 
 /**
  * @author Jakub Kulaviak
  **/
 public class ResultElementConverter
 {
+    protected static final Logger LOG = Logger.getLogger(ResultElementConverter.class);
 
     /**
      * Converts data from ResultElement to Objects. It takes
      * field value from each ResultElement.
      * @param result result row to be converted
+     * @param pathCollection the paths to export
      * @return converted result row
      */
-    public List<Object> convert(List<ResultElement> result) {
+    public List<Object> convert(List<ResultElement> result, Collection<Path> pathCollection) {
         List<Object> ret = new ArrayList<Object>();
+
+        List<Path> elPathList = new ArrayList<Path>();
         for (ResultElement el : result) {
-            if (el != null) {
-                ret.add(el.getField());
-            } else {
-                ret.add(null);
+            elPathList.add(el.getPath());
+        }
+
+        if (pathCollection != null && elPathList.containsAll(pathCollection)) {
+            for (Path p : pathCollection) {
+                ResultElement el = result.get(elPathList.indexOf(p));
+                if (el != null) {
+                    ret.add(el.getField());
+                } else {
+                    ret.add(null);
+                }
+            }
+        } else {
+            for (ResultElement el : result) {
+                if (el != null) {
+                    ret.add(el.getField());
+                } else {
+                    ret.add(null);
+                }
             }
         }
+
         return ret;
     }
 }
