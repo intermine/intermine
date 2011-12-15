@@ -119,9 +119,9 @@ public class SequenceExporter implements Exporter
 
                 if (object instanceof SequenceFeature) {
                     bioSequence = createSequenceFeature(header, object,
-                            row);
+                            row, pathCollection);
                 } else if (object instanceof Protein) {
-                    bioSequence = createProtein(header, object, row);
+                    bioSequence = createProtein(header, object, row, pathCollection);
                 } else {
                     // ignore other objects
                     continue;
@@ -164,31 +164,33 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createProtein(StringBuffer header, Object object,
-            List<ResultElement> row) throws IllegalSymbolException {
+            List<ResultElement> row, Collection<Path> pathCollection)
+        throws IllegalSymbolException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
 
-        makeHeader(header, object, row);
+        makeHeader(header, object, row, pathCollection);
 
         return bioSequence;
     }
 
     private BioSequence createSequenceFeature(StringBuffer header,
-            Object object, List<ResultElement> row)
+            Object object, List<ResultElement> row, Collection<Path> pathCollection)
         throws IllegalSymbolException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
 
-        makeHeader(header, object, row);
+        makeHeader(header, object, row, pathCollection);
         return bioSequence;
     }
 
     /**
      * Set the header to be the contents of row, separated by spaces.
      */
-    private void makeHeader(StringBuffer header, Object object, List<ResultElement> row) {
+    private void makeHeader(StringBuffer header, Object object,
+            List<ResultElement> row, Collection<Path> pathCollection) {
 
         List<String> headerBits = new ArrayList<String>();
 
@@ -201,6 +203,21 @@ public class SequenceExporter implements Exporter
             headerBits.add(keyFieldValue.toString());
         } else {
             headerBits.add("-");
+        }
+
+        // get a subset of result row by pathCollection
+        List<Path> elPathList = new ArrayList<Path>();
+        for (ResultElement el : row) {
+            elPathList.add(el.getPath());
+        }
+
+        List<ResultElement> subRow = new ArrayList<ResultElement>();
+        if (pathCollection != null && elPathList.containsAll(pathCollection)) {
+            for (Path p : pathCollection) {
+                subRow.add(row.get(elPathList.indexOf(p)));
+            }
+        } else {
+            subRow = row;
         }
 
         // two instances
@@ -220,7 +237,7 @@ public class SequenceExporter implements Exporter
                 String locString = chr + ':' + start + '-' + end;
                 headerBits.add(locString);
             }
-            for (ResultElement re : row) {
+            for (ResultElement re : subRow) {
                 // to avoid failure in modmine when no experimental factors (sub 2745)
                 if (re == null) {
                     continue;
@@ -245,7 +262,7 @@ public class SequenceExporter implements Exporter
 
         } else if (object instanceof Protein) {
 
-            for (ResultElement re : row) {
+            for (ResultElement re : subRow) {
                 if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {

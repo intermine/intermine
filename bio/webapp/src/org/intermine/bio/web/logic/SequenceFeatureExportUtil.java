@@ -43,6 +43,7 @@ public final class SequenceFeatureExportUtil
 {
     private static final Logger LOG = Logger.getLogger(SequenceFeatureExportUtil.class);
 
+    @SuppressWarnings("unused")
     private static final Object ERROR_MSG = "Error happened during fetching organism information"
         + " for SequenceFeature export.";
 
