@@ -253,7 +253,8 @@ public class LiveQueryTest {
         PathQuery test2 = queries.get("multi-values");
 
         assertEquals("These queries should be equivalent",
-                unauthorised.getCount(test1),
-                unauthorised.getCount(test2));
+                unauthorised.getCount(test2),
+                unauthorised.getCount(test1)
+                );
     }
 }
