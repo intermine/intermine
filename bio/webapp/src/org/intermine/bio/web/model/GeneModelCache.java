@@ -99,6 +99,7 @@ public final class GeneModelCache
      * @param model the data model
      * @return a list of gene models or an empty list
      */
+    @SuppressWarnings("unchecked")
     protected static synchronized List<GeneModel> fetchGeneModels(Gene gene, Model model) {
         if (gene == null) {
             return Collections.EMPTY_LIST;
@@ -124,9 +125,9 @@ public final class GeneModelCache
 
     /**
      *
-     * @param organismName the organism name
-     * @param os the objectStore
-     * @return organism setting map
+     * @param organismName org name
+     * @param os ObjectStore
+     * @return GeneModelSettings
      */
     public static GeneModelSettings getGeneModelOrganismSettings(String organismName,
             ObjectStore os) {
