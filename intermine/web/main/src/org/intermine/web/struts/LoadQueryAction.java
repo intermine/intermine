@@ -105,7 +105,7 @@ public class LoadQueryAction extends DispatchAction
                     throw new RuntimeException("unknown export format: " + exportFormat);
                 }
 
-                exporter.export(pt, request, response, null);
+                exporter.export(pt, request, response, null, null);
 
                 // If null is returned then no forwarding is performed and
                 // to the output is not flushed any jsp output, so user

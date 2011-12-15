@@ -1,7 +1,6 @@
 package org.intermine.bio.webservice;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
@@ -12,10 +11,19 @@ import org.intermine.web.logic.export.Exporter;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 
-public class GenomicRegionFastaService extends AbstractRegionExportService {
-
+/**
+*
+* @author Alexis Kalderimis.
+*
+*/
+public class GenomicRegionFastaService extends AbstractRegionExportService
+{
     protected static final String SUFFIX = ".fasta";
 
+    /**
+     * Constructor.
+     * @param im A reference to an InterMine API settings bundle.
+     */
     public GenomicRegionFastaService(InterMineAPI im) {
         super(im);
     }
@@ -32,7 +40,7 @@ public class GenomicRegionFastaService extends AbstractRegionExportService {
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pq, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, null);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();

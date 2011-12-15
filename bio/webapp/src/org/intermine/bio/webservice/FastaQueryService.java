@@ -1,20 +1,8 @@
 package org.intermine.bio.webservice;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,13 +11,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.export.SequenceExporter;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -100,7 +84,7 @@ public class FastaQueryService extends AbstractQueryService
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, null);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();
@@ -117,7 +101,6 @@ public class FastaQueryService extends AbstractQueryService
      * Return the query specified in the request, shorn of all duplicate
      * classes in the view. Note, it is the users responsibility to ensure
      * that there are only SequenceFeatures in the view.
-     * @param request The HTTP request
      * @return A suitable pathquery for getting GFF3 data from.
      */
     protected PathQuery getQuery() {
@@ -131,7 +114,8 @@ public class FastaQueryService extends AbstractQueryService
         PathQuery pq = builder.getQuery();
 
         if (pq.getView().size() > 1) {
-            throw new BadRequestException("Queries for this webservice may only have one output column");
+            throw new BadRequestException(
+                    "Queries for this webservice may only have one output column");
         }
 
         return pq;

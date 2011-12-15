@@ -13,6 +13,7 @@ package org.intermine.bio.web.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
@@ -66,7 +67,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * {@inheritDoc}
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-                       TableExportForm form) {
+                       TableExportForm form, Collection<Path> pathCollection) {
         boolean doGzip = (form != null) && form.getDoGzip();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
@@ -120,7 +121,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         try {
             iter = getResultRows(pt, request);
             iter.goFaster();
-            exporter.export(iter);
+            exporter.export(iter, pathCollection);
             if (outputStream instanceof GZIPOutputStream) {
                 try {
                     ((GZIPOutputStream) outputStream).finish();
