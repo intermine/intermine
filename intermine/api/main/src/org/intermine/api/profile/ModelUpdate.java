@@ -303,6 +303,7 @@ public class ModelUpdate
             savedQueries = new HashMap<String, SavedQuery>(profile.getSavedQueries());
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
+                pathQuery.deVerify();
                 if (!savedQuery.getName().contains(OLD) && !pathQuery.isValid()) {
                     PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, oldModel);
                     try {
