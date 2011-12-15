@@ -20,6 +20,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
@@ -48,6 +49,8 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class SequenceHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
+    protected static final Logger LOG = Logger.getLogger(SequenceHttpExporter.class);
+
     /**
      * Set response proper header.
      * @param response response
