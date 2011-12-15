@@ -13,6 +13,7 @@ package org.intermine.model.testmodel.web;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,7 +55,7 @@ public class EmployeeExporter implements TableHttpExporter
      * @param form the form containing the columns paths to export
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-            @SuppressWarnings("unused") TableExportForm form) {
+            TableExportForm form, Collection<Path> pathCollection) {
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
