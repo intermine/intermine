@@ -307,6 +307,7 @@ public class ModelUpdate
                 if (!savedQuery.getName().contains(OLD) && !pathQuery.isValid()) {
                     PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, oldModel);
                     try {
+                        stdout.println("Start updating the query: " + savedQuery.getName());
                         problems = pathQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
                             stdout.println("Problems updating pathQuery in savedQuery "
@@ -322,7 +323,7 @@ public class ModelUpdate
                                 savedQuery.getDateCreated(), savedQuery.getPathQuery());
                             profile.saveQuery(backupSavedQueryName, backupSavedQuery);
                             profile.saveQuery(savedQuery.getName(), updatedSavedQuery);
-                            stdout.println("Updated the saved query: " + savedQuery.getName());
+                            stdout.println("Updated the query: " + savedQuery.getName());
                         }
                     } catch (PathException pe) {
                         stdout.println("Problems updating pathQuery in savedQuery "
@@ -334,13 +335,15 @@ public class ModelUpdate
             }
             templateQueries = new HashMap<String, ApiTemplate>(profile.getSavedTemplates());
             for (ApiTemplate templateQuery : templateQueries.values()) {
+                templateQuery.deVerify();
                 if (!templateQuery.getName().contains(OLD) && !templateQuery.isValid()) {
                     TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(
                         templateQuery, oldModel);
                     try {
+                        stdout.println("Start updating the template: " + templateQuery.getName());
                         problems = templateQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
-                            System.out.println("Problems updating pathQuery in templateQuery "
+                            stdout.println("Problems updating pathQuery in template "
                                                + templateQuery.getName() + ". " + problems);
                             continue;
                         }
@@ -352,10 +355,10 @@ public class ModelUpdate
                             backupTemplateQuery.setName(backupTemplateName);
                             profile.saveTemplate(backupTemplateName, backupTemplateQuery);
                             profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
-                            System.out.println("Updated the template query: " + templateQuery.getName());
+                            stdout.println("Updated the template: " + templateQuery.getName());
                         }
                     } catch (PathException pe) {
-                        System.out.println("Problems updating pathQuery in templateQuery "
+                        stdout.println("Problems updating pathQuery in templateQuery "
                             + templateQuery.getName() + " caused by the wrong path "
                             + pe.getPathString());
                         continue;
