@@ -160,7 +160,7 @@
 
 
   <tr>
-    <td rowspan="5"  class="leftcol"><p> <h2>Gene Ontology</h2></p></td>
+    <td rowspan="4" class="leftcol"><p> <h2>Gene Ontology</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new" class="extlink">Gene Ontology Site</a> - 23 Nov 2011</td>
@@ -258,7 +258,7 @@
   </tr>
 
   <tr>
-    <td rowspan="3" class="leftcol"><p> <h2>Phenotypes</h2></p></td>
+    <td rowspan="2" class="leftcol"><p> <h2>Phenotypes</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Alleles and phenotypes</td>
     <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase</a> - Version FB2011_10</td>
