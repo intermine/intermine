@@ -86,6 +86,9 @@ public final class PortalHelper
      * @return a parameter value from the request, or null if none is found
      */
     public static String getAdditionalParameter(HttpServletRequest request, String params) {
+        if (StringUtils.isEmpty(params)) {
+            return null;
+        }
         String[] urlFields = params.split("[, ]+");
         String addparameter = null;
         for (String urlField : urlFields) {
