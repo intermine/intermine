@@ -11,7 +11,7 @@
     </query>
   </bag-type>
   <additional-converter class-name="org.intermine.bio.web.logic.OrthologueConverter"
-    urlfield="orthologue,ortholog"
+    urlField="orthologue,ortholog"
     constraint-path="Gene.homologues.homologue.organism.shortName"
     target-type="Gene"
     title="Orthologues"/>
