@@ -18,9 +18,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.util.TypeUtil;
+import org.intermine.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -32,13 +36,14 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BagQueryHandler extends DefaultHandler
 {
+    private static final Logger LOG = Logger.getLogger(BagQueryHandler.class);
     private List<BagQuery> queryList;
     private List<BagQuery> preDefaultQueryList;
     private Map<String, List<BagQuery>> bagQueries = new HashMap<String, List<BagQuery>>();
     private Map<String, List<BagQuery>> preDefaultBagQueries
         = new HashMap<String, List<BagQuery>>();
-    private Map<String, Map<String, String[]>> additionalConverters
-        = new HashMap<String, Map<String, String[]>>();
+    private Map<String, Set<AdditionalConverter>> additionalConverters
+        = new HashMap<String, Set<AdditionalConverter>>();
     private String type, message, queryString;
     private Boolean matchesAreIssues;
     private Boolean runBeforeDefault;
@@ -48,9 +53,6 @@ public class BagQueryHandler extends DefaultHandler
     private String pkg = null;
     private BagQueryConfig bagQueryConfig = new BagQueryConfig(bagQueries, preDefaultBagQueries,
                                                                additionalConverters);
-    private String connectField;
-    private String className;
-    private String constrainField;
 
     /**
      * Create a new BagQueryHandler object.
@@ -77,8 +79,7 @@ public class BagQueryHandler extends DefaultHandler
      * {@inheritDoc}
      */
     @Override
-    public void startElement(@SuppressWarnings("unused") String uri,
-            @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
+    public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if ("bag-type".equals(qName)) {
             type = attrs.getValue("type");
@@ -92,7 +93,7 @@ public class BagQueryHandler extends DefaultHandler
             }
             String matchOnFirstStr = attrs.getValue("matchOnFirst");
             if (StringUtils.isNotEmpty(matchOnFirstStr)) {
-                matchOnFirst = (matchOnFirstStr.equalsIgnoreCase("false")
+                matchOnFirst = ("false".equalsIgnoreCase(matchOnFirstStr)
                         ? Boolean.FALSE : Boolean.TRUE);
                 bagQueryConfig.setMatchOnFirst(matchOnFirst);
             }
@@ -104,29 +105,7 @@ public class BagQueryHandler extends DefaultHandler
             sb = new StringBuffer();
         }
         if ("additional-converter".equals(qName)) {
-            String urlField = attrs.getValue("urlfield");
-            String lClassName = attrs.getValue("class-name");
-            String classConstraint = attrs.getValue("classConstraint");
-            String targetType = attrs.getValue("target-type");
-            String [] array = new String[] {urlField, classConstraint, targetType};
-
-            Map<String, String[]> converterMap = new HashMap<String, String[]>();
-            converterMap.put(lClassName, array);
-
-            // add additional converter for this class and any subclasses
-            ClassDescriptor typeCld = model.getClassDescriptorByName(targetType);
-            if (typeCld == null) {
-                throw new SAXException("Invalid target type for additional converter: "
-                                       + targetType);
-            }
-            Set<String> clds = new HashSet<String>();
-            clds.add(typeCld.getName());
-            for (ClassDescriptor cld : model.getAllSubs(typeCld)) {
-                clds.add(cld.getName());
-            }
-            for (String nextCld : clds) {
-                additionalConverters.put(TypeUtil.unqualifiedName(nextCld), converterMap);
-            }
+            processAdditionalConverters(attrs);
         }
     }
 
@@ -167,8 +146,7 @@ public class BagQueryHandler extends DefaultHandler
      * {@inheritDoc}
      */
     @Override
-    public void endElement(@SuppressWarnings("unused") String uri,
-                           @SuppressWarnings("unused") String localName, String qName) {
+    public void endElement(String uri, String localName, String qName) {
         if ("query".equals(qName)) {
             queryString = sb.toString();
             if (queryString != null && message != null && matchesAreIssues != null) {
@@ -206,6 +184,42 @@ public class BagQueryHandler extends DefaultHandler
                 }
                 preDefaultTypeQueries.addAll(preDefaultQueryList);
             }
+        }
+    }
+
+    private void processAdditionalConverters(Attributes attrs) {
+        String fullyQualifiedName = attrs.getValue("class-name");
+        String constraintPath = attrs.getValue("constraint-path");
+        String targetType = attrs.getValue("target-type");
+        String title = attrs.getValue("title");
+        String urlField = attrs.getValue("urlField");
+
+        ClassDescriptor typeCld = model.getClassDescriptorByName(targetType);
+        if (typeCld == null) {
+            LOG.warn("Invalid target type for additional converter: " + targetType);
+            return;
+        }
+
+        try {
+            new Path(model, constraintPath);
+        } catch (PathException e) {
+            LOG.warn("Can't add converter to bag-queries.xml, constraint-path '" + constraintPath
+                    + "' isn't in model.", e);
+            return;
+        }
+
+        Set<String> clds = new HashSet<String>();
+        clds.add(typeCld.getName());
+        for (ClassDescriptor cld : model.getAllSubs(typeCld)) {
+            clds.add(cld.getName());
+        }
+
+        AdditionalConverter additionalConverter = new AdditionalConverter(constraintPath,
+                targetType, fullyQualifiedName, title, urlField);
+
+        for (String nextCld : clds) {
+            Util.addToSetMap(additionalConverters, TypeUtil.unqualifiedName(nextCld),
+                    additionalConverter);
         }
     }
 

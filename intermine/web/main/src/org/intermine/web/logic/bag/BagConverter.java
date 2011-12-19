@@ -12,6 +12,7 @@ package org.intermine.web.logic.bag;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
@@ -80,4 +81,16 @@ public abstract class BagConverter
     */
     public abstract List<Integer> getConvertedObjectIds(Profile profile, String bagType,
             List<Integer> bagList, String constraintValue);
+
+    /**
+    * Method to return list of values and the counts of converted objects for that object
+    * used for display on list analysis page.
+    *
+    * @param profile user's profile
+    * @param bagType class of list
+    * @param bagList list of intermine object IDs
+    * @return map of values to counts
+    */
+    public abstract Map<String, Integer> getCounts(Profile profile, String bagType,
+            List<Integer> bagList);
 }

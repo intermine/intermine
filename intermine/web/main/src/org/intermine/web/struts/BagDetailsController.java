@@ -31,7 +31,6 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ResultElement;
@@ -135,26 +134,6 @@ public class BagDetailsController extends TilesAction
             || "true".equals(request.getParameter("trackExecution"))) {
             im.getTrackerDelegate().trackListExecution(imBag.getType(), bagSize, profile,
                                                        session.getId());
-        }
-
-        // TODO this needs to be removed when InterMineBag can store the initial ids of when the
-        // bag was made.
-        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-        Map<String, String[]> additionalConverters = bagQueryConfig.getAdditionalConverters(imBag
-                        .getType());
-        if (additionalConverters != null) {
-            for (String converterClassName : additionalConverters.keySet()) {
-                String[] paramArray = additionalConverters.get(converterClassName);
-                String[] urlFields = paramArray[0].split(",");
-                for (int i = 0; i < urlFields.length; i++) {
-                    if (request.getParameter(urlFields[i]) != null) {
-                        request.setAttribute("extrafield", urlFields[i]);
-                        request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
-                        request.setAttribute("externalids", request.getParameter("externalids"));
-                        break;
-                    }
-                }
-            }
         }
 
         // Get the widget toggle state

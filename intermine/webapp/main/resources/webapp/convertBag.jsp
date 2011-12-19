@@ -27,40 +27,44 @@
 
 </c:if>
 
-<!-- organism Orthologues -->
+<!-- custom converters -->
 <c:if test="${orientation=='h'}">
 
   <div class="orthologues">
-  <c:forEach items="${customConverters}" var="converterInfo">
-	  <h3 class="goog">Orthologues</h3>
-	  <p>
-	  <c:forEach items="${converterInfo.value}" var="value">
-	  	<a href="#">${value}</a>
-	  </c:forEach>
-	  <html:select property="extraFieldValue" styleId="extraConstraintSelect" style="display:none;">
-	      <c:forEach items="${converterInfo.value}" var="value">
-	       <html:option value="${value}">${value}</html:option>
-	     </c:forEach>
-	  </html:select>
-		&nbsp;
-	  <html:submit property="convertToThing" style="display:none;">Convert</html:submit>
-	  </p>
+  <c:forEach items="${customConverters}" var="entry">
+     <c:set var="converter" value="${entry.key}" />
+     <c:set var="results" value="${entry.value}" />
+
+    <h3 class="goog">converter.title</h3>
+    <p>
+    <c:forEach items="${results}" var="resultsEntry">
+      <a href="#">${resultsEntry.key}</a> (${resultsEntry.value})
+    </c:forEach>
+    <html:select property="extraFieldValue" styleId="extraConstraintSelect" style="display:none;">
+        <c:forEach items="${results}" var="resultsEntry">
+         <html:option value="${resultsEntry.key}">${resultsEntry.key}</html:option>
+       </c:forEach>
+    </html:select>
+    &nbsp;
+    <html:submit property="convertToThing" style="display:none;">Convert</html:submit>
+    </p>
   </c:forEach>
   </div>
-  
+
 </c:if>
+<!-- /custom converters -->
 
 <script type="text/javascript">
 (function() {
     jQuery('#convert-and-orthologues div.orthologues a').click(function() {
-    	var t 	  = jQuery(this).text(),
-    		ortho = jQuery(this).closest('div.orthologues');
-    	ortho.find('select option').each(function() {
-    		if (jQuery(this).text() == t) {
-    			jQuery(this).attr('selected', 'selected');
-    			ortho.find('input[name="convertToThing"]').click();
-    		}
-    	});
+      var t 	  = jQuery(this).text(),
+        ortho = jQuery(this).closest('div.orthologues');
+      ortho.find('select option').each(function() {
+        if (jQuery(this).text() == t) {
+          jQuery(this).attr('selected', 'selected');
+          ortho.find('input[name="convertToThing"]').click();
+        }
+      });
     });
 })();
 </script>

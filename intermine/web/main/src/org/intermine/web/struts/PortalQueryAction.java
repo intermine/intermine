@@ -31,6 +31,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
@@ -140,7 +141,7 @@ public class PortalQueryAction extends InterMineAction
                     String[] result = ob.split(", ");
                     for (String token : result) {
                         String[] pair = token.split("=");
-                        if (pair[0].equalsIgnoreCase("id")) {
+                        if ("id".equalsIgnoreCase(pair[0])) {
                             id = pair[1].replaceAll("\"", "").replaceAll("]", "");
                             return new ForwardParameters(mapping.findForward("report"))
                                 .addParameter("id", id).forward();
@@ -150,7 +151,6 @@ public class PortalQueryAction extends InterMineAction
                 }
             }
         }
-
 
         Model model = im.getModel();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
@@ -171,7 +171,6 @@ public class PortalQueryAction extends InterMineAction
                 webConfig, null));
         pathQuery.addConstraint(Constraints.lookup(className, lookupStr, null));
 
-
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
         Profile profile = SessionMethods.getProfile(session);
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
@@ -190,36 +189,36 @@ public class PortalQueryAction extends InterMineAction
         ActionMessages actionMessages = new ActionMessages();
 
         // Use custom converters
-        Map<String, String []> additionalConverters =
+        Set<AdditionalConverter> additionalConverters =
             bagQueryConfig.getAdditionalConverters(className);
         if (additionalConverters != null) {
-            for (String converterClassName : additionalConverters.keySet()) {
+            for (AdditionalConverter additionalConverter : additionalConverters) {
 
-                String addparameter = PortalHelper.getAdditionalParameter(request,
-                        additionalConverters.get(converterClassName));
+                // constraint value, eg. organism name
+                String extraValue = PortalHelper.getAdditionalParameter(request,
+                        additionalConverter.getUrlField());
 
-                if (StringUtils.isNotEmpty(addparameter)) {
-
+                if (StringUtils.isNotEmpty(extraValue)) {
                     BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
-                            converterClassName);
+                            additionalConverter.getClassName());
                     List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
-                            className, bagList, addparameter);
+                            className, bagList, extraValue);
                     // No matches
                     if (converted.size() <= 0) {
-//                        actionMessages.add(Constants.PORTAL_MSG,
-//                            new ActionMessage("portal.noorthologues", addparameter, extId));
-//                        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
+                        actionMessages.add(Constants.PORTAL_MSG,
+                            new ActionMessage("portal.noorthologues", extraValue, extId));
+                        session.setAttribute(Constants.PORTAL_MSG, actionMessages);
                         return goToResults(mapping, session, webResults);
                     }
                     actionMessages.add(Constants.PORTAL_MSG, bagConverter.getActionMessage(extId,
-                            converted.size(), className, addparameter));
+                            converted.size(), className, extraValue));
                     session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
                     if (converted.size() == 1) {
                         return goToReport(mapping, converted.get(0).toString());
                     }
                     InterMineBag imBag = profile.createBag(bagName, className, "",
-                                                           im.getClassKeys());
+                            im.getClassKeys());
                     return createBagAndGoToBagDetails(mapping, imBag, converted);
                 }
             }
@@ -230,13 +229,13 @@ public class PortalQueryAction extends InterMineAction
 
         session.setAttribute(Constants.PORTAL_MSG, actionMessages);
 
-        // Go to results page
+        // more than one result but only one ID
         if ((bagList.size() > 1) && (idList.length == 1)) {
             return goToResults(mapping, session, webResults);
-        // Go to the object details page
+        // one ID searched for one ID found
         } else if ((bagList.size() == 1) && (idList.length == 1)) {
             return goToReport(mapping, bagList.get(0).toString());
-        // Make a bag
+        // lots of results, make a list
         } else if (bagList.size() >= 1) {
             InterMineBag imBag = profile.createBag(bagName, className, "", im.getClassKeys());
             return createBagAndGoToBagDetails(mapping, imBag, bagList);
