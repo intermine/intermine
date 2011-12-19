@@ -83,14 +83,14 @@ public class ConvertBagController extends TilesAction
         String bagType = imBag.getType();
         Set<AdditionalConverter> additionalConverters
             = bagQueryConfig.getAdditionalConverters(bagType);
-        Map<String, Map<String, Integer>> customConverters = new HashMap();
+        Map<AdditionalConverter, Map<String, Integer>> customConverters = new HashMap();
         if (additionalConverters != null) {
             for (AdditionalConverter additionalConverter : additionalConverters) {
                 BagConverter bagConverter = PortalHelper.getBagConverter(
                         im, webConfig, additionalConverter.getClassName());
                 Map<String, Integer> counts = bagConverter.getCounts(
                         SessionMethods.getProfile(session), bagType, imBag.getContentsAsIds());
-                customConverters.put(TypeUtil.unqualifiedName(bagType), counts);
+                customConverters.put(additionalConverter, counts);
             }
         }
         request.setAttribute("customConverters", customConverters);

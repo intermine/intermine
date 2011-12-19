@@ -35,7 +35,7 @@
      <c:set var="converter" value="${entry.key}" />
      <c:set var="results" value="${entry.value}" />
 
-    <h3 class="goog">converter.title</h3>
+    <h3 class="goog">${converter.title}</h3>
     <p>
     <c:forEach items="${results}" var="resultsEntry">
       <a href="#">${resultsEntry.key}</a> (${resultsEntry.value})
