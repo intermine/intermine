@@ -121,12 +121,12 @@ public class GraphWidget extends Widget
                 selectedExtraAttribute});
             notAnalysed = bag.getSize() - dataSetLdr.getWidgetTotal();
         } catch (Exception err) {
-            err.printStackTrace();
+            LOG.warn("Error rendering graph widget.", err);
             return;
         }
 
         if (dataSetLdr == null || dataSetLdr.getDataSet() == null) {
-            LOG.error("No data found for graph widget");
+            LOG.warn("No data found for graph widget");
             return;
         }
         BarRenderer.setDefaultShadowsVisible(false);
@@ -135,19 +135,18 @@ public class GraphWidget extends Widget
         String graphType = ((GraphWidgetConfig) config).getGraphType();
         ChartFactory.setChartTheme(StandardChartTheme.createLegacyTheme());
 
-        
         if (StringUtils.isNotEmpty(graphType) && "ScatterPlot".equals(graphType)) {
             chart = ChartFactory.createScatterPlot(
                     config.getTitle(),
                     ((GraphWidgetConfig) config).getDomainLabel(),
-                    ((GraphWidgetConfig) config).getRangeLabel(), 
+                    ((GraphWidgetConfig) config).getRangeLabel(),
                     (XYDataset) graphDataSet,
                     PlotOrientation.VERTICAL,
                     true, true, false);
             XYPlot plot = chart.getXYPlot();
 
             XYItemRenderer xyrenderer = plot.getRenderer();
-            StandardXYItemRenderer regressionRenderer 
+            StandardXYItemRenderer regressionRenderer
                 = new StandardXYItemRenderer();
             regressionRenderer.setBaseSeriesVisibleInLegend(false);
             plot.setDataset(1, regress((XYDataset) graphDataSet));
@@ -474,7 +473,7 @@ public class GraphWidget extends Widget
             for (Object key: ds.getKeys()) {
                 List<Object> row = new LinkedList<Object>();
                 row.add(key.toString());
-                row.add(ds.getValue((Comparable) key)); 
+                row.add(ds.getValue((Comparable) key));
                 ret.add(row);
             }
         } else {
