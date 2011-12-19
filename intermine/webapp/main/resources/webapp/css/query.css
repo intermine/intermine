@@ -145,6 +145,8 @@ form#submitform input, form#submitform {
 .browserline {
   white-space: nowrap;}
 
+.browserline.empty { display:none; }
+
 table.noborder, table.noborder td, table.noborder th {
   border: none;}
 
