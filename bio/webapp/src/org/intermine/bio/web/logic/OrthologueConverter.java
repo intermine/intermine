@@ -30,6 +30,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -182,6 +183,8 @@ public class OrthologueConverter extends BagConverter
 
         // homologue.type = "orthologue"
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
+
+        q.setOuterJoinStatus("Gene.homologues.dataSets", OuterJoinStatus.OUTER);
 
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
