@@ -191,6 +191,10 @@ public class CreateTemplateAction extends InterMineAction
         session.removeAttribute(Constants.NEW_TEMPLATE);
 
         SessionMethods.loadQuery(toSave, request.getSession(), response);
-        return mapping.findForward("query");
+        if ("SAVE".equals(tsf.getActionType())) {
+            return mapping.findForward("query");
+        } else {
+            return mapping.findForward("run");
+        }
     }
 }
