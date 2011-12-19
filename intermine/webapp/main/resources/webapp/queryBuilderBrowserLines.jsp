@@ -24,7 +24,7 @@
   
   <c:set var="node" value="${node}" scope="request"/>
   
-  <div id="${node.pathString}" class="browserline indent-${node.indentation}">
+  <div id="${node.pathString}" class="browserline indent-${node.indentation} <c:if test="${node.isNull}"> empty</c:if>">
   	<tiles:insert page="/queryBuilderBrowserLine.jsp"/>
   </div>
 
