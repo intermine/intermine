@@ -13,8 +13,8 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,15 +26,16 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -51,16 +52,13 @@ public class ConvertBagController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-                                 ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response)
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+                                 HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+
         InterMineBag imBag = (InterMineBag) request.getAttribute("bag");
-        ObjectStore os = im.getObjectStore();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = im.getModel();
         TemplateManager templateManager = im.getTemplateManager();
@@ -81,22 +79,18 @@ public class ConvertBagController extends TilesAction
             }
         }
         // Use custom converters
-        ObjectStoreSummary oss = im.getObjectStoreSummary();
         BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-        Map<String, String []> additionalConverters =
-            bagQueryConfig.getAdditionalConverters(imBag.getType());
-
-        // e.g. {Organism=[A. gambiae, C. elegans, D. ananassae]}
-        Map<String, List> customConverters = new HashMap();
+        String bagType = imBag.getType();
+        Set<AdditionalConverter> additionalConverters
+            = bagQueryConfig.getAdditionalConverters(bagType);
+        Map<String, Map<String, Integer>> customConverters = new HashMap();
         if (additionalConverters != null) {
-            for (String converterClassName : additionalConverters.keySet()) {
-                String [] paramArray = additionalConverters.get(converterClassName);
-                String clazzName = paramArray[1];
-                // TODO shouldn't use getConstrainField here but have one specified in
-                // the config file
-                List fieldValues = BagBuildController.getFieldValues(os, oss, clazzName,
-                                                      bagQueryConfig.getConstrainField());
-                customConverters.put(TypeUtil.unqualifiedName(clazzName), fieldValues);
+            for (AdditionalConverter additionalConverter : additionalConverters) {
+                BagConverter bagConverter = PortalHelper.getBagConverter(
+                        im, webConfig, additionalConverter.getClassName());
+                Map<String, Integer> counts = bagConverter.getCounts(
+                        SessionMethods.getProfile(session), bagType, imBag.getContentsAsIds());
+                customConverters.put(TypeUtil.unqualifiedName(bagType), counts);
             }
         }
         request.setAttribute("customConverters", customConverters);

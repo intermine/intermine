@@ -13,7 +13,9 @@ package org.intermine.bio.web.logic;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionMessage;
@@ -27,10 +29,10 @@ import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * @author "Xavier Watkins"
@@ -52,9 +54,10 @@ public class OrthologueConverter extends BagConverter
     private PathQuery constructPathQuery(String organismName) {
         PathQuery q = new PathQuery(model);
 
-        // organism
-        q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
+        if (StringUtils.isNotEmpty(organismName)) {
+            q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
                 organismName));
+        }
 
         // homologue.type = "orthologue"
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
@@ -83,6 +86,36 @@ public class OrthologueConverter extends BagConverter
             ids.add((Integer) row.get(0).getField());
         }
         return ids;
+    }
+
+    /**
+     * runs the orthologue conversion pathquery and returns list of intermine IDs
+     * used in the portal
+     * @param profile the user's profile
+     * @param bagType not used, always gene
+     * @param bagList list of intermine object IDs
+     * @return list of intermine IDs
+     */
+    public Map<String, Integer> getCounts(Profile profile, String bagType, List<Integer> bagList) {
+        PathQuery pathQuery = constructPathQuery(null);
+        pathQuery.addConstraint(Constraints.inIds("Gene", bagList));
+        pathQuery.addView("Gene.homologues.homologue.organism.shortName");
+        pathQuery.addView("Gene.homologues.homologue.id");
+        pathQuery.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+        ExportResultsIterator it = executor.execute(pathQuery);
+        Map<String, Integer> results = new HashMap<String, Integer>();
+        while (it.hasNext()) {
+            List<ResultElement> row = it.next();
+            String homologue = (String) row.get(0).getField();
+            Integer count = results.get(homologue);
+            if (count == null) {
+                count = 0;
+            }
+            int plusOne = count.intValue();
+            results.put(homologue, new Integer(++plusOne));
+        }
+        return results;
     }
 
     /**
@@ -133,9 +166,13 @@ public class OrthologueConverter extends BagConverter
             String parameters) throws ObjectStoreException {
 
         PathQuery q = new PathQuery(model);
-        List<String> view = PathQueryResultHelper.getDefaultViewForClass(type, model, webConfig,
-                "Gene.homologues.homologue");
-        q.addViews(view);
+        // add columns to the output
+        q.addViewSpaceSeparated("Gene.primaryIdentifier "
+                + "Gene.organism.shortName "
+                + "Gene.homologues.homologue.primaryIdentifier "
+                + "Gene.homologues.homologue.organism.shortName "
+                + "Gene.homologues.type "
+                + "Gene.homologues.dataSets.name");
 
         // gene
         q.addConstraint(Constraints.inIds("Gene", fromList));

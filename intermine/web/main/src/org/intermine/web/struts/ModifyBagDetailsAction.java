@@ -10,7 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +20,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
@@ -106,12 +107,13 @@ public class ModifyBagDetailsAction extends InterMineAction
         // orthologues form
         } else if (request.getParameter("convertToThing") != null) {
             BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-            Map<String, String []> additionalConverters
+            Set<AdditionalConverter> additionalConverters
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
-            if (additionalConverters != null) {
-                for (String converterClassName : additionalConverters.keySet()) {
+            if (additionalConverters != null && !additionalConverters.isEmpty()) {
+                for (AdditionalConverter additionalConverter : additionalConverters) {
                     BagConverter bagConverter = PortalHelper.getBagConverter(im,
-                            SessionMethods.getWebConfig(request), converterClassName);
+                            SessionMethods.getWebConfig(request),
+                            additionalConverter.getClassName());
                     WebResults result = bagConverter.getConvertedObjects(profile,
                             imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());
                     PagedTable pc = new PagedTable(result);

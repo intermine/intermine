@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
@@ -38,7 +37,7 @@ import org.intermine.web.util.URLGenerator;
  **/
 public final class PortalHelper
 {
-    private static final Logger LOG = Logger.getLogger(PortalHelper.class);
+//    private static final Logger LOG = Logger.getLogger(PortalHelper.class);
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
 
@@ -46,60 +45,6 @@ public final class PortalHelper
     private static final String EXTERNAL_PORTAL_PAGE = "portal.do";
 
     private PortalHelper() {
-    }
-
-    /**
-     * If the given param is present in the comma-separated list in the first element of the given
-     * paramArray, then return the param, otherwise return null.
-     *
-     * @param param a String
-     * @param paramArray an array of Strings, the first element of which is a comma-separated list
-     * @return param if it is present in the list
-     */
-    public static String getAdditionalParameter(String param, String[] paramArray) {
-        String[] urlFields = paramArray[0].split(",");
-        for (String urlField : urlFields) {
-            // if one of the request vars matches the variables listed in the bagquery
-            // config, add the variable to be passed to the custom converter
-
-            if (urlField.equals(param)) {
-                // the spaces in organisms, eg. D.%20rerio, need to be handled
-                return param;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Searches a request for additional parameters that might match an additional converter. The
-     * additional converter config is passed in through the paramArray parameter, which is a String
-     * array, where the first element is a comma-separated list of possible parameter names to
-     * search for. The value of the last parameter in the request that matches one of the names in
-     * the list will be returned, or null if none match.
-     *
-     * @param request a request to search in
-     * @param paramArray an array of Strings, the first element of which is a comma-separated list
-     * of parameter names to search for in the request
-     * @return a parameter value from the request, or null if none is found
-     */
-    public static String getAdditionalParameter(HttpServletRequest request, String[] paramArray) {
-        String[] urlFields = paramArray[0].split(",");
-        String addparameter = null;
-        for (String urlField : urlFields) {
-            // if one of the request vars matches the variables listed in the bagquery
-            // config, add the variable to be passed to the custom converter
-            String param = request.getParameter(urlField);
-            if (StringUtils.isNotEmpty(param)) {
-                // the spaces in organisms, eg. D.%20rerio, need to be handled
-                try {
-                    addparameter = URLDecoder.decode(param, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    // UTF8 not supported!
-                    throw new Error("UTF-8 is not supported?!", e);
-                }
-            }
-        }
-        return addparameter;
     }
 
     /**
@@ -127,6 +72,37 @@ public final class PortalHelper
             bagConverters.put(converterClassName, bagConverter);
         }
         return bagConverter;
+    }
+
+    /**
+     * Searches a request for additional parameters that might match an additional converter. The
+     * additional converter config is passed in through the paramArray parameter, which is a String
+     * array, where the first element is a comma-separated list of possible parameter names to
+     * search for. The value of the last parameter in the request that matches one of the names in
+     * the list will be returned, or null if none match.
+     *
+     * @param request a request to search in
+     * @param params comma-separated list of parameter names to search for in the request
+     * @return a parameter value from the request, or null if none is found
+     */
+    public static String getAdditionalParameter(HttpServletRequest request, String params) {
+        String[] urlFields = params.split("[, ]+");
+        String addparameter = null;
+        for (String urlField : urlFields) {
+            // if one of the request vars matches the variables listed in the bagquery
+            // config, add the variable to be passed to the custom converter
+            String param = request.getParameter(urlField);
+            if (StringUtils.isNotEmpty(param)) {
+                // the spaces in organisms, eg. D.%20rerio, need to be handled
+                try {
+                    addparameter = URLDecoder.decode(param, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    // UTF8 not supported!
+                    throw new Error("UTF-8 is not supported?!", e);
+                }
+            }
+        }
+        return addparameter;
     }
 
     /**
@@ -172,7 +148,7 @@ public final class PortalHelper
         if (baseUrl.contains("release")) {
             newBase = baseUrl.replaceFirst("release-\\d*", "query");
         } else {
-            newBase=baseUrl;
+            newBase = baseUrl;
         }
         return  newBase + generatePermaPath(obj, classKeys);
     }
