@@ -85,6 +85,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                                                 false);
 
         if (chromosomeList.isEmpty()) {
+            LOG.info("Can't render chromosome widget, features have no chromosomes.");
             return;
         }
 
