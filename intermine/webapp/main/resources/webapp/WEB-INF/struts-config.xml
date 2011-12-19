@@ -246,6 +246,7 @@
     <action path="/createTemplate" name="templateSettingsForm" type="org.intermine.web.struts.CreateTemplateAction" validate="false">
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="query" redirect="true" path="/query.do"/>
+      <forward name="run" redirect="true" path="/queryBuilderViewAction.do"/>
     </action>
     <action path="/summariseTemplates" type="org.intermine.web.struts.SummariseTemplatesAction">
       <forward name="mymine" redirect="true" path="/mymine.do"/>

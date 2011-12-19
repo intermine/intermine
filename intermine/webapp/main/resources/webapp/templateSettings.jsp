@@ -72,6 +72,7 @@
         </td>
       </tr>
     </table>
+    <input type="hidden" name="actionType" id="actionType"/>
     </div>
 </html:form>
   <link rel="stylesheet" type="text/css" href="css/templatePreview.css"/>
@@ -103,7 +104,14 @@
             <c:if test="${PROFILE.loggedIn && !empty QUERY}">
                 <fmt:message key="${NEW_TEMPLATE != null ?
                     'templateBuilder.save' : 'templateBuilder.update'}" var="saveLabel"/>
-                <html:button value="${saveLabel}" property="saveTemplate" onclick="jQuery('#templateSettingsForm').submit();"/>
+                <html:button value="${saveLabel}" property="saveTemplate" onclick="jQuery('#actionType').val('SAVE');jQuery('#templateSettingsForm').submit();"/>
+            </c:if>
+          </td>
+          <td>
+            <c:if test="${PROFILE.loggedIn && !empty QUERY}">
+                <fmt:message key="${NEW_TEMPLATE != null ?
+                    'templateBuilder.saveandrun' : 'templateBuilder.updateandrun'}" var="saveAndRunLabel"/>
+                <html:button value="${saveAndRunLabel}" property="saveAndRunTemplate" onclick="jQuery('#actionType').val('RUN');jQuery('#templateSettingsForm').submit();"/>
             </c:if>
           </td>
         </tr>
