@@ -11,6 +11,7 @@ package org.intermine.bio.web.struts;
  */
 
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,10 +85,15 @@ public class SequenceExportAction extends InterMineAction
 
         if (obj instanceof SequenceFeature || obj instanceof Protein) {
             bioSequence = createBioSequence(obj);
+
+            response.setContentType("text/plain");
             if (bioSequence != null) {
-                response.setContentType("text/plain");
                 OutputStream out = response.getOutputStream();
                 SeqIOTools.writeFasta(out, bioSequence);
+            } else {
+                PrintWriter out = response.getWriter();
+                out.write("Sequnce information not availble for this sequence feature...");
+                out.flush();
             }
         }
 
