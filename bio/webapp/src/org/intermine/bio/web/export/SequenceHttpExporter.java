@@ -69,8 +69,9 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * Method called to export a PagedTable object using the BioJava sequence and feature writers.
      * {@inheritDoc}
      */
-    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-                       TableExportForm form, Collection<Path> pathCollection) {
+    public void export(PagedTable pt, HttpServletRequest request,
+            HttpServletResponse response, TableExportForm form,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         boolean doGzip = (form != null) && form.getDoGzip();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
@@ -124,7 +125,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         try {
             iter = getResultRows(pt, request);
             iter.goFaster();
-            exporter.export(iter, pathCollection);
+            exporter.export(iter, unionPathCollection, newPathCollection);
             if (outputStream instanceof GZIPOutputStream) {
                 try {
                     ((GZIPOutputStream) outputStream).finish();

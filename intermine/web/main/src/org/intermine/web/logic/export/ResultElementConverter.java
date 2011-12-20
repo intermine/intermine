@@ -29,20 +29,19 @@ public class ResultElementConverter
      * Converts data from ResultElement to Objects. It takes
      * field value from each ResultElement.
      * @param result result row to be converted
-     * @param pathCollection the paths to export
+     * @param unionPathCollection union path from old and new views in pathquery
+     * @param newPathCollection the paths to export
      * @return converted result row
      */
-    public List<Object> convert(List<ResultElement> result, Collection<Path> pathCollection) {
+    public List<Object> convert(List<ResultElement> result,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection) {
         List<Object> ret = new ArrayList<Object>();
 
-        List<Path> elPathList = new ArrayList<Path>();
-        for (ResultElement el : result) {
-            elPathList.add(el.getPath());
-        }
-
-        if (pathCollection != null && elPathList.containsAll(pathCollection)) {
-            for (Path p : pathCollection) {
-                ResultElement el = result.get(elPathList.indexOf(p));
+        if (newPathCollection != null && unionPathCollection != null
+                && unionPathCollection.containsAll(newPathCollection)) {
+            for (Path p : newPathCollection) {
+                ResultElement el = result.get(((List<Path>) unionPathCollection).indexOf(p));
                 if (el != null) {
                     ret.add(el.getField());
                 } else {

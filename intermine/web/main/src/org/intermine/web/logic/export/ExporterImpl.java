@@ -71,7 +71,7 @@ public class ExporterImpl implements Exporter
      * {@inheritDoc}
      */
     public void export(Iterator<? extends List<ResultElement>> resultIt,
-            Collection<Path> pathCollection) {
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         try {
             if (headers != null) {
                 out.println(rowFormatter.format(new ArrayList<Object>(headers)));
@@ -80,7 +80,8 @@ public class ExporterImpl implements Exporter
             ResultElementConverter converter = new ResultElementConverter();
             while (resultIt.hasNext()) {
                 List<ResultElement> result = resultIt.next();
-                out.println(rowFormatter.format(converter.convert(result, pathCollection)));
+                out.println(rowFormatter.format(converter.convert(result,
+                        unionPathCollection, newPathCollection)));
                 writtenResultsCount++;
                 if (writtenResultsCount % 10000 == 0) {
                     if (out.checkError()) {

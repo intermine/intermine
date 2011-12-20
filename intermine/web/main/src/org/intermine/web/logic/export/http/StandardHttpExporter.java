@@ -65,12 +65,13 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
      * @param request request
      * @param response response
      * @param form the form
-     * @param pathCollection columns paths
+     * @param unionPathCollection view paths
+     * @param newPathCollection columns paths
      */
     @Override
     public void export(final PagedTable pt, final HttpServletRequest request,
             final HttpServletResponse response, final TableExportForm form,
-            final Collection<Path> pathCollection) {
+            final Collection<Path> unionPathCollection, final Collection<Path> newPathCollection) {
 
         final boolean doGzip = form != null && form.getDoGzip();
         OutputStream out = null;
@@ -91,14 +92,14 @@ public abstract class StandardHttpExporter extends HttpExporterBase implements T
         }
         List<String> headers = null;
         if (form != null && form.getIncludeHeaders()) {
-            headers = getHeaders(pt, SessionMethods.getWebConfig(request), pathCollection);
+            headers = getHeaders(pt, SessionMethods.getWebConfig(request), newPathCollection);
         }
         final Exporter exporter = getExporter(out, separator, headers);
         ExportResultsIterator iter = null;
         try {
             iter = getResultRows(pt, request);
             iter.goFaster();
-            exporter.export(iter, pathCollection);
+            exporter.export(iter, unionPathCollection, newPathCollection);
             if (out instanceof GZIPOutputStream) {
                 try {
                     ((GZIPOutputStream) out).finish();

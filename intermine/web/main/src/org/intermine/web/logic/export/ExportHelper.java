@@ -21,8 +21,11 @@ import org.intermine.web.logic.results.PagedTable;
  *
  * @author rns
  */
-public class ExportHelper
+public final class ExportHelper
 {
+    private ExportHelper() {
+
+    }
 
     /**
      * Return true if the specified class or a subclass is found in a column of the
