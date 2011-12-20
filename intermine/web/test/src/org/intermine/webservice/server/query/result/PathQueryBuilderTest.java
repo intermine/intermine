@@ -100,7 +100,7 @@ public class PathQueryBuilderTest extends TestCase {
             throw e;
         } catch (BadRequestException e) {
             assertEquals(
-                    "The query XML is well formatted but query contains errors: Multiple root classes in query: Employee and Department.",
+                    "XML is well formatted but query contains errors: Multiple root classes in query: Employee and Department.",
                     e.getMessage()
             );
         } catch (Throwable t) {
