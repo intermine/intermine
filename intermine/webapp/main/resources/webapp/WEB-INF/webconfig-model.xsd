@@ -108,6 +108,7 @@
         <xsd:attribute name="description" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="link" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="typeClass" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="style" type="xsd:string"></xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="graphWidgetType">
         <xsd:complexContent>
