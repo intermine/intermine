@@ -111,7 +111,6 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-
     /**
      * to read genome and project versions
      * @return header further info about versions
@@ -157,7 +156,6 @@ public class GFF3Exporter implements Exporter
         return "##gff-version 3" + getHeaderParts();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -170,7 +168,7 @@ public class GFF3Exporter implements Exporter
             // LOG.info("SOO:" + cNames.toString());
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
-                exportRow(row, newPathCollection);
+                exportRow(row, unionPathCollection, newPathCollection);
             }
             finishLastRow();
 
@@ -191,8 +189,8 @@ public class GFF3Exporter implements Exporter
     private Map<String, List<String>> attributes = null;
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
-
-    private void exportRow(List<ResultElement> row, Collection<Path> pathCollection)
+    private void exportRow(List<ResultElement> row,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection)
         throws ObjectStoreException, IllegalAccessException {
 
         List<ResultElement> elWithObject = getResultElements(row);
@@ -222,7 +220,8 @@ public class GFF3Exporter implements Exporter
                 String parent = null;
                 String parentClass = null;
 
-                List<ResultElement> newRow = filterResultRow(row, pathCollection);
+                List<ResultElement> newRow = filterResultRow(row,
+                        unionPathCollection, newPathCollection);
 
                 for (int i = 0; i < newRow.size(); i++) {
                     ResultElement el = newRow.get(i);
@@ -322,7 +321,6 @@ public class GFF3Exporter implements Exporter
         return attribute;
     }
 
-
     /**
      *
      */
@@ -373,8 +371,6 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-
-
     private List<String> formatElementValue(ResultElement el) {
         List<String> ret = new ArrayList<String>();
         String s;
@@ -392,7 +388,6 @@ public class GFF3Exporter implements Exporter
         return ret;
     }
 
-
     private List<ResultElement> getResultElements(List<ResultElement> row) {
         List<ResultElement> els = new ArrayList<ResultElement>();
         for (Integer index : featureIndexes) {
@@ -402,7 +397,6 @@ public class GFF3Exporter implements Exporter
         }
         return els;
     }
-
 
     /**
      * {@inheritDoc}
@@ -453,17 +447,13 @@ public class GFF3Exporter implements Exporter
      * @return
      */
     private List<ResultElement> filterResultRow(List<ResultElement> row,
-            Collection<Path> pathCollection) {
-        List<Path> elPathList = new ArrayList<Path>();
-        for (ResultElement el : row) {
-            elPathList.add(el.getPath());
-        }
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
 
         List<ResultElement> newRow = new ArrayList<ResultElement>();
 
-        if (pathCollection != null && elPathList.containsAll(pathCollection)) {
-            for (Path p : pathCollection) {
-                ResultElement el = row.get(elPathList.indexOf(p));
+        if (newPathCollection != null && unionPathCollection.containsAll(newPathCollection)) {
+            for (Path p : newPathCollection) {
+                ResultElement el = row.get(((List<Path>) unionPathCollection).indexOf(p));
                 if (el != null) {
                     newRow.add(el);
                 } else {
@@ -472,9 +462,9 @@ public class GFF3Exporter implements Exporter
             }
             return newRow;
         } else {
-            throw new RuntimeException("pathCollection: " + pathCollection
+            throw new RuntimeException("pathCollection: " + newPathCollection
                     + ", elPathList contains pathCollection: "
-                    + elPathList.containsAll(pathCollection));
+                    + unionPathCollection.containsAll(newPathCollection));
         }
     }
 }
