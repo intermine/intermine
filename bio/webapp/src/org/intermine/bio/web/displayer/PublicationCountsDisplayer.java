@@ -31,10 +31,8 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
-import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
@@ -48,8 +46,6 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class PublicationCountsDisplayer extends ReportDisplayer
 {
-
-
     protected static final Logger LOG = Logger.getLogger(PublicationCountsDisplayer.class);
 
     /**
@@ -69,7 +65,7 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         String type = DynamicUtil.getSimpleClass(object).getSimpleName();
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Query q = getQuery(im, object.getId(), type);
+        Query q = getQuery(im, object, type);
         ObjectStore os = im.getObjectStore();
         Results results = os.execute(q, 2000, true, true, true);
         Iterator<Object> it = results.iterator();
@@ -86,31 +82,25 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         }
     }
 
-    private Query getQuery(InterMineAPI im, Integer geneID, String type) {
+    private Query getQuery(InterMineAPI im, InterMineObject object, String type) {
         Model model = im.getModel();
-        QueryClass qcReportGene = null;
         QueryClass qcPub = new QueryClass(Publication.class);
         QueryClass qcOtherGenes = null;
 
         try {
-            qcReportGene = new QueryClass(Class.forName(model.getPackageName()  + "." + type));
             qcOtherGenes = new QueryClass(Class.forName(model.getPackageName()  + "." + type));
         } catch (ClassNotFoundException e) {
             LOG.error("Error rendering publication count displayer", e);
             return null;
         }
 
-        QueryField qfReportGeneId = new QueryField(qcReportGene, "id");
         QueryField qfDate = new QueryField(qcPub, "year");
 
         // constraints
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        cs.addConstraint(new SimpleConstraint(qfReportGeneId, ConstraintOp.EQUALS,
-                new QueryValue(geneID)));
-
-        // gene.publication = publication
-        QueryCollectionReference qcr1 = new QueryCollectionReference(qcReportGene, "publications");
+        // This lets us join to the gene/publication indirection table without joining gene as well
+        QueryCollectionReference qcr1 = new QueryCollectionReference(object, "publications");
         cs.addConstraint(new ContainsConstraint(qcr1, ConstraintOp.CONTAINS, qcPub));
 
         QueryCollectionReference qcr2 = new QueryCollectionReference(qcOtherGenes, "publications");
@@ -120,7 +110,6 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         q.setDistinct(true);
 
         // from statement
-        q.addFrom(qcReportGene);
         q.addFrom(qcPub);
         q.addFrom(qcOtherGenes);
 
@@ -132,8 +121,10 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         QueryFunction qf = new QueryFunction();
         q.addToSelect(qf);
 
-        q.addToGroupBy(qcPub);
+        q.addToGroupBy(new QueryField(qcPub, "id"));
+        q.addToGroupBy(qfDate);
 
+        q.addToSelect(qfDate);
         q.addToOrderBy(qf);
         q.addToOrderBy(qfDate, "desc");
         return q;
