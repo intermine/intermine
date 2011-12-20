@@ -37,6 +37,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
@@ -173,12 +174,21 @@ public abstract class WebService
     private static final String AUTH_TOKEN_PARAM_KEY = "token";
     private static final Profile ANON_PROFILE = new AnonProfile();
 
+    /**
+     * Constants for property keys in global property configuration.
+     */
+    private static final String WS_HEADERS_PREFIX = "ws.response.header";
+    private static final String BOTS = "ws.robots";
+
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected Output output;
     protected InterMineAPI im;
 
     private ApiPermission permission = null;
+
+    /** The properties this mine was configured with **/
+    protected Properties webProperties;
 
     /**
      * Construct the web service with the InterMine API object that gives access
@@ -205,31 +215,30 @@ public abstract class WebService
      * @param response The response, as handled by the servlet.
      */
     public void service(HttpServletRequest request, HttpServletResponse response) {
-        try {
+        this.request = request;
+        this.response = response;
+        this.webProperties = SessionMethods.getWebProperties(request);
 
-            this.request = request;
+        if (!agentIsRobot()) {
             try {
-                request.setCharacterEncoding("UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                LOG.error(ex);
+                setHeaders();
+                initOutput();
+                checkEnabled();
+                authenticate();
+                initState();
+                validateState();
+                execute();
+            } catch (Throwable t) {
+                sendError(t, response);
             }
-            this.response = response;
-            response.setHeader("Access-Control-Allow-Origin", "*"); // Allow cross domain requests.
-
-            initOutput(response);
-
-            checkEnabled();
-
-            authenticate();
-            initState();
-            validateState();
-            execute();
-
-        } catch (Throwable t) {
-            sendError(t, response);
+        } else {
+            response.setStatus(403);
         }
+
         try {
-            output.flush();
+            if (output != null) {
+                output.flush();
+            }
         } catch (Throwable t) {
             logError(t, "Error flushing", 500);
         }
@@ -242,6 +251,34 @@ public abstract class WebService
         // Do not persist sessions. All requests should be state-less.
         request.getSession().invalidate();
 
+    }
+
+    private boolean agentIsRobot() {
+        String ua = request.getHeader("User-Agent");
+        if (ua != null) {
+            ua = ua.toLowerCase();
+            String[] robots = StringUtils.split(webProperties.getProperty(BOTS, ""), ',');
+            for (String bot : robots) {
+                if (ua.contains(bot.trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void setHeaders() {
+        Properties headerProps
+            = PropertiesUtil.getPropertiesStartingWith(WS_HEADERS_PREFIX, webProperties);
+        for (Object o : headerProps.values()) {
+            String h = o.toString();
+            String[] parts = StringUtils.split(h, ":", 2);
+            if (parts.length != 2) {
+                LOG.warn("Ignoring invalid response header: " + h);
+            } else {
+                response.setHeader(parts[0].trim(), parts[1].trim());
+            }
+        }
     }
 
     private void checkEnabled() {
@@ -503,7 +540,7 @@ public abstract class WebService
         }
     }
 
-    private void initOutput(HttpServletResponse response) {
+    private void initOutput() {
         final String separator;
         if (RequestUtil.isWindowsClient(request)) {
             separator = Exporter.WINDOWS_SEPARATOR;
