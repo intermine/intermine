@@ -443,7 +443,7 @@ public class ReportObject
     private Map<String, TitleValue> getTitles(String key) {
         if (headerTitles == null) {
             headerTitles = new HashMap<String, Map<String, TitleValue>>();
-            Type type = webConfig.getTypes().get(this.objectType);
+            Type type = webConfig.getTypes().get(DynamicUtil.getSimpleClassName(object));
             HeaderConfigTitle hc = type.getHeaderConfigTitle();
 
             for (String part : HeaderConfigTitle.TYPES) {
