@@ -243,8 +243,6 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
-                LOG.info("re >>> " + re.getPath() + "|" + "re object >>> " + ((InterMineObject) re.getObject()).getId() + "|" + "object >>> " + ((InterMineObject) object).getId());
-
                 if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();
                     if (fieldValue == null) {
