@@ -1116,7 +1116,7 @@ public class PathQuery implements Cloneable
         validateConstraints(problems, validMainPaths);
         // Now the validMainPaths set contains all the main (ie class) paths that are permitted in
         // this query.
-        if (!problems.isEmpty()) {
+        if (!(problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems))) {
             throw new PathException(problems.toString(), null);
         }
         for (OrderElement order : getOrderBy()) {
@@ -1848,7 +1848,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Map<String, String> getSubclasses() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableMap(new LinkedHashMap<String, String>(subclasses));
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -2020,7 +2020,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Map<String, Set<String>> getConstraintGroups() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableMap(new LinkedHashMap<String, Set<String>>(
                         constraintGroups));
         }
