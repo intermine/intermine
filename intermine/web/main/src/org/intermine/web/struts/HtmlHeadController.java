@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -28,7 +27,6 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.template.TemplateQuery;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.session.SessionMethods;
@@ -106,9 +104,8 @@ public class HtmlHeadController extends TilesAction
 
             htmlPageTitle = htmlPageTitle + templateTitle;
 
-            /* object */
+        /* report page */
         } else if ("report".equals(pageName) && objectId != null) {
-
             Integer id = null;
             try {
                 id = new Integer(Integer.parseInt(objectId));
@@ -119,45 +116,9 @@ public class HtmlHeadController extends TilesAction
                     return null;
                 }
 
-                ReportObject dobj = reportObjects.get(object);
-                if (dobj == null || dobj.getObject() == null || dobj.getAttributes() == null) {
-                    // why would this happen?
-                    request.setAttribute("htmlPageTitle", htmlPageTitle);
-                    return null;
-                }
+                ReportObject reportObject = reportObjects.get(object);
+                htmlPageTitle = reportObject.getHtmlHeadTitle();
 
-                String className = DynamicUtil.getFriendlyName(dobj.getObject().getClass());
-                String idForPageTitle = "";
-
-                if (dobj.getAttributes().get("primaryIdentifier") != null) {
-                    String primaryIdentifier
-                        = dobj.getAttributes().get("primaryIdentifier").toString();
-
-                    if (dobj.getAttributes().get("symbol") != null) {
-                        String symbol = dobj.getAttributes().get("symbol").toString();
-                        idForPageTitle = symbol + " (" + primaryIdentifier + ")";
-                    } else {
-                        idForPageTitle = primaryIdentifier;
-                    }
-                }
-
-                // TODO use the class keys instead of hardcoding which fields should be used
-                if (StringUtils.isEmpty(idForPageTitle)
-                        && dobj.getAttributes().get("secondaryIdentifier") != null) {
-                    idForPageTitle = dobj.getAttributes().get("secondaryIdentifier").toString();
-                }
-                if (StringUtils.isEmpty(idForPageTitle)
-                        && dobj.getAttributes().get("identifier") != null) {
-                    idForPageTitle = dobj.getAttributes().get("identifier").toString();
-                }
-                if (StringUtils.isEmpty(idForPageTitle)
-                        && dobj.getAttributes().get("symbol") != null) {
-                    idForPageTitle = dobj.getAttributes().get("symbol").toString();
-                }
-
-                if (StringUtils.isNotEmpty(idForPageTitle)) {
-                    htmlPageTitle = className + " report for " + idForPageTitle;
-                }
             } catch (Exception e) {
                 LOG.warn("Could not correctly set the page title for object ID - " + objectId);
             }
