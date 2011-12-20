@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -597,30 +596,18 @@ public class WebConfig
                     // before, see setTitles() in HeaderConfig
                     final HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
                     if (hc != null) {
-
                         // set the HeaderConfig titles as HeaderConfig for thisClassType might have
                         //  been configured
-                        final HashMap<String, LinkedHashMap<String, Object>> titles
-                            = hc.getTitles();
+                        final HashMap<String, List<HeaderConfigTitle.TitlePart>> titles =
+                            hc.getTitles();
                         if (titles != null) {
-
                             // new childish HeaderConfig
-                            final HeaderConfigTitle newHC = thisClassType.getHeaderConfigTitle();
-                            if (newHC != null) {
+                            final HeaderConfigTitle subclassHc =
+                                thisClassType.getHeaderConfigTitle();
+                            if (subclassHc != null) {
                                 // type A behavior: inherit titles from the parent and append
-                                if (newHC.getAppendConfig()) {
-                                    // copy over main titles
-                                    if (titles.get("main") != null) {
-                                        for (final Object title : titles.get("main").keySet()) {
-                                            newHC.setMainTitles((String) title);
-                                        }
-                                    }
-                                    // copy over sub titles
-                                    if (titles.get("sub") != null) {
-                                        for (final Object title : titles.get("sub").keySet()) {
-                                            newHC.setSubTitles((String) title);
-                                        }
-                                    }
+                                if (subclassHc.getAppendConfig()) {
+                                    subclassHc.addTitleParts(hc.getTitles());
                                 }
                             } else {
                                 // type B behavior: inherit from parent if we are null
@@ -628,8 +615,6 @@ public class WebConfig
                             }
                         }
                     }
-
-
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
                         for (final FieldConfig fc : superClassType.getFieldConfigs()) {

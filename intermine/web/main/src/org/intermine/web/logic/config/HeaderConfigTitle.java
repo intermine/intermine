@@ -10,8 +10,9 @@ package org.intermine.web.logic.config;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -26,23 +27,33 @@ public class HeaderConfigTitle
 
     /**
      * @var title(s) for the object when displaying it, e.g.: eve FBgn0000606 D.melanogaster
-     * @see using LinkedHashMap to add elements in order while easily being able to retrieve them
      **/
-    private HashMap<String, LinkedHashMap<String, Object>> objectTitles = null;
+    private HashMap<String, List<TitlePart>> titleParts = new HashMap<String, List<TitlePart>>();
 
     /** @var decides whether to append or only inherit config from parent, used by WebConfig only */
     private Boolean appendConfig = false;
 
-    private HeaderConfigLink link = new HeaderConfigLink();
+    private Integer numberOfMainTitlesToShow = Integer.MAX_VALUE;
 
-    private Integer numberOfMainTitlesToShow = null;
+    /**
+     * The first part of a page title.
+     */
+    public static final String MAIN = "main";
+    /**
+     * A subtitle.
+     */
+    public static final String SUB = "sub";
+    /**
+     * The parts that make up a header (main title, sub title)
+     */
+    public static final String[] TYPES = new String[] {MAIN, SUB};
 
     /**
      * Set main title(s) path(s) for the object, e.g.: symbol, primaryIdentifier => eve FBgn0000606
      * @param mainTitles a '|' delineated string of paths
      */
     public void setMainTitles(String mainTitles) {
-        setTitles(mainTitles, "main");
+        setTitles(mainTitles, MAIN);
     }
 
     /**
@@ -50,7 +61,7 @@ public class HeaderConfigTitle
      * @param subTitles a '|' delineated string of paths
      */
     public void setSubTitles(String subTitles) {
-        setTitles(subTitles, "sub");
+        setTitles(subTitles, SUB);
     }
 
     /**
@@ -75,44 +86,106 @@ public class HeaderConfigTitle
      * @param titles
      * @param key
      */
-    private void setTitles(String titles, String key) {
-        // init biz
-        if (objectTitles == null) {
-            objectTitles = new HashMap<String, LinkedHashMap<String, Object>>();
+    private void setTitles(String titles, String titlePart) {
+        List<TitlePart> titleFields = titleParts.get(titlePart);
+        if (titleFields == null) {
+            titleFields = new ArrayList<TitlePart>();
+            titleParts.put(titlePart, titleFields);
         }
 
-        LinkedHashMap<String, Object> l = null;
-        // do we have the titles already?
-        if (objectTitles.containsKey(key)) {
-            // get
-            l = objectTitles.get(key);
-        } else {
-            // new
-            l = new LinkedHashMap<String, Object>();
-        }
         // split on a pipe character "|"
         StringTokenizer st = new StringTokenizer(titles, "|");
-        // traverse
         while (st.hasMoreTokens()) {
-            // get the string
-            String token = st.nextToken();
-            // due to the inheritance in WebConfig we need to check we have NOT
-            //  saved the path before
-            if (!l.containsKey(token)) {
-                // add to the map
-                l.put(token, null);
+            String field = st.nextToken();
+            // due to the inheritance in WebConfig we need to check we haven't saved the path before
+            TitlePart tp = new TitlePart(field);
+            if (!titleFields.contains(tp)) {
+                titleFields.add(tp);
             }
         }
-        // save
-        objectTitles.put(key, l);
+    }
+
+    /**
+     * Add title parts to this header config.
+     * @param partsToAdd parts to add to config
+     */
+    public void addTitleParts(HashMap<String, List<TitlePart>> partsToAdd) {
+        titleParts.putAll(partsToAdd);
+    }
+
+    /**
+     * Holder for a path that appears in the title and any prefix and suffix values if they have
+     * been configured.
+     */
+    public class TitlePart
+    {
+        private final String path;
+        private String prefix = "";
+        private String suffix = "";
+
+        /**
+         * Construct with path string from config that may include formatting information.
+         * @param styledPath a path from config
+         */
+        TitlePart(String styledPath) {
+            char first = styledPath.charAt(0);
+            char last = styledPath.charAt(styledPath.length() - 1);
+            // apply special formatting
+            if (first == '[' && last == ']') {
+                prefix = "" + first;
+                suffix = "" + last;
+            } else if (first == '*' && first == last) {
+                prefix = "<i>";
+                suffix = "</i>";
+            }
+            // strip all "non allowed" characters
+            this.path = styledPath.replaceAll("[^a-zA-Z.]", "");
+        }
+
+        /**
+         * The path that should be in the title, with style removed.
+         * @return a path as a string
+         */
+        public String getPath() {
+            return path;
+        }
+
+        /**
+         * A prefix that may be an HTML tag to appear before this part in the title.
+         * @return the prefix or an empty string
+         */
+        public String getPrefix() {
+            return prefix;
+        }
+
+        /**
+         * A suffix that may be an HTML tag to appear after this part in the title.
+         * @return the suffix or an empty string
+         */
+        public String getSuffix() {
+            return suffix;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof TitlePart) {
+                return ((TitlePart) obj).path.equals(path);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return path.hashCode();
+        }
     }
 
     /**
      *
      * @return map of titles
      */
-    public HashMap<String, LinkedHashMap<String, Object>> getTitles() {
-        return objectTitles;
+    public HashMap<String, List<TitlePart>> getTitles() {
+        return titleParts;
     }
 
     /**

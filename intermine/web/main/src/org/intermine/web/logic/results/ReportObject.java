@@ -11,10 +11,10 @@ package org.intermine.web.logic.results;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -38,6 +39,7 @@ import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.DynamicUtil;
+import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.DisplayerManager;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.Constants;
@@ -81,8 +83,10 @@ public class ReportObject
     private Map<String, DisplayReference> references = null;
     private Map<String, DisplayCollection> collections = null;
     private Map<String, DisplayField> refsAndCollections = null;
+    private Map<String, Map<String, TitleValue>> headerTitles = null;
 
     private HeaderConfigLink headerLink;
+    private String pageTitle = null;
 
     /** @var Set of References & Collections that will always be 0 for this type of object */
     private Set<String> nullRefsCols;
@@ -175,6 +179,7 @@ public class ReportObject
      * @return <ReportObjectField>s List
      */
     public List<ReportObjectField> getObjectSummaryFields() {
+        long startTime = System.currentTimeMillis();
         // are we setup yet?
         if (objectSummaryFields == null) {
             objectSummaryFields = new ArrayList<ReportObjectField>();
@@ -241,8 +246,8 @@ public class ReportObject
             }
 
             // 4. remove fields that are resolved IN titles
-            Map<String, String> mainTitles = getTitleMain();
-            Map<String, String> subTitles = getTitleSub();
+            Map<String, TitleValue> mainTitles = getTitleMain();
+            Map<String, TitleValue> subTitles = getTitleSub();
             Set<String> allTitles = new HashSet<String>();
             if (mainTitles != null) {
                 allTitles.addAll(mainTitles.keySet());
@@ -260,8 +265,12 @@ public class ReportObject
                 }
                 objectSummaryFields = temp;
             }
+            long endTime = System.currentTimeMillis();
+            LOG.info("TIME objectSummaryFields creation took: " + (endTime - startTime) + "ms");
+        } else {
+            long endTime = System.currentTimeMillis();
+            LOG.info("TIME objectSummaryFields already set, took: " + (endTime - startTime) + "ms");
         }
-
         return objectSummaryFields;
     }
 
@@ -371,83 +380,148 @@ public class ReportObject
     }
 
     /**
+     * Fetch a header string to use as the page title.  The title will be type of the object plus
+     * the main and sub titles if configured, otherwise any value fetched from a class key.
+     *
+     * NOTE: This is called from HtmlHeadController so will block the page starting to load until
+     * complete, avoid any unnecessary computation.
+     *
+     * @return a title string for the page
+     */
+    public String getHtmlHeadTitle() {
+        if (pageTitle == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(this.objectType);
+            sb.append(" ");
+
+            Map<String, TitleValue> mainTitles = getTitles(HeaderConfigTitle.MAIN);
+            if (!mainTitles.values().isEmpty()) {
+                for (TitleValue mainTitle : mainTitles.values()) {
+                    sb.append(mainTitle.getUnformatted());
+                    sb.append(" ");
+                }
+            } else {
+                // no title configured so attempt to get a value from a class key
+                Object keyFieldValue = ClassKeyHelper.getKeyFieldValue(object, im.getClassKeys());
+                if (keyFieldValue != null) {
+                    sb.append(keyFieldValue);
+                }
+            }
+
+            Map<String, TitleValue> subTitles = getTitles(HeaderConfigTitle.SUB);
+            for (TitleValue subTitle : subTitles.values()) {
+                sb.append(subTitle.getUnformatted());
+                sb.append(" ");
+            }
+            pageTitle = sb.toString().trim();
+        }
+
+        return pageTitle;
+    }
+
+    /**
      * Used by JSP
      * @return the main title of this object, i.e.: "eve FBgn0000606" as a Map
      */
-    public Map<String, String> getTitleMain() {
-        return getTitles("main");
+    public Map<String, TitleValue> getTitleMain() {
+        return getTitles(HeaderConfigTitle.MAIN);
     }
 
     /**
      * Used by JSP
      * @return the subtitle of this object, i.e.: "D. melanogaster" as a Map
      */
-    public Map<String, String> getTitleSub() {
-        return getTitles("sub");
+    public Map<String, TitleValue> getTitleSub() {
+        return getTitles(HeaderConfigTitle.SUB);
     }
 
     /**
-     * Get a title based on the type key we pass it
-     * @param key: main|subre
+     * Get the main or sub title of the page.
+     * @param key: main|sub
      * @return the titles string as resolved based on the path(s) under key
      */
-    private Map<String, String> getTitles(String key) {
-        // fetch the Type
-        Type type = webConfig.getTypes().get(getClassDescriptor().getName());
-        // retrieve the titles map, HeaderConfig serves as a useless wrapper
-        HeaderConfigTitle hc = type.getHeaderConfigTitle();
-        if (hc != null) {
-            Map<String, LinkedHashMap<String, Object>> titles = hc.getTitles();
-            // if we have something saved
-            if (titles != null && titles.containsKey(key)) {
-                Map<String, String> result = new LinkedHashMap<String, String>();
-                // specify the maximum number of values to show
-                Integer maxCount = ("main".equals(key)
-                        && hc.getNumberOfMainTitlesToShow() != null)
-                        ? hc.getNumberOfMainTitlesToShow() : 666;
-                Integer count = 0;
-                // concatenate a space delineated title together as resolved from FieldValues
-                Iterator<String> itr = titles.get(key).keySet().iterator();
-                while (itr.hasNext() && count < maxCount) {
-                    String path = itr.next();
-                    // do we have some special formatting chars?
-                    char first = path.charAt(0);
-                    char last = path.charAt(path.length() - 1);
-                    // strip all "non allowed" characters
-                    path = path.replaceAll("[^a-zA-Z.]", "");
+    private Map<String, TitleValue> getTitles(String key) {
+        if (headerTitles == null) {
+            headerTitles = new HashMap<String, Map<String, TitleValue>>();
+            Type type = webConfig.getTypes().get(this.objectType);
+            HeaderConfigTitle hc = type.getHeaderConfigTitle();
 
-                    // resolve the field value
-                    Object stuff = getFieldValue(path);
-                    // maybe not in FieldConfigs - try just resolving the path
-                    if (stuff == null) {
-                        try {
-                            stuff = resolvePath(objectType + "." + path);
-                        } catch (PathException e) {
-                            LOG.warn("Error resolving path '" + path + "' in titles config for: "
-                                    + objectType);
-                        }
-                    }
-                    if (stuff != null) {
-                        String stringyStuff = stuff.toString();
-                        // String.isEmpty() was introduced in Java release 1.6
-                        if (StringUtils.isNotBlank(stringyStuff)) {
-                            // apply special formatting
-                            if (first == '[' && last == ']') {
-                                stringyStuff = first + stringyStuff + last;
-                            } else if (first == '*' && first == last) {
-                                stringyStuff = "<i>" + stringyStuff + "</i>";
+            for (String part : HeaderConfigTitle.TYPES) {
+                headerTitles.put(part, new LinkedHashMap<String, TitleValue>());
+                if (hc != null) {
+                    for (HeaderConfigTitle.TitlePart tp : hc.getTitles().get(part)) {
+                        Object fieldValue = getFieldValue(tp.getPath());
+                        // maybe not in FieldConfigs - try just resolving the path
+                        if (fieldValue == null) {
+                            try {
+                                fieldValue = resolvePath(objectType + "." + tp.getPath());
+                            } catch (PathException e) {
+                                LOG.warn("Error resolving path '" + tp.getPath()
+                                        + "' in titles config for: " + objectType);
                             }
-
-                            result.put(path, stringyStuff);
-                            count++;
+                        }
+                        if (fieldValue != null) {
+                            // Store both formatted and unformatted versions of the title
+                            String fieldValueStr = fieldValue.toString();
+                            if (StringUtils.isNotBlank(fieldValueStr)) {
+                                String formatted =
+                                    tp.getPrefix() + fieldValueStr + tp.getSuffix();
+                                TitleValue tv = new TitleValue(formatted, fieldValueStr);
+                                headerTitles.get(part).put(tp.getPath(), tv);
+                            }
+                        }
+                        // There is optional configuration for a maximum number of main header parts
+                        if (part.equals(HeaderConfigTitle.MAIN)) {
+                            if (headerTitles.get(HeaderConfigTitle.MAIN).size()
+                                    >= hc.getNumberOfMainTitlesToShow()) {
+                                break;
+                            }
                         }
                     }
                 }
-                return result;
             }
         }
+        if (!headerTitles.containsKey(key)) {
+            LOG.error("Requested invalid title part '" + key + "', valid parts are: "
+                    + StringUtil.prettyList(Arrays.asList(HeaderConfigTitle.TYPES)));
+            return null;
+        }
+        return headerTitles.get(key);
+    }
 
-        return null;
+    /**
+     * Holder for formatted and unformatted versions of a title part.
+     */
+    public class TitleValue
+    {
+        private final String formatted;
+        private final String unformatted;
+
+        /**
+         * Construct with two versions of title part.
+         * @param formatted with formatting, e.g. italics
+         * @param unformatted just the string
+         */
+        TitleValue(String formatted, String unformatted) {
+            this.formatted = formatted;
+            this.unformatted = unformatted;
+        }
+
+        /**
+         * Get the formatted version, with e.g. italics tags.
+         * @return formatted title part
+         */
+        public String getFormatted() {
+            return formatted;
+        }
+
+        /**
+         * Get the unformatted version that is just the field value.
+         * @return unformatted title part
+         */
+        public String getUnformatted() {
+            return unformatted;
+        }
     }
 
     /**
@@ -455,6 +529,7 @@ public class ReportObject
      * @return a resolved link
      */
     public HeaderConfigLink getHeaderLink() {
+        long startTime = System.currentTimeMillis();
         if (this.headerLink == null) {
             // fetch the Type
             Type type = webConfig.getTypes().get(getClassDescriptor().getName());
@@ -487,6 +562,11 @@ public class ReportObject
                     }
                 }
             }
+            long endTime = System.currentTimeMillis();
+            LOG.info("TIME getHeaderLink creation took: " + (endTime - startTime) + "ms");
+        } else {
+            long endTime = System.currentTimeMillis();
+            LOG.info("TIME getHeaderLink already set, took: " + (endTime - startTime) + "ms");
         }
         return this.headerLink;
     }
@@ -515,10 +595,9 @@ public class ReportObject
      *        fields are not resolved elsewhere and skipped instead
      * @see setDescriptorOnInlineList() is still needed when traversing FieldDescriptors
      */
-    private void initialiseInlineList(
-            InlineList list,
-            HashMap<String, Boolean> bagOfInlineListNames
-    ) {
+    private void initialiseInlineList(InlineList list,
+            HashMap<String, Boolean> bagOfInlineListNames) {
+        long startTime = System.currentTimeMillis();
         // soon to be list of values
         Set<Object> listOfListObjects = null;
         String columnToDisplayBy = null;
@@ -556,6 +635,8 @@ public class ReportObject
         // save name of the collection
         String path = list.getPath();
         bagOfInlineListNames.put(path.substring(0, path.indexOf('.')), true);
+        long endTime = System.currentTimeMillis();
+        LOG.info("TIME initialiseInlineLists took: " + (endTime - startTime) + "ms");
     }
 
     /**
@@ -563,6 +644,7 @@ public class ReportObject
      * @param fd FieldDescriptor
      */
     private void initialiseAttribute(FieldDescriptor fd) {
+        long startTime = System.currentTimeMillis();
         // bags
         attributes = (attributes != null) ? attributes
                 : new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
@@ -588,6 +670,9 @@ public class ReportObject
             attributes.put(fd.getName(), fieldValue);
             attributeDescriptors.put(fd.getName(), fd);
         }
+        long endTime = System.currentTimeMillis();
+        LOG.info("TIME initialiseAttribute " + fd.getName() + " took: " + (endTime - startTime)
+                + "ms");
     }
 
     /**
@@ -595,6 +680,7 @@ public class ReportObject
      * @param fd FieldDescriptor
      */
     private void initialiseReference(FieldDescriptor fd) {
+        long startTime = System.currentTimeMillis();
         // bag
         references = (references != null) ? references
                 : new TreeMap<String, DisplayReference>(String.CASE_INSENSITIVE_ORDER);
@@ -629,6 +715,9 @@ public class ReportObject
                 references.put(refName, newReference);
             }
         }
+        long endTime = System.currentTimeMillis();
+        LOG.info("TIME initialiseReference " + fd.getName() + " took: " + (endTime - startTime)
+                + "ms");
     }
 
     /**
@@ -636,6 +725,7 @@ public class ReportObject
      * @param fd FieldDescriptor
      */
     private void initialiseCollection(FieldDescriptor fd) {
+        long startTime = System.currentTimeMillis();
         // bag
         collections = (collections != null) ? collections
                 : new TreeMap<String, DisplayCollection>(String.CASE_INSENSITIVE_ORDER);
@@ -650,9 +740,12 @@ public class ReportObject
                 e.printStackTrace();
             }
 
+            long queryStartTime = System.currentTimeMillis();
             // determine the types in the collection
             List<Class<?>> listOfTypes = PathQueryResultHelper.
             queryForTypesInCollection(object, colName, im.getObjectStore());
+            long queryTime = System.currentTimeMillis() - queryStartTime;
+            LOG.info("TIME - query for types in collection: " + colName + " took: " + queryTime);
 
             DisplayCollection newCollection = null;
             try {
@@ -667,12 +760,18 @@ public class ReportObject
                 collections.put(colName, newCollection);
             }
         }
+        long endTime = System.currentTimeMillis();
+        LOG.info("TIME initialiseCollection " + fd.getName() + " took: " + (endTime - startTime)
+                + "ms");
     }
 
     /**
      * Create the Maps and Lists returned by the getters in this class.
      */
     private void initialise() {
+        // TODO don't initialise replaced collections!  Work this out first.
+
+        long startTime = System.currentTimeMillis();
         // combined Map of References & Collections
         refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
 
@@ -688,8 +787,8 @@ public class ReportObject
         // a map of inlineList object names so we do not include them elsewhere
         HashMap<String, Boolean> bagOfInlineListNames = new HashMap<String, Boolean>();
         // fill up
-        for (int i = 0; i < inlineListsWebConfig.size(); i++) {
-            initialiseInlineList(inlineListsWebConfig.get(i), bagOfInlineListNames);
+        for (InlineList list : inlineListsWebConfig) {
+            initialiseInlineList(list, bagOfInlineListNames);
         }
 
         /** Attributes, References, Collections through FieldDescriptors **/
@@ -723,6 +822,8 @@ public class ReportObject
         if (collections != null) {
             refsAndCollections.putAll(collections);
         }
+        long endTime = System.currentTimeMillis();
+        LOG.info("TIME initialise took: " + (endTime - startTime) + "ms");
     }
 
     /**

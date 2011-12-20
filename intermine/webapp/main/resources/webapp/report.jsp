@@ -30,6 +30,7 @@
 <link rel="stylesheet" type="text/css" href="css/report.print.css" media="print" />
 
 <div id="header_wrap">
+
   <div id="object_header">
     <c:if test="${object.headerLink != null}">
         <c:set var="headerLink" value="${object.headerLink}"/>
@@ -55,10 +56,10 @@
     <h1 class="title">
         <im:displaypath path="${object.type}"/>:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
-          <c:if test="${status.count > 0}"> </c:if><strong>${title.value}</strong>
+          <c:if test="${status.count > 0}"> </c:if><strong>${title.value.formatted}</strong>
         </c:forEach>
         <c:forEach var="title" varStatus="status" items="${object.titleSub}">
-          <c:if test="${status.count > 0}"> </c:if>${title.value}
+          <c:if test="${status.count > 0}"> </c:if>${title.value.formatted}
         </c:forEach>
     </h1>
     </a>
@@ -291,8 +292,8 @@
 	 <tiles:insert page="/reportDisplayers.jsp">
 	    <tiles:put name="placement" value="summary" />
 		<tiles:put name="reportObject" beanName="object" />
-     </tiles:insert>  
-  
+     </tiles:insert>
+
 	 <tiles:insert name="reportAspect.tile">
         <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
         <tiles:put name="placement" value="im:summary" />
@@ -334,7 +335,6 @@
     </tiles:insert>
   </div>
 </div>
-
 </div>
 </div>
 
