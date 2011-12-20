@@ -140,7 +140,6 @@
                 <xsd:attribute name="displayFields" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="exportField" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="columnTitle" type="xsd:string"></xsd:attribute>
-                <xsd:attribute name="style" type="xsd:string"></xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
