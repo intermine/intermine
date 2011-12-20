@@ -68,7 +68,7 @@ public abstract class ReportDisplayer
             // failed to display so put an error message in place instead
             LOG.error("Error rendering report displayer " + getClass() + " for "
                     + reportObject.getType() + "(" + reportObject.getId() + "): "
-                    + e.fillInStackTrace());
+                    + ExceptionUtils.getFullStackTrace(e));
             request.setAttribute("displayerName", getClass().getSimpleName());
             request.setAttribute("jspPage", "reportDisplayerError.jsp");
 
