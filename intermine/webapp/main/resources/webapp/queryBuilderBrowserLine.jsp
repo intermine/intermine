@@ -23,17 +23,20 @@
         </c:forEach>
       </c:if>
       <a name="${node.pathString}">&nbsp;</a>
-      <!-- empty collection/reference -->
+      <!-- empty collection/reference or attribute -->
       <c:set var="isNull" value="${node.isNull}"/>
       <c:if test="${isNull}">
-        <span class="nullStrike">
+      	<c:choose>
+      		<c:when test="${node.button}"><span class="nullStrike"></c:when>
+      		<c:otherwise><span class="nullAttribute"></c:otherwise>
+      	</c:choose>
       </c:if>
       <%-- construct the real path for this node --%>
       <c:set var="fullpath" value="${node.pathString}"/>
       <c:choose>
         <c:when test="${node.reverseReference && node.reference}">
         </c:when>
-        <c:when test="${isNull}">
+        <c:when test="${isNull && node.button}">
           <img class="toggle" border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
         </c:when>
         <c:when test="${node.button == '+'}">

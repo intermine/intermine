@@ -146,6 +146,8 @@ form#submitform input, form#submitform {
   white-space: nowrap;}
 
 .browserline.empty { display:none; }
+.browserline.empty span.nullAttribute span.attributeField { color:#898989; }
+.browserline.empty span.nullAttribute
 
 table.noborder, table.noborder td, table.noborder th {
   border: none;}
