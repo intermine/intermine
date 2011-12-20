@@ -84,6 +84,7 @@ public class ReportObject
     private Map<String, DisplayCollection> collections = null;
     private Map<String, DisplayField> refsAndCollections = null;
     private Map<String, Map<String, TitleValue>> headerTitles = null;
+    private Set<String> replacedFieldExprs = null;
 
     private HeaderConfigLink headerLink;
     private String pageTitle = null;
@@ -795,9 +796,12 @@ public class ReportObject
         nullRefsCols =
             im.getObjectStoreSummary()
                 .getNullReferencesAndCollections(getClassDescriptor().getName());
+
+        Set<String> replacedFields = getReplacedFieldExprs();
         for (FieldDescriptor fd : getClassDescriptor().getAllFieldDescriptors()) {
             // only continue if we have not included this object in an inline list
-            if (bagOfInlineListNames.get(fd.getName()) == null) {
+            if (!bagOfInlineListNames.containsKey(fd.getName())
+                    && !replacedFields.contains(fd.getName())) {
                 if (fd.isAttribute() && !"id".equals(fd.getName())) {
                     /** Attribute **/
                     initialiseAttribute(fd);
@@ -843,9 +847,11 @@ public class ReportObject
      * @return fields that should not be shown
      */
     public Set<String> getReplacedFieldExprs() {
-        Set<String> replacedFieldExprs = new HashSet<String>();
-        for (ReportDisplayer reportDisplayer : getAllReportDisplayers()) {
-            replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
+        if (replacedFieldExprs == null) {
+            replacedFieldExprs = new HashSet<String>();
+            for (ReportDisplayer reportDisplayer : getAllReportDisplayers()) {
+                replacedFieldExprs.addAll(reportDisplayer.getReplacedFieldExprs());
+            }
         }
         return replacedFieldExprs;
     }
