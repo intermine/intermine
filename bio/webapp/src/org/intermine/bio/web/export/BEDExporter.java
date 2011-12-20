@@ -93,7 +93,7 @@ public class BEDExporter implements Exporter
 
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt,
-            Collection<Path> pathCollection) {
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }

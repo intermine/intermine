@@ -188,6 +188,6 @@ public class CytoscapeNetworkExportAction extends Action
         // Ref class - StandardHttpExporter
         exportForm.setIncludeHeaders(true);
 
-        exporter.export(pt, request, response, exportForm, null);
+        exporter.export(pt, request, response, exportForm, null, null);
     }
 }

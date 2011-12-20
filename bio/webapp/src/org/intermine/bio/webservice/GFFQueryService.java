@@ -120,7 +120,7 @@ public class GFFQueryService extends AbstractQueryService
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter, null);
+                exporter.export(iter, null, null);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();

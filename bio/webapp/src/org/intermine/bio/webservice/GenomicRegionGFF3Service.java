@@ -62,7 +62,7 @@ public class GenomicRegionGFF3Service extends AbstractRegionExportService
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pq, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter, null);
+                exporter.export(iter, null, null);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();

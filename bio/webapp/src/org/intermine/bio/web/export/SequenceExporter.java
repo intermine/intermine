@@ -92,7 +92,7 @@ public class SequenceExporter implements Exporter
      * writeFasta is used for writing sequence.
      */
     public void export(Iterator<? extends List<ResultElement>> resultIt,
-            Collection<Path> pathCollection) {
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         // IDs of the features we have successfully output - used to avoid
         // duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
@@ -119,9 +119,10 @@ public class SequenceExporter implements Exporter
 
                 if (object instanceof SequenceFeature) {
                     bioSequence = createSequenceFeature(header, object,
-                            row, pathCollection);
+                            row, unionPathCollection, newPathCollection);
                 } else if (object instanceof Protein) {
-                    bioSequence = createProtein(header, object, row, pathCollection);
+                    bioSequence = createProtein(header, object, row,
+                            unionPathCollection, newPathCollection);
                 } else {
                     // ignore other objects
                     continue;
@@ -164,25 +165,28 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createProtein(StringBuffer header, Object object,
-            List<ResultElement> row, Collection<Path> pathCollection)
+            List<ResultElement> row, Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection)
         throws IllegalSymbolException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
 
-        makeHeader(header, object, row, pathCollection);
+        makeHeader(header, object, row, unionPathCollection, newPathCollection);
 
         return bioSequence;
     }
 
     private BioSequence createSequenceFeature(StringBuffer header,
-            Object object, List<ResultElement> row, Collection<Path> pathCollection)
+            Object object, List<ResultElement> row,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection)
         throws IllegalSymbolException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
 
-        makeHeader(header, object, row, pathCollection);
+        makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return bioSequence;
     }
 
@@ -190,7 +194,8 @@ public class SequenceExporter implements Exporter
      * Set the header to be the contents of row, separated by spaces.
      */
     private void makeHeader(StringBuffer header, Object object,
-            List<ResultElement> row, Collection<Path> pathCollection) {
+            List<ResultElement> row, Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection) {
 
         List<String> headerBits = new ArrayList<String>();
 
@@ -205,16 +210,11 @@ public class SequenceExporter implements Exporter
             headerBits.add("-");
         }
 
-        // get a subset of result row by pathCollection
-        List<Path> elPathList = new ArrayList<Path>();
-        for (ResultElement el : row) {
-            elPathList.add(el.getPath());
-        }
-
         List<ResultElement> subRow = new ArrayList<ResultElement>();
-        if (pathCollection != null && elPathList.containsAll(pathCollection)) {
-            for (Path p : pathCollection) {
-                subRow.add(row.get(elPathList.indexOf(p)));
+        if (newPathCollection != null && unionPathCollection != null
+                && unionPathCollection.containsAll(newPathCollection)) {
+            for (Path p : newPathCollection) {
+                subRow.add(row.get(((List<Path>) unionPathCollection).indexOf(p)));
             }
         } else {
             subRow = row;
@@ -242,6 +242,8 @@ public class SequenceExporter implements Exporter
                 if (re == null) {
                     continue;
                 }
+
+                LOG.info("re >>> " + re.getPath() + "|" + "re object >>> " + ((InterMineObject) re.getObject()).getId() + "|" + "object >>> " + ((InterMineObject) object).getId());
 
                 if (object.equals(re.getObject())) {
                     Object fieldValue = re.getField();

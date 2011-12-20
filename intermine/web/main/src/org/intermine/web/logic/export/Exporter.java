@@ -33,9 +33,12 @@ public interface Exporter
     /**
      * Do export.
      * @param it iterator over stuff to be exported
-     * @param pathCollection a collection of Path to export from the results
+     * @param unionPathCollection a collection of Path combining old and new views
+     * @param newPathCollection a collection of Path to export from the results
      */
-    void export(Iterator<? extends List<ResultElement>> it, Collection<Path> pathCollection);
+    void export(Iterator<? extends List<ResultElement>> it,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection);
 
     /**
      * This method finds out if result row composed from instances of these

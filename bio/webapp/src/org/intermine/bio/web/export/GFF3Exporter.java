@@ -161,10 +161,8 @@ public class GFF3Exporter implements Exporter
     /**
      * {@inheritDoc}
      */
-
-
     public void export(Iterator<? extends List<ResultElement>> resultIt,
-            Collection<Path> pathCollection) {
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }
@@ -172,7 +170,7 @@ public class GFF3Exporter implements Exporter
             // LOG.info("SOO:" + cNames.toString());
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
-                exportRow(row);
+                exportRow(row, newPathCollection);
             }
             finishLastRow();
 
@@ -194,9 +192,8 @@ public class GFF3Exporter implements Exporter
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
 
-    private void exportRow(List<ResultElement> row)
-        throws ObjectStoreException,
-    IllegalAccessException {
+    private void exportRow(List<ResultElement> row, Collection<Path> pathCollection)
+        throws ObjectStoreException, IllegalAccessException {
 
         List<ResultElement> elWithObject = getResultElements(row);
         if (elWithObject == null) {
@@ -225,8 +222,10 @@ public class GFF3Exporter implements Exporter
                 String parent = null;
                 String parentClass = null;
 
-                for (int i = 0; i < row.size(); i++) {
-                    ResultElement el = row.get(i);
+                List<ResultElement> newRow = filterResultRow(row, pathCollection);
+
+                for (int i = 0; i < newRow.size(); i++) {
+                    ResultElement el = newRow.get(i);
 
                     if (el == null) {
                         continue;
@@ -236,8 +235,12 @@ public class GFF3Exporter implements Exporter
                         parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
 //                        LOG.info("PAR: " + parentClass);
                         if (cNames.contains(parentClass.toLowerCase())) {
-                            parent = el.getField().toString();
-//                            LOG.info("PARent: " + parent);
+                            if (((SequenceFeature) el.getObject()).getPrimaryIdentifier() != null) {
+                                parent = ((SequenceFeature) el.getObject()).getPrimaryIdentifier();
+//                                LOG.info("PARent: " + parent);
+
+                                // TODO this is not accurate... should use SO relationship (part-of)
+                            }
                         }
                     }
 
@@ -295,6 +298,7 @@ public class GFF3Exporter implements Exporter
                         }
                     }
                 }
+
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
             } catch (Exception ex) {
@@ -425,6 +429,7 @@ public class GFF3Exporter implements Exporter
     }
 
     private void finishLastRow() {
+
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
                 attributes, makeUcscCompatible);
 
@@ -439,5 +444,37 @@ public class GFF3Exporter implements Exporter
             writtenResultsCount++;
         }
         lastLsfId = null;
+    }
+
+    /**
+     * Remove the elements from row which are not in pathCollection
+     * @param row
+     * @param pathCollection
+     * @return
+     */
+    private List<ResultElement> filterResultRow(List<ResultElement> row,
+            Collection<Path> pathCollection) {
+        List<Path> elPathList = new ArrayList<Path>();
+        for (ResultElement el : row) {
+            elPathList.add(el.getPath());
+        }
+
+        List<ResultElement> newRow = new ArrayList<ResultElement>();
+
+        if (pathCollection != null && elPathList.containsAll(pathCollection)) {
+            for (Path p : pathCollection) {
+                ResultElement el = row.get(elPathList.indexOf(p));
+                if (el != null) {
+                    newRow.add(el);
+                } else {
+                    newRow.add(null);
+                }
+            }
+            return newRow;
+        } else {
+            throw new RuntimeException("pathCollection: " + pathCollection
+                    + ", elPathList contains pathCollection: "
+                    + elPathList.containsAll(pathCollection));
+        }
     }
 }

@@ -120,13 +120,18 @@ public class TableExportAction extends InterMineAction
             unionPathSet.addAll(newPathList);
 
             // make a collection of Path
-            List<Path> pathList = new ArrayList<Path>();
+            List<Path> newPatCollection = new ArrayList<Path>();
             for (String pathString : newPathList) {
-                pathList.add(pathQuery.makePath(pathString));
+                newPatCollection.add(pathQuery.makePath(pathString));
+            }
+
+            List<Path> unionPathCollection = new ArrayList<Path>();
+            for (String pathString : unionPathSet) {
+                unionPathCollection.add(pathQuery.makePath(pathString));
             }
 
             PagedTable newPt = reorderPagedTable(pathQuery, unionPathSet, request);
-            exporter.export(newPt, request, response, tef, pathList);
+            exporter.export(newPt, request, response, tef, unionPathCollection, newPatCollection);
 
             // If null is returned then no forwarding is performed and
             // to the output is not flushed any jsp output, so user
