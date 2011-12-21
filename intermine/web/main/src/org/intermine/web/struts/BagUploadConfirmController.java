@@ -44,10 +44,10 @@ public class BagUploadConfirmController extends TilesAction
      * Set up the bagUploadConfirm page.
      * {@inheritDoc}
      */
-    public ActionForward execute(ComponentContext context,
-            ActionMapping mapping, ActionForm form,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    @Override
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws Exception {
 
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -58,10 +58,19 @@ public class BagUploadConfirmController extends TilesAction
         }
 
         BagQueryResult bagQueryResult = (BagQueryResult) session.getAttribute(bagQueryResultLabel);
+
+        // MATCHES
         request.setAttribute("matches", bagQueryResult.getMatches());
-        Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();
-        request.setAttribute("issues", issues);
+
+        // NO MATCH
         request.setAttribute("unresolved", bagQueryResult.getUnresolved());
+
+        Map<String, Map<String, Map<String, List>>> issues = bagQueryResult.getIssues();
+
+        // TODO delete -- not ordering by type anymore.
+
+        request.setAttribute("issues", issues);
+
 
         StringBuffer flattenedArray = new StringBuffer();
 

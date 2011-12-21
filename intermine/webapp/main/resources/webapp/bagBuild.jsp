@@ -12,14 +12,14 @@
 
 <script language="javascript">
 <!--//<![CDATA[
-               
-	<%-- Java to JavaScript map --%>
-	<c:if test="${!empty bagExampleIdentifiers && !empty bagExampleIdentifiers['default']}">
-		var bagExampleIdentifiers = {};
-		<c:forEach items="${bagExampleIdentifiers}" var="exampleType">
-			bagExampleIdentifiers['${exampleType.key}'.replace(/\s/gi,"").toLowerCase()] = '${exampleType.value}';
-		</c:forEach>
-	</c:if>
+
+  <%-- Java to JavaScript map --%>
+  <c:if test="${!empty bagExampleIdentifiers && !empty bagExampleIdentifiers['default']}">
+    var bagExampleIdentifiers = {};
+    <c:forEach items="${bagExampleIdentifiers}" var="exampleType">
+      bagExampleIdentifiers['${exampleType.key}'.replace(/\s/gi,"").toLowerCase()] = '${exampleType.value}';
+    </c:forEach>
+  </c:if>
 
    function switchInputs(open, close) {
       jQuery('#' + open + 'Input').attr("disabled","");
@@ -41,14 +41,14 @@
     function loadExample() {
       switchInputs('paste','file');
       jQuery('#pasteInput').focus();
-      
+
       <%-- based on the selected type, load an example list identifiers --%>
       var example = bagExampleIdentifiers[jQuery("select#typeSelector option:selected").val().toLowerCase()];
       if (!example) {
-    	  example = bagExampleIdentifiers['default'];
+        example = bagExampleIdentifiers['default'];
       }
-   	  jQuery('#pasteInput').val(example);
-      
+       jQuery('#pasteInput').val(example);
+
       return false;
     }
 
@@ -156,6 +156,12 @@
                    onchange="switchInputs('file','paste');"
                    onkeydown="switchInputs('file','paste');" size="28" />
                </td>
+           </tr>
+           <tr>
+                <td align="right" class="label">
+                   </label>
+               </td>
+               <td><html:checkbox property="caseSensitive"/>&nbsp;<label><fmt:message key="bagBuild.caseSensitive"/></td>
            </tr>
        </table>
 

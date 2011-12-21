@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.metadata.FieldDescriptor;
@@ -88,14 +89,36 @@ public class BagQueryRunner
      */
     public BagQueryResult searchForBag(String type, List<String> input, String extraFieldValue,
             boolean doWildcards) throws ClassNotFoundException, InterMineException {
+        return search(type, input, extraFieldValue, doWildcards, false);
+    }
+
+    /**
+     * Given an input list of string identifiers search for corresponding objects. First run a
+     * default query then any queries configured for the specified type.
+     *
+     * @param type an unqualified class name to search for objects
+     * @param input a list of strings to query
+     * @param extraFieldValue the value used when adding an extra constraint to the bag query,
+     * configured in BagQueryConfig (e.g. if connectField is "organism", the extraClassName is
+     * "Organism" and the constrainField is "name", the extraFieldValue might be "Drosophila
+     * melanogaster")
+     * @param doWildcards true if the strings should be evaluated as wildcards
+     * @param caseSensitive true if the strings have to match case too
+     * @return the matches, issues and unresolved input
+     * @throws ClassNotFoundException if the type isn't in the model
+     * @throws InterMineException if there is any other exception
+     */
+    public BagQueryResult search(String type, List<String> input, String extraFieldValue,
+            boolean doWildcards, boolean caseSensitive)
+        throws ClassNotFoundException, InterMineException {
 
         Map<String, String> lowerCaseInput = new HashMap<String, String>();
         List<String> cleanInput = new ArrayList<String>();
         List<String> wildcardInput = new ArrayList<String>();
         Map<String, Pattern> patterns = new HashMap<String, Pattern>();
         for (String inputString : input) {
-            if (!(inputString == null) && !("".equals(inputString))) {
-                if (inputString.indexOf('*') == -1 || (!doWildcards)) {
+            if (StringUtils.isNotEmpty(inputString)) {
+                if (inputString.indexOf('*') == -1 || !doWildcards) {
                     if (!lowerCaseInput.containsKey(inputString.toLowerCase())) {
                         cleanInput.add(inputString);
                         lowerCaseInput.put(inputString.toLowerCase(), inputString);
@@ -115,8 +138,7 @@ public class BagQueryRunner
         // or just leave as a list of identifiers and objects of the qrong type
         // CollectionUtil.groupByClass will sort out the strings and types
         Class<?> typeCls = Class.forName(model.getPackageName() + "." + type);
-        List<BagQuery> queries =
-            getBagQueriesForType(bagQueryConfig, typeCls.getName());
+        List<BagQuery> queries = getBagQueriesForType(bagQueryConfig, typeCls.getName());
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
         Set<String> wildcardUnresolved = new LinkedHashSet<String>(wildcardInput);
         BagQueryResult bqr = new BagQueryResult();
@@ -139,22 +161,16 @@ public class BagQueryRunner
                                 }
                                 String field = (String) fieldObject;
                                 String lowerField = field.toLowerCase();
-                                if (lowerCaseInput.containsKey(lowerField)) {
+                                if (caseSensitive) {
+                                    if (cleanInput.contains(field)) {
+                                        processMatch(resMap, unresolved, id, field);
+                                    }
+                                } else if (lowerCaseInput.containsKey(lowerField)) {
                                     // because we are converting to lower case we need to match
                                     // to original input so that 'h' matches 'H' and 'h' becomes
                                     // a duplicate.
                                     String originalInput = lowerCaseInput.get(lowerField);
-                                    Set<Integer> ids = resMap.get(originalInput);
-                                    if (ids == null) {
-                                        ids = new LinkedHashSet<Integer>();
-                                        resMap.put(originalInput, ids);
-                                    }
-                                    // obj is an Integer
-                                    ids.add(id);
-                                    if (bagQueryConfig.getMatchOnFirst().booleanValue()) {
-                                        // remove any identifiers that are now resolved
-                                        unresolved.remove(lowerCaseInput.get(lowerField));
-                                    }
+                                    processMatch(resMap, unresolved, id, originalInput);
                                 }
                             }
                         }
@@ -212,6 +228,19 @@ public class BagQueryRunner
         bqr.getUnresolved().putAll(unresolvedMap);
 
         return bqr;
+    }
+
+    private void processMatch(Map<String, Set<Integer>> resMap, Set<String> unresolved,
+        Integer id, String field) {
+        Set<Integer> ids = resMap.get(field);
+        if (ids == null) {
+            ids = new LinkedHashSet<Integer>();
+            resMap.put(field, ids);
+        }
+        ids.add(id);
+        if (bagQueryConfig.getMatchOnFirst().booleanValue()) {
+            unresolved.remove(field);
+        }
     }
 
     /**

@@ -21,7 +21,6 @@ import org.apache.struts.upload.FormFile;
  *
  * @author Kim Rutherford
  */
-
 public class BuildBagForm extends ActionForm
 {
 
@@ -30,6 +29,7 @@ public class BuildBagForm extends ActionForm
     private String type;
     private String extraFieldValue;
     private String whichInput;
+    private boolean caseSensitive = false;
 
     /**
      * Get the bag type
@@ -115,6 +115,20 @@ public class BuildBagForm extends ActionForm
     }
 
     /**
+     * @return if true, hits have to match on case too
+     */
+    public boolean getCaseSensitive() {
+        return caseSensitive;
+    }
+
+    /**
+     * @param caseSensitive hits have to match on case too
+     */
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -125,6 +139,7 @@ public class BuildBagForm extends ActionForm
         //type = "";
         extraFieldValue = "";
         whichInput = "";
+        setCaseSensitive(false);
     }
 
 }
