@@ -14,11 +14,28 @@
 <tiles:importAttribute name="placement"/>
 
 <c:forEach items="${reportObject.reportDisplayers[placement]}" var="displayer">
-    <tiles:insert name="reportDisplayer.tile">
-      <tiles:put name="displayer" beanName="displayer" />
-      <tiles:put name="reportObject" beanName="reportObject" />
-    </tiles:insert>
-    <br />
+   
+   <c:set var="displayerWrapper" value="${fn:toLowerCase(displayer.displayerName)}-wrapper"/>
+   <div id="${displayerWrapper}" class="wrapper collection-table">
+		<h3 class="loading">${displayer.nicerDisplayerName}</h3>
+   </div>
+
+   <script type="text/javascript"> 
+    jQuery.ajax({
+        url: 'modifyDetails.do',
+        dataType: 'html',
+        data: 'method=ajaxShowDisplayer&name=${displayer.displayerName}&id=${reportObject.id}',
+        success: function(html) {
+        	jQuery('#${displayerWrapper}').hide().html(html).fadeIn();
+        },
+        error: function(jXHR, textStatus) {
+          throw new Error('Failed to load Displayer "' + ${displayer.displayerName} + '", ' + textStatus);
+        },
+        complete: function(jXHR, textStatus) {
+            // 
+        }
+      });
+    </script>
 </c:forEach>
 
 <!-- /reportDisplayers.jsp -->

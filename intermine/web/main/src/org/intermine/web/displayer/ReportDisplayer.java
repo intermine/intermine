@@ -58,7 +58,7 @@ public abstract class ReportDisplayer
     public void execute(HttpServletRequest request, ReportObject reportObject) {
         request.setAttribute("reportObject", reportObject);
         request.setAttribute("jspPage", getJspPage());
-
+        
         try {
             display(request, reportObject);
         } catch (ReportDisplayerNoResultsException e) {
@@ -106,5 +106,25 @@ public abstract class ReportDisplayer
      */
     public Set<String> getReplacedFieldExprs() {
         return config.getReplacedFieldNames();
+    }
+    
+    /**
+     * Gimme my name
+     * @return a name
+     */
+    public String getDisplayerName() {
+    	return getClass().getSimpleName();
+    }
+    
+    /**
+     * A JSP wants a nice name to display while the Displayer is loading
+     * @return camel case class simple name split
+     */
+    public String getNicerDisplayerName() {
+    	String name = "";
+    	for (String w : getDisplayerName().split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])")) {
+    		name += w + " ";
+    	}
+		return name.trim();
     }
 }

@@ -293,6 +293,18 @@ im.timestampFormat = function() {
 	});
 };
 
+im.slugify = function(str) {
+	str = str.replace(/^\s+|\s+$/g, '').toLowerCase();
+	  
+	var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;",
+		 to   = "aaaaeeeeiiiioooouuuunc------";
+	for (var i=0, l=from.length; i<l; i++) {
+		str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+	}
+	
+	return str.replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+};
+
 // jQuery extensions
 jQuery.fn.extend({
 	exists: function() {
@@ -321,6 +333,9 @@ jQuery.fn.extend({
 	},
 	getCookie: function(key) {
 		return im.getCookie(key);
+	},
+	slugify: function(str) {
+		return im.slugify(str);
 	}
 });
 

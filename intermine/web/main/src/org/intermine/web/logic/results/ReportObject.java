@@ -128,6 +128,16 @@ public class ReportObject
         DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
         return displayerManager.getReportDisplayersForType(objectType);
     }
+    
+    /**
+     * Give us a displayer by a specific name, called by AjaxServices
+     * @param name
+     * @return ReportDisplayer
+     */
+    public ReportDisplayer getReportDisplayer(String name) {
+        DisplayerManager displayerManager = DisplayerManager.getInstance(webConfig, im);
+        return displayerManager.getReportDisplayerByName(objectType, name);
+    }
 
     /**
      * Get the id of this object

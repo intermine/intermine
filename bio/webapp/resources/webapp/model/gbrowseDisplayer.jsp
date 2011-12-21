@@ -4,6 +4,8 @@
 
 <!-- gbrowseDisplayer.jsp -->
 
+<c:set var="object" value="${reportObject.object}"/>
+
 <c:choose>
 <c:when test="${((!empty object.chromosomeLocation && !empty object.chromosome)
                 || className == 'Chromosome') && className != 'ChromosomeBand'}">
