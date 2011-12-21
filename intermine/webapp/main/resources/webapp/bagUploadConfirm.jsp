@@ -204,9 +204,7 @@
       <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
     </div>
     <div class="body">
-    <html:submit property="goBack">
-      <fmt:message key="bagUploadConfirm.goBack"/>
-    </html:submit>
+      <input type="button" onclick="history.back();" id="goBack" value='<fmt:message key="bagUploadConfirm.goBack"/>' />
       <p>
         <fmt:message key="bagUploadConfirm.unresolved">
           <fmt:param value="${fn:length(unresolved)}"/>
