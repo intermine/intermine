@@ -279,7 +279,7 @@
             var tStatistic = expression.tStatistic;
             data.setValue(n, 0, cellType.condition);
 
-            var formattedString = tStatistic + ' (t-statistic), ' + expression.pValue + ' (p-value)';
+            var formattedString = '\n' + tStatistic + ' (t-statistic)\n' + expression.pValue + ' (p-value)';
 
             if (tStatistic > 0) { <%-- UP --%>
               <%-- low confidence? --%>
