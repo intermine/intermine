@@ -10,22 +10,26 @@ function getProcessGraphWidgetConfig(widgetId, bagName) {
   if(pValue != null) {
     extraAttr = pValue.value;
   }
-  AjaxServices.getProcessGraphWidget(widgetId,bagName,extraAttr,handleGraphWidget);
-}
-
-function handleGraphWidget(widget) {
-  display('widgetdatanoresults' + widget.configId, false);
-  if(widget.hasResults) {
-    var widgetdataname = document.getElementById('widgetdata' + widget.configId);
-    widgetdataname.innerHTML = widget.html;
-    display('widgetdatawait' + widget.configId, false);
-    widgetdataname.style.display = 'block';
-  } else {
-    display('widgetdatawait' + widget.configId, false);
-    display('widgetdata' + widget.configId, false);
-    display('widgetdatanoresults' + widget.configId, true);
-  }
-  calcNotAnalysed(widget);
+  AjaxServices.getProcessGraphWidget(widgetId,bagName,extraAttr, function(widget) {
+    // does it actually exist?
+    if (widget) {
+      display('widgetdatanoresults' + widget.configId, false);
+      if (widget.hasResults) {
+        var widgetdataname = document.getElementById('widgetdata' + widget.configId);
+        widgetdataname.innerHTML = widget.html;
+        display('widgetdatawait' + widget.configId, false);
+        widgetdataname.style.display = 'block';
+      } else {
+        display('widgetdatawait' + widget.configId, false);
+        display('widgetdata' + widget.configId, false);
+        display('widgetdatanoresults' + widget.configId, true);
+      }
+    calcNotAnalysed(widget);
+    } else {
+      jQuery('#widgetdata' + widgetId).hide();
+      jQuery('#widgetdatanoresults' + widgetId).show().html(jQuery('<i/>', { 'text': 'no results found' }));
+    }
+  });
 }
 
 function getProcessHTMLWidgetConfig(widgetId, bagName) {
@@ -151,15 +155,15 @@ function checkSelected(formName) {
 }
 
 function submitWidgetForm(widgetId,type,extra) {
-        var formName = 'widgetaction'+widgetId; 
-        if(formName && !checkSelected(formName)) { 
-            document.getElementById('selected_all' + widgetId).checked = true; 
-            toggleAllChecks(formName, widgetId); 
+        var formName = 'widgetaction'+widgetId;
+        if(formName && !checkSelected(formName)) {
+            document.getElementById('selected_all' + widgetId).checked = true;
+            toggleAllChecks(formName, widgetId);
         }
-    
+
     $('action'+widgetId).value=type;
     $('export' + widgetId).value=extra;
-    $('widgetaction' + widgetId).submit();    
+    $('widgetaction' + widgetId).submit();
 }
 
 function displayNotAnalysed(widgetId,type,extra) {

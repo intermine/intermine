@@ -963,7 +963,9 @@ public class AjaxServices
                     graphWidgetConf.setSession(session);
                     GraphWidget graphWidget = new GraphWidget(graphWidgetConf, imBag, os,
                                     selectedExtraAttribute);
-                    return graphWidget;
+                    if (!graphWidget.getResults().isEmpty()) {
+                        return graphWidget;
+                    }
                 }
             }
         } catch (RuntimeException e) {

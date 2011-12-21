@@ -98,16 +98,16 @@
         <!-- View in results table button -->
         <li id="tool_bar_li_display_widget_${widget.id}" class="tb_button">
           <span id="tool_bar_button_display_${widget.id}" class="widget_tool_bar_button"
-            onclick="javascript:submitWidgetForm('${widget.id}','display','null');return false;" 
+            onclick="javascript:submitWidgetForm('${widget.id}','display','null');return false;"
           >View</span>
         </li>
         <li id="tool_bar_li_export_widget_${widget.id}" class="tb_button">
           <span id="tool_bar_button_export_${widget.id}" class="widget_tool_bar_button"
-            onclick="javascript:submitWidgetForm('${widget.id}','export','tab');return false;" 
+            onclick="javascript:submitWidgetForm('${widget.id}','export','tab');return false;"
           >Download</span>
         </li>
     </ul>
-  </div> 
+  </div>
  </c:if>
 
 <%-- output different widget containers if it's a graph widget because flyatlas widget is too tall --%>
