@@ -65,12 +65,12 @@
 
                     <div class="textarea">
                       <c:choose>
-	                      <c:when test="${fn:startsWith(WEB_PROPERTIES['bag.example.identifiers'], 'e.g') == true}">
-	                      	<textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
-	                      </c:when>
-	                      <c:otherwise>
-	                      	<textarea id="listInput" name="text">e.g. <c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
-	                      </c:otherwise>
+                        <c:when test="${fn:startsWith(WEB_PROPERTIES['bag.example.identifiers'], 'e.g') == true}">
+                          <textarea id="listInput" name="text"><c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+                        </c:when>
+                        <c:otherwise>
+                          <textarea id="listInput" name="text">e.g. <c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" /></textarea>
+                        </c:otherwise>
                       </c:choose>
                     </div>
                     <div class="bottom">
@@ -358,17 +358,8 @@
     }
 
     var placeholder = '<c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" />';
-    var placeholderTextarea = '<c:out value="${WEB_PROPERTIES['textarea.identifiers']}" />';
+    var placeholderTextarea = 'e.g. <c:out value="${WEB_PROPERTIES['bag.example.identifiers']}" />';
     var inputToggleClass = 'eg';
-
-    /*
-    function preFillInput(target, term) {
-        var e = jQuery("input#actionsInput");
-        e.val(term);
-        if (e.hasClass(inputToggleClass)) e.toggleClass(inputToggleClass);
-        e.focus();
-    }
-    */
 
     // e.g. values only available when JavaScript is on
     jQuery('input#actionsInput').toggleClass(inputToggleClass);
