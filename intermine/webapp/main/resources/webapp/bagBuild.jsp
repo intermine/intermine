@@ -159,7 +159,7 @@
            </tr>
            <tr>
                <td></td>
-               <td class="label><html:checkbox property="caseSensitive"/>&nbsp;<label><fmt:message key="bagBuild.caseSensitive"/></label></td>
+               <td class="label"><html:checkbox property="caseSensitive"/>&nbsp;<label><fmt:message key="bagBuild.caseSensitive"/></label></td>
            </tr>
        </table>
 
