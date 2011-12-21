@@ -251,11 +251,7 @@
     <%-- call me to draw me --%>
     function drawChart(liszt, redraw) {
       if (liszt.length > 0) {
-        if (redraw) {
-          googleChart();
-        } else {
-          google.setOnLoadCallback(googleChart);
-        }
+		googleChart();
       } else {
         notify('Nothing to show, adjust the p-value and/or t-stat to see upto ' + geneExpressionAtlasDisplayer.originalList.byName.length + ' results', true);
       }
