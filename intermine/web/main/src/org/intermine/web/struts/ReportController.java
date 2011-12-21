@@ -82,15 +82,9 @@ public class ReportController extends InterMineAction
         // fetch & set requested object
         InterMineObject requestedObject = getRequestedObject(im, request);
 
-        long stepTime = System.currentTimeMillis();
-        startTime = stepTime;
-
         if (requestedObject != null) {
             ReportObjectFactory reportObjectFactory = SessionMethods.getReportObjects(session);
             ReportObject reportObject = reportObjectFactory.get(requestedObject);
-
-            stepTime = System.currentTimeMillis();
-            startTime = stepTime;
 
             request.setAttribute("object", reportObject);
             request.setAttribute("reportObject", reportObject);
@@ -112,9 +106,9 @@ public class ReportController extends InterMineAction
                 String taggedType = getTaggedType(fd);
 
                 // assign lists to any aspects they are tagged to or put in unplaced lists
-                List<Tag> tags =
-                    tagManager.getTags(null, fd.getClassDescriptor().getUnqualifiedName()
-                            + "." + fd.getName(), taggedType, superuser);
+                String fieldPath = fd.getClassDescriptor().getUnqualifiedName()
+                    + "." + fd.getName();
+                List<Tag> tags = tagManager.getTags(null, fieldPath, taggedType, superuser);
                 for (Tag tag : tags) {
                     String tagName = tag.getTagName();
                     if (AspectTagUtil.isAspectTag(tagName)) {
@@ -127,7 +121,7 @@ public class ReportController extends InterMineAction
                     } else if (tagName.equals(TagNames.IM_SUMMARY)) {
                         List<InlineList> summaryLists = placedInlineLists.get(tagName);
                         if (summaryLists == null) {
-                        	summaryLists = new ArrayList<InlineList>();
+                            summaryLists = new ArrayList<InlineList>();
                             placedInlineLists.put(tagName, summaryLists);
                         }
                         summaryLists.add(list);
@@ -139,15 +133,15 @@ public class ReportController extends InterMineAction
                 new ArrayList<InlineList>(reportObject.getNormalInlineLists());
             unplacedInlineLists.removeAll(placedInlineLists.values());
 
-            stepTime = System.currentTimeMillis();
-            LOG.info("TIME placed inline lists: " + (stepTime - startTime) + "ms");
-            startTime = stepTime;
+            long now = System.currentTimeMillis();
+            LOG.info("TIME placed inline lists: " + (now - startTime) + "ms");
+            long stepTime = now;
 
             request.setAttribute("mapOfInlineLists", placedInlineLists);
             request.setAttribute("listOfUnplacedInlineLists", unplacedInlineLists);
 
-            Map<String, Map<String, DisplayField>> placementRefsAndCollections = new TreeMap<String,
-                Map<String, DisplayField>>();
+            Map<String, Map<String, DisplayField>> placementRefsAndCollections =
+                new TreeMap<String, Map<String, DisplayField>>();
             Set<String> aspects =
                 new LinkedHashSet<String>(SessionMethods.getCategories(servletContext));
 
@@ -165,8 +159,8 @@ public class ReportController extends InterMineAction
 
             // summary refs and colls
             Map<String, DisplayField> summaryRefsCols = new TreeMap<String, DisplayField>();
-            placementRefsAndCollections.put(TagNames.IM_SUMMARY, summaryRefsCols);            
-            
+            placementRefsAndCollections.put(TagNames.IM_SUMMARY, summaryRefsCols);
+
             for (Iterator<Entry<String, DisplayField>> iter
                     = reportObject.getRefsAndCollections().entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, DisplayField> entry = iter.next();
@@ -181,9 +175,6 @@ public class ReportController extends InterMineAction
                             placementRefsAndCollections, SessionMethods.isSuperUser(session));
                 }
             }
-
-            stepTime = System.currentTimeMillis();
-            startTime = stepTime;
 
             // remove any fields overridden by displayers
             removeFieldsReplacedByReportDisplayers(reportObject, placementRefsAndCollections);
@@ -242,9 +233,8 @@ public class ReportController extends InterMineAction
             if (!categories.isEmpty()) {
                 request.setAttribute("categories", categories);
             }
-            stepTime = System.currentTimeMillis();
-            LOG.info("TIME made list of categories: " + (stepTime - startTime) + "ms");
-            startTime = stepTime;
+            now = System.currentTimeMillis();
+            LOG.info("TIME made list of categories: " + (now - stepTime) + "ms");
         }
 
         return null;
@@ -311,12 +301,13 @@ public class ReportController extends InterMineAction
                     miscRefs.remove(fd.getName());
                 }
             } else if (tagName.equals(TagNames.IM_SUMMARY)) {
-            	Map<String, DisplayField> summary = placementRefsAndCollections.get(TagNames.IM_SUMMARY);
+                Map<String, DisplayField> summary =
+                    placementRefsAndCollections.get(TagNames.IM_SUMMARY);
                 if (summary != null) {
-                	summary.put(fd.getName(), dispRef);
-                	miscRefs.remove(fd.getName());
+                    summary.put(fd.getName(), dispRef);
+                    miscRefs.remove(fd.getName());
                 }
-	            miscRefs.remove(fd.getName());
+                miscRefs.remove(fd.getName());
             }
         }
     }
