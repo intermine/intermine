@@ -87,10 +87,19 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     // expect each input string to match one object
     public void testSearchForBagMatches() throws Exception {
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
-        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
+        BagQueryResult res = runner.search("Employee", input, null, true, true);
         assertEquals(2, res.getMatches().values().size());
         assertTrue(res.getIssues().isEmpty());
         assertTrue(res.getUnresolved().isEmpty());
+    }
+
+    // expect each input string to match one object
+    public void testCase() throws Exception {
+        List input = Arrays.asList(new Object[] {"employeeA1", "employeeA2"});
+        BagQueryResult res = runner.search("Employee", input, null, true, true);
+        assertTrue(res.getMatches().isEmpty());
+        assertTrue(res.getIssues().isEmpty());
+        assertEquals(2, res.getUnresolved().size());
     }
 
 
@@ -286,6 +295,7 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
         assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("searching key fields").get("EmployeeA*")));
         assertEquals(ids, new HashSet(res.getIssues().get(BagQueryResult.WILDCARD).get("Employable by name").get("EmployeeA*")));
     }
+
 
     // we need to test a query that matches a different type.  Probably
     // need to add another query to: testmodel/webapp/main/resources/webapp/WEB-INF/bag-queries.xml
