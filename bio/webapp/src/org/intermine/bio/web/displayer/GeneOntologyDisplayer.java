@@ -105,7 +105,7 @@ public class GeneOntologyDisplayer extends ReportDisplayer
             Model model = im.getModel();
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
 
-            InterMineObject object = (InterMineObject) request.getAttribute("object");
+            InterMineObject object = (InterMineObject) reportObject.getObject();
             String primaryIdentifier = null;
             try {
                 primaryIdentifier = (String) object.getFieldValue("primaryIdentifier");

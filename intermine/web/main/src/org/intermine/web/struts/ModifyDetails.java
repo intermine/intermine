@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
+import org.directwebremoting.WebContextFactory;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -35,6 +36,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.results.ReportObjectFactory;
@@ -42,7 +44,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
 /**
- * Action to handle events related to displaying inline templates.
+ * Action to handle events related to displaying Report templates and displayers
  *
  * @author Mark Woodbridge
  */
@@ -258,6 +260,42 @@ public class ModifyDetails extends DispatchAction
         return mapping.findForward("reportTemplateTable");
     }
 
+    public ActionForward ajaxShowDisplayer(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) {
+		// fetch params from request
+		String displayerName = request.getParameter("name");
+        String reportObjectID = request.getParameter("id");    	
+    	
+    	// get ReportObject
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        ObjectStore os = im.getObjectStore();
+        
+		try {
+			InterMineObject o = os.getObjectById(new Integer(reportObjectID));
+			
+	        ReportObjectFactory reportObjects = SessionMethods.getReportObjects(session);
+	        ReportObject reportObject = reportObjects.get(o);			
+			
+	    	// get ReportDisplayer
+	    	ReportDisplayer d = reportObject.getReportDisplayer(displayerName);
+	    	
+	    	// forward
+	    	ComponentContext cc = new ComponentContext();
+	    	cc.putAttribute("reportObject", reportObject);
+	    	cc.putAttribute("displayer", d);
+	    	
+	        new ReportDisplayerController().execute(cc, mapping, form, request, response);
+	        request.setAttribute("org.apache.struts.taglib.tiles.CompContext", cc);
+	    	
+	    	return mapping.findForward("reportDisplayer");
+		
+		} catch (ObjectStoreException e) {
+			e.printStackTrace();
+		}
+		return null;
+    }
+    
     /**
      * Construct an ActionForward to the object details page.
      */

@@ -68,6 +68,7 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -82,12 +83,15 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.displayer.InterMineLinkGenerator;
+import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
+import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
@@ -100,6 +104,7 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.web.struts.ForwardParameters;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -1460,5 +1465,4 @@ public class AjaxServices
 
         return lists.toString();
     }
-
 }

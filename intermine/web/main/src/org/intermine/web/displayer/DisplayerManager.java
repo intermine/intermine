@@ -125,4 +125,22 @@ public final class DisplayerManager
         return displayers.get(type);
     }
 
+    /**
+     * Get a specific ReportDisplayer by its name for a given ReportObject type
+     * @param objectType
+     * @param name
+     * @return
+     */
+	public ReportDisplayer getReportDisplayerByName(String objectType,
+			String name) {
+		for (List<ReportDisplayer> l : displayers.get(objectType).values()) {
+			for (ReportDisplayer d : l) {
+				if (d.getDisplayerName().equals(name)) {
+					return d;
+				}
+			}
+		}
+		return null;
+	}
+
 }

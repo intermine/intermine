@@ -123,6 +123,9 @@ form#fly-atlas-options table tr td { padding:6px; }
 #mine-pathway-displayer th.loading { background-image:url('../images/icons/ajax-loader.gif'); padding-left:22px;
 	background-repeat:no-repeat; background-position:0 5px; }
 
+/* Displayer Wrappers */
+div.wrapper { margin-bottom:30px; }
+
 /* resizing on small screens */
 @media only screen and (max-width:1440px) {
     /* header summary fields */

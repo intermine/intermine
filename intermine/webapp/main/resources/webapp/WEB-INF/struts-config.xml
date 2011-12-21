@@ -183,6 +183,7 @@
       <forward name="results" path="/results.do" redirect="true"/>
       <forward name="reportCollectionTable" path="/reportCollectionTable.jsp"/>
       <forward name="reportTemplateTable" path="/reportTemplateTable.jsp"/>
+      <forward name="reportDisplayer" redirect="false" path="/reportDisplayer.jsp"/>
       <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
     </action>
     <action path="/editTemplate" type="org.intermine.web.struts.EditTemplateAction">
