@@ -40,17 +40,30 @@ import org.intermine.web.logic.results.InlineResultsTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
-public class GeneExpressionAtlasDisplayer extends ReportDisplayer {
+/**
+ * Gene Expression Atlas Displayer (Blue/Green)
+ * @author rs676
+ *
+ */
+public class GeneExpressionAtlasDisplayer extends ReportDisplayer
+{
 
     /** @var column keys we have in the results table */
-    private ArrayList<String> expressionColumns =  new ArrayList<String>() {{
-        add("condition");
-        add("expression");
-        add("pValue");
-        add("tStatistic");
-        add("type");
-    }};
+    private ArrayList<String> expressionColumns =  new ArrayList<String>() {
+        {
+            add("condition");
+            add("expression");
+            add("pValue");
+            add("tStatistic");
+            add("type");
+        }
+    };
 
+    /**
+     * Constructor
+     * @param config .
+     * @param im .
+     */
     public GeneExpressionAtlasDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
@@ -85,36 +98,37 @@ public class GeneExpressionAtlasDisplayer extends ReportDisplayer {
 
             // attach to results
             request.setAttribute("expressions", geae);
-            request.setAttribute("url", "http://www.ebi.ac.uk/gxa/experiment/E-MTAB-62/" + genePrimaryID);
+            request.setAttribute("url", "http://www.ebi.ac.uk/gxa/experiment/E-MTAB-62/"
+                    + genePrimaryID);
             request.setAttribute("defaultPValue", "1e-4");
             request.setAttribute("defaultTValue", "2");
-            
+
             // get the corresponding collection
-	        for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
-	            if ("atlasExpression".equals(fd.getName()) && fd.isCollection()) {
-	                // fetch the collection
-	                Collection<?> collection = null;
-	                try {
-	                    collection = (Collection<?>)
-	                        reportObject.getObject().getFieldValue("atlasExpression");
-	                } catch (IllegalAccessException e) {
-	                    e.printStackTrace();
-	                }
-	                
-	                List<Class<?>> lc = PathQueryResultHelper.
-	                        queryForTypesInCollection(reportObject.getObject(), "atlasExpression",
-	                                im.getObjectStore());
-	                
+            for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
+                if ("atlasExpression".equals(fd.getName()) && fd.isCollection()) {
+                    // fetch the collection
+                    Collection<?> collection = null;
+                    try {
+                        collection = (Collection<?>)
+                            reportObject.getObject().getFieldValue("atlasExpression");
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                    List<Class<?>> lc = PathQueryResultHelper.
+                            queryForTypesInCollection(reportObject.getObject(), "atlasExpression",
+                                    im.getObjectStore());
+
                     // create an InlineResultsTable
                     InlineResultsTable t = new InlineResultsTable(collection,
                             fd.getClassDescriptor().getModel(),
-                            SessionMethods.getWebConfig(request), im.getClassKeys(), collection.size(),
-                            false, lc);
-	                
-	                request.setAttribute("collection", t);
-	                break;
-	            }
-	        }
+                            SessionMethods.getWebConfig(request), im.getClassKeys(),
+                            collection.size(), false, lc);
+
+                    request.setAttribute("collection", t);
+                    break;
+                }
+            }
 
         }
     }
