@@ -16,6 +16,7 @@
     <p>${noResults}</p>
   </c:when>
   <c:otherwise>
+    <p>Total number of publications:  ${totalNumberOfPubs}</p>
     <table>
       <thead>
         <tr>
