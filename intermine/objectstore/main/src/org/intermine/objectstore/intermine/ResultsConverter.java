@@ -164,33 +164,35 @@ public final class ResultsConverter
                         needPathExpressions = true;
                     } else {
                         currentColumn = sqlResults.getObject(alias);
-                        if (Date.class.equals(node.getType())) {
-                            currentColumn = new Date(((Long) currentColumn).longValue());
-                        } else if (Class.class.equals(node.getType())) {
-                            Set<Class<?>> classes = new HashSet<Class<?>>();
-                            try {
-                                String[] b = ((String) currentColumn).split(" ");
-                                for (int i = 0; i < b.length; i++) {
-                                    classes.add(Class.forName(b[i]));
+                        if (currentColumn != null) {
+                            if (Date.class.equals(node.getType())) {
+                                currentColumn = new Date(((Long) currentColumn).longValue());
+                            } else if (Class.class.equals(node.getType())) {
+                                Set<Class<?>> classes = new HashSet<Class<?>>();
+                                try {
+                                    String[] b = ((String) currentColumn).split(" ");
+                                    for (int i = 0; i < b.length; i++) {
+                                        classes.add(Class.forName(b[i]));
+                                    }
+                                } catch (ClassNotFoundException e) {
+                                    SQLException e2
+                                        = new SQLException("Invalid entry in class column");
+                                    e2.initCause(e);
+                                    throw e2;
                                 }
-                            } catch (ClassNotFoundException e) {
-                                SQLException e2 = new SQLException("Invalid entry in class column");
-                                e2.initCause(e);
-                                throw e2;
+                                if (classes.size() == 1) {
+                                    currentColumn = classes.iterator().next();
+                                } else {
+                                    currentColumn = DynamicUtil.composeClass(classes);
+                                }
+                            } else if (Short.class.equals(node.getType())
+                                    && (currentColumn instanceof Integer)) {
+                                int i = ((Integer) currentColumn).intValue();
+                                currentColumn = new Short((short) i);
+                            } else if (ClobAccess.class.equals(node.getType())) {
+                                currentColumn = ClobAccess.decodeDbDescription(os,
+                                        (String) currentColumn);
                             }
-                            if (classes.size() == 1) {
-                                currentColumn = classes.iterator().next();
-                            } else {
-                                currentColumn = DynamicUtil.composeClass(classes);
-                            }
-                        } else if (Short.class.equals(node.getType())
-                                && (currentColumn instanceof Integer)) {
-                            int i = ((Integer) currentColumn).intValue();
-                            currentColumn = new Short((short) i);
-                        } else if (ClobAccess.class.equals(node.getType())
-                                && currentColumn != null) {
-                            currentColumn = ClobAccess.decodeDbDescription(os,
-                                    (String) currentColumn);
                         }
                         row.add(currentColumn);
                     }
