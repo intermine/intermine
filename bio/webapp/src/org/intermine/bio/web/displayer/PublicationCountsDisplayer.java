@@ -69,12 +69,15 @@ public class PublicationCountsDisplayer extends ReportDisplayer
         ObjectStore os = im.getObjectStore();
         Results results = os.execute(q, 2000, true, true, true);
         Iterator<Object> it = results.iterator();
+        int i = 0;
         while (it.hasNext()) {
             ResultsRow rr =  (ResultsRow) it.next();
             Publication pub = (Publication) rr.get(0);
             Long count = (Long) rr.get(1);
             publications.put(pub, count.toString());
+            i++;
         }
+        request.setAttribute("totalNumberOfPubs", i);
         request.setAttribute("results", publications);
         request.setAttribute("type", type);
         if (results.isEmpty()) {
