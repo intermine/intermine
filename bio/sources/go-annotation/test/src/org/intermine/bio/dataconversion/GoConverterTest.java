@@ -45,6 +45,7 @@ public class GoConverterTest extends ItemsTestCase
         writeTempFile(goOboFile, goOboReader);
         writer = new MockItemWriter(new LinkedHashMap());
         converter = new GoConverter(writer, model);
+        converter.setGaff("2.0");
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));
         resolverFactory.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
