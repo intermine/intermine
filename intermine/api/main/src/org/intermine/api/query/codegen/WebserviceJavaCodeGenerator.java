@@ -1,5 +1,34 @@
 package org.intermine.api.query.codegen;
 
+import java.lang.StringBuffer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.lang.StringUtils;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.OuterJoinStatus;
+import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintLookup;
+import org.intermine.pathquery.PathConstraintLoop;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
+import org.intermine.util.TypeUtil;
+
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
@@ -10,42 +39,50 @@ package org.intermine.api.query.codegen;
  *
  */
 
-import java.util.Collection;
-import java.util.Map.Entry;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.OuterJoinStatus;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.pathquery.PathConstraintBag;
-import org.intermine.pathquery.PathConstraintIds;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathConstraintLoop;
-import org.intermine.pathquery.PathConstraintMultiValue;
-import org.intermine.pathquery.PathConstraintSubclass;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
 
 /**
  * This Class generates Java source code of web service client for path query and template query.
  *
  * @author Fengyuan Hu
+ * @author Alex Kalderimis
  *
  */
 public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 {
     protected static final String TEST_STRING = "This is a Java test string...";
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output.";
-    protected static final String NULL_QUERY = "Invalid query. Query can not be null.";
-    protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
-        + "constraint, which is currently not supported.";
+    protected static final String INVALID_QUERY =
+            "/**\n * Invalid query.\n * =============\n * "
+             + "The java code for this query could not be generated for the following reasons:\n";
+    protected static final String NULL_QUERY = "The query is null.";
 
     protected static final String INDENT = "    ";
     protected static final String INDENT2 = INDENT + INDENT;
+    protected static final String INDENT3 = INDENT + INDENT + INDENT;
     protected static final String SPACE = " ";
     protected static final String ENDL = System.getProperty("line.separator");
+
+    private static final String ROOT_IDENTIFIER = "private static final String ROOT = ";
+    private static final String TOKEN_INIT = "private static final String TOKEN = null;";
+    private static final String INTERNAL_FEATURE_MSG
+        = "This query makes use of a feature that is only for internal use";
+
+    private static final String OUTER_JOIN_TITLE = "Outer Joins";
+    private static final String OUTER_JOIN_EXPL
+        = "Show all information about these relationships if they exist, but do not require that they exist.";
+
+    private static final String TEMPLATE_PARAMS_INIT
+        = "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();";
+    private static final String TEMPLATE_PARAMS_EXPL
+        = "Edit the template parameter values to get different results";
+
+    private static final String FLT_FMT = "g";
+    private static final String DATE_FMT = "tc";
+    private static final String INT_FMT = "d";
+    private static final String BOOL_FMT = "b";
+    private static final String STR_FMT = "s";
+    private static final String GET_ITERATOR
+        = "Iterator<List<Object>> rows = service.getRowListIterator(";
+    private static final String INIT_OUT = "PrintStream out = System.out;";
 
     /**
      * This method will generate web service source code in Java from a path query
@@ -58,90 +95,86 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
-        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
-        String projectTitle = wsCodeGenInfo.getProjectTitle();
 
         // query is null
         if (query == null) {
-            return NULL_QUERY;
+            return INVALID_QUERY + formatProblems(Arrays.asList(NULL_QUERY));
         }
 
-        String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
-        StringBuffer pac = new StringBuffer();
-        StringBuffer impJava = new StringBuffer();
-        StringBuffer impIM = new StringBuffer();
-        StringBuffer sb = new StringBuffer();
+        StringBuffer packageName = new StringBuffer();
+        Set<String> javaImports = new TreeSet<String>();
+        Set<String> intermineImports = new TreeSet<String>();
+        StringBuffer codeBody = new StringBuffer();
 
-        if ("PathQuery".equals(queryClassName)) {
-            if (query.getView() == null || query.getView().isEmpty()) {
-                return INVALID_QUERY;
+        try {
+            if (query instanceof TemplateQuery) {
+                generateTemplateQueryCode(wsCodeGenInfo, packageName, javaImports, intermineImports, codeBody);
             } else {
-                sb = generatePathQueryCode(wsCodeGenInfo, pac, impJava, impIM, sb);
+                generatePathQueryCode(wsCodeGenInfo, packageName, javaImports, intermineImports, codeBody);
             }
-        } else if ("TemplateQuery".equals(queryClassName)) {
-            sb = generateTemplateQueryCode(wsCodeGenInfo, pac, impJava, impIM, sb);
+        } catch (InvalidQueryException e) {
+            return INVALID_QUERY + formatProblems(e.getProblems());
         }
 
-        if (!TEMPLATE_BAG_CONSTRAINT.equals(sb.toString())) {
-            return pac.toString() + impJava.toString() + ENDL
-                    + impIM.toString() + ENDL + sb.toString();
-        } else {
-            return sb.toString();
-        }
+        return "package " + packageName.toString() + ";" + ENDL
+                + ENDL
+                + importsToString(javaImports)
+                + ENDL
+                + importsToString(intermineImports)
+                + ENDL
+                + codeBody.toString();
     }
 
-    /**
-     * This method will generate Java source code for PathQuery.
-     * @param query a PathQuery object
-     * @param serviceBaseURL webservice base url, like "http://www.flymine.org"
-     * @param projectTitle the name of mine
-     * @param pac a StringBuffer to hold the package string
-     * @param impJava a StringBuffer to hold all the import strings from standard Java classes
-     * @param impIM a StringBuffer to hold all the import strings from InterMine classes
-     * @param sb a StringBuffer to hold the rest of the source code strings
-     * @return sb
-     */
-    private StringBuffer generatePathQueryCode(WebserviceCodeGenInfo info,
-            StringBuffer pac, StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
-        // Add package and import
-        pac.append("package ")
-            .append(TypeUtil.javaisePackageName(info.getProjectTitle()))
-            .append(";" + ENDL + ENDL);
+    private static String importsToString(Collection<? extends String> imports) {
+        StringBuffer sb = new StringBuffer();
+        for (String s : imports) {
+            sb.append("import " + s + ";" + ENDL);
+        }
+        return sb.toString();
+    }
 
-        impJava.append("import java.io.IOException;" + ENDL)
-            .append("import java.util.List;" + ENDL);
+    private static String formatProblems(Collection<? extends String> problems) {
+        StringBuffer sb = new StringBuffer();
+        int c = 1;
+        for (String s : problems) {
+            sb.append(" * " + c + ". " + s + ENDL);
+            c++;
+        }
+        return sb.toString() + " **/";
+    }
 
-        impIM.append("import org.intermine.metadata.Model;" + ENDL)
-            .append("import org.intermine.webservice.client.core.ServiceFactory;" + ENDL)
-            .append("import org.intermine.webservice.client.services.ModelService;" + ENDL)
-            .append("import org.intermine.webservice.client.services.QueryService;" + ENDL)
-            .append("import org.intermine.pathquery.PathQuery;" + ENDL);
+    private String getIntro(WebserviceCodeGenInfo info) {
+        final String src = info.getProjectTitle();
+        final String author = (StringUtils.isBlank(info.getUserName())) ? src : info.getUserName();
+        StringBuffer sb = new StringBuffer();
+        sb.append("/**" + ENDL);
+        sb.append(" * This is a Java program to run a query from " + src + "." + ENDL);
+        sb.append(" * It was automatically generated at " + new Date().toString()  + ENDL);
+        sb.append(" *" + ENDL);
+        if (StringUtils.isNotBlank(info.getQuery().getDescription())) {
+            sb.append(" * " + info.getQuery().getDescription() + ENDL + ENDL);
+        }
+        sb.append(" * " + "@author " + author + ENDL);
+        sb.append(" *" + ENDL);
+        sb.append(" */" + ENDL);
+        return sb.toString();
+    }
 
-        // Add class comments
-        sb.append("/**" + ENDL)
-                .append(SPACE + "*" + SPACE
-                        + "This is an automatically generated Java program to run the "
-                        + info.getProjectTitle() + " query." + ENDL)
-            .append(SPACE + "*" + ENDL)
-            .append(SPACE + "*" + SPACE + "@author " + info.getProjectTitle() + ENDL)
-            .append(SPACE + "*" + ENDL)
-            .append(SPACE + "*/" + ENDL);
+    private String generateStartOfClass(WebserviceCodeGenInfo info, String className) {
+        StringBuffer sb = new StringBuffer();
+        String base = info.getServiceBaseURL() + "/service";
 
         // Add class code
-        sb.append("public class QueryClient" + ENDL)
-            .append(
-                "{" + ENDL
-                + INDENT + "private static final String ROOT "
-                    + "= \"" + info.getServiceBaseURL() + "/service\";" + ENDL
-                + ENDL);
+        sb.append("public class " + className + ENDL)
+            .append("{" + ENDL)
+            .append(INDENT + ROOT_IDENTIFIER + qq(base) + ";" + ENDL)
+            .append(ENDL);
         if (!info.isPublic()) {
             sb.append(
-                INDENT + "//Add your login details here by setting your password." + ENDL
-              + INDENT + "private static final String USERNAME = \"" + info.getUserName() + "\";" + ENDL
-              + INDENT + "private static final String PASSWORD = null;" + ENDL
+                INDENT + "//Authenticate your request by providing an API access token." + ENDL
+              + INDENT + TOKEN_INIT + ENDL
               + ENDL);
         }
-
         // Add methods code
         // Add Main method
         sb.append(
@@ -150,287 +183,349 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             + INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL
             + INDENT + SPACE + "*" + SPACE + "@throws IOException" + ENDL
             + INDENT + SPACE + "*/" + ENDL);
-
-        sb.append(
-            INDENT + "public static void main(String[] args) {" + ENDL
-            + INDENT2 + "ServiceFactory factory = new ServiceFactory(ROOT);" + ENDL
-            + INDENT2 + "Model model = factory.getModelService().getModel();" + ENDL
-            + INDENT2 + "QueryService service = factory.getQueryService();" + ENDL
-            + INDENT2 + "PathQuery query = new PathQuery(model);" + ENDL
-            + ENDL);
-
-        // If we need to authenticate, do that now.
-        if (!info.isPublic()) {
-            sb.append(
-                 INDENT2 + "// Log in to access the private lists in this query" + ENDL
-               + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
-               + ENDL);
+        sb.append(INDENT + "public static void main(String[] args) throws IOException {" + ENDL);
+        if (info.isPublic()) {
+            sb.append(INDENT2 + "ServiceFactory factory = new ServiceFactory(ROOT);" + ENDL);
+        } else {
+            sb.append(INDENT2 + "ServiceFactory factory = new ServiceFactory(ROOT, TOKEN);" + ENDL);
         }
 
+        return sb.toString();
+    }
+
+    /**
+     * This method will generate Java source code for PathQuery.
+     * @param info The information object containing the parameters needed to generate code.
+     * @param packageName the package string
+     * @param javaImports the import strings from standard Java classes
+     * @param intermineImports the import strings from InterMine classes
+     * @param codeBody the body of the generated class
+     */
+    private void generatePathQueryCode(WebserviceCodeGenInfo info,
+            StringBuffer packageName, Set<String> javaImports, Set<String> intermineImports,
+            StringBuffer codeBody)
+        throws InvalidQueryException {
+
         PathQuery query = info.getQuery();
+
+        // Check the query first.
+        if (!query.isValid()) {
+            throw new InvalidQueryException(query.verifyQuery());
+        }
+
+        // Add package and import
+        packageName.append(TypeUtil.javaisePackageName(info.getProjectTitle()));
+
+        // Add class comments
+        codeBody.append(getIntro(info));
+        codeBody.append(generateStartOfClass(info, "QueryClient"));
+
+        javaImports.add("java.io.IOException");
+
+        intermineImports.addAll(Arrays.asList(
+                "org.intermine.metadata.Model",
+                "org.intermine.webservice.client.core.ServiceFactory",
+                "org.intermine.pathquery.PathQuery"));
+
+
+        codeBody.append(INDENT2 + "Model model = factory.getModel();" + ENDL)
+                .append(INDENT2 + "PathQuery query = new PathQuery(model);" + ENDL)
+                .append(ENDL);
+
+
         // Add views
-        sb.append(INDENT2 + "// Add views" + ENDL);
+        codeBody.append(INDENT2 + "// Select the output columns:" + ENDL);
         if (query.getView().size() > 1) {
             int idx = 1;
             for (String pathString : query.getView()) {
                 if (idx == 1) {
-                    sb.append(INDENT2 + "query.addViews(\"" + pathString + "\"," + ENDL);
+                    codeBody.append(INDENT2 + "query.addViews(\"" + pathString + "\"," + ENDL);
                     idx++;
                     continue;
                 }
                 if (idx == query.getView().size()) {
-                    sb.append(INDENT2 + INDENT2 + "\"" + pathString + "\");" + ENDL);
+                    codeBody.append(INDENT2 + INDENT2 + "\"" + pathString + "\");" + ENDL);
                     break;
                 }
-                sb.append(INDENT2 + INDENT2 + "\"" + pathString + "\"," + ENDL);
+                codeBody.append(INDENT2 + INDENT2 + "\"" + pathString + "\"," + ENDL);
                 idx++;
             }
         } else {
-            sb.append(INDENT + INDENT + "query.addView(\""
+            codeBody.append(INDENT + INDENT + "query.addView(\""
                     + query.getView().iterator().next() + "\");" + ENDL);
         }
 
-        sb.append(ENDL);
+        codeBody.append(ENDL);
 
         // Add orderby
         if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) {
-            impIM.append("import org.intermine.pathquery.OrderDirection;" + ENDL);
-            sb.append(INDENT + INDENT + "// Add orderby" + ENDL);
+            intermineImports.add("org.intermine.pathquery.OrderDirection");
+            codeBody.append(INDENT + INDENT + "// Add orderby" + ENDL);
             for (OrderElement oe : query.getOrderBy()) {
-                sb.append(INDENT + INDENT + "query.addOrderBy(\""
+                codeBody.append(INDENT + INDENT + "query.addOrderBy(\""
                         + oe.getOrderPath() + "\", OrderDirection." + oe.getDirection() + ");"
                         + ENDL);
             }
-
-            sb.append(ENDL);
+            codeBody.append(ENDL);
         }
 
         // Add constraints
+        List<String> constraintProblems = new ArrayList<String>();
         if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
-            impIM.append("import org.intermine.pathquery.Constraints;" + ENDL);
-            sb.append(INDENT + INDENT
-                    + "// Add constraints and you can edit the constraint values below" + ENDL);
+            intermineImports.add("org.intermine.pathquery.Constraints");
+            codeBody.append(INDENT + INDENT
+                    + "// Filter the results with the following constraints:" + ENDL);
             if (query.getConstraints().size() == 1) {
                 PathConstraint pc = query.getConstraints().entrySet()
                         .iterator().next().getKey();
-                String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-                if ("PathConstraintMultiValue".equals(className)) {
-                    impJava.append("import java.util.ArrayList;" + ENDL);
-                    sb.append(INDENT + INDENT
-                            + "List<String> values = new ArrayList<String>();"
+                try {
+                    codeBody.append(INDENT + INDENT + "query.addConstraint("
+                            + pathContraintUtil(pc, javaImports) + ");"
                             + ENDL);
-                    for (String value : ((PathConstraintMultiValue) pc).getValues()) {
-                        sb.append(INDENT + INDENT + "values.add(\"" + value + "\");" + ENDL);
-                    }
+                } catch (UnhandledFeatureException e) {
+                    constraintProblems.add(e.getMessage());
                 }
-                if ("PathConstraintIds".equals(className)) {
-                    impJava.append("import java.util.ArrayList;" + ENDL);
-                    sb.append(INDENT + INDENT
-                            + "List<String> values = new ArrayList<String>();"
-                            + ENDL);
-                    for (Integer id : ((PathConstraintIds) pc).getIds()) {
-                        sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
-                    }
-                }
-                sb.append(INDENT + INDENT + "query.addConstraint("
-                        + pathContraintUtil(pc) + ");"
-                        + ENDL);
             } else {
+                int constraintsWithCodes = 0;
                 for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
                     PathConstraint pc = entry.getKey();
-                    String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-                    if ("PathConstraintMultiValue".equals(className)) {
-                        impJava.append("import java.util.ArrayList;" + ENDL);
-                        sb.append(INDENT + INDENT
-                                + "List<String> values = new ArrayList<String>();"
-                                + ENDL);
-                        for (String value : ((PathConstraintMultiValue) pc).getValues()) {
-                            sb.append(INDENT + INDENT + "values.add(\""
-                                    + value + "\");" + ENDL);
-                        }
+                    String code = entry.getValue();
+                    codeBody.append(INDENT2 + "query.addConstraint(");
+                    String conArg = null;
+                    try {
+                        conArg = pathContraintUtil(pc, javaImports);
+                    } catch (UnhandledFeatureException e) {
+                        constraintProblems.add(e.getMessage());
                     }
-                    if ("PathConstraintIds".equals(className)) {
-                        impJava.append("import java.util.ArrayList;" + ENDL);
-                        sb.append(INDENT + INDENT
-                                + "List<String> values = new ArrayList<String>();"
-                                + ENDL);
-                        for (Integer id : ((PathConstraintIds) pc).getIds()) {
-                            sb.append(INDENT + INDENT + "ids.add(" + id + ");" + ENDL);
-                        }
+                    if (code == null) {
+                        codeBody.append(conArg + ");");
+                    } else {
+                        constraintsWithCodes++;
+                        codeBody.append(conArg + ", " + qq(code) + ");");
                     }
-                    sb.append(INDENT + INDENT + "query.addConstraint("
-                            + pathContraintUtil(pc) + ", \"" + entry.getValue() + "\");"
-                            + ENDL);
-                    sb.append(ENDL);
+                    codeBody.append(ENDL);
                 }
 
                 // Add constraintLogic
-                if (query.getConstraintLogic() != null
-                        && !"".equals(query.getConstraintLogic())) {
-                    sb.append(INDENT + INDENT + "// Add constraintLogic" + ENDL);
-                    sb.append(INDENT + INDENT + "query.setConstraintLogic(\""
-                            + query.getConstraintLogic() + "\");"
-                            + ENDL);
+                if (constraintsWithCodes > 1 && StringUtils.isNotBlank(query.getConstraintLogic())) {
+                    codeBody.append(INDENT2 + "// Specify how these constraints should be combined." + ENDL);
+                    codeBody.append(INDENT2 + "query.setConstraintLogic(")
+                            .append("\"" + query.getConstraintLogic() + "\"")
+                            .append(");" + ENDL);
                 }
             }
-
-            sb.append(ENDL);
+            codeBody.append(ENDL);
+        }
+        if (!constraintProblems.isEmpty()) {
+            throw new InvalidQueryException(constraintProblems);
         }
 
         // Add join status
         if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
-            impIM.append("import org.intermine.pathquery.OuterJoinStatus;" + ENDL);
-            sb.append(INDENT2 + "// Add join status" + ENDL);
+            intermineImports.add("org.intermine.pathquery.OuterJoinStatus");
+            codeBody.append(INDENT2 + "// " + OUTER_JOIN_TITLE + ENDL);
+            codeBody.append(INDENT2 + "// " + OUTER_JOIN_EXPL + ENDL);
             for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                sb.append(INDENT2 + "query.setOuterJoinStatus(\""
-                        + entry.getKey() + "\", OuterJoinStatus." + entry.getValue() + ");"
-                        + ENDL);
+                // There is no need to declare INNER joins
+                if (entry.getValue() == OuterJoinStatus.OUTER) {
+                    codeBody.append(INDENT2 + "query.setOuterJoinStatus(\""
+                            + entry.getKey() + "\", OuterJoinStatus." + entry.getValue() + ");"
+                            + ENDL);
+                }
             }
 
-            sb.append(ENDL);
+            codeBody.append(ENDL);
         }
 
-        // Add description?
-
         // Add display results code
-        sb.append(INDENT2 + "List<List<String>> result = service.getAllResults(query);" + ENDL
-                + INDENT2 + "List<String> view = query.getView();" + ENDL
-                + INDENT2 + "System.out.println(\"Results:\");" + ENDL
-                + INDENT2 + "for (List<String> row : result) {" + ENDL
-                + INDENT2 + INDENT + "for (String cell : row) {" + ENDL
-                + INDENT2 + INDENT2 + "System.out.print(cell + \" \");" + ENDL
-                + INDENT2 + INDENT + "}" + ENDL
-                + INDENT2 + INDENT + "System.out.print(\"\\n\");" + ENDL
-                + INDENT2 + "}" + ENDL
-                + INDENT + "}" + ENDL
-                + ENDL);
+        intermineImports.add("org.intermine.webservice.client.services.QueryService");
 
-        sb.append("}" + ENDL);
+        codeBody.append(INDENT2 + "QueryService service = factory.getQueryService();" + ENDL);
 
-        return sb;
+        javaImports.add("java.util.List");
+        javaImports.add("java.util.Iterator");
+
+        String[] formats = getFormats(query);
+
+        javaImports.add("java.io.PrintStream");
+        codeBody.append(INDENT2 + INIT_OUT + ENDL);
+
+        if (query.getView().size() == 1) {
+            codeBody.append(INDENT2 + "out.println(" + qq(query.getView().get(0)) + ");" + ENDL);
+        } else {
+            codeBody.append(INDENT2 + "String viewFormat = \"" + formats[1] + "\\n\";" + ENDL);
+            codeBody.append(INDENT2 + "String dataFormat = \"" + formats[0] + "\\n\";" + ENDL);
+            codeBody.append(INDENT2 + "out.printf(viewFormat, query.getView().toArray());" + ENDL);
+        }
+        codeBody.append(INDENT2 + GET_ITERATOR + "query);" + ENDL);
+        codeBody.append(INDENT2 + "while (rows.hasNext()) {" + ENDL);
+        if (query.getView().size() == 1) {
+            codeBody.append(INDENT3 + "out.println(rows.next().get(0));" + ENDL);
+        } else {
+            codeBody.append(INDENT3 + "out.printf(dataFormat, rows.next().toArray());" + ENDL);
+        }
+        codeBody.append(INDENT2 + "}" + ENDL);
+
+        codeBody.append(INDENT2 + "out.printf(\"%d rows\\n\", service.getCount(query));" + ENDL);
+
+        codeBody.append(INDENT + "}" + ENDL + ENDL); // END METHOD
+        codeBody.append("}" + ENDL); // END CLASS
+    }
+
+    private String[] getFormats(PathQuery query) throws InvalidQueryException {
+        List<String> parts = new ArrayList<String>();
+        List<String> viewParts = new ArrayList<String>();
+        int width = (100 - query.getView().size() * 3) / query.getView().size();
+        String prefix = "%-" + width;
+        for (int i = 0; i < query.getView().size(); i++) {
+            parts.add(prefix + "." + width + STR_FMT );
+            viewParts.add(prefix + "." + width + STR_FMT);
+        }
+        String format = StringUtils.join(parts, " | ");
+        String viewFormat = StringUtils.join(viewParts, " | ");
+        return new String[] {format, viewFormat};
     }
 
     /**
      * This method will generate Java source code for TemplateQuery.
-     * @param query a PathQuery object, must cast to TemplateQuery
-     * @param serviceBaseURL webservice base url, like "http://www.flymine.org"
-     * @param projectTitle the name of mine
-     * @param pac a StringBuffer to hold the package string
-     * @param impJava a StringBuffer to hold all the import strings from standard Java classes
-     * @param impIM a StringBuffer to hold all the import strings from InterMine classes
-     * @param sb a StringBuffer to hold the rest of the source code strings
-     * @return sb
+     * @param info The bundle of information needed to construct the generated code.
+     * @param packageName The name of the package should be inserted here.
+     * @param javaImports the import strings from standard Java classes.
+     * @param intermineImports the import strings from InterMine classes.
+     * @param codeBody The body of the class definition.
+     * @throws InvalidQueryException If the query is invalid.
     */
-    private StringBuffer generateTemplateQueryCode(WebserviceCodeGenInfo info,
-            StringBuffer pac, StringBuffer impJava, StringBuffer impIM, StringBuffer sb) {
+    private void generateTemplateQueryCode(WebserviceCodeGenInfo info,
+            StringBuffer packageName,
+            Set<String> javaImports, Set<String> intermineImports,
+            StringBuffer codeBody)
+        throws InvalidQueryException {
 
         TemplateQuery template = (TemplateQuery) info.getQuery();
-        if (template.getBagNames().size() > 0) {
-            return new StringBuffer(TEMPLATE_BAG_CONSTRAINT);
+
+        // Check the query first.
+        if (!template.isValid()) {
+            throw new InvalidQueryException(template.verifyQuery());
         }
+
         String srcClassName = TypeUtil.javaiseClassName(template.getName());
 
         // Add package and import
-        pac.append("package " + TypeUtil.javaisePackageName(info.getProjectTitle()) + ';'
-                + ENDL + ENDL);
+        packageName.append(TypeUtil.javaisePackageName(info.getProjectTitle()));
 
-        impJava.append(
-                "import java.util.ArrayList;" + ENDL
-             +  "import java.util.List;" + ENDL);
+        codeBody.append(getIntro(info));
+        codeBody.append(generateStartOfClass(info, "TemplateQuery" + srcClassName));
 
-        impIM.append(
-              "import org.intermine.webservice.client.core.ServiceFactory;" + ENDL
-            + "import org.intermine.webservice.client.services.TemplateService;" + ENDL
-            + "import org.intermine.webservice.client.template.TemplateParameter;" + ENDL);
+        intermineImports.add("org.intermine.webservice.client.core.ServiceFactory");
+        intermineImports.add("org.intermine.webservice.client.template.TemplateParameter");
+        javaImports.addAll(Arrays.asList("java.util.List", "java.util.ArrayList", "java.io.IOException"));
 
-        // Add class comments
-        sb.append("/**" + ENDL)
-            .append(SPACE + "* This is an automatically generated Java program to run the "
-                + info.getProjectTitle() + " template, " + template.getName() +  ENDL);
-        if (!(template.getDescription() == null || "".equals(template.getDescription()))) {
-            sb.append(SPACE + "* Description:" + SPACE + template.getDescription() + ENDL);
-        }
-        sb.append(SPACE + "*" + ENDL)
-            .append(SPACE + "*" + SPACE + "@author " + info.getProjectTitle() + ENDL)
-            .append(SPACE + "*" + ENDL)
-            .append(SPACE + "*/" + ENDL);
-
-        // Add class code
-        sb.append("public class Template" + srcClassName + ENDL
-            + "{" + ENDL
-            + INDENT + "private static final String ROOT = \"" + info.getServiceBaseURL()
-                     + "/service\";" + ENDL
-            + ENDL);
-
-        if (!info.isPublic()) {
-               sb.append(
-                   INDENT + "//Add your login details here by setting your password." + ENDL
-                + INDENT + "private static final String USERNAME = \"" + info.getUserName() + "\";" + ENDL
-                + INDENT + "private static final String PASSWORD = null;" + ENDL
-                + ENDL);
-        }
-
-        // Add methods code
-        // Add Main method
-        sb.append(INDENT + "/**" + ENDL)
-            .append(INDENT + SPACE + "*" + SPACE + "@param args command line arguments" + ENDL)
-            .append(INDENT + SPACE + "*/" + ENDL);
-
-        sb.append(
-              INDENT + "public static void main(String[] args) {" + ENDL
-            + ENDL+ INDENT2
-            + "TemplateService service = new ServiceFactory(ROOT).getTemplateService();" + ENDL
-            + ENDL);
-
-        if (!info.isPublic()) {
-            sb.append(
-                    INDENT2 + "// Log in to access this template" + ENDL
-                 + INDENT2 + "service.setAuthentication(USERNAME, PASSWORD);" + ENDL
-                 + ENDL);
-        }
-
-        sb.append(
-            INDENT2 + "List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();" + ENDL
-            + INDENT2 + "// You can edit the constraint values below" + ENDL);
+        codeBody.append(INDENT2 + "// " + TEMPLATE_PARAMS_EXPL + ENDL);
+        codeBody.append(INDENT2 + TEMPLATE_PARAMS_INIT + ENDL);
 
         // Only editable constraints will be generated
-        for (PathConstraint pc : template.getEditableConstraints()) {
+        List<PathConstraint> editableConstraints = template.getEditableConstraints();
+        if (editableConstraints == null || editableConstraints.isEmpty()) {
+            throw new InvalidQueryException("This template has no editable constraints");
+        }
+        List<String> constraintProblems = new ArrayList<String>();
+        for (PathConstraint pc : editableConstraints) {
             String constraintDes = template.getConstraintDescription(pc);
-            if (constraintDes == null || "".equals(constraintDes)) {
-            } else {
-                sb.append(INDENT + INDENT + "// Constraint description - "
-                        + constraintDes + ENDL);
+            if (StringUtils.isNotBlank(constraintDes)) {
+                codeBody.append(INDENT2 + "// " + constraintDes + ENDL);
             }
-            sb.append(INDENT + INDENT + templateConstraintUtil(pc) + ENDL);
+            String code = template.getConstraints().get(pc);
+            try {
+                codeBody.append(INDENT2 + templateConstraintUtil(pc, code, javaImports) + ENDL);
+            } catch (UnhandledFeatureException e) {
+                constraintProblems.add(e.getMessage());
+            }
+        }
+        if (!constraintProblems.isEmpty()) {
+            throw new InvalidQueryException(constraintProblems);
         }
 
-        sb.append(ENDL);
+        codeBody.append(ENDL);
+        intermineImports.add("org.intermine.webservice.client.services.TemplateService");
+        javaImports.add("java.util.Iterator");
+
+        String[] formats = getFormats(template);
+
+        String[] quotedViews = new String[template.getView().size()];
+        int i = 0;
+        for (String view: template.getView()) {
+            quotedViews[i] = qq(view);
+            i++;
+        }
 
         // Add display results code
-        sb.append(
+        codeBody.append(
               INDENT2 + "// Name of template" + ENDL
             + INDENT2 + "String name = \"" + template.getName() + "\";" + ENDL
+            + INDENT2 + "// Template Service - use this object to fetch results." + ENDL
+            + INDENT2 + "TemplateService service = factory.getTemplateService();" + ENDL
             + ENDL
-            + INDENT2 + "List<List<String>> rows = " + "service.getAllResults(name, parameters);" + ENDL
-            + INDENT2 + "System.out.println(\"Results:\");" + ENDL
-            + INDENT2 + "for (List<String> row : rows) {" + ENDL
-            + INDENT2 + INDENT + "for (String cell : row) {" + ENDL
-            + INDENT2 + INDENT + INDENT + "System.out.print(cell + \" \");" + ENDL
-            + INDENT2 + INDENT + "}" + ENDL
-            + INDENT2 + INDENT + "System.out.print(\"\\n\");" + ENDL
-            + INDENT2 + "}" + ENDL
-            + INDENT + "}" + ENDL
-            + "}" + ENDL);
+            + INDENT2 + "System.out.printf(\"" + formats[1] + "\\n\", " + StringUtils.join(quotedViews, ", ") + ");" + ENDL
+            + INDENT2 + "Iterator<List<Object>> rows = " + "service.getRowListIterator(name, parameters);" + ENDL
+            + INDENT2 + "while (rows.hasNext()) {" + ENDL
+            + INDENT2 + INDENT + "System.out.printf(\"" + formats[0] + "\\n\", rows.next().toArray());" + ENDL
+            + INDENT2 + "}" + ENDL);
+        codeBody.append(INDENT2 + "System.out.printf(\"%d rows\\n\", service.getCount(name, parameters));" + ENDL);
 
-        return sb;
+        codeBody.append(INDENT + "}" + ENDL + ENDL); // END METHOD
+        codeBody.append("}" + ENDL); // END CLASS
+
+    }
+
+    /**
+     * Format a list at a certain indentation, so
+     * <pre>
+     *  ["a string", "another string", "yet another string"]
+     * </pre>
+     * Becomes:
+     * <pre>
+     *  "\"a string\", "\"another string\",\n    \"yet another string\""
+     * </pre>
+     */
+    private String formatList(Collection<String> items, int indentation) {
+        String indent = "";
+        for (int i = 0; i < indentation; i++) {
+            indent += INDENT;
+        }
+        StringBuffer sb = new StringBuffer();
+        StringBuffer currentLine = new StringBuffer();
+        Iterator<String> it = items.iterator();
+        int limit = 25;
+        while (currentLine.length() < limit && it.hasNext()) {
+            String next = "\"" + it.next() + "\"";
+            if (it.hasNext()) {
+                next += ", ";
+            }
+            if (next.length() >= limit) {
+                sb.append(currentLine.toString().trim());
+                currentLine = new StringBuffer(indent);
+                limit = 100;
+            }
+            currentLine.append(next);
+            if (currentLine.length() >= limit) {
+                sb.append(currentLine.toString().trim());
+                currentLine = new StringBuffer(indent);
+                limit = 100;
+            }
+        }
+        if (currentLine.length() > 0 && !indent.equals(currentLine.toString())) {
+            sb.append(currentLine.toString().trim());
+        }
+        return sb.toString();
     }
 
     /**
      * This method helps to generate constraint source code for PathQuery
      * @param pc PathConstraint object
      * @return a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
+     * @throws UnhandledFeatureException
      */
-    private String pathContraintUtil(PathConstraint pc) {
+    private String pathContraintUtil(PathConstraint pc, Set<String> javaImports) throws UnhandledFeatureException {
         // Generate a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
         // Ref to Constraints
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
@@ -492,24 +587,20 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintIds".equals(className)) {
-            // can not test from webapp
-            if (op.equals(ConstraintOp.IN)) {
-                return "Constraints.inIds(\"" + path + "\", ids)";
-            }
-
-            if (op.equals(ConstraintOp.NOT_IN)) {
-                return "Constraints.notInIds(\"" + path + "\", ids)";
-            }
+            throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG + " (" + className + ")");
         }
 
         if ("PathConstraintMultiValue".equals(className)) {
+            javaImports.add("java.util.Arrays");
+            String method = null;
+            String values = "Arrays.asList(" + formatList(((PathConstraintMultiValue) pc).getValues(), 2) + ")";
             if (op.equals(ConstraintOp.ONE_OF)) {
-                return "Constraints.oneOfValues(\"" + path + "\", values)";
+                method = "oneOfValues";
             }
-
             if (op.equals(ConstraintOp.NONE_OF)) {
-                return "Constraints.noneOfValues(\"" + path + "\", values)";
+                method = "noneOfValues";
             }
+            return "Constraints." + method + "(\"" + path + "\", " + values + ");";
         }
 
         if ("PathConstraintNull".equals(className)) {
@@ -523,7 +614,6 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintSubclass".equals(className)) {
-            // can not test from webapp
             String type = ((PathConstraintSubclass) pc).getType();
             return "Constraints.type(\"" + path + "\", \"" + type + "\")";
         }
@@ -542,84 +632,47 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         return null;
     }
 
+    private static String qq(String input) {
+        if (input == null) {
+            return "null";
+        } else {
+            return "\"" + input + "\"";
+        }
+    }
+
     /**
      * This method helps to generate Template Parameters (predefined constraints) source code for
      * TemplateQuery
      * @param pc PathConstraint object
      * @return a line of source code
      */
-    private String templateConstraintUtil(PathConstraint pc) {
+    private String templateConstraintUtil(PathConstraint pc, String code, Set<String> javaImports) throws UnhandledFeatureException {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-        String path = pc.getPath();
-        String op = pc.getOp().toString();
 
-        if ("PathConstraintAttribute".equals(className)) {
-            String value = ((PathConstraintAttribute) pc).getValue();
-            if ("=".equals(op)) { op = "eq"; }
-            if ("!=".equals(op)) { op = "ne"; }
-            if ("<".equals(op)) { op = "lt"; }
-            if ("<=".equals(op)) { op = "le"; }
-            if (">".equals(op)) { op = "gt"; }
-            if (">=".equals(op)) { op = "ge"; }
-            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
-                    + op + "\", \"" + value + "\"));";
+        if ("PathConstraintIds".equals(className) || "PathConstraintSubclass".equals(className)) {
+            throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG + "(" + className + ")");
         }
 
-        if ("PathConstraintLookup".equals(className)) {
-            String value = ((PathConstraintLookup) pc).getValue();
-            String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
-                + op + "\", \"" + value + "\", \"" + extraValue + "\"));";
-        }
+        String path = qq(pc.getPath());
+        String op = qq(pc.getOp().toString());
 
-        // Bag constraint is not supported
-        if ("PathConstraintBag".equals(className)) {
+        String prefix = "parameters.add(new TemplateParameter(" + path + ", " + op;
+        code = qq(code);
 
-        }
-
-        if ("PathConstraintIds".equals(className)) {
-            // can not test from webapp
-            Collection<Integer> ids = ((PathConstraintIds) pc).getIds();
-            StringBuilder idSB = new StringBuilder();
-            for (Integer id : ids) {
-                idSB.append(id);
-                idSB.append(",");
+        Collection<String> values = PathConstraint.getValues(pc);
+        if (values == null) {
+            String value = qq(PathConstraint.getValue(pc));
+            String extraValue = qq(PathConstraint.getExtraValue(pc));
+            return prefix + ", " + value + ", " + extraValue + ", " + code + "));";
+        } else {
+            javaImports.add("java.util.Arrays");
+            String[] quoted = new String[values.size()];
+            int i = 0;
+            for (String s: values) {
+                quoted[i] = qq(s);
+                i++;
             }
-            idSB.deleteCharAt(idSB.lastIndexOf(","));
-            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
-                + op + "\", \"" + idSB.toString() + "\"));";
+            return prefix + ", Arrays.asList(" + StringUtils.join(quoted, ", ") + "), " + code + "));";
         }
-
-        if ("PathConstraintMultiValue".equals(className)) {
-            Collection<String> values = ((PathConstraintMultiValue) pc).getValues();
-            StringBuilder multiSB = new StringBuilder();
-            for (String value : values) {
-                multiSB.append(value);
-                multiSB.append(",");
-            }
-            multiSB.deleteCharAt(multiSB.lastIndexOf(","));
-
-            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
-                + op + "\", \"" + multiSB.toString() + "\"));";
-
-        }
-
-        if ("PathConstraintNull".equals(className)) {
-            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
-                + op + "\", \"" + op + "\"));";
-        }
-
-        if ("PathConstraintSubclass".equals(className)) {
-            // not handled
-        }
-
-        // Loop constraint is uneditable
-        if ("PathConstraintLoop".equals(className)) {
-            String loopPath = ((PathConstraintLoop) pc).getLoopPath();
-            return "parameters.add(new TemplateParameter(\"" + path + "\", \""
-                + op + "\", \"" + loopPath + "\"));";
-        }
-
-        return null;
     }
 }
