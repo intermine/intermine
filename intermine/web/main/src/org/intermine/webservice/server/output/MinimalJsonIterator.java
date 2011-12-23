@@ -11,22 +11,13 @@ package org.intermine.webservice.server.output;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.model.InterMineObject;
-import org.intermine.pathquery.Path;
-import org.intermine.web.logic.PortalHelper;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Alexis Kalderimis
@@ -52,7 +43,12 @@ public class MinimalJsonIterator implements Iterator<JSONArray>
         List<Object> jsonRow = new ArrayList<Object>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement re = row.get(i);
-            jsonRow.add(re.getField());
+            if (re == null) {
+                // In the case of flattened outerjoins.
+                jsonRow.add(null);
+            } else {
+                jsonRow.add(re.getField());
+            }
         }
         JSONArray next = new JSONArray(jsonRow);
         return next;
