@@ -16,10 +16,10 @@ service = Service("TEST_SERVICE_ROOT/service")
 template = service.get_template('TEMP_NAME')
 
 # You can edit the constraint values below
-# A    Employee
+# A    Employee.name
 
 rows = template.rows(
     A = {"op": "NONE OF", "values": "["Employee A1", "EmployeeA2"]"}
 )
 for row in rows:
-    print row
+    print row["name"]

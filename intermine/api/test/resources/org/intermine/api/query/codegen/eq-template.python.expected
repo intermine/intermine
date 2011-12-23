@@ -25,4 +25,4 @@ rows = template.rows(
     A = {"op": "=", "value": "zen"}
 )
 for row in rows:
-    print row
+    print row["organism.shortName"]

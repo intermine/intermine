@@ -13,23 +13,23 @@
 from intermine.webservice import Service
 service = Service("TEST_SERVICE_ROOT/service")
 
-# Get a new query from the service you will be querying:
-query = service.new_query()
+# Get a new query on the class (table) you will be querying:
+query = service.new_query("Gene")
 
 # The view specifies the output columns
 query.add_view(
-    "Gene.primaryIdentifier", "Gene.secondaryIdentifier", "Gene.symbol",
-    "Gene.name", "Gene.organism.shortName"
+    "primaryIdentifier", "secondaryIdentifier", "symbol", "name",
+    "organism.shortName"
 )
 
 # Uncomment and edit the line below (the default) to select a custom sort order:
 # query.add_sort_order("Gene.primaryIdentifier", "ASC")
 
 # You can edit the constraint values below
-query.add_constraint("Gene.length", ">=", "1024", "A")
+query.add_constraint("length", ">=", "1024", "A")
 
 # Uncomment and edit the code below to specify your own custom logic:
 # query.set_logic("A")
 
 for row in query.rows():
-    print row
+    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], row["organism.shortName"]
