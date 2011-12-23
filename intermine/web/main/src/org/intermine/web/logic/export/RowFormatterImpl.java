@@ -55,6 +55,8 @@ public class RowFormatterImpl implements RowFormatter
                 } else {
                     sb.append(getQuoted(o));
                 }
+            } else {
+                sb.append(getQuoted(""));
             }
             if (i < row.size() - 1) {
                 sb.append(delimiter);
