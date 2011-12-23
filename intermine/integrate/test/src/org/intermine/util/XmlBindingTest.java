@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -39,20 +40,12 @@ public class XmlBindingTest extends XMLTestCase {
         setIds(unmarshalled);
         binding.marshal(unmarshalled, sw);
 
-        // read the original into a string
-        BufferedReader originalReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("testmodel_data.xml"), "UTF8"));
-        StringWriter originalWriter = new StringWriter();
-        int c = originalReader.read();
-        while (c != -1) {
-            originalWriter.write(c);
-            c = originalReader.read();
-        }
-        //System.out.println("Original: " + originalWriter.toString());
-        //System.out.println("Generated: " + sw.toString());
-        Diff diff = new Diff(originalWriter.toString(), sw.toString());
+        String expected = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("testmodel_data.xml"));
+
+        Diff diff = new Diff(expected, sw.toString());
         DetailedDiff detail = new DetailedDiff(diff);
         detail.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        assertTrue(detail.getAllDifferences().toString() + ": Original: " + originalWriter.toString() + ", Generated: " + sw.toString(), detail.similar());
+        assertTrue(detail.getAllDifferences().toString() + ": Original: " + expected + ", Generated: " + sw.toString(), detail.similar());
     }
 
 
