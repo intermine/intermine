@@ -248,7 +248,7 @@ public class PathQueryBinding
         try {
             SAXParser.parse(new InputSource(reader), new PathQueryHandler(queries, version));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return queries;
     }
