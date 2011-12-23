@@ -1271,8 +1271,10 @@ public class AjaxServices
                 try {
                     tagManager.addTag(tagName, taggedObject, type, profile);
                 } catch (TagManager.TagNameException e) {
+                    LOG.error("Adding tag failed", e);
                     return e.getMessage();
                 } catch (TagManager.TagNamePermissionException e) {
+                    LOG.error("Adding tag failed", e);
                     return e.getMessage();
                 }
 
