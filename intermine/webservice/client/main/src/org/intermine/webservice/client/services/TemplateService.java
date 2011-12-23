@@ -173,7 +173,14 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
                 int index = i + 1;
                 addParameter("constraint" + index, par.getPathId());
                 addParameter("op" + index, par.getOperation());
-                addParameter("value" + index, par.getValue());
+                String valueIndex = "value" + index;
+                if (par.isMultiValue()) {
+                    for (String value : par.getValues()) {
+                        addParameter(valueIndex, value);
+                    }
+                } else {
+                    addParameter(valueIndex, par.getValue());
+                }
                 if (par.getExtraValue() != null) {
                     addParameter("extra" + index, par.getExtraValue());
                 }
@@ -189,27 +196,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      * @return The names of the available templates.
      */
     public Set<String> getTemplateNames() {
-        Request request = new RequestImpl(
-                RequestType.GET,
-                getRootUrl() + AVAILABLE_TEMPLATES,
-                ContentType.TEXT_TAB);
-        HttpConnection connection = executeRequest(request);
-
-        Set<String> ret = new HashSet<String>();
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getResponseBodyAsStream()));
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                ret.add(line);
-            }
-        } catch (IOException e) {
-            throw new ServiceException("Reading from response stream failed", e);
-        } finally {
-            connection.close();
-        }
-        return ret;
+        return getTemplates().keySet();
     }
 
     /**
@@ -218,6 +205,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
      */
     public Map<String, TemplateQuery> getTemplates() {
      // Have to do this or the model won't be available at the parsing stage...
+
         getFactory().getModel();
         Request request = new RequestImpl(
                 RequestType.GET,
@@ -319,11 +307,14 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
         for (PathConstraint pc: template.getEditableConstraints()) {
             if (template.getSwitchOffAbility(pc) != SwitchOffAbility.OFF) {
-                TemplateParameter tp = new TemplateParameter(
-                        pc.getPath(), pc.getOp().toString(), PathConstraint.getValue(pc));
-                String extraValue = PathConstraint.getExtraValue(pc);
-                if (extraValue != null) {
-                    tp.setExtraValue(extraValue);
+                TemplateParameter tp;
+                String path = pc.getPath();
+                String op = pc.getOp().toString();
+                String code = template.getConstraints().get(pc);
+                if (PathConstraint.getValues(pc) != null) {
+                    tp = new TemplateParameter(path, op, PathConstraint.getValues(pc), code);
+                } else {
+                    tp = new TemplateParameter(path, op, PathConstraint.getValue(pc), PathConstraint.getExtraValue(pc), code);
                 }
                 params.add(tp);
             }

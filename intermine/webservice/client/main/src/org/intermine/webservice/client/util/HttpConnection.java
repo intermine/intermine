@@ -40,6 +40,9 @@ import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.client.exceptions.ServiceUnavailableException;
 
+import org.json.JSONObject;
+import org.json.JSONException;
+
 /**
  * The HttpConnection is class wrapping implementation details of http connection and the
  * implementation can change easily.
@@ -219,6 +222,13 @@ public class HttpConnection
     protected void handleErrorResponse() throws IOException {
 
         String message = executedMethod.getResponseBodyAsString();
+        try {
+            JSONObject jo = new JSONObject(message);
+            message = jo.getString("error");
+        } catch (JSONException e) {
+            // Pass
+        }
+
         switch (executedMethod.getStatusCode()) {
 
             case HttpURLConnection.HTTP_NOT_FOUND:
