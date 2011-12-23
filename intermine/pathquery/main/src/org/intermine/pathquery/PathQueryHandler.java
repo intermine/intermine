@@ -216,7 +216,7 @@ public class PathQueryHandler extends DefaultHandler
             constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
         }
         if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
-            boolean isLoop = false;
+            boolean isLoop = (attrs.get("loopPath") != null);
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
                 try {
                     Path constraintPath2 = q.makePath(path);
@@ -224,7 +224,13 @@ public class PathQueryHandler extends DefaultHandler
                         isLoop = true;
                     }
                 } catch (PathException e) {
-                    LOG.error("Cannot recognise path in constraint: " + path, e);
+                    if (isLoop) {
+                        // A genuine error - rethrow
+                        throw new SAXException("Illegal loop constraint definition", e);
+                    } else {
+                        // Not actually a loop constraint. Ignore.
+                        LOG.error("Cannot recognise path in constraint: " + path, e);
+                    }
                 }
             }
             if (isLoop) {
