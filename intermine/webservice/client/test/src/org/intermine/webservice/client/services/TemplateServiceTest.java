@@ -45,17 +45,15 @@ public class TemplateServiceTest extends TestCase
                 + "&start=0"
                 + "&name=fourConstraints&code2=B&code3=C");
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
-        parameters.add(new TemplateParameter("Employee.name", "contains", "EmployeeA"));
+        parameters.add(new TemplateParameter("Employee.name", "contains", "EmployeeA", null));
 
-        TemplateParameter par1 = new TemplateParameter("Employee.age", "gt", "10");
-        par1.setCode("B");
+        TemplateParameter par1 = new TemplateParameter("Employee.age", "gt", "10", "B");
         parameters.add(par1);
 
-        TemplateParameter par2 = new TemplateParameter("Employee.age", "lt", "60");
-        par2.setCode("C");
+        TemplateParameter par2 = new TemplateParameter("Employee.age", "lt", "60", "C");
         parameters.add(par2);
 
-        parameters.add(new TemplateParameter("Employee.fullTime", "eq", "true"));
+        parameters.add(new TemplateParameter("Employee.fullTime", "eq", "true", null));
         List<List<String>> results = service.getAllResults("fourConstraints", parameters);
         assertEquals(2, results.size());
         // returns 2 results, notice that the logic for constraints B and C is OR -> returns Employee of age 10

@@ -32,10 +32,12 @@ public class LiveTemplatesTest {
         Set<String> unAuthNames = unauthorised.getTemplateNames();
 
         assertTrue(authNames.size() > unAuthNames.size());
-        assertTrue(authNames.contains("ManagerLookup"));
-        assertTrue(authNames.contains("private-template-1"));
-        assertTrue(authNames.contains("ManagerLookup"));
-        assertFalse(unAuthNames.contains("private-template-1"));
+
+        assertTrue(unAuthNames + " should contain ManagerLookup", unAuthNames.contains("ManagerLookup"));
+        assertFalse(unAuthNames + " should not contain private-template-1", unAuthNames.contains("private-template-1"));
+
+        assertTrue(authNames + " should contain ManagerLookup", authNames.contains("ManagerLookup"));
+        assertTrue(authNames + " should contain private-template-1", authNames.contains("private-template-1"));
     }
 
     @Test
@@ -71,14 +73,14 @@ public class LiveTemplatesTest {
     @Test
     public void countWithParams() {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("Manager", "LOOKUP", "David Brent"));
+        params.add(new TemplateParameter("Manager", "LOOKUP", "David Brent", null));
         assertEquals(1, unauthorised.getCount("ManagerLookup", params));
     }
 
     @Test
     public void allResults() {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("Manager", "LOOKUP", "David Brent"));
+        params.add(new TemplateParameter("Manager", "LOOKUP", "David Brent", null));
         List<List<String>> results = unauthorised.getAllResults("ManagerLookup", params);
         assertEquals(1, results.size());
         assertEquals("David Brent", results.get(0).get(0));
@@ -97,7 +99,7 @@ public class LiveTemplatesTest {
     @Test
     public void resultFrom1() {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
+        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner", null));
         assertEquals(5, unauthorised.getCount("CEO_Rivals", params));
         List<List<String>> results = unauthorised.getResults("CEO_Rivals", params, subset);
         assertEquals(2, results.size());
@@ -118,7 +120,7 @@ public class LiveTemplatesTest {
     @Test
     public void allJSONresults1() throws JSONException {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("Manager", "LOOKUP", "David Brent"));
+        params.add(new TemplateParameter("Manager", "LOOKUP", "David Brent", null));
         List<JSONObject> results = unauthorised.getAllJSONResults("ManagerLookup", params);
         assertEquals(1, results.size());
         assertEquals("David Brent", results.get(0).getString("name"));
@@ -127,7 +129,7 @@ public class LiveTemplatesTest {
     @Test
     public void allJSONresults2() throws JSONException {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
+        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner", null));
         List<JSONObject> results = unauthorised.getAllJSONResults("CEO_Rivals", params);
         assertEquals(5, results.size());
         assertEquals("Gogirep", results.get(3).getJSONObject("company").getString("name"));
@@ -146,7 +148,7 @@ public class LiveTemplatesTest {
     @Test
     public void someJSONResults1() throws JSONException {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
+        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner", null));
         List<JSONObject> results = unauthorised.getJSONResults("CEO_Rivals", params, subset);
         assertEquals(2, results.size());
         assertEquals(333836, results.get(1).getInt("salary"));
@@ -167,7 +169,7 @@ public class LiveTemplatesTest {
     @Test
     public void allRowIterator() {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
+        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner", null));
         Iterator<List<String>> it = unauthorised.getAllRowsIterator("CEO_Rivals", params);
         int count = 0;
         while (it.hasNext()) {
@@ -194,7 +196,7 @@ public class LiveTemplatesTest {
     @Test
     public void rowIterator() {
         List<TemplateParameter> params = new ArrayList<TemplateParameter>();
-        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner"));
+        params.add(new TemplateParameter("CEO.name", "!=", "Charles Miner", null));
         Iterator<List<String>> it = unauthorised.getRowIterator("CEO_Rivals", params, subset);
         int count = 0;
         while (it.hasNext()) {
