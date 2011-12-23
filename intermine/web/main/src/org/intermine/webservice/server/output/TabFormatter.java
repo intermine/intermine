@@ -10,7 +10,6 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import org.intermine.web.logic.export.RowFormatter;
 import org.intermine.web.logic.export.RowFormatterImpl;
 
 /**
@@ -19,7 +18,10 @@ import org.intermine.web.logic.export.RowFormatterImpl;
  **/
 public class TabFormatter extends FlatFileFormatter
 {
-	public TabFormatter() {
-		setRowFormatter(new RowFormatterImpl("\t", false));
-	}
+    /**
+     * Constructor.
+     */
+    public TabFormatter() {
+        setRowFormatter(new RowFormatterImpl("\t", true));
+    }
 }
