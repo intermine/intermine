@@ -1,5 +1,28 @@
 package org.intermine.api.query.codegen;
 
+import java.lang.String;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringUtils;
+
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.OuterJoinStatus;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintSubclass;
+import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.template.TemplateQuery;
+import org.intermine.util.TypeUtil;
+
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
@@ -10,25 +33,6 @@ package org.intermine.api.query.codegen;
  *
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.OuterJoinStatus;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.pathquery.PathConstraintBag;
-import org.intermine.pathquery.PathConstraintLookup;
-import org.intermine.pathquery.PathConstraintLoop;
-import org.intermine.pathquery.PathConstraintMultiValue;
-import org.intermine.pathquery.PathConstraintSubclass;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
-import org.intermine.util.TypeUtil;
 
 /**
  * This Class generates Perl source code of web service client for path query and template query.
@@ -38,8 +42,10 @@ import org.intermine.util.TypeUtil;
 public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 {
     protected static final String TEST_STRING = "This is a Java test string...";
-    protected static final String INVALID_QUERY = "Invalid query. No fields selected for output.";
-    protected static final String NULL_QUERY = "Invalid query. Query can not be null.";
+    protected static final String INVALID_QUERY 
+        = "# Invalid query.\n"
+        + "# ==============\n"
+        + "# The code to run this query could not be generated for the following reasons:\n";
     protected static final String PATH_BAG_CONSTRAINT = "This query contains a list constraint, "
         + "which is currently not supported...";
     protected static final String TEMPLATE_BAG_CONSTRAINT = "This template contains a list "
@@ -51,10 +57,23 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     protected static final String SPACE = " ";
     protected static final String ENDL = System.getProperty("line.separator");
 
-    protected static final String BOILERPLATE =
-        "#!/usr/bin/perl" + ENDL
-        + ENDL
-        + "use strict;" + ENDL
+    private static final String SUBCLASS_EXPLANATION 
+        = "Type constraints must come before all mentions of the paths they constrain";
+    private static final String INTERNAL_USE_CONSTRAINT 
+        = "This query makes use of a constraint type that can only be used internally";
+
+    private static final String SEPARATOR_CONSTANT
+        = "# Set the output field separator as tab" + ENDL
+        + "$, = \"\\t\";" + ENDL;
+
+    private static final String NO_WARNINGS_UNDEF
+        = "# Silence warnings when printing null fields" + ENDL
+        + "no warnings ('uninitialized');" + ENDL;
+
+    private static final String SHEBANG = "#!/usr/bin/perl" + ENDL + ENDL;
+
+    protected static final String BOILERPLATE 
+        = "use strict;" + ENDL
         + "use warnings;" + ENDL + ENDL;
 
     protected static final String INTRO =
@@ -79,11 +98,14 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         + "######################################################################" + ENDL
         + ENDL;
 
-    protected static final String RESULTS_PRINTING =
-           "while (<$results>) {" + ENDL
-         + INDENT + "print $_, \"\\n\";" + ENDL
-         + "}" + ENDL
-         + ENDL;
+    private String formatProblems(Collection<String> problems) {
+        StringBuffer sb = new StringBuffer();
+        for (String s: problems) {
+            sb.append("#  * " + s + ENDL);
+        }
+        return sb.toString();
+    }
+
     /**
      * This method will generate web service source code in Perl from a path query
      * or template query.
@@ -95,18 +117,26 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
     public String generate(WebserviceCodeGenInfo wsCodeGenInfo) {
 
         PathQuery query = wsCodeGenInfo.getQuery();
-        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL() + "/service";
+        String serviceBaseURL = wsCodeGenInfo.getServiceBaseURL();
         String projectTitle = wsCodeGenInfo.getProjectTitle();
         String perlWSModuleVer = wsCodeGenInfo.getPerlWSModuleVer();
 
         // query is null
         if (query == null) {
-            return NULL_QUERY;
+            return INVALID_QUERY + formatProblems(Arrays.asList("The query is null"));
         }
 
-        String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
+        if (!query.isValid()) {
+            return INVALID_QUERY + formatProblems(query.verifyQuery());
+        }
 
-        StringBuffer sb = new StringBuffer(BOILERPLATE).append(INTRO);
+        StringBuffer sb = new StringBuffer(SHEBANG)
+                                  .append(INTRO)
+                                  .append(BOILERPLATE)
+                                  .append(SEPARATOR_CONSTANT)
+                                  .append(NO_WARNINGS_UNDEF)
+                                  .append(ENDL);
+
         sb.append("# The following import statement sets " + projectTitle + " as your default"
                 + ENDL);
         if (wsCodeGenInfo.isPublic()) {
@@ -114,157 +144,215 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                     + ENDL);
         } else {
             sb.append("# You must also supply your login details here to access this query" + ENDL);
-            sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "', "
-                    + "'" + wsCodeGenInfo.getUserName() + "', YOUR-PASSWORD;" + ENDL);
+            sb.append("use Webservice::InterMine " 
+                    + perlWSModuleVer 
+                    + " '" + serviceBaseURL + "', "
+                    + "'YOUR-API-TOKEN'" + ENDL);
         }
         sb.append(ENDL);
 
-        if ("PathQuery".equals(queryClassName)) {
-            // Import the client library
-
-            if (query.getDescription() != null && !"".equals(query.getDescription())) {
-                printLine(sb, "# ", "Description: " + query.getDescription());
-                sb.append(ENDL);
-            }
-
-            sb.append("my $query = Webservice::InterMine->new_query;" + ENDL + ENDL);
-
-            // Add views
-            if (query.getView() == null || query.getView().isEmpty()) {
-                return INVALID_QUERY;
-            } else {
-                sb.append("# The view specifies the output columns" + ENDL)
-                    .append("$query->add_view(qw/" + ENDL);
-                for (String pathString : query.getView()) {
-                    sb.append(INDENT + pathString + ENDL);
-                }
-                sb.append("/);" + ENDL);
-            }
-
+        if (StringUtils.isNotBlank(query.getDescription())) {
+            printLine(sb, "# ", "Description: " + query.getDescription());
             sb.append(ENDL);
+        }
 
-            // Add orderBy
-            if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
-                if ( // The default
-                    query.getOrderBy().size() == 1
-                        && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
-                        && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
-                    sb.append("# edit the line below to change the sort order:" + ENDL);
-                    sb.append("# ");
-                } else {
-                    sb.append("# Your custom sort order is specified with the following code:"
-                            + ENDL);
-                }
-                for (OrderElement oe : query.getOrderBy()) {
-                    sb.append("$query->add_sort_order(");
-                    sb.append("'" + oe.getOrderPath() + "', '" + oe.getDirection() + "'");
-                    sb.append(");" + ENDL);
-                }
-                sb.append(ENDL);
+        try {
+            if (query instanceof TemplateQuery) {
+                generateTemplateQueryCode((TemplateQuery) query, sb);
+            } else {
+                generatePathQueryCode(query, sb);
             }
-
-            // Add constraints
-            if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
-                // Add comments for constraints
-                sb.append("# You can edit the constraint values below" + ENDL);
-
-                int codedQueries = 0;
-                List<String> uncodedQueryTexts = new ArrayList<String>();
-                List<String> codedQueryTexts = new ArrayList<String>();
-
-                for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
-                    PathConstraint pc = entry.getKey();
-                    if (entry.getValue() != null) {
-                        codedQueries++;
-                        codedQueryTexts.add(pathContraintUtil(pc, entry.getValue()));
-                    } else {
-                        uncodedQueryTexts.add(pathContraintUtil(pc, entry.getValue()));
-                    }
-                }
-                // Subclass constraints must come first or the query will break
-                for (String text: uncodedQueryTexts) {
-                    sb.append(text);
-                }
-                for (String text: codedQueryTexts) {
-                    sb.append(text);
-                }
-                sb.append(ENDL);
-
-                // Add constraintLogic
-                if (query.getConstraintLogic() != null
-                    && !"".equals(query.getConstraintLogic())) {
-                    String logic = query.getConstraintLogic();
-                    if (codedQueries <= 1 || logic.indexOf("or") == -1) {
-                        sb.append("# Edit the code below to specify your own custom logic:" + ENDL
-                                + "# ");
-                    } else {
-                        sb.append("# Your custom logic is specified with the code below:" + ENDL);
-                    }
-                    sb.append("$query->set_logic(\"" + logic + "\");" + ENDL + ENDL);
-                }
-            }
-
-            // Add join status
-            if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
-                sb.append("# Join status" + ENDL);
-                for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
-                    if (entry.getValue() == OuterJoinStatus.OUTER) {
-                        sb.append("$query->add_outer_join('" + entry.getKey() + "');" + ENDL);
-                    }
-                }
-
-                sb.append(ENDL);
-            }
-
-            // Add print results
-            sb.append("$query->show;" + ENDL);
-
-
-        } else if ("TemplateQuery".equals(queryClassName)) {
-
-            TemplateQuery template = (TemplateQuery) query;
-            String templateName = template.getName();
-            String description = template.getDescription();
-            Map<PathConstraint, String> allConstraints = template.getConstraints();
-            List<PathConstraint> editableConstraints = template.getEditableConstraints();
-
-            if (description != null && !"".equals(description)) {
-                printLine(sb, "# ", "Description: " + description);
-                sb.append(ENDL);
-            }
-
-            sb.append("my $template = Webservice::InterMine->template('"
-                            + templateName + "')" + ENDL)
-                .append(INDENT + "or die 'Could not find template';" + ENDL)
-                .append(ENDL)
-                .append("$template->show_with(" + ENDL);
-
-            for (PathConstraint pc : editableConstraints) {
-                // Add comments for constraints
-                String path = pc.getPath();
-
-                String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-                if ("PathConstraintBag".equals(className)) {
-                    return TEMPLATE_BAG_CONSTRAINT;
-                }
-                if ("PathConstraintLoop".equals(className)) {
-                    return LOOP_CONSTRAINT;
-                }
-                String opCode = allConstraints.get(pc);
-                String constraintInfo = opCode + ":  " + path;
-                String constraintDes = ((TemplateQuery) query).getConstraintDescription(pc);
-                if (constraintDes != null && !"".equals(constraintDes)) {
-                    constraintInfo += " - " + constraintDes;
-                }
-                printLine(sb, INDENT + "# ", constraintInfo);
-
-                sb.append(templateConstraintUtil(pc, opCode));
-            }
-
-            sb.append(");" + ENDL);
+        } catch (InvalidQueryException e) {
+            return INVALID_QUERY + formatProblems(e.getProblems());
         }
 
         return sb.toString();
+    }
+
+    private String q(String input) {
+        if (input == null) {
+            return "";
+        } else {
+            return "'" + input + "'";
+        }
+    }
+
+    private String qq(String input) {
+        if (input == null) {
+            return "";
+        } else {
+            return "\"" + input + "\"";
+        }
+    }
+
+    private String decapitate(String input) {
+        if (input == null) {
+            return "";
+        } else {
+            return input.substring(input.indexOf(".") + 1);
+        }
+    }
+
+    private void generateTemplateQueryCode(TemplateQuery template, StringBuffer sb) throws InvalidQueryException {
+        String name = template.getName();
+        Map<PathConstraint, String> allConstraints = template.getConstraints();
+        List<PathConstraint> editableConstraints = template.getEditableConstraints();
+
+        if (editableConstraints.isEmpty()) {
+            throw new InvalidQueryException("This template has no editable constraints");
+        }
+
+        sb.append("my $template = Webservice::InterMine->template(" + q(name) + ")" + ENDL)
+            .append(INDENT + "or die 'Could not find a template called " + name + "';" + ENDL)
+            .append(ENDL)
+            .append("# Use an iterator to avoid having all rows in memory at once." + ENDL)
+            .append("my $it = $template->results_iterator_with(" + ENDL);
+
+        List<String> constraintProblems = new ArrayList<String>();
+        for (PathConstraint pc : editableConstraints) {
+            // Add comments for constraints
+            String path = pc.getPath();
+
+            String opCode = allConstraints.get(pc);
+            String constraintInfo = opCode + ":  " + path;
+            String constraintDes = template.getConstraintDescription(pc);
+            if (StringUtils.isNotBlank(constraintDes)) {
+                constraintInfo += " - " + constraintDes;
+            }
+            printLine(sb, INDENT + "# ", constraintInfo);
+
+            try {
+                sb.append(templateConstraintUtil(pc, opCode));
+            } catch (UnhandledFeatureException e) {
+                constraintProblems.add(e.getMessage());
+            }
+        }
+        if (!constraintProblems.isEmpty()) {
+            throw new InvalidQueryException(constraintProblems);
+        }
+
+        sb.append(");" + ENDL);
+        sb.append(ENDL);
+        sb.append("while (my $row = <$it>) {" + ENDL);
+        sb.append(INDENT + "print ");
+        List<String> thingsToPrint = new ArrayList<String>();
+        for (String v: template.getView()) {
+            thingsToPrint.add("$row->{" + q(decapitate(v)) + "}");
+        }
+        thingsToPrint.add(qq("\\n"));
+        sb.append(StringUtils.join(thingsToPrint, ", ") + ";" + ENDL);
+        sb.append("}" + ENDL);
+
+    }
+
+    private void generatePathQueryCode(PathQuery query, StringBuffer sb) throws InvalidQueryException {
+
+        String rootClass = null;
+        try {
+            rootClass = query.getRootClass();
+        } catch (PathException e) {
+            throw new InvalidQueryException(e.getMessage());
+        }
+
+        sb.append("my $query = new_query(class => " + q(rootClass) + ");" + ENDL + ENDL);
+
+        List<String> uncodedConstraints = new ArrayList<String>();
+        List<String> codedConstraints = new ArrayList<String>();
+        List<String> constraintProblems = new ArrayList<String>();
+        if (query.getConstraints() != null && !query.getConstraints().isEmpty()) {
+            for (Entry<PathConstraint, String> entry : query.getConstraints().entrySet()) {
+                PathConstraint pc = entry.getKey();
+                try {
+                    if (entry.getValue() != null) {
+                        codedConstraints.add(pathContraintUtil(pc, entry.getValue()));
+                    } else {
+                        uncodedConstraints.add(pathContraintUtil(pc, entry.getValue()));
+                    }
+                } catch (UnhandledFeatureException e) {
+                    constraintProblems.add(e.getMessage());
+                }
+            }
+        }
+        if (!constraintProblems.isEmpty()) {
+            throw new InvalidQueryException(constraintProblems);
+        }
+
+        if (!uncodedConstraints.isEmpty()) {
+            sb.append("# " + SUBCLASS_EXPLANATION + ENDL);
+            // Subclass constraints must come first or the query will break
+            for (String text: uncodedConstraints) {
+                sb.append(text);
+            }
+        }
+
+        sb.append("# The view specifies the output columns" + ENDL)
+            .append("$query->add_view(qw/" + ENDL);
+        for (String pathString : query.getView()) {
+            sb.append(INDENT + decapitate(pathString) + ENDL);
+        }
+        sb.append("/);" + ENDL);
+        sb.append(ENDL);
+
+        // Add orderBy
+        if (query.getOrderBy() != null && !query.getOrderBy().isEmpty()) { // no sort order
+            if ( // The default
+                query.getOrderBy().size() == 1
+                    && query.getOrderBy().get(0).getOrderPath().equals(query.getView().get(0))
+                    && query.getOrderBy().get(0).getDirection() == OrderDirection.ASC) {
+                sb.append("# edit the line below to change the sort order:" + ENDL);
+                sb.append("# ");
+            } else {
+                sb.append("# Your custom sort order is specified with the following code:"
+                        + ENDL);
+            }
+            for (OrderElement oe : query.getOrderBy()) {
+                sb.append("$query->add_sort_order(");
+                sb.append(q(decapitate(oe.getOrderPath())) + ", " + q(oe.getDirection().toString()));
+                sb.append(");" + ENDL);
+            }
+            sb.append(ENDL);
+        }
+
+        // Add join status
+        if (query.getOuterJoinStatus() != null && !query.getOuterJoinStatus().isEmpty()) {
+            sb.append("# Outer Joins" + ENDL);
+            sb.append("# (Show attributes of these relations if they exist, but do not require them to exist.)" + ENDL);
+            for (Entry<String, OuterJoinStatus> entry : query.getOuterJoinStatus().entrySet()) {
+                // Only outer joins need to be declared.
+                if (entry.getValue() == OuterJoinStatus.OUTER) {
+                    sb.append("$query->add_outer_join(" + q(decapitate(entry.getKey())) + ");" + ENDL);
+                }
+            }
+            sb.append(ENDL);
+        }
+
+        for (String text: codedConstraints) {
+            sb.append(text);
+        }
+        sb.append(ENDL);
+
+        // Add constraintLogic
+        if (codedConstraints.size() > 1 && StringUtils.isNotBlank(query.getConstraintLogic())) {
+            String logic = query.getConstraintLogic();
+            if (logic.indexOf("or") == -1) {
+                sb.append("# Edit the code below to specify your own custom logic:" + ENDL
+                        + "# ");
+            } else {
+                sb.append("# Your custom logic is specified with the code below:" + ENDL);
+            }
+            sb.append("$query->set_logic(" + q(logic) + ");" + ENDL + ENDL);
+        }
+        sb.append("# Use an iterator to avoid having all rows in memory at once." + ENDL);
+        sb.append("my $it = $query->iterator();" + ENDL);
+        sb.append("while (my $row = <$it>) {" + ENDL);
+        sb.append(INDENT + "print ");
+        List<String> thingsToPrint = new ArrayList<String>();
+        for (String v: query.getView()) {
+            thingsToPrint.add("$row->{" + q(decapitate(v)) + "}");
+        }
+        thingsToPrint.add(qq("\\n"));
+        sb.append(StringUtils.join(thingsToPrint, ", ") + ";" + ENDL);
+        sb.append("}" + ENDL);
     }
 
     /*
@@ -292,14 +380,16 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
      * @param pc PathConstraint object
      * @return a string for constraints source code
      */
-    private String pathContraintUtil(PathConstraint pc, String code) {
+    private String pathContraintUtil(PathConstraint pc, String code) throws UnhandledFeatureException {
         // Ref to Constraints
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String path = pc.getPath();
         ConstraintOp op = pc.getOp();
+        String value = PathConstraint.getValue(pc);
+        String extraValue = PathConstraint.getExtraValue(pc);
 
-        if ("PathConstraintAttribute".equals(className)) {
-            String value = ((PathConstraintAttribute) pc).getValue();
+        if ("PathConstraintAttribute".equals(className)
+                || "PathConstraintBag".equals(className)) {
             return
                 "$query->add_constraint(" + ENDL
                 + INDENT + "path  => '" + path + "'," + ENDL
@@ -307,13 +397,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 + INDENT + "value => '" + value + "'," + ENDL
                 + INDENT + "code  => '" + code + "'," + ENDL
                 + ");" + ENDL;
-
         }
 
         if ("PathConstraintLookup".equals(className)) {
-            String value = ((PathConstraintLookup) pc).getValue();
-            String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-
             return
                 "$query->add_constraint(" + ENDL
                 + INDENT + "path        => '" + path + "'," + ENDL
@@ -324,25 +410,14 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 + ");" + ENDL;
         }
 
-        if ("PathConstraintBag".equals(className)) {
-            String list = ((PathConstraintBag) pc).getBag();
-            return
-                "$query->add_constraint(" + ENDL
-                + INDENT + "path  => '" + path + "'," + ENDL
-                + INDENT + "op    => '" + op.toString() + "'," + ENDL
-                + INDENT + "value => '" + list + "'," + ENDL
-                + INDENT + "code  => '" + code + "'," + ENDL
-                + ");" + ENDL;
-        }
-
         if ("PathConstraintIds".equals(className)) {
-            // can not test from webapp
+            throw new UnhandledFeatureException(INTERNAL_USE_CONSTRAINT + " (" + className + ")");
         }
 
         if ("PathConstraintMultiValue".equals(className)) {
             StringBuffer values = new StringBuffer();
             for (String aValue : ((PathConstraintMultiValue) pc).getValues()) {
-                values.append(INDENT + INDENT + "'" + aValue + "'," + ENDL);
+                values.append(INDENT + INDENT + q(aValue) + "," + ENDL);
             }
             return
                 "$query->add_constraint(" + ENDL
@@ -362,7 +437,6 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 + INDENT + "op   => '" + op.toString() + "'," + ENDL
                 + INDENT + "code => '" + code + "'," + ENDL
                 + ");" + ENDL;
-
         }
 
         if ("PathConstraintSubclass".equals(className)) {
@@ -375,7 +449,6 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintLoop".equals(className)) {
-            String loopPath = ((PathConstraintLoop) pc).getLoopPath();
             String opStr = op.toString();
             if (ConstraintOp.EQUALS.equals(op)) {
                 opStr = "IS";
@@ -386,12 +459,12 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                 "$query->add_constraint(" + ENDL
                 + INDENT + "path      => '" + path + "'," + ENDL
                 + INDENT + "op        => '" + opStr + "'," + ENDL
-                + INDENT + "loop_path => '" + loopPath + "'," + ENDL
+                + INDENT + "loop_path => '" + value + "'," + ENDL
                 + INDENT + "code      => '" + code + "'," + ENDL
                 + ");" + ENDL;
         }
 
-        return null;
+        throw new UnhandledFeatureException("Unknown constraint type (" + className + ")");
     }
 
     /**
@@ -401,20 +474,20 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
      * @param opCode operation code
      * @return a line of source code
      */
-    private String templateConstraintUtil(PathConstraint pc, String opCode) {
+    private String templateConstraintUtil(PathConstraint pc, String opCode) throws UnhandledFeatureException {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
         String op = pc.getOp().toString();
+        String value = PathConstraint.getValue(pc);
+        String extraValue = PathConstraint.getExtraValue(pc);
 
-        if ("PathConstraintAttribute".equals(className)) {
-            String value = ((PathConstraintAttribute) pc).getValue();
+        if ("PathConstraintAttribute".equals(className)
+                || "PathConstraintBag".equals(className)) {
             return
                 INDENT + "op" + opCode + "    => '" + op + "'," + ENDL
                 + INDENT + "value" + opCode + " => '" + value + "'," + ENDL;
         }
 
         if ("PathConstraintLookup".equals(className)) {
-            String value = ((PathConstraintLookup) pc).getValue();
-            String extraValue = ((PathConstraintLookup) pc).getExtraValue();
             String ret =
                 INDENT + "op" + opCode + "    => 'LOOKUP'," + ENDL
                 + INDENT + "value" + opCode + " => '" + value + "'," + ENDL;
@@ -424,12 +497,9 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
             return ret;
         }
 
-        if ("PathConstraintBag".equals(className)) {
-            // not supported
-        }
-
-        if ("PathConstraintIds".equals(className)) {
-            // can not test from webapp
+        if ("PathConstraintIds".equals(className)
+            || ("PathConstraintLoop".equals(className))) {
+            throw new UnhandledFeatureException(INTERNAL_USE_CONSTRAINT + " (" + className + ")");
         }
 
         if ("PathConstraintMultiValue".equals(className)) {
@@ -450,13 +520,10 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
 
         if ("PathConstraintSubclass".equals(className)) {
-            // not handled
+            throw new UnhandledFeatureException("Type constraints should not be editable");
         }
 
-        if ("PathConstraintLoop".equals(className)) {
-            // not supported
-        }
-        return null;
+        throw new UnhandledFeatureException("Unknown constraint type (" + className + ")");
     }
 }
 
