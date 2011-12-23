@@ -1,5 +1,9 @@
 package org.intermine.pathquery;
 
+import java.util.Collection;
+
+import org.intermine.objectstore.query.ConstraintOp;
+
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
@@ -10,7 +14,6 @@ package org.intermine.pathquery;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Representation of a constraint in the PathQuery. All PathConstraint subclasses must be
@@ -94,6 +97,14 @@ public abstract class PathConstraint
     public static String getExtraValue(PathConstraint con) {
         if (con instanceof PathConstraintLookup) {
             return ((PathConstraintLookup) con).getExtraValue();
+        } else {
+            return null;
+        }
+    }
+
+    public static Collection<String> getValues(PathConstraint con) {
+        if (con instanceof PathConstraintMultiValue) {
+            return ((PathConstraintMultiValue) con).getValues();
         } else {
             return null;
         }
