@@ -136,9 +136,23 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             return error;
         }
 
-        sb.append(INDENT + "print ");
-        sb.append(StringUtils.join(rowKeyAccesses, ", "));
-        sb.append(ENDL);
+        StringBuffer currentLine = new StringBuffer(INDENT + "print");
+        Iterator<String> rowKeyIt = rowKeyAccesses.iterator();
+        while (rowKeyIt.hasNext()) {
+            String toPrint = rowKeyIt.next();
+            if (StringUtils.isNotBlank(currentLine.toString())) {
+                toPrint = " " + toPrint;
+            }
+            if (rowKeyIt.hasNext()) {
+                toPrint += ",";
+            }
+            if (currentLine.length() + toPrint.length() > 100) {
+                sb.append(currentLine.toString() + "\\" + ENDL);
+                currentLine = new StringBuffer(INDENT + INDENT);
+            }
+            currentLine.append(toPrint);
+        }
+        sb.append(currentLine.toString() + ENDL);
 
         return sb.toString();
     }
@@ -149,7 +163,7 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
 
     private String handlePathQuery(StringBuffer sb, PathQuery query, List<String> rootLessViews) {
 
-        if (query.getDescription() != null && !"".equals(query.getDescription())) {
+        if (StringUtils.isNotBlank(query.getDescription())) {
             sb.append("# query description - " + query.getDescription() + ENDL + ENDL);
         }
 
@@ -308,8 +322,6 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
             // Add comments for constraints
             String path = pc.getPath();
 
-
-            String className = TypeUtil.unqualifiedName(pc.getClass().toString());
             String opCode = allConstraints.get(pc);
             constraintComments.append("# " + opCode + INDENT + path);
             String constraintDes = ((TemplateQuery) query).getConstraintDescription(pc);
