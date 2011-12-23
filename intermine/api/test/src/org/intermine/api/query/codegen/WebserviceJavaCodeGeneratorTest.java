@@ -14,12 +14,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.template.TemplateQuery;
@@ -31,14 +34,13 @@ import org.intermine.template.xml.TemplateQueryBinding;
  * @author Fengyuan Hu
  * @author Alexis Kalderimis
  */
-public class WebserviceJavaCodeGeneratorTest extends TestCase {
-
-    private final String TEMPLATE_BAG_CONSTRAINT = WebserviceJavaCodeGenerator.TEMPLATE_BAG_CONSTRAINT;
-
+public class WebserviceJavaCodeGeneratorTest extends TestCase
+{
     private final String serviceRootURL = "TEST_SERVICE_ROOT";
     private final String projectTitle = "TEST_PROJECT_TITLE";
     private final String perlWSVersion = "TEST_WS_VERSION";
 
+    private static final String DATE_PATTERN = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun) \\w{3} \\d{2} \\d{2}:\\d{2}:\\d{2} \\w+ 20\\d{2}";
     protected String lang;
 
     protected WebserviceCodeGenerator cg;
@@ -56,10 +58,11 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     }
 
     private void init() {
+        String className = getClass().getSimpleName();
         try {
-            testProps.load(getClass().getResourceAsStream("WebserviceJavaCodeGeneratorTest.properties"));
+            testProps.load(getClass().getResourceAsStream(className + ".properties"));
         } catch (Exception e) {
-            throw new RuntimeException("Could not read test properties", e);
+            throw new RuntimeException("Could not read test properties for " + className, e);
         }
     }
 
@@ -78,11 +81,27 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     private void doComparison(String xml, String resource) {
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(xml), PathQuery.USERPROFILE_VERSION);
+        doComparison(pathQuery, resource);
+    }
 
-        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+    private void doComparison(PathQuery pathQuery, String resource) {
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery, false);
+        String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__");
 
-        String expected = readExpected(resource);
-        assertEquals(expected, cg.generate(wsCodeGenInfo));
+        assertEquals(expected, cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__"));
+    }
+
+    private void doPrivateComparison(String xml, String resource) {
+        PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(
+                new StringReader(xml), PathQuery.USERPROFILE_VERSION);
+        doPrivateComparison(pathQuery, resource);
+    }
+
+    private void doPrivateComparison(PathQuery pathQuery, String resource) {
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery, true);
+        String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__");
+
+        assertEquals(expected, cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__"));
     }
 
 
@@ -106,8 +125,11 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     }
 
     private WebserviceCodeGenInfo getGenInfo(PathQuery pq) {
+        return getGenInfo(pq, false);
+    }
+    private WebserviceCodeGenInfo getGenInfo(PathQuery pq, boolean isPrivate) {
         return new WebserviceCodeGenInfo(pq, serviceRootURL, projectTitle, perlWSVersion,
-                true, null);
+                !isPrivate, null);
     }
 
     //****************************** Test PathQuery *********************************
@@ -116,9 +138,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      */
     public void testPathQueryCodeGenerationWithNullQuery() {
         PathQuery pathQuery = null;
-
-
-        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery); getGenInfo(pathQuery);
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
         String expected = testProps.getProperty("null.query");
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
@@ -136,8 +156,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      */
     public void testPathQueryCodeGenerationWithInvalidQuery() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\"></query>";
+        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\"></query>";
 
         // Parse XML to PathQuery - PathQueryBinding
         PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
@@ -148,6 +167,25 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         // Mock up
         pathQuery.clearView();
         String expected = testProps.getProperty("invalid.query");
+        assertEquals(expected, cg.generate(wsCodeGenInfo));
+    }
+
+    // Should get information about all the query's problems in a comment block
+    public void testPathQueryCodeGenerationWithMultipleProblems() {
+        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Employee.name "
+                + "Employee.age\" sortOrder=\"Employee.department.name asc\">"
+                + "<constraint path=\"Foo\" op=\"=\" value=\"bar\"/>"
+                + "</query>";
+
+        // Parse XML to PathQuery - PathQueryBinding
+        PathQuery pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
+                PathQuery.USERPROFILE_VERSION);
+
+        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery);
+
+        // Mock up
+        pathQuery.clearView();
+        String expected = testProps.getProperty("very.invalid.query");
         assertEquals(expected, cg.generate(wsCodeGenInfo));
     }
 
@@ -390,6 +428,14 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         doComparison(queryXml, "in-constraint");
     }
 
+    public void testPathQueryCodeGenerationWithConstraintInPrivate() {
+        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
+        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
+        "sortOrder=\"Gene.primaryIdentifier asc\"><constraint path=\"Gene\" op=\"IN\" value=\"aList\"/>" +
+        "</query>";
+        doPrivateComparison(queryXml, "private-in-constraint");
+    }
+
     /**
      * This method tests when a path query has one constraint - PathConstraintBag
      * ConstraintOp.NOT_IN
@@ -499,10 +545,9 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      *
      */
     public void testPathQueryCodeGenerationWithConstraintEqualToLoop() {
-        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\">" +
-        "<constraint path=\"Gene.proteins.genes\" op=\"=\" loopPath=\"InterMineObject\"/>" +
+        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name " +
+        "Employee.department.name\">" +
+        "<constraint path=\"Employee.department.manager\" op=\"=\" loopPath=\"Employee.department.company.CEO\"/>" +
         "</query>";
         doComparison(queryXml, "loopeq-constraint");
     }
@@ -517,11 +562,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * </query>
      */
     public void testPathQueryCodeGenerationWithConstraintNotEqualToLoop() {
-        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\">" +
-        "<constraint path=\"Gene.proteins.genes\" op=\"!=\" loopPath=\"InterMineObject\"/>" +
-        "</query>";
+        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name " +
+                "Employee.department.name\">" +
+                "<constraint path=\"Employee.department.manager\" op=\"!=\" loopPath=\"Employee.department.company.CEO\"/>" +
+                "</query>";
         doComparison(queryXml, "loopne-constraint");
     }
 
@@ -541,53 +585,68 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     * </query>
     */
     public void testPathQueryCodeGenerationWithTwoOrMoreConstraints() {
-        String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
-        "Gene.secondaryIdentifier Gene.symbol Gene.name Gene.organism.shortName\" " +
-        "sortOrder=\"Gene.primaryIdentifier asc\" constraintLogic=\"(A or B) and C\">" +
-        "<constraint path=\"Gene.proteins.genes\" code=\"A\" op=\"!=\" loopPath=\"InterMineObject\"/>" +
-        "<constraint path=\"Gene\" code=\"B\" op=\"LOOKUP\" value=\"zen\" extraValue=\"\"/>" +
-        "<constraint path=\"Gene.organism.commonName\" code=\"C\" op=\"ONE OF\"><value>fruit fly</value><value>honey bee</value></constraint>" +
+        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name Employee.department.name\" " +
+        "constraintLogic=\"(A or C) and B\">" +
+        "<constraint path=\"Employee.department.manager\" code=\"A\" op=\"!=\" loopPath=\"Employee.department.company.CEO\"/>" +
+        "<constraint path=\"Employee\" code=\"B\" op=\"LOOKUP\" value=\"M*\" extraValue=\"\"/>" +
+        "<constraint path=\"Employee.department.name\" code=\"C\" op=\"ONE OF\"><value>Sales</value><value>Warehouse</value></constraint>" +
         "</query>";
         doComparison(queryXml, "multiple-constraints");
-
     }
 
     /**
      * This method tests when a path query has one constraint - PathConstraintIds
      * ConstraintOp.IN
      *
-     * Can not be tested
-     *
      * Test PathQuery:
      */
     public void testPathQueryCodeGenerationWithConstraintInIds() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        pq.addConstraint(Constraints.inIds("Employee", Arrays.asList(1, 2, 3, 4, 5)));
 
+        doComparison(pq, "inids-query");
     }
 
     /**
      * This method tests when a path query has one constraint - PathConstraintIds
      * ConstraintOp.NOT_IN
      *
-     * Can not be tested
-     *
      * Test PathQuery:
      */
     public void testPathQueryCodeGenerationWithConstraintNotInIds() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        pq.addConstraint(Constraints.notInIds("Employee", Arrays.asList(1, 2, 3, 4, 5)));
 
+        doComparison(pq, "inids-query");
     }
 
     /**
      * This method tests when a path query has one constraint - PathConstraintSubclass
      *
      */
-    public void testPathQueryCodeGenerationWithConstraintType() {
+    public void testPathQueryCodeGenerationWithSubClassConstraint() {
         String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name " +
         "Employee.age\">" +
-        "<constraint path=\"Employee\" type=\"Manager\"/>" +
+        "<constraint path=\"Employee.department.manager\" type=\"CEO\"/>" +
         "</query>";
         doComparison(queryXml, "subclass-constraint");
     }
 
+    /**
+     * This method tests when a path query has one constraint - PathConstraintSubclass
+     *
+     */
+    public void testPathQueryCodeGenerationWithNecessarySubClassConstraint() {
+        String queryXml = "<query name=\"\" model=\"testmodel\" view=\"Employee.name " +
+        "Employee.age Employee.department.manager.salary\">" + // accessing CEO.salary from CEO
+        "<constraint path=\"Employee.department.manager\" type=\"CEO\"/>" +
+        "</query>";
+        doComparison(queryXml, "necessary-subclass-constraint");
+    }
 
     //****************************** Test TemplateQuery *********************************
     /**
@@ -608,7 +667,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
         // Parse xml to TemplateQuery - TemplateQueryBinding
         Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
         TemplateQuery templateQuery = (TemplateQuery) tqs.values().toArray()[0];
+        doTemplateComparison(templateQuery, resource);
+    }
 
+    private void doTemplateComparison(TemplateQuery templateQuery, String resource) {
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
         String expected = readExpected(resource);
         assertEquals(expected, cg.generate(wsCodeGenInfo));
@@ -732,12 +794,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "<template name=\"TEMP_NAME\"><query model=\"testmodel\" view=\"Employee.name\">" +
             "<constraint path=\"Employee\" editable=\"true\" op=\"IN\" value=\"aList\"/>" +
             "</query></template>";
-        // Parse xml to TemplateQuery - TemplateQueryBinding
-        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.values().toArray()[0];
-        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
-        String expected = TEMPLATE_BAG_CONSTRAINT;
-        assertEquals(expected, cg.generate(wsCodeGenInfo));
+        doTemplateComparison(xml, "in-template");
     }
 
     /**
@@ -749,12 +806,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
             "<template name=\"TEMP_NAME\"><query model=\"testmodel\" view=\"Employee.name\">" +
             "<constraint path=\"Employee\" editable=\"true\" op=\"NOT IN\" value=\"aList\"/>" +
             "</query></template>";
-        // Parse xml to TemplateQuery - TemplateQueryBinding
-        Map<String, TemplateQuery> tqs = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
-        TemplateQuery templateQuery = (TemplateQuery) tqs.values().toArray()[0];
-        WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
-        String expected = TEMPLATE_BAG_CONSTRAINT;
-        assertEquals(expected, cg.generate(wsCodeGenInfo));
+        doTemplateComparison(xml, "not-in-template");
     }
 
     /**
@@ -764,7 +816,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testTemplateQueryCodeGenerationWithConstraintOneOfValues() {
         String xml =
             "<template name=\"TEMP_NAME\"><query model=\"testmodel\" view=\"Employee.name\">" +
-            "<constraint path=\"Employee\" editable=\"true\" op=\"ONE OF\">" +
+            "<constraint path=\"Employee.name\" editable=\"true\" op=\"ONE OF\">" +
             "<value>Employee A1</value><value>EmployeeA2</value></constraint>" +
             "</query></template>";
         doTemplateComparison(xml, "oneof-template");
@@ -777,7 +829,7 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
     public void testTemplateQueryCodeGenerationWithConstraintNoneOfValues() {
         String xml =
             "<template name=\"TEMP_NAME\"><query model=\"testmodel\" view=\"Employee.name\">" +
-            "<constraint path=\"Employee\" editable=\"true\" op=\"NONE OF\">" +
+            "<constraint path=\"Employee.name\" editable=\"true\" op=\"NONE OF\">" +
             "<value>Employee A1</value><value>EmployeeA2</value></constraint>" +
             "</query></template>";
         doTemplateComparison(xml, "noneof-template");
@@ -829,6 +881,15 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Can not be tested
      */
     public void testTemplateQueryCodeGenerationWithConstraintInIds() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        String code = pq.addConstraint(Constraints.inIds("Employee", Arrays.asList(1, 2, 3, 4, 5)));
+
+        TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
+        tq.setEditable(tq.getConstraintForCode(code), true);
+
+        doTemplateComparison(tq, "inids-query");
 
     }
 
@@ -839,26 +900,47 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Can not be tested
      */
     public void testTemplateQueryCodeGenerationWithConstraintNotInIds() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        String code = pq.addConstraint(Constraints.notInIds("Employee", Arrays.asList(1, 2, 3, 4, 5)));
 
+        TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
+        tq.setEditable(tq.getConstraintForCode(code), true);
+
+        doTemplateComparison(tq, "inids-query");
     }
 
     /**
      * This method tests when a template query has one constraint - PathConstraintSubclass
      *
-     * Can not be tested
      */
-    public void testTemplateQueryCodeGenerationWithConstraintType() {
+    public void testTemplateQueryCodeGenerationWithSubClassConstraint() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        pq.addConstraint(Constraints.type("Employee.department.manager", "CEO"));
 
+        TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
+
+        doTemplateComparison(tq, "no-editable-constraints");
     }
 
     /**
      * This method tests when a template query has one constraint - PathConstraintLoop
      * ConstraintOp.EQUALS
      *
-     * Uneditable
      */
     public void testTemplateQueryCodeGenerationWithConstraintEqualToLoop() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        String code = pq.addConstraint(Constraints.equalToLoop("Employee.department.manager", "Employee.department.company.CEO"));
 
+        TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
+        tq.setEditable(tq.getConstraintForCode(code), true);
+
+        doTemplateComparison(tq, "loop-template");
     }
 
     /**
@@ -868,7 +950,15 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase {
      * Uneditable
      */
     public void testTemplateQueryCodeGenerationWithConstraintNotEqualToLoop() {
+        Model testmodel = Model.getInstanceByName("testmodel");
+        PathQuery pq = new PathQuery(testmodel);
+        pq.addViews("Employee.name", "Employee.age");
+        String code = pq.addConstraint(Constraints.notEqualToLoop("Employee.department.manager", "Employee.department.company.CEO"));
 
+        TemplateQuery tq = new TemplateQuery("TEMP_NAME", "TEMP_TITLE", "TEMP_DESC", pq);
+        tq.setEditable(tq.getConstraintForCode(code), true);
+
+        doTemplateComparison(tq, "loop-template");
     }
 
     // Other private methods can be added...
