@@ -16,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.OrderElement;
 import org.intermine.pathquery.OuterJoinStatus;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
@@ -24,7 +23,6 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintSubclass;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
@@ -75,10 +73,12 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String TEMPLATE_PARAMS_EXPL
         = "Edit the template parameter values to get different results";
 
+    /* Currently only using the string format.
     private static final String FLT_FMT = "g";
     private static final String DATE_FMT = "tc";
     private static final String INT_FMT = "d";
     private static final String BOOL_FMT = "b";
+    */
     private static final String STR_FMT = "s";
     private static final String GET_ITERATOR
         = "Iterator<List<Object>> rows = service.getRowListIterator(";
@@ -345,7 +345,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         javaImports.add("java.util.List");
         javaImports.add("java.util.Iterator");
 
-        String[] formats = getFormats(query);
+        String format = getFormat(query);
 
         javaImports.add("java.io.PrintStream");
         codeBody.append(INDENT2 + INIT_OUT + ENDL);
@@ -353,16 +353,15 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         if (query.getView().size() == 1) {
             codeBody.append(INDENT2 + "out.println(" + qq(query.getView().get(0)) + ");" + ENDL);
         } else {
-            codeBody.append(INDENT2 + "String viewFormat = \"" + formats[1] + "\\n\";" + ENDL);
-            codeBody.append(INDENT2 + "String dataFormat = \"" + formats[0] + "\\n\";" + ENDL);
-            codeBody.append(INDENT2 + "out.printf(viewFormat, query.getView().toArray());" + ENDL);
+            codeBody.append(INDENT2 + "String format = \"" + format + "\\n\";" + ENDL);
+            codeBody.append(INDENT2 + "out.printf(format, query.getView().toArray());" + ENDL);
         }
         codeBody.append(INDENT2 + GET_ITERATOR + "query);" + ENDL);
         codeBody.append(INDENT2 + "while (rows.hasNext()) {" + ENDL);
         if (query.getView().size() == 1) {
             codeBody.append(INDENT3 + "out.println(rows.next().get(0));" + ENDL);
         } else {
-            codeBody.append(INDENT3 + "out.printf(dataFormat, rows.next().toArray());" + ENDL);
+            codeBody.append(INDENT3 + "out.printf(format, rows.next().toArray());" + ENDL);
         }
         codeBody.append(INDENT2 + "}" + ENDL);
 
@@ -372,18 +371,22 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         codeBody.append("}" + ENDL); // END CLASS
     }
 
-    private String[] getFormats(PathQuery query) throws InvalidQueryException {
+    private String getFormat(PathQuery query) throws InvalidQueryException {
         List<String> parts = new ArrayList<String>();
-        List<String> viewParts = new ArrayList<String>();
-        int width = (100 - query.getView().size() * 3) / query.getView().size();
+        int width = 0;
+        int span = 100;
+        int cellCount = query.getView().size();
+        // Cells smaller than 10 characters aren't worth it.
+        while (width < 10) {
+            width = (span - cellCount * 3) / cellCount;
+            span += 20;
+        }
         String prefix = "%-" + width;
         for (int i = 0; i < query.getView().size(); i++) {
             parts.add(prefix + "." + width + STR_FMT );
-            viewParts.add(prefix + "." + width + STR_FMT);
         }
         String format = StringUtils.join(parts, " | ");
-        String viewFormat = StringUtils.join(viewParts, " | ");
-        return new String[] {format, viewFormat};
+        return format;
     }
 
     /**
@@ -449,14 +452,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         intermineImports.add("org.intermine.webservice.client.services.TemplateService");
         javaImports.add("java.util.Iterator");
 
-        String[] formats = getFormats(template);
-
-        String[] quotedViews = new String[template.getView().size()];
-        int i = 0;
-        for (String view: template.getView()) {
-            quotedViews[i] = qq(view);
-            i++;
-        }
+        String format = getFormat(template);
 
         // Add display results code
         codeBody.append(
@@ -464,11 +460,30 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             + INDENT2 + "String name = \"" + template.getName() + "\";" + ENDL
             + INDENT2 + "// Template Service - use this object to fetch results." + ENDL
             + INDENT2 + "TemplateService service = factory.getTemplateService();" + ENDL
-            + ENDL
-            + INDENT2 + "System.out.printf(\"" + formats[1] + "\\n\", " + StringUtils.join(quotedViews, ", ") + ");" + ENDL
-            + INDENT2 + "Iterator<List<Object>> rows = " + "service.getRowListIterator(name, parameters);" + ENDL
+            + INDENT2 + "// Format to present data in fixed width columns" + ENDL
+            + INDENT2 + "String format = \"" + format + "\\n\";" + ENDL
+            + ENDL);
+        StringBuffer currentLine = new StringBuffer(INDENT2 + "System.out.printf(format,");
+        Iterator<String> viewIt = template.getView().iterator();
+        while (viewIt.hasNext()) {
+            String view = qq(viewIt.next());
+            if (viewIt.hasNext()) {
+                view += ",";
+            }
+            if (currentLine.length() + view.length() > 100) {
+                codeBody.append(currentLine.toString() + ENDL);
+                currentLine = new StringBuffer(INDENT2 + INDENT);
+            }
+            if (StringUtils.isNotBlank(currentLine.toString())) {
+                currentLine.append(" ");
+            }
+            currentLine.append(view);
+        }
+        codeBody.append(currentLine.toString() + ");" + ENDL);
+        codeBody.append(
+              INDENT2 + "Iterator<List<Object>> rows = " + "service.getRowListIterator(name, parameters);" + ENDL
             + INDENT2 + "while (rows.hasNext()) {" + ENDL
-            + INDENT2 + INDENT + "System.out.printf(\"" + formats[0] + "\\n\", rows.next().toArray());" + ENDL
+            + INDENT2 + INDENT + "System.out.printf(format, rows.next().toArray());" + ENDL
             + INDENT2 + "}" + ENDL);
         codeBody.append(INDENT2 + "System.out.printf(\"%d rows\\n\", service.getCount(name, parameters));" + ENDL);
 

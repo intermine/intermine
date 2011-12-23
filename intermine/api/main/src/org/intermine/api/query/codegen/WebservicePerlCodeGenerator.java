@@ -5,6 +5,7 @@ import java.lang.String;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,6 +71,10 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         = "# Silence warnings when printing null fields" + ENDL
         + "no warnings ('uninitialized');" + ENDL;
 
+    private static final String UNICODE_OUTPUT
+        = "# Print unicode to standard out" + ENDL
+        + "binmode(STDOUT, 'utf8');" + ENDL;
+
     private static final String SHEBANG = "#!/usr/bin/perl" + ENDL + ENDL;
 
     protected static final String BOILERPLATE 
@@ -134,20 +139,22 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
                                   .append(INTRO)
                                   .append(BOILERPLATE)
                                   .append(SEPARATOR_CONSTANT)
+                                  .append(UNICODE_OUTPUT)
                                   .append(NO_WARNINGS_UNDEF)
                                   .append(ENDL);
 
         sb.append("# The following import statement sets " + projectTitle + " as your default"
                 + ENDL);
         if (wsCodeGenInfo.isPublic()) {
-            sb.append("use Webservice::InterMine " + perlWSModuleVer + " '" + serviceBaseURL + "';"
-                    + ENDL);
+            sb.append("use Webservice::InterMine " 
+                    + perlWSModuleVer 
+                    + " '" + serviceBaseURL + "';" + ENDL);
         } else {
             sb.append("# You must also supply your login details here to access this query" + ENDL);
             sb.append("use Webservice::InterMine " 
                     + perlWSModuleVer 
                     + " '" + serviceBaseURL + "', "
-                    + "'YOUR-API-TOKEN'" + ENDL);
+                    + "'YOUR-API-TOKEN';" + ENDL);
         }
         sb.append(ENDL);
 
@@ -233,16 +240,7 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
 
         sb.append(");" + ENDL);
         sb.append(ENDL);
-        sb.append("while (my $row = <$it>) {" + ENDL);
-        sb.append(INDENT + "print ");
-        List<String> thingsToPrint = new ArrayList<String>();
-        for (String v: template.getView()) {
-            thingsToPrint.add("$row->{" + q(decapitate(v)) + "}");
-        }
-        thingsToPrint.add(qq("\\n"));
-        sb.append(StringUtils.join(thingsToPrint, ", ") + ";" + ENDL);
-        sb.append("}" + ENDL);
-
+        printResults(template, sb);
     }
 
     private void generatePathQueryCode(PathQuery query, StringBuffer sb) throws InvalidQueryException {
@@ -344,15 +342,29 @@ public class WebservicePerlCodeGenerator implements WebserviceCodeGenerator
         }
         sb.append("# Use an iterator to avoid having all rows in memory at once." + ENDL);
         sb.append("my $it = $query->iterator();" + ENDL);
+        printResults(query, sb);
+    }
+
+    private void printResults(PathQuery pq, StringBuffer sb) {
         sb.append("while (my $row = <$it>) {" + ENDL);
-        sb.append(INDENT + "print ");
-        List<String> thingsToPrint = new ArrayList<String>();
-        for (String v: query.getView()) {
-            thingsToPrint.add("$row->{" + q(decapitate(v)) + "}");
+        StringBuffer currentLine = new StringBuffer(INDENT + "print");
+        Iterator<String> it = pq.getView().iterator();
+        while (it.hasNext()) {
+            String toPrint = "$row->{" + q(decapitate(it.next())) + "}";
+            if (it.hasNext()) {
+                toPrint += ",";
+            }
+            if (currentLine.length() + toPrint.length() > 100) {
+                sb.append(currentLine.toString() + ENDL);
+                currentLine = new StringBuffer(INDENT + INDENT);
+            }
+            if (StringUtils.isNotBlank(currentLine.toString())) {
+                currentLine.append(" ");
+            }
+            currentLine.append(toPrint);
         }
-        thingsToPrint.add(qq("\\n"));
-        sb.append(StringUtils.join(thingsToPrint, ", ") + ";" + ENDL);
-        sb.append("}" + ENDL);
+        sb.append(currentLine + ", " + qq("\\n") + ";" + ENDL);
+        sb.append("}").append(ENDL);
     }
 
     /*
