@@ -19,6 +19,22 @@ public class Widget
     private final Set<String> filters;
     private final String xLabel, yLabel;
 
+    /**
+     * Constructor.
+     *
+     * Intended for use by the widget parser.
+     *
+     * @param factory the main service object for this web service.
+     * @param name The Name of this widget.
+     * @param title The title of this widget.
+     * @param description the description of this widget.
+     * @param widgetType The type of widget (enrichment, chart, etc).
+     * @param chartType The type of chart if a chart widget (otherwise null).
+     * @param targets The classes this widget may consume.
+     * @param filters The available filter values.
+     * @param xLabel The label for the X-Axis if a chart widget.
+     * @param yLabel The label for the Y-Axis if a chart widget.
+     */
     public Widget(
             ServiceFactory factory,
             String name, String title, String description,
