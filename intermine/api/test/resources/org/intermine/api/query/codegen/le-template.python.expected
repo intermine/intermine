@@ -22,4 +22,4 @@ rows = template.rows(
     A = {"op": "<=", "value": "10"}
 )
 for row in rows:
-    print row
+    print row["name"]
