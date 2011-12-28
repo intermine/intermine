@@ -20,6 +20,10 @@ import java.util.Map;
  */
 public class PlainFormatter extends Formatter
 {
+    /**
+     * The string that begins an error line.
+     */
+    public static final String ERROR_INTRO = "[ERROR] ";
 
     @Override
     public String formatHeader(Map<String, Object> attributes) {
@@ -42,7 +46,11 @@ public class PlainFormatter extends Formatter
 
     @Override
     public String formatFooter(String errorMessage, int errorCode) {
-        return "";
+        StringBuilder sb = new StringBuilder();
+        if (errorCode != Output.SC_OK) {
+            sb.append(ERROR_INTRO).append(errorCode).append(" " + errorMessage);
+        }
+        return sb.toString();
     }
 
 
