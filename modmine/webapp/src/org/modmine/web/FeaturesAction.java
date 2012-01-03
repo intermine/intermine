@@ -359,7 +359,7 @@ public class FeaturesAction extends InterMineAction
                 exportForm.setDoGzip(doGzip);
             }
 
-            exporter.export(pt, request, response, exportForm);
+            exporter.export(pt, request, response, exportForm, null, null);
 
             // If null is returned then no forwarding is performed and
             // to the output is not flushed any jsp output, so user
