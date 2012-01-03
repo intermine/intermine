@@ -44,47 +44,47 @@ if (!im.bagWorks) {
     </c:when>
     <c:otherwise>
 
-	<html:form action="/modifyBag">
-	<c:forEach items="${PROFILE.savedBagsByStatus}" var="statusSavedBag">
-		
-		<div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT'}">style="display:none;"</c:if>>
-		<c:choose>
-			<c:when test="${statusSavedBag.key == 'TO_UPGRADE'}">
-				<h2>Lists to upgrade</h2>
-				<p>You need to manually upgrade the following lists in order to use them.</p>
-			</c:when>
-			<c:when test="${statusSavedBag.key == 'NOT_CURRENT' && fn:length(statusSavedBag.value) > 0}">
-				<script type="text/javascript">
-				(function() {
-					<%-- lists are being upgraded (should be anyways) --%>
-					jQuery('div.topBar.errors').clone().addClass('loading').show().text(im.bagWorks.upgradingMessage)
-					.appendTo(jQuery('div.topBar.errors').parent());
-					im.bagWorks.notCurrentLists = new Array();
-					<c:forEach items="${statusSavedBag.value}" var="list">
-					im.bagWorks.notCurrentLists.push('${list.value.name}');
-					</c:forEach>
-				})();
-				</script>
-			</c:when>
-		</c:choose>
-		
-    	<table class="bag-table sortable-onload-2 rowstyle-alt colstyle-alt no-arrow">
-    	  <thead>
-	          <tr>
-	          	<th style="display:none;"></th>
-	            <th>
-	              <input type="checkbox" id="selected_bag"
-	                     onclick="selectColumnCheckbox(this.form, 'bag')">
-	            </th>
-	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.namecolumnheader"/></th>
-	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.descriptioncolumnheader"/></th>
-	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.typecolumnheader"/></th>
-	            <th align="right" nowrap class="sortable-numeric"><fmt:message key="query.savedbags.countcolumnheader"/></th>
-	            <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.datecreatedcolumnheader"/></th>
-	            <c:if test="${statusSavedBag.key == 'TO_UPGRADE'}">
-	            	<th align="left" nowrap class="upgrade">Upgrade list</th>
-	            </c:if>
-	          </tr>
+  <html:form action="/modifyBag">
+  <c:forEach items="${PROFILE.savedBagsByStatus}" var="statusSavedBag">
+
+    <div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT'}">style="display:none;"</c:if>>
+    <c:choose>
+      <c:when test="${statusSavedBag.key == 'TO_UPGRADE'}">
+        <h2>Lists to upgrade</h2>
+        <p>You need to manually upgrade the following lists in order to use them.</p>
+      </c:when>
+      <c:when test="${statusSavedBag.key == 'NOT_CURRENT' && fn:length(statusSavedBag.value) > 0}">
+        <script type="text/javascript">
+        (function() {
+          <%-- lists are being upgraded (should be anyways) --%>
+          jQuery('div.topBar.errors').clone().addClass('loading').show().text(im.bagWorks.upgradingMessage)
+          .appendTo(jQuery('div.topBar.errors').parent());
+          im.bagWorks.notCurrentLists = new Array();
+          <c:forEach items="${statusSavedBag.value}" var="list">
+          im.bagWorks.notCurrentLists.push('${list.value.name}');
+          </c:forEach>
+        })();
+        </script>
+      </c:when>
+    </c:choose>
+
+      <table class="bag-table sortable-onload-2 rowstyle-alt colstyle-alt no-arrow">
+        <thead>
+            <tr>
+              <th style="display:none;"></th>
+              <th>
+                <input type="checkbox" id="selected_bag"
+                       onclick="selectColumnCheckbox(this.form, 'bag')">
+              </th>
+              <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.namecolumnheader"/></th>
+              <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.descriptioncolumnheader"/></th>
+              <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.typecolumnheader"/></th>
+              <th align="right" nowrap class="sortable-numeric"><fmt:message key="query.savedbags.countcolumnheader"/></th>
+              <th align="left" nowrap class="sortable"><fmt:message key="query.savedbags.datecreatedcolumnheader"/></th>
+              <c:if test="${statusSavedBag.key == 'TO_UPGRADE'}">
+                <th align="left" nowrap class="upgrade">Upgrade list</th>
+              </c:if>
+            </tr>
           </thead>
           <tbody>
           <c:forEach items="${statusSavedBag.value}" var="savedBag" varStatus="status">
@@ -140,144 +140,144 @@ if (!im.bagWorks) {
                 <c:if test="${savedBag.value.size != 1}">s</c:if>
               </td>
               <td class="sorting"><im:dateDisplay date="${savedBag.value.dateCreated}"/></td>
-              
+
               <%-- to upgrade link --%>
               <c:if test="${savedBag.value.state == 'TO_UPGRADE'}">
               <td class="upgrade">
-              	<str:encodeUrl var="nameForURL">${savedBag.value.name}</str:encodeUrl>
+                <str:encodeUrl var="nameForURL">${savedBag.value.name}</str:encodeUrl>
                 <html:link title="Upgrade this list" action="/bagUpgrade?bagName=${nameForURL}" styleClass="bagToUpgrade"></html:link>
               </td>
               </c:if>
-              
+
             </tr>
           </c:forEach>
           </tbody>
         </table>
-        
+
         <%-- list works --%>
         <c:if test="${statusSavedBag.key == 'CURRENT'}">
-	        <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
-	          New list name:
-	          <html:text property="newBagName" size="12"/>
-	            <input type="button" onclick="validateBagOperations('modifyBagForm', 'union')" value="Union"/>
-	            <input type="button" onclick="validateBagOperations('modifyBagForm', 'intersect')" value="Intersect"/>
-	           <input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
-	        </c:if>
-	        <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
-	        <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
-	
-	        <html:hidden property="pageName" value="MyMine"/>
-	        <html:hidden property="listsButton" value="" styleId="listsButton"/>
+          <c:if test="${fn:length(PROFILE.savedBags) >= 2}">
+            New list name:
+            <html:text property="newBagName" size="12"/>
+              <input type="button" onclick="validateBagOperations('modifyBagForm', 'union')" value="Union"/>
+              <input type="button" onclick="validateBagOperations('modifyBagForm', 'intersect')" value="Intersect"/>
+             <input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
+          </c:if>
+          <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
+          <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
+
+          <html:hidden property="pageName" value="MyMine"/>
+          <html:hidden property="listsButton" value="" styleId="listsButton"/>
         </c:if>
-        
+
         </div>
-        
+
       </c:forEach>
       </html:form>
 
     </c:otherwise>
   </c:choose>
-  
+
 <script type="text/javascript">
 (function() {
-	jQuery(window).load(function(){
-		<%-- sort bags by a remembered column --%>
-		var order = im.getCookie("mymine.lists.order");
-		if (order && parseInt(order)) {
-			<%-- traverse all tables and call them custom sort --%>
-			jQuery('table.bag-table').each(function() {
-				fdTableSort.jsWrapper(jQuery(this).attr("id"), order);
-			});
-		}
-		
-		<%-- callback saving sort order of tables into a cookie --%>
-		jQuery('table.bag-table').each(function() {
-			var id = jQuery(this).attr("id"),
-				that = this;
-			window["sortCompleteCallback" + id] = function() {
-				var th = jQuery(that).find("th.forwardSort");
-				if (!jQuery(th).exists()) {
-					th = jQuery(that).find("th.reverseSort");
-				}
-				im.setCookie("mymine.lists.order", th.attr("class").replace(/[^0-9.]/g, ""));
-			};
-		});
-	});
-	
-	<%-- ##### --%>
-	
-	<%-- attach handler to select all in a table --%>
-	jQuery('table.bag-table th input[type="checkbox"]').click(function() {
-		jQuery(this).closest('table').find('tr td input[type="checkbox"]').attr('checked', jQuery(this).is(':checked'));
-	});
-	
-	<%-- poll for lists that are "current" or "to upgrade" --%>
+  jQuery(window).load(function(){
+    <%-- sort bags by a remembered column --%>
+    var order = im.getCookie("mymine.lists.order");
+    if (order && parseInt(order)) {
+      <%-- traverse all tables and call them custom sort --%>
+      jQuery('table.bag-table').each(function() {
+        fdTableSort.jsWrapper(jQuery(this).attr("id"), order);
+      });
+    }
+
+    <%-- callback saving sort order of tables into a cookie --%>
+    jQuery('table.bag-table').each(function() {
+      var id = jQuery(this).attr("id"),
+        that = this;
+      window["sortCompleteCallback" + id] = function() {
+        var th = jQuery(that).find("th.forwardSort");
+        if (!jQuery(th).exists()) {
+          th = jQuery(that).find("th.reverseSort");
+        }
+        im.setCookie("mymine.lists.order", th.attr("class").replace(/[^0-9.]/g, ""));
+      };
+    });
+  });
+
+  <%-- ##### --%>
+
+  <%-- attach handler to select all in a table --%>
+  jQuery('table.bag-table th input[type="checkbox"]').click(function() {
+    jQuery(this).closest('table').find('tr td input[type="checkbox"]').attr('checked', jQuery(this).is(':checked'));
+  });
+
+  <%-- poll for lists that are "current" or "to upgrade" --%>
     if (im.bagWorks.notCurrentLists) {
-    	
-    	function remainingLists() {
-			if (!jQuery('div.topBar.errors.loading div.count').exists()) {
-				jQuery('<div/>', {
-					'class': 'count',
-					'style': 'display:inline; margin-left:5px;',
-				}).appendTo('div.topBar.errors.loading');
-			}
-			if (im.bagWorks.notCurrentLists.length > 0) {
-				jQuery('div.topBar.errors.loading div.count').html(function() {
-					return '<strong>' + im.bagWorks.notCurrentLists.length + '</strong> ' +
-					((im.bagWorks.notCurrentLists.length > 1) ? 'lists' : 'list') + ' remaining.';
-				});
-			} else {
-				jQuery('div.topBar.errors.loading').remove();
-			}
-    	}
-    	remainingLists();
-    	
-    	jQuery('<h2/>', {
-    		'text': 'Your current lists'
-    	}).prependTo(jQuery('div.CURRENT.status-table'));
-    	
-		im.bagWorks.timeout = window.setInterval(function() {		    
-			AjaxServices.getSavedBagStatus(function(json) {
-		    	var jSONObject = jQuery.parseJSON(json);
-	            jQuery.each(jSONObject, function(i) {
-	            	var list = jSONObject[i],
-	            		j	 = im.bagWorks.notCurrentLists.indexOf(list['name']);
-	            	if (j >= 0) {
-	            		jQuery('div.status-table.NOT_CURRENT table tbody tr').each(function(i) {
-	            			if (jQuery(this).find('td.list-name').text() == list['name']) {
-	            				jQuery('div.status-table.' + list['status']).show();
-	            				var newList = jQuery(this).clone();
-	            				
-	            				if (list['status'] == 'TO_UPGRADE') {
-	            					jQuery('<td/>', {
-	            						'class': 'upgrade'
-	            					})
-	            					.append(jQuery('<a/>', {
-	            						'href': '<html:rewrite action="/bagUpgrade"/>' + '?bagName=' + newList.find('td.list-name').text().replace(/ /g, '+'),
-	            						'class': 'bagToUpgrade'
-	            					}))
-	            					.appendTo(newList);
-	            				} else if (list['status'] == 'CURRENT') {
-	            					var listSize = list['size'];
-	            					if (listSize != undefined) {
-	            						newList.find('td[id^="size"]').text(function() {
-	            							return listSize + " value" + ((listSize != 1) ? 's' : '');
-	            						});
-	            					}
-	            				}
-	            				
-	            				newList.prependTo(jQuery('div.status-table.' + list['status'] + ' table tbody'))
-	            				.highlight();
-	            			}
-	            		});
-	            		im.bagWorks.notCurrentLists.splice(j, 1);
-	            		remainingLists();
-	            	}
-	            });
-	            <%-- shall we poll any further? --%>
-	            if (im.bagWorks.notCurrentLists.length == 0) window.clearInterval(im.bagWorks.timeout);
-		    });
-		}, im.bagWorks.timeout);
+
+      function remainingLists() {
+      if (!jQuery('div.topBar.errors.loading div.count').exists()) {
+        jQuery('<div/>', {
+          'class': 'count',
+          'style': 'display:inline; margin-left:5px;',
+        }).appendTo('div.topBar.errors.loading');
+      }
+      if (im.bagWorks.notCurrentLists.length > 0) {
+        jQuery('div.topBar.errors.loading div.count').html(function() {
+          return '<strong>' + im.bagWorks.notCurrentLists.length + '</strong> ' +
+          ((im.bagWorks.notCurrentLists.length > 1) ? 'lists' : 'list') + ' remaining.';
+        });
+      } else {
+        jQuery('div.topBar.errors.loading').remove();
+      }
+      }
+      remainingLists();
+
+      jQuery('<h2/>', {
+        'text': 'Your current lists'
+      }).prependTo(jQuery('div.CURRENT.status-table'));
+
+    im.bagWorks.timeout = window.setInterval(function() {
+      AjaxServices.getSavedBagStatus(function(json) {
+          var jSONObject = jQuery.parseJSON(json);
+              jQuery.each(jSONObject, function(i) {
+                var list = jSONObject[i],
+                  j	 = im.bagWorks.notCurrentLists.indexOf(list['name']);
+                if (j >= 0) {
+                  jQuery('div.status-table.NOT_CURRENT table tbody tr').each(function(i) {
+                    if (jQuery(this).find('td.list-name').text() == list['name']) {
+                      jQuery('div.status-table.' + list['status']).show();
+                      var newList = jQuery(this).clone();
+
+                      if (list['status'] == 'TO_UPGRADE' && !newList.find('td.upgrade').exists()) {
+                        jQuery('<td/>', {
+                          'class': 'upgrade'
+                        })
+                        .append(jQuery('<a/>', {
+                          'href': '<html:rewrite action="/bagUpgrade"/>' + '?bagName=' + newList.find('td.list-name').text().replace(/ /g, '+'),
+                          'class': 'bagToUpgrade'
+                        }))
+                        .appendTo(newList);
+                      } else if (list['status'] == 'CURRENT') {
+                        var listSize = list['size'];
+                        if (listSize != undefined) {
+                          newList.find('td[id^="size"]').text(function() {
+                            return listSize + " value" + ((listSize != 1) ? 's' : '');
+                          });
+                        }
+                      }
+
+                      newList.prependTo(jQuery('div.status-table.' + list['status'] + ' table tbody'))
+                      .highlight();
+                    }
+                  });
+                  im.bagWorks.notCurrentLists.splice(j, 1);
+                  remainingLists();
+                }
+              });
+              <%-- shall we poll any further? --%>
+              if (im.bagWorks.notCurrentLists.length == 0) window.clearInterval(im.bagWorks.timeout);
+        });
+    }, im.bagWorks.timeout);
     }
 })();
 </script>
