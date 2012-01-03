@@ -285,7 +285,9 @@ public class EnrichmentWidget extends Widget
      * @return List of column labels
      */
     public List<String> getColumns() {
-        return Arrays.asList(new String[] {((EnrichmentWidgetConfig) config).getLabel(), "p-Value",
+        String label = (!"Benjamini Hochberg".equalsIgnoreCase(errorCorrection)) ? "p-Value"
+                                                                                 : "q-Value";
+        return Arrays.asList(new String[] {((EnrichmentWidgetConfig) config).getLabel(), label,
             ""});
     }
 }
