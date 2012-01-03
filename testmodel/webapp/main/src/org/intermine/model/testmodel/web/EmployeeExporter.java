@@ -55,7 +55,8 @@ public class EmployeeExporter implements TableHttpExporter
      * @param form the form containing the columns paths to export
      */
     public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-            TableExportForm form, Collection<Path> pathCollection) {
+            TableExportForm form, Collection<Path> pathCollection,
+            Collection<Path> newPathCollection) {
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=exployee.txt");
