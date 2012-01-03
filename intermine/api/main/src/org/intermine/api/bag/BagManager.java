@@ -229,8 +229,8 @@ public class BagManager
 
     /**
      * Order a map of bags by im:order:n tag
-     * @param bags
-     * @return
+     * @param bags unordered
+     * @return an ordered Map of InterMineBags
      */
     public Map<String, InterMineBag> orderBags(Map<String, InterMineBag> bags) {
         Map<String, InterMineBag> bagsOrdered = new TreeMap<String, InterMineBag>(new ByTagOrder());
@@ -429,7 +429,8 @@ public class BagManager
      * @author radek
      *
      */
-    public class ByTagOrder implements Comparator<String> {
+    public class ByTagOrder implements Comparator<String>
+    {
 
         /**
          * For a list of tags corresponding to a bag, give us the order set in im:order:n
@@ -443,14 +444,16 @@ public class BagManager
                     return Integer.parseInt(name.replaceAll("[^0-9]", ""));
                 }
             }
-            return 666;
+            return Integer.MAX_VALUE;
         }
 
         @Override
         public int compare(String aK, String bK) {
             // get the order from the tags for the bags for the superduper profile
-            Integer aO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(aK)));
-            Integer bO = resolveOrderFromTagsList(getTagsForBag(superProfile.getSavedBags().get(bK)));
+            Integer aO = resolveOrderFromTagsList(getTagsForBag(superProfile.
+                    getSavedBags().get(aK)));
+            Integer bO = resolveOrderFromTagsList(getTagsForBag(superProfile.
+                    getSavedBags().get(bK)));
 
             if (aO < bO) {
                 return -1;
@@ -470,7 +473,8 @@ public class BagManager
      * @author radek
      *
      */
-    public class CaseInsensitiveComparator implements Comparator<String> {
+    public class CaseInsensitiveComparator implements Comparator<String>
+    {
 
         @Override
         public int compare(String aK, String bK) {
