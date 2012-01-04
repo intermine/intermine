@@ -253,7 +253,7 @@ public class DisplayConstraint
 
     /**
      * If the constraint is a multivalue, returns the value collection
-     * represented as string separated by ',', otherwise return an empty String.
+     * represented as string separated by ', ', otherwise return an empty String.
      *
      * @return a String representing the multivalues of constraint
      */
@@ -261,8 +261,10 @@ public class DisplayConstraint
         String multiValuesAsString = "";
         if (getMultiValues() != null) {
             for (String value : getMultiValues()) {
-                multiValuesAsString += value + ",";
+                multiValuesAsString += value + ", ";
             }
+            multiValuesAsString = multiValuesAsString.substring(0,
+                                  multiValuesAsString.lastIndexOf(","));
         }
         return multiValuesAsString;
     }
