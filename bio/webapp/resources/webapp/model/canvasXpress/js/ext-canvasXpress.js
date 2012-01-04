@@ -25,12 +25,17 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   afterRender: function() {
     Ext.canvasXpress.superclass.afterRender.apply(this, arguments);
     this.canvasId = this.id + 'canvas';
+    // To cope with the remote services divs we resize the canvas
+    var dw = this.options.decreaseWidth ? this.options.decreaseWidth : 0;
+    var dh = this.options.decreaseHeight ? this.options.decreaseHeight : 0;
+    var pw = this.el.dom.parentNode ? this.el.dom.parentNode.clientWidth - dw : 500;
+    var ph = this.el.dom.parentNode ? this.el.dom.parentNode.clientHeight - dh : 500;
     // Add the canvas tag
     Ext.DomHelper.append(this.body, {
       tag: 'canvas',
       id: this.canvasId,
-      width: this.width || (this.el.dom.parentNode? this.el.dom.parentNode.clientWidth || 500 : 500),
-      height: this.height || (this.el.dom.parentNode? this.el.dom.parentNode.clientHeight || 500 : 500)
+      width: dw && pw ? pw : this.width || pw,
+      height: dh && ph ? ph : this.height || ph
     });
     // first set up default events
     var events = {};
@@ -54,6 +59,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     Ext.applyIf(this.events, events);
     // Now get the canvasXpress object
     this.canvas = new CanvasXpress(this.canvasId, this.data, this.options, this.events);
+    this.canvas.Ext = this;
     this.canvas.highlightNode = []; // clear up the initial highlight
     var ss = this.canvas.shapes.sort();
     if(ss[0] != 'image') ss.unshift('image');
@@ -67,6 +73,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     }
     this.on('destroy', function(p) {
       if(p.snapshotCtrl) p.snapshotCtrl.close();
+    });
+    this.on('beforedestroy', function(p) {
+      p.canvas.destroy();
     });
   },
   onContextMenu: function (e, o, r) {
@@ -629,7 +638,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
 	items.push({
 	  text: 'Scale Factor',
 	  iconCls: '',
-	  menu: this.buildGroupMenu('scaleDecorationFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
+	  menu: this.buildGroupMenu('decorationScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
 	});
       }
       return items;
@@ -664,7 +673,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
 	items.push({
 	  text: 'Scale Factor',
 	  iconCls: '',
-	  menu: this.buildGroupMenu('scaleLegendFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
+	  menu: this.buildGroupMenu('legendScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
 	});
 	items.push({
 	  text: 'Boxed',
@@ -1194,6 +1203,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   },
   dataRange: function () {
     var m = [];
+    if (!this.canvas.getValidAxes) {
+      this.canvas.initAxes(false, true);
+    }
     var axes = this.canvas.getValidAxes();
     for (var i = 0; i < axes.length; i++) {
       var l = axes[i] == 'xAxis2' ? 'X2' : axes[i].substring(0,1).toUpperCase();
@@ -1210,6 +1222,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   dataSeries: function () {
     var m = [];
     if (this.canvas.graphType == 'BarLine' || this.canvas.graphType.match(/Scatter/) || this.canvas.graphType == 'Pie') {
+      if (!this.canvas.getValidAxes) {
+	this.canvas.initAxes(false, true);
+      }
       var axes = this.canvas.getValidAxes(true);
       var objs = this.canvas.graphType == 'BarLine' ? this.canvas.getVariables() : this.canvas.getSamples();
       for (var i = 0; i < axes.length; i++) {
@@ -1308,7 +1323,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     }, {
       text: 'Scale Factor',
       iconCls: '',
-      menu: this.buildGroupMenu('scaleSmpLabelFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])			
+      menu: this.buildGroupMenu('smpLabelScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])			
 		}, {
       text: 'Max String Length',
       iconCls: '',
@@ -1350,7 +1365,7 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     }, {
       text: 'Scale Factor',
       iconCls: '',
-      menu: this.buildGroupMenu('scaleVarFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])     
+      menu: this.buildGroupMenu('varLabelScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])     
     }, {
       text: 'Max String Length',
       iconCls: '',
@@ -1379,6 +1394,9 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
   // Axes
   axesMenus: function () {
     var items = [];
+    if (!this.canvas.getValidAxes) {
+      this.canvas.initAxes(false, true);
+    }
     var axes = this.canvas.getValidAxes();
     if (axes) {
       this.addItemToMenu(items, 'Font Sizes', false, this.axesFontSizes());
@@ -1415,17 +1433,17 @@ Ext.canvasXpress = Ext.extend(Ext.Panel, {
     var items = [{
       text: 'Ticks',
       iconCls: '',
-      menu: this.buildGroupMenu('scaleTickFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
+      menu: this.buildGroupMenu('tickScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
     }, {
       text: 'Titles',
       iconCls: '',
-      menu: this.buildGroupMenu('scaleTitleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
+      menu: this.buildGroupMenu('titleScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
     }];
     if (this.canvas.hasDataSamples()) {
       items.push({
         text: 'Samples',
         iconCls: '',
-        menu: this.buildGroupMenu('scaleSmpTitleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
+        menu: this.buildGroupMenu('smpTitleScaleFontFactor', [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2])
       });
     }
     return items;
@@ -3505,24 +3523,35 @@ Ext.canvasXpress.utils = {
       }
     }
   },
-  customPanel: function(ps, ed) {
+  customPanel: function(ps, ed, isMulti) {
     // it's nicer to remove the item instead of hiding them (due to sending data AND the looks due to margin)
     for(var i = 0; i < ps.length; i++)
     {
       var a = ps[i].items;
       for(var j = a.length - 1; j >= 0; j--)
         if(a[j].hidden) a.splice(j, 1);
+        else if(isMulti) a[j].allowBlank = true;
     }
     if(ed.panels)
     {
       for(var i = 0; i < ed.panels.length; i++)
-        ps.push(ed.panels[i]);
+      {
+        var p = ed.panels[i];
+        if(isMulti)
+        {
+          var a = p.items;
+          for(var j = a.length - 1; j >= 0; j--)
+            a[j].allowBlank = true;
+        }
+        ps.push(p);
+      }
     }
     if(ed.addToPanels)
     {
       for(var i = 0; i < ed.addToPanels.length; i++)
       {
         var o = ed.addToPanels[i];
+        if(isMulti) o.allowBlank = true;
         ps[o.pidx || 0].items.push(o);
       }
     }
@@ -3790,9 +3819,8 @@ Ext.canvasXpress.customShapeDialog = Ext.extend(Ext.Window, {
     return '<div style="width:180px;height:150px;text-alignment:center;padding-left:15px;"><img width=150 height=100 src="' +
             url + '" /><div style="text-align:center"><div class="shapename">'+name+'</div>' +
             '<div class="buttonwrapper">' +
-            '<a class="squarebutton"'+idstr+'><span>Use</span></a>' +
-            (editable?'<a style="margin-left:6px" class="squarebutton"'+idstr+'><span>Edit</span></a>':'') +
-            '<a style="margin-left:6px" class="squarebutton"'+idstr+'><span>Remove</span></a>' +
+            '<a '+ (editable?'':'style="margin-left:55px" ')+'class="squarebutton"'+idstr+'><span>Use</span></a>' +
+            (editable?'<a style="margin-left:6px" class="squarebutton"'+idstr+'><span>Edit</span></a><a style="margin-left:6px" class="squarebutton"'+idstr+'><span>Remove</span></a>':'') +
             '</div></div></div>';
   },
   getIFrameDoc: function() {
@@ -3894,6 +3922,7 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
   constructor: function(config, extCanvas) {
     if(!config) config = {};
     this.nodeInfo = config;
+    var isMulti = !!config.length;
     this.extCanvas = extCanvas;
     var allNodes = [], data = config.data || {}, parent = null;
     for(var i in extCanvas.canvas.nodes)
@@ -3913,23 +3942,23 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         xtype: 'compositefield',
         fieldLabel: 'Label',
         items: [
-          { xtype: 'textfield', value: config.label || config.name || config.id || '',
-            allowBlank: false, name:'label', width: 80 },
+          { xtype: 'textfield', value: isMulti? null : config.label || config.name || config.id || '',
+            allowBlank: isMulti, name:'label', width: 80 },
           { xtype: 'displayfield', value: 'Size:', width: 24, style:'margin-top:3px' },
-          { xtype: 'numberfield', value: config.labelSize || 1,
-            allowBlank: false, name:'labelSize', width: 30 },
+          { xtype: 'numberfield', value: isMulti? null : config.labelSize || 1,
+            allowBlank: isMulti, name:'labelSize', width: 30 },
           {
             xtype: 'checkbox',
-            checked: config.hideName,
+            checked: isMulti? false : config.hideName,
             boxLabel: 'Hide label?',
             name: 'hideName',
             flex: 1
           }
         ]
       },
-      { fieldLabel: 'Name', value: config.name || '',
+      { fieldLabel: 'Name', value: isMulti? null : config.name || '',
         hideLabel: h.name, hidden: h.name,
-        allowBlank: false, name:'name' },
+        allowBlank: isMulti, name:'name' },
       {
         xtype: 'combo',
         fieldLabel: 'Parent',
@@ -3944,15 +3973,15 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         valueField: 'id',
         displayField: 'label',
         tpl: '<tpl for="."><div ext:qtip="Id:{id}" class="x-combo-list-item">{label}</div></tpl>',
-        value: config.parentNode
+        value: isMulti? null : config.parentNode
       }
     ];
     var item2 = [
-      { xtype: 'colorfield', fieldLabel: 'Color', allowBlank: false,
-        name:'color', value: config.color || 'rgb(255,0,0)',
+      { xtype: 'colorfield', fieldLabel: 'Color', allowBlank: isMulti,
+        name:'color', value: isMulti? null : config.color || 'rgb(255,0,0)',
         hideLabel: h.color, hidden: h.color },
-      { xtype: 'colorfield', fieldLabel: 'Outline', allowBlank: false,
-        name:'outline', value: config.outline || 'rgb(255,0,0)',
+      { xtype: 'colorfield', fieldLabel: 'Outline', allowBlank: isMulti,
+        name:'outline', value: isMulti? null : config.outline || 'rgb(255,0,0)',
         hideLabel: h.outline, hidden: h.outline },
       {
         xtype: 'compositefield',
@@ -3960,10 +3989,10 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         items: [
           { xtype:'combo', name:'pattern', hideLabel: h.pattern, hidden: h.pattern,
             triggerAction: 'all', store: ['open', 'closed'],
-            width: 80, value: config.pattern || 'closed' },
+            width: 80, value: isMulti? null : config.pattern || 'closed' },
           { xtype: 'displayfield', value: 'Rotate:', width: 52, style:'margin-top:3px;margin-left:5px;' },
           { xtype:'numberfield', name:'rotate', hideLabel: h.rotate, hidden: h.rotate,
-            width: 30, value: config.rotate || '' }
+            width: 30, value: isMulti? null : config.rotate || '' }
         ]
       },
       {
@@ -3971,25 +4000,25 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         fieldLabel: 'Size',
         items: [
           { xtype:'numberfield', name:'size', hideLabel: h.size, hidden: h.size,
-            width: 30, value: config.size || '1.0' },
+            width: 30, value: isMulti? null : config.size || '1.0' },
           { xtype: 'displayfield', value: 'Width:', width: 35, style:'margin-top:3px' },
           { xtype:'numberfield', name:'width', hideLabel: h.width, hidden: h.width,
-            width: 30, value: config.width || '' },
+            width: 30, value: isMulti? null : config.width || '' },
           { xtype: 'displayfield', value: 'Height:', width: 40, style:'margin-top:3px' },
           { xtype:'numberfield', name:'height', hideLabel: h.height, hidden: h.height,
-            width: 30, value: config.height || '' }
+            width: 30, value: isMulti? null : config.height || '' }
         ]
       },
       {
         xtype: 'combo',
         fieldLabel: 'Shape',
-        allowBlank: false,
+        allowBlank: isMulti,
         hideLabel: h.shape, hidden: h.shape,
         emptyText: 'Selection Required',
         triggerAction: 'all',
         store: extCanvas.canvas.shapes.sort(),
         name: 'shape',
-        value: config.shape || 'square',
+        value: isMulti? null : config.shape || 'square',
         listeners: {
           scope: this,
           select: function(c, r, i) {
@@ -4035,7 +4064,7 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
           }
         }
       },
-      { fieldLabel: 'Image Path', value: config.imagePath || '',
+      { fieldLabel: 'Image Path', value: isMulti? null : config.imagePath || '',
         hideLabel: h.imagePath, hidden: h.imagePath, width: 200,
         allowBlank: true, name:'imagePath', disabled: config.shape != 'image' }
     ];
@@ -4051,7 +4080,7 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
         title: 'Graphics',
         items: item2
       });
-    Ext.canvasXpress.utils.customPanel(ps, nd);
+    Ext.canvasXpress.utils.customPanel(ps, nd, isMulti);
     var bf = function(b, e, noClose) {
       var tab = b.ownerCt.ownerCt.get(0), prop = tab.get(0), graph = extCanvas.separateGraphics? tab.get(1) : null,
           pf = prop.getForm(), gf = graph? graph.getForm() : null;
@@ -4136,7 +4165,7 @@ Ext.canvasXpress.nodeDialog = Ext.extend(Ext.Window, {
       },
       '|',
       {
-        text: (config.id? 'Change' : 'Add') + ' Node',
+        text: isMulti? 'Change Nodes' : (config.id? 'Change' : 'Add') + ' Node',
         handler: bf
       });
     Ext.apply(this, {
@@ -4161,6 +4190,7 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
     if(dir == 'to') config = {id2:config.id};
     else if(dir == 'from') config = {id1:config.id};
     else if(!config) config = {};
+    var isMulti = !!config.length;
     this.edgeInfo = config;
     this.extCanvas = extCanvas;
     var allNodes = [], data = config.data || {};
@@ -4228,7 +4258,7 @@ Ext.canvasXpress.edgeDialog = Ext.extend(Ext.Window, {
           hideLabel: h.color, hidden: h.color }
       ]
     }];
-    Ext.canvasXpress.utils.customPanel(ps, ed);
+    Ext.canvasXpress.utils.customPanel(ps, ed, isMulti);
     var bbf = function(b, e, noClose) {
       var tab = b.ownerCt.ownerCt.get(0), fp = tab.get(0), bf = fp.getForm();
       Ext.canvasXpress.utils.renderPanels(tab);
