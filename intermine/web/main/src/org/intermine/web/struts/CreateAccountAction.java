@@ -60,7 +60,8 @@ public class CreateAccountAction extends LoginHandler
                 && webProperties.getProperty("mail.mailing-list").length() > 0) {
                 MailUtils.subscribe(username, webProperties);
             }
-            SessionMethods.recordMessage("You have successfully created an account.", session);
+            SessionMethods.recordMessage("You have successfully created an account, and logged in.",
+                    session);
         } catch (Exception e) {
             SessionMethods.recordError("Failed to send confirmation email", session);
         }
@@ -77,6 +78,6 @@ public class CreateAccountAction extends LoginHandler
          * (NoSuchAlgorithmException e) { }
          */
         doLogin(request, username, password);
-        return mapping.findForward("mymine");
+        return new ActionForward("/begin.do");
     }
 }
