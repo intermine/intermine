@@ -52,7 +52,7 @@ public class HomologueURLQuery implements WidgetURLQuery
                 "Gene.homologues.homologue.symbol",
                 "Gene.homologues.homologue.organism.shortName",
                 "Gene.homologues.type");
-        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
+        q.addConstraint(Constraints.in("Gene", bag.getName()));
         q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
         if (!showAll) {
             String[] keys = key.split(",");
