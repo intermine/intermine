@@ -146,7 +146,7 @@
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="rnaSeqResults" label="RNA_seq Results" showInResults="false" showInInlineCollection="false" showInSummary="false" />
+      <fieldconfig fieldExpr="name"/>
     </fields>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
