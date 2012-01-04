@@ -35,7 +35,7 @@ jQuery(document).ready(function () {
 </script>
 
 <c:set var="MAX_CLUSTER" value="250" />
-<c:set var="MAX_MAP" value="800" />
+<c:set var="MAX_MAP" value="600" />
 <c:set var="MAX_DEFAULT_OPEN" value="100" />
 
 <%--
