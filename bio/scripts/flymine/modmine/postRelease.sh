@@ -12,7 +12,6 @@ LOADDIR="$DATADIR/load"
 INTERACT=y
 DOIT=y
 
-#PRO="oliver snyder"
 PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
 #PRO="lieb macalpine snyder karpen celnikerlai waterstonpiano"
 
@@ -226,7 +225,7 @@ cd /home/modmine/.intermine
 sed 's/modprod0/modalone/g' modmine.properties.r$PREL | sed 's/modmine-prod-userprofile/modmine-r'"$PREL"'-userprofile/g' | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
 
 echo; echo "Starting archived webapp r$PREL..."
-cd /home/modmine/svn/modmine-$PREL/modmine/webapp
+cd /data/code/modmine/modmine-$PREL/modmine/webapp
 ant -Drelease=modmine-$PREL default remove-webapp release-webapp
 
 echo
