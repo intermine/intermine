@@ -317,7 +317,8 @@
                     if (i == maxEntries) return;
 
                     feedTitle = trimmer(items[i].getElementsByTagName("title")[0].firstChild.nodeValue, 70);
-                    feedDescription = trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70);
+                    feedDescription = (items[i].getElementsByTagName("description").length > 0) ?
+                        trimmer(items[i].getElementsByTagName("description")[0].firstChild.nodeValue, 70) : '';
                     // we have a feed date
                     if (items[i].getElementsByTagName("pubDate")[0]) {
                         feedDate = new Date(items[i].getElementsByTagName("pubDate")[0].firstChild.nodeValue);
