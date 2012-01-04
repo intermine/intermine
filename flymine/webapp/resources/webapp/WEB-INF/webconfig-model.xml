@@ -698,6 +698,12 @@
                      placement="summary"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinStructureATMDisplayer"
+                     jspName="model/proteinStructureATMDisplayer.jsp"
+                     replacesFields="atm"
+                     placement="summary"
+                     types="ProteinStructure"/>
+
   </reportdisplayers>
 
    <widgets>
