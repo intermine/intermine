@@ -207,8 +207,8 @@ public class HeatMapController extends TilesAction
             if (symbol == null) {
                 symbol = id;
             }
-
-            symbol = fixSymbol(symbol);
+// should be fine with release 4.2 of canvasxpress
+//            symbol = fixSymbol(symbol);
 
             if (!expressionScoreMap.containsKey(symbol)) {
                 // Create a list with space for n (size of conditions) ExpressionScore
@@ -244,10 +244,9 @@ public class HeatMapController extends TilesAction
      * @return a fixed symbol
      */
     private String fixSymbol(String symbol) {
-            symbol = symbol.replace("(", "%28");
-            symbol = symbol.replace(")", "%29");
-            symbol = symbol.replace(":", "%3A");
-
+        symbol = symbol.replace("(", "%28");
+        symbol = symbol.replace(")", "%29");
+        symbol = symbol.replace(":", "%3A");
         return symbol;
     }
 
