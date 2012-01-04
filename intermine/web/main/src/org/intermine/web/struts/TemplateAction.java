@@ -52,7 +52,10 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
 import org.intermine.util.StringUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.DisplayConstraintFactory;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
@@ -148,6 +151,16 @@ public class TemplateAction extends InterMineAction
         }
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
                 template, templateFormToTemplateValues(tf, template));
+
+        //displayconstraint list used to display  constraints edited by the user
+        DisplayConstraintFactory factory =  new DisplayConstraintFactory(im, null);
+        DisplayConstraint displayConstraint = null;
+        List<DisplayConstraint> displayConstraintList = new ArrayList<DisplayConstraint>();
+        for (PathConstraint pathConstraint : populatedTemplate.getEditableConstraints()) {
+            displayConstraint = factory.get(pathConstraint, profile, populatedTemplate);
+            displayConstraintList.add(displayConstraint);
+        }
+        session.setAttribute("dcl", displayConstraintList);
 
         String url = new URLGenerator(request).getPermanentBaseURL();
 

@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +37,10 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.template.TemplateQuery;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.DisplayConstraintFactory;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -194,6 +200,16 @@ public class CreateTemplateAction extends InterMineAction
         if ("SAVE".equals(tsf.getActionType())) {
             return mapping.findForward("query");
         } else {
+            //prepare display constraint list to display  parameter values
+            //edited by the user in the result page
+            DisplayConstraintFactory factory =  new DisplayConstraintFactory(im, null);
+            DisplayConstraint displayConstraint = null;
+            List<DisplayConstraint> displayConstraintList = new ArrayList<DisplayConstraint>();
+            for (PathConstraint pathConstraint : template.getEditableConstraints()) {
+                displayConstraint = factory.get(pathConstraint, profile, template);
+                displayConstraintList.add(displayConstraint);
+            }
+            session.setAttribute("dcl", displayConstraintList);
             return mapping.findForward("run");
         }
     }

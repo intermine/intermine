@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
+<%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
 <!-- table.jsp -->
 
@@ -34,7 +35,6 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="js/table.js" ></script>
-
     <div class="body">
       <div class="resultsTableTemplateHeader">
 
@@ -59,18 +59,42 @@
        </c:if>
      </c:if>
 
-     <c:if test="${!empty pathQuery.description || !empty param.templateQueryDescription}">
+     <c:if test="${!empty templateQuery.description || !empty param.templateQueryDescription}">
        <div class="templateDescription">
          <c:choose>
            <c:when test="${!empty param.templateQueryDescription}">
              <c:out value="${param.templateQueryDescription}"/>
            </c:when>
            <c:otherwise>
-             <c:out value="${pathQuery.description}"/>
+             <c:out value="${templateQuery.description}"/>
            </c:otherwise>
          </c:choose>
          </div>
      </c:if>
+     <c:if test="${!empty templateQuery}">
+     <div>
+     <span class="parameterValues">
+      <c:forEach items="${dcl}" var="dec" >
+          <c:out value="${imf:formatPathStr(dec.endClassName, INTERMINE_API, WEBCONFIG)}" />
+          <c:set var="fieldDisplay" value="${imf:formatField(dec.path.path, WEBCONFIG)}" />
+          <c:if test="${!empty fieldDisplay}">
+              &gt;&nbsp;${fieldDisplay}
+          </c:if>
+          &nbsp;${dec.selectedOp.label}
+          <c:if test="${!empty dec.selectedValue}">
+              &nbsp;${dec.selectedValue}
+          </c:if>
+          <c:if test="${!empty dec.multiValuesAsString}">
+              &nbsp;${dec.multiValuesAsString}
+          </c:if>
+          <c:if test="${!empty dec.selectedExtraValue}">
+              IN&nbsp;${dec.selectedExtraValue}
+          </c:if>
+          <br/>
+      </c:forEach>
+      </span>
+      </div>
+      </c:if>
 
      <c:if test="${!empty param.bagName}">
        <div><strong id="numberOfResults">${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
