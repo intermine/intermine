@@ -128,7 +128,7 @@
     </c:if>
 
   <%-- shown @ top displayers --%>
-  <div id="displayers" class="table">
+  <div class="displayers">
     <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="top" />
       <tiles:put name="reportObject" beanName="object" />
@@ -289,12 +289,12 @@
 <div class="grid_10">
 
   <div id="summaryCategory" class="aspectBlock">
-	 <tiles:insert page="/reportDisplayers.jsp">
-	    <tiles:put name="placement" value="summary" />
-		<tiles:put name="reportObject" beanName="object" />
+   <tiles:insert page="/reportDisplayers.jsp">
+      <tiles:put name="placement" value="summary" />
+    <tiles:put name="reportObject" beanName="object" />
      </tiles:insert>
 
-	 <tiles:insert name="reportAspect.tile">
+   <tiles:insert name="reportAspect.tile">
         <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
         <tiles:put name="placement" value="im:summary" />
         <tiles:put name="reportObject" beanName="object" />
