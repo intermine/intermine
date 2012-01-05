@@ -10,6 +10,7 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,9 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
@@ -114,15 +117,19 @@ public class ModifyBagDetailsAction extends InterMineAction
                     BagConverter bagConverter = PortalHelper.getBagConverter(im,
                             SessionMethods.getWebConfig(request),
                             additionalConverter.getClassName());
-                    WebResults result = bagConverter.getConvertedObjects(profile,
-                            imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());
-                    PagedTable pc = new PagedTable(result);
-                    String identifier = "col" + index++;
-                    SessionMethods.setResultsTable(session, identifier, pc);
-                    String trail = "|bag." + imBag.getName();
-                    SessionMethods.removeQuery(session);
-                    return new ForwardParameters(mapping.findForward("results"))
-                        .addParameter("table", identifier).addParameter("trail", trail).forward();
+                    List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
+                            imBag.getType(), imBag.getContentsAsIds(), mbdf.getExtraFieldValue());
+
+                    if (converted.size() == 1) {
+                        return goToReport(mapping, converted.get(0).toString());
+                    }
+
+                    String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(),
+                            mbdf.getExtraFieldValue() + " orthologues of " + imBag.getName());
+
+                    InterMineBag newBag = profile.createBag(bagName, imBag.getType(), "",
+                            im.getClassKeys());
+                    return createBagAndGoToBagDetails(mapping, newBag, converted);
                 }
             }
         // convert links
@@ -148,5 +155,17 @@ public class ModifyBagDetailsAction extends InterMineAction
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();
+    }
+
+    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag,
+            List<Integer> bagList) throws ObjectStoreException {
+        imBag.addIdsToBag(bagList, imBag.getType());
+        return new ForwardParameters(mapping.findForward("bagDetails"))
+            .addParameter("bagName", imBag.getName()).forward();
+    }
+
+    private ActionForward goToReport(ActionMapping mapping, String id) {
+        return new ForwardParameters(mapping.findForward("report"))
+            .addParameter("id", id).forward();
     }
 }
