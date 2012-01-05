@@ -793,7 +793,7 @@ public class PathQuery implements Cloneable
     /**
      * Returns the current constraint logic. The logic is returned in groups, according to the outer
      * join layout of the query. Two codes in separate groups can only be combined with an AND
-     * operation, not an OR operation.
+     * operation and OR operation.
      *
      * @return the current constraint logic
      */
