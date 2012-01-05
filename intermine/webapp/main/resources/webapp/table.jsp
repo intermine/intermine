@@ -44,7 +44,7 @@
            a bag) - see #1031 --%>
         <c:if test="${empty param.bagName}">
           <div>
-            <fmt:message key="results.templateTitle"/>:
+            <h3><fmt:message key="results.templateConstraints"/></h3>
             <span class="templateTitleBold">
             <c:choose>
               <c:when test="${!empty param.templateQueryTitle}">
@@ -95,7 +95,11 @@
       </span>
       </div>
       </c:if>
-
+     <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
+       <c:if test="${empty param.bagName}">
+         <h3><fmt:message key="results.templateTitle"/></h3>
+       </c:if>
+     </c:if>
      <c:if test="${!empty param.bagName}">
        <div><strong id="numberOfResults">${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
      </c:if>
