@@ -9,6 +9,19 @@
 
 <div id="sequence-feature-displayer" class="collection-table column-border-by-2">
 
+<style>
+<%-- this bad boy sometimes shows in the top of the page --%>
+#object_header #sequencefeaturedisplayer-wrapper.wrapper { margin-bottom:10px; }
+#object_header #sequence-feature-displayer { margin:7px 0 0 3px; }
+#object_header #sequence-feature-displayer h3 { display:none; }
+#object_header #sequence-feature-displayer table { width:50%; }
+#object_header #sequence-feature-displayer table td { padding:0; }
+#object_header #sequence-feature-displayer table,
+#object_header #sequence-feature-displayer table tr,
+#object_header #sequence-feature-displayer table td,
+#object_header #sequence-feature-displayer table th { border:0; background:transparent; }
+</style>
+
 <c:set var="feature" value="${reportObject.object}"/>
 
 <c:choose>
@@ -164,12 +177,12 @@
         jQuery("#sequence-feature-displayer div.toggle a.more").remove();
     }
   });
-  
+
   <%-- fixup number of columns --%>
   var l = jQuery('#sequence-feature-displayer table tr:first td').length,
-  	   m = jQuery('#sequence-feature-displayer table tr:last td').length;
+       m = jQuery('#sequence-feature-displayer table tr:last td').length;
   if (l != m) {
-	  jQuery('#sequence-feature-displayer table tr:last td:last').attr('colspan', l - m + 1);
+    jQuery('#sequence-feature-displayer table tr:last td:last').attr('colspan', l - m + 1);
   }
 })();
 </script>
