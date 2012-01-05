@@ -79,9 +79,13 @@ public final class DisplayerManager
             Set<String> allTypes = new HashSet<String>();
             for (String type : config.getConfiguredTypes()) {
                 ClassDescriptor cld = im.getModel().getClassDescriptorByName(type);
-                allTypes.add(type);
-                for (ClassDescriptor sub : im.getModel().getAllSubs(cld)) {
-                    allTypes.add(sub.getUnqualifiedName());
+                if (cld != null) {
+                    allTypes.add(type);
+                    for (ClassDescriptor sub : im.getModel().getAllSubs(cld)) {
+                        allTypes.add(sub.getUnqualifiedName());
+                    }
+                } else {
+                    LOG.error("The type " + type + " does not exist, check webconfig-model.xml.");
                 }
             }
             for (String type : allTypes) {
@@ -127,20 +131,19 @@ public final class DisplayerManager
 
     /**
      * Get a specific ReportDisplayer by its name for a given ReportObject type
-     * @param objectType
-     * @param name
-     * @return
+     * @param objectType object type (Gene etc)
+     * @param name of the displayer
+     * @return Displayer
      */
-	public ReportDisplayer getReportDisplayerByName(String objectType,
-			String name) {
-		for (List<ReportDisplayer> l : displayers.get(objectType).values()) {
-			for (ReportDisplayer d : l) {
-				if (d.getDisplayerName().equals(name)) {
-					return d;
-				}
-			}
-		}
-		return null;
-	}
+    public ReportDisplayer getReportDisplayerByName(String objectType, String name) {
+        for (List<ReportDisplayer> l : displayers.get(objectType).values()) {
+            for (ReportDisplayer d : l) {
+                if (d.getDisplayerName().equals(name)) {
+                    return d;
+                }
+            }
+        }
+        return null;
+    }
 
 }

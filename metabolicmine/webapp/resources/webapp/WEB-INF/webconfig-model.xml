@@ -446,12 +446,6 @@
                      placement="summary"
                      types="BioEntity"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinStructureATMDisplayer"
-                     jspName="model/proteinStructureATMDisplayer.jsp"
-                     replacesFields="ATM"
-                     placement="summary"
-                     types="ProteinStructure"/>
-
 </reportdisplayers>
 
 <!-- widgets -->
