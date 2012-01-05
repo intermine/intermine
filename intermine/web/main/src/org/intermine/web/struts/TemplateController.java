@@ -185,6 +185,10 @@ public class TemplateController extends TilesAction
         verifyDisplayExtraValue(displayConstraintList);
         request.setAttribute("dcl", displayConstraintList);
         request.setAttribute("templateQuery", displayTemplate);
+        String constraintLogic = template.getConstraintLogic().toLowerCase();
+        if (constraintLogic.contains("or") || constraintLogic.contains("not")) {
+            request.setAttribute("displayLogicExpression", "true");
+        }
         return null;
     }
 

@@ -48,6 +48,16 @@ ol.templateForm li label.marg {
   margin-left: 2px;
 }
 
+.templateConstraintCode {
+  font-size: 1.1em;
+  margin-left: 2px;
+  font-weight: bold;
+}
+
+.templateConstraintLogic {
+  margin-left: 60px;
+}
+
 .templateConstraintHelp a {
   font-size: 1.1em;
   margin-left: 10px;

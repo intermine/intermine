@@ -88,6 +88,11 @@
                                 <c:out value=" - ${dec.description}" />
                             </span>
                         </c:if>
+                        <c:if test="${not empty displayLogicExpression}">
+                        <span class="templateConstraintCode">
+                            <c:out value="  (${dec.code})" />
+                        </span>
+                        </c:if>
                     </div>
                 </td>
 
@@ -321,6 +326,12 @@
        </script>
         </c:forEach>
 </ol>
+<c:if test="${empty builder && !empty displayLogicExpression}">
+<div id="constraintLogicContainer" class="templateConstraintLogic">
+<strong><fmt:message key="query.constraintLogic"/>: </strong>
+<c:out value="${templateQuery.constraintLogic}"/>
+</div>
+</c:if>
 </div>
 <%-- edit/submit buttons --%>
 <c:if test="${empty builder}">
