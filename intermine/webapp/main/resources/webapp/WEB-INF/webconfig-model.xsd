@@ -178,6 +178,7 @@
         <xsd:attribute name="javaClass" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="jspName" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="replacesFields" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="showImmediately" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="placement" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="types" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="parameters" type="xsd:string"></xsd:attribute>
