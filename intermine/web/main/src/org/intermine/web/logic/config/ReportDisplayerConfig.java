@@ -31,6 +31,7 @@ public class ReportDisplayerConfig
     private String types;
     private Set<String> configuredTypes = null;
     private Set<String> replacedFieldNames = null;
+    private Boolean showImmediately = false;
 
     /**
      * Get the comma separated unqualified class names for which this displayer should be displayed.
@@ -161,6 +162,22 @@ public class ReportDisplayerConfig
      */
     public void setReplacesFields(String replacesFields) {
         this.replacesFields = replacesFields;
+    }
+
+    /**
+     * Should we display this 'splayer immediately, wo/ waiting for the AJAX call?
+     * @return true if we should display immediately
+     */
+    public Boolean getShowImmediately() {
+        return showImmediately;
+    }
+
+    /**
+     * Set if we should display the displayer immediately
+     * @param showImmediately sets whether to display immediately or not
+     */
+    public void setShowImmediately(Boolean showImmediately) {
+        this.showImmediately  = showImmediately;
     }
 
     /**
