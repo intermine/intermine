@@ -191,7 +191,18 @@
 
     <li id="tool_bar_li_addtolist" class="tb_button inactive"><img src="images/add.png" width="15" height="13" alt="Add"><html:link linkName="#">Add to List</html:link></li>
     <li id="tool_bar_li_addcolumn" class="tb_button"><img src="images/addcol.png" width="9" height="13" alt="Addcol"><html:link linkName="#">Add Column</html:link></li>
-    <li id="tool_bar_li_export" class="tb_button"><img src="images/export.png" width="12" height="13" alt="Export"><html:link linkName="#">Export</html:link></li>
+
+    <%-- export buttons --%>
+
+    <li id="toolbar-export">
+      <c:set var="results_page" value="results" scope="request"/> <%-- this is a results page --%>
+      <c:set var="tableName" value="${param.table}" scope="request"/>
+      <c:set var="pagedTable" value="${resultsTable}" scope="request"/> <!-- This is not used by ExportController-->
+      <tiles:get name="export.tile"/>
+    </li>
+
+    <%-- /export buttons --%>
+
     <li class="tool_bar_link" style="padding:2px">
 
 <html:form action="/changeTableSize">
@@ -265,14 +276,7 @@
   <a href="javascript:hideMenu('tool_bar_item_addtolist')" >Cancel</a>
 </div>
 
-<%-- Export --%>
-<div id="tool_bar_item_export" style="display:none;width:370px" class="tool_bar_item">
-    <c:set var="tableName" value="${param.table}" scope="request"/>
-    <c:set var="pagedTable" value="${resultsTable}" scope="request"/> <!-- This is not used by ExportController-->
-    <tiles:get name="export.tile"/>
-    <hr>
-  <a href="javascript:hideMenu('tool_bar_item_export')" ><fmt:message key="confirm.cancel"/></a>
-</div>
+
 <div style="clear:both"></div>
 <div class="results collection-table nowrap nomargin">
 <tiles:insert name="resultsTable.tile">
