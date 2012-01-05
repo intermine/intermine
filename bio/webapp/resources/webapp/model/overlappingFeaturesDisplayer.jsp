@@ -14,7 +14,7 @@
         <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
         Genome features that overlap coordinates of this ${reportObject.type}
       </p>
-	      
+
       <div class="switchers">
         <c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
           <%-- TODO: potential fail if key has spaces --%>
@@ -39,7 +39,7 @@
           <a style="float:right;" class="less"><span>Hide</span></a>
         </div>
         <div class="show-in-table">
-          <html:link action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
+          <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
             Show all in a table &raquo;
           </html:link>
         </div>
@@ -48,16 +48,16 @@
       <div class="clear"></div>
     </c:forEach>
     <div class="show-in-table outer">
-      <html:link action="/collectionDetails?id=${object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
+      <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=overlappingFeatures&amp;trail=${param.trail}">
         Show all in a table &raquo;
       </html:link>
     </div>
   </c:when>
   <c:otherwise>
-	<p>There was a problem rendering the displayer.</p>
-	<script type="text/javascript">
-		jQuery('#overlapping-features').addClass('warning');
-	</script>
+  <p>There was a problem rendering the displayer.</p>
+  <script type="text/javascript">
+    jQuery('#overlapping-features').addClass('warning');
+  </script>
   </c:otherwise>
 </c:choose>
 
