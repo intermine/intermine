@@ -121,11 +121,9 @@ public class FriendlyMineManager
             String bgcolor = mineProps.getProperty("bgcolor");
             String frontcolor = mineProps.getProperty("frontcolor");
 
-            // TODO I don't think we need a logo
-            if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)
-                    || StringUtils.isEmpty(logo)) {
-                String msg = "InterMine configured incorrectly in web.properties.  Cannot generate "
-                    + " linkouts: " + mineId;
+            if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)) {
+                final String msg = "InterMine configured incorrectly in web.properties.  "
+                        + "Cannot generate friendly mine linkouts: " + mineId;
                 LOG.error(msg);
                 continue;
             }
