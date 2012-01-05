@@ -146,6 +146,7 @@
         <fieldconfig fieldExpr="primaryIdentifier" showInListAnalysisPreviewTable="true"/>
         <fieldconfig fieldExpr="primaryAccession"/>
         <fieldconfig fieldExpr="organism.name"/>
+        <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
   </class>
 
@@ -205,13 +206,6 @@
      <fieldconfig fieldExpr="confidenceText"/>
      <fieldconfig fieldExpr="confidence"/>
      <fieldconfig fieldExpr="role"/>
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.InteractionExperiment">
-    <fields>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
 
@@ -275,15 +269,6 @@
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="taxonId" />
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.Protein">
-    <fields>
-      <fieldconfig fieldExpr="primaryIdentifier"/>
-      <fieldconfig fieldExpr="primaryAccession"/>
-      <fieldconfig fieldExpr="organism.name"/>
-      <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
     </fields>
   </class>
 
