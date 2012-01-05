@@ -30,10 +30,10 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * @author "Xavier Watkins"
@@ -167,13 +167,9 @@ public class OrthologueConverter extends BagConverter
             String parameters) throws ObjectStoreException {
 
         PathQuery q = new PathQuery(model);
-        // add columns to the output
-        q.addViewSpaceSeparated("Gene.primaryIdentifier "
-                + "Gene.organism.shortName "
-                + "Gene.homologues.homologue.primaryIdentifier "
-                + "Gene.homologues.homologue.organism.shortName "
-                + "Gene.homologues.type "
-                + "Gene.homologues.dataSets.name");
+        List<String> view = PathQueryResultHelper.getDefaultViewForClass(type, model, webConfig,
+                "Gene.homologues");
+        q.addViews(view);
 
         // gene
         q.addConstraint(Constraints.inIds("Gene", fromList));
@@ -183,8 +179,6 @@ public class OrthologueConverter extends BagConverter
 
         // homologue.type = "orthologue"
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
-
-        q.setOuterJoinStatus("Gene.homologues.dataSets", OuterJoinStatus.OUTER);
 
         WebResultsExecutor executor = im.getWebResultsExecutor(profile);
 
