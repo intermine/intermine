@@ -538,8 +538,10 @@ public class DisplayConstraint
             Class<?> type = path.getEndType();
             if (Date.class.equals(type)) {
                 List<Object> fieldValueFormatted = new ArrayList<Object>();
-                for (Object obj : fieldValues) {
-                    fieldValueFormatted.add(ConstraintValueParser.format((String) obj));
+                if (fieldValues != null) {
+                    for (Object obj : fieldValues) {
+                        fieldValueFormatted.add(ConstraintValueParser.format((String) obj));
+                    }
                 }
                 return fieldValueFormatted;
             }
