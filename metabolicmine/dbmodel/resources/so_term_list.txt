@@ -3,6 +3,7 @@ exon
 gene
 intron
 mRNA
+ncRNA
 sequence_feature
 transcript
 five_prime_UTR
