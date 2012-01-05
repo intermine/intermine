@@ -22,18 +22,14 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * @author "Xavier Watkins"
@@ -160,28 +156,5 @@ public class OrthologueConverter extends BagConverter
             encodedurl };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
-    }
-
-    @Override
-    public WebResults getConvertedObjects(Profile profile, List<Integer> fromList, String type,
-            String parameters) throws ObjectStoreException {
-
-        PathQuery q = new PathQuery(model);
-        List<String> view = PathQueryResultHelper.getDefaultViewForClass(type, model, webConfig,
-                "Gene.homologues");
-        q.addViews(view);
-
-        // gene
-        q.addConstraint(Constraints.inIds("Gene", fromList));
-
-        // organism
-        q.addConstraint(Constraints.lookup("Gene.homologues.homologue.organism", parameters, ""));
-
-        // homologue.type = "orthologue"
-        q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
-
-        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-
-        return executor.execute(q);
     }
 }
