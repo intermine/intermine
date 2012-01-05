@@ -417,11 +417,11 @@ public class GraphWidget extends Widget
         return sb.toString();
     }
 
-    @SuppressWarnings({ "rawtypes" })
     public List<List<Object>> getResults() {
         Dataset dataSet = dataSetLdr.getDataSet();
         if (dataSet == null) {
-            throw new RuntimeException("null dataset");
+            LOG.warn("no data found for graph widget.");
+            return null;
         }
         List<List<Object>> ret = new LinkedList<List<Object>>();
         if (graphDataSet instanceof CategoryDataset) {
