@@ -26,14 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Class to manage orthologue linkouts to other intermines on the list analysis page
+ * Class to query friendly mines.
  *
- *  1. works out friendly mines
- *  2. for friendly mines and local mine, runs two queries:
- *     a. which genes for which organisms are available to query
- *     b. which organisms and datasets for orthologues are available
- *  3. Cache the results of these two queries and update every day/hour
- *  4. uses webservice to retrieve release version
  * @author Julie Sullivan
  */
 public final class FriendlyMineQueryRunner
@@ -167,6 +161,9 @@ public final class FriendlyMineQueryRunner
 
                 // update release version
                 mine.setReleaseVersion(newReleaseVersion);
+
+                // clear cache TODO clear cache for this mine only
+                queryResultsCache = new CacheMap<MultiKey, JSONObject>();
             }
         }
     }
