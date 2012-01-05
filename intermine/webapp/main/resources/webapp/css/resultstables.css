@@ -146,3 +146,16 @@ table.results table.column-header-content td span {
   padding:0;
   margin:0;
 }
+
+li#toolbar-export { padding-top:6px !important; }
+li#toolbar-export span { display:block; float:left; }
+li#toolbar-export span:not(:first-child) { margin-left:5px; }
+li#toolbar-export span a { display:block; height:16px; background-repeat:no-repeat; position:top left; }
+li#toolbar-export span.galaxy a { background-image:url('../images/formats/galaxy.gif'); width:59px; }
+li#toolbar-export span.csv a { background-image:url('../images/formats/csv.gif'); width:35px; }
+li#toolbar-export span.tab a { background-image:url('../images/formats/tab.gif'); width:35px; }
+li#toolbar-export span.fasta a,
+li#toolbar-export span.sequence a { background-image:url('../images/formats/fasta.gif'); width:52px; }
+li#toolbar-export span.bed a { background-image:url('../images/formats/bed.gif'); width:35px; }
+li#toolbar-export span.gff3 a { background-image:url('../images/formats/gff3.gif'); width:40px; }
+li#toolbar-export span.seq a { background-image:url('../images/formats/seq.gif'); width:35px; }
