@@ -350,12 +350,26 @@
 
 <!-- report page displayers -->
 <reportdisplayers>
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
+                     jspName="model/geneIdentifiersDisplayer.jsp"
+                     replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
+                     showImmediately="true"
+                     placement="top"
+                     types="Gene"/>
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,mapLocation"
                      showImmediately="true"
                      placement="top"
                      types="SequenceFeature"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSummaryDisplayer"
+                     jspName="model/geneSummaryDisplayer.jsp"
+                     replacesFields=""
+                     showImmediately="true"
+                     placement="top"
+                     types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
@@ -368,13 +382,6 @@
                      replacesFields=""
                      placement="summary"
                      types="Gene,Protein"/>
-
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneIdentifiersDisplayer"
-                     jspName="model/geneIdentifiersDisplayer.jsp"
-                     replacesFields="primaryIdentifier,secondaryIdentifier,ncbiGeneNumber"
-                     showImmediately="true"
-                     placement="top"
-                     types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SnpToGeneDisplayer"
                      jspName="model/snpToGeneDisplayer.jsp"

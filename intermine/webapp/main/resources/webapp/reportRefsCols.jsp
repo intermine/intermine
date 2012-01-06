@@ -31,6 +31,7 @@
     <c:set var="placementAndField" value="${placement}_${fieldName}" />
         <%-- ############# --%>
         <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
+        <a name="${fieldName}" class="anchor"></a>
         <h3>
           <c:if test="${IS_SUPERUSER}">
             <div class="right">
@@ -72,9 +73,9 @@
         <%-- ############# --%>
       </c:when>
       <c:otherwise>
-      	<script type="text/javascript">
-      		jQuery("#${fn:replace(placement, ":", "_")}${fieldName}_table.collection-table").addClass('gray');
-      	</script>
+        <script type="text/javascript">
+          jQuery("#${fn:replace(placement, ":", "_")}${fieldName}_table.collection-table").addClass('gray');
+        </script>
       </c:otherwise>
     </c:choose>
     </div>

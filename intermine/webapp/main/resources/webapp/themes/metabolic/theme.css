@@ -229,6 +229,7 @@ h3.interactions { color:#4896B2; font-size:13px; margin:10px 0 10px; }
 #pagecontentcontainer.report-page #cwtabsbyside fieldset.alt { background:#EFFAFE; border-color:#E6F7FE; }
 #pagecontentcontainer.report-page form#fly-atlas-options table tr td { border-color:#E6F7FE; }
 #pagecontentcontainer.report-page form#fly-atlas-options table tr.even td { background:#EFFAFE; }
+#pagecontentcontainer.report-page #gene-summary-displayer div.label { color:#1F7492; }
 
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */

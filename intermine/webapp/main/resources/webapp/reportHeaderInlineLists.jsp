@@ -51,6 +51,7 @@
 <c:forEach items="${object.headerInlineLists}" var="list" varStatus="outerStatus">
   <c:if test="${list.size > 0}">
     <div class="inline-list" id="header-inline-list-${outerStatus.count}">
+      <a name="${list.prefix}" class="anchor"></a>
       <ul>
         <li><span class="name">${list.prefix}</span>:</li>
         <c:choose>

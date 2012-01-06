@@ -5,6 +5,5 @@
 
 <!-- reportDisplayer.jsp -->
   <tiles:importAttribute name="displayer"/>
-
   <jsp:include page="${jspPage}"/>
 <!-- /reportDisplayer.jsp -->

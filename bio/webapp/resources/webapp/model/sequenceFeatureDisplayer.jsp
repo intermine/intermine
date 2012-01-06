@@ -12,7 +12,7 @@
 <style>
 <%-- this bad boy sometimes shows in the top of the page --%>
 #object_header #sequencefeaturedisplayer-wrapper.wrapper { margin-bottom:10px; }
-#object_header #sequence-feature-displayer { margin:7px 0 0 3px; }
+#object_header #sequence-feature-displayer { margin:0 0 0 3px; }
 #object_header #sequence-feature-displayer h3 { display:none; }
 #object_header #sequence-feature-displayer table { width:50%; }
 #object_header #sequence-feature-displayer table td { padding:0; }
