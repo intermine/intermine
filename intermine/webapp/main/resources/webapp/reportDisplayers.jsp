@@ -15,6 +15,7 @@
 
 <c:forEach items="${reportObject.reportDisplayers[placement]}" var="displayer">
 
+   <a name="${displayer.displayerName}" class="anchor"></a>
    <c:choose>
      <c:when test="${displayer.showImmediately}">
       <%-- show right now --%>

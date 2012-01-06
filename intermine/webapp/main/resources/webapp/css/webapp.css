@@ -1569,7 +1569,7 @@ h3.goog { border-top-width:1px; border-top-style:solid; margin-bottom:6px; paddi
 /* applicable to all */
 div.basic-table h3.loading,
 div.collection-table h3.loading { background-image:url('../images/icons/ajax-loader.gif'); background-repeat:no-repeat; background-position:6px 5px;
-	padding-left:30px; }
+  padding-left:30px; }
 .one-line * { display:block; }
 .tiny-font * { font-size:11px; }
 .loading-spinner { background:url('../images/icons/ajax-loader.gif') no-repeat center; display:inline-block; width:16px; height:11px; }
@@ -1577,8 +1577,8 @@ div.collection-table h3.loading { background-image:url('../images/icons/ajax-loa
 div.collection-table.warning h3,
 div.collection-of-collections.warning h3,
 div.basic-table.warning h3 { background-image:url('../images/icons/alert.png'); background-position:99% 3px; background-repeat:no-repeat;
-	background-color:#FFF4D1; border-color:#C77C39; color:#C77C39; text-shadow:1px 1px 1px #FFE194 !important;
-	padding-left:6px; }
+  background-color:#FFF4D1; border-color:#C77C39; color:#C77C39; text-shadow:1px 1px 1px #FFE194 !important;
+  padding-left:6px; }
 div.collection-table.warning,
 div.collection-of-collections.warning,
 div.basic-table.warning,
@@ -1605,4 +1605,3 @@ table.summary.results td {
  background-color: #EFE7D1;
  border: 1px solid grey;
 }
-
