@@ -316,6 +316,9 @@ public class QueryBuilderChange extends DispatchAction
 
         String pathName = request.getParameter("path");
         PathQuery query = SessionMethods.getQuery(session);
+        if (query.getView().contains(pathName)) {
+            return new ForwardParameters(mapping.findForward("query")).forward();
+        }
         Path path = query.makePath(pathName);
 
         // If an object has been selected, select its fields instead
