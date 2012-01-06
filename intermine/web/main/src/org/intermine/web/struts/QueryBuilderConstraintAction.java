@@ -68,7 +68,7 @@ public class QueryBuilderConstraintAction extends InterMineAction
         if (!isTokenValid(request)) {
             return mapping.findForward("query");
         }
-        session.removeAttribute(Globals.TRANSACTION_TOKEN_KEY);
+        resetToken(request);
         PathQuery query = SessionMethods.getQuery(session);
         QueryBuilderConstraintForm constraintForm = (QueryBuilderConstraintForm) form;
 
