@@ -109,12 +109,12 @@ public class QueryBuilderController extends TilesAction
             if (path == null) {
                 path = prefix;
             }
-            
+
             // nodes for the model browser
-            Collection<MetadataNode> nodes = ModelBrowserHelper.makeSelectedNodes(path, prefix, model,
-                    isSuperUser, query, webConfig, im.getClassKeys(), im.getBagManager(),
+            Collection<MetadataNode> nodes = ModelBrowserHelper.makeSelectedNodes(path, prefix,
+                    model, isSuperUser, query, webConfig, im.getClassKeys(), im.getBagManager(),
                     SessionMethods.getProfile(session), im.getObjectStoreSummary());
-            
+
             // set nodes
             request.setAttribute("nodes", nodes);
 
