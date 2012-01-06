@@ -39,6 +39,12 @@ public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SubmissionGeneratedFeaturesDisplayer.class);
 
+    /**
+     * Constructor
+     *
+     * @param config ReportDisplayerConfig
+     * @param im InterMineAPI
+     */
     public SubmissionGeneratedFeaturesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
@@ -54,6 +60,8 @@ public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
 
         // submission object
         Submission s = (Submission) reportObject.getObject();
+
+        request.setAttribute("object", s);
 
         Map<String, Long> featureCounts =
                 MetadataCache.getSubmissionFeatureCounts(os, s.getdCCid());
@@ -71,7 +79,7 @@ public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
 
         Map<String, Map<String, Long>> subFeatEL =
                 MetadataCache.getSubmissionFeatureExpressionLevelCounts(os);
-            request.setAttribute("subFeatEL", subFeatEL);
+        request.setAttribute("subFeatEL", subFeatEL);
 
         Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
                 MetadataCache.getSubFileSourceCounts(os);

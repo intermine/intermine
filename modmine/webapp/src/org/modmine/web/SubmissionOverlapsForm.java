@@ -22,7 +22,7 @@ import org.apache.struts.action.ActionMapping;
  */
 public class SubmissionOverlapsForm extends ActionForm
 {
-
+    private static final long serialVersionUID = 1L;
     private String direction;
     private String submissionTitle;
     private String distance;
@@ -30,7 +30,7 @@ public class SubmissionOverlapsForm extends ActionForm
     private String flankingFeatureType;
     private String overlapFindType;
     private String submissionId;
-    
+
     /**
      * @return the submissionId
      */
@@ -75,7 +75,7 @@ public class SubmissionOverlapsForm extends ActionForm
     }
 
 
-    
+
     /**
      * @return the flankingFeatureType
      */
@@ -117,7 +117,7 @@ public class SubmissionOverlapsForm extends ActionForm
     public void setDistance(String distance) {
         this.distance = distance;
     }
-        
+
     /**
      * @param direction the direction to set
      */
@@ -133,11 +133,11 @@ public class SubmissionOverlapsForm extends ActionForm
         return direction;
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
-    @Override    
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         direction = null;
