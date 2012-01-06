@@ -54,7 +54,6 @@ import org.intermine.objectstore.ObjectStoreSummary;
 public class QueryBuilderController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(QueryBuilderController.class);
-    
     /**
      * {@inheritDoc}
      */
@@ -68,7 +67,8 @@ public class QueryBuilderController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
         if (im.getBagManager().isAnyBagToUpgrade(profile)) {
             ActionMessages actionErrors = getErrors(request);
-            actionErrors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            actionErrors.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("login.upgradeListManually"));
             saveErrors(request, actionErrors);
         }
         populateRequest(request, response);
