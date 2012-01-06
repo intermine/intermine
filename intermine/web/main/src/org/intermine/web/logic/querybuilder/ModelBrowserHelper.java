@@ -71,7 +71,7 @@ public final class ModelBrowserHelper
 
         // Gene.crossReferences, ...
         Collection<MetadataNode> nodes = makeNodes(stringPath, model, isSuperUser,
-                query, classKeys, bagManager, profile, oss);
+                query, webConfig, classKeys, bagManager, profile, oss);
         List<String> view = query.getView();
         for (MetadataNode node : nodes) {
             // Update view nodes
@@ -131,7 +131,7 @@ public final class ModelBrowserHelper
      * @throws PathException if the query is invalid.
      */
     public static Collection<MetadataNode> makeNodes(String path, Model model, boolean isSuperUser,
-            PathQuery query, Map<String,
+            PathQuery query, WebConfig webConfig, Map<String,
             List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
             ObjectStoreSummary oss)
         throws PathException {
@@ -157,7 +157,8 @@ public final class ModelBrowserHelper
         nodes.put(className, new MetadataNode(className, empty, query, classKeys, bagManager,
                 profile));
         makeNodes(model.getClassDescriptorByName(className), subPath, className, nodes,
-                isSuperUser, empty, subclasses, null, query, classKeys, bagManager, profile, oss);
+                isSuperUser, empty, subclasses, null, query, classKeys, bagManager,
+                profile, oss, webConfig);
         return nodes.values();
     }
 
@@ -184,7 +185,7 @@ public final class ModelBrowserHelper
             Map<String, MetadataNode> nodes, boolean isSuperUser, List<String> structure,
             Map<String, String> subclasses, String reverseFieldName, PathQuery query,
             Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
-            ObjectStoreSummary oss) {
+            ObjectStoreSummary oss, WebConfig webConfig) {
 
         // null atrtributes, references and collections
         Set<String> nullAttr = oss.getNullAttributes(cld.getName());
@@ -205,13 +206,16 @@ public final class ModelBrowserHelper
         Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(comparator);
         for (Iterator<FieldDescriptor> i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
             FieldDescriptor fd = i.next();
-            if (!fd.isReference() && !fd.isCollection()) {
-                attributeNodes.add(fd);
-            } else {
-                if (fd.getName().equals(reverseFieldName)) {
-                    sortedNodes.add(fd);
+            FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, fd);
+            if (fc == null || !fc.isHideInQueryBuilder()) {
+                if (!fd.isReference() && !fd.isCollection()) {
+                    attributeNodes.add(fd);
                 } else {
-                    referenceAndCollectionNodes.add(fd);
+                    if (fd.getName().equals(reverseFieldName)) {
+                        sortedNodes.add(fd);
+                    } else {
+                        referenceAndCollectionNodes.add(fd);
+                    }
                 }
             }
         }
@@ -290,7 +294,7 @@ public final class ModelBrowserHelper
                     reverse = ((ReferenceDescriptor) fd).getReverseReferenceFieldName();
                 }
                 makeNodes(refCld, tail, currentPath + "." + head, nodes, isSuperUser, newStructure,
-                        subclasses, reverse, query, classKeys, bagManager, profile, oss);
+                        subclasses, reverse, query, classKeys, bagManager, profile, oss, webConfig);
             }
         }
     }
