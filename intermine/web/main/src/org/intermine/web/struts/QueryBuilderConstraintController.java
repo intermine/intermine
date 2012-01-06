@@ -47,9 +47,6 @@ public class QueryBuilderConstraintController extends TilesAction
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
 
-        //to prevent submit twice
-        saveToken(request);
-
         Profile profile = SessionMethods.getProfile(session);
         PathQuery query = SessionMethods.getQuery(session);
         DisplayConstraintFactory factory = getFactory(session);
@@ -62,6 +59,7 @@ public class QueryBuilderConstraintController extends TilesAction
                 factory.get(displayPath.getPath(), profile, query);
             request.setAttribute("dec", displayConstraint);
             session.removeAttribute("newConstraintPath");
+            saveToken(request);
         } else if (session.getAttribute("editingConstraint") != null) {
             // EDITING AN EXISTING CONSTRAINT
             PathConstraint con = (PathConstraint) session.getAttribute("editingConstraint");
@@ -79,6 +77,7 @@ public class QueryBuilderConstraintController extends TilesAction
             if (session.getAttribute("editingTemplateConstraint") != null) {
                 SessionMethods.moveToRequest("editingTemplateConstraint", request);
             }
+            saveToken(request);
         } else if (session.getAttribute("joinStylePath") != null) {
             // ONLY EDITING JOIN STYLE
             String joinStylePathStr = (String) session.getAttribute("joinStylePath");
