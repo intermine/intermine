@@ -129,7 +129,7 @@
         <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
         <property name="intact.organisms" value="7227 6239 7230 46245 7240 7244 7245 6238 31234 135651 281687"/>
     </source>
-    <source name="biogrid" type="biogrid">
+    <source name="biogrid" type="biogrid" dump="true">
         <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
         <property name="src.data.dir.includes" value="*psi25.xml"/>
         <property name="biogrid.organisms" value="7227 6239 46245"/>
@@ -151,6 +151,7 @@
     <source name="fly-misc-cvterms" type="fly-misc-cvterms">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-cv/current/flybase_controlled_vocabulary.obo"/>
     </source>
+    
     <source name="flybase-dmel-gene-fasta" type="fasta">
       <property name="fasta.taxonId" value="7227"/>
       <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
@@ -438,7 +439,7 @@
 -->
     <!-- new in 23 -->
     <source name="drosophila-homology" type="drosophila-homology">
-      <property name="src.data.dir" location="/micklem/data/flybase/current/homology"/>
+      <property name="src.data.dir" location="/micklem/data/flybase/homology/current"/>
       <property name="src.data.dir.includes" value="*.tsv"/>
     </source>
 
