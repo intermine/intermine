@@ -87,6 +87,15 @@
           // more extra space:
           extraSpace : 10
       });
+        AjaxServices.getToggledElements(function(json) {
+            var jSONObject = jQuery.parseJSON(json);
+            jQuery.each(jSONObject, function(i) {
+              var toggledElement = jSONObject[i];
+              if(toggledElement['opened'] == 'false') {
+                  jQuery('#widgetcontainer' + toggledElement['id']).hide();
+              }
+            })
+        });
     });
 </script>
 
@@ -271,13 +280,11 @@
 <script language="javascript">
   function openWidget(widgetid,linkid) {
       jQuery('#widgetcontainer'+widgetid).show();
-      jQuery('#'+linkid).addClass('active');
       AjaxServices.saveToggleState(widgetid, true);
       window.location.href= "#anchorage" + widgetid;
   }
   function closeWidget(widgetid,linkid) {
-      jQuery('#'+widgetid).hide();
-      jQuery('#'+linkid).removeClass('active');
+      jQuery('#widgetcontainer'+widgetid).hide();
       AjaxServices.saveToggleState(widgetid, false);
   }
 </script>
@@ -285,7 +292,7 @@
 <p id="toggleWidgets">Click to select widgets you would like to display:
   <ol class="widgetList">
   <c:forEach items="${widgets}" var="widget">
-    <li><a title="toggle widget" href="javascript:openWidget('${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
+    <li><a title="toggle widget" href="javascript:openWidget('${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}">${widget.title}</a></li>
   </c:forEach>
   </ol>
 </p>
