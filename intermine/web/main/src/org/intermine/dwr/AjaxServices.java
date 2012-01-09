@@ -398,6 +398,12 @@ public class AjaxServices
         return SessionMethods.getWebState(session);
     }
 
+    /**
+     * This method gets a map of ids of elements that were in the past (during session) toggled and
+     * returns them in JSON
+     * @return JSON serialized to a String
+     * @throws JSONException
+     */
     public static String getToggledElements() {
         HttpSession session = WebContextFactory.get().getSession();
         WebState webState = SessionMethods.getWebState(session);
