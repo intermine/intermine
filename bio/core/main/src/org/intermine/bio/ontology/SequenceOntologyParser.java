@@ -12,28 +12,39 @@ package org.intermine.bio.ontology;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.BuildException;
+import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.util.StringUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.util.Util;
 
 /**
- * This class handles the ontologies for OboToModel.
+ * Helper class for SequenceOntology.  Keeps track of all obo relationships and filters on terms
+ * (if provided).
  *
  * @author Julie Sullivan
  */
-public class OboToModelProcessor
+public class SequenceOntologyParser
 {
-    private String namespace;
     private Map<String, Set<String>> childToParents, parentToChildren, partOfs;
     // SO terms to filter on, eg. sequence_feature
     private Set<String> termsToKeep = new HashSet<String>();
@@ -54,43 +65,45 @@ public class OboToModelProcessor
 
     private Map<String, Set<String>> reversePartOfs = new HashMap<String, Set<String>>();
 
-    // TODO put this in config file instead
     private static final String CHROMOSOME = "SO:0000340";
-//    private static final String TRANSCRIPT = "SO:0000673";
-//    private static final String EXON = "SO:0000147";
+
+    // class descriptors for classes found in SO OBO file, after filtering
+    private Set<ClassDescriptor> classes;
+
+    private static final String NAMESPACE = "org.intermine.model.bio";
+    private static final String NAME = "so";
+
+    private Model soModel = null;
 
     /**
      * Constructor.
      *
      * @param termsFile file containing list of SO terms to filter on
-     * @param namespace the namespace to use in generating URI-based identifiers
+     * @param oboFile so.obo
      */
-    public OboToModelProcessor(File termsFile, String namespace) {
-        this.namespace = namespace;
-        processTermFile(termsFile);
+    public SequenceOntologyParser(File oboFile, File termsFile) {
+
+        if (termsFile != null) {
+            //  parse SO terms from config file
+            processTermFile(termsFile);
+        }
+
+        // parse all SO terms, filter on SO terms in config file
+        process(oboFile);
     }
 
     /**
-     * @return number of OBO terms we are filtering on
+     * @return set of class descriptors created from SO OBO file
      */
-    public int getTermsCount() {
-        return termsToKeep.size();
-    }
-
-    /**
-     * Returns name of the package, eg. org.intermine.bio.
-     *
-     * @return name of the package, eg. org.intermine.bio
-     */
-    public String getNamespace() {
-        return namespace;
+    public Model getModel() {
+        return soModel;
     }
 
     /**
      * @param childIdentifier the oboterm to get relationships for
      * @return all collections for given class
      */
-    public Set<String> getPartOfs(String childIdentifier) {
+    private Set<String> getPartOfs(String childIdentifier) {
         return partOfs.get(childIdentifier);
     }
 
@@ -98,7 +111,7 @@ public class OboToModelProcessor
      * @param childIdentifier the oboterm to get relationships for
      * @return all collections for given class
      */
-    public Set<String> getReversePartOfs(String childIdentifier) {
+    private Set<String> getReversePartOfs(String childIdentifier) {
         return reversePartOfs.get(childIdentifier);
     }
 
@@ -109,7 +122,10 @@ public class OboToModelProcessor
      * @param identifier for obo term
      * @return true if the class is in the model
      */
-    public boolean classInModel(String identifier) {
+    private boolean classInModel(String identifier) {
+        if (validOboTerms == null) {
+            return false;
+        }
         return validOboTerms.containsKey(identifier);
     }
 
@@ -121,7 +137,7 @@ public class OboToModelProcessor
      * @param child the term to test
      * @return TRUE if this term is listed in the config file as a many-to-many relationship.
      */
-    public boolean isManyToMany(String parent, String child) {
+    private boolean isManyToMany(String parent, String child) {
         if (!testManyToMany(parent, child)) {
             return testManyToMany(child, parent);
         } else {
@@ -172,7 +188,7 @@ public class OboToModelProcessor
      * @param childIdentifier identifier for obo term of interest
      * @return list of identifiers for parent obo terms
      */
-    public Set<String> getParents(String childIdentifier) {
+    private Set<String> getParents(String childIdentifier) {
         return childToParents.get(childIdentifier);
     }
 
@@ -180,7 +196,7 @@ public class OboToModelProcessor
      * @param identifier for obo term
      * @return name of term, eg. sequence_feature
      */
-    public String getName(String identifier) {
+    private String getName(String identifier) {
         OboTerm o = validOboTerms.get(identifier);
         if (o == null) {
             return null;
@@ -193,7 +209,7 @@ public class OboToModelProcessor
      *
      * @return set of obo term identifiers to process, eg. SO:001
      */
-    public Set<String> getOboTermIdentifiers() {
+    private Set<String> getOboTermIdentifiers() {
         return validOboTerms.keySet();
     }
 
@@ -204,7 +220,7 @@ public class OboToModelProcessor
      *
      * @param oboRelations List of obo relations from OBOEdit
      */
-    public void processRelations(List<OboRelation> oboRelations) {
+    private void processRelations(List<OboRelation> oboRelations) {
         childToParents = new HashMap<String, Set<String>>();
         partOfs = new HashMap<String, Set<String>>();
         for (OboRelation r : oboRelations) {
@@ -280,7 +296,6 @@ public class OboToModelProcessor
             String oboTerm = entry.getKey();
             Set<String> parents = new HashSet<String>(entry.getValue());
             for (String parent : parents) {
-                // TODO put this in config file
                 if (parent.equals(CHROMOSOME)) {
                     continue;
                 }
@@ -605,7 +620,7 @@ public class OboToModelProcessor
      *
      * @param terms set of obo terms to process
      */
-    public void processOboTerms(Set<OboTerm> terms) {
+    private void processOboTerms(Set<OboTerm> terms) {
         for (OboTerm term : terms) {
             if (!term.isObsolete()) {
                 String identifier = term.getId().trim();
@@ -621,11 +636,8 @@ public class OboToModelProcessor
 
     /**
      * Check that each OBO term in file provided by user is in OBO file.
-     *
-     * @param oboFilename name of obo file - used for error message only
-     * @param termsToKeepFileName file containing obo terms - used for error message only
      */
-    public void validateTermsToKeep(String oboFilename, String termsToKeepFileName) {
+    private void validateTermsToKeep() {
         List<String> invalidTermsConfigured = new ArrayList<String>();
         for (String term : termsToKeep) {
             if (!term.contains("#") && !term.contains(".")
@@ -634,15 +646,17 @@ public class OboToModelProcessor
             }
         }
         if (!invalidTermsConfigured.isEmpty()) {
-            throw new RuntimeException("The following terms specified in "
-                    + termsToKeepFileName + " are not valid Sequence Ontology terms"
-                    + " according to: " + oboFilename + ": "
+            throw new BuildException("The following terms specified in so_terms are not valid "
+                    + "Sequence Ontology terms according to so.obo: "
                     + StringUtil.prettyList(invalidTermsConfigured));
         }
     }
 
-    // move terms from (user provided) file to list
-    // only these terms (and dependents) will be processed
+    /**
+     *  move terms from (user provided) file to list
+     *  only these terms (and dependents) will be processed
+     * @param filename terms file
+     */
     private void processTermFile(File filename) {
         Set<String> terms = new HashSet<String>();
         Map<String, Set<String>> manyToMany = new HashMap<String, Set<String>>();
@@ -676,5 +690,168 @@ public class OboToModelProcessor
         }
         termsToKeep = terms;
         manyToManyPartOfs = manyToMany;
+    }
+
+    /**
+     * translates OBO file --> Model
+     *
+     * 1. uses OBO edit to parse OBO file
+     * 2. trims unwanted SO terms using config file as guide
+     * 3. finally creates class descriptors based on relationships created in previous steps
+     */
+    private void process(File oboFile) {
+        String oboFilename = null;
+
+        // parse file using OBOEdit
+        OboParser parser = new OboParser();
+        try {
+            oboFilename = oboFile.getCanonicalPath();
+            parser.processOntology(new FileReader(oboFile));
+            parser.processRelations(oboFilename);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Couldn't find obo file", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Parsing obo file failed", e);
+        }
+
+        // process results of parsing by OBOEdit.  flatten and trim unwanted terms
+        processOboTerms(parser.getOboTerms());
+        validateTermsToKeep();
+        processRelations(parser.getOboRelations());
+
+        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>();
+
+        // process each oboterm - add parent and collections
+        for (String childIdentifier : getOboTermIdentifiers()) {
+            // is_a
+            String parents = processParents(childIdentifier);
+            // part_of
+            ClassDescriptor cd = processRefsAndColls(parents, childIdentifier);
+            clds.add(cd);
+        }
+
+        classes = new TreeSet<ClassDescriptor>(getComparator());
+        classes.addAll(clds);
+
+        try {
+            soModel = new Model(NAME, NAMESPACE, classes);
+        } catch (MetaDataException e) {
+            throw new RuntimeException("Invalid model", e);
+        }
+    }
+
+    private Comparator<ClassDescriptor> getComparator() {
+        // sort classes by name for readability
+        Comparator<ClassDescriptor> comparator = new Comparator<ClassDescriptor>() {
+            @Override
+            public int compare(ClassDescriptor o1, ClassDescriptor o2) {
+                String fieldName1 = o1.getName().toLowerCase();
+                String fieldName2 = o2.getName().toLowerCase();
+                return fieldName1.compareTo(fieldName2);
+            }
+        };
+        return comparator;
+    }
+
+    /**
+     * using the relationship maps, build each SO term
+     *
+     * @param childIdentifier identifier for child SO term
+     * @return space-delimited list of parents for the given term, or NULL if none
+     */
+    private String processParents(String childIdentifier) {
+        Set<String> parents = getParents(childIdentifier);
+        Set<String> parentsInModel = new HashSet<String>();
+        if (parents != null && !parents.isEmpty()) {
+            for (String parentIdentifier : parents) {
+                if (classInModel(parentIdentifier)) {
+                    String parentName = getName(parentIdentifier);
+                    parentName = TypeUtil.generateClassName(NAMESPACE, parentName);
+                    parentsInModel.add(parentName);
+                }
+            }
+        }
+        String parentList = StringUtil.join(parentsInModel, " ");
+        if (StringUtils.isBlank(parentList)) {
+            parentList = null;
+        }
+        return parentList;
+    }
+
+    private ClassDescriptor processRefsAndColls(String parents, String childIdentifier) {
+        Set<AttributeDescriptor> fakeAttributes = Collections.emptySet();
+        Set<ReferenceDescriptor> references = new HashSet<ReferenceDescriptor>();
+        Set<CollectionDescriptor> collections = new HashSet<CollectionDescriptor>();
+        Set<String> childReversePartOfs = getReversePartOfs(childIdentifier);
+        Set<String> partOfIdentifiers = getPartOfs(childIdentifier);
+        String childOBOName = getName(childIdentifier);
+
+        // part ofs, reference to parent
+        // can be a collection if in config, though
+        if (partOfIdentifiers != null) {
+            for (String parent : partOfIdentifiers) {
+                if (classInModel(parent)) {
+                    // reference
+                    String parentName = getName(parent);
+                    String fullyQualifiedClassName = TypeUtil.generateClassName(
+                            NAMESPACE, parentName);
+                    parentName = TypeUtil.javaiseClassName(parentName);
+                    parentName = StringUtil.decapitalise(parentName);
+
+                    // reverse reference
+                    String reverseReference = generateReverseReference(parentName, childOBOName,
+                            true);
+                    if (isManyToMany(parent, childIdentifier)) {
+                        parentName = parentName + "s";
+                        CollectionDescriptor cd = new CollectionDescriptor(parentName,
+                                fullyQualifiedClassName, reverseReference);
+                        collections.add(cd);
+                    } else {
+                        ReferenceDescriptor rd = new ReferenceDescriptor(parentName,
+                                fullyQualifiedClassName, reverseReference);
+                        references.add(rd);
+                    }
+                }
+            }
+        }
+
+        // other side of part_of relationship, collection of children
+        // reverse reference can be a collection if in config
+        if (childReversePartOfs != null) {
+            for (String collection : childReversePartOfs) {
+                if (classInModel(collection)) {
+                    // collection
+                    String collectionName = TypeUtil.javaiseClassName(
+                            getName(collection));
+                    String fullyQualifiedClassName = TypeUtil.generateClassName(
+                            NAMESPACE, collectionName);
+                    collectionName = StringUtil.decapitalise(collectionName) + "s";
+                    // reverse reference
+                    String reverseReference = generateReverseReference(collectionName, childOBOName,
+                            isManyToMany(collection, childIdentifier));
+                    // cd
+                    CollectionDescriptor cd = new CollectionDescriptor(collectionName ,
+                            fullyQualifiedClassName, reverseReference);
+                    collections.add(cd);
+                }
+            }
+        }
+
+        String childName = TypeUtil.generateClassName(NAMESPACE, getName(childIdentifier));
+        return new ClassDescriptor(childName, parents, true, fakeAttributes, references,
+                collections);
+    }
+
+    private static String generateReverseReference(String parent, String child,
+            boolean manyToMany) {
+        if ("chromosome".equals(parent) || "chromosome".equals(child)) {
+            return null;
+        }
+        String reverseReference = TypeUtil.javaiseClassName(child);
+        reverseReference = StringUtil.decapitalise(reverseReference);
+        if (manyToMany) {
+            reverseReference = reverseReference + "s";
+        }
+        return reverseReference;
     }
 }
