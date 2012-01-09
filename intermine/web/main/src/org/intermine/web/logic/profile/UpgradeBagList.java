@@ -51,32 +51,33 @@ public class UpgradeBagList implements Runnable
     }
 
     public void run() {
-        Map<String, Map<String, Object>> savedBagsStatus = SessionMethods.getNotCurrentSavedBagsStatus(session);
+        Map<String, Map<String, Object>> savedBagsStatus = SessionMethods
+            .getNotCurrentSavedBagsStatus(session);
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-        	
+
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
-            	Map<String, Object> bagAttributes = new HashMap<String, Object>();
-            	
-            	bagAttributes.put("status", Constants.UPGRADING_BAG);
+                Map<String, Object> bagAttributes = new HashMap<String, Object>();
+
+                bagAttributes.put("status", Constants.UPGRADING_BAG);
                 savedBagsStatus.put(bag.getName(), bagAttributes);
 
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
                 BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
                 try {
                     if (result.getUnresolved().isEmpty()
-                        && (result.getIssues().isEmpty() 
+                        && (result.getIssues().isEmpty()
                             || onlyOtherIssuesAlreadyContained(result))) {
                         Map<Integer, List> matches = result.getMatches();
                         //we set temporary the updateBagValues parameter to true
                         //in this way will update the extra field recently added
                         bag.upgradeOsb(matches.keySet(), true);
                         bagAttributes.put("status", BagState.CURRENT.toString());
-                		try {
-                			bagAttributes.put("size", bag.getSize());
-                		} catch (ObjectStoreException e) {
-                			// nothing serious happens here...
-                		}
+                        try {
+                            bagAttributes.put("size", bag.getSize());
+                        } catch (ObjectStoreException e) {
+                            // nothing serious happens here...
+                        }
                         savedBagsStatus.put(bag.getName(), bagAttributes);
                     } else {
                         session.setAttribute("bagQueryResult_" + bag.getName(), result);
@@ -99,36 +100,39 @@ public class UpgradeBagList implements Runnable
      * @return
      */
     private boolean onlyOtherIssuesAlreadyContained(BagQueryResult result) {
-        if(result.getIssues().get(BagQueryResult.DUPLICATE) == null
+        if (result.getIssues().get(BagQueryResult.DUPLICATE) == null
             && result.getIssues().get(BagQueryResult.TYPE_CONVERTED) == null
             && result.getIssues().get(BagQueryResult.WILDCARD) == null) {
 
             Map<String, Map<String, List>> otherMatchMap = result.getIssues()
-            .get(BagQueryResult.OTHER);
+                .get(BagQueryResult.OTHER);
             Set<Integer> matchesIds = result.getMatches().keySet();
             if (otherMatchMap != null) {
                 Map<String, ArrayList<Object>> lowQualityMatches = new LinkedHashMap<String,
                 ArrayList<Object>>();
                 Iterator otherMatchesIter = otherMatchMap.values().iterator();
                 while (otherMatchesIter.hasNext()) {
-                    Map<String, ArrayList<Object>> inputToObjectsMap = (Map) otherMatchesIter.next();
-                    Map<String, ArrayList<Object>> inputToObjectsMapUpdated = new LinkedHashMap<String, ArrayList<Object>>();
+                    Map<String, ArrayList<Object>> inputToObjectsMap =
+                        (Map<String, ArrayList<Object>>) otherMatchesIter.next();
+                    Map<String, ArrayList<Object>> inputToObjectsMapUpdated =
+                        new LinkedHashMap<String, ArrayList<Object>>();
                     for (String key : inputToObjectsMap.keySet()) {
                         ArrayList<Object> listObjects = inputToObjectsMap.get(key);
                         ArrayList<Object> listObjectsUpdated = new ArrayList<Object>();
                         for (Object obj : listObjects) {
-                            InterMineObject intermineObj= (InterMineObject) obj;
-                            if (matchesIds.isEmpty() || !matchesIds.contains(intermineObj.getId())) {
-                               listObjectsUpdated.add(obj);
+                            InterMineObject intermineObj = (InterMineObject) obj;
+                            if (matchesIds.isEmpty()
+                                || !matchesIds.contains(intermineObj.getId())) {
+                                listObjectsUpdated.add(obj);
                             }
                         }
                         if (!listObjectsUpdated.isEmpty()) {
                             inputToObjectsMapUpdated.put(key, listObjects);
                         }
                     }
-                   if (!inputToObjectsMapUpdated.isEmpty()) {
-                       lowQualityMatches.putAll(inputToObjectsMapUpdated);
-                   }
+                    if (!inputToObjectsMapUpdated.isEmpty()) {
+                        lowQualityMatches.putAll(inputToObjectsMapUpdated);
+                    }
                 }
                 if (lowQualityMatches.isEmpty()) {
                     return true;
