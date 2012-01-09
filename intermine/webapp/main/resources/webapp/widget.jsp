@@ -28,8 +28,8 @@
 <html:hidden property="exporttype" value="" styleId="export${widget.id}"/>
 
 <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
-<a name="anchorage${widget.id}" id="anchorage${widget.id}"></a>
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
+  <a name="anchorage${widget.id}" id="anchorage${widget.id}"></a>
   <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:closeWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close</a></span>
   <h3 class="goog">${widget.title}</h3>
   <p>${widget.description}
