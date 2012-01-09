@@ -989,16 +989,8 @@ ol.widgetList li a, ol.widgetList li a.active, ol.widgetList li a:hover {
     background-position: left;
     color: #000;
     text-decoration: none;
-    padding: 4px 6px 4px 26px;
+    padding: 4px 6px 4px 6px;
     border: 1px solid #D2D2D2;
-}
-
-ol.widgetList li a {
-    background-image: url('../images/icons/toggle_plus.png');
-}
-
-ol.widgetList li a.active {
-    background-image: url('../images/icons/toggle_minus.png');
 }
 
 /* template.do buttons */

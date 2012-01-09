@@ -28,10 +28,9 @@
 <html:hidden property="exporttype" value="" styleId="export${widget.id}"/>
 
 <c:set var="extraAttrMap" value="${widget2extraAttrs[widget.id]}" />
-
+<a name="anchorage${widget.id}" id="anchorage${widget.id}"></a>
 <div id="widgetcontainer${widget.id}" class="widgetcontainer">
-
-  <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close</a></span>
+  <span id="closewidget${widget.id}" class="widgetcloser"><a href="javascript:closeWidget('widgetcontainer${widget.id}','togglelink${widget.id}');">close</a></span>
   <h3 class="goog">${widget.title}</h3>
   <p>${widget.description}
   <c:if test="${type == 'EnrichmentWidgetConfig'}">

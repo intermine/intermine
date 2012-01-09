@@ -269,22 +269,23 @@
      <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
 </div>
 <script language="javascript">
-  function toggleWidget(widgetid,linkid) {
-    jQuery('#'+widgetid).toggle();
-    if(jQuery('#'+linkid).hasClass('active')) {
-      jQuery('#'+linkid).removeClass('active');
-      AjaxServices.saveToggleState(widgetid, false);
-    } else {
+  function openWidget(widgetid,linkid) {
+      jQuery('#widgetcontainer'+widgetid).show();
       jQuery('#'+linkid).addClass('active');
       AjaxServices.saveToggleState(widgetid, true);
-    }
+      window.location.href= "#anchorage" + widgetid;
+  }
+  function closeWidget(widgetid,linkid) {
+      jQuery('#'+widgetid).hide();
+      jQuery('#'+linkid).removeClass('active');
+      AjaxServices.saveToggleState(widgetid, false);
   }
 </script>
 
 <p id="toggleWidgets">Click to select widgets you would like to display:
   <ol class="widgetList">
   <c:forEach items="${widgets}" var="widget">
-    <li><a title="toggle widget" href="javascript:toggleWidget('widgetcontainer${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
+    <li><a title="toggle widget" href="javascript:openWidget('${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}" class="active">${widget.title}</a></li>
   </c:forEach>
   </ol>
 </p>
