@@ -68,7 +68,6 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -83,15 +82,12 @@ import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.displayer.InterMineLinkGenerator;
-import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
-import org.intermine.web.logic.results.ReportObject;
-import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
@@ -104,7 +100,6 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.web.struts.ForwardParameters;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -401,6 +396,24 @@ public class AjaxServices
     private static WebState getWebState() {
         HttpSession session = WebContextFactory.get().getSession();
         return SessionMethods.getWebState(session);
+    }
+
+    public static String getToggledElements() {
+        HttpSession session = WebContextFactory.get().getSession();
+        WebState webState = SessionMethods.getWebState(session);
+        Collection<JSONObject> lists = new HashSet<JSONObject>();
+        try {
+            for (Map.Entry<String, Boolean> entry : webState.getToggledElements().entrySet()) {
+                JSONObject list = new JSONObject();
+                list.put("id", entry.getKey());
+                list.put("opened", entry.getValue().toString());
+                lists.add(list);
+            }
+        } catch (JSONException jse) {
+            LOG.error("Errors generating json objects", jse);
+        }
+
+        return lists.toString();
     }
 
     /**
