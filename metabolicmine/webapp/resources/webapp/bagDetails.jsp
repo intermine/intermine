@@ -534,19 +534,22 @@
       </ol>
     </div>
 
-	<script type="text/javascript">
-	(function() {
-	    <%-- widget toggler --%>
-		jQuery('ol.widgetList li a').each(function() {
-			jQuery(this).click(function() {
-				jQuery(this).toggleClass('active');
-				var widgetName = jQuery(this).attr('name');
-				var widget = jQuery('#widgetcontainer' + widgetName).toggle();
-				AjaxServices.saveToggleState('widgetcontainer' + widgetName, widget.is(":visible"));
-			});
-		});
-	})();
-	</script>
+    <script type="text/javascript">
+    (function() {
+        <%-- widget toggler --%>
+        jQuery('ol.widgetList li a').each(function() {
+            jQuery(this).click(function() {
+                jQuery(this).toggleClass('active');
+                var widgetName = jQuery(this).attr('name');
+                var widget = jQuery('#widgetcontainer' + widgetName).toggle();
+                if (widget.is(":visible")) {
+                    window.location.href= "#anchorage" + widgetName;
+                }
+                AjaxServices.saveToggleState('widgetcontainer' + widgetName, widget.is(":visible"));
+                });
+            });
+        })();
+    </script>
 
     <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
