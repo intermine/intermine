@@ -167,7 +167,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @param classDescriptor if true the classDescriptor will be setted
      * @throws ObjectStoreException if something goes wrong
      */
-    public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw, boolean classDescriptor)
+    public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw,
+        boolean classDescriptor)
         throws ObjectStoreException {
         this.os = os;
         this.uosw = uosw;
@@ -284,7 +285,8 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns a List of BagValue (key field value and extra value) of the objects contained by this bag.
+     * Returns a List of BagValue (key field value and extra value) of the objects contained
+     * by this bag.
      * @return the list of BagValue
      */
     public List<BagValue> getContentsAsKeyFieldAndExtraValue() {
@@ -330,8 +332,8 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns the values of the key field objects and extra attribute (if it exists) contained in the bag.
-     * The values are retrieved using the objectstorebag.
+     * Returns the values of the key field objects and extra attribute (if it exists)
+     * contained in the bag. The values are retrieved using the objectstorebag.
      * @param ids the collection of id
      * @return the list of values
      */
@@ -341,7 +343,7 @@ public class InterMineBag implements WebSearchable, Cloneable
 
     /**
      * Returns the values of the key field objects and extra attribute (if it exists) having the id
-     * specified in input and contained in the bag.The values are retrieved using the objectstorebag.
+     * specified in input and contained in the bag.The values are retrieved using the objectstorebag
      * @param ids the collection of id
      * @return the list of values
      */
@@ -382,7 +384,8 @@ public class InterMineBag implements WebSearchable, Cloneable
             QueryClass qc = new QueryClass(Class.forName(getQualifiedType()));
             q.addFrom(qc);
             if (hasExtraValue) {
-                QueryObjectPathExpression qope = new QueryObjectPathExpression(qc, extraConnectField);
+                QueryObjectPathExpression qope = new QueryObjectPathExpression(qc,
+                                                 extraConnectField);
                 qope.addToSelect(qope.getDefaultClass());
                 q.addToSelect(qope);
                 q.addToSelect(qc);
@@ -433,7 +436,8 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns a List of BagValue (key field value and extra value) of the objects contained by this bag.
+     * Returns a List of BagValue (key field value and extra value) of the objects contained
+     * by this bag.
      * @return the list of BagValue
      */
     public List<BagValue> getContentsOrderByExtraValue() {
@@ -1033,7 +1037,9 @@ public class InterMineBag implements WebSearchable, Cloneable
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
-    public class BagValue {
+
+    public class BagValue
+    {
         String value = null;
         String extra = null;
 
