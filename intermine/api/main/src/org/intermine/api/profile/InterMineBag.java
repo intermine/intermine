@@ -103,7 +103,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
         throws ObjectStoreException {
-        this.type = type;
+        this.type = TypeUtil.unqualifiedName(type);
         init(name, description, dateCreated, state, os, profileId, uosw);
     }
 
@@ -124,7 +124,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
         List<String> keyFieldNames) throws ObjectStoreException {
-        this.type = type;
+        this.type = TypeUtil.unqualifiedName(type);
         init(name, description, dateCreated, state, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
     }
@@ -175,7 +175,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         ObjectStore uos = uosw.getObjectStore();
         SavedBag savedBag = (SavedBag) uos.getObjectById(savedBagId, SavedBag.class);
         checkAndSetName(savedBag.getName());
-        this.type = savedBag.getType();
+        this.type = TypeUtil.unqualifiedName(savedBag.getType());
         this.description = savedBag.getDescription();
         this.dateCreated = savedBag.getDateCreated();
         this.profileId = savedBag.proxGetUserProfile().getId();
