@@ -335,6 +335,7 @@ public class SubmissionOverlapsAction extends InterMineAction
             queryResultsMap.put("geneIdSet", geneIdSet);
             queryResultsMap.put("sequenceFeatureIdSet", sequenceFeatureIdSet);
         }
+        LOG.info("OVERLAPTIME: getOverlappingGenes: " + (System.currentTimeMillis() - bT) + " ms");
         return queryResultsMap;
     }
 }
