@@ -68,17 +68,12 @@ public class SubmissionOverlapsAction extends InterMineAction
      * Action for creating a bag of InterMineObjects or Strings from identifiers
      * in text field.
      *
-     * @param mapping
-     *            The ActionMapping used to select this instance
-     * @param form
-     *            The optional ActionForm bean for this request (if any)
-     * @param request
-     *            The HTTP request we are processing
-     * @param response
-     *            The HTTP response we are creating
+     * @param mapping        The ActionMapping used to select this instance
+     * @param form           The optional ActionForm bean for this request (if any)
+     * @param request        The HTTP request we are processing
+     * @param response       The HTTP response we are creating
      * @return an ActionForward object defining where control goes next
-     * @exception Exception
-     *                if the application business logic throws an exception
+     * @exception Exception  if the application business logic throws an exception
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
@@ -87,6 +82,7 @@ public class SubmissionOverlapsAction extends InterMineAction
                 .getSession());
         ObjectStore os = im.getObjectStore();
 
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
         SubmissionOverlapsForm submissionOverlapsForm = (SubmissionOverlapsForm) form;
 
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
@@ -155,6 +151,8 @@ public class SubmissionOverlapsAction extends InterMineAction
 
         String trail = "|" + submissionId;
 
+        LOG.info("OVERLAPTIME: execute: " + (System.currentTimeMillis() - bT) + " ms");
+
         return new ForwardParameters(mapping.findForward("waiting"))
                 .addParameter("qid", qid).addParameter("trail", trail)
                 .forward();
@@ -163,6 +161,8 @@ public class SubmissionOverlapsAction extends InterMineAction
     private Map<String, Set<Integer>> getOverlappingGenes(
             SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
         throws ObjectStoreException, ClassNotFoundException {
+
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
         String direction = submissionOverlapsForm.getDirection();
         String distance = submissionOverlapsForm.getDistance();
