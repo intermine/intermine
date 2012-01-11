@@ -39,17 +39,17 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author radek
  *
  */
-public class GeneSummaryDisplayer extends ReportDisplayer
+public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
 {
 
-    protected static final Logger LOG = Logger.getLogger(GeneSummaryDisplayer.class);
+    protected static final Logger LOG = Logger.getLogger(MetabolicGeneSummaryDisplayer.class);
 
     /**
      * Construct with config and the InterMineAPI.
      * @param config to describe the report displayer
      * @param im the InterMine API
      */
-    public GeneSummaryDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+    public MetabolicGeneSummaryDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
 
@@ -58,18 +58,16 @@ public class GeneSummaryDisplayer extends ReportDisplayer
         GeneSummary summary = new GeneSummary(reportObject.getObject(), request);
 
         // 1. Pathways count
-        summary.addCollectionCount("Pathways", "pathways", "pathways");
+        summary.addCollectionCount("Pathways", "description", "pathways", "pathways");
         // 2. Diseases count
-        summary.addCollectionCount("Diseases", "diseases", "diseases");
+        summary.addCollectionCount("Diseases", "description", "diseases", "diseases");
         // 3. Mouse Alleles count
-        summary.addCollectionCount("Mouse Alleles", allelesPathQuery(summary.getNewPathQuery(),
+        summary.addCollectionCount("Mouse Alleles", "description",
+                allelesPathQuery(summary.getNewPathQuery(),
                 summary.getObjectId()), "alleles");
-        // 4. GOTerm distinct count
-        summary.addCollectionDistinctCount("Gene Ontology", goTermPathQuery(
-                summary.getNewPathQuery(), summary.getObjectId()), "GeneOntologyDisplayer");
-        // 5. Expression image from EMTAB-62
-        summary.addImageLink("Expression", emtabExpression(summary.getPrimaryId()),
-                "GeneExpressionAtlasDisplayer");
+        // 4. GOTerm count
+        summary.addCollectionCount("Gene Ontology", "description", "goAnnotation",
+                "GeneOntologyDisplayer");
 
         request.setAttribute("summary", summary);
     }
@@ -78,11 +76,13 @@ public class GeneSummaryDisplayer extends ReportDisplayer
      * EMTAB-62 link generator from ebi.ac.uk
      * @param primaryId
      * @return
+     * @deprecated because the image is too big
      */
+    @SuppressWarnings("unused")
+    @java.lang.Deprecated
     private String emtabExpression(String primaryId) {
         if (primaryId != null) {
             return "http://www.ebi.ac.uk/gxa/webanatomogram/" + primaryId + ".png";
-            //return "http://t2.gstatic.com/images?q=tbn:ANd9GcQ_xV46v3XH9RrRL0shuNioW1dqxeKU5duvgR0zQw3IKZwKcP66Nw";
         }
         return null;
     }
@@ -109,6 +109,7 @@ public class GeneSummaryDisplayer extends ReportDisplayer
      * @param objectId
      * @return
      */
+    @SuppressWarnings("unused")
     private PathQuery goTermPathQuery(PathQuery query, Integer objectId) {
         query.addViews("Gene.goAnnotation.ontologyTerm.namespace");
         query.addOrderBy("Gene.goAnnotation.ontologyTerm.namespace", OrderDirection.ASC);
@@ -145,14 +146,16 @@ public class GeneSummaryDisplayer extends ReportDisplayer
         /**
          * Add collection count to the summary.
          * @param key to show under in the summary
+         * @param description to show under the title
          * @param param can be a fieldName or a PathQuery
          * @param anchor says where we will scroll onlick, an ID attr of the target element
          */
-        public void addCollectionCount(String key, Object param, String anchor) {
+        public void addCollectionCount(String key, String description, Object param,
+                String anchor) {
             if (param instanceof PathQuery) {
                 try {
                     storage.put(key, createWrapper("integer", executor.count((PathQuery)
-                            param), anchor));
+                            param), anchor, description));
                 } catch (ObjectStoreException e) {
                     LOG.error("Problem running PathQuery " + e.toString());
                 }
@@ -160,21 +163,24 @@ public class GeneSummaryDisplayer extends ReportDisplayer
                 Collection<?> coll = null;
                 try {
                     if ((coll = (Collection<?>) imObj.getFieldValue((String) param)) != null) {
-                        storage.put(key, createWrapper("integer", coll.size(), anchor));
+                        storage.put(key, createWrapper("integer", coll.size(), anchor,
+                                description));
                     }
                 } catch (IllegalAccessException e) {
                     LOG.error("The field " + param + " does not exist");
                 }
             } else {
-                storage.put(key, createWrapper("unknown", param, anchor));
+                storage.put(key, createWrapper("unknown", param, anchor, description));
             }
         }
 
-        private HashMap<String, Object> createWrapper(String type, Object data, String anchor) {
+        private HashMap<String, Object> createWrapper(String type, Object data, String anchor,
+                String description) {
             HashMap<String, Object> inner = new HashMap<String, Object>();
             inner.put("type", type);
             inner.put("data", data);
             inner.put("anchor", anchor);
+            inner.put("description", description);
             return inner;
         }
 
@@ -182,10 +188,12 @@ public class GeneSummaryDisplayer extends ReportDisplayer
          * Add collection distinct count to the summary. Will get the distinct value referenced
          * and get their count.
          * @param key to show under in the summary
+         * @param description to show under the title
          * @param param can be a fieldName or a PathQuery
          * @param anchor says where we will scroll onlick, an ID attr of the target element
          */
-        public void addCollectionDistinctCount(String key, Object param, String anchor) {
+        public void addCollectionDistinctCount(String key, String description, Object param,
+                String anchor) {
             if (param instanceof PathQuery) {
                 ExportResultsIterator results = executor.execute((PathQuery) param);
 
@@ -198,20 +206,21 @@ public class GeneSummaryDisplayer extends ReportDisplayer
                     }
                     temp.put(value, temp.get(value) + 1);
                 }
-                storage.put(key, createWrapper("map", temp, anchor));
+                storage.put(key, createWrapper("map", temp, anchor, description));
             } else {
-                storage.put(key, createWrapper("unknown", param, anchor));
+                storage.put(key, createWrapper("unknown", param, anchor, description));
             }
         }
 
         /**
          * Add a link to an image for the summary.
          * @param key to show under in the summary
+         * @param description to show under the title
          * @param link refers to the src attr of the img element
          * @param anchor says where we will scroll onlick, an ID attr of the target element
          */
-        public void addImageLink(String key, String link, String anchor) {
-            storage.put(key, createWrapper("image", link, anchor));
+        public void addImageLink(String key, String link, String anchor, String description) {
+            storage.put(key, createWrapper("image", link, anchor, description));
         }
 
         /**
