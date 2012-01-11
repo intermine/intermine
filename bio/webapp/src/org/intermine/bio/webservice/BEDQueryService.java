@@ -139,7 +139,7 @@ public class BEDQueryService extends AbstractQueryService
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
-                exporter.export(iter, null, null);
+                exporter.export(iter);
             } finally {
                 if (iter != null) {
                     iter.releaseGoFaster();
