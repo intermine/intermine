@@ -181,6 +181,11 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("Export failed", ex);
         }
     }
+    
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    }
 
     /* State for the exportRow method, to allow several rows to be merged. */
     private Map<String, Integer> attributeVersions = new HashMap<String, Integer>();
@@ -301,7 +306,7 @@ public class GFF3Exporter implements Exporter
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
             } catch (Exception ex) {
-                LOG.error("Exception: " + ex);
+                LOG.error("While exporting", ex);
                 continue;
             }
         }

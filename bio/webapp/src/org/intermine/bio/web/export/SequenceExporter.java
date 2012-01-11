@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,11 @@ public class SequenceExporter implements Exporter
         return writtenResultsCount;
     }
 
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    }
+    
     /**
      * {@inheritDoc} Lines are always separated with \n because third party tool
      * writeFasta is used for writing sequence.
