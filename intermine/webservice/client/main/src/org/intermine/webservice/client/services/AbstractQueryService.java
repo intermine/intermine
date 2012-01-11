@@ -262,23 +262,7 @@ public abstract class AbstractQueryService<T> extends Service
      */
     protected RowResultSet getRows(Request request, List<String> views) {
         HttpConnection connection = executeRequest(request);
-        return new RowResultSet(connection, views);
-    }
-
-    /**
-     * Performs the request and returns the result as a string.
-     * @param request The TemplateRequest object
-     * @return a string containing the body of the response
-     */
-    protected String getStringResponse(Request request) {
-        HttpConnection connection = executeRequest(request);
-        String res = null;
-        try {
-            res = connection.getResponseBodyAsString().trim();
-        } finally {
-            connection.close();
-        }
-        return res;
+        return new RowResultSet(connection, views, getAPIVersion());
     }
 
     /**
