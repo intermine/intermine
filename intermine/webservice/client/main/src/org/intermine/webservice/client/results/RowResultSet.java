@@ -34,15 +34,17 @@ public class RowResultSet extends ResultSet
 
     private List<String> views;
     private final StringBuffer containerBuffer = new StringBuffer();
+    private final boolean useNewAPI;
 
     /**
      * Construct a new result-set with an HttpConnection and a list of output columns.
      * @param connection The connection to receive results from.
      * @param views The columns selected for output.
      */
-    public RowResultSet(HttpConnection connection, List<String> views) {
+    public RowResultSet(HttpConnection connection, List<String> views, int version) {
         super(connection);
         init(views);
+        useNewAPI = version >= 8;
     }
 
     /**
@@ -56,6 +58,7 @@ public class RowResultSet extends ResultSet
     public RowResultSet(String stringResults, List<String> views) {
         super(stringResults);
         init(views);
+        useNewAPI = false;
     }
 
     // At Package level for testing
@@ -67,6 +70,7 @@ public class RowResultSet extends ResultSet
     RowResultSet(InputStream is, List<String> views) {
         super(is);
         init(views);
+        useNewAPI = false;
     }
 
     private void init(List<String> views) {
@@ -101,7 +105,11 @@ public class RowResultSet extends ResultSet
         List<List<Object>> ret = new ArrayList<List<Object>>();
         String rowData = null;
         while ((rowData = getNextRow()) != null) {
-            ret.add(new ResultRowList(rowData));
+            if (useNewAPI) {
+                ret.add(new JsonRow(rowData));
+            } else {
+                ret.add(new ResultRowList(rowData));
+            }
         }
         return ret;
     }
@@ -119,7 +127,11 @@ public class RowResultSet extends ResultSet
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         String rowData = null;
         while ((rowData = getNextRow()) != null) {
-            ret.add(new ResultRowMap(rowData, views));
+            if (useNewAPI) {
+                ret.add(new JsonRowMap(rowData, views));
+            } else {
+                ret.add(new ResultRowMap(rowData, views));
+            }
         }
         return ret;
     }
@@ -165,7 +177,7 @@ public class RowResultSet extends ResultSet
             String line = getNextRow();
 
             if (line != null) {
-                return new ResultRowMap(line, views);
+                return useNewAPI ? new JsonRowMap(line, views) : new ResultRowMap(line, views);
             } else {
                 return null;
             }
@@ -204,7 +216,7 @@ public class RowResultSet extends ResultSet
             String line = getNextRow();
 
             if (line != null) {
-                return new ResultRowList(line);
+                return useNewAPI ? new JsonRow(line) : new ResultRowList(line);
             } else {
                 return null;
             }

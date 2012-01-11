@@ -208,7 +208,7 @@ public class Service
 
     /**
      * Returns service's root URL.
-     * Example: http://www.flymine.org/service
+     * Example: http://www.flymine.org/query/service
      * @return URL
      */
     public String getRootUrl() {
@@ -239,7 +239,7 @@ public class Service
      * @return service version
      */
     public Version getVersion() {
-        return new Version("1.1");
+        return new Version("1.3");
     }
 
     /**
@@ -247,5 +247,49 @@ public class Service
      */
     public String getApplicationName() {
         return applicationName;
+    }
+
+    /**
+     * Performs the request and returns the result as a string.
+     * @param request The Request object
+     * @return a string containing the body of the response
+     */
+    protected String getStringResponse(Request request) {
+        HttpConnection connection = executeRequest(request);
+        String res = null;
+        try {
+            res = connection.getResponseBodyAsString().trim();
+        } finally {
+            connection.close();
+        }
+        return res;
+    }
+
+    /**
+     * Performs the request and returns the result as an integer.
+     * Suitable when the service returns a single integer number.
+     * @param request The Request object
+     * @return an integer.
+     */
+    protected int getIntResponse(Request request) {
+        String body = getStringResponse(request);
+        if (body.length() == 0) {
+            throw new ServiceException("The server didn't return any results");
+        }
+        try {
+            return Integer.parseInt(body);
+        }  catch (NumberFormatException e) {
+            throw new ServiceException(
+                    "The server returned an invalid result. It is not a number: "
+                    + body, e);
+        }
+    }
+
+    /**
+     * @return the server's API version.
+     */
+    public int getAPIVersion() {
+        Request r = createGetRequest(getRootUrl() + "/version", ContentType.TEXT_PLAIN);
+        return getIntResponse(r);
     }
 }
