@@ -364,8 +364,8 @@
                      placement="top"
                      types="SequenceFeature"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneSummaryDisplayer"
-                     jspName="model/geneSummaryDisplayer.jsp"
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MetabolicGeneSummaryDisplayer"
+                     jspName="model/metabolicGeneSummaryDisplayer.jsp"
                      replacesFields=""
                      showImmediately="true"
                      placement="top"
