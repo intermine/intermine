@@ -276,16 +276,19 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         throws ObjectStoreException {
         for (org.biopax.paxtools.model.level2.xref xref : pathway.getXREF()) {
             String xrefId = xref.getID();
-            if (!StringUtils.isEmpty(xrefId) && xrefId.startsWith(xrefPrefix)) {
+            if (StringUtils.isNotEmpty(xrefId) && xrefId.startsWith(xrefPrefix)) {
                 String identifier = xrefId.substring(xrefPrefix.length());
                 String refId = pathways.get(identifier);
                 if (refId == null) {
                     Item item = createItem("Pathway");
                     item.setAttribute("identifier", identifier);
                     item.setAttribute("name", pathway.getNAME());
+                    String comment = getComment(pathway.getCOMMENT());
+                    if (StringUtils.isNotEmpty(comment)) {
+                        item.setAttribute("comment", comment);
+                    }
                     item.setAttribute("curated", curated);
                     item.addToCollection("dataSets", dataset);
-                    // TODO add comment
                     store(item);
                     refId = item.getIdentifier();
                     pathways.put(identifier, refId);
@@ -295,6 +298,17 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         }
         LOG.warn("couldn't process pathway " + pathway.getNAME());
         return null;
+    }
+
+    private String getComment(Set<String> comments) {
+        if (comments == null || comments.isEmpty()) {
+            return null;
+        }
+        StringBuilder comment = new StringBuilder();
+        for (String c : comments) {
+            comment.append(c);
+        }
+        return comment.toString();
     }
 
     private Item getBioentity(String identifier) {
