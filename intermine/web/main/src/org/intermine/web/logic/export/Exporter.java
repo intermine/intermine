@@ -40,6 +40,14 @@ public interface Exporter
             Collection<Path> unionPathCollection,
             Collection<Path> newPathCollection);
 
+
+    /**
+     * Perform the export with the exporter's defaults in the absence of
+     * path collection changes.
+     * @param resultIt iterator over stuff to be exported.
+     */
+    void export(Iterator<? extends List<ResultElement>> resultIt);
+
     /**
      * This method finds out if result row composed from instances of these
      * classes can be exported with actual implementation of exporter.
@@ -52,4 +60,5 @@ public interface Exporter
      * @return count of written results
      */
     int getWrittenResultsCount();
+
 }
