@@ -29,6 +29,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -166,6 +167,18 @@ public class PathQueryExecutor extends QueryExecutor
         checkListStatus(pq);
 
         return makeQuery(pq, returnBagQueryResults, pathToQueryNode);
+    }
+
+    /**
+     * Get the SQl that will be run on the database.
+     * @param pathQuery The path-query to run.
+     * @return An SQL command.
+     * @throws ObjectStoreException If something goes wrong.
+     */
+    public String makeSql(PathQuery pathQuery) throws ObjectStoreException {
+        Query query = makeQuery(pathQuery);
+        ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+        return osimi.generateSql(query);
     }
 
     /**
