@@ -13,6 +13,7 @@ package org.intermine.bio.web.export;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,6 +90,11 @@ public class BEDExporter implements Exporter
         } else {
             this.trackName = trackDescription.replaceAll(" ", "_");
         }
+    }
+
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     @Override
