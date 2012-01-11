@@ -7,13 +7,12 @@
   #gene-summary-displayer { margin-left:3px; }
   #gene-summary-displayer a { color:inherit; text-decoration:none; }
   #gene-summary-displayer li { margin:0; }
-  #gene-summary-displayer ul li.main { display:inline-block; }
+  #gene-summary-displayer ul li.main { display:inline-block; border:1px solid #d1d0d0; padding:6px; }
   #gene-summary-displayer ul li.main:not(:first-child) { margin-left:20px; }
-  #gene-summary-displayer div.data { margin-right:10px; border-left:1px solid #fff; font-size:30px; font-weight:bold; }
-  #gene-summary-displayer div.data:before { content:" "; float:left; display:inline-block; background:#d1d0d0; height:37px; width:1px; margin-right:10px; }
+  #gene-summary-displayer div.data { margin-right:10px; font-size:30px; font-weight:bold; line-height:27px; }
   #gene-summary-displayer div.data,
   #gene-summary-displayer div.label { float:left; }
-  #gene-summary-displayer div.label span.title { font-size:15px; font-weight:bold; }
+  #gene-summary-displayer div.label span.title { font-size:15px; font-weight:bold; text-decoration:underline; }
   #gene-summary-displayer div.label span.description { display:block; }
   </style>
 
