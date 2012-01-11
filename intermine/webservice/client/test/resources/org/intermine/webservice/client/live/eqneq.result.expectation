@@ -1,0 +1,14 @@
+Employee.name     | Employee.age      | Employee.fullTime | Employee.end      | Employee.address.
+Andy Bernard      | 33                | false             | 4                 | 63 Worker Av.    
+Delphine          | 47                | false             | 9                 | Av. Fatigue 66   
+Dwight Schrute    | 46                | true              | 2                 | 69 Worker Av.    
+Fatou             | 50                | false             | 8                 | Av. Fatigue 19   
+Gilles Triquet    | 57                | false             | null              | Rue Représentant 
+Jennifer          | 45                | true              | 8                 | Av. Fatigue 53   
+Jim Halpert       | 60                | true              | 2                 | 7 Worker Av.     
+Michael Scott     | 42                | false             | null              | 85 Cowboy St     
+Nicole            | 52                | true              | 3                 | Av. Fatigue 96   
+Patrick           | 49                | false             | 3                 | Av. Fatigue 45   
+Phyllis Lapin-Van | 32                | false             | 1                 | 75 Worker Av.    
+Stanley Hudson    | 50                | true              | 5                 | 34 Worker Av.    
+12 rows
