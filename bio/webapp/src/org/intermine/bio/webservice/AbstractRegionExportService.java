@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,11 +12,21 @@ package org.intermine.bio.webservice;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.results.ResultElement;
+import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
@@ -43,20 +53,32 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
 
     @Override
     public boolean isAuthenticated() {
-        // Allow anyone to use this service, even though it
-        // uses a list to do its dirty work.
+        // Allow anyone to use this service, as it doesn't use a list, but 
+        // an id-list query.
         return true;
     }
 
     @Override
     protected void makeList(ListInput input, String type, Profile profile,
             Set<String> temporaryBagNamesAccumulator) throws Exception {
-        // Delete the list on end.
-        temporaryBagNamesAccumulator.add(input.getListName());
+        
         GenomicRegionSearchListInput searchInput = (GenomicRegionSearchListInput) input;
-        InterMineBag tempBag = doListCreation(searchInput, profile, type);
 
-        PathQuery pq = makePathQuery(tempBag);
+        Set<Integer> objectIds = new HashSet<Integer>();
+        Map<GenomicRegion, Query> queries = createQueries(searchInput.getSearchInfo());
+        for (Entry<GenomicRegion, Query> e: queries.entrySet()) {
+            Query q = e.getValue();
+            ObjectStore os = im.getObjectStore();
+            Results rs = os.execute(q);
+            Iterator<Object> it = rs.iterator();
+            while (it.hasNext()) {
+                ResultsRow rr = (ResultsRow) it.next();
+                Integer id = (Integer) rr.get(0);
+                objectIds.add(id);
+            }
+        }
+
+        PathQuery pq = makePathQuery(type, objectIds);
         export(pq, profile);
     }
 
@@ -65,10 +87,10 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
      * @param tempBag The bag to constrain this query on.
      * @return A path-query.
      */
-    protected PathQuery makePathQuery(InterMineBag tempBag) {
+    protected PathQuery makePathQuery(String type, Collection<Integer> ids) {
         PathQuery pq = new PathQuery(im.getModel());
-        pq.addView(tempBag.getType() + ".primaryIdentifier");
-        pq.addConstraint(Constraints.in(tempBag.getType(), tempBag.getName()));
+        pq.addView(type + ".primaryIdentifier");
+        pq.addConstraint(Constraints.inIds(type, ids));
         return pq;
     }
 
