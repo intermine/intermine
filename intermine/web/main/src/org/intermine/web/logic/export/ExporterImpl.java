@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -93,6 +94,11 @@ public class ExporterImpl implements Exporter
         } catch (RuntimeException e) {
             throw new ExportException("Export failed.", e);
         }
+    }
+
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     /**
