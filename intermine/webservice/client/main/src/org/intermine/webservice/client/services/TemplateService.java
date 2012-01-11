@@ -285,16 +285,7 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
 
         request.setName(templateName);
         request.setTemplateParameters(parameters);
-        String body = getStringResponse(request);
-        if (body.length() == 0) {
-            throw new ServiceException("The server didn't return any results");
-        }
-        try {
-            return Integer.parseInt(body);
-        }  catch (NumberFormatException e) {
-            throw new ServiceException("The server returned an invalid result. It is not a number: "
-                    + body, e);
-        }
+        return getIntResponse(request);
     }
 
     @Override
@@ -581,8 +572,8 @@ public class TemplateService extends AbstractQueryService<TemplateQuery>
 
     private RowResultSet getRows(String name, List<TemplateParameter> params,
             List<String> views, Page page) {
-        TemplateRequest request =
-                new TemplateRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON_ROW);
+        ContentType ct = (getAPIVersion() < 8) ? ContentType.APPLICATION_JSON_ROW : ContentType.APPLICATION_JSON;
+        TemplateRequest request = new TemplateRequest(RequestType.POST, getUrl(), ct);
 
         request.setName(name);
         request.setTemplateParameters(params);
