@@ -95,15 +95,20 @@
       </span>
       </div>
       </c:if>
-     <c:if test="${!empty templateQuery || !empty param.templateQueryTitle}">
-       <c:if test="${empty param.bagName}">
-         <h3><fmt:message key="results.templateTitle"/></h3>
-       </c:if>
-     </c:if>
-     <c:if test="${!empty param.bagName}">
-       <div><strong id="numberOfResults">${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
-     </c:if>
-
+      <c:choose>
+        <c:when test="${!empty templateQuery || !empty param.templateQueryTitle}">
+         <c:if test="${empty param.bagName}">
+           <h3><fmt:message key="results.templateTitle"/></h3>
+           Total rows: ${resultsTable.estimatedSize}
+         </c:if>
+        </c:when>
+        <c:when test="${!empty param.bagName}">
+          <div><strong id="numberOfResults">${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
+        </c:when>
+        <c:otherwise>
+          Total rows: ${resultsTable.estimatedSize}
+        </c:otherwise>
+      </c:choose>
        </div>
      </div>
 
