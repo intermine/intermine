@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.lists;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,13 +34,19 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class ListServiceUtils {
+/**
+ * Utility functions for dealing with list requests.
+ * @author Alex Kalderimis
+ *
+ */
+public final class ListServiceUtils
+{
 
     private ListServiceUtils() {
         // Uninstantiatable
     }
 
-    public static final String CAST = "_temp_cast";
+    private static final String CAST = "_temp_cast";
 
     /**
      * Given a common type, return a collection of bags cast to that type. The contents
@@ -94,6 +110,12 @@ public class ListServiceUtils {
         }
     }
 
+    /**
+     * After this method returns, the will be no bag with the given name in the given profile.
+     * @param profile The profile to target for list deletion.
+     * @param name The name of the bag that must not exist.
+     * @throws ObjectStoreException If there is a problem deleting the bag.
+     */
     public static void ensureBagIsDeleted(Profile profile, String name)
         throws ObjectStoreException {
         try {
@@ -121,7 +143,7 @@ public class ListServiceUtils {
         if (classes.size() == 1) {
             return classes.iterator().next().getUnqualifiedName();
         }
-        
+
         Set<String> classNames = new HashSet<String>();
         for (ClassDescriptor cd: classes) {
             classNames.add(cd.getUnqualifiedName());
@@ -163,7 +185,7 @@ public class ListServiceUtils {
                     return 0;
                 }
             }
-            
+
         });
         return superList.get(0).getUnqualifiedName();
     }
