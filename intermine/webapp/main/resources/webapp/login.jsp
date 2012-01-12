@@ -60,7 +60,7 @@
     </div>
 
     <div class="column second">
-      <c:if test="${!empty OPENID_PROVIDERS && WEB_PROPERTIES['openid.allowed'] != 'false'}">
+      <c:if test="${!empty OPENID_PROVIDERS && WEB_PROPERTIES['openid.allowed'] != 'false' && isExternallyAccessible}">
         <im:debug message="${OPENID_PROVIDERS}"/>
         <h3 class="openid"><fmt:message key="login.openid"/></h3>
         <c:forEach var="provider" items="${OPENID_PROVIDERS}">
