@@ -27,9 +27,10 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
       var targetElem = document.getElementById("widgetdata" + widgetId);
       var Chart = null;
       var options = jQuery.extend({}, CHART_OPTS, {title: res.title});
-      if (res.chartType == "BarChart") {
+      if (res.chartType == "ColumnChart") {
           Chart = viz.ColumnChart;
-      } else if (res.chartType == "StackedBarChart") {
+          jQuery.extend(options, {reverseCategories: true});
+      } else if (res.chartType == "BarChart") {
           Chart = viz.BarChart;
           jQuery.extend(options, {isStacked: true, height: 450});
       } else if (res.chartType == "ScatterPlot") {
