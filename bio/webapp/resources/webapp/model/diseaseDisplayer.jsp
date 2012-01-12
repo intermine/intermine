@@ -12,9 +12,6 @@
 <div id="mine-rat-disease" class="collection-table">
 <h3 class="loading">Diseases (from RatMine)</h3>
 
-<c:choose>
-  <c:when test="${ratGenes != null && !empty(ratGenes)}">
-
 <table>
   <tbody>
   <tr>
@@ -24,6 +21,9 @@
   </tr>
   </tbody>
 </table>
+
+<c:choose>
+  <c:when test="${ratGenes != null && !empty(ratGenes)}">
 
 <script type="text/javascript" charset="utf-8">
 function generateDiseases(jSONObject, target) {
