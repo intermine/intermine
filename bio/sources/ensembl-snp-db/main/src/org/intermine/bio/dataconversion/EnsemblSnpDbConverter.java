@@ -589,7 +589,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + "     AND tv.cdna_start is not null)"
             + " LEFT JOIN (variation_synonym vs)"
             + " ON (vf.variation_id = vs.variation_id"
-            + "     AND vs.source_id IN (" + StringUtil.join(getSnpSourceIds(connection), ",") + ")"
+            + "     AND vs.source_id IN (" + makeInList(getSnpSourceIds(connection)) + ")"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
@@ -602,6 +602,15 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
+
+    private String makeInList(Collection<String> strings) {
+        Set<String> quoted = new HashSet<String>();
+        for (String s : strings) {
+            quoted.add("'" + s + "'");
+        }
+        return StringUtil.join(quoted, ",");
+    }
+
 
     private Set<String> getSnpSourceIds(Connection connection) throws SQLException {
         if (snpSourceIds == null) {
