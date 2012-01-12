@@ -158,6 +158,7 @@ public class PathQueryExecutor extends QueryExecutor
      * PathQuery one.
      * @param pq the PathQuery to translate.
      * @return The Query to run.
+     * @throws ObjectStoreException if there is a problem making the query.
      */
     public Query makeQuery(PathQuery pq) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
