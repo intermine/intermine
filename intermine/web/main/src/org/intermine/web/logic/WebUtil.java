@@ -409,7 +409,7 @@ public abstract class WebUtil
         List<String> elems = p.getElements();
         String firstField = elems.get(0);
         if (firstField == null) {
-            return "";
+            return ""; // shouldn't actually happen - but we shouldn't throw exceptions here.
         }
         FieldDescriptor fd = cd.getFieldDescriptorByName(firstField);
         final FieldConfig fc = FieldConfigHelper.getFieldConfig(config, cd, fd);
@@ -420,10 +420,11 @@ public abstract class WebUtil
             thisPart = FieldConfig.getFormattedName(fd.getName());
         }
         if (elems.size() > 1) {
-            String newRoot
-                = ((ReferenceDescriptor) fd).getReferencedClassDescriptor().getUnqualifiedName();
-            String nextPathString
-                = newRoot + "." + StringUtils.join(p.getElements().subList(1, elems.size()), ".");
+            String root = p.decomposePath().get(1).getLastClassDescriptor().getUnqualifiedName();
+            String[] parts = p.toString().split("\\."); // use toString to get subclass info.
+            int start = Math.min(2, parts.length - 1);
+            String fields = StringUtils.join(Arrays.copyOfRange(parts, start, parts.length), ".");
+            String nextPathString = root + "." + fields;
             Path newPath;
             try {
                 newPath = new Path(p.getModel(), nextPathString);
