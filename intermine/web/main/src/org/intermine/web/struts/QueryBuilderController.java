@@ -95,7 +95,7 @@ public class QueryBuilderController extends TilesAction
 
         try {
             // Create a Map from view path to sort style (disabled, asc, desc, none). At the moment,
-            // the order by list will only contain one element, as the web representation is only
+            // the order by list will only contain one element, as the web representation is not
             // able to represent multiple order elements
             request.setAttribute("viewStrings", findViewSortOrders(query));
             request.setAttribute("viewPaths", listToMap(query.getView()));
