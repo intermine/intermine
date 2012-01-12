@@ -285,7 +285,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
                     item.setAttribute("name", pathway.getNAME());
                     String comment = getComment(pathway.getCOMMENT());
                     if (StringUtils.isNotEmpty(comment)) {
-                        item.setAttribute("comment", comment);
+                        item.setAttribute("description", comment);
                     }
                     item.setAttribute("curated", curated);
                     item.addToCollection("dataSets", dataset);
