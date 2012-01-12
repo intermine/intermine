@@ -220,14 +220,22 @@ public class KeggPathwayConverter extends BioFileConverter
         }
         return gene;
     }
+
     private void processPathway(String[] line) throws ObjectStoreException {
         String identifier = line[0];
         String name = line[1];
+        String description = null;
+        if (line.length > 2) {
+            description = line[2];
+        }
         Item pathway = pathwaysNotStored.remove(identifier);
         if (pathway == null) {
             pathway = getPathway(identifier);
         }
         pathway.setAttribute("name", name);
+        if (StringUtils.isNotEmpty(description)) {
+            pathway.setAttribute("description", description);
+        }
         store(pathway);
     }
 
