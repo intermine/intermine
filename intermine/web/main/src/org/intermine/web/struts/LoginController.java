@@ -10,15 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.Properties;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Controller for the login page.
@@ -39,9 +42,16 @@ public class LoginController extends TilesAction
                                  HttpServletRequest request,
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
+
         LoginForm loginForm = (LoginForm) form;
         String returnToString = request.getParameter("returnto");
         loginForm.setReturnToString(returnToString);
+
+        Properties webprops = SessionMethods.getWebProperties(request);
+        String ourPath = webprops.getProperty("webapp.path");
+        boolean isLocal = Pattern.compile("\\w+\\.\\w+:\\d{4}").matcher(ourPath).matches();
+        request.setAttribute("isExternallyAccessible", !isLocal);
+
         return null;
     }
 }
