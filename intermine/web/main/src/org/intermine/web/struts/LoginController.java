@@ -48,8 +48,8 @@ public class LoginController extends TilesAction
         loginForm.setReturnToString(returnToString);
 
         Properties webprops = SessionMethods.getWebProperties(request);
-        String ourPath = webprops.getProperty("webapp.path");
-        boolean isLocal = Pattern.compile("\\w+\\.\\w+:\\d{4}").matcher(ourPath).matches();
+        String ourPath = webprops.getProperty("webapp.baseurl");
+        boolean isLocal = Pattern.compile("\\w+\\.\\w+:\\d{4}").matcher(ourPath).find();
         request.setAttribute("isExternallyAccessible", !isLocal);
 
         return null;
