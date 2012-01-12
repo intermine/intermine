@@ -63,4 +63,4 @@
   </c:choose>
 </div>
 
-<!-- /qyeryBuilderView.jsp -->
+<!-- /queryBuilderView.jsp -->
