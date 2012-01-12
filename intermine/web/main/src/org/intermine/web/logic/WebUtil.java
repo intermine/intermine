@@ -296,6 +296,25 @@ public abstract class WebUtil
     }
 
     /**
+     * Formats a column name, using the given query to construct a path according to the current
+     * state of its subclasses.
+     * @param path The path to format.
+     * @param pq The query to use for path construction.
+     * @param config The configuration to find labels in.
+     * @return A nicely formatted string.
+     */
+    public static String formatPath(final String path, final PathQuery pq, final WebConfig config) {
+        Path viewPath;
+        try {
+            viewPath = pq.makePath(path);
+        } catch (Throwable t) {
+            // In all error cases, return the original string.
+            return path;
+        }
+        return formatPath(viewPath, config);
+    }
+
+    /**
      * Formats a column name, using the webconfig to produce configured labels.
      * EG: MRNA.scoreType --&gt; mRNA &gt; Score Type
      *
