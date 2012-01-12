@@ -55,7 +55,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
     private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
         = new CacheMap<MultiKey, Collection<JSONObject>>();
-    private boolean debug = true;
+    private boolean debug = false;
     private static final String QUERY_PATH = "/query/results?size=1000&format=tab&query=";
     private static final String EMPTY = "\"\""; // webservices returns "" as empty
 
