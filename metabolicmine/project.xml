@@ -133,7 +133,9 @@
       <property name="ensemblcompara.organisms" value="9606 10090 10116"/>
     </source>
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-     <property name="source.db.name" value="ensembl.9606.variation"/>
+      <property name="source.db.name" value="ensembl.9606.variation"/>
+      <property name="organism" value="9606"/>
+      <property name="sources" value="dbSNP"/>
     </source>
 <!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.10090.variation"/>
