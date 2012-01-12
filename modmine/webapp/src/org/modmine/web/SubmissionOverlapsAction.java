@@ -46,6 +46,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.session.SessionMethods;
@@ -61,8 +62,7 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SubmissionOverlapsAction extends InterMineAction
 {
-    private static final Logger LOG = Logger
-            .getLogger(SubmissionOverlapsAction.class);
+    private static final Logger LOG = Logger.getLogger(SubmissionOverlapsAction.class);
 
     /**
      * Action for creating a bag of InterMineObjects or Strings from identifiers
@@ -77,73 +77,22 @@ public class SubmissionOverlapsAction extends InterMineAction
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
+                    throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request
                 .getSession());
         ObjectStore os = im.getObjectStore();
 
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
         SubmissionOverlapsForm submissionOverlapsForm = (SubmissionOverlapsForm) form;
-
-        String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
         String submissionId = submissionOverlapsForm.getSubmissionId();
 
         PathQuery q = new PathQuery(os.getModel());
 
         if (request.getParameter("overlaps") != null) {
-            String featureType = submissionOverlapsForm.getOverlapFeatureType();
-            String findFeatureType = submissionOverlapsForm
-                    .getOverlapFindType();
-            String description = "Results of searching for " + featureType
-                    + "s generated from DCC" + " submission " + submissionTitle
-                    + " that overlap " + findFeatureType + "s.";
-            q.setDescription(description);
-
-            q.addView(findFeatureType + ".primaryIdentifier");
-            q.addView(findFeatureType
-                    + ".overlappingFeatures.secondaryIdentifier");
-            q.addView(findFeatureType + ".chromosomeLocation.start");
-            q.addView(findFeatureType + ".chromosomeLocation.end");
-            q.addView(findFeatureType + ".chromosomeLocation.strand");
-
-            if ("Exon".equals(findFeatureType)) {
-                q.addView(findFeatureType + ".gene.primaryIdentifier");
-            }
-
-            q.addConstraint(Constraints.type(findFeatureType
-                    + ".overlappingFeatures", featureType));
-            q.addConstraint(Constraints
-                    .eq(findFeatureType
-                            + ".overlappingFeatures.submissions.title",
-                            submissionTitle));
-
+            getOverlappingFeatures(submissionOverlapsForm, q, im);
         } else if (request.getParameter("flanking") != null) {
-            Map<String, Set<Integer>> queryResultsMap = getOverlappingGenes(
-                    submissionOverlapsForm, im);
-
-            Submission submission = (Submission) im.getObjectStore().getObjectById(
-                    Integer.valueOf(submissionId));
-            String organismShortName = submission.getOrganism().getShortName();
-
-            // PathQuery
-            q.addViews("Gene.overlappingFeatures.primaryIdentifier", "Gene.primaryIdentifier");
-
-            if (queryResultsMap == null) {
-                q.addConstraint(Constraints.lookup("Gene", "", ""));
-                q.addConstraint(Constraints.lookup("Gene.overlappingFeatures", "", ""));
-            } else {
-                q.addConstraint(Constraints.inIds("Gene",
-                        queryResultsMap.get("geneIdSet")));
-                q.addConstraint(Constraints.inIds("Gene.overlappingFeatures",
-                        queryResultsMap.get("sequenceFeatureIdSet")));
-            }
-
-            q.addConstraint(Constraints.eq("Gene.organism.shortName", organismShortName));
-            q.addConstraint(Constraints.eq(
-                    "Gene.overlappingFeatures.organism.shortName",
-                    organismShortName));
-            q.addConstraint(Constraints.eq(
-                    "Gene.overlappingFeatures.submissions.id", submissionId));
+            //getFlankingGenesWithFeatures(im, submissionOverlapsForm, submissionId, q);
+            getFlankingGenes(im, submissionOverlapsForm, q);
         }
 
         String qid = SessionMethods.startQueryWithTimeout(request, false, q);
@@ -151,16 +100,148 @@ public class SubmissionOverlapsAction extends InterMineAction
 
         String trail = "|" + submissionId;
 
-        LOG.info("OVERLAPTIME: execute: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("OVERLAP:TOTALTIME: execute: " + (System.currentTimeMillis() - bT) + " ms");
 
-        return new ForwardParameters(mapping.findForward("waiting"))
-                .addParameter("qid", qid).addParameter("trail", trail)
-                .forward();
+        return new ForwardParameters(mapping.findForward("waiting")).addParameter("qid", qid)
+                .addParameter("trail", trail).forward();
     }
+
+    /**
+     * @param submissionOverlapsForm
+     * @param submissionTitle
+     * @param q
+     */
+    private void getOverlappingFeatures(
+            SubmissionOverlapsForm submissionOverlapsForm, PathQuery q, InterMineAPI im)
+                    throws ObjectStoreException, ClassNotFoundException {
+
+        String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
+        String givenFeatureType = submissionOverlapsForm.getOverlapFeatureType();
+        String overlapFeatureType = submissionOverlapsForm.getOverlapFindType();
+        String description = "Results of searching for " + givenFeatureType
+                + "s generated from DCC" + " submission " + submissionTitle
+                + " that overlap " + overlapFeatureType + "s.";
+        q.setDescription(description);
+
+        q.addView(overlapFeatureType + ".primaryIdentifier");
+//        q.addView(findFeatureType
+//                + ".overlappingFeatures.secondaryIdentifier");
+        q.addView(overlapFeatureType + ".chromosomeLocation.start");
+        q.addView(overlapFeatureType + ".chromosomeLocation.end");
+        q.addView(overlapFeatureType + ".chromosomeLocation.strand");
+
+
+        if ("Exon".equals(overlapFeatureType)) {
+            q.addView(overlapFeatureType + ".gene.primaryIdentifier");
+        }
+
+        q.addConstraint(Constraints.inIds(overlapFeatureType,
+                getOverlappingFeaturesId(submissionOverlapsForm, im)));
+
+    }
+
+
+    /** TO RM
+     * @param submissionOverlapsForm
+     * @param submissionTitle
+     * @param q
+     */
+    private void getOverlappingFeaturesOld(
+            SubmissionOverlapsForm submissionOverlapsForm, PathQuery q) {
+
+        String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
+        String featureType = submissionOverlapsForm.getOverlapFeatureType();
+        String findFeatureType = submissionOverlapsForm.getOverlapFindType();
+        String description = "Results of searching for " + featureType
+                + "s generated from DCC" + " submission " + submissionTitle
+                + " that overlap " + findFeatureType + "s.";
+        q.setDescription(description);
+
+        q.addView(findFeatureType + ".primaryIdentifier");
+        q.addView(findFeatureType
+                + ".overlappingFeatures.secondaryIdentifier");
+        q.addView(findFeatureType + ".chromosomeLocation.start");
+        q.addView(findFeatureType + ".chromosomeLocation.end");
+        q.addView(findFeatureType + ".chromosomeLocation.strand");
+
+        if ("Exon".equals(findFeatureType)) {
+            q.addView(findFeatureType + ".gene.primaryIdentifier");
+        }
+
+        q.addConstraint(Constraints.type(findFeatureType + ".overlappingFeatures",
+                featureType));
+        q.addConstraint(Constraints.eq(findFeatureType
+                + ".overlappingFeatures.submissions.title", submissionTitle));
+    }
+
+
+    /**
+     * @param im
+     * @param submissionOverlapsForm
+     * @param submissionId
+     * @param q
+     * @throws ObjectStoreException
+     * @throws ClassNotFoundException
+     */
+    private void getFlankingGenesWithFeatures(final InterMineAPI im,
+            SubmissionOverlapsForm submissionOverlapsForm, String submissionId,
+            PathQuery q) throws ObjectStoreException, ClassNotFoundException {
+        Map<String, Set<Integer>> queryResultsMap = getOverlappingGenes(
+                submissionOverlapsForm, im);
+
+        Submission submission = (Submission) im.getObjectStore().getObjectById(
+                Integer.valueOf(submissionId));
+        String organismShortName = submission.getOrganism().getShortName();
+
+        // PathQuery
+        q.addViews("Gene.overlappingFeatures.primaryIdentifier", "Gene.primaryIdentifier");
+
+        if (queryResultsMap == null) {
+            q.addConstraint(Constraints.lookup("Gene", "", ""));
+            q.addConstraint(Constraints.lookup("Gene.overlappingFeatures", "", ""));
+        } else {
+            q.addConstraint(Constraints.inIds("Gene", queryResultsMap.get("geneIdSet")));
+            q.addConstraint(Constraints.inIds("Gene.overlappingFeatures",
+                    queryResultsMap.get("sequenceFeatureIdSet")));
+        }
+
+        q.addConstraint(Constraints.eq("Gene.organism.shortName", organismShortName));
+        q.addConstraint(Constraints.eq("Gene.overlappingFeatures.organism.shortName",
+                organismShortName));
+        q.addConstraint(Constraints.eq("Gene.overlappingFeatures.submissions.id", submissionId));
+    }
+
+
+    /**
+     * @param im
+     * @param submissionOverlapsForm
+     * @param submissionId
+     * @param q
+     * @throws ObjectStoreException
+     * @throws ClassNotFoundException
+     */
+    private void getFlankingGenes(final InterMineAPI im,
+            SubmissionOverlapsForm submissionOverlapsForm, PathQuery q)
+                    throws ObjectStoreException, ClassNotFoundException {
+
+        // PathQuery
+        q.addViews("Gene.primaryIdentifier", "Gene.symbol");
+        q.addConstraint(Constraints.inIds("Gene",
+                getOverlappingGenesId(submissionOverlapsForm, im)));
+    }
+
+
+    /**
+     * TO SAVE: it is about as fast as the single set one
+    *  if we can improve the pathquery speed...
+    *
+    *
+    *
+    *  */
 
     private Map<String, Set<Integer>> getOverlappingGenes(
             SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
-        throws ObjectStoreException, ClassNotFoundException {
+                    throws ObjectStoreException, ClassNotFoundException {
 
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
@@ -173,36 +254,8 @@ public class SubmissionOverlapsAction extends InterMineAction
                 Integer.valueOf(submissionId));
         int organismId = submission.getOrganism().getId();
 
-        int flankingSize = 0;
-        int beforeStartOfGene = 0;
-        int afterEndOfGene = 0;
-
-        if ("0.5kb".equals(distance)) {
-            flankingSize = 500;
-        }
-        if ("1.0kb".equals(distance)) {
-            flankingSize = 1000;
-        }
-        if ("2.0kb".equals(distance)) {
-            flankingSize = 2000;
-        }
-        if ("5.0kb".equals(distance)) {
-            flankingSize = 5000;
-        }
-        if ("10.0kb".equals(distance)) {
-            flankingSize = 10000;
-        }
-
-        if ("bothways".equalsIgnoreCase(direction)) {
-            beforeStartOfGene = flankingSize;
-            afterEndOfGene = flankingSize;
-        }
-        if ("upstream".equalsIgnoreCase(direction)) {
-            beforeStartOfGene = flankingSize;
-        }
-        if ("downstream".equalsIgnoreCase(direction)) {
-            afterEndOfGene = flankingSize;
-        }
+        int beforeStartOfGene = getLeftMargin(direction, distance);
+        int afterEndOfGene = getRightMargin(direction, distance);
 
         String modelPackName = im.getModel().getPackageName();
         Class<?> featureCls = Class.forName(modelPackName + "." + featureType);
@@ -218,10 +271,10 @@ public class SubmissionOverlapsAction extends InterMineAction
         // QueryClass qcOrg = new QueryClass(Organism.class);
         // QueryClass qcChr = new QueryClass(Chromosome.class);
 
-//        QueryField qfSequenceFeatureSecondaryIdentifier = new QueryField(
-//            qcSequenceFeature, "secondaryIdentifier");
+        //        QueryField qfSequenceFeatureSecondaryIdentifier = new QueryField(
+        //            qcSequenceFeature, "secondaryIdentifier");
         QueryField qfSequenceFeatureId = new QueryField(qcSequenceFeature,
-            "id");
+                "id");
         // QueryField qfGenePId = new QueryField(qcGene, "primaryIdentifier");
         QueryField qfGeneId = new QueryField(qcGene, "id");
         // QueryField qfSequenceFeatureClass = new QueryField(qcSequenceFeature,
@@ -231,7 +284,7 @@ public class SubmissionOverlapsAction extends InterMineAction
 
         // query.addToSelect(qfGenePId);
         query.addToSelect(qfGeneId);
-//        query.addToSelect(qfSequenceFeatureSecondaryIdentifier);
+        //        query.addToSelect(qfSequenceFeatureSecondaryIdentifier);
         query.addToSelect(qfSequenceFeatureId);
 
         query.addFrom(qcSequenceFeature);
@@ -317,7 +370,8 @@ public class SubmissionOverlapsAction extends InterMineAction
         ObjectStoreInterMineImpl ob = (ObjectStoreInterMineImpl) im
                 .getObjectStore();
 
-        LOG.info("OVERLAP " + ob.generateSql(query));
+        LOG.info("OVERLAPGENE FULL " + ob.generateSql(query));
+
         Results results = im.getObjectStore().execute(query);
 
         Map<String, Set<Integer>> queryResultsMap = new HashMap<String, Set<Integer>>();
@@ -335,7 +389,317 @@ public class SubmissionOverlapsAction extends InterMineAction
             queryResultsMap.put("geneIdSet", geneIdSet);
             queryResultsMap.put("sequenceFeatureIdSet", sequenceFeatureIdSet);
         }
-        LOG.info("OVERLAPTIME: getOverlappingGenes: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("OVERLAPGENE FULL TIME: " + (System.currentTimeMillis() - bT) + " ms");
         return queryResultsMap;
     }
+
+
+    private Set<Integer> getOverlappingGenesId(
+            SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
+                    throws ObjectStoreException, ClassNotFoundException {
+
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
+
+        String direction = submissionOverlapsForm.getDirection();
+        String distance = submissionOverlapsForm.getDistance();
+        String featureType = submissionOverlapsForm.getFlankingFeatureType();
+        String submissionId = submissionOverlapsForm.getSubmissionId();
+
+        Submission submission = (Submission) im.getObjectStore().getObjectById(
+                Integer.valueOf(submissionId));
+        int organismId = submission.getOrganism().getId();
+
+        int beforeStartOfGene = getLeftMargin(direction, distance);
+        int afterEndOfGene = getRightMargin(direction, distance);
+
+        String modelPackName = im.getModel().getPackageName();
+        Class<?> featureCls = Class.forName(modelPackName + "." + featureType);
+
+        Query query = new Query();
+        query.setDistinct(false);
+
+        QueryClass qcSequenceFeature = new QueryClass(featureCls);
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcSequenceFeatureLoc = new QueryClass(Location.class);
+        QueryClass qcGeneLoc = new QueryClass(Location.class);
+        //        QueryField qfSequenceFeatureId = new QueryField(qcSequenceFeature, "id");
+        QueryField qfGeneId = new QueryField(qcGene, "id");
+        query.addToSelect(qfGeneId);
+        //        query.addToSelect(qfSequenceFeatureId);
+
+        query.addFrom(qcSequenceFeature);
+        query.addFrom(qcGene);
+        query.addFrom(qcSequenceFeatureLoc);
+        query.addFrom(qcGeneLoc);
+
+        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
+        query.setConstraint(constraints);
+
+        QueryObjectReference locGeneSubject = new QueryObjectReference(
+                qcGeneLoc, "feature");
+        ContainsConstraint ccLocGeneSubject = new ContainsConstraint(
+                locGeneSubject, ConstraintOp.CONTAINS, qcGene);
+        constraints.addConstraint(ccLocGeneSubject);
+
+        QueryObjectReference locSequenceFeatureSubject = new QueryObjectReference(
+                qcSequenceFeatureLoc, "feature");
+        ContainsConstraint ccLocSequenceFeatureSubject = new ContainsConstraint(
+                locSequenceFeatureSubject, ConstraintOp.CONTAINS,
+                qcSequenceFeature);
+        constraints.addConstraint(ccLocSequenceFeatureSubject);
+
+        // SequenceFeaure.chromosome = Gene.chromosome
+        constraints.addConstraint(new SimpleConstraint(new QueryForeignKey(
+                qcGene, "chromosome"), ConstraintOp.EQUALS,
+                new QueryForeignKey(qcSequenceFeature, "chromosome")));
+
+        // SequenceFeaure.organism = Gene.organism
+        constraints.addConstraint(new SimpleConstraint(new QueryForeignKey(
+                qcGene, "organism"), ConstraintOp.EQUALS, new QueryForeignKey(
+                        qcSequenceFeature, "organism")));
+
+        SimpleConstraint scOrg = new SimpleConstraint(new QueryForeignKey(
+                qcGene, "organism"), ConstraintOp.EQUALS, new QueryValue(
+                        organismId));
+        constraints.addConstraint(scOrg);
+
+        QueryCollectionReference qcrSubmission = new QueryCollectionReference(
+                submission, "features");
+        constraints.addConstraint(new ContainsConstraint(qcrSubmission,
+                ConstraintOp.CONTAINS, qcSequenceFeature));
+
+        // Sequence feature location chromosome reference
+        QueryObjectReference sequenceFeatureLocatedOnRef = new QueryObjectReference(
+                qcSequenceFeatureLoc, "locatedOn");
+
+        // Gene location chromosome reference
+        QueryObjectReference geneLocatedOnRef = new QueryObjectReference(
+                qcGeneLoc, "locatedOn");
+
+        OverlapRange overlapInput = new OverlapRange(new QueryField(
+                qcSequenceFeatureLoc, "start"), new QueryField(
+                        qcSequenceFeatureLoc, "end"), sequenceFeatureLocatedOnRef);
+
+        OverlapRange overlapFeature = new OverlapRange(new QueryExpression(
+                new QueryField(qcGeneLoc, "start"), QueryExpression.SUBTRACT,
+                new QueryValue(beforeStartOfGene)), new QueryExpression(
+                        new QueryField(qcGeneLoc, "end"), QueryExpression.ADD,
+                        new QueryValue(afterEndOfGene)), geneLocatedOnRef);
+
+        OverlapConstraint oc = new OverlapConstraint(overlapInput,
+                ConstraintOp.OVERLAPS, overlapFeature);
+
+        constraints.addConstraint(oc);
+
+        ObjectStoreInterMineImpl ob = (ObjectStoreInterMineImpl) im.getObjectStore();
+
+        LOG.info("OVERLAP GENE: " + ob.generateSql(query));
+
+        Results results = im.getObjectStore().execute(query, 100000,true, false, true);
+//        SingletonResults results = im.getObjectStore()
+//                .executeSingleton(query, 100000,true, false, true);
+        if (results == null || results.isEmpty()) {
+            return null;
+        }
+        Set<Integer> geneIdSet = new HashSet<Integer>();
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+//            geneIdSet.add((Integer)iter.next());
+            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+            geneIdSet.add((Integer) row.get(0));
+        }
+
+        /* no way of accessing the ids in the bag:
+         * change so that a bag doesn't need to be in a userprofile
+        ObjectStoreWriter oswProduction = null;
+        try {
+            oswProduction = os.getNewWriter();
+            oswProduction.addToBagFromQuery(osb, query);
+        } finally {
+            if (oswProduction != null) {
+                oswProduction.close();
+            }
+        }
+         */
+        LOG.info("OVERLAP GENE TIME: " + (System.currentTimeMillis() - bT) + " ms");
+        return geneIdSet;
+    }
+
+    private Set<Integer> getOverlappingFeaturesId(
+            SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
+                    throws ObjectStoreException, ClassNotFoundException {
+
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
+
+        String featureType = submissionOverlapsForm.getOverlapFeatureType();  //GF
+        String findFeatureType = submissionOverlapsForm.getOverlapFindType(); //OF
+
+        String submissionId = submissionOverlapsForm.getSubmissionId();
+
+        Submission submission = (Submission) im.getObjectStore().getObjectById(
+                Integer.valueOf(submissionId));
+        int organismId = submission.getOrganism().getId();
+
+        String modelPackName = im.getModel().getPackageName();
+        Class<?> featureCls = Class.forName(modelPackName + "." + featureType);
+        Class<?> overlapFeatureCls = Class.forName(modelPackName + "." + findFeatureType);
+
+        Query query = new Query();
+        query.setDistinct(false);
+
+        QueryClass qcGivenFeature = new QueryClass(featureCls);
+        QueryClass qcOverlapFeature = new QueryClass(overlapFeatureCls);
+        QueryClass qcGivenFeatureLoc = new QueryClass(Location.class);
+        QueryClass qcOverlapFeatureLoc = new QueryClass(Location.class);
+        //        QueryField qfSequenceFeatureId = new QueryField(qcSequenceFeature, "id");
+        QueryField qfOFId = new QueryField(qcOverlapFeature, "id");
+        query.addToSelect(qfOFId);
+        //        query.addToSelect(qfSequenceFeatureId);
+
+        query.addFrom(qcGivenFeature);
+        query.addFrom(qcOverlapFeature);
+        query.addFrom(qcGivenFeatureLoc);
+        query.addFrom(qcOverlapFeatureLoc);
+
+        ConstraintSet constraints = new ConstraintSet(ConstraintOp.AND);
+        query.setConstraint(constraints);
+
+        QueryObjectReference locOFSubject = new QueryObjectReference(
+                qcOverlapFeatureLoc, "feature");
+        ContainsConstraint ccLocOFSubject = new ContainsConstraint(
+                locOFSubject, ConstraintOp.CONTAINS, qcOverlapFeature);
+        constraints.addConstraint(ccLocOFSubject);
+
+        QueryObjectReference locGFSubject = new QueryObjectReference(
+                qcGivenFeatureLoc, "feature");
+        ContainsConstraint ccLocGFSubject = new ContainsConstraint(
+                locGFSubject, ConstraintOp.CONTAINS,
+                qcGivenFeature);
+        constraints.addConstraint(ccLocGFSubject);
+
+        // SequenceFeaure.chromosome = Gene.chromosome
+        constraints.addConstraint(new SimpleConstraint(new QueryForeignKey(
+                qcOverlapFeature, "chromosome"), ConstraintOp.EQUALS,
+                new QueryForeignKey(qcGivenFeature, "chromosome")));
+
+        // SequenceFeaure.organism = Gene.organism
+        constraints.addConstraint(new SimpleConstraint(new QueryForeignKey(
+                qcOverlapFeature, "organism"), ConstraintOp.EQUALS, new QueryForeignKey(
+                        qcGivenFeature, "organism")));
+
+        SimpleConstraint scOrg = new SimpleConstraint(new QueryForeignKey(
+                qcOverlapFeature, "organism"), ConstraintOp.EQUALS, new QueryValue(
+                        organismId));
+        constraints.addConstraint(scOrg);
+
+        QueryCollectionReference qcrSubmission = new QueryCollectionReference(
+                submission, "features");
+        constraints.addConstraint(new ContainsConstraint(qcrSubmission,
+                ConstraintOp.CONTAINS, qcGivenFeature));
+
+        // Sequence feature location chromosome reference
+        QueryObjectReference givenFeatureLocatedOnRef = new QueryObjectReference(
+                qcGivenFeatureLoc, "locatedOn");
+
+        // Gene location chromosome reference
+        QueryObjectReference overlapFeatureLocatedOnRef = new QueryObjectReference(
+                qcOverlapFeatureLoc, "locatedOn");
+
+        OverlapRange givenFeatureRange = new OverlapRange(new QueryField(
+                qcGivenFeatureLoc, "start"), new QueryField(
+                        qcGivenFeatureLoc, "end"), givenFeatureLocatedOnRef);
+
+        OverlapRange overlapFeatureRange = new OverlapRange(new QueryField(
+                qcOverlapFeatureLoc, "start"), new QueryField(
+                        qcOverlapFeatureLoc, "end"), overlapFeatureLocatedOnRef);
+
+//        OverlapRange overlapFeatureRange = new OverlapRange(new QueryExpression(
+//                new QueryField(qcOverlapFeatureLoc, "start"), QueryExpression.SUBTRACT,
+//                new QueryValue(beforeStartOfGene)), new QueryExpression(
+//                        new QueryField(qcOverlapFeatureLoc, "end"), QueryExpression.ADD,
+//                        new QueryValue(afterEndOfGene)), overlapFeatureLocatedOnRef);
+
+        OverlapConstraint oc = new OverlapConstraint(givenFeatureRange,
+                ConstraintOp.OVERLAPS, overlapFeatureRange);
+
+        constraints.addConstraint(oc);
+
+        ObjectStoreInterMineImpl ob = (ObjectStoreInterMineImpl) im.getObjectStore();
+
+        LOG.info("OVERLAP " + ob.generateSql(query));
+
+//        Results results = im.getObjectStore().execute(query, 100000,true, false, false);
+        SingletonResults results = im.getObjectStore()
+                .executeSingleton(query, 100000,true, false, false);
+        if (results == null || results.isEmpty()) {
+            return null;
+        }
+        Set<Integer> overlapFeatureIdSet = new HashSet<Integer>();
+        for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
+            overlapFeatureIdSet.add((Integer)iter.next());
+//            ResultsRow<?> row = (ResultsRow<?>) iter.next();
+//            geneIdSet.add((Integer) row.get(0));
+        }
+
+        LOG.info("OVERLAP TIME: " + (System.currentTimeMillis() - bT) + " ms");
+        return overlapFeatureIdSet;
+    }
+
+    /**
+     * @param distance
+     * @return
+     */
+    private int getFlankingSize(String distance) {
+        if ("0.5kb".equals(distance)) {
+            return 500;
+        }
+        if ("1.0kb".equals(distance)) {
+            return 1000;
+        }
+        if ("2.0kb".equals(distance)) {
+            return 2000;
+        }
+        if ("5.0kb".equals(distance)) {
+            return 5000;
+        }
+        if ("10.0kb".equals(distance)) {
+            return 10000;
+        }
+        return 0;
+    }
+    /**
+     * @param distance
+     * @param direction
+     * @return
+     */
+    private int getLeftMargin(String direction, String distance) {
+
+        if ("bothways".equalsIgnoreCase(direction)) {
+            int beforeStartOfGene = getFlankingSize(distance);
+            return beforeStartOfGene;
+        }
+        if ("upstream".equalsIgnoreCase(direction)) {
+            int beforeStartOfGene = getFlankingSize(distance);
+            return beforeStartOfGene;
+        }
+        return 0;
+    }
+
+    /**
+     * @param distance
+     * @param direction
+     * @return
+     */
+    private int getRightMargin(String direction, String distance) {
+
+        if ("bothways".equalsIgnoreCase(direction)) {
+            int afterEndOfGene = getFlankingSize(distance);
+            return afterEndOfGene;
+        }
+        if ("downstream".equalsIgnoreCase(direction)) {
+            int afterEndOfGene = getFlankingSize(distance);
+            return afterEndOfGene;
+        }
+        return 0;
+    }
+
 }
