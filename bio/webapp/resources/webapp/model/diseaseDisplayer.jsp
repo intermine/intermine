@@ -13,7 +13,7 @@
 <h3 class="loading">Diseases (from RatMine)</h3>
 
 <c:choose>
-	<c:when test="${ratGenes != null && !empty(ratGenes)}">
+  <c:when test="${ratGenes != null && !empty(ratGenes)}">
 
 <table>
   <tbody>
@@ -49,14 +49,14 @@ function generateDiseases(jSONObject, target) {
 (function() {
     AjaxServices.getRatDiseases('${ratGenes}', function(diseases) {
         jQuery("#mine-rat-disease h3").removeClass('loading');
-
+        if (diseases) {
             var jSONObject = jQuery.parseJSON(diseases);
             if (jSONObject && jSONObject['results'].length > 0) {
                generateDiseases(jSONObject, "#intermine_rat_disease");
             } else {
               jQuery("#intermine_rat_disease").html("<p>No diseases found.</p>");
             }
-
+       }
      });
 })();
 
@@ -64,10 +64,11 @@ function generateDiseases(jSONObject, target) {
 
 </c:when>
 <c:otherwise>
-	<p>There was a problem rendering the displayer.</p>
-	<script type="text/javascript">
-		jQuery('#mine-rat-disease').addClass('warning');
-	</script>
+  <!-- no rat homologues for this gene -->
+  <script type="text/javascript">
+    jQuery("#mine-rat-disease h3").removeClass('loading');
+    jQuery("#intermine_rat_disease").html("<p>No diseases found.</p>");
+  </script>
 </c:otherwise>
 </c:choose>
 
