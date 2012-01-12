@@ -587,10 +587,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
-            + "     AND tv.cdna_start is not null)"
+            + "    AND tv.cdna_start is not null)"
             + " LEFT JOIN (variation_synonym vs)"
             + " ON (vf.variation_id = vs.variation_id"
-            + "     AND vs.source_id IN (" + makeInList(getSnpSourceIds(connection)) + ")"
+            + "    AND vs.source_id IN (" + StringUtil.join(getSnpSourceIds(connection), ",") + "))"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
@@ -604,21 +604,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
-    private String makeInList(Collection<String> strings) {
-        Set<String> quoted = new HashSet<String>();
-        for (String s : strings) {
-            quoted.add("'" + s + "'");
-        }
-        return StringUtil.join(quoted, ",");
-    }
-
-
     private Set<String> getSnpSourceIds(Connection connection) throws SQLException {
         if (snpSourceIds == null) {
             snpSourceIds = new HashSet<String>();
             String sql = "SELECT source_id FROM source";
             if (snpSources != null && !snpSources.isEmpty()) {
-                sql += "WHERE name IN (" + StringUtil.join(snpSources, ",") + ")";
+                sql += " WHERE name IN (" + makeInList(snpSources) + ")";
             }
             Statement stmt = connection.createStatement();
             ResultSet res = stmt.executeQuery(sql);
@@ -630,6 +621,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
         }
         return snpSourceIds;
+    }
+
+    private String makeInList(Collection<String> strings) {
+        Set<String> quoted = new HashSet<String>();
+        for (String s : strings) {
+            quoted.add("\"" + s + "\"");
+        }
+        return StringUtil.join(quoted, ",");
     }
 
     private ResultSet queryStrains(Connection connection)
