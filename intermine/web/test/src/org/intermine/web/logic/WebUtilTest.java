@@ -97,6 +97,19 @@ public class WebUtilTest extends TestCase {
         assertEquals(expected, WebUtil.formatField(p, config));
     }
 
+    public void testSubclassedPath() throws PathException {
+        Path p;
+        String expected;
+
+        p = new Path(model, "Department.employees[Manager].seniority");
+        expected = "Abteilung > Angestellter > Seniority";
+        assertEquals(expected, WebUtil.formatPath(p, config));
+
+        p = new Path(model, "Company.departments.employees[Manager].seniority");
+        expected = "Firma > Abteilungen > Angestellter > Seniority";
+        assertEquals(expected, WebUtil.formatPath(p, config));
+    }
+
     public void testFormatPathDescription() {
         final PathQuery pq = new PathQuery(model);
         pq.setDescription("Employee.department.company", "COMPANY");
