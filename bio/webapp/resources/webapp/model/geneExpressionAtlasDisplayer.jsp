@@ -13,7 +13,9 @@
   #gene-expression-atlas div.inside { min-width:1000px; }
   #gene-expression-atlas div.sidebar { display:inline; float:left; margin-left:10px; }
   #gene-expression-atlas div.sidebar h4,
-  #gene-expression-atlas div.sidebar p.small { font-size:11px; margin:5px 0 16px 0; width:430px; }
+  #gene-expression-atlas div.sidebar p { margin:5px 0 16px 0; width:430px; }
+  #gene-expression-atlas div.sidebar p.small { font-size:11px; }
+  #gene-expression-atlas div.sidebar a.ext { background:url('images/icons/external_link.png') no-repeat top right; padding-right:10px; }
   #gene-expression-atlas div.sidebar h4 { margin:0; }
   #gene-expression-atlas div.sidebar div.description { width:100%; }
   #gene-expression-atlas div.sidebar div.description a.more { display:none; }
@@ -239,6 +241,9 @@
         <p class="small">The p-value (p-value) is obtained from the moderated t-statistic,
         usually after adjustment for multiple testing: "fdr" which is
         Benjamini and Hochberg's method to control the false discovery rate.</p>
+
+        <h3>About &amp; Source</h3>
+        <p>This chart is taken from <a class="ext" target="new" href="http://www.ebi.ac.uk/gxa/experiment/E-MTAB-62">EMTAB-62 experiment</a>.</p>
       <%--</div>--%>
       <%--<div class="wrap"><a class="more">Read more</a></div>--%>
     </div>
