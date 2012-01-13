@@ -256,6 +256,8 @@ Find overlapping features:
         <html:hidden property="submissionTitle" value="${object.title}" />
         <html:hidden property="submissionId" value="${object.id}" /> <%-- can't find id anymore --%>
         <html:hidden property="submissionDCCid" value="${object.dCCid}" />
+        <html:hidden property="distance" value="0" />
+        <html:hidden property="direction" value="bothways" />
 
             Find
                 <html:select styleId="typeSelector" property="overlapFindType">
@@ -320,17 +322,16 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
                 <td>
                 <html:form action="/submissionOverlapsAction" method="post">
                     <html:hidden property="submissionTitle" value="${object.title}" />
-                    <html:hidden property="submissionId" value="${object.id}" /> <%-- can't find id anymore --%>
+                    <html:hidden property="submissionId" value="${object.id}" />
                     <html:hidden property="submissionDCCid" value="${object.dCCid}" />
+                    <html:hidden property="overlapFindType" value="Gene" />
                       Find Genes that have
-                      <html:select styleId="typeSelector" property="flankingFeatureType">
+<%--                   <html:select styleId="typeSelector" property="flankingFeatureType"> --%>
+                      <html:select styleId="typeSelector" property="overlapFeatureType">
                         <c:forEach items="${featureCounts}" var="fc" varStatus="status">
                         <c:if test="${fn:endsWith(fc.key, 'Site') || fn:contains(fc.key, 'Prime')
                             || fc.key == 'CopyNumberVariation' || fc.key == 'TSS'
                             || fc.key == 'PolyASignalSequence'}">
-                             <%--
-                                              <c:if test='${fc.key != "Chromosome"}'>
-                             --%>
                              <html:option value="${fc.key}">${fc.key}</html:option>
                           </c:if>
                         </c:forEach>
@@ -345,9 +346,9 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
                       </html:select>
 
                        <html:select styleId="typeSelector" property="direction">
-                         <%-- <html:option value="upstream">upstream</html:option> --%>
-                         <html:option value="downstream">downstream</html:option>
-                         <%-- <html:option value="bothways">both ways</html:option> --%>
+                       <html:option value="downstream">downstream</html:option>
+                         <html:option value="upstream">upstream</html:option>
+                         <html:option value="bothways">both ways</html:option>
                        </html:select>
                     <html:submit property="flanking" styleClass="query">Show Results</html:submit>
                 </html:form>
@@ -355,7 +356,64 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
             </tr>
         </tbody>
     </table>
-</c:if>
+
+    <%--
+<hr><hr>
+
+    <h3>Find nearby features</h3>
+    <table>
+    <tbody>
+        <tr>
+            <td>
+            <html:form action="/submissionOverlapsAction" method="post">
+                <html:hidden property="submissionTitle" value="${object.title}" />
+                <html:hidden property="submissionId" value="${object.id}" /> <%-- can't find id anymore --%>
+                <html:hidden property="submissionDCCid" value="${object.dCCid}" />
+                  Find
+                  <html:select styleId="typeSelector" property="overlapFindType">
+                            <html:option value="Gene">Genes</html:option>
+                            <html:option value="Exon">Exons</html:option>
+                            <html:option value="Intron">Introns</html:option>
+                            <html:option value="IntergenicRegion">IntergenicRegions</html:option>
+                          </html:select>
+              located within
+
+              <html:select styleId="typeSelector" property="distance">
+              <html:option value="0">0</html:option>
+              <html:option value="0.5kb">.5kb</html:option>
+              <html:option value="1.0kb">1kb</html:option>
+              <html:option value="2.0kb">2kb</html:option>
+              <html:option value="5.0kb">5kb</html:option>
+              <html:option value="10.0kb">10kb</html:option>
+           </html:select>
+
+            <html:select styleId="typeSelector" property="direction">
+            <html:option value="bothways">both ways</html:option>
+              <html:option value="upstream">upstream</html:option>
+              <html:option value="downstream">downstream</html:option>
+            </html:select>
+            of
+                  <html:select styleId="typeSelector" property="flankingFeatureType">
+                    <c:forEach items="${featureCounts}" var="fc" varStatus="status">
+                    <c:if test="${fn:endsWith(fc.key, 'Site') || fn:contains(fc.key, 'Prime')
+                        || fc.key == 'CopyNumberVariation' || fc.key == 'TSS'
+                        || fc.key == 'PolyASignalSequence'}">
+                         <html:option value="${fc.key}">${fc.key}</html:option>
+                      </c:if>
+                    </c:forEach>
+                  </html:select>
+                  generated by this submission.
+                <html:submit property="flanking2" styleClass="query">Show Results</html:submit>
+            </html:form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+--%>
+
+
+    </c:if>
   </div>
   </c:when>
 
