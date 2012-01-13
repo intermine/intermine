@@ -167,7 +167,8 @@
   </script>
   </c:when>
   <c:otherwise>
-    <p>No overlapping features</p>
+    </div>
+    <p style="font-style:italic;">No overlapping features</p>
   </c:otherwise>
 </c:choose>
 
