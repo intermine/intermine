@@ -2,6 +2,8 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
+<!-- metabolicGeneSummaryDisplayer.jsp -->
+
 <div id="gene-summary-displayer">
   <style>
   #gene-summary-displayer { margin-left:3px; }
@@ -85,3 +87,5 @@
   })();
   </script>
 </div>
+
+<!-- /metabolicGeneSummaryDisplayer.jsp -->

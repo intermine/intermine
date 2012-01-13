@@ -63,11 +63,12 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         summary.addCollectionCount("Diseases", "description", "diseases", "diseases");
         // 3. Mouse Alleles count
         if (summary.isThisAMouser()) {
-            summary.addCollectionCount("Phenotypes", "straight off mouse", "alleles", "alleles");
+            summary.addCollectionCount("Phenotypes", "straight off mouse", "alleles",
+                    "MouseAllelesDisplayer");
         } else {
             summary.addCollectionCount("Phenotypes", "through mouse",
                     allelesPathQuery(summary.getNewPathQuery(),
-                    summary.getObjectId()), "alleles");
+                    summary.getObjectId()), "MouseAllelesDisplayer");
         }
         // 4. GOTerm count
         summary.addCollectionCount("Gene Ontology", "description", "goAnnotation",
