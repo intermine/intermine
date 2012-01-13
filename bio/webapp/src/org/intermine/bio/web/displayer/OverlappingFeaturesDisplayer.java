@@ -86,93 +86,96 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
         }
         request.setAttribute("featureCounts", featureCounts);
 
-        // resolve Collection from FieldDescriptor
-        for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
-            if ("overlappingFeatures".equals(fd.getName()) && fd.isCollection()) {
-                // fetch the collection
-                Collection<?> collection = null;
-                try {
-                    collection = (Collection<?>)
-                        reportObject.getObject().getFieldValue("overlappingFeatures");
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-
-                // get the types
-                List<Class<?>> lt = PathQueryResultHelper.
-                queryForTypesInCollection(reportObject.getObject(), "overlappingFeatures",
-                        im.getObjectStore());
-
-                // make collection into a list
-                List<?> collectionList;
-                if (collection instanceof List<?>) {
-                    collectionList = (List<?>) collection;
-                } else {
-                    if (collection instanceof LazyCollection<?>) {
-                        collectionList = ((LazyCollection<?>) collection).asList();
-                    } else {
-                        collectionList = new ArrayList(collection);
+        // Rat genes do not have nothing
+        if (!featureCounts.isEmpty()) {
+            // resolve Collection from FieldDescriptor
+            for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
+                if ("overlappingFeatures".equals(fd.getName()) && fd.isCollection()) {
+                    // fetch the collection
+                    Collection<?> collection = null;
+                    try {
+                        collection = (Collection<?>)
+                            reportObject.getObject().getFieldValue("overlappingFeatures");
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
-                }
 
+                    // get the types
+                    List<Class<?>> lt = PathQueryResultHelper.
+                    queryForTypesInCollection(reportObject.getObject(), "overlappingFeatures",
+                            im.getObjectStore());
 
-
-            // separate objects into their types
-            looptyloop:
-                for (Class<?> c : lt) {
-
-                    long loopStartTime = System.currentTimeMillis();
-
-                    Iterator<?> resultsIter = collectionList.iterator();
-
-                    // new collection of objects of only type "c"
-                    List<InterMineObject> s = new ArrayList<InterMineObject>();
-
-                    String type = null;
-                    Integer count = this.maxCount;
-                    // loop through each row object
-                    while (resultsIter.hasNext() && count > 0) {
-                        Object o = resultsIter.next();
-                        if (o instanceof ProxyReference) {
-                            // special case for ProxyReference from DisplayReference objects
-                            o = ((ProxyReference) o).getObject();
+                    // make collection into a list
+                    List<?> collectionList;
+                    if (collection instanceof List<?>) {
+                        collectionList = (List<?>) collection;
+                    } else {
+                        if (collection instanceof LazyCollection<?>) {
+                            collectionList = ((LazyCollection<?>) collection).asList();
+                        } else {
+                            collectionList = new ArrayList(collection);
                         }
-                        // cast
-                        InterMineObject imObj = (InterMineObject) o;
-                        // type match?
-                        Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
-                        if (c.equals(imObjClass)) {
-                            count--;
-                            s.add(imObj);
-                            // determine type
-                            type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
-                            // do we actually want any of this?
-                            if (!featureCounts.containsKey(type)) {
-                                continue looptyloop;
+                    }
+
+
+
+                // separate objects into their types
+                looptyloop:
+                    for (Class<?> c : lt) {
+
+                        long loopStartTime = System.currentTimeMillis();
+
+                        Iterator<?> resultsIter = collectionList.iterator();
+
+                        // new collection of objects of only type "c"
+                        List<InterMineObject> s = new ArrayList<InterMineObject>();
+
+                        String type = null;
+                        Integer count = this.maxCount;
+                        // loop through each row object
+                        while (resultsIter.hasNext() && count > 0) {
+                            Object o = resultsIter.next();
+                            if (o instanceof ProxyReference) {
+                                // special case for ProxyReference from DisplayReference objects
+                                o = ((ProxyReference) o).getObject();
+                            }
+                            // cast
+                            InterMineObject imObj = (InterMineObject) o;
+                            // type match?
+                            Class<?> imObjClass = DynamicUtil.getSimpleClass(imObj);
+                            if (c.equals(imObjClass)) {
+                                count--;
+                                s.add(imObj);
+                                // determine type
+                                type = DynamicUtil.getSimpleClass(s.get(0)).getSimpleName();
+                                // do we actually want any of this?
+                                if (!featureCounts.containsKey(type)) {
+                                    continue looptyloop;
+                                }
                             }
                         }
+
+                        if (s.size() > 0) {
+                            // one element list
+                            ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
+                            lc.add(c);
+
+                            // create an InlineResultsTable
+                            InlineResultsTable t = new InlineResultsTable(s,
+                                    fd.getClassDescriptor().getModel(),
+                                    SessionMethods.getWebConfig(request), im.getClassKeys(), s.size(),
+                                    false, lc);
+
+                            // name the table based on the first element contained
+                            featureTables.put(type, t);
+                        }
+                        long loopTime = System.currentTimeMillis();
                     }
-
-                    if (s.size() > 0) {
-                        // one element list
-                        ArrayList<Class<?>> lc = new ArrayList<Class<?>>();
-                        lc.add(c);
-
-                        // create an InlineResultsTable
-                        InlineResultsTable t = new InlineResultsTable(s,
-                                fd.getClassDescriptor().getModel(),
-                                SessionMethods.getWebConfig(request), im.getClassKeys(), s.size(),
-                                false, lc);
-
-                        // name the table based on the first element contained
-                        featureTables.put(type, t);
-                    }
-                    long loopTime = System.currentTimeMillis();
                 }
             }
-        }
 
-        request.setAttribute("featureTables", featureTables);
+            request.setAttribute("featureTables", featureTables);
+        }
     }
 
     private void incrementCount(Map<String, Integer> featureCounts, InterMineObject feature) {

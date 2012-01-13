@@ -15,6 +15,8 @@
         Genome features that overlap coordinates of this ${reportObject.type}
       </p>
 
+<c:choose>
+  <c:when test="${!empty featureCounts}">
       <div class="switchers">
         <c:forEach items="${featureCounts}" var="entry" varStatus="status"><c:if test="${status.count > 1}">, </c:if>
           <%-- TODO: potential fail if key has spaces --%>
@@ -163,6 +165,11 @@
       );
     });
   </script>
+  </c:when>
+  <c:otherwise>
+    <p>No overlapping features</p>
+  </c:otherwise>
+</c:choose>
 
 </div>
 
