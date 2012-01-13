@@ -395,6 +395,12 @@
                      placement="Genomics"
                      types="SequenceFeature"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MouseAllelesDisplayer"
+                     jspName="model/mouseAllelesDisplayer.jsp"
+                     replacesFields="alleles"
+                     placement="Genomics"
+                     types="Gene"/>
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.JBrowseDisplayer"
                      jspName="model/jbrowseDisplayer.jsp"
                      replacesFields=""
