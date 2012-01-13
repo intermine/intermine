@@ -50,9 +50,12 @@ public class GeneIdentifiersDisplayer extends ReportDisplayer
         InterMineObject imObj = reportObject.getObject();
         try {
             for (String identifier : identifiers) {
-                String value = imObj.getFieldValue(identifier).toString();
-                if (!result.values().contains(value)) {
-                    result.put(identifier, value);
+                Object id = imObj.getFieldValue(identifier);
+                if (id != null) {
+                    String value = id.toString();
+                    if (!result.values().contains(value)) {
+                        result.put(identifier, value);
+                    }
                 }
             }
         } catch (IllegalAccessException e) {
