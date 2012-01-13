@@ -74,7 +74,40 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         summary.addCollectionCount("Gene Ontology", "description", "goAnnotation",
                 "GeneOntologyDisplayer");
 
+        // 4. ArrayExpress Gene Expression Diseases
+        summary.addCustom("Expression", "ArrayExpress", this.arrayAtlasExpressionDiseases(summary
+                .getNewPathQuery(), summary), "gene-expression-atlas",
+                "metabolicGeneSummaryArrayExpressExpressionDiseasesDisplayer.jsp");
+
         request.setAttribute("summary", summary);
+    }
+
+
+    private Object arrayAtlasExpressionDiseases(PathQuery query, GeneSummary summary) {
+        query.addViews("Gene.atlasExpression.condition", "Gene.atlasExpression.expression");
+
+        query.addOrderBy("Gene.atlasExpression.pValue", OrderDirection.ASC);
+
+        query.addConstraint(Constraints.eq("Gene.id", summary.getObjectId().toString()), "A");
+        query.addConstraint(Constraints.lessThan("Gene.atlasExpression.pValue", "1E-20"), "B");
+        query.addConstraint(Constraints.neq("Gene.atlasExpression.pValue", "0"), "C");
+        query.addConstraint(Constraints.eq("Gene.atlasExpression.type", "disease_state"), "D");
+        query.addConstraint(Constraints.greaterThan("Gene.atlasExpression.tStatistic", "8"), "E");
+        query.addConstraint(Constraints.lessThan("Gene.atlasExpression.tStatistic", "-8"), "F");
+        query.setConstraintLogic("A and B and C and D and (E or F)");
+
+        ExportResultsIterator results = summary.getExecutor().execute((PathQuery) query);
+
+        HashMap<String, String> diseases = new HashMap<String, String>();
+        while (results.hasNext()) {
+            List<ResultElement> item = results.next();
+            String disease = item.get(0).getField().toString();
+            String regulation = item.get(1).getField().toString();
+            // obviously, we can have the same disease appear 2x (we will), but we don't care...
+            diseases.put(disease, regulation);
+        }
+
+        return diseases;
     }
 
     /**
@@ -149,6 +182,19 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         }
 
         /**
+         * Add a custom object to the displayer.
+         * @param key to show under in the summary
+         * @param description to show under the title
+         * @param data to save on the wrapper object
+         * @param anchor says where we will scroll onlick, an ID attr of the target element
+         * @param jsp to include that knows how to display us
+         */
+        public void addCustom(String key, String description,
+                Object data, String anchor, String jsp) {
+            storage.put(key, createWrapper("custom", data, anchor, description, jsp));
+        }
+
+        /**
          * Add collection count to the summary.
          * @param key to show under in the summary
          * @param description to show under the title
@@ -160,7 +206,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
             if (param instanceof PathQuery) {
                 try {
                     storage.put(key, createWrapper("integer", executor.count((PathQuery)
-                            param), anchor, description));
+                            param), anchor, description, null));
                 } catch (ObjectStoreException e) {
                     LOG.error("Problem running PathQuery " + e.toString());
                 }
@@ -169,23 +215,26 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
                 try {
                     if ((coll = (Collection<?>) imObj.getFieldValue((String) param)) != null) {
                         storage.put(key, createWrapper("integer", coll.size(), anchor,
-                                description));
+                                description, null));
                     }
                 } catch (IllegalAccessException e) {
                     LOG.error("The field " + param + " does not exist");
                 }
             } else {
-                storage.put(key, createWrapper("unknown", param, anchor, description));
+                storage.put(key, createWrapper("unknown", param, anchor, description, null));
             }
         }
 
         private HashMap<String, Object> createWrapper(String type, Object data, String anchor,
-                String description) {
+                String description, String jsp) {
             HashMap<String, Object> inner = new HashMap<String, Object>();
             inner.put("type", type);
             inner.put("data", data);
             inner.put("anchor", anchor);
             inner.put("description", description);
+            if (jsp != null) {
+                inner.put("jsp", jsp);
+            }
             return inner;
         }
 
@@ -211,9 +260,9 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
                     }
                     temp.put(value, temp.get(value) + 1);
                 }
-                storage.put(key, createWrapper("map", temp, anchor, description));
+                storage.put(key, createWrapper("map", temp, anchor, description, null));
             } else {
-                storage.put(key, createWrapper("unknown", param, anchor, description));
+                storage.put(key, createWrapper("unknown", param, anchor, description, null));
             }
         }
 
@@ -225,7 +274,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
          * @param anchor says where we will scroll onlick, an ID attr of the target element
          */
         public void addImageLink(String key, String link, String anchor, String description) {
-            storage.put(key, createWrapper("image", link, anchor, description));
+            storage.put(key, createWrapper("image", link, anchor, description, null));
         }
 
         /**
@@ -275,6 +324,14 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
                 LOG.error("The field primaryIdentifier does not exist");
             }
             return null;
+        }
+
+        /**
+         *
+         * @return PathQuery Executor
+         */
+        public PathQueryExecutor getExecutor() {
+            return executor;
         }
 
         /**

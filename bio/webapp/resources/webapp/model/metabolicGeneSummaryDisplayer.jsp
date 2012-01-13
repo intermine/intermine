@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <!-- metabolicGeneSummaryDisplayer.jsp -->
@@ -61,6 +62,10 @@
                        .attr('src', "${field.value['data']}");
                  })();
                </script>
+            </c:when>
+            <c:when test="${field.value['type'] == 'custom'}">
+              <c:set var="field" value="${field}" scope="request" />
+              <jsp:include page="${field.value['jsp']}"/>
             </c:when>
             <c:otherwise>
               <div class="data">
