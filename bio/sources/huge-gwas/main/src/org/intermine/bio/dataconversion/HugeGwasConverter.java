@@ -35,8 +35,8 @@ import org.intermine.xml.full.Item;
 public class HugeGwasConverter extends BioFileConverter
 {
     //
-    private static final String DATASET_TITLE = "Add DataSet.title here";
-    private static final String DATA_SOURCE_NAME = "Add DataSource.name here";
+    private static final String DATASET_TITLE = "HuGE GWAS Integrator";
+    private static final String DATA_SOURCE_NAME = "HuGE Navigator";
 
     private String headerStart = "rs Number(region location)";
     private Map<String, String> genes = new HashMap<String, String>();
