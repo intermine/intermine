@@ -24,9 +24,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.bio.ontology.SequenceOntology;
+import org.intermine.bio.ontology.SequenceOntologyFactory;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
@@ -181,7 +185,7 @@ public class GFF3Exporter implements Exporter
             throw new ExportException("Export failed", ex);
         }
     }
-    
+
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
         export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
@@ -211,19 +215,60 @@ public class GFF3Exporter implements Exporter
                 boolean isCollection = re.getPath().containsCollections();
 
                 if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
+                    // TODO it's hard to add multiple parents to a feature, e.g. exon -> transcript,
+                    // since a feature can only be exported once, but parents need to be added up.
                     continue;
                 }
 
                 if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+                    //TODO add parent here
+                    // testing code - find a parent for the sequence features
+                    String parent = null;
+//                    String parentClass = null;
+
+                    List<Integer> featureIdList = new ArrayList<Integer>();
+                    List<String> classNamesList = new ArrayList<String>();
+                    for (ResultElement el : elWithObject) {
+                        if (el != null) {
+                            classNamesList
+                                    .add(el.getPath().getLastClassDescriptor()
+                                            .getUnqualifiedName().toLowerCase());
+                            featureIdList.add(((SequenceFeature) el.getObject()).getId());
+                        } else {
+                            classNamesList.add(null);
+                        }
+                    }
+
+                    SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
+                    Set<String> parents = so.getAllPartOfs(classNamesList.get(
+                            featureIdList.indexOf(lastLsf)));
+
+
+                    if (parents != null) {
+                        for (String c : parents) {
+                            if (classNamesList.contains(c)) {
+                                parent = ((SequenceFeature) elWithObject.get(
+                                        classNamesList.indexOf(c)).getObject())
+                                        .getPrimaryIdentifier();
+//                                parentClass = c;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (parent != null) {
+                        List<String> addPar = new ArrayList<String>();
+                        addPar.add(parent);
+                        attributes.put("Parent", addPar);
+                    }
+                    //
+
                     makeRecord();
                 }
 
                 if (lastLsfId == null) {
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
-
-                String parent = null;
-                String parentClass = null;
 
                 List<ResultElement> newRow = filterResultRow(row,
                         unionPathCollection, newPathCollection);
@@ -233,19 +278,6 @@ public class GFF3Exporter implements Exporter
 
                     if (el == null) {
                         continue;
-                    }
-
-                    if (i == 0) { // this is the beginning of the path
-                        parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
-//                        LOG.info("PAR: " + parentClass);
-                        if (cNames.contains(parentClass.toLowerCase())) {
-                            if (((SequenceFeature) el.getObject()).getPrimaryIdentifier() != null) {
-                                parent = ((SequenceFeature) el.getObject()).getPrimaryIdentifier();
-//                                LOG.info("PARent: " + parent);
-
-                                // TODO this is not accurate... should use SO relationship (part-of)
-                            }
-                        }
                     }
 
                     // checks for attributes:
@@ -282,31 +314,12 @@ public class GFF3Exporter implements Exporter
                         //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
                         checkAttribute(el, attributeName);
                     }
-
-                    // TEMP out (fm release)
-                    // add the parent
-                    if (i >= 1 && parent != null) {
-                        if (!parentClass.equalsIgnoreCase(
-                                re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
-//                    LOG.info("PAR: " + parentClass + " -> "
-//                    + re.getPath().getLastClassDescriptor().getUnqualifiedName()
-//                    + re.getPath().getLastClassDescriptor().getType()
-//                    + re.getPath().getLastClassDescriptor().getName()
-//                    + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
-//                    + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
-//                    + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
-//                        );
-                            List<String> addPar = new ArrayList<String>();
-                            addPar.add(parent);
-                            attributes.put("Parent", addPar);
-                        }
-                    }
                 }
 
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
             } catch (Exception ex) {
-                LOG.error("While exporting", ex);
+                LOG.error("Exception: " + ex);
                 continue;
             }
         }

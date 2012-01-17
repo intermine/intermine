@@ -28,28 +28,23 @@ public class SequenceOntologyTest extends TestCase
     }
 
     public void testGetAllClasses()  throws URISyntaxException {
-
-
-
         File terms = new File(SequenceOntologyTest.class.getClassLoader().getResource("so_terms-test").toURI());
-
         File oboFile = new File(SequenceOntologyTest.class.getClassLoader().getResource("SequenceOntology.obo").toURI());
-
-        SequenceOntology so = SequenceOntology.getSequenceOntology(oboFile, terms);
+        SequenceOntology so = SequenceOntologyFactory.getSequenceOntology(oboFile, terms);
 
         Model model = so.getModel();
         assertEquals(model.toString(), getModelXML(), model.toString());
-
     }
-
+    public void testParents() {
+        SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
+        String className = "exon";
+        Set<String> parents = so.getAllPartOfs(className);
+        assertEquals(1, parents.size());
+        assertTrue(parents.contains("transcript"));
+    }
     public void testNoFile() {
-        SequenceOntology so = SequenceOntology.getSequenceOntology();
+        SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
         Model model = so.getModel();
-        assertEquals(model.toString(), getModelXML(), model.toString());
-
-        so.reset();
-
-        model = so.getModel();
         assertEquals(model.toString(), getModelXML(), model.toString());
     }
 
@@ -57,10 +52,13 @@ public class SequenceOntologyTest extends TestCase
         StringBuffer sb = new StringBuffer();
         sb.append("<model name=\"so\" package=\"org.intermine.model.bio\">" + ENDL);
         sb.append("<class name=\"Chromosome\" extends=\"SequenceFeature\" is-interface=\"true\"></class>" + ENDL);
+        sb.append("<class name=\"Exon\" extends=\"SequenceFeature\" is-interface=\"true\"></class>" + ENDL);
         sb.append("<class name=\"Gene\" extends=\"SequenceFeature\" is-interface=\"true\"></class>" + ENDL);
         sb.append("<class name=\"SequenceFeature\" is-interface=\"true\"></class>" + ENDL);
         sb.append("</model>");
         return sb.toString();
 
     }
+
+
 }

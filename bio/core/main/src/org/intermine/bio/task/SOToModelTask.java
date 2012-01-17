@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.bio.ontology.SequenceOntology;
+import org.intermine.bio.ontology.SequenceOntologyFactory;
 import org.intermine.metadata.Model;
 
 /**
@@ -71,7 +72,8 @@ public class SOToModelTask extends Task
         }
 
         try {
-            SequenceOntology so = SequenceOntology.getSequenceOntology(soFile, soTermListFile);
+            SequenceOntology so = SequenceOntologyFactory.getSequenceOntology(soFile,
+                    soTermListFile);
             Model model = null;
             PrintWriter out = null;
             try {
