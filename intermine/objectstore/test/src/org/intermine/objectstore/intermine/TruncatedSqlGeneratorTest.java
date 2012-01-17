@@ -217,6 +217,11 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("InterMineObject"));
+        results.put("Greatest", "SELECT GREATEST(2000,a1_.vatNumber) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY GREATEST(2000,a1_.vatNumber)");
+        results2.put("Greatest", Collections.singleton("InterMineObject"));
+        results.put("Least", "SELECT LEAST(2000,a1_.vatNumber) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY LEAST(2000,a1_.vatNumber)");
+        results2.put("Least", Collections.singleton("InterMineObject"));
+
         results.put("CollectionQueryOneMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND " + departmentA1Id + " = a1_.departmentId ORDER BY a1_.id");
         results2.put("CollectionQueryOneMany", Collections.singleton("InterMineObject"));
         results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, HasSecretarysSecretarys AS indirect0 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Secretary' AND " + companyBId + " = indirect0.HasSecretarys AND indirect0.Secretarys = a1_.id ORDER BY a1_.id");

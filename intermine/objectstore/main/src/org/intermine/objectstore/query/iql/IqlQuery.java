@@ -528,6 +528,12 @@ public class IqlQuery
             return "UPPER(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
         } else if (qe.getOperation() == QueryExpression.LOWER) {
             return "LOWER(" + nodeToString(q, qe.getArg1(), parameters, null) + ")";
+        } else if (qe.getOperation() == QueryExpression.GREATEST) {
+            return "GREATEST(" + nodeToString(q, qe.getArg1(), parameters, null) + ","
+                + nodeToString(q, qe.getArg2(), parameters, null) + ")";
+        } else if (qe.getOperation() == QueryExpression.LEAST) {
+            return "LEAST(" + nodeToString(q, qe.getArg1(), parameters, null) + ","
+                + nodeToString(q, qe.getArg2(), parameters, null) + ")";
         } else {
             String retval = nodeToString(q, qe.getArg1(), parameters, null);
             switch (qe.getOperation()) {

@@ -2215,6 +2215,18 @@ public final class SqlGenerator
                 buffer.append("UPPER(");
                 queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
                 buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.GREATEST) {
+                buffer.append("GREATEST(");
+                queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
+                buffer.append(",");
+                queryEvaluableToString(buffer, nodeE.getArg2(), q, state);
+                buffer.append(")");
+            } else if (nodeE.getOperation() == QueryExpression.LEAST) {
+                buffer.append("LEAST(");
+                queryEvaluableToString(buffer, nodeE.getArg1(), q, state);
+                buffer.append(",");
+                queryEvaluableToString(buffer, nodeE.getArg2(), q, state);
+                buffer.append(")");
             } else {
                 QueryEvaluable arg1 = nodeE.getArg1();
                 QueryEvaluable arg2 = nodeE.getArg2();

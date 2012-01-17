@@ -12,6 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.sql.Connection;
 
 import junit.framework.Test;
 
@@ -35,10 +35,9 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
@@ -49,16 +48,15 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.BestQueryStorer;
 import org.intermine.sql.precompute.PrecomputedTable;
-import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.testing.MustBeDifferentMap;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 public class SqlGeneratorTest extends SetupDataTestCase
 {
@@ -280,6 +278,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
         results.put("Lower", "SELECT LOWER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY LOWER(a1_.name)");
         results2.put("Lower", Collections.singleton("Employee"));
+
+        results.put("Greatest", "SELECT GREATEST(2000,a1_.vatNumber) AS a2_ FROM Company AS a1_ ORDER BY GREATEST(2000,a1_.vatNumber)");
+        results2.put("Greatest", Collections.singleton("Company"));
+
+        results.put("Least", "SELECT LEAST(2000,a1_.vatNumber) AS a2_ FROM Company AS a1_ ORDER BY LEAST(2000,a1_.vatNumber)");
+        results2.put("Least", Collections.singleton("Company"));
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("Employee"));
@@ -581,6 +585,20 @@ public class SqlGeneratorTest extends SetupDataTestCase
         SqlGenerator.State state = new SqlGenerator.State();
         SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
         assertEquals("SUBSTR('Hello', 3, 5)", buffer.toString());
+    }
+
+    public void testSelectQueryExpressionGreatestLeast() throws Exception {
+        QueryValue v1 = new QueryValue(new Integer(5));
+        QueryValue v2 = new QueryValue(new Integer(7));
+        QueryExpression e1 = new QueryExpression(v1, QueryExpression.GREATEST, v2);
+        QueryExpression e2 = new QueryExpression(v1, QueryExpression.LEAST, v2);
+        StringBuffer buffer = new StringBuffer();
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        buffer.append(", ");
+        SqlGenerator.queryEvaluableToString(buffer, e2, null, state);
+        assertEquals("GREATEST(5,7), LEAST(5,7)", buffer.toString());
     }
 
     /* TODO

@@ -51,6 +51,14 @@ public class QueryExpression implements QueryEvaluable
      * Upper case version of the given string
      */
     public static final int UPPER = 7;
+    /**
+     * Return the greatest value from two expressions, e.g. (col1, 0)
+     */
+    public static final int GREATEST = 8;
+    /**
+     * Return the lowest value from two expressions, e.g. (col1, 0)
+     */
+    public static final int LEAST = 9;
 
     private QueryEvaluable arg1;
     private int op;
@@ -68,7 +76,8 @@ public class QueryExpression implements QueryEvaluable
      * types and the specified operation
      */
     public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) {
-        if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE) {
+        if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE
+                || op == GREATEST || op == LEAST) {
             if (Number.class.isAssignableFrom(arg1.getType())
                     && Number.class.isAssignableFrom(arg2.getType())
                     && arg1.getType().equals(arg2.getType())) {
@@ -192,7 +201,8 @@ public class QueryExpression implements QueryEvaluable
         }
         if (arg.getType().equals(UnknownTypeValue.class)) {
             arg.youAreType(String.class);
-        } else if (!arg.getType().equals(String.class) && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
+        } else if (!arg.getType().equals(String.class)
+                && !arg.getType().equals(org.intermine.objectstore.query.ClobAccess.class)) {
             throw new ClassCastException("Invalid argument (" + arg.getType() + ") for "
                     + (op == UPPER ? "UPPER()" : "LOWER()") + " operation");
         }
