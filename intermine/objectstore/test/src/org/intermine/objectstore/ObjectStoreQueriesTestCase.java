@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,18 +24,59 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
-import java.util.Date;
-import java.math.BigDecimal;
 
 import junit.framework.AssertionFailedError;
 
 import org.intermine.SummaryAssertionFailedError;
 import org.intermine.SummaryException;
 import org.intermine.model.InterMineObject;
-import org.intermine.model.testmodel.*;
-import org.intermine.objectstore.query.*;
-import org.intermine.util.DynamicUtil;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Bank;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Contractor;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employable;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.HasAddress;
+import org.intermine.model.testmodel.ImportantPerson;
+import org.intermine.model.testmodel.Manager;
+import org.intermine.model.testmodel.RandomInterface;
+import org.intermine.model.testmodel.Range;
+import org.intermine.model.testmodel.Secretary;
+import org.intermine.model.testmodel.Types;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ClassConstraint;
+import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.MultipleInBagConstraint;
+import org.intermine.objectstore.query.ObjectStoreBag;
+import org.intermine.objectstore.query.ObjectStoreBagCombination;
+import org.intermine.objectstore.query.ObjectStoreBagsForObject;
+import org.intermine.objectstore.query.OrderDescending;
+import org.intermine.objectstore.query.OverlapConstraint;
+import org.intermine.objectstore.query.OverlapRange;
+import org.intermine.objectstore.query.PathExpressionField;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryClassBag;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryExpression;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryForeignKey;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
+import org.intermine.objectstore.query.QueryTestCase;
+import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryConstraint;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 
 /**
  * TestCase for testing InterMine Queries
@@ -219,6 +261,8 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         queries.put("NegativeNumbers", negativeNumbers());
         queries.put("Lower", lower());
         queries.put("Upper", upper());
+        queries.put("Greatest", greatest());
+        queries.put("Least", least());
 
         // test 'foo' IN bag
         queries.put("LargeBagConstraint", largeBagConstraint(false));
@@ -1416,6 +1460,34 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
     }
 
     /*
+     * SELECT GREATEST(2000, a1_.vatNumber) AS a2_ FROM Company AS a1_;
+     */
+    public static Query greatest() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "vatNumber");
+        QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.GREATEST, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
+     * SELECT LEAST(2000, a1_.vatNumber) AS a2_ FROM Company AS a1_;
+     */
+    public static Query least() throws Exception {
+        Query q = new Query();
+        q.setDistinct(false);
+        QueryClass qc = new QueryClass(Company.class);
+        q.addFrom(qc);
+        QueryField f = new QueryField(qc, "vatNumber");
+        QueryExpression e = new QueryExpression(new QueryValue(2000), QueryExpression.LEAST, f);
+        q.addToSelect(e);
+        return q;
+    }
+
+    /*
      * select a1_ FROM Employee AS a1_ ORDER BY a1_.department;
      */
     public static Query orderByReference() throws Exception {
@@ -2243,7 +2315,7 @@ public abstract class ObjectStoreQueriesTestCase extends QueryTestCase
         q.setDistinct(false);
         return q;
     }
-    
+
     public static Query multipleInBagConstraint1() throws Exception {
         Query q = new Query();
         QueryClass qc1 = new QueryClass(Employee.class);
