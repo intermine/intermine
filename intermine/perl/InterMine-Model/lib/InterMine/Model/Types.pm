@@ -71,6 +71,7 @@ subtype PathHash, as HashRef  [PathString];
 coerce PathList, from JoinedPathString, via { [ split /[,\s]+/ ] };
 coerce PathString, from JoinedPathString,
     via { ( split /[\s]+/ )[0] };
+coerce PathString, from ClassDescriptor, via { "$_" };
 
 # Attribute values
 
