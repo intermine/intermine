@@ -177,7 +177,7 @@ public class GFF3Exporter implements Exporter
 
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
-        export(resultIt, Collections.EMPTY_SET, Collections.EMPTY_LIST);
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     /* State for the exportRow method, to allow several rows to be merged. */
