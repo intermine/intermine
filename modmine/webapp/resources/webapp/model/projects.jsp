@@ -114,9 +114,16 @@ ${exp.piSurname}<br>
 
 <%-- CATEGORIES --%>
 <b>
-     <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}"
-        title="View ${exp.name}">${exp.name}</html:link>
+<c:choose>
+<c:when test="${fn:contains(exp.name, '+')}">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '+', '%2B')}"
+title="View ${exp.name}">${exp.name}</html:link>
+</c:when>
+<c:otherwise>
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}"
+title="View ${exp.name}">${exp.name}</html:link>
+</c:otherwise>
+</c:choose>
 </b>
 <br></br>
 
