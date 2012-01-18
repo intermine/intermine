@@ -42,10 +42,9 @@ import org.obo.datamodel.OBOSession;
 public class OboParser
 {
     private static final Logger LOG = Logger.getLogger(OboParser.class);
-
+    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");
-
 
     /**
      * All terms.
@@ -61,7 +60,6 @@ public class OboParser
      * All relation types
      */
     protected Map<String, OboTypeDefinition> types = new HashMap<String, OboTypeDefinition>();
-
 
     /**
      * Default namespace.
@@ -84,12 +82,14 @@ public class OboParser
      * @throws Exception if something goes wrong
      */
     public void processRelations(String dagFileName) throws Exception {
-        File f = new File("build");
-        // this directory isn't present when parsing from the command line
-        if (!f.exists()) {
-            f.mkdir();
+        if (temp == null || !temp.exists()) {
+            File f = new File("build");
+            if (!f.exists()) {
+                temp = File.createTempFile("obo", ".tmp");
+            } else {
+                temp = File.createTempFile("obo", ".tmp", f);
+            }
         }
-        File temp = File.createTempFile("obo", ".tmp", f);
         // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
