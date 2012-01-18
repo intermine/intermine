@@ -47,6 +47,17 @@ has objectId => (
     isa => Str,
 );
 
+=head2 id
+
+Read-Only synonym for getObjectId
+
+=cut
+
+sub id { 
+    my $self = shift;
+    return $self->getObjectId;
+}
+
 =head1 METHODS 
 
 =head2 equals($something)

@@ -402,7 +402,22 @@ sub _make_fields_into_attributes {
         }
 
         $self->add_attribute($field->name, $options);
-        $self->add_method($field->name, sub { my $self = shift; my $reader = $get . $suffix; return $self->$reader});
+        my $been_fetched = undef;
+        $self->add_method($field->name, sub { my $obj = shift; 
+            my $reader = $get . $suffix; 
+            my $writer = "set" . $suffix;
+            my $is_empty = $field->name . "_is_empty";
+            if (not ($been_fetched)
+                and ( 
+                     ($field->isa("InterMine::Model::Reference")  and (not defined $obj->$reader))
+                  or ($field->isa("InterMine::Model::Collection") and ($obj->$is_empty))
+                )) {
+                my $fetched = $self->model->lazy_fetch($self, $field, $obj);
+                $obj->$writer($fetched) if $fetched;
+                $been_fetched = 1;
+            }
+            $obj->$reader;
+        });
     }
 }
 

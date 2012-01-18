@@ -11,7 +11,7 @@ use Time::HiRes qw/gettimeofday/;
 
 use constant TYPE_PREFIX => "InterMine";
 
-our $VERSION = '0.9804';
+our $VERSION = '0.9900';
 
 =head1 NAME
 
@@ -388,6 +388,15 @@ sub to_xml {
     $xml .= "</model>";
     return $xml;
 }
+
+=head2 lazy_fetch
+
+Always returns undef. This can be overriden by subclasses to provide lazy fetching
+capabilities for items, from a web-service or directly from a database.
+
+=cut
+
+sub lazy_fetch { undef };
 
 1;
 
