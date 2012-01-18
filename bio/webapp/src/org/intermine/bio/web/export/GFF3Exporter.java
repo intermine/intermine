@@ -175,6 +175,7 @@ public class GFF3Exporter implements Exporter
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
         export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
@@ -216,6 +217,7 @@ public class GFF3Exporter implements Exporter
 
                 // processing parent for last cell
                 if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+                    processAttributes(row, unionPathCollection, newPathCollection, re);
                     processParent(resultsCells, classToParents, classesInResults);
                     makeRecord();
                 }
@@ -224,58 +226,64 @@ public class GFF3Exporter implements Exporter
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
 
-                List<ResultElement> newRow = filterResultRow(row, unionPathCollection,
-                        newPathCollection);
-
-                boolean isCollection = re.getPath().containsCollections();
-
-                for (int i = 0; i < newRow.size(); i++) {
-                    ResultElement el = newRow.get(i);
-
-                    if (el == null) {
-                        continue;
-                    }
-
-                    // checks for attributes:
-                    if (isCollection && !el.getPath().containsCollections()) {
-                        // one is collection, the other is not: do not show
-                        continue;
-                    }
-                    if (!isCollection && el.getPath().containsCollections()
-                            && soClassNames.containsKey(el.getType())) {
-                        // show attributes only if they are not linked to features
-                        // (they will be displayed with the relevant one, see below)
-                        continue;
-                    }
-
-                    if (isCollection && el.getPath().containsCollections()) {
-                        // show only if of the same class
-                        Class<?> reType = re.getPath().getLastClassDescriptor().getType();
-                        Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                        if (!reType.isAssignableFrom(elType)) {
-                            continue;
-                        }
-                    }
-
-                    if ("location".equalsIgnoreCase(el.getPath()
-                            .getLastClassDescriptor().getUnqualifiedName())) {
-                        // don't show locations (they are already displayed parts of the element)
-                        continue;
-                    }
-
-                    if (el.getField() != null) {
-                        String unqualName = el.getPath()
-                                .getLastClassDescriptor().getUnqualifiedName();
-                        String attributeName = trimAttribute(attributesNames.get(i), unqualName);
-                        checkAttribute(el, attributeName);
-                    }
-                }
-
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
             } catch (Exception ex) {
                 LOG.error("Failed to write GFF3 file: " + ex);
                 continue;
+            }
+        }
+    }
+
+    private void processAttributes(List<ResultElement> row,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection, ResultElement re) {
+        List<ResultElement> newRow = filterResultRow(row, unionPathCollection,
+                newPathCollection);
+
+        boolean isCollection = re.getPath().containsCollections();
+
+        for (int i = 0; i < newRow.size(); i++) {
+            ResultElement el = newRow.get(i);
+
+            if (el == null) {
+                continue;
+            }
+
+            // checks for attributes:
+            if (isCollection && !el.getPath().containsCollections()) {
+                // one is collection, the other is not: do not show
+                continue;
+            }
+            if (!isCollection && el.getPath().containsCollections()
+                    && soClassNames.containsKey(el.getType())) {
+                // show attributes only if they are not linked to features
+                // (they will be displayed with the relevant one, see below)
+                continue;
+            }
+
+            if (isCollection && el.getPath().containsCollections()) {
+                // show only if of the same class
+                Class<?> reType = re.getPath().getLastClassDescriptor().getType();
+                Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+                if (!reType.isAssignableFrom(elType)) {
+                    continue;
+                }
+            }
+
+            if ("location".equalsIgnoreCase(el.getPath()
+                    .getLastClassDescriptor().getUnqualifiedName())) {
+                // don't show locations (they are already displayed
+                // parts of the element)
+                continue;
+            }
+
+            if (el.getField() != null) {
+                String unqualName = el.getPath()
+                        .getLastClassDescriptor().getUnqualifiedName();
+                String attributeName = trimAttribute(
+                        attributesNames.get(i), unqualName);
+                checkAttribute(el, attributeName);
             }
         }
     }
@@ -305,7 +313,7 @@ public class GFF3Exporter implements Exporter
             Map<String, Set<String>> classToParents, Set<String> classesInResults) {
 
         String parent = null;
-        ResultsCell r = resultsCells.get(lastLsf);
+        ResultsCell r = resultsCells.get(lastLsfId);
 
         if (r == null) {
             return;
@@ -316,6 +324,7 @@ public class GFF3Exporter implements Exporter
 
         // list of parents for the object in the cell
         Set<String> parents = classToParents.get(className);
+        List<String> addPar = new ArrayList<String>();
 
         if (parents != null) {
             for (String parentType : parents) {
@@ -325,17 +334,12 @@ public class GFF3Exporter implements Exporter
                     ResultElement parentResultElment = r.re;
                     parent = ((SequenceFeature) parentResultElment.getObject())
                             .getPrimaryIdentifier();
-                    break;
+                    addPar.add(parent);
                 }
             }
         }
 
-        if (parent != null) {
-            List<String> addPar = new ArrayList<String>();
-            addPar.add(parent);
-            attributes.put("Parent", addPar);
-        }
-
+        attributes.put("Parent", addPar);
     }
 
     private String trimAttribute(String attribute, String unqualName) {
