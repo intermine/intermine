@@ -246,6 +246,7 @@ Features
       <!-- end submission loop -->
   </table>
 
+  <%--
 <h3>
 Find overlapping features:
 </h3>
@@ -282,6 +283,7 @@ Find overlapping features:
 </tbody>
 </table>
 
+--%>
 
 <%-- OVERLAPPING GENES
 
@@ -316,7 +318,8 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
 </c:forEach>
 
 <c:if test="${gffeat == 'true'}">
-    <h3>Find nearby genes:</h3>
+<%--
+<h3>Find nearby genes:</h3>
     <table>
         <tbody>
             <tr>
@@ -357,10 +360,10 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
         </tbody>
     </table>
 
+--%>
 
-<hr><hr>
 
-    <h3>Find nearby features</h3>
+    <h3>Find overlapping or nearby features</h3>
     <table>
     <tbody>
         <tr>
@@ -376,7 +379,7 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
                             <html:option value="Intron">Introns</html:option>
                             <html:option value="IntergenicRegion">IntergenicRegions</html:option>
                           </html:select>
-              located within
+              overlapping or located within
 
               <html:select styleId="typeSelector" property="distance">
               <html:option value="0">0</html:option>
@@ -393,7 +396,7 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
               <html:option value="downstream">downstream</html:option>
             </html:select>
             of
-                  <html:select styleId="typeSelector" property="flankingFeatureType">
+                  <html:select styleId="typeSelector" property="overlapFeatureType">
                     <c:forEach items="${featureCounts}" var="fc" varStatus="status">
                     <c:if test="${fn:endsWith(fc.key, 'Site') || fn:contains(fc.key, 'Prime')
                         || fc.key == 'CopyNumberVariation' || fc.key == 'TSS'
