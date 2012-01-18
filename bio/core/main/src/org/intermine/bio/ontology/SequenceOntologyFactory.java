@@ -10,10 +10,14 @@ package org.intermine.bio.ontology;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
 
@@ -27,6 +31,8 @@ public final class SequenceOntologyFactory
 {
     private static final Logger LOG = Logger.getLogger(SequenceOntologyFactory.class);
     private static SequenceOntology so = null;
+    private static final String OBO_FILE = "so-obo";
+    private static File tmpFile = null;
 
     private SequenceOntologyFactory() {
         //disable external instantiation
@@ -55,6 +61,12 @@ public final class SequenceOntologyFactory
             if (oboFile == null) {
                 oboFileStream = SequenceOntologyFactory.class.getClassLoader()
                         .getResourceAsStream("so.obo");
+                try {
+                    filename = writeFile(oboFileStream);
+                } catch (IOException e) {
+                    LOG.error("so.obo file not found");
+                    return null;
+                }
             } else {
                 try {
                     oboFileStream = new FileInputStream(oboFile);
@@ -79,6 +91,21 @@ public final class SequenceOntologyFactory
             so = new SequenceOntology(oboFileStream, filename, termsFileStream);
         }
         return so;
+    }
+
+    private static String writeFile(InputStream oboFileStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(oboFileStream));
+        if (tmpFile == null || !tmpFile.exists()) {
+            tmpFile = File.createTempFile(OBO_FILE, ".tmp");
+            FileWriter writer = new FileWriter(tmpFile);
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line + "\n");
+            }
+            writer.flush();
+            writer.close();
+        }
+        return tmpFile.getAbsolutePath();
     }
 
     /**

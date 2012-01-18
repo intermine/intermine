@@ -214,9 +214,6 @@ public class SequenceOntology
         return parentToChildren.containsKey(identifier);
     }
 
-
-
-
     /**
      * @param childIdentifier identifier for obo term of interest
      * @return list of identifiers for parent obo terms
@@ -732,7 +729,6 @@ public class SequenceOntology
      * 3. finally creates class descriptors based on relationships created in previous steps
      */
     private void process(InputStream inputStream, String oboFilename) {
-
 
         // parse file using OBOEdit
         OboParser parser = new OboParser();

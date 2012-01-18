@@ -24,13 +24,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.ontology.SequenceOntology;
 import org.intermine.bio.ontology.SequenceOntologyFactory;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
@@ -48,14 +46,6 @@ import org.intermine.web.logic.export.Exporter;
 public class GFF3Exporter implements Exporter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
-
-
-    //    public static final Set<String> GFF_FIELDS = Collections
-    //    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-    //            "chromosomeLocation.start", "chromosomeLocation.end",
-    //            "chromosomeLocation.strand", "primaryIdentifier", "score",
-    //            "start", "end", "strand")));
-
     /**
      * the fields we don't want to display as attributes
      */
@@ -119,7 +109,6 @@ public class GFF3Exporter implements Exporter
      * to read genome and project versions
      * @return header further info about versions
      */
-
     private String getHeaderParts() {
         StringBuffer header = new StringBuffer();
         Properties props = PropertiesUtil.getProperties();
@@ -188,7 +177,7 @@ public class GFF3Exporter implements Exporter
 
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
-        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        export(resultIt, Collections.EMPTY_SET, Collections.EMPTY_LIST);
     }
 
     /* State for the exportRow method, to allow several rows to be merged. */
@@ -207,12 +196,17 @@ public class GFF3Exporter implements Exporter
             return;
         }
 
-        // loop through all the objects in a row
+        SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
+        Map<Integer, ResultsCell> resultsCells = new HashMap<Integer, ResultsCell>();
+        Map<String, Set<String>> classToParents = new HashMap<String, Set<String>>();
+        Set<String> classesInResults = new HashSet<String>();
+        if (so != null) {
+            classesInResults.addAll(getCellTypes(elWithObject, so, resultsCells, classToParents));
+        }
+
         for (ResultElement re : elWithObject) {
             try {
                 SequenceFeature lsf = (SequenceFeature) re.getObject();
-                //             LOG.info("GFFrePath: " + re.getPath());
-                boolean isCollection = re.getPath().containsCollections();
 
                 if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
                     // TODO it's hard to add multiple parents to a feature, e.g. exon -> transcript,
@@ -220,49 +214,9 @@ public class GFF3Exporter implements Exporter
                     continue;
                 }
 
+                // processing parent for last cell
                 if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
-                    //TODO add parent here
-                    // testing code - find a parent for the sequence features
-                    String parent = null;
-//                    String parentClass = null;
-
-                    List<Integer> featureIdList = new ArrayList<Integer>();
-                    List<String> classNamesList = new ArrayList<String>();
-                    for (ResultElement el : elWithObject) {
-                        if (el != null) {
-                            classNamesList
-                                    .add(el.getPath().getLastClassDescriptor()
-                                            .getUnqualifiedName().toLowerCase());
-                            featureIdList.add(((SequenceFeature) el.getObject()).getId());
-                        } else {
-                            classNamesList.add(null);
-                        }
-                    }
-
-                    SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
-                    Set<String> parents = so.getAllPartOfs(classNamesList.get(
-                            featureIdList.indexOf(lastLsf)));
-
-
-                    if (parents != null) {
-                        for (String c : parents) {
-                            if (classNamesList.contains(c)) {
-                                parent = ((SequenceFeature) elWithObject.get(
-                                        classNamesList.indexOf(c)).getObject())
-                                        .getPrimaryIdentifier();
-//                                parentClass = c;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (parent != null) {
-                        List<String> addPar = new ArrayList<String>();
-                        addPar.add(parent);
-                        attributes.put("Parent", addPar);
-                    }
-                    //
-
+                    processParent(resultsCells, classToParents, classesInResults);
                     makeRecord();
                 }
 
@@ -270,8 +224,10 @@ public class GFF3Exporter implements Exporter
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
 
-                List<ResultElement> newRow = filterResultRow(row,
-                        unionPathCollection, newPathCollection);
+                List<ResultElement> newRow = filterResultRow(row, unionPathCollection,
+                        newPathCollection);
+
+                boolean isCollection = re.getPath().containsCollections();
 
                 for (int i = 0; i < newRow.size(); i++) {
                     ResultElement el = newRow.get(i);
@@ -301,8 +257,8 @@ public class GFF3Exporter implements Exporter
                         }
                     }
 
-                    if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
-                            equalsIgnoreCase("location")) {
+                    if ("location".equalsIgnoreCase(el.getPath()
+                            .getLastClassDescriptor().getUnqualifiedName())) {
                         // don't show locations (they are already displayed parts of the element)
                         continue;
                     }
@@ -311,7 +267,6 @@ public class GFF3Exporter implements Exporter
                         String unqualName = el.getPath()
                                 .getLastClassDescriptor().getUnqualifiedName();
                         String attributeName = trimAttribute(attributesNames.get(i), unqualName);
-                        //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
                         checkAttribute(el, attributeName);
                     }
                 }
@@ -319,10 +274,68 @@ public class GFF3Exporter implements Exporter
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
             } catch (Exception ex) {
-                LOG.error("Exception: " + ex);
+                LOG.error("Failed to write GFF3 file: " + ex);
                 continue;
             }
         }
+    }
+
+    private Set<String> getCellTypes(List<ResultElement> elWithObject, SequenceOntology so,
+            Map<Integer, ResultsCell> resultsCells, Map<String, Set<String>> classToParents) {
+        Set<String> classesInResults = new HashSet<String>();
+        for (ResultElement el : elWithObject) {
+            String className = null;
+            if (el == null) {
+                continue;
+            }
+            className = el.getPath().getLastClassDescriptor().getUnqualifiedName().toLowerCase();
+            classesInResults.add(className);
+            Integer id = ((SequenceFeature) el.getObject()).getId();
+            ResultsCell cell = new ResultsCell(id, className, el);
+            resultsCells.put(id, cell);
+            if (classToParents.get(className) == null) {
+                Set<String> parents = so.getAllPartOfs(className);
+                classToParents.put(className, parents);
+            }
+        }
+        return classesInResults;
+    }
+
+    private void processParent(Map<Integer, ResultsCell> resultsCells,
+            Map<String, Set<String>> classToParents, Set<String> classesInResults) {
+
+        String parent = null;
+        ResultsCell r = resultsCells.get(lastLsf);
+
+        if (r == null) {
+            return;
+        }
+
+        // class name of the object in the cell
+        String className = r.className;
+
+        // list of parents for the object in the cell
+        Set<String> parents = classToParents.get(className);
+
+        if (parents != null) {
+            for (String parentType : parents) {
+                // if we have any of these type
+                if (classesInResults.contains(parentType)) {
+                    // get parent
+                    ResultElement parentResultElment = r.re;
+                    parent = ((SequenceFeature) parentResultElment.getObject())
+                            .getPrimaryIdentifier();
+                    break;
+                }
+            }
+        }
+
+        if (parent != null) {
+            List<String> addPar = new ArrayList<String>();
+            addPar.add(parent);
+            attributes.put("Parent", addPar);
+        }
+
     }
 
     private String trimAttribute(String attribute, String unqualName) {
@@ -343,7 +356,6 @@ public class GFF3Exporter implements Exporter
      *
      */
     private void makeRecord() {
-
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
                 attributes, makeUcscCompatible);
 
@@ -484,5 +496,29 @@ public class GFF3Exporter implements Exporter
                     + ", elPathList contains pathCollection: "
                     + unionPathCollection.containsAll(newPathCollection));
         }
+    }
+
+    /**
+     * Represents a cell in the results table
+     */
+    public class ResultsCell
+    {
+        protected Integer intermineId;
+        protected String className;
+        protected ResultElement re;
+
+        /**
+         * Constructor
+         *
+         * @param intermineId ID for intermine object
+         * @param className name of type, eg. gene or exon
+         * @param re results element
+         */
+        public ResultsCell(Integer intermineId, String className, ResultElement re) {
+            this.intermineId = intermineId;
+            this.className = className;
+            this.re = re;
+        }
+
     }
 }
