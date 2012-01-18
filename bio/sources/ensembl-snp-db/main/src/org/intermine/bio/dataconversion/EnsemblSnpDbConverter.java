@@ -313,14 +313,17 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             if (StringUtils.isBlank(type)) {
                 type = "UNKOWN";
             }
-            String peptideAlleles = res.getString("pep_allele_string");
             String transcriptStableId = res.getString("feature_stable_id");
 
             Item consequenceItem = createItem("Consequence");
             consequenceItem.setAttribute("type", type);
-            if (!StringUtils.isBlank(peptideAlleles)) {
-                consequenceItem.setAttribute("peptideAlleles", peptideAlleles);
-            }
+            setAttIfValue(consequenceItem, "peptideAlles", res.getString("pep_allele_string"));
+            setAttIfValue(consequenceItem, "siftPrediction", res.getString("sift_prediction"));
+            setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
+            setAttIfValue(consequenceItem, "polyphenPrediction",
+                    res.getString("polyphen_prediction"));
+            setAttIfValue(consequenceItem, "polyphenScore", res.getString("polyphen_score"));
+
             if (!StringUtils.isBlank(transcriptStableId)) {
                 consequenceItem.setReference("transcript",
                         getTranscriptIdentifier(transcriptStableId));
@@ -344,6 +347,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
         LOG.info("variationIdToItemIdentifier.size() = " + variationIdToItemIdentifier.size());
+    }
+
+    private void setAttIfValue(Item item, String attName, String attValue) {
+        if (!StringUtils.isBlank(attValue)) {
+            item.setAttribute(attName, attValue);
+        }
     }
 
     // This has to be called after process() called for the chromosome because it needs
@@ -562,7 +571,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " s.name,"
             + " vf.validation_status,"
             + " vf.consequence_type,"
-            + " tv.cdna_start,tv.consequence_types,tv.pep_allele_string,tv.feature_stable_id"
+            + " tv.cdna_start,tv.consequence_types,tv.pep_allele_string,tv.feature_stable_id,"
+            + " tv.sift_prediction, tv.sift_score, tv.polyphen_prediction, tv.polyphen_score"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"

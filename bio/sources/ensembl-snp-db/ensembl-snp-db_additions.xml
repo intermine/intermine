@@ -12,9 +12,13 @@
      <attribute name="name" type="java.lang.String"/>
    </class>
    <class name="Consequence" is-interface="true">
-     <reference name="transcript" referenced-type="Transcript"/>
      <attribute name="type" type="java.lang.String"/>
      <attribute name="peptideAlleles" type="java.lang.String"/>
+     <attribute name="polyphenPrediction" type="java.lang.String"/>
+     <attribute name="polyphenScore" type="java.lang.Double"/>
+     <attribute name="siftPrediction" type="java.lang.String"/>
+     <attribute name="siftScore" type="java.lang.Double"/>
+     <reference name="transcript" referenced-type="Transcript"/>
    </class>
   <class name="Source" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
