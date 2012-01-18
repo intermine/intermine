@@ -63,7 +63,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
     private Map<String, String> transcripts = new HashMap<String, String>();
-    private Map<String, String> noTranscriptConsequences = new HashMap<String, String>();
 
     private static final Logger LOG = Logger.getLogger(EnsemblSnpDbConverter.class);
     /**
@@ -119,6 +118,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
         for (String chrName : chrNames) {
             process(connection, chrName);
+            createSynonyms(connection, chrName);
         }
         storeFinalSnps();
 
@@ -127,8 +127,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
         connection.close();
     }
-
-
 
     private void storeFinalSnps() throws Exception {
         LOG.info("storeFinalSnps() pendingConsequences.size(): " + pendingSnpConsequences.size());
@@ -141,7 +139,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             store(col, storedSnpId);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -160,7 +157,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Set<String> consequenceIdentifiers = new HashSet<String>();
         boolean storeSnp = false;
         String currentSnpIdentifier = null;
-        Set<String> snpSynonyms = new HashSet<String>();
         Integer currentVariationId = null;
 
         // This code is complicated because not all SNPs map to a unique location and often have
@@ -179,7 +175,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 // if we didn't get back a storedSnpId this was the first time we found this SNP,
                 // so store it now
                 if (storeSnp && storedSnpId == null) {
-                    storedSnpId = storeSnp(currentSnp, snpSynonyms);
+                    storedSnpId = store(currentSnp);
                     variationIdToItemIdentifier.put(currentVariationId, currentSnp.getIdentifier());
                     snpCounter++;
                 }
@@ -205,7 +201,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 previousRsNumber = rsNumber;
                 seenLocsForSnp = new HashSet<String>();
                 consequenceIdentifiers = new HashSet<String>();
-                snpSynonyms = new HashSet<String>();
                 storeSnp = true;
 
                 // map weight is the number of chromosome locations for the SNP, in practice there
@@ -309,44 +304,30 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 store(loc);
             }
 
-
             // CONSEQUENCE TYPES
             // for SNPs without a uniqueLocation there will be different consequences at each one.
-            // some consequences will need to stored a the end
-            String cdnaStart = res.getString("cdna_start");
-            if (StringUtils.isBlank(cdnaStart)) {
-                String typeStr = res.getString("vf.consequence_type");
-                for (String type : typeStr.split(",")) {
-                    consequenceIdentifiers.add(getConsequenceIdentifier(type));
-                }
-            } else {
-                String type = res.getString("tv.consequence_types");
-                // Seen one example so far where consequence type is an empty string
-                if (StringUtils.isBlank(type)) {
-                    type = "UNKOWN";
-                }
-                String peptideAlleles = res.getString("pep_allele_string");
-                String transcriptStableId = res.getString("feature_stable_id");
+            // some consequences will need to stored at the end
 
-                Item consequenceItem = createItem("Consequence");
-                consequenceItem.setAttribute("type", type);
-                if (!StringUtils.isBlank(peptideAlleles)) {
-                    consequenceItem.setAttribute("peptideAlleles", peptideAlleles);
-                }
-                if (!StringUtils.isBlank(transcriptStableId)) {
-                    consequenceItem.setReference("transcript",
-                            getTranscriptIdentifier(transcriptStableId));
-                }
-                consequenceIdentifiers.add(consequenceItem.getIdentifier());
-                store(consequenceItem);
+            String type = res.getString("tv.consequence_types");
+            // Seen one example so far where consequence type is an empty string
+            if (StringUtils.isBlank(type)) {
+                type = "UNKOWN";
             }
+            String peptideAlleles = res.getString("pep_allele_string");
+            String transcriptStableId = res.getString("feature_stable_id");
 
-            // SYNONYMS
-            // we may see the same synonym on multiple row but the Set will make them unique
-            String synonym = res.getString("vs.name");
-            if (!StringUtils.isBlank(synonym)) {
-                snpSynonyms.add(synonym);
+            Item consequenceItem = createItem("Consequence");
+            consequenceItem.setAttribute("type", type);
+            if (!StringUtils.isBlank(peptideAlleles)) {
+                consequenceItem.setAttribute("peptideAlleles", peptideAlleles);
             }
+            if (!StringUtils.isBlank(transcriptStableId)) {
+                consequenceItem.setReference("transcript",
+                        getTranscriptIdentifier(transcriptStableId));
+            }
+            consequenceIdentifiers.add(consequenceItem.getIdentifier());
+            store(consequenceItem);
+
             if (counter % 100000 == 0) {
                 LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr "
                         + chrName);
@@ -354,7 +335,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         }
 
         if (currentSnp != null && storeSnp) {
-            Integer storedSnpId = storeSnp(currentSnp, snpSynonyms);
+            Integer storedSnpId = store(currentSnp);
             variationIdToItemIdentifier.put(currentVariationId, currentSnp.getIdentifier());
             if (!storedSnpIds.containsKey(storedSnpId)) {
                 storeSnpCollections(storedSnpId, consequenceIdentifiers);
@@ -363,6 +344,25 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
         LOG.info("variationIdToItemIdentifier.size() = " + variationIdToItemIdentifier.size());
+    }
+
+    // This has to be called after process() called for the chromosome because it needs
+    // variationIdToItemIdentifier to be populated.
+    private void createSynonyms(Connection connection, String chrName)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = querySynonyms(connection, chrName);
+
+        int synonymCounter = 0;
+        while (res.next()) {
+            Integer variationId = res.getInt("variation_id");
+            String synonym = res.getString("name");
+
+            if (!StringUtils.isBlank(synonym)) {
+                synonymCounter++;
+                createSynonym(variationIdToItemIdentifier.get(variationId), synonym, true);
+            }
+        }
+        LOG.info("Created " + synonymCounter + " synonyms for chr " + chrName);
     }
 
     private void processGenotypes(Connection connection) throws Exception {
@@ -434,14 +434,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
-    }
-
-    private Integer storeSnp(Item snp, Set<String> synonyms) throws ObjectStoreException {
-        Integer storedSnpId = store(snp);
-        for (String synonym : synonyms) {
-            createSynonym(snp.getIdentifier(), synonym, true);
-        }
-        return storedSnpId;
     }
 
     private void storeSnpCollections(Integer storedSnpId, Set<String> consequenceIdentifiers)
@@ -561,18 +553,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return stateIdentifier;
     }
 
-    private String getConsequenceIdentifier(String type) throws ObjectStoreException {
-        String consequenceIdentifier = noTranscriptConsequences.get(type);
-        if (consequenceIdentifier == null) {
-            Item consequence = createItem("Consequence");
-            consequence.setAttribute("type", type);
-            store(consequence);
-            consequenceIdentifier = consequence.getIdentifier();
-            noTranscriptConsequences.put(type, consequenceIdentifier);
-        }
-        return consequenceIdentifier;
-    }
-
     private ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
 
@@ -582,19 +562,33 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " s.name,"
             + " vf.validation_status,"
             + " vf.consequence_type,"
-            + " tv.cdna_start,tv.consequence_types,tv.pep_allele_string,tv.feature_stable_id,"
-            + " vs.name"
+            + " tv.cdna_start,tv.consequence_types,tv.pep_allele_string,tv.feature_stable_id"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
             + "    AND tv.cdna_start is not null)"
-            + " LEFT JOIN (variation_synonym vs)"
-            + " ON (vf.variation_id = vs.variation_id"
-            + "    AND vs.source_id IN (" + StringUtil.join(getSnpSourceIds(connection), ",") + "))"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
             + " ORDER BY vf.variation_id";
+
+        LOG.warn(query);
+        System.out.println(query);
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    private ResultSet querySynonyms(Connection connection, String chrName)
+        throws SQLException {
+        String query = "SELECT vs.variation_id, vs.name"
+            + " FROM variation_synonym vs, variation_feature vf, seq_region sr"
+            + " WHERE vs.variation_id = vf.variation_id"
+            + " AND vf.seq_region_id = sr.seq_region_id"
+            + " AND sr.name = '" + chrName + "'"
+            + " AND vs.source_id IN (" + StringUtil.join(getSnpSourceIds(connection), ",") + ")"
+            + " ORDER BY vs.variation_id";
 
         LOG.warn(query);
         System.out.println(query);
