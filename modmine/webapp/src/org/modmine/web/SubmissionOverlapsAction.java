@@ -234,11 +234,20 @@ public class SubmissionOverlapsAction extends InterMineAction
                 qcGivenFeatureLoc, "start"), new QueryField(
                         qcGivenFeatureLoc, "end"), givenFeatureLocatedOnRef);
 
-        OverlapRange overlapFeatureRange = new OverlapRange(new QueryExpression(
-                new QueryField(qcOverlapFeatureLoc, "start"), QueryExpression.SUBTRACT,
-                new QueryValue(beforeStartOfOF)), new QueryExpression(
+//        OverlapRange overlapFeatureRangeold = new OverlapRange(new QueryExpression(
+//                new QueryField(qcOverlapFeatureLoc, "start"), QueryExpression.SUBTRACT,
+//                new QueryValue(beforeStartOfOF)), new QueryExpression(
+//                        new QueryField(qcOverlapFeatureLoc, "end"), QueryExpression.ADD,
+//                        new QueryValue(afterEndOfOF)), overlapFeatureLocatedOnRef);
+
+        OverlapRange overlapFeatureRange = new OverlapRange(new QueryExpression(new QueryValue(1),
+                QueryExpression.GREATEST,
+                new QueryExpression(new QueryField(qcOverlapFeatureLoc, "start"),
+                        QueryExpression.SUBTRACT,new QueryValue(beforeStartOfOF))),
+                        new QueryExpression(
                         new QueryField(qcOverlapFeatureLoc, "end"), QueryExpression.ADD,
                         new QueryValue(afterEndOfOF)), overlapFeatureLocatedOnRef);
+
 
         OverlapConstraint oc = new OverlapConstraint(givenFeatureRange,
                 ConstraintOp.OVERLAPS, overlapFeatureRange);
