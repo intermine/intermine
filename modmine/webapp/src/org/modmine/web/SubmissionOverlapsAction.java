@@ -77,7 +77,7 @@ public class SubmissionOverlapsAction extends InterMineAction
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-                    throws Exception {
+        throws Exception {
         final InterMineAPI im = SessionMethods.getInterMineAPI(request
                 .getSession());
         ObjectStore os = im.getObjectStore();
@@ -89,7 +89,7 @@ public class SubmissionOverlapsAction extends InterMineAction
         PathQuery q = new PathQuery(os.getModel());
 
 //        if (request.getParameter("overlaps") != null) {
-            buildOverlapPathQuery(submissionOverlapsForm, q, im);
+        buildOverlapPathQuery(submissionOverlapsForm, q, im);
 //        }
 
         String qid = SessionMethods.startQueryWithTimeout(request, false, q);
@@ -110,7 +110,7 @@ public class SubmissionOverlapsAction extends InterMineAction
      */
     private void buildOverlapPathQuery(
             SubmissionOverlapsForm submissionOverlapsForm, PathQuery q, InterMineAPI im)
-                    throws ObjectStoreException, ClassNotFoundException {
+        throws ObjectStoreException, ClassNotFoundException {
 
         String submissionTitle = submissionOverlapsForm.getSubmissionTitle();
         String givenFeatureType = submissionOverlapsForm.getOverlapFeatureType();
@@ -137,13 +137,13 @@ public class SubmissionOverlapsAction extends InterMineAction
         }
 
         q.addConstraint(Constraints.inIds(overlapFeatureType,
-        getOverlappingFeaturesId(submissionOverlapsForm, im)));
+                getOverlappingFeaturesId(submissionOverlapsForm, im)));
     }
 
 
     private Set<Integer> getOverlappingFeaturesId(
             SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
-                    throws ObjectStoreException, ClassNotFoundException {
+        throws ObjectStoreException, ClassNotFoundException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
         String direction = submissionOverlapsForm.getDirection();
@@ -243,7 +243,7 @@ public class SubmissionOverlapsAction extends InterMineAction
         OverlapRange overlapFeatureRange = new OverlapRange(new QueryExpression(new QueryValue(1),
                 QueryExpression.GREATEST,
                 new QueryExpression(new QueryField(qcOverlapFeatureLoc, "start"),
-                        QueryExpression.SUBTRACT,new QueryValue(beforeStartOfOF))),
+                        QueryExpression.SUBTRACT, new QueryValue(beforeStartOfOF))),
                         new QueryExpression(
                         new QueryField(qcOverlapFeatureLoc, "end"), QueryExpression.ADD,
                         new QueryValue(afterEndOfOF)), overlapFeatureLocatedOnRef);
@@ -258,7 +258,7 @@ public class SubmissionOverlapsAction extends InterMineAction
 
         LOG.info("OVERLAP " + ob.generateSql(query));
 
-        Results results = im.getObjectStore().execute(query, 100000,true, false, true);
+        Results results = im.getObjectStore().execute(query, 100000, true, false, true);
 //        SingletonResults results = im.getObjectStore()
 //                .executeSingleton(query, 100000,true, false, true);
         if (results == null || results.isEmpty()) {
@@ -344,7 +344,7 @@ public class SubmissionOverlapsAction extends InterMineAction
 
     private Map<String, Set<Integer>> getOverlappingGenes(
             SubmissionOverlapsForm submissionOverlapsForm, InterMineAPI im)
-                    throws ObjectStoreException, ClassNotFoundException {
+            throws ObjectStoreException, ClassNotFoundException {
 
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
