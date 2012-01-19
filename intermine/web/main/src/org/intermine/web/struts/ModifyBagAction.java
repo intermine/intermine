@@ -10,10 +10,13 @@ package org.intermine.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -34,6 +37,7 @@ import org.intermine.api.bag.BagOperations;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.util.NameUtil;
 import org.intermine.objectstore.ObjectStoreException;
@@ -248,8 +252,8 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
-            InterMineBag bag = profile.getSavedBags().get(
-                    mbf.getSelectedBags()[i]);
+            InterMineBag bag = profile.getSavedBags().get(mbf.getSelectedBags()[i]);
+            deleteQueriesThatMentionBag(profile, bag.getName());
             deleteBag(session, profile, bag);
         }
     }
@@ -269,5 +273,27 @@ public class ModifyBagAction extends InterMineAction
         }
         return new ForwardParameters(mapping.findForward("bag"))
                     .addParameter("subtab", "view").forward();
+    }
+
+    private static void deleteQueriesThatMentionBag(Profile profile, String bagName) {
+        // delete query from history
+        Map<String, SavedQuery> savedQueries = profile.getHistory();
+        for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
+            String queryName = (String) i.next();
+            SavedQuery query = (SavedQuery) savedQueries.get(queryName);
+            if (query.getPathQuery().getBagNames().contains(bagName)) {
+                profile.deleteHistory(queryName);
+            }
+        }
+
+        // delete query from saved queries
+        savedQueries = profile.getSavedQueries();
+        for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
+            String queryName = (String) i.next();
+            SavedQuery query = (SavedQuery) savedQueries.get(queryName);
+            if (query.getPathQuery().getBagNames().contains(bagName)) {
+                profile.deleteQuery(queryName);
+            }
+        }
     }
 }

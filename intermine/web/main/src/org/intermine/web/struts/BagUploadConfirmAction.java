@@ -96,7 +96,7 @@ public class BagUploadConfirmAction extends InterMineAction
             bag.addIdsToBag(contents, bagType);
             //track the list creation
             im.getTrackerDelegate().trackListCreation(bagType, bag.getSize(),
-                                   ListBuildMode.IDENTIFIERS, profile, session.getId());
+                    ListBuildMode.IDENTIFIERS, profile, session.getId());
             session.removeAttribute("bagQueryResult");
         } else {
             InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
@@ -104,17 +104,17 @@ public class BagUploadConfirmAction extends InterMineAction
             session.removeAttribute("bagQueryResult_" + bagName);
             Map<String, Object> bagAttributes = new HashMap<String, Object>();
             bagAttributes.put("status", BagState.CURRENT.toString());
-    		try {
-    			bagAttributes.put("size", bagToUpgrade.getSize());
-    		} catch (ObjectStoreException e) {
-    			// nothing serious happens here...
-    		}
+            try {
+                bagAttributes.put("size", bagToUpgrade.getSize());
+            } catch (ObjectStoreException e) {
+                // nothing serious happens here...
+            }
             SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName,
-            		bagAttributes);
+                    bagAttributes);
         }
 
-        ForwardParameters forwardParameters
-            = new ForwardParameters(mapping.findForward("bagDetails"));
+        ForwardParameters forwardParameters = new ForwardParameters(
+                mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);
         forwardParameters.addParameter("trackExecution", "false");
         return forwardParameters.forward();
