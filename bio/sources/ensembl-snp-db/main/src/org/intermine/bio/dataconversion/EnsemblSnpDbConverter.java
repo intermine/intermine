@@ -317,7 +317,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
             Item consequenceItem = createItem("Consequence");
             consequenceItem.setAttribute("type", type);
-            setAttIfValue(consequenceItem, "peptideAlles", res.getString("pep_allele_string"));
+            setAttIfValue(consequenceItem, "peptideAlleles", res.getString("pep_allele_string"));
             setAttIfValue(consequenceItem, "siftPrediction", res.getString("sift_prediction"));
             setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
             setAttIfValue(consequenceItem, "polyphenPrediction",
