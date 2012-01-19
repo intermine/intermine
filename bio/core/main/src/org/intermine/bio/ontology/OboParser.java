@@ -42,7 +42,7 @@ import org.obo.datamodel.OBOSession;
 public class OboParser
 {
     private static final Logger LOG = Logger.getLogger(OboParser.class);
-    private static File temp = null;
+//    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");
 
@@ -82,15 +82,14 @@ public class OboParser
      * @throws Exception if something goes wrong
      */
     public void processRelations(String dagFileName) throws Exception {
-        if (temp == null || !temp.exists()) {
-            File f = new File("build");
-            if (!f.exists()) {
-                temp = File.createTempFile("obo", ".tmp");
-            } else {
-                temp = File.createTempFile("obo", ".tmp", f);
-            }
+        File temp = null;
+        File f = new File("build");
+        if (!f.exists()) {
+            temp = File.createTempFile("obo", ".tmp");
+        } else {
+            temp = File.createTempFile("obo", ".tmp", f);
         }
-        // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
+    // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
         // by obo2linkfile so we can get rid of the code below and just use the downloaded file.

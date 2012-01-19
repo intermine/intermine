@@ -132,7 +132,7 @@ public class SequenceOntology
         }
         Set<String> parents = new HashSet<String>();
         for (String ident : parentIdentifiers) {
-            String parent = (ident);
+            String parent = getName(ident);
             if (StringUtils.isNotEmpty(parent)) {
                 // add this class name
                 parents.add(parent);
