@@ -63,6 +63,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
     private Map<String, String> transcripts = new HashMap<String, String>();
+    private Map<String, String> consequenceTypes = new HashMap<String, String>();
 
     private static final Logger LOG = Logger.getLogger(EnsemblSnpDbConverter.class);
     /**
@@ -107,14 +108,15 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
 
         List<String> chrNames = new ArrayList<String>();
-        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
-            chrNames.add("" + i);
-        }
-        chrNames.add("X");
-        chrNames.add("Y");
-        chrNames.add("MT");
-        chrNames.add("Mt");
-        chrNames.add("Pt");
+//        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
+//            chrNames.add("" + i);
+//        }
+//        chrNames.add("X");
+//        chrNames.add("Y");
+//        chrNames.add("MT");
+//        chrNames.add("Mt");
+//        chrNames.add("Pt");
+        chrNames.add("22");
 
         for (String chrName : chrNames) {
             process(connection, chrName);
@@ -316,7 +318,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             String transcriptStableId = res.getString("feature_stable_id");
 
             Item consequenceItem = createItem("Consequence");
-            consequenceItem.setAttribute("type", type);
+            consequenceItem.setAttribute("description", type);
+            for (String individualType : type.split(",")) {
+                consequenceItem.addToCollection("types", getConsequenceType(individualType.trim()));
+            }
             setAttIfValue(consequenceItem, "peptideAlleles", res.getString("pep_allele_string"));
             setAttIfValue(consequenceItem, "siftPrediction", res.getString("sift_prediction"));
             setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
@@ -353,6 +358,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         if (!StringUtils.isBlank(attValue)) {
             item.setAttribute(attName, attValue);
         }
+    }
+
+    private String getConsequenceType(String type) throws ObjectStoreException {
+        if (!consequenceTypes.containsKey(type)) {
+            Item consequenceType = createItem("ConsequenceType");
+            consequenceType.setAttribute("type", type);
+            store(consequenceType);
+            consequenceTypes.put(type, consequenceType.getIdentifier());
+        }
+        return consequenceTypes.get(type);
     }
 
     // This has to be called after process() called for the chromosome because it needs
