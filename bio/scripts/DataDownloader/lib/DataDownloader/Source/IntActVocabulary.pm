@@ -1,11 +1,11 @@
-package DataDownloader::Source::IntactVocabulary;
+package DataDownloader::Source::IntActVocabulary;
 
 use Moose;
 extends 'DataDownloader::Source::ABC';
 
 use constant {
     TITLE => 
-        "Intact Vocabulary",
+        "IntAct Vocabulary",
     DESCRIPTION => 
         "A structured controlled vocabulary for the annotation of experiments concerned with protein-protein interactions.",
     SOURCE_LINK => 

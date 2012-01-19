@@ -12,7 +12,7 @@ default_sources:
   - "FlyDevelopmentOntology"
   - "GOAnnotation"
   - "IntAct"
-  - "IntactVocabulary"
+  - "IntActVocabulary"
   - "InterPro"
   - "InterProGO"
   - "MGIIdentifiers"
