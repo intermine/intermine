@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -200,9 +201,9 @@ public class GFF3Exporter implements Exporter
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
         Map<Integer, ResultsCell> resultsCells = new HashMap<Integer, ResultsCell>();
         Map<String, Set<String>> classToParents = new HashMap<String, Set<String>>();
-        Set<String> classesInResults = new HashSet<String>();
+        Map<String, ResultElement> classesInResults = new HashMap<String, ResultElement>();
         if (so != null) {
-            classesInResults.addAll(getCellTypes(elWithObject, so, resultsCells, classToParents));
+            classesInResults.putAll(getCellTypes(elWithObject, so, resultsCells, classToParents));
         }
 
         for (ResultElement re : elWithObject) {
@@ -288,16 +289,17 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-    private Set<String> getCellTypes(List<ResultElement> elWithObject, SequenceOntology so,
+    private Map<String, ResultElement> getCellTypes(
+            List<ResultElement> elWithObject, SequenceOntology so,
             Map<Integer, ResultsCell> resultsCells, Map<String, Set<String>> classToParents) {
-        Set<String> classesInResults = new HashSet<String>();
+        Map<String, ResultElement> classesInResults = new HashMap<String, ResultElement>();
         for (ResultElement el : elWithObject) {
             String className = null;
             if (el == null) {
                 continue;
             }
             className = el.getPath().getLastClassDescriptor().getUnqualifiedName().toLowerCase();
-            classesInResults.add(className);
+            classesInResults.put(className, el);
             Integer id = ((SequenceFeature) el.getObject()).getId();
             ResultsCell cell = new ResultsCell(id, className, el);
             resultsCells.put(id, cell);
@@ -310,7 +312,7 @@ public class GFF3Exporter implements Exporter
     }
 
     private void processParent(Map<Integer, ResultsCell> resultsCells,
-            Map<String, Set<String>> classToParents, Set<String> classesInResults) {
+            Map<String, Set<String>> classToParents, Map<String, ResultElement> classesInResults) {
 
         String parent = null;
         ResultsCell r = resultsCells.get(lastLsfId);
@@ -324,14 +326,14 @@ public class GFF3Exporter implements Exporter
 
         // list of parents for the object in the cell
         Set<String> parents = classToParents.get(className);
-        List<String> addPar = new ArrayList<String>();
+        Set<String> addPar = new LinkedHashSet<String>();
 
-        if (parents != null) {
+        if (parents != null && parents.size() > 0) {
             for (String parentType : parents) {
                 // if we have any of these type
-                if (classesInResults.contains(parentType)) {
+                if (classesInResults.keySet().contains(parentType)) {
                     // get parent
-                    ResultElement parentResultElment = r.re;
+                    ResultElement parentResultElment = classesInResults.get(parentType);
                     parent = ((SequenceFeature) parentResultElment.getObject())
                             .getPrimaryIdentifier();
                     addPar.add(parent);
@@ -339,7 +341,9 @@ public class GFF3Exporter implements Exporter
             }
         }
 
-        attributes.put("Parent", addPar);
+        if (addPar.size() > 0) {
+            attributes.put("Parent", new ArrayList<String>(addPar));
+        }
     }
 
     private String trimAttribute(String attribute, String unqualName) {
@@ -360,6 +364,7 @@ public class GFF3Exporter implements Exporter
      *
      */
     private void makeRecord() {
+        LOG.info("attributes >>> " + attributes);
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
                 attributes, makeUcscCompatible);
 
