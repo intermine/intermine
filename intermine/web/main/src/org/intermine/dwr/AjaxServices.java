@@ -901,16 +901,21 @@ public class AjaxServices
                 for (int i = 0; i < selectedBags.length; i++) {
                     Set<String> queries = new HashSet<String>();
                     queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
-                                selectedBags[i]));
+                            selectedBags[i]));
                     queries.addAll(queriesThatMentionBag(profile.getHistory(), selectedBags[i]));
                     if (queries.size() > 0) {
-                        return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
-                            + "by other queries " + queries;
+                        // TODO the javascript method relies on the content of this message.
+                        // which is dumb and should be fixed.  in the meantime, don't change this.
+                        final String msg = "You are trying to delete the list:  `"
+                                + selectedBags[i] + "`, which is used by these queries: "
+                                + queries + ".  Select OK to delete the list and queries or Cancel "
+                                + "to cancel this operation.";
+                        return msg;
                     }
                 }
                 for (int i = 0; i < selectedBags.length; i++) {
                     if (profile.getSavedBags().get(selectedBags[i]) == null) {
-                        return "List " + selectedBags[i] + " cannot be deleted as it is a shared "
+                        return "List `" + selectedBags[i] + "` cannot be deleted as it is a shared "
                             + "list";
                     }
                 }

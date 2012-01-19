@@ -721,15 +721,25 @@ function validateBagOperations(formName, operation) {
             }
         }
     }
-    AjaxServices.validateBagOperations(
-      bagName, selectedBags, operation, function(errMsg) {
-          if (errMsg != '') {
-              Boxy.alert(errMsg, null, {title: 'Error', modal: false});
-          } else {
-              frm.listsButton.value = operation;
-              frm.submit();
-          }
+    AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
+        if (errMsg != '') {
+            var msgBagInUse = "You are trying to delete the list";
+            // if the list they are trying to delete is in use, prompt for response
+            // then delete list if the user clicks OK
+            if (operation == 'delete' && errMsg.substring(0,33) == msgBagInUse) {
+                Boxy.confirm(errMsg, function() { 
+                    frm.listsButton.value = operation;
+                    frm.submit();
+                }, {title: 'Warning', modal: false});
+            } else {
+                Boxy.alert(errMsg, null, {title: 'Error', modal: false});
+            }
+        } else {
+            frm.listsButton.value = operation;
+            frm.submit();
+        }
     });
+
 }
 
 // table.jsp, bagUploadConfirm.jsp
