@@ -685,7 +685,9 @@
     <post-process name="create-references" />
     <post-process name="set-missing-chromosome-locations"/>
     <post-process name="create-intergenic-region-features"/>
+    <!--
     <post-process name="create-gene-flanking-features" />
+    -->
 <!-- TODO tmp -->
     <post-process name="transfer-sequences" dump="true"/>
 
