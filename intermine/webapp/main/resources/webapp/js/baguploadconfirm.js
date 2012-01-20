@@ -14,7 +14,11 @@ function initForm(buildNewBag) {
  * Turn bagList back to its input field form
  */
 function updateMatchIDs() {
-  jQuery('input#matchIDs').val(bagList);
+  if (bagList.length > 0) {
+    jQuery('input#matchIDs').val(bagList);
+    return true;
+  }
+  return false;
 }
 
 /**
