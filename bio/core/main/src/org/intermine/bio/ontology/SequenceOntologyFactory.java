@@ -88,7 +88,7 @@ public final class SequenceOntologyFactory
                     return null;
                 }
             }
-            so = new SequenceOntology(oboFileStream, filename, termsFileStream);
+            so = new SequenceOntology(filename, termsFileStream);
         }
         return so;
     }
