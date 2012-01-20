@@ -30,6 +30,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
+import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 import org.intermine.xml.full.Reference;
 
@@ -69,7 +70,6 @@ public class GFF3Converter extends DataConverter
      * @param sequenceHandler the GFF3SeqHandler use to create sequence Items
      * @throws ObjectStoreException if something goes wrong
      */
-
     public GFF3Converter(ItemWriter writer, String seqClsName, String orgTaxonId,
             String dataSourceName, String dataSetTitle, Model tgtModel,
             GFF3RecordHandler handler, GFF3SeqHandler sequenceHandler) throws ObjectStoreException {
@@ -114,7 +114,8 @@ public class GFF3Converter extends DataConverter
         for (Iterator<?> i = GFF3Parser.parse(bReader); i.hasNext();) {
             record = (GFF3Record) i.next();
 
-            if (processedIds.contains(record.getId())) {
+            // we only care about dupes if we are NOT creating locations
+            if (processedIds.contains(record.getId()) && dontCreateLocations) {
                 duplicates = true;
                 duplicatedIds.add(record.getId());
             } else {
@@ -157,10 +158,12 @@ public class GFF3Converter extends DataConverter
      * @throws ObjectStoreException if an error occurs storing items
      */
     public void process(GFF3Record record) throws ObjectStoreException {
+        String identifier = record.getId();
+        String refId = identifierMap.get(identifier);
+
         // get rid of previous record Items from handler
         handler.clear();
         List<?> names = record.getNames();
-
         Item seq = getSeq(record.getSequenceID());
 
         String term = record.getType();
@@ -174,36 +177,53 @@ public class GFF3Converter extends DataConverter
                     + " (original GFF record type: " + term + ") for "
                     + "record: " + record);
         }
-        String identifier = record.getId();
+
         Set<Item> synonymsToAdd = new HashSet<Item>();
-        // need to look up item id for this feature as may have already been a parent reference
-        Item feature = createItem(className);
+
+        Item feature = null;
+
+        // new feature
+        if (refId == null) {
+            feature = createItem(className);
+            refId = feature.getIdentifier();
+        }
+
+        if (!"chromosome".equals(record.getType()) && seq != null) {
+            boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
+                && !dontCreateLocations
+                && handler.createLocations(record);
+            if (makeLocation) {
+                Item location = getLocation(record, refId, seq, cd);
+                if (feature == null) {
+                    // this feature has already been created and stored
+                    // we only wanted the location, we're done here.
+                    store(location);
+                    return;
+                }
+                int length = getLength(record);
+                feature.setAttribute("length", String.valueOf(length));
+                handler.setLocation(location);
+                if ("Chromosome".equals(seqClsName)
+                        && (cd.getFieldDescriptorByName("chromosome") != null)) {
+                    feature.setReference("chromosome", seq.getIdentifier());
+                    feature.setReference("chromosomeLocation", location);
+                }
+            }
+        }
+
+        if (feature == null) {
+            // this feature has already been created and stored
+            // feature with discontinous location, this location wasn't valid for some reason
+            return;
+        }
+
         if (identifier != null) {
             feature.setAttribute("primaryIdentifier", identifier);
         }
         handler.setFeature(feature);
         identifierMap.put(identifier, feature.getIdentifier());
-
         if (names != null) {
-            if (cd.getFieldDescriptorByName("symbol") == null) {
-                String name = (String) names.get(0);
-                feature.setAttribute("name", name);
-                for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
-                    String recordName = (String) i.next();
-                    if (!recordName.equals(record.getId()) && !recordName.equals(name)) {
-                        synonymsToAdd.add(getSynonym(feature, recordName));
-                    }
-                }
-            } else {
-                String symbol = (String) names.get(0);
-                feature.setAttribute("symbol", (String) names.get(0));
-                for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
-                    String recordName = (String) i.next();
-                    if (!recordName.equals(record.getId()) && !recordName.equals(symbol)) {
-                        synonymsToAdd.add(getSynonym(feature, recordName));
-                    }
-                }
-            }
+            setNames(names, synonymsToAdd, record.getId(), feature, cd);
         }
 
         List<String> parents = record.getParents();
@@ -213,46 +233,7 @@ public class GFF3Converter extends DataConverter
 
         feature.addReference(getOrgRef());
         feature.addToCollection("dataSets", dataSet);
-        if (!"chromosome".equals(record.getType()) && seq != null) {
-            boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
-                && !dontCreateLocations
-                && handler.createLocations(record);
-            if (makeLocation) {
-                Item location = createItem("Location");
-                int start = record.getStart();
-                int end = record.getEnd();
-                if (record.getStart() < record.getEnd()) {
-                    location.setAttribute("start", String.valueOf(start));
-                    location.setAttribute("end", String.valueOf(end));
-                } else {
-                    location.setAttribute("start", String.valueOf(end));
-                    location.setAttribute("end", String.valueOf(start));
-                }
-                if (record.getStrand() != null && "+".equals(record.getStrand())) {
-                    location.setAttribute("strand", "1");
-                } else
-                    if (record.getStrand() != null && "-".equals(record.getStrand())) {
-                        location.setAttribute("strand", "-1");
-                    } else {
-                        location.setAttribute("strand", "0");
-                    }
-                int length = Math.abs(end - start) + 1;
-                feature.setAttribute("length", String.valueOf(length));
 
-                location.setReference("locatedOn", seq.getIdentifier());
-                location.setReference("feature", feature.getIdentifier());
-                location.addToCollection("dataSets", dataSet);
-
-                handler.setLocation(location);
-                if ("Chromosome".equals(seqClsName)
-                        && (cd.getFieldDescriptorByName("chromosome") != null)) {
-                    feature.setReference("chromosome", seq.getIdentifier());
-                    if (makeLocation) {
-                        feature.setReference("chromosomeLocation", location);
-                    }
-                }
-            }
-        }
         handler.addDataSet(dataSet);
         Double score = record.getScore();
         if (score != null && !"".equals(String.valueOf(score))) {
@@ -283,6 +264,30 @@ public class GFF3Converter extends DataConverter
         }
     }
 
+    private Item getLocation(GFF3Record record, String refId, Item seq, ClassDescriptor cd) {
+        Item location = createItem("Location");
+        int start = record.getStart();
+        int end = record.getEnd();
+        if (record.getStart() < record.getEnd()) {
+            location.setAttribute("start", String.valueOf(start));
+            location.setAttribute("end", String.valueOf(end));
+        } else {
+            location.setAttribute("start", String.valueOf(end));
+            location.setAttribute("end", String.valueOf(start));
+        }
+        if (record.getStrand() != null && "+".equals(record.getStrand())) {
+            location.setAttribute("strand", "1");
+        } else if (record.getStrand() != null && "-".equals(record.getStrand())) {
+            location.setAttribute("strand", "-1");
+        } else {
+            location.setAttribute("strand", "0");
+        }
+        location.setReference("locatedOn", seq.getIdentifier());
+        location.setReference("feature", refId);
+        location.addToCollection("dataSets", dataSet);
+        return location;
+    }
+
     private void setRefsAndCollections(List<String> parents, Item feature) {
         String clsName = feature.getClassName();
         Map<String, String> refsAndCollections = handler.getRefsAndCollections();
@@ -310,6 +315,29 @@ public class GFF3Converter extends DataConverter
             } else if (parentIter.hasNext()) {
                 throw new RuntimeException("No '" + refName + "' reference/collection found in "
                         + "class: " + clsName + " - is map configured correctly?");
+            }
+        }
+    }
+
+    private void setNames(List<?> names, Set<Item> synonymsToAdd, String recordId,
+            Item feature, ClassDescriptor cd) {
+        if (cd.getFieldDescriptorByName("symbol") == null) {
+            String name = (String) names.get(0);
+            feature.setAttribute("name", name);
+            for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
+                String recordName = (String) i.next();
+                if (!recordName.equals(recordId) && !recordName.equals(name)) {
+                    synonymsToAdd.add(getSynonym(feature, recordName));
+                }
+            }
+        } else {
+            String symbol = (String) names.get(0);
+            feature.setAttribute("symbol", (String) names.get(0));
+            for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
+                String recordName = (String) i.next();
+                if (!recordName.equals(recordId) && !recordName.equals(symbol)) {
+                    synonymsToAdd.add(getSynonym(feature, recordName));
+                }
             }
         }
     }
@@ -484,6 +512,13 @@ public class GFF3Converter extends DataConverter
             dataSets.put(title, item);
         }
         return item;
+    }
+
+    private int getLength(GFF3Record record) {
+        int start = record.getStart();
+        int end = record.getEnd();
+        int length = Math.abs(end - start) + 1;
+        return length;
     }
 
     private String getRefId(String identifier) {
