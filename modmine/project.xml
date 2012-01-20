@@ -96,10 +96,11 @@
       <property name="treefam.organisms" value="7227 6239"/>
     </source>
     -->
-    <!-- Added r28 -->
+    <!-- Added r28 
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
-    </source>        
+    </source>
+    -->        
     <!-- Added r25 -->
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
