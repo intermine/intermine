@@ -12,6 +12,7 @@ package org.intermine.bio.ontology;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,10 +80,9 @@ public class SequenceOntology
      * Constructor.
      *
      * @param termsFile file containing list of SO terms to filter on
-     * @param oboFile so.obo
      * @param oboFileName full path of OBO file, needed for OboParser
      */
-    public SequenceOntology(InputStream oboFile, String oboFileName, InputStream termsFile) {
+    public SequenceOntology(String oboFileName, InputStream termsFile) {
 
         if (termsFile != null) {
             //  parse SO terms from config file
@@ -90,7 +90,7 @@ public class SequenceOntology
         }
 
         // parse all SO terms, filter on SO terms in config file
-        process(oboFile, oboFileName);
+        process(oboFileName);
     }
 
     /**
@@ -728,12 +728,12 @@ public class SequenceOntology
      * 2. trims unwanted SO terms using config file as guide
      * 3. finally creates class descriptors based on relationships created in previous steps
      */
-    private void process(InputStream inputStream, String oboFilename) {
+    private void process(String oboFilename) {
 
         // parse file using OBOEdit
         OboParser parser = new OboParser();
         try {
-            parser.processOntology(new InputStreamReader(inputStream));
+            parser.processOntology(new FileReader(oboFilename));
             parser.processRelations(oboFilename);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Couldn't find obo file", e);

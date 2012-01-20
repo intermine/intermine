@@ -364,7 +364,6 @@ public class GFF3Exporter implements Exporter
      *
      */
     private void makeRecord() {
-        LOG.info("attributes >>> " + attributes);
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
                 attributes, makeUcscCompatible);
 

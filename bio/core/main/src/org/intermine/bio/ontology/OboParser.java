@@ -81,6 +81,7 @@ public class OboParser
      * @param dagFileName the name of the obo file to read from
      * @throws Exception if something goes wrong
      */
+    @SuppressWarnings("unchecked")
     public void processRelations(String dagFileName) throws Exception {
         File temp = null;
         File f = new File("build");
@@ -163,6 +164,7 @@ public class OboParser
      * @param in text in DAG format
      * @throws IOException if anything goes wrong
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void readTerms(BufferedReader in) throws IOException {
         String line;
         Map<String, String> tagValues = new MultiValueMap();
