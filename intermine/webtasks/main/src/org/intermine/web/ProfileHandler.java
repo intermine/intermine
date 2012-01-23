@@ -15,13 +15,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.profile.BagSet;
+import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagHandler;
-import org.intermine.api.profile.InterMineBag.BagValue;
-import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
 import org.intermine.model.userprofile.Tag;
@@ -45,6 +46,7 @@ class ProfileHandler extends DefaultHandler
     private String password;
     private Map<String, SavedQuery> savedQueries;
     private Map<String, InterMineBag> savedBags;
+    private Map<String, InvalidBag> invalidBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
     private Map<String, Set<BagValue>> bagsValues;
@@ -106,7 +108,8 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, TemplateHelper.upcast(savedTemplates), apiKey,
+                                     new BagSet(savedBags, invalidBags),
+                                     TemplateHelper.upcast(savedTemplates), apiKey,
                                      isLocal, isSuperUser);
         return retval;
     }
@@ -151,9 +154,11 @@ class ProfileHandler extends DefaultHandler
         }
         if ("bags".equals(qName)) {
             savedBags = new LinkedHashMap();
+            invalidBags = new LinkedHashMap();
             bagsValues = new LinkedHashMap();
-            subHandler = new InterMineBagHandler(profileManager.getProfileObjectStoreWriter(),
-                    osw, savedBags, bagsValues, null);
+            subHandler = new InterMineBagHandler(
+                    profileManager.getProfileObjectStoreWriter(), osw,
+                    savedBags, invalidBags, bagsValues);
         }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
