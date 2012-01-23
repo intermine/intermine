@@ -17,7 +17,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -109,7 +108,8 @@ public class ProfileManagerTest extends InterMineAPITestCase
                               new PathQuery(Model.getInstanceByName("testmodel")));
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
-                                 new HashMap(), new HashMap(), new HashMap(), bobKey, true, false);
+                Collections.EMPTY_MAP, Collections.EMPTY_MAP, Collections.EMPTY_MAP, bobKey,
+                true, false);
         pm.createProfile(bobProfile);
         bobProfile.saveQuery("query1", sq);
         bobProfile.saveBag("bag1", bag);
@@ -122,9 +122,9 @@ public class ProfileManagerTest extends InterMineAPITestCase
         String sallyName = "sally";
 
         // employees and managers
-//        <bag name="sally_bag2" type="org.intermine.model.CEO">
-//        <bagElement type="org.intermine.model.CEO" id="1011"/>
-//    </bag>
+        //    <bag name="sally_bag2" type="org.intermine.model.CEO">
+        //        <bagElement type="org.intermine.model.CEO" id="1011"/>
+        //    </bag>
 
         CEO ceoEx = new CEO();
         ceoEx.setName("EmployeeB1");
@@ -139,7 +139,7 @@ public class ProfileManagerTest extends InterMineAPITestCase
         template = new ApiTemplate("template", "ttitle", "tcomment",
                                      new PathQuery(Model.getInstanceByName("testmodel")));
         sallyProfile = new Profile(pm, sallyName, sallyId, sallyPass,
-                                   new HashMap(), new HashMap(), new HashMap(), true, false);
+                  Collections.EMPTY_MAP, Collections.EMPTY_MAP, Collections.EMPTY_MAP, true, false);
         pm.createProfile(sallyProfile);
         sallyProfile.saveQuery("query1", sq);
         sallyProfile.saveBag("sally_bag1", objectBag);
@@ -180,10 +180,10 @@ public class ProfileManagerTest extends InterMineAPITestCase
 
         String actualXml = sw.toString().trim();
 
-        assertEquals(massage(expectedXml), massage(actualXml));
+        assertEquals(normalise(expectedXml), normalise(actualXml));
     }
 
-    private static String massage(String x) {
+    private static String normalise(String x) {
         return x.replaceAll(">\\s*<", "><") // Ignore whitespace between elements
                 .replaceAll("\n", "")       // Remove all new-lines
                 .replaceAll("\\s*/>", "/>") // Remove whitespace before />
@@ -218,12 +218,12 @@ public class ProfileManagerTest extends InterMineAPITestCase
         assertEquals(expectedBagContents,
                     (stored2.getSavedBags().get("stored_2_3")).getContentsAsIds());
 
-        List<InterMineBag.BagValue> contentsAsKey = (stored2.getSavedBags()
-                .get("stored_2_1")).getContentsAsKeyFieldAndExtraValue();
+        List<BagValue> contentsAsKey = (stored2.getSavedBags()
+                .get("stored_2_1")).getContents();
         assertEquals("DepartmentA1", contentsAsKey.get(0).value);
 
-        List<InterMineBag.BagValue> contentsAsKey2 = (stored2.getSavedBags()
-                .get("stored_2_3")).getContentsAsKeyFieldAndExtraValue();
+        List<BagValue> contentsAsKey2 = (stored2.getSavedBags()
+                .get("stored_2_3")).getContents();
         assertEquals("EmployeeA3", contentsAsKey2.get(0).value);
         assertEquals("EmployeeB2", contentsAsKey2.get(1).value);
 
