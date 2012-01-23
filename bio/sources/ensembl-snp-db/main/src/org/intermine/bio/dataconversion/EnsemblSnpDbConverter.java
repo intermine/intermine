@@ -308,32 +308,36 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             // CONSEQUENCE TYPES
             // for SNPs without a uniqueLocation there will be different consequences at each one.
             // some consequences will need to stored at the end
-
-            String type = res.getString("tv.consequence_types");
-            // Seen one example so far where consequence type is an empty string
-            if (StringUtils.isBlank(type)) {
-                type = "UNKOWN";
-            }
             String transcriptStableId = res.getString("feature_stable_id");
 
-            Item consequenceItem = createItem("Consequence");
-            consequenceItem.setAttribute("description", type);
-            for (String individualType : type.split(",")) {
-                consequenceItem.addToCollection("types", getConsequenceType(individualType.trim()));
-            }
-            setAttIfValue(consequenceItem, "peptideAlleles", res.getString("pep_allele_string"));
-            setAttIfValue(consequenceItem, "siftPrediction", res.getString("sift_prediction"));
-            setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
-            setAttIfValue(consequenceItem, "polyphenPrediction",
-                    res.getString("polyphen_prediction"));
-            setAttIfValue(consequenceItem, "polyphenScore", res.getString("polyphen_score"));
-
             if (!StringUtils.isBlank(transcriptStableId)) {
-                consequenceItem.setReference("transcript",
-                        getTranscriptIdentifier(transcriptStableId));
+                String type = res.getString("tv.consequence_types");
+                // Seen one example so far where consequence type is an empty string
+                if (StringUtils.isBlank(type)) {
+                    type = "UNKNOWN";
+                }
+
+                Item consequenceItem = createItem("Consequence");
+                consequenceItem.setAttribute("description", type);
+                for (String individualType : type.split(",")) {
+                    consequenceItem.addToCollection("types",
+                                getConsequenceType(individualType.trim()));
+                }
+                setAttIfValue(consequenceItem, "peptideAlleles",
+                        res.getString("pep_allele_string"));
+                setAttIfValue(consequenceItem, "siftPrediction", res.getString("sift_prediction"));
+                setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
+                setAttIfValue(consequenceItem, "polyphenPrediction",
+                        res.getString("polyphen_prediction"));
+                setAttIfValue(consequenceItem, "polyphenScore", res.getString("polyphen_score"));
+
+                if (!StringUtils.isBlank(transcriptStableId)) {
+                    consequenceItem.setReference("transcript",
+                            getTranscriptIdentifier(transcriptStableId));
+                }
+                consequenceIdentifiers.add(consequenceItem.getIdentifier());
+                store(consequenceItem);
             }
-            consequenceIdentifiers.add(consequenceItem.getIdentifier());
-            store(consequenceItem);
 
             if (counter % 100000 == 0) {
                 LOG.info("Read " + counter + " rows total, stored " + snpCounter + " SNPs. for chr "
