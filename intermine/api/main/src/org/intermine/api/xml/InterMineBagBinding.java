@@ -20,6 +20,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.util.SAXParser;
@@ -70,8 +71,8 @@ public class InterMineBagBinding
                 writer.writeAttribute("description", bag.getDescription());
             }
             writer.writeAttribute("status", bag.getState());
-            List<InterMineBag.BagValue> keyFieldValues = bag.getContentsAsKeyFieldAndExtraValue();
-            for (InterMineBag.BagValue bagValues : keyFieldValues) {
+            List<BagValue> keyFieldValues = bag.getContents();
+            for (BagValue bagValues : keyFieldValues) {
                 writer.writeEmptyElement("bagValue");
                 writer.writeAttribute("value", bagValues.getValue());
                 writer.writeAttribute("extra", bagValues.getExtra());
@@ -86,16 +87,17 @@ public class InterMineBagBinding
      * Parse saved queries from a Reader
      * @param reader the saved bags
      * @param uosw UserProfile ObjectStoreWriter
-     * @param osw ObjectStoreWriter used to resolve object ids and write to ObjectStoreBags
+     * @param osw ObjectStoreWriter used to resolve object id's and write to ObjectStoreBags
      * @param userId an Integer
      */
     public static Map unmarshal(final Reader reader, final ObjectStoreWriter uosw,
             final ObjectStoreWriter osw, Integer userId) {
         final Map bags = new LinkedHashMap();
         final Map bagsValues = new LinkedHashMap();
+        final Map invalidBags = new LinkedHashMap();
         try {
             SAXParser.parse(new InputSource(reader), new InterMineBagHandler(uosw, osw, bags,
-                        bagsValues, userId));
+                    invalidBags, bagsValues, userId));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

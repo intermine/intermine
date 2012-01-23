@@ -17,8 +17,10 @@ package org.intermine.api.bag;
  * @author Richard Smith
  *
  */
-public class UnknownBagTypeException extends RuntimeException
+public class UnknownBagTypeException extends Exception
 {
+    private static final long serialVersionUID = 7566185607950016514L;
+
     /**
      * Constructs an IncompatibleBagTypesException with the specified detail message.
      *

@@ -22,9 +22,10 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
-import org.intermine.api.profile.InterMineBag.BagValue;
+import org.intermine.api.profile.BagValue;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -38,6 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Mark Woodbridge
  * @author Kim Rutherford
+ * @author Alex Kalderimis
  */
 public class InterMineBagHandler extends DefaultHandler
 {
@@ -46,6 +48,7 @@ public class InterMineBagHandler extends DefaultHandler
     private ObjectStoreWriter uosw;
     private ObjectStoreWriter osw;
     private Map<String, InterMineBag> bags;
+    private Map<String, InvalidBag> invalidBags;
     private Integer userId;
     private Model model;
 
@@ -54,6 +57,7 @@ public class InterMineBagHandler extends DefaultHandler
     private String bagDescription;
     private String bagState;
     private InterMineBag bag;
+    private InvalidBag invalidBag;
     private int elementsInOldBag;
     private Set<BagValue> bagValues;
     private Map<String, Set<BagValue>> bagContents;
@@ -65,15 +69,17 @@ public class InterMineBagHandler extends DefaultHandler
      * @param uosw UserProfile ObjectStoreWriter
      * @param osw ObjectStoreWriter used to resolve object ids and write to the objectstore bag
      * @param bags Map from bag name to InterMineIdBag - results are added to this Map
+     * @param invalidBags Accumulator for the bags of this user that are no longer valid.
      * @param userId the id of the user
-     * @param idToObjectMap a Map from id to InterMineObject. This is used to create template
-     * objects to pass to createPKQuery() so that old bags can be used with new ObjectStores.
+     * @param bagsValues a Map from bag name to sets of bag values.
      */
     public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw,
-            Map<String, InterMineBag> bags, Map<String, Set<BagValue>> bagsValues, Integer userId) {
+            Map<String, InterMineBag> bags, Map<String, InvalidBag> invalidBags,
+            Map<String, Set<BagValue>> bagsValues, Integer userId) {
         this.uosw = uosw;
         this.osw = osw;
         this.bags = bags;
+        this.invalidBags = invalidBags;
         this.bagContents = bagsValues;
         this.userId = userId;
         this.model = osw.getModel();
@@ -89,7 +95,21 @@ public class InterMineBagHandler extends DefaultHandler
     }
 
     /**
-     * {@inheritDoc}
+     * Create a new InterMineBagHandler object.
+     *
+     * @param uosw UserProfile ObjectStoreWriter
+     * @param osw ObjectStoreWriter used to resolve object ids and write to the objectstore bag
+     * @param bags Map from bag name to InterMineIdBag - results are added to this Map
+     * @param bagsValues a Map from bagName to a set of bag values.
+     */
+    public InterMineBagHandler(ObjectStoreWriter uosw, ObjectStoreWriter osw,
+            Map<String, InterMineBag> bags, Map<String, InvalidBag> invalidBags,
+            Map<String, Set<BagValue>> bagsValues) {
+        this(uosw, osw, bags, invalidBags, bagsValues, null);
+    }
+
+    /**
+     * {@inheritDoc}InvalidBag
      */
     @Override
     public void startElement(@SuppressWarnings("unused") String uri,
@@ -114,20 +134,22 @@ public class InterMineBagHandler extends DefaultHandler
                 if (model.hasClassDescriptor(bagClsName)) {
                     bag = new InterMineBag(bagName, bagType, bagDescription,
                             dateCreated, BagState.NOT_CURRENT, osw.getObjectStore(),
-                            userId, uosw, ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
+                            uosw, ClassKeyHelper.getKeyFieldNames(classKeys, bagType));
                 } else {
-                    LOG.warn("Not upgrading bag: " + bagName + " for user: " + userId
-                            + " - " + bagType + " no longer in model.");
+                    invalidBag = new InvalidBag(bagName, bagType, bagDescription,
+                            dateCreated, osw.getObjectStore(), uosw);
+                    LOG.warn(bagName + " for user: " + userId + " is invalid: "
+                            + bagType + " is not in the model.");
                 }
             }
 
-            if ("bagValue".equals(qName) && bag != null) {
+            if ("bagValue".equals(qName) && bagValues != null) {
                 elementsInOldBag++;
                 String value = attrs.getValue("value");
                 String extra = attrs.getValue("extra");
-                bagValues.add(bag.new BagValue(value, extra));
+                bagValues.add(new BagValue(value, extra));
             }
-        } catch (ObjectStoreException e) {
+        } catch (Exception e) {
             throw new SAXException(e);
         }
     }
@@ -141,14 +163,23 @@ public class InterMineBagHandler extends DefaultHandler
             String qName) throws SAXException {
         try {
             if ("bag".equals(qName)) {
+                String debugMsg = "";
                 if (bag != null && !bagValues.isEmpty()) {
                     bags.put(bagName, bag);
                     bagContents.put(bagName, bagValues);
+                    debugMsg = "bag with " + bag.size() + " elements";
                 }
+                if (invalidBag != null) {
+                    invalidBags.put(bagName, invalidBag);
+                    bagContents.put(bagName, bagValues);
+                    debugMsg = "invalid bag with " + bagValues.size() + " old values";
+                }
+                System.out.println("XML bag \"" + bagName + "\" contained " + elementsInOldBag
+                        + " elements; created " + debugMsg);
                 LOG.debug("XML bag \"" + bagName + "\" contained " + elementsInOldBag
-                        + " elements, created bag with " + (bag == null ? "null"
-                                : "" + bag.size()) + " elements");
+                        + " elements; created " + debugMsg);
                 bag = null;
+                invalidBag = null;
                 elementsInOldBag = 0;
             }
         } catch (ObjectStoreException e) {

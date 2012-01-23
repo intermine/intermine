@@ -19,6 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -278,6 +279,8 @@ public class ModelUpdate
             } catch (ObjectStoreException ose) {
                 System.out.println("Problems updating savedBag " + savedBag.getName()
                                    + ose.getMessage());
+            } catch (UnknownBagTypeException e) {
+                throw new RuntimeException("When trying to correct a bag's type", e);
             }
         }
     }

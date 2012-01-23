@@ -17,10 +17,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
@@ -52,7 +54,7 @@ public class Profile
         = Collections.synchronizedMap(new TreeMap<String, InterMineBag>());
     protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
-    protected Map<String, InterMineBag> savedInvalidBags = new TreeMap<String, InterMineBag>();
+    protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
     protected Map queryHistory = new ListOrderedMap();
     protected boolean savingDisabled;
     private final SearchRepository searchRepository;
@@ -119,7 +121,18 @@ public class Profile
                    boolean isSuperUser) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates, token,
             isLocal, isSuperUser);
-        this.savedInvalidBags = savedInvalidBags;
+        for (Entry<String, InterMineBag> pair: savedInvalidBags.entrySet()) {
+            this.savedInvalidBags.put(pair.getKey(), pair.getValue().invalidate());
+        }
+    }
+
+    public Profile(ProfileManager manager, String username, Integer userId, String password,
+            Map<String, SavedQuery> savedQueries, BagSet bagset,
+            Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
+            boolean isSuperUser) {
+        this(manager, username, userId, password, savedQueries, bagset.getBags(), savedTemplates,
+                token, isLocal, isSuperUser);
+        this.savedInvalidBags.putAll(bagset.getInvalidBags());
     }
 
     /**
@@ -371,6 +384,33 @@ public class Profile
     }
 
     /**
+     * @return the invalid bags for this profile.
+     */
+    public synchronized Map<String, InvalidBag> getInvalidBags() {
+        return Collections.unmodifiableMap(this.savedInvalidBags);
+    }
+
+    public synchronized void fixInvalidBag(String name, String newType)
+        throws UnknownBagTypeException, ObjectStoreException {
+        InvalidBag invb = savedInvalidBags.get(name);
+        InterMineBag imb = invb.amendTo(newType);
+        savedInvalidBags.remove(name);
+        saveBag(name, imb);
+    }
+
+    /**
+     * Get all bags associated with this profile, both valid and invalid.
+     *
+     * @return a map from name to bag.
+     */
+    public synchronized Map<String, StorableBag> getAllBags() {
+        Map<String, StorableBag> ret = new HashMap<String, StorableBag>();
+        ret.putAll(savedBags);
+        ret.putAll(savedInvalidBags);
+        return Collections.unmodifiableMap(ret);
+    }
+
+    /**
      * Get the saved bags in a map of "status key" -> map of lists
      * @return
      */
@@ -431,7 +471,8 @@ public class Profile
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description,
-        Map<String, List<FieldDescriptor>> classKeys) throws ObjectStoreException {
+        Map<String, List<FieldDescriptor>> classKeys)
+        throws UnknownBagTypeException, ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
@@ -454,7 +495,7 @@ public class Profile
         if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
-        InterMineBag bagToDelete;
+        StorableBag bagToDelete;
         if (savedBags.containsKey(name)) {
             bagToDelete = savedBags.get(name);
             savedBags.remove(name);
@@ -476,20 +517,22 @@ public class Profile
      * If there is no such bag associated with the account, no action is performed.
      * @param name the bag name
      * @param newType the type to set
-     * @throws ObjectStoreException if problems deleting bag
+     * @throws ObjectStoreException if problems storing bag
      */
-    public void updateBagType(String name, String newType) throws ObjectStoreException {
+    public void updateBagType(String name, String newType)
+        throws UnknownBagTypeException, BagDoesNotExistException, ObjectStoreException {
         if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
-        InterMineBag bagToUpdate;
         if (savedBags.containsKey(name)) {
-            bagToUpdate = savedBags.get(name);
+            InterMineBag bagToUpdate = savedBags.get(name);
+            if (isLoggedIn()) {
+                bagToUpdate.setType(newType);
+            }
         } else {
-            bagToUpdate = savedInvalidBags.get(name);
-        }
-        if (isLoggedIn()) {
-            bagToUpdate.setType(newType);
+            InterMineBag recovered = savedInvalidBags.get(name).amendTo(newType);
+            savedInvalidBags.remove(name);
+            savedBags.put(recovered.getName(), recovered);
         }
     }
 
@@ -502,18 +545,23 @@ public class Profile
      * @throws ObjectStoreException if problems storing
      */
     public void renameBag(String oldName, String newName) throws ObjectStoreException {
-        if (!savedBags.containsKey(oldName)) {
+        if (!getAllBags().containsKey(oldName)) {
             throw new BagDoesNotExistException("Attempting to rename " + oldName);
         }
-        if (savedBags.containsKey(newName)) {
+        if (getAllBags().containsKey(newName)) {
             throw new ProfileAlreadyExistsException("Attempting to rename a bag to a new name that"
                     + " already exists: " + newName);
         }
-
-        InterMineBag bag = savedBags.get(oldName);
-        savedBags.remove(oldName);
-        bag.setName(newName);
-        saveBag(newName, bag);
+        if (savedBags.containsKey(oldName)) {
+            InterMineBag bag = savedBags.get(oldName);
+            savedBags.remove(oldName);
+            bag.setName(newName);
+            saveBag(newName, bag);
+        } else {
+            InvalidBag bag = savedInvalidBags.get(oldName);
+            savedInvalidBags.remove(oldName);
+            savedInvalidBags.put(newName, bag.rename(newName));
+        }
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
     }
 
