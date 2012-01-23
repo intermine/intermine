@@ -81,7 +81,7 @@ public class BagManagerTest extends InterMineAPITestCase
         assertEquals(expected, bagManager.getBagsWithTag(superUser, TagNames.IM_HIDDEN));
     }
 
-    public void testGetBagsWithTagsDashCollisions() throws ObjectStoreException, TagNameException, TagNamePermissionException {
+    public void testGetBagsWithTagsDashCollisions() throws Exception {
         Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
         InterMineBag listA = superUser.createBag("list-a", "Employee", "", classKeys);
         InterMineBag list_A = superUser.createBag("list_a", "Employee", "", classKeys);
@@ -93,7 +93,7 @@ public class BagManagerTest extends InterMineAPITestCase
 
     }
 
-    public void testGetBagsWithTagsUnderscoreCollisions() throws ObjectStoreException, TagNameException, TagNamePermissionException {
+    public void testGetBagsWithTagsUnderscoreCollisions() throws Exception {
         Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
         InterMineBag listA = superUser.createBag("listX", "Employee", "", classKeys);
         InterMineBag list_A = superUser.createBag("list_", "Employee", "", classKeys);
@@ -104,7 +104,7 @@ public class BagManagerTest extends InterMineAPITestCase
         assertEquals(expected, bagManager.getBagsWithTag(superUser, "FOO"));
     }
 
-    public void testGetBagsWithTagsCaseCollisions() throws ObjectStoreException, TagNameException, TagNamePermissionException {
+    public void testGetBagsWithTagsCaseCollisions() throws Exception {
         Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
         InterMineBag listb = superUser.createBag("list-b", "Employee", "", classKeys);
         InterMineBag listB = superUser.createBag("list-B", "Employee", "", classKeys);

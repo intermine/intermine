@@ -11,6 +11,7 @@ package org.intermine.api;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,10 @@ import junit.framework.TestCase;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.profile.BagSet;
 import org.intermine.api.profile.DeletingProfileManager;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.tracker.TrackerDelegate;
@@ -86,8 +90,14 @@ public class InterMineAPITestCase extends TestCase {
                                         new HashMap(), new HashMap(), true, true);
         pmTmp.createProfile(superUser);
 
-        testUser = new Profile(pmTmp, "testUser", null, "password", new HashMap(), new HashMap(),
-                               new HashMap(), true, false);
+        String apiKey = "abcdef012345";
+        Integer userId = null;
+        Map<String, InvalidBag> invalidBags = new HashMap<String, InvalidBag>();
+        Map<String, InterMineBag> validBags = new HashMap<String, InterMineBag>();
+
+        testUser = new Profile(pmTmp, "testUser", userId, "password",
+                               new HashMap(), new BagSet(validBags, invalidBags),
+                               new HashMap(), apiKey, true, false);
         pmTmp.createProfile(testUser);
 
         String[] trackerClassNames = {"org.intermine.api.tracker.TemplateTracker",
@@ -96,9 +106,7 @@ public class InterMineAPITestCase extends TestCase {
                 "org.intermine.api.tracker.KeySearchTracker"};
         trackerDelegate = new TrackerDelegate(trackerClassNames, uosw);
 
-
         im = new InterMineAPI(os, uosw, classKeys, bagQueryConfig, oss, trackerDelegate, null);
-
     }
 
     public void tearDown() throws Exception {
