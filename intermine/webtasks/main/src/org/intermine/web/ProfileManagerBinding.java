@@ -20,22 +20,21 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.servlet.ServletException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.StorableBag;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
-import org.intermine.api.profile.InterMineBag.BagValue;
-import org.intermine.metadata.FieldDescriptor;
 import org.intermine.api.tracker.xml.TrackManagerBinding;
 import org.intermine.api.tracker.xml.TrackManagerHandler;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.modelproduction.MetadataManager;
 import org.intermine.objectstore.ObjectStore;
@@ -55,9 +54,13 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Kim Rutherford
  */
-
-public class ProfileManagerBinding
+public final class ProfileManagerBinding
 {
+
+    private ProfileManagerBinding() {
+        // Hidden constructor for utility class.
+    }
+
     private static final Logger LOG = Logger.getLogger(ProfileManagerBinding.class);
 
     /**
@@ -75,7 +78,7 @@ public class ProfileManagerBinding
             writer.writeStartElement("userprofiles");
             String profileVersion = getProfileVersion(profileManager.getProfileObjectStoreWriter());
             writer.writeAttribute(MetadataManager.PROFILE_FORMAT_VERSION, profileVersion);
-            List usernames = profileManager.getProfileUserNames();
+            List<?> usernames = profileManager.getProfileUserNames();
 
             for (Object userName : usernames) {
                 Profile profile = profileManager.getProfile((String) userName);
@@ -209,13 +212,13 @@ class ProfileManagerHandler extends DefaultHandler
             } else {
                 version = Integer.parseInt(value);
             }
-            ObjectStoreWriter osw = profileManager.getProfileObjectStoreWriter();
+            ObjectStoreWriter userprofileOsw = profileManager.getProfileObjectStoreWriter();
             try {
-                Connection con = ((ObjectStoreInterMineImpl) osw).getConnection();
+                Connection con = ((ObjectStoreInterMineImpl) userprofileOsw).getConnection();
                 if (!DatabaseUtil.tableExists(con, "bagvalues")) {
                     DatabaseUtil.createBagValuesTables(con);
                 }
-                ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
+                ((ObjectStoreInterMineImpl) userprofileOsw).releaseConnection(con);
             } catch (SQLException sqle) {
                 LOG.error("Problem retrieving connection", sqle);
             }
@@ -227,11 +230,9 @@ class ProfileManagerHandler extends DefaultHandler
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
         }
-
         if ("tracks".equals(qName)) {
             trackHandler = new TrackManagerHandler(profileManager.getProfileObjectStoreWriter());
         }
-
         if (trackHandler != null) {
             trackHandler.startElement(uri, localName, qName, attrs);
         }
@@ -248,11 +249,11 @@ class ProfileManagerHandler extends DefaultHandler
             profileManager.createProfileWithoutBags(profile);
             try {
                 Map<String, Set<BagValue>> bagValues = profileHandler.getBagsValues();
-                for (InterMineBag bag : profile.getSavedBags().values()) {
+                for (StorableBag bag : profile.getAllBags().values()) {
                     bag.saveWithBagValues(profile.getUserId(), bagValues.get(bag.getName()));
                 }
             } catch (ObjectStoreException ose) {
-                throw new RuntimeException(ose);
+                throw new SAXException(ose);
             }
             Set<Tag> tags = profileHandler.getTags();
             TagManager tagManager =
@@ -262,14 +263,14 @@ class ProfileManagerHandler extends DefaultHandler
                     tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(), tag.getType(),
                             profile);
                 } catch (TagManager.TagException e) {
-                    LOG.error("Error during adding tag: " + tag.toString(), e);
+                    LOG.error("Cannot add tag: " + tag.toString(), e);
                     if (abortOnError) {
-                        throw new RuntimeException(e);
+                        throw new SAXException(e);
                     }
                 } catch (RuntimeException e) {
-                    LOG.error("Error during adding tag: " + tag.toString(), e);
+                    LOG.error("Error adding tag: " + tag.toString(), e);
                     if (abortOnError) {
-                        throw e;
+                        throw new SAXException(e);
                     }
                 }
             }
@@ -286,6 +287,7 @@ class ProfileManagerHandler extends DefaultHandler
         }
     }
 
+    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (profileHandler != null) {
             profileHandler.characters(ch, start, length);
