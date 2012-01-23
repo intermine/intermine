@@ -68,13 +68,11 @@ import org.intermine.util.TypeUtil;
  * @author Kim Rutherford
  * @author Matthew Wakeling
  */
-public class InterMineBag implements WebSearchable, Cloneable
+public class InterMineBag extends StorableBag implements WebSearchable, Cloneable
 {
     protected static final Logger LOG = Logger.getLogger(InterMineBag.class);
     /** name of bag values table */
     public static final String BAG_VALUES = "bagvalues";
-    private Integer profileId;
-    private Integer savedBagId;
     private String name;
     private String type;
     private String description;
@@ -102,7 +100,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
-        throws ObjectStoreException {
+        throws UnknownBagTypeException, ObjectStoreException {
         this.type = TypeUtil.unqualifiedName(type);
         init(name, description, dateCreated, state, os, profileId, uosw);
     }
@@ -123,14 +121,36 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
-        List<String> keyFieldNames) throws ObjectStoreException {
+        List<String> keyFieldNames)
+        throws UnknownBagTypeException, ObjectStoreException {
         this.type = TypeUtil.unqualifiedName(type);
         init(name, description, dateCreated, state, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
     }
 
+    /**
+     * Constructs a new InterMineBag, and saves it in the UserProfile database.
+     *
+     * @param name the name of the bag
+     * @param type the class of objects stored in the bag
+     * @param description the description of the bag
+     * @param dateCreated the Date when this bag was created
+     * @param state the state of the bag
+     * @param os the production ObjectStore
+     * @param uosw the ObjectStoreWriter of the userprofile database
+     * @param keyFieldNames the list of identifiers defined for this bag
+     * @throws ObjectStoreException if an error occurs
+     */
+    public InterMineBag(String name, String type, String description, Date dateCreated,
+        BagState state, ObjectStore os, ObjectStoreWriter uosw,
+        List<String> keyFieldNames)
+        throws UnknownBagTypeException, ObjectStoreException {
+        this(name, type, description, dateCreated, state, os, null, uosw, keyFieldNames);
+    }
+
     private void init(String name, String description, Date dateCreated, BagState state,
-        ObjectStore os, Integer profileId, ObjectStoreWriter uosw) throws ObjectStoreException {
+        ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
+        throws UnknownBagTypeException, ObjectStoreException {
         checkAndSetName(name);
         this.description = description;
         this.dateCreated = dateCreated;
@@ -140,7 +160,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         this.osb = os.createObjectStoreBag();
         this.uosw = uosw;
         this.savedBagId = null;
-        SavedBag savedBag = store();
+        SavedBag savedBag = storeSavedBag();
         this.savedBagId = savedBag.getId();
         setClassDescriptors();
     }
@@ -154,7 +174,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw)
-        throws ObjectStoreException {
+        throws UnknownBagTypeException, ObjectStoreException {
         this(os, savedBagId, uosw, true);
     }
 
@@ -169,7 +189,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw,
         boolean classDescriptor)
-        throws ObjectStoreException {
+        throws UnknownBagTypeException, ObjectStoreException {
         this.os = os;
         this.uosw = uosw;
         this.savedBagId = savedBagId;
@@ -187,7 +207,23 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    private void setClassDescriptors() {
+
+
+    /**
+     * Declare that this bag is invalid, and return its InvalidBag representation.
+     * @return An InvalidBag version of the database record.
+     */
+    protected InvalidBag invalidate() {
+        try {
+            return new InvalidBag(name, type, description, dateCreated, os,
+                savedBagId, profileId, osb, uosw);
+        } catch (ObjectStoreException e) {
+            // Shouldn't happen, unless this.osb == null, and then things are really screwy.
+            throw new RuntimeException("Unexpected error:", e);
+        }
+    }
+
+    private void setClassDescriptors() throws UnknownBagTypeException {
         try {
             Class<?> cls = Class.forName(getQualifiedType());
             classDescriptors = os.getModel().getClassDescriptorsForClass(cls);
@@ -206,28 +242,13 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    private SavedBag store() throws ObjectStoreException {
-        SavedBag savedBag = new SavedBag();
-        savedBag.setId(savedBagId);
-        if (profileId != null) {
-            savedBag.setName(name);
-            savedBag.setType(type);
-            savedBag.setDescription(description);
-            savedBag.setDateCreated(dateCreated);
-            savedBag.proxyUserProfile(new ProxyReference(null, profileId, UserProfile.class));
-            savedBag.setOsbId(osb.getBagId());
-            savedBag.setState(state.toString());
-            uosw.store(savedBag);
-        }
-        return savedBag;
-    }
-
     /**
      * Delete this bag from the userprofile database, bag should not be used after this method has
      * been called. Delete the ids from the production database too.
      * @throws ObjectStoreException if problem deleting bag
      */
-    protected void delete() throws ObjectStoreException {
+    @Override
+    public void delete() throws ObjectStoreException {
         if (profileId != null) {
             SavedBag savedBag = (SavedBag) uosw.getObjectStore().getObjectById(savedBagId,
                     SavedBag.class);
@@ -289,45 +310,12 @@ public class InterMineBag implements WebSearchable, Cloneable
      * by this bag.
      * @return the list of BagValue
      */
-    public List<BagValue> getContentsAsKeyFieldAndExtraValue() {
+    @Override
+    public List<BagValue> getContents() {
         if (isCurrent()) {
             return getContentsFromOsb();
         } else {
-            //we are upgrading bags, the osbag_int is empty, we need to use bagvalues table
-            Connection conn = null;
-            Statement stm = null;
-            ResultSet rs = null;
-            List<BagValue> primaryIdentifiersList = new ArrayList<BagValue>();
-            ObjectStoreInterMineImpl uos = null;
-            try {
-                uos = (ObjectStoreInterMineImpl) uosw.getObjectStore();
-                conn = uos.getConnection();
-                stm = conn.createStatement();
-                String sql = "SELECT value, extra FROM " + BAG_VALUES + " WHERE savedbagid = "
-                             + savedBagId + " order by value";
-                rs = stm.executeQuery(sql);
-                while (rs.next()) {
-                    primaryIdentifiersList.add(new BagValue(rs.getString(1),
-                                               (rs.getString(2) != null) ? rs.getString(2) : ""));
-                }
-            } catch (SQLException sqe) {
-                LOG.error("Connection problems during loadings primary identifiers fields for"
-                          + "the bag " + name, sqe);
-            } finally {
-                if (rs != null) {
-                    try {
-                        rs.close();
-                        if (stm != null) {
-                            stm.close();
-                        }
-                    } catch (SQLException sqle) {
-                        LOG.error("Problems closing resources in the method "
-                            + "getContentsASPrimaryIdentifierValues for the bag " + name, sqle);
-                    }
-                }
-                uos.releaseConnection(conn);
-            }
-            return primaryIdentifiersList;
+            return super.getContents();
         }
     }
 
@@ -436,48 +424,6 @@ public class InterMineBag implements WebSearchable, Cloneable
     }
 
     /**
-     * Returns a List of BagValue (key field value and extra value) of the objects contained
-     * by this bag.
-     * @return the list of BagValue
-     */
-    public List<BagValue> getContentsOrderByExtraValue() {
-        Connection conn = null;
-        Statement stm = null;
-        ResultSet rs = null;
-        List<BagValue> primaryIdentifiersList = new ArrayList<BagValue>();
-        ObjectStoreInterMineImpl uos = null;
-        try {
-            uos = (ObjectStoreInterMineImpl) uosw.getObjectStore();
-            conn = uos.getConnection();
-            stm = conn.createStatement();
-            String sql = "SELECT value, extra FROM " + BAG_VALUES + " WHERE savedbagid = "
-                         + savedBagId + " ORDER BY extra DESC";
-            rs = stm.executeQuery(sql);
-            while (rs.next()) {
-                primaryIdentifiersList.add(new BagValue(rs.getString(1),
-                                          (rs.getString(2) != null) ? rs.getString(2) : ""));
-            }
-        } catch (SQLException sqe) {
-            LOG.error("Connection problems during loadings primary identifiers fields for"
-                      + "the bag " + name, sqe);
-        } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                    if (stm != null) {
-                        stm.close();
-                    }
-                } catch (SQLException sqle) {
-                    LOG.error("Problems closing resources in the method "
-                        + "getContentsASPrimaryIdentifierValues for the bag " + name, sqle);
-                }
-            }
-            uos.releaseConnection(conn);
-        }
-        return primaryIdentifiersList;
-    }
-
-    /**
      * Upgrades the ObjectStoreBag with a new ObjectStoreBag containing the collection of elements
      * given in input
      * @param values the collection of elements to add
@@ -507,27 +453,18 @@ public class InterMineBag implements WebSearchable, Cloneable
         }
     }
 
-    /**
-     * Returns the size of the bag.
-     *
-     * @return the number of elements in the bag
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public int size() throws ObjectStoreException {
+
+    @Override
+    public int getSize() throws ObjectStoreException {
         Query q = new Query();
         q.addToSelect(osb);
         q.setDistinct(false);
         return os.count(q, ObjectStore.SEQUENCE_IGNORE);
     }
 
-    /**
-     * Getter for size, just to make JSP happy.
-     *
-     * @return the number of elements in the bag
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public int getSize() throws ObjectStoreException {
-        return size();
+    /** @return the user-profile object store writer **/
+    public ObjectStoreWriter getUserProfileWriter() {
+        return uosw;
     }
 
     /**
@@ -557,24 +494,9 @@ public class InterMineBag implements WebSearchable, Cloneable
     public void setProfileId(Integer profileId)
         throws ObjectStoreException {
         this.profileId = profileId;
-        SavedBag savedBag = store();
+        SavedBag savedBag = storeSavedBag();
         this.savedBagId = savedBag.getId();
         addBagValues();
-    }
-
-    /**
-     * Save the bag into the userprofile database
-     *
-     * @param profileId the ID of the userprofile
-     * @param bagValues the list of the key field values of the objects contained by the bag
-     * @throws ObjectStoreException if something goes wrong
-     */
-    public void saveWithBagValues(Integer profileId, Collection<BagValue> bagValues)
-        throws ObjectStoreException {
-        this.profileId = profileId;
-        SavedBag savedBag = store();
-        this.savedBagId = savedBag.getId();
-        addBagValues(bagValues);
     }
 
     /**
@@ -593,7 +515,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public void setName(String name) throws ObjectStoreException {
         checkAndSetName(name);
-        store();
+        storeSavedBag();
     }
 
     // Always set the name via this method to avoid saving bags with blank names
@@ -628,7 +550,7 @@ public class InterMineBag implements WebSearchable, Cloneable
     public void setDescription(String description)
         throws ObjectStoreException {
         this.description = description;
-        store();
+        storeSavedBag();
     }
 
     /**
@@ -647,7 +569,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         throws ObjectStoreException {
         if (os.getModel().getClassDescriptorByName(type) != null) {
             this.type = type;
-            store();
+            storeSavedBag();
         }
     }
 
@@ -674,15 +596,6 @@ public class InterMineBag implements WebSearchable, Cloneable
     public String getTitle() {
         return getName();
     }
-
-    /**
-     * Return the savedbagId of this bag
-     * @return savedbagId
-     */
-    public Integer getSavedBagId() {
-        return savedBagId;
-    }
-
 
     /**
      * Set the keyFieldNames
@@ -727,7 +640,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public void setState(BagState state) throws ObjectStoreException {
         this.state = state;
-        store();
+        storeSavedBag();
     }
 
     /**
@@ -771,7 +684,7 @@ public class InterMineBag implements WebSearchable, Cloneable
         try {
             copy = (InterMineBag) super.clone();
             copy.savedBagId = null;
-            SavedBag savedBag = copy.store();
+            SavedBag savedBag = copy.storeSavedBag();
             copy.savedBagId = savedBag.getId();
             copy.keyFieldNames = keyFieldNames;
         } catch (ObjectStoreException ex) {
@@ -919,7 +832,7 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     public void addBagValues() {
         if (profileId != null) {
-            List<BagValue> values = getContentsAsKeyFieldAndExtraValue();
+            List<BagValue> values = getContents();
             addBagValues(values);
         }
     }
@@ -929,47 +842,8 @@ public class InterMineBag implements WebSearchable, Cloneable
      */
     private void addBagValuesFromIds(Collection<Integer> ids) {
         if (profileId != null) {
-            List<InterMineBag.BagValue> values = getContentsFromOsb(ids);
+            List<BagValue> values = getContentsFromOsb(ids);
             addBagValues(values);
-        }
-    }
-
-    /**
-     * Save the values given in input into bagvalues table
-     * @param bagValues the values to save
-     */
-    public void addBagValues(Collection<BagValue> bagValues) {
-        Connection conn = null;
-        Batch batch = null;
-        try {
-            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            if (conn.getAutoCommit()) {
-                conn.setAutoCommit(false);
-                batch = new Batch(new BatchWriterPostgresCopyImpl());
-                String[] colNames = new String[] {"savedbagid", "value", "extra"};
-                for (BagValue bagValue : bagValues) {
-                    batch.addRow(conn, BAG_VALUES, savedBagId, colNames,
-                                new Object[] {savedBagId, bagValue.value, bagValue.extra});
-                }
-                batch.flush(conn);
-                conn.commit();
-                conn.setAutoCommit(true);
-            }
-        } catch (SQLException sqle) {
-            LOG.error("Exception committing bagValues for bag: " + savedBagId, sqle);
-            try {
-                conn.rollback();
-                conn.setAutoCommit(true);
-            } catch (SQLException sqlex) {
-                throw new RuntimeException("Error aborting transaction", sqlex);
-            }
-        } finally {
-            try {
-                batch.close(conn);
-            } catch (Exception e) {
-                LOG.error("Exception caught when closing Batch while addbagValues", e);
-            }
-            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
 
@@ -981,87 +855,17 @@ public class InterMineBag implements WebSearchable, Cloneable
         addBagValues();
     }
 
+    /**
+     * Delete a given set of bag values from the bag value table. If an empty list is passed in,
+     * no values will be deleted. If null is passed in, that is an error, and an
+     * IllegalArgumentException will be raised.
+     * @param values The values to delete. May not be <code>null</code>.
+     */
+    @Override
     public void deleteBagValues(List<String> values) {
-        Connection conn = null;
-        PreparedStatement stm = null;
-        try {
-            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-
-            Collection<String> placeHolders = CollectionUtils.collect(values,
-                                              new ConstantTransformer("?"));
-            String valuesList = StringUtils.join(placeHolders, ", ");
-            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId = ? "
-                + " AND value IN (" + valuesList + " )";
-            stm = conn.prepareStatement(sql);
-            stm.setInt(1, savedBagId);
-            for (int i = 0; i < values.size(); i++) {
-                stm.setString(i + 2, values.get(i));
-            }
-            stm.executeUpdate();
-        } catch (SQLException sqle) {
-            throw new RuntimeException("Error deleting the " + values.size()
-                    + " bagvalues of bag : " + savedBagId, sqle);
-        } finally {
-            if (stm != null) {
-                try {
-                    stm.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Problem closing  resources in"
-                                               + " deleteBagValuesByValue()", e);
-                }
-            }
-            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        if (values == null) {
+            throw new IllegalArgumentException("values cannot be null");
         }
-    }
-
-    public void deleteAllBagValues() {
-        Connection conn = null;
-        PreparedStatement stm = null;
-        try {
-            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            String sql = "DELETE FROM " + BAG_VALUES + " WHERE savedBagId = ? ";
-            stm = conn.prepareStatement(sql);
-            stm.setInt(1, savedBagId);
-            stm.executeUpdate();
-        } catch (SQLException sqle) {
-            throw new RuntimeException("Error deleting the bagvalues of bag : " + savedBagId, sqle);
-        } finally {
-            if (stm != null) {
-                try {
-                    stm.close();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Problem closing  resources in"
-                                               + " deleteAllBagValues()", e);
-                }
-            }
-            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
-        }
-    }
-
-    public class BagValue
-    {
-        String value = null;
-        String extra = null;
-
-        public BagValue (String value, String extra) {
-            this.value = value;
-            this.extra = extra;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getExtra() {
-            return extra;
-        }
-
-        public void setExtra(String extra) {
-            this.extra = extra;
-        }
+        super.deleteBagValues(values);
     }
 }

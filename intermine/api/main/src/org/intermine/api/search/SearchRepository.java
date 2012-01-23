@@ -269,7 +269,7 @@ public class SearchRepository
      * @param scope webSearchable type (see TemplateHelper)
      * @return a RAMDirectory containing the index
      */
-    private RAMDirectory indexWebSearchables(Map<String, ? extends WebSearchable> webSearchableMap,
+    protected RAMDirectory indexWebSearchables(Map<String, ? extends WebSearchable> webSearchableMap,
             String type) {
         long time = System.currentTimeMillis();
         LOG.info("Indexing webSearchable queries");

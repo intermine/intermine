@@ -316,7 +316,8 @@ public class TagManager
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
         }
-        if (tagName.startsWith(TagNames.IM_PREFIX) && !profile.isSuperuser()) {
+        if (tagName.startsWith(TagNames.IM_PREFIX)
+                && !profile.isSuperuser() && !TagNames.IM_FAVOURITE.equals(tagName)) {
             throw new TagNamePermissionException();
         }
         if (!isValidTagName(tagName)) {
@@ -433,7 +434,7 @@ public class TagManager
 
     private void checkTagType(String type) {
         if (!isKnownTagType(type)) {
-            throw new IllegalArgumentException("unknown tag type: " + type);
+            throw new IllegalArgumentException("unknown tag type: '" + type + "'");
         }
     }
 

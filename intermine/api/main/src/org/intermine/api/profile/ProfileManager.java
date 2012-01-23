@@ -284,7 +284,7 @@ public class ProfileManager
         }
 
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
-        Map<String, InterMineBag> savedInvalidBags = new HashMap<String, InterMineBag>();
+        Map<String, InvalidBag> savedInvalidBags = new HashMap<String, InvalidBag>();
         Query q = new Query();
         QueryClass qc = new QueryClass(SavedBag.class);
         q.addFrom(qc);
@@ -294,27 +294,26 @@ public class ProfileManager
                     ConstraintOp.CONTAINS, new ProxyReference(null, userProfile.getId(),
                         UserProfile.class)));
         try {
-            // TODO ig
             Results bags = uosw.execute(q, 1000, false, false, true);
             for (Iterator<?> i = bags.iterator(); i.hasNext();) {
                 ResultsRow<?> row = (ResultsRow<?>) i.next();
                 Integer bagId = (Integer) row.get(0);
                 SavedBag savedBag = (SavedBag) row.get(1);
-                if (StringUtils.isBlank(savedBag.getName())) {
+                String bagName = savedBag.getName();
+                if (StringUtils.isBlank(bagName)) {
                     LOG.warn("Failed to load bag with blank name on login for user: " + username);
                 } else {
-                    InterMineBag bag = null;
                     try {
-                        bag = new InterMineBag(os, bagId, uosw);
+                        InterMineBag bag = new InterMineBag(os, bagId, uosw);
                         bag.setKeyFieldNames(ClassKeyHelper.getKeyFieldNames(
                                              classKeys, bag.getType()));
-                        savedBags.put(bag.getName(), bag);
+                        savedBags.put(bagName, bag);
                     } catch (UnknownBagTypeException e) {
-                        LOG.warn("The bag '" + savedBag.getName() + " for user '"
-                                + username + "' with type: " + savedBag.getType()
+                        LOG.warn("The bag '" + bagName + "' for user '" + username + "'"
+                                + " with type: " + savedBag.getType()
                                 + " is not in the model. It will be saved into invalidBags", e);
-                        bag = new InterMineBag(os, bagId, uosw, false);
-                        savedInvalidBags.put(bag.getName(), bag);
+                        InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
+                        savedInvalidBags.put(bagName, bag);
                     }
                 }
             }
@@ -367,8 +366,9 @@ public class ProfileManager
                          + template.getTemplateQuery(), err);
             }
         }
+        BagSet bags = new BagSet(savedBags, savedInvalidBags);
         profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
-                savedQueries, savedBags, savedInvalidBags, savedTemplates, userProfile.getApiKey(),
+                savedQueries, bags, savedTemplates, userProfile.getApiKey(),
                 userProfile.getLocalAccount(), userProfile.getSuperuser());
         profileCache.put(username, profile);
         return profile;
