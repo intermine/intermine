@@ -44,19 +44,38 @@
       </span>
   </h1>
   <div id="tool_bar_div">
-      <ul id="button_bar">
-          <li id="tool_bar_li_export"class="tb_button"><img src="images/export.png" width="13" height="13" alt="Export this list"><html:link linkName="#">Export</html:link></li>
+      <c:choose>
+        <c:when test="${invalid}">
+            <html:form action="/triageBag">
+                <html:hidden property="pageName" value="MyMine"/>
+                <html:hidden name="newBagName" property="newBagName" value="__DUMMY-VALUE__"/>
+                <html:hidden property="selectedBags" value="${bag.name}"/>
+                <html:submit property="listsButton" value="delete" styleClass="bagDetailsAction"/>
+                <html:submit property="listsButton" value="export"styleClass="bagDetailsAction"/>
+            </html:form>
+        </c:when>
+        <c:otherwise>
+        <ul id="button_bar">
+          <li id="tool_bar_li_export"class="tb_button">
+            <img src="images/export.png" width="13" height="13" alt="Export this list">
+            <html:link linkName="#">Export</html:link>
+          </li>
           <c:if test="${myBag == 'true'}">
-            <li id="tool_bar_li_edit"class="tb_button"><img src="images/edit.png" width="13" height="13" alt="Edit my list"><html:link linkName="#">Edit</html:link></li>
-      </c:if>
-      </ul>
-    <html:form action="/findInList">
-        <input type="text" name="textToFind" id="textToFind"/>
-          <input type="hidden" name="bagName" value="${bag.name}"/>
-          <html:submit>
-            <fmt:message key="bagDetails.findInList"/>
-          </html:submit>
-    </html:form>
+            <li id="tool_bar_li_edit"class="tb_button">
+              <img src="images/edit.png" width="13" height="13" alt="Edit my list">
+              <html:link linkName="#">Edit</html:link>
+            </li>
+         </c:if>
+        </ul>
+        <html:form action="/findInList">
+            <input type="text" name="textToFind" id="textToFind"/>
+            <input type="hidden" name="bagName" value="${bag.name}"/>
+            <html:submit>
+                <fmt:message key="bagDetails.findInList"/>
+            </html:submit>
+        </html:form>
+        </c:otherwise>
+      </c:choose>
   </div>
   <div style="clear:both;"></div>
 </div>
@@ -98,6 +117,8 @@
         });
     });
 </script>
+
+
 
 <html:form action="/modifyBagDetailsAction">
 <html:hidden property="bagName" value="${bag.name}"/>
@@ -170,28 +191,32 @@
 
 <table style="margin-top: 10px;">
   <tr>
-    <td><tiles:insert name="paging.tile">
-      <tiles:put name="resultsTable" beanName="pagedResults" />
-      <tiles:put name="currentPage" value="bagDetails" />
-      <tiles:put name="bag" beanName="bag" />
-    </tiles:insert></td>
-    <c:if test="${PROFILE.loggedIn}">
-      <td><div id="listTags">
-        <table>
-          <tr>
-            <td><b>Tags&nbsp;&nbsp;</b></td>
-            <td>
-              <c:set var="taggable" value="${bag}"/>
-              <tiles:insert name="inlineTagEditor.tile">
-                     <tiles:put name="taggable" beanName="taggable"/>
-                     <tiles:put name="vertical" value="true"/>
-                     <tiles:put name="show" value="true"/>
-                 </tiles:insert>
-             </td>
-          </tr>
-        </table>
-        </div></td>
-    </c:if>
+      <td>
+          <tiles:insert name="paging.tile">
+            <tiles:put name="resultsTable" beanName="pagedResults" />
+            <tiles:put name="currentPage" value="bagDetails" />
+            <tiles:put name="bag" beanName="bag" />
+          </tiles:insert>
+      </td>
+      <c:if test="${PROFILE.loggedIn}">
+        <td>
+            <div id="listTags">
+              <table>
+                <tr>
+                  <td><b>Tags&nbsp;&nbsp;</b></td>
+                  <td>
+                    <c:set var="taggable" value="${bag}"/>
+                    <tiles:insert name="inlineTagEditor.tile">
+                      <tiles:put name="taggable" beanName="taggable"/>
+                      <tiles:put name="vertical" value="true"/>
+                      <tiles:put name="show" value="true"/>
+                    </tiles:insert>
+                  </td>
+                 </tr>
+              </table>
+            </div>
+        </td>
+      </c:if>
   </tr>
 </table>
 
@@ -232,47 +257,56 @@
 </div>
 
 <%-- BagDisplayers on Left --%>
-    <tiles:insert page="/bagDisplayers.jsp">
-       <tiles:put name="bag" beanName="bag"/>
-       <tiles:put name="showOnLeft" value="true"/>
-    </tiles:insert>
+    <c:if test="${!invalid}">
+        <tiles:insert page="/bagDisplayers.jsp">
+            <tiles:put name="bag" beanName="bag"/>
+            <tiles:put name="showOnLeft" value="true"/>
+        </tiles:insert>
+    </c:if>
 
 </TD>
 
-<TD align="left" valign="top" width="40%">
+<c:if test="${!invalid}">
+    <TD align="left" valign="top" width="40%">
 
 
-<!-- closing toolbar div -->
+    <!-- closing toolbar div -->
 
-<div id="convertList" class="listtoolbox" align="left">
-<tiles:insert name="convertBag.tile">
-     <tiles:put name="bag" beanName="bag" />
-     <tiles:put name="idname" value="cp" />
-     <tiles:put name="orientation" value="h" />
-</tiles:insert>
-</html:form>
+    <div id="convertList" class="listtoolbox" align="left">
+        <tiles:insert name="convertBag.tile">
+            <tiles:put name="bag" beanName="bag" />
+            <tiles:put name="idname" value="cp" />
+            <tiles:put name="orientation" value="h" />
+        </tiles:insert>
+</c:if>
+    </html:form>
+<c:if test="${!invalid}">
 
-<%-- BagDisplayers --%>
-    <tiles:insert page="/bagDisplayers.jsp">
-       <tiles:put name="bag" beanName="bag"/>
-       <tiles:put name="showOnLeft" value="false"/>
+
+    <%-- BagDisplayers --%>
+        <tiles:insert page="/bagDisplayers.jsp">
+        <tiles:put name="bag" beanName="bag"/>
+        <tiles:put name="showOnLeft" value="false"/>
+        </tiles:insert>
+
+    </div>
+
+
+    <!-- link outs -->
+    <div id="linkOuts" class="listtoolbox" align="left">
+        <p>
+    <tiles:insert name="attributeLinks.tile">
+        <tiles:put name="bag" beanName="bag" />
     </tiles:insert>
+    </p>
+    </div>
 
-</div>
-
-
-<!-- link outs -->
-<div id="linkOuts" class="listtoolbox" align="left">
-     <p>
-  <tiles:insert name="attributeLinks.tile">
-    <tiles:put name="bag" beanName="bag" />
-  </tiles:insert>
-  </p>
-</div>
-
-</TD>
+    </TD>
+</c:if>
 </TR>
 </TABLE>
+
+<c:if test="${!invalid}">
 
 <div class="heading" style="clear:both;margin-top:15px">
      <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
@@ -335,6 +369,7 @@
 </div>  <!-- templates body -->
 
 <!-- /templates -->
+</c:if>
 </c:when>
 <c:otherwise>
 <!--  No list found with this name -->

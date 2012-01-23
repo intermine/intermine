@@ -45,17 +45,21 @@ function editName(name){
 }
 
 function renameElement(name, type, index){
-    document.getElementById('form_'+name).style.display="none";
-    document.getElementById('name_'+name).innerHTML="<i>saving...</i>";
-    document.getElementById('name_'+name).style.display="block";
-    AjaxServices.rename(name,type, (document.getElementById('newName_'+name).value).replace(/^\s*|\s*$/g,""), function(str){
-        document.getElementById('name_'+name).innerHTML=str;
-        // coming from mymine
+    var uid = name + type;
+    var selectionInput;
+    document.getElementById('form_' + uid).style.display="none";
+    document.getElementById('name_' + uid).innerHTML="<i>saving...</i>";
+    document.getElementById('name_' + uid).style.display="block";
+    AjaxServices.rename(name,type, (document.getElementById('newName_' + uid).value).replace(/^\s*|\s*$/g,""), function(str){
+        document.getElementById('name_' + uid).innerHTML=str;
         if (document.getElementById('selected_' + type + '_' + index) != null) {
-            document.getElementById('selected_' + type + '_' + index).value=str;
             // coming from bags/templates pages
+            document.getElementById('selected_' + type + '_' + index).value=str;
         } else {
-            document.getElementById('selected_user_' + type + '_' + index).value=str;
+            // coming from mymine
+            if (selectionInput = document.getElementById('selected_user_' + type + '_' + index)) {
+                selectionInput.value = str;
+            }
         }
         // reload so that new "IDs" based on the name match
         window.location.reload();

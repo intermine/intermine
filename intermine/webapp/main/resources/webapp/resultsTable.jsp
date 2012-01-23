@@ -9,12 +9,44 @@
 
 <html:xhtml/>
 
-<tiles:importAttribute name="pagedResults" ignore="false"/>
-<tiles:importAttribute name="currentPage" ignore="false"/>
+<tiles:importAttribute name="pagedResults" ignore="true"/>
+<tiles:importAttribute name="currentPage" ignore="true"/>
 <tiles:importAttribute name="bagName" ignore="true"/>
 <tiles:importAttribute name="inlineTable" ignore="true"/>
 <tiles:importAttribute name="highlightId" ignore="true"/>
 <tiles:importAttribute name="tableIdentifier" ignore="true"/>
+<%-- Required for displaying the contents of invalid bags --%>
+<tiles:importAttribute name="invalid" ignore="true"/>
+<tiles:importAttribute name="bag" ignore="true"/>
+
+<c:choose>
+    <c:when test="${invalid}">
+        <div class="results collection-table nowrap nomargin">
+            <table>
+                <thead>
+                    <tr onclick="javascript:jQuery('tr.invalid-value').fadeToggle('fast')">
+                        <th>Value</th>
+                        <th>Extra Value</th>
+                    </tr>
+                </thead>
+                <tbody id="invalid-values">
+                    <c:forEach var="bagValue" items="${bag.contents}" varStatus="status">
+                    <c:set var="rowClass">
+                        <c:choose>
+                        <c:when test="${status.count % 2 == 1}">even</c:when>
+                        <c:otherwise>odd</c:otherwise>
+                        </c:choose>
+                    </c:set>
+                    <tr class="invalid-value ${rowClass}">
+                        <td>${bagValue.value}</td>
+                        <td>${bagValue.extra}</td>
+                    </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </c:when>
+    <c:otherwise>
 
 <script type="text/javascript">
   function changePageSize() {
@@ -291,3 +323,6 @@
     </c:otherwise>
   </c:choose>
   </div>
+
+  </c:otherwise>
+</c:choose>

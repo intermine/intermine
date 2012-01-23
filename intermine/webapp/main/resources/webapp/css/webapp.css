@@ -748,6 +748,11 @@ div.plainbox div.templateFormContainer {
     padding: 0 10px;
 }
 
+input[type = "submit"].bagDetailsAction {
+    margin: 0em 0.1em 0em 0.1em;
+    padding: 0.1em 0.4em 0.1em 0.4em;
+}
+
 /* button styling */
 input[type = "submit"],
 input[type = "button"] {
