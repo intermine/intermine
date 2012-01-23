@@ -22,7 +22,8 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * Action that builds a PagedCollection to view a bag. Redirects to results.do
+ * Action that builds a PagedCollection to view a bag. 
+ * Redirects to results.do
  *
  * @author Kim Rutherford
  * @author Thomas Riley

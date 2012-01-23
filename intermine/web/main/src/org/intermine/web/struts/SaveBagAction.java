@@ -21,6 +21,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
@@ -109,10 +110,10 @@ public class SaveBagAction extends InterMineAction
             recordError(actionMessage, request);
             return mapping.findForward("results");
         }
-        
+
         try {
             if (bag == null) {
-            	InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                InterMineAPI im = SessionMethods.getInterMineAPI(session);
                 bag = profile.createBag(bagName, pt.getSelectedClass(), "", im.getClassKeys());
             }
             pt.addSelectedToBag(bag);
@@ -124,7 +125,7 @@ public class SaveBagAction extends InterMineAction
                 im.getTrackerDelegate().trackListCreation(bag.getType(), bag.getSize(),
                                         ListBuildMode.QUERY, profile, session.getId());
             }
-        } catch (ObjectStoreException e) {
+        } catch (Exception e) {
             LOG.error("Failed to save bag", e);
             recordError(new ActionMessage("An error occured while saving the bag"), request);
             return mapping.findForward("results");

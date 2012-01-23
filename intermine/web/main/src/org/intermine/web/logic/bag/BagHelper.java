@@ -16,8 +16,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStore;
@@ -96,9 +97,14 @@ public final class BagHelper
         Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null,
                 im.getBagQueryRunner(), null);
 
-        InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(),
+        InterMineBag bag = null;
+        try {
+            bag = new InterMineBag(bagName, bagType, bagDescription, new Date(),
                            BagState.CURRENT, os, profile.getUserId(),
                            profile.getProfileManager().getProfileObjectStoreWriter());
+        } catch (UnknownBagTypeException e) {
+            throw new RuntimeException("Bag type determined from query is invalid", e);
+        }
         osw.addToBagFromQuery(bag.getOsb(), q);
         profile.saveBag(bag.getName(), bag);
         return bag;

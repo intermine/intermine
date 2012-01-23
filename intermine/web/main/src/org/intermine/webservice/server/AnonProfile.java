@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.template.ApiTemplate;
@@ -40,7 +41,7 @@ final class AnonProfile extends Profile
         savedQueries = new DevNullMap<String, SavedQuery>();
         savedBags = new DevNullMap<String, InterMineBag>();
         savedTemplates = new DevNullMap<String, ApiTemplate>();
-        savedInvalidBags = new DevNullMap<String, InterMineBag>();
+        savedInvalidBags = new DevNullMap<String, InvalidBag>();
         queryHistory = new DevNullMap();
         savingDisabled = true;
     }

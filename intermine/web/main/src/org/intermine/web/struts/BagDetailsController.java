@@ -92,6 +92,11 @@ public class BagDetailsController extends TilesAction
             if (imBag != null) {
                 myBag = Boolean.TRUE;
             }
+            if (profile.getInvalidBags().containsKey(bagName)) {
+                request.setAttribute("bag", profile.getInvalidBags().get(bagName));
+                request.setAttribute("invalid", true);
+                return null;
+            }
         }
 
         if (scope.equals(Scope.GLOBAL) || scope.equals(Scope.ALL)) {
@@ -129,17 +134,19 @@ public class BagDetailsController extends TilesAction
             pagedResults = SessionMethods.doQueryGetPagedTable(request, imBag);
         }
 
-        //tracks the list execution only if the list has'n just been created
+        // tracks the list execution only if the list hasn't 
+        // just been created
         if (request.getParameter("trackExecution") == null
             || "true".equals(request.getParameter("trackExecution"))) {
-            im.getTrackerDelegate().trackListExecution(imBag.getType(), bagSize, profile,
-                                                       session.getId());
+            im.getTrackerDelegate().trackListExecution(imBag.getType(), 
+                    bagSize, profile, session.getId());
         }
 
         // Get the widget toggle state
         // TODO this needs to be re-implemented.  see #1660
-//        request.setAttribute("toggledElements", SessionMethods.getWebState(session).
-//                getToggledElements());
+        // request.setAttribute("toggledElements", 
+        //   SessionMethods.getWebState(session).
+        // getToggledElements());
 
         // Set the size
         String pageStr = request.getParameter("page");

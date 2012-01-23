@@ -18,7 +18,7 @@ import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.profile.InterMineBag.BagValue;
+import org.intermine.api.profile.BagValue;
 
 public class BagQueryUpgrade
 {
@@ -70,7 +70,7 @@ public class BagQueryUpgrade
         }
         return bagQueryResult;
     }
-    
+
     private BagQueryResult combineBagQueryResult(List<BagQueryResult> bagQueryResultList) {
         BagQueryResult bagQueryResult = new BagQueryResult();
         for (BagQueryResult bqr : bagQueryResultList) {

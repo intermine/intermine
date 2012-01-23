@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -65,7 +66,7 @@ public final class ListServiceUtils
             Collection<InterMineBag> bags, String type,
             Set<String> nameAccumulator, Profile profile,
             Map<String, List<FieldDescriptor>> classKeys)
-        throws ObjectStoreException {
+        throws UnknownBagTypeException, ObjectStoreException {
         Set<InterMineBag> castBags = new HashSet<InterMineBag>();
         for (InterMineBag bag: bags) {
             if (bag.isOfType(type)) {
