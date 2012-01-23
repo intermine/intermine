@@ -7,11 +7,18 @@
 
 <!-- paging.jsp -->
 
-<tiles:importAttribute name="resultsTable" ignore="false" />
-<tiles:importAttribute name="currentPage" ignore="false" />
+<tiles:importAttribute name="resultsTable" ignore="true" />
+<tiles:importAttribute name="currentPage" ignore="true" />
 <tiles:importAttribute name="bag" ignore="true" />
+<tiles:importAttribute name="invalid" ignore="true" />
 
 <html:xhtml/>
+
+<c:choose>
+    <c:when test="${invalid}">
+      <span>Showing ${bag.size} values</span>
+    </c:when>
+    <c:otherwise>
 
   <%-- Paging controls --%>
     <tiles:insert page="/tablePageLinks.jsp">
@@ -69,5 +76,7 @@
         </script>
       </c:otherwise>
     </c:choose>
+    </c:otherwise>
+</c:choose>
 
 <!-- /paging.jsp -->

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    </html:form>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -109,7 +110,7 @@ if (!im.bagWorks) {
                     </tiles:insert>
 
                      <c:if test="${PROFILE.loggedIn}">
-                          <c:set var="taggable" value="${savedBag.value}"/>
+                         <c:set var="taggable" value="${savedBag.value}"/>
                          <tiles:insert name="inlineTagEditor.tile">
                            <tiles:put name="taggable" beanName="taggable"/>
                            <tiles:put name="vertical" value="true"/>
@@ -177,6 +178,110 @@ if (!im.bagWorks) {
 
     </c:otherwise>
   </c:choose>
+  <c:if test="${! empty PROFILE.invalidBags}">
+    <h2>
+      <fmt:message key="bags.invalid.intro"/>
+    </h2>
+    <p>
+    <fmt:message key="bags.invalid.explanation"/>
+    </p>
+      <html:form action="/triageBag">
+        <table class="bag-table sortable-onload-2 rowstyle-alt colstyle-alt no-arrow">
+
+         <thead>
+           <tr>
+             <th style="display:none;"></th>
+             <th>
+               <input type="checkbox" id="selected_bag" onclick="selectColumnCheckbox(this.form, 'bag')">
+             </th>
+             <th align="left" nowrap class="sortable">
+               <fmt:message key="query.savedbags.namecolumnheader"/>
+             </th>
+             <th align="left" nowrap class="sortable">
+               <fmt:message key="query.savedbags.descriptioncolumnheader"/>
+             </th>
+             <th align="left" nowrap class="sortable">
+               <fmt:message key="query.savedbags.typecolumnheader"/>
+             </th>
+             <th align="right" nowrap class="sortable-numeric">
+               <fmt:message key="query.savedbags.countcolumnheader"/>
+             </th>
+             <th align="left" nowrap class="sortable">
+               <fmt:message key="query.savedbags.datecreatedcolumnheader"/>
+             </th>
+           </tr>
+         </thead>
+
+         <c:forEach items="${PROFILE.invalidBags}" var="bagEntry" varStatus="status">
+           <c:set var="bag" value="${bagEntry.value}"/>
+           <tr>
+             <td class="list-name" style="display:none;">${bag.name}</td> <%-- ID cell --%>
+             <td class="sorting" align="center">                          <%-- Selection cell --%>
+                <html:multibox property="selectedBags" styleId="selected_bag_${status.index}">
+                  <c:out value="${bag.name}"/>
+                </html:multibox>
+              </td>
+              <td class="sorting">                                        <%-- Name cell --%>
+                <tiles:insert name="renamableElement.jsp">
+                  <tiles:put name="name" value="${bag.name}"/>
+                  <tiles:put name="type" value="bag"/>
+                  <tiles:put name="state" value="NOT_CURRENT"/>
+                  <tiles:put name="index" value="${status.count-1}"/>
+                </tiles:insert>
+                
+                <tiles:insert name="setFavourite.tile">
+                  <tiles:put name="name" value="${bag.name}"/>
+                  <tiles:put name="type" value="bag"/>
+                </tiles:insert>
+
+                <c:if test="${PROFILE.loggedIn}">
+                  <c:set var="taggable" value="${bag}"/>
+                  <tiles:insert name="inlineTagEditor.tile">
+                    <tiles:put name="taggable" beanName="taggable"/>
+                    <tiles:put name="vertical" value="true"/>
+                    <tiles:put name="show" value="true"/>"
+                    <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
+                  </tiles:insert>
+                </c:if>
+
+              </td>
+              <td class="sorting">                                        <%-- Description --%>
+                <c:choose>
+                  <c:when test="${fn:length(bag.description) > 100}">
+                    ${fn:substring(bag.description, 0, 100)}...
+                  </c:when>
+                  <c:otherwise>
+                    ${bag.description}
+                  </c:otherwise>
+                </c:choose>
+                &nbsp;
+              </td>
+              <td class="sorting">                                         <%-- Type --%>
+                <tiles:insert name="renamableElement.jsp">
+                  <tiles:put name="name" value="${bag.name}"/>
+                  <tiles:put name="type" value="invalid.bag.type"/>
+                  <tiles:put name="index" value="${status.count-1}"/>
+                  <tiles:put name="currentValue" value="${bag.type}"/>
+                </tiles:insert>
+              </td>
+              <td id="size_${bag.name}" class="sorting" align="right">     <%-- Size --%>
+                <c:out value="${bag.size}"/>&nbsp;value<c:if test="${bag.size != 1}">s</c:if>
+              </td>
+              <td class="sorting">                                         <%-- Date --%>
+                  <im:dateDisplay date="${bag.dateCreated}"/>
+              </td>
+         </c:forEach>
+        </table>
+
+        <input type="button" onclick="validateBagOperations('triageBagForm', 'delete')" value="Delete"/>
+        <input type="button" onclick="validateBagOperations('triageBagForm', 'export')" value="Export"/>
+
+        <html:hidden name="newBagName" property="newBagName" value="__DUMMY-VALUE__"/>
+        <html:hidden property="pageName" value="MyMine"/>
+        <html:hidden property="listsButton" value="" styleId="listsButton"/>
+
+      </html:form>
+  </c:if>
 
 <script type="text/javascript">
 (function() {

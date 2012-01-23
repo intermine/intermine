@@ -10,7 +10,7 @@ if (typeof jQuery == 'undefined') {
 var im;
 if (!im) {
     im = {};
-    if (window.console && window.console.firebug) { // 'attach' Firebug
+    if (window.console && window.console.log) { // 'attach' Firebug
       console.log("ƒ InterMine JavaScript Library loaded");
       im.firebug = true;
       jQuery.error = console.error;
@@ -275,9 +275,7 @@ im.getCookie = function(key) {
 // sadly, so that sorters work, we can show nice dates (for now) as a 'title' only
 im.timestampFormat = function() {
   var offset = new Date().getTimezoneOffset() * 60 * 1000,
-    pad = function(value) {
-      return (value < 10) ? "0" + value : value;
-    };
+      pad = function(value) {return (value < 10) ? "0" + value : value;};
 
   // locales
   Date.locale = {
@@ -294,17 +292,22 @@ im.timestampFormat = function() {
   jQuery(".intermine.timestamp").each(function() {
     var timestamp = parseInt(jQuery(this).text());
     // convert to Date and shift from current timezone in minutes
-    var d = new Date(timestamp - offset);
-    var formattedTime = d.getFullYear() + "-" +
-      pad(d.getMonth()+1) + "-" +
-      pad(d.getDate()) + " " +
-      pad(d.getHours()) + ":" +
-      pad(d.getMinutes());
+    if (timestamp) { // parse was successful.
+      var d = new Date(timestamp - offset);
+      // format
+      var formattedTime = d.getFullYear() + "-" +
+        pad(d.getMonth()) + "-" +
+        pad(d.getDate()) + " " +
+        pad(d.getHours()) + ":" +
+        pad(d.getMinutes());
 
-    var title = pad(d.getDate()) + " " + d.getMonthNameShort() + " " +
-      d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+      var title = pad(d.getDate()) + " " + d.getMonthNameShort() + " " +
+         d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
 
-    jQuery(this).text(formattedTime).removeClass('intermine').attr('title', title);
+      jQuery(this).text(formattedTime).removeClass('intermine').attr('title', title);
+    } else {
+      jQuery(this).text("Unknown date").removeClass('intermine').addClass("unknown");
+    }
   });
 };
 

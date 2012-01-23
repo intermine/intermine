@@ -9,6 +9,7 @@
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
     <form-bean name="modifyBagForm" type="org.intermine.web.struts.ModifyBagForm"/>
+    <form-bean name="triageBagForm" type="org.intermine.web.struts.TriageBagForm"/>
     <form-bean name="modifyTemplateForm" type="org.intermine.web.struts.ModifyTemplateForm"/>
     <form-bean name="queryBuilderConstraintForm" type="org.intermine.web.struts.QueryBuilderConstraintForm"/>
     <form-bean name="queryClassSelectForm" type="org.intermine.web.struts.QueryClassSelectForm"/>
@@ -283,6 +284,10 @@
       <forward name="history" redirect="true" path="/mymine.do"/>
     </action>
     <action path="/modifyBag" name="modifyBagForm" type="org.intermine.web.struts.ModifyBagAction" scope="request" input="bag" parameter="action" validate="false">
+      <forward name="bag" redirect="true" path="/bag.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+    </action>
+    <action path="/triageBag" name="triageBagForm" type="org.intermine.web.struts.TriageBagAction" scope="request" input="bag" parameter="action" validate="false">
       <forward name="bag" redirect="true" path="/bag.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
     </action>

@@ -18,6 +18,14 @@
   </tiles:insert>
   </c:when>
 
+  <%-- invalid bags --%>
+  <c:when test="${subtabs[subtabName] == 'invalid'}">
+    <tiles:insert name="invalidBagView.jsp">
+    <tiles:put name="type" value="bag"/>
+  </tiles:insert>
+  </c:when>
+
+
     <%-- saved queries --%>
     <c:when test="${subtabs[subtabName]  =='saved'}">
       <tiles:insert name="historyQueryView.jsp">
