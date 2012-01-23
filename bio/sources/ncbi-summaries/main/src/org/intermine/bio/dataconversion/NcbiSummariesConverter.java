@@ -10,7 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,20 +48,21 @@ public class NcbiSummariesConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
         // Data has format:
         // id | summary
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        while (lineIter.hasNext()) {
-            String[] line = (String[]) lineIter.next();
+        int counter = 0;
+        BufferedReader bufferedReader = new BufferedReader(reader);
 
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] cols = line.split("\t");
+            counter++;
             try {
-                String entrez = line[0];
-                String summary = line[1];
+                String entrez = cols[0];
+                String summary = cols[1];
 
                 if (!StringUtils.isBlank(summary)) {
                     Item gene = createItem("Gene");
@@ -69,7 +72,7 @@ public class NcbiSummariesConverter extends BioFileConverter
                     store(gene);
                 }
             } catch (IndexOutOfBoundsException e) {
-                LOG.info("Failed to read line: " + line);
+                LOG.info("Failed to read line: " + Arrays.asList(line));
             }
         }
     }
