@@ -50,6 +50,7 @@ import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
@@ -66,6 +67,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -87,6 +89,7 @@ import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
+import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
@@ -275,6 +278,16 @@ public class AjaxServices
                     return "<i>" + name + " does not exist</i>";
                 } catch (ProfileAlreadyExistsException e) {
                     return "<i>" + newName + " already exists</i>";
+                }
+            } else if ("invalid.bag.type".equals(type)) {
+                try {
+                    profile.fixInvalidBag(name, newName);
+                    InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
+                } catch (UnknownBagTypeException e) {
+                    return "<i>" + e.getMessage() + "</i>";
+                } catch (ObjectStoreException e) {
+                    return "<i>Error fixing type</i>";
                 }
             } else {
                 return "Type unknown";
@@ -914,7 +927,8 @@ public class AjaxServices
                     }
                 }
                 for (int i = 0; i < selectedBags.length; i++) {
-                    if (profile.getSavedBags().get(selectedBags[i]) == null) {
+                    Map allBags = profile.getAllBags();
+                    if (!allBags.containsKey(selectedBags[i])) {
                         return "List `" + selectedBags[i] + "` cannot be deleted as it is a shared "
                             + "list";
                     }
@@ -1310,6 +1324,8 @@ public class AjaxServices
                 }
                 return "ok";
             }
+            LOG.error("Adding tag failed: tag='" + tag + "', taggedObject='" + taggedObject
+                    + "', type='" + type + "'");
             return "Adding tag failed.";
         } catch (Throwable e) {
             LOG.error("Adding tag failed", e);
@@ -1354,10 +1370,10 @@ public class AjaxServices
      * @return tags
      */
     public static Set<String> getTags(String type) {
-        HttpServletRequest request = getRequest();
+        final HttpServletRequest request = getRequest();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        TagManager tagManager = im.getTagManager();
-        Profile profile = getProfile(request);
+        final TagManager tagManager = im.getTagManager();
+        final Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
             return tagManager.getUserTagNames(type, profile.getUsername());
         }

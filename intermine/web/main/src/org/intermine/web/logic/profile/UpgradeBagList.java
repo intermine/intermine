@@ -44,12 +44,20 @@ public class UpgradeBagList implements Runnable
     private BagQueryRunner bagQueryRunner;
     private HttpSession session;
 
+    /**
+     * Constructor
+     *
+     * @param profile The profile of the user whose lists we are upgrading.
+     * @param bagQueryRunner The mechanism to search for items for the lists.
+     * @param session A reference to the session to store progress information.
+     */
     public UpgradeBagList(Profile profile, BagQueryRunner bagQueryRunner, HttpSession session) {
         this.profile = profile;
         this.bagQueryRunner = bagQueryRunner;
         this.session = session;
     }
 
+    @Override
     public void run() {
         Map<String, Map<String, Object>> savedBagsStatus = SessionMethods
             .getNotCurrentSavedBagsStatus(session);

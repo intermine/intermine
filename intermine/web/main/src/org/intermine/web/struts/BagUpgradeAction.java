@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2010 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,7 +10,6 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.InterMineBag.BagValue;
 import org.intermine.web.logic.bag.BagQueryUpgrade;
 import org.intermine.web.logic.session.SessionMethods;
 

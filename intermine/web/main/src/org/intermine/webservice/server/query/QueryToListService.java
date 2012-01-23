@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -162,6 +163,9 @@ public class QueryToListService extends AbstractQueryService
         } catch (CompletelyFalseException e) {
             output.addResultItem(Arrays.asList("0"));
             throw new BadRequestException("List not created - it would be of size 0");
+        } catch (UnknownBagTypeException e) {
+            output.addResultItem(Arrays.asList("0"));
+            throw new InternalErrorException(e.getMessage(), e);
         } finally {
             if (profile.getSavedBags().containsKey(tempName)) {
                 profile.deleteBag(tempName);
