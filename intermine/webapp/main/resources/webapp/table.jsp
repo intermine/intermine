@@ -75,6 +75,7 @@
      <div>
      <span class="parameterValues">
       <c:forEach items="${dcl}" var="dec" >
+        <c:if test="${dec.switchable != 'off'}">
           <c:out value="${imf:formatPathStr(dec.endClassName, INTERMINE_API, WEBCONFIG)}" />
           <c:set var="fieldDisplay" value="${imf:formatField(dec.path.path, WEBCONFIG)}" />
           <c:if test="${!empty fieldDisplay}">
@@ -91,6 +92,7 @@
               IN&nbsp;${dec.selectedExtraValue}
           </c:if>
           <br/>
+        </c:if>
       </c:forEach>
       </span>
       </div>
