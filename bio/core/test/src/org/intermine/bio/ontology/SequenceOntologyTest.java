@@ -16,7 +16,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 
 public class SequenceOntologyTest extends TestCase
@@ -39,7 +38,8 @@ public class SequenceOntologyTest extends TestCase
         SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
         String className = "exon";
         Set<String> parents = so.getAllPartOfs(className);
-        assertEquals(1, parents.size());
+        System.out.print(parents);
+        assertEquals(2, parents.size());
         assertTrue(parents.contains("transcript"));
     }
     public void testNoFile() {
