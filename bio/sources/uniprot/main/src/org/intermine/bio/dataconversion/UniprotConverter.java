@@ -55,6 +55,8 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
+    // md5Checksum -> sequence item identifier  (ensure all sequences are unique across organisms)
+    private Map<String, String> allSequences = new HashMap<String, String>();
     private Map<String, String> ontologies = new HashMap<String, String>();
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
@@ -149,6 +151,7 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
         // reset all variables here, new organism
+        sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
     }
 
@@ -651,19 +654,28 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processSequence(Item protein, UniprotEntry uniprotEntry) {
-            Item item = createItem("Sequence");
-            item.setAttribute("residues", uniprotEntry.getSequence());
-            item.setAttribute("length", uniprotEntry.getLength());
-            item.setAttribute("md5checksum", uniprotEntry.getMd5checksum());
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
-            }
+            String seqIdentifier = getSequenceIdentfier(uniprotEntry.getMd5checksum(),
+                    uniprotEntry.getSequence(), uniprotEntry.getLength());
             protein.setAttribute("length", uniprotEntry.getLength());
-            protein.setReference("sequence", item.getIdentifier());
+            protein.setReference("sequence", seqIdentifier);
             protein.setAttribute("molecularWeight", uniprotEntry.getMolecularWeight());
             protein.setAttribute("md5checksum", uniprotEntry.getMd5checksum());
+        }
+
+        private String getSequenceIdentfier(String md5Checksum, String residues, String length) {
+            if (!allSequences.containsKey(md5Checksum)) {
+                Item item = createItem("Sequence");
+                item.setAttribute("residues", residues);
+                item.setAttribute("length", length);
+                item.setAttribute("md5checksum", md5Checksum);
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
+                allSequences.put(md5Checksum, item.getIdentifier());
+            }
+            return allSequences.get(md5Checksum);
         }
 
         private void processIdentifiers(Item protein, UniprotEntry uniprotEntry) {
