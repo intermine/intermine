@@ -1552,15 +1552,20 @@ div.template h3 div.favorites { display:inline; }
 div.template h3 div.favorites img { vertical-align:middle; margin-bottom:2px; }
 /* togglers */
 div.collection-table div.toggle,
-div.collection-of-collections div.toggle { padding:2px; font-size:12px; }
+div.collection-of-collections div.toggle,
+div.inline-list div.toggle { padding:2px; font-size:12px; }
 div.collection-table div.toggle a,
-div.collection-of-collections div.toggle a { padding:1px 2px 1px 14px; border-radius:2px 2px 2px 2px; box-shadow:0 1px 2px #EFEFEF; cursor:pointer; }
+div.collection-of-collections div.toggle a,
+div.inline-list div.toggle a { padding:1px 2px 1px 14px; border-radius:2px 2px 2px 2px; box-shadow:0 1px 2px #EFEFEF; cursor:pointer; }
 div.collection-table div.toggle a.less,
-div.collection-of-collections div.toggle a.less { background:url("../images/report/arrow_collapse.gif") no-repeat scroll 2px 50% transparent; }
+div.collection-of-collections div.toggle a.less,
+div.inline-list div.toggle a.less { background:url("../images/report/arrow_collapse.gif") no-repeat scroll 2px 50% transparent; }
 div.collection-table div.toggle a.more,
-div.collection-of-collections div.toggle a.more { background:url("../images/report/arrow_expand.gif") no-repeat scroll 2px 50% transparent; }
+div.collection-of-collections div.toggle a.more,
+div.inline-list div.toggle a.more { background:url("../images/report/arrow_expand.gif") no-repeat scroll 2px 50% transparent; }
 div.collection-table div.show-in-table,
-div.collection-of-collections div.show-in-table { text-align:center; }
+div.collection-of-collections div.show-in-table,
+div.inline-list div.show-in-table { text-align:center; }
 /* header, the same as table header */
 h3.goog { border-top-width:1px; border-top-style:solid; margin-bottom:6px; padding-left:6px; font-size:14px; }
 /* applicable to all */

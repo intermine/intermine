@@ -10,10 +10,12 @@
 <div class="inline-list" id="mouse-alleles">
   <style>
   #mouse-alleles span.size-1 { font-size:10px; }
-  #mouse-alleles span.size-2 { font-size:12px; }
-  #mouse-alleles span.size-3 { font-size:14px; }
+  #mouse-alleles span.size-2 { font-size:14px; }
+  #mouse-alleles span.size-3 { font-size:22px; }
   #mouse-alleles div.header h3 { border:0; }
   #mouse-alleles ul li:not(:last-child) { margin-right:10px; }
+  #mouse-alleles ul li:not(.top) { display:none; }
+  #mouse-alleles div.toggle { margin:0 auto; text-align:center; }
   </style>
 
   <h3>Mouse Alleles</h3>
@@ -24,17 +26,24 @@
     </c:if>
     <ul>
     <c:forEach var="term" items="${homologue.value['terms']}">
-      <li>
+      <li <c:if test="${term.value.top}">class="top"</c:if>>
       <span class="size-<c:choose>
-        <c:when test="${term.value < 2}">1</c:when>
-        <c:when test="${term.value < 5}">2</c:when>
+        <c:when test="${term.value.count < 2}">1</c:when>
+        <c:when test="${term.value.count < 5}">2</c:when>
         <c:otherwise>3</c:otherwise>
-      </c:choose>"><html:link action="/report?id=${homologue.value['homologueId']}">${term.key}</html:link> (${term.value})</span>
+      </c:choose>"><html:link action="/report?id=${homologue.value['homologueId']}">${term.key}</html:link> (${term.value.count})</span>
       </li>
     </c:forEach>
     </ul>
+    <div class="toggle"><a class="more" title="Show more terms">Show more terms</a></div>
   </c:forEach>
   </c:if>
+  <script type="text/javascript">
+    jQuery("#mouse-alleles div.toggle a").click(function() {
+      jQuery('#mouse-alleles ul li').css('display', 'inline');
+      jQuery("#mouse-alleles div.toggle").remove();
+    });
+  </script>
 </div>
 
 <!-- /mouseAllelesDisplayer.jsp -->
