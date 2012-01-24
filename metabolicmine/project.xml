@@ -152,10 +152,10 @@
 
   <post-processing>
     <post-process name="create-references"/>
-    <post-process name="transfer-sequences"/>
+    <post-process name="transfer-sequences" dump="true"/>
 
     <!-- this runs the postprocessing steps in all sources -->
-    <post-process name="do-sources" dump="true"/>
+    <post-process name="do-sources"/>
     <post-process name="create-gene-flanking-features"/>
 
     <post-process name="create-bioseg-location-index"/>
