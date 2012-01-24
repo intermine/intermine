@@ -1,5 +1,15 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.lists.ListServiceUtils;
 
@@ -62,7 +72,7 @@ public class GenomicRegionSearchService extends ListMakerService
 
         addOutputInfo(LIST_SIZE_KEY, tempBag.getSize() + "");
 
-        final List<String> row = new ArrayList<String>(searchInput.getSearchInfo().getInvalidSpans());
+        List<String> row = new ArrayList<String>(searchInput.getSearchInfo().getInvalidSpans());
         output.addResultItem(row);
         if (!input.getTags().isEmpty()) {
             im.getBagManager().addTagsToBag(input.getTags(), tempBag, profile);
@@ -70,7 +80,16 @@ public class GenomicRegionSearchService extends ListMakerService
         profile.renameBag(input.getTemporaryListName(), input.getListName());
     }
 
-    protected InterMineBag doListCreation(GenomicRegionSearchListInput input, Profile profile, String type) throws ObjectStoreException {
+    /**
+     * Create the list specified by the region search input.
+     * @param input The input object, containing the values specified by the user.
+     * @param profile The user's profile
+     * @param type The unqualified name of the class of object in the new list.
+     * @return A new list
+     * @throws ObjectStoreException if there is an error running the queries.
+     */
+    protected InterMineBag doListCreation(GenomicRegionSearchListInput input, Profile profile,
+        String type) throws ObjectStoreException {
         final InterMineBag tempBag = profile.createBag(
                 input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
         Map<GenomicRegion, Query> queries = createQueries(input.getSearchInfo());
