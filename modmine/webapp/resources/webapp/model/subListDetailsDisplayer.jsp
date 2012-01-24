@@ -58,10 +58,16 @@ jQuery("doclose").click(function(){
 
 </script>
 
-<div id="details" style="display: block">
+<div id="details" style="display: block" class="collection-table column-border">
+<html:link linkName="#" styleId="sis" style="cursor:pointer">
+<h3>
+    Submissions Details (click to toggle)
+    <img src="images/undisclosed.gif" id="co">
+</h3>
+</html:link>
 
-<table class="collection-table column-border">
-
+<table >
+<thead>
    <tr>
       <td class="head" >
 modENCODE Submissions
@@ -76,7 +82,8 @@ modENCODE Submissions
       Experimental properties
      </td>
     </tr>
-
+</thead>
+<tbody>
 <%-- === FILES ============================= --%>
 <c:forEach var="subFiles" items="${files}" varStatus="files_status">
 
@@ -237,7 +244,8 @@ title="More about this target">
 
          </tr>
     </c:forEach>
-  </table>
+</tbody>
+    </table>
 
 </div>
 
