@@ -37,9 +37,9 @@
 <div class="heading results">
   <img src="images/icons/lists-64.png" alt="lists icon"/>
   <h1>
-      <fmt:message key="bagDetails.title"/> 
+      <fmt:message key="bagDetails.title"/>
       <span style="font-size:0.9em;font-weight:normal">
-          for <b>${bag.name}</b> 
+          for <b>${bag.name}</b>
           (${bag.size}&nbsp;<c:out value="${imf:formatPathStr(bag.type, INTERMINE_API, WEBCONFIG)}s"/>)
       </span>
   </h1>
@@ -179,7 +179,10 @@
 <TR>
 
 <TD valign="top" class="tableleftcol">
+
+<c:if test ="${bag.type ne 'Submission'}">
 <div class="results collection-table nowrap nomargin">
+
 <%-- Table displaying bag elements --%>
 <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="pagedResults" />
@@ -221,6 +224,7 @@
 </table>
 
 <div id="clearLine">&nbsp;</div>
+</c:if>
 
 <div style="clear:both">
 

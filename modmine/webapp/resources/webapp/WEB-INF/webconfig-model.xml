@@ -572,16 +572,16 @@
       </titles>
     </headerconfig>
     <fields>
-      <fieldconfig fieldExpr="title"/>
-      <fieldconfig fieldExpr="design"/>
-      <fieldconfig fieldExpr="DCCid" label="DCC id"/>
+      <fieldconfig fieldExpr="title" />
+      <fieldconfig fieldExpr="design" />
+      <fieldconfig fieldExpr="DCCid" label="DCC id" />
       <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
       <fieldconfig fieldExpr="embargoDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
     <bagdisplayers>
-      <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
       <displayer src="subListDetailsDisplayer.tile" showOnLeft="true" />
+      <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
     </bagdisplayers>
   </class>
 
