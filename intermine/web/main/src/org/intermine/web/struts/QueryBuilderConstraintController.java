@@ -92,6 +92,7 @@ public class QueryBuilderConstraintController extends TilesAction
             }
             request.setAttribute("dec", displayConstraint);
             request.setAttribute("joinStyleOnly", "true");
+            saveToken(request);
         }
 
         return null;
