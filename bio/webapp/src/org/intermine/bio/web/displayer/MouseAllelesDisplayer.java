@@ -10,9 +10,13 @@ package org.intermine.bio.web.displayer;
  *
  */
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -66,12 +70,18 @@ public class MouseAllelesDisplayer extends ReportDisplayer
 
         Boolean mouser = false;
         if (!this.isThisAMouser(reportObject)) {
-            // to give us some homologue identifier
-            q.addViews("Gene.homologues.homologue.symbol");
-            q.addViews("Gene.homologues.homologue.primaryIdentifier");
-            q.addViews("Gene.homologues.homologue.id");
-            // the actual names we want to tag-cloudize
-            q.addViews("Gene.homologues.homologue.alleles.highLevelPhenotypeTerms.name");
+            // to give us some homologue identifier and the actual terms to tag-cloudize
+            q.addViews(
+                    "Gene.symbol",
+                    "Gene.primaryIdentifier",
+                    "Gene.id",
+                    "Gene.homologues.homologue.alleles.genotypes.phenotypeTerms.name");
+            // add this rubbish so we do not filter out the same terms
+            q.addViews(
+                    "Gene.homologues.homologue.id",
+                    "Gene.homologues.homologue.alleles.id",
+                    "Gene.homologues.homologue.alleles.genotypes.id");
+
             // mouse homologues only
             q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
                     "M. musculus"), "A");
@@ -85,12 +95,18 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             q.addOrderBy("Gene.homologues.homologue.id", OrderDirection.ASC);
         } else {
             mouser = true;
-            // to give us our homologue identifier
-            q.addViews("Gene.symbol");
-            q.addViews("Gene.primaryIdentifier");
-            q.addViews("Gene.id");
-            // the actual names we want to tag-cloudize
-            q.addViews("Gene.alleles.highLevelPhenotypeTerms.name");
+
+            // to give us some homologue identifier and the actual terms to tag-cloudize
+            q.addViews(
+                    "Gene.symbol",
+                    "Gene.primaryIdentifier",
+                    "Gene.id",
+                    "Gene.alleles.genotypes.phenotypeTerms.name");
+            // add this rubbish so we do not filter out the same terms
+            q.addViews(
+                    "Gene.alleles.id",
+                    "Gene.alleles.genotypes.id");
+
             // for our gene object
             q.addConstraint(Constraints.eq("Gene.id", reportObject.getObject().getId().toString()),
                     "A");
@@ -125,7 +141,50 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             }
         }
 
-        request.setAttribute("counts", counts);
+        // Now give us a map of top 20 per homologue
+        HashMap<String, HashMap<String, Object>> top = new HashMap<String, HashMap<String,
+                Object>>();
+        for (String symbol : counts.keySet()) {
+            HashMap<String, Object> gene = counts.get(symbol);
+            LinkedHashMap<String, Integer> terms =
+                    (LinkedHashMap<String, Integer>) gene.get("terms");
+            if (terms != null) {
+                // sorted by value
+                TreeMap<String, Integer> sorted = new TreeMap<String, Integer>(
+                        new IntegerValueComparator(terms));
+                // deep copy
+                for (String term : terms.keySet()) {
+                    sorted.put(term, (Integer) terms.get(term));
+                }
+                // "mark" top 20 and order by natural order - the keys
+                HashMap<String, Map<String, Object>> marked =
+                        new HashMap<String, Map<String, Object>>();
+                Integer i = 0;
+                for (String term : sorted.keySet()) {
+                    // wrapper map
+                    HashMap<String, Object> m = new HashMap<String, Object>();
+                    // am I top dog?
+                    Boolean topTerm = false;
+                    if (i < 20) {
+                        topTerm = true;
+                    }
+                    m.put("top", topTerm);
+                    m.put("count", (Integer) sorted.get(term));
+
+                    // save it
+                    marked.put(term, m);
+                    i++;
+                }
+
+                HashMap<String, Object> wrapper = new HashMap<String, Object>();
+                wrapper.put("terms", marked);
+                wrapper.put("homologueId", gene.get("homologueId"));
+                wrapper.put("isMouser", gene.get("isMouser"));
+                top.put(symbol, wrapper);
+            }
+        }
+
+        request.setAttribute("counts", top);
     }
 
 /**
@@ -152,6 +211,45 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Compare Maps by their integer values
+     * @author radek
+     *
+     */
+    class IntegerValueComparator implements Comparator
+    {
+
+        Map base;
+        /**
+         * A constructor
+         * @param base parameter
+         */
+        public IntegerValueComparator(Map base) {
+            this.base = base;
+        }
+
+        /**
+         * A function
+         * @param a parameter
+         * @param b parameter
+         * @return Integer
+         */
+        public int compare(Object a, Object b) {
+            Integer aV = (Integer) base.get(a);
+            Integer bV = (Integer) base.get(b);
+
+            if (aV < bV) {
+                return 1;
+            } else {
+                if (aV == bV) {
+                    // Same size, need to sort by name
+                    return a.toString().compareTo(b.toString());
+                }
+            }
+            return -1;
+        }
     }
 
 }
