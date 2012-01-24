@@ -353,10 +353,11 @@ public class GFF3Exporter implements Exporter
                         .getPath().getLastClassDescriptor()
                         .getUnqualifiedName().toLowerCase();
                 // reverse relationship, e.g. Gene.exons.transcripts, exon
-                // is not parent of transcript, use SO to check the correct
-                // parent
-                // TODO Limitation - exon doesn't know transcript as parent
-                // since the parents are found reversely from path string
+                // is not parent of transcript, use SO to validate the correct
+                // parents
+                // TODO Limitation - exon doesn't know transcript is a parent
+                // since the parents are found reversely from path string, but
+                // transcript is behind it
                 Set<String> parentsSOTerms = so.getAllPartOfs(featureClassName);
                 if (parentsSOTerms.contains(parentClassName)) {
                     addPar.add(parent.getPrimaryIdentifier());
