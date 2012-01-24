@@ -149,7 +149,6 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
         // reset all variables here, new organism
-        sequences = new HashMap<String, Map<String, String>>();
         genes = new HashMap<String, String>();
     }
 
