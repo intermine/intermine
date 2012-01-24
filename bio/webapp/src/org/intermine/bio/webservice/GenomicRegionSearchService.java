@@ -69,7 +69,12 @@ public class GenomicRegionSearchService extends ListMakerService
         }
         GenomicRegionSearchListInput searchInput = (GenomicRegionSearchListInput) input;
 
-        InterMineBag tempBag = doListCreation(searchInput, profile, type);
+        InterMineBag tempBag;
+        try {
+            tempBag = doListCreation(searchInput, profile, type);
+        } catch (UnknownBagTypeException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
 
         addOutputInfo(LIST_SIZE_KEY, tempBag.getSize() + "");
 
