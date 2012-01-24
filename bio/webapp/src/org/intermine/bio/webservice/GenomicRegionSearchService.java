@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.bio.web.logic.GenomicRegionSearchQueryRunner;
@@ -87,9 +88,10 @@ public class GenomicRegionSearchService extends ListMakerService
      * @param type The unqualified name of the class of object in the new list.
      * @return A new list
      * @throws ObjectStoreException if there is an error running the queries.
+     * @throws UnknownBagTypeException
      */
     protected InterMineBag doListCreation(GenomicRegionSearchListInput input, Profile profile,
-        String type) throws ObjectStoreException {
+        String type) throws ObjectStoreException, UnknownBagTypeException {
         final InterMineBag tempBag = profile.createBag(
                 input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
         Map<GenomicRegion, Query> queries = createQueries(input.getSearchInfo());
