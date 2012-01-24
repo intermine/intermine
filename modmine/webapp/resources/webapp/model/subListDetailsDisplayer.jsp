@@ -60,7 +60,7 @@ jQuery("doclose").click(function(){
 
 <div id="details" style="display: block">
 
-<table class="stats">
+<table class="collection-table column-border">
 
    <tr>
       <td class="head" >
@@ -85,7 +85,7 @@ modENCODE Submissions
   <td>
   <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}">
   <c:out value="${sub.title}"><br>${sub.dCCid}</c:out></html:link>
-  <br><br>[<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}">
+  <br>[<html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}">
   <c:out value="${sub.dCCid}"></c:out></html:link>]
   </td>
   <td>
@@ -93,7 +93,7 @@ modENCODE Submissions
       <mm:dataFiles files="${subFiles.value}" dccId="${sub.dCCid}"/>
     </span>
       <mm:getTarball dccId="${sub.dCCid}"/>
-         
+
 <%-- === REPOSITORY ENTRIES ================ --%>
 <%-- TODO: use tiles (duplicated code with experiment.jsp) --%>
 <c:forEach var="subReposited" items="${reposited}" varStatus="rep_status">
@@ -134,24 +134,24 @@ ${aRef[1]}
 </c:forEach>
 
 </c:if>
-</c:forEach>  
-    
+</c:forEach>
+
 <%-- === PROPERTIES ================ --%>
 <%-- TODO: use tiles (duplicated code with experiment.jsp) --%>
 
    <td class="sorting" bgcolor="white">
-   <c:set var="thisTypeCount" value="0" /> 
-   		
-   
+   <c:set var="thisTypeCount" value="0" />
+
+
    <c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="ef_status">
 
-            <c:choose>      
+            <c:choose>
             <c:when test="${factor.property != null}">
 <c:set var="thisTypeCount" value="${thisTypeCount + 1}"></c:set>
                <c:choose>
                <c:when test="${thisTypeCount <= 5}">
                <c:if test="${!ef_status.first}"><br></c:if>
-               <b>${factor.type}</b>: 
+               <b>${factor.type}</b>:
                  <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
                 <span class="tinylink">
                    <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
@@ -197,7 +197,7 @@ title="More about this target">
 </c:if>
 
 </c:when>
-              
+
 <c:when test="${thisTypeCount > 5 && ef_status.last}">
               ...
 <br></br>
@@ -233,8 +233,8 @@ title="More about this target">
 <%-- --%>
 
 
-         
-         
+
+
          </tr>
     </c:forEach>
   </table>
