@@ -443,6 +443,12 @@
                      placement="summary"
                      types="Gene"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasDiseasesDisplayer"
+                     jspName="model/geneExpressionAtlasDiseasesDisplayer.jsp"
+                     replacesFields="atlasExpression"
+                     placement="summary"
+                     types="Gene"/>
+
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
                      jspName="model/publicationAnnotationsDisplayer.jsp"
                      replacesFields=""
