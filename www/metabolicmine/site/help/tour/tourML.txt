@@ -14,9 +14,9 @@ construct searches across domains of biological knowledge.</p>
 up an identifier and viewing a report page.  This quick tour will
 introduce some of the features:</p>
 
-<p>The first thing you'll see is the <strong>First Time Here</strong> box. 
+<p>The first thing you'll see is the <strong>First Time Here</strong> box.</p> 
 
-<img alt="[First Time Here]" src="mmFTHbox.png"/></p>
+<img alt="[First Time Here]" src="mmFTHbox.png"/>
 
 <p>Here's where you'll find our handy <strong>Feature Hints</strong>. Scroll through when you 
 need a quick reminder of the different parts of metabolicMine and what everything does.
@@ -508,4 +508,4 @@ it's easy to access the ones you use often.</p>
 <p/>
 <p/>
 
-<p>Please contact us if you have any questions or suggestions: <strong>support@intermine.org</strong></p>
+<p>Please contact us if you have any questions or suggestions: <strong>metabolicmine@intermine.org</strong></p>
