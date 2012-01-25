@@ -138,7 +138,7 @@ public abstract class StorableBag
 
     /** Remove all the values from the bag-value table. **/
     public void deleteAllBagValues() {
-        deleteBagValues(null);
+        deleteSomeBagValues(null);
     }
 
     /**
@@ -147,11 +147,10 @@ public abstract class StorableBag
      * @param values The values to delete. <code>null</code> is understood
      *               as <code>ALL VALUES.</code>.
      */
-    protected void deleteBagValues(final List<String> values) {
+    protected void deleteSomeBagValues(final List<String> values) {
         Connection conn = null;
         PreparedStatement stm = null;
         ObjectStoreWriter uosw = getUserProfileWriter();
-        Integer savedBagId = getSavedBagId();
         List<String> clauses = new ArrayList<String>(Arrays.asList("savedBagId = ?"));
 
         if (values != null) {
