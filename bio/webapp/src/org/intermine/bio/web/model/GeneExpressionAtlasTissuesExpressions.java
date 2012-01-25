@@ -21,10 +21,10 @@ import org.intermine.api.results.ResultElement;
  */
 
 /**
- * Gene Expression Atlas Expressions
+ * Gene Expression Atlas Tissues Expressions
  */
 @SuppressWarnings("serial")
-public class GeneExpressionAtlasExpressions {
+public class GeneExpressionAtlasTissuesExpressions {
 
     /** @var holds mapped queue of mapped results
      *
@@ -75,7 +75,7 @@ public class GeneExpressionAtlasExpressions {
      * Convert Path results into a List (ProteinAtlasDisplayer.java)
      * @param values
      */
-    public GeneExpressionAtlasExpressions(ExportResultsIterator values) {
+    public GeneExpressionAtlasTissuesExpressions(ExportResultsIterator values) {
         results = new TreeMap<String, ExpressionList>(new CaseInsensitiveComparator());
 
         // ResultElement -> Map of Lists

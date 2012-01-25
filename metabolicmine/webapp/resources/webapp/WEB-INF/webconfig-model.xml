@@ -437,8 +437,8 @@
                      placement="summary"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasDisplayer"
-                     jspName="model/geneExpressionAtlasDisplayer.jsp"
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneExpressionAtlasTissuesDisplayer"
+                     jspName="model/geneExpressionAtlasTissuesDisplayer.jsp"
                      replacesFields="atlasExpression"
                      placement="summary"
                      types="Gene"/>

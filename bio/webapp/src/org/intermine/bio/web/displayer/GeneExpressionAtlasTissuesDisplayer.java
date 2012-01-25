@@ -12,7 +12,6 @@ package org.intermine.bio.web.displayer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,17 +21,14 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.bio.web.model.GeneExpressionAtlasExpressions;
+import org.intermine.bio.web.model.GeneExpressionAtlasTissuesExpressions;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Gene;
-import org.intermine.objectstore.proxy.LazyCollection;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -45,7 +41,7 @@ import org.intermine.web.logic.session.SessionMethods;
  * @author rs676
  *
  */
-public class GeneExpressionAtlasDisplayer extends ReportDisplayer
+public class GeneExpressionAtlasTissuesDisplayer extends ReportDisplayer
 {
 
     /** @var column keys we have in the results table */
@@ -64,7 +60,7 @@ public class GeneExpressionAtlasDisplayer extends ReportDisplayer
      * @param config .
      * @param im .
      */
-    public GeneExpressionAtlasDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+    public GeneExpressionAtlasTissuesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
 
@@ -94,14 +90,14 @@ public class GeneExpressionAtlasDisplayer extends ReportDisplayer
             ExportResultsIterator values = executor.execute(query);
 
             // convert to a map
-            GeneExpressionAtlasExpressions geae = new GeneExpressionAtlasExpressions(values);
+            GeneExpressionAtlasTissuesExpressions geae = new GeneExpressionAtlasTissuesExpressions(values);
 
             // attach to results
             request.setAttribute("expressions", geae);
             request.setAttribute("url", "http://www.ebi.ac.uk/gxa/experiment/E-MTAB-62/"
                     + genePrimaryID);
             request.setAttribute("defaultPValue", "1e-4");
-            request.setAttribute("defaultTValue", "2");
+            request.setAttribute("defaultTValue", "4");
 
             // get the corresponding collection
             for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
