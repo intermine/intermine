@@ -861,11 +861,10 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * IllegalArgumentException will be raised.
      * @param values The values to delete. May not be <code>null</code>.
      */
-    @Override
     public void deleteBagValues(List<String> values) {
         if (values == null) {
             throw new IllegalArgumentException("values cannot be null");
         }
-        super.deleteBagValues(values);
+        deleteSomeBagValues(values);
     }
 }
