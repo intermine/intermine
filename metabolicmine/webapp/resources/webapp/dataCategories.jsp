@@ -20,25 +20,119 @@
 <div style="padding: 10px 40px">
 <h3>The following data are loaded in the metabolicMine BETA:</h3>
 
-<ul>
-  <li>Human genome sequence and annotation - Ensembl 62</li>
-  <li>Mouse genome sequence and annotation - Ensembl 62</li>
-  <li>Human SNPs (including dbSNP 132) - Ensembl 61</li>
-  <li>Human GWAS results - Ensembl 62</li>
-  <li>Human gene names and symbols - NCBI and HGNC</li>
-  <li>Mouse gene names and symbols - MGI</li>
-  <li>Human and Mouse protein sequences and information - Uniprot 2011_05</li>
-  <li>Human and Mouse protein domains - InterPro</li>
-  <li>Human and Mouse Gene Ontology (GO) terms - UniProt and MGI</li>
-  <li>Human and Mouse pathways - KEGG</li>
-  <li>Human pathways - Reactome</li>
-  <li>Human protein expression - Protein Atlas</li>
-  <li>Human and Mouse protein interactions - Intact, BioGRID</li>
-  <li>Human and Mouse publication to gene relationships - PubMed</li>
-  <li>Human diseases - OMIM</li>
-  <li>Human, Mouse and Rat orthologues - Ensembl Compara</li>
+<br/>
 
-</ul>
+<table>
+       <tr>
+               <th>Type</th>
+               <th>Source</th>
+               <th>Organisms</th>
+               <th>Version</th>
+       </tr>
+       <tr>
+               <td>Genome sequence and annotation</td>
+               <td><a href="http://www.ensembl.org">Ensembl</a></td>
+               <td>Human, Mouse</td>
+               <td>Ensembl 65</td>
+       </tr>
+       <tr>
+               <td>SNPs</td>
+               <td><a href="http://www.ensembl.org/info/docs/variation/sources_documentation.html">Ensembl (including dbSNP, HGMD, COSMIC)</td>
+               <td>Human</td>
+               <td>Ensembl 65 (dbSNP 134)</td>
+       </tr>
+       <tr>
+               <td>GWAS</td>
+               <td><a href="http://www.hugenavigator.org/HuGENavigator/gWAHitStartPage.do">HuGE navigator (including GWAS catalog)</a></td>
+               <td>Human</td>
+               <td>10th December 2011</td>
+       </tr>
+       <tr>
+               <td>Gene names and symbol</td>
+               <td><a href="http://www.genenames.org/">HGNC</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/">NCBI</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://rgd.mcw.edu/">RGD</a></td>
+               <td>Human, Mouse, Rat</td>
+               <td>January 2012</td>
+       </tr>
+       <tr>
+               <td>Protein sequence and annotation</a></td>
+               <td><a href="http://www.uniprot.org/">UniProt</a></td>
+               <td>Human, Mouse</td>
+               <td>2011_12</td>
+       </tr>
+       <tr>
+               <td>Protein domains</td>
+               <td><a href="http://www.ebi.ac.uk/interpro/">InterPro</a></td>
+               <td>Human, Mouse</td>
+               <td>19th January 2012</td>
+       </tr>
+       <tr>
+               <td>Gene Ontology</td>
+               <td><a href="http://www.uniprot.org/">UniProt</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://www.geneontology.org/">GO Consortium</a></td>
+               <td>Human, Mouse</td>
+               <td>January 2012</td>
+       </tr>
+       <tr>
+               <td>Pathways</td>
+               <td><a href="http://www.reactome.org/">Reactome</a></td>
+               <td>Human, Mouse</td>
+               <td>19th January 2012</td>
+       </tr>
+       <tr>
+               <td>Pathways</td>
+               <td><a href="http://www.genome.jp/kegg/pathway.html">KEGG</a></td>
+               <td>Human, Mouse</td>
+               <td>5th May 2011</td>
+       </tr>
+       <tr>
+               <td>Protein localisation</td>
+               <td><a href="http://www.proteinatlas.org/">Human Protein Atlas (HPA)</a></td>
+               <td>Human</td>
+               <td>5th May 2011</td>
+       </tr>
+       <tr>
+               <td>Gene expression</td>
+               <td><a href="http://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-62">ArrayExpress Atlas (experiment E-MTAB-62)</a></td>
+               <td>Human</td>
+               <td>29th June 2011</td>
+       </tr>
+       <tr>
+               <td>Interactions</td>
+               <td><a href="http://www.ebi.ac.uk/intact/">IntAct</a></td>
+               <td>Human, Mouse</td>
+               <td>4th January 2012</td>
+       </tr>  
+       <tr>
+               <td>Interactions</td>
+               <td><a href="http://thebiogrid.org/">BioGRID</a></td>
+               <td>Human, Mouse</td>
+               <td>3.1.84 (25th December 2011)</td>
+       </tr>
+       <tr>
+               <td>Publications</td>
+               <td><a href="ftp://ftp.ncbi.nih.gov/gene/DATA/">NCBI PubMed (gene to PubMed id mappings)</a></td>
+               <td>Human, Mouse</td>
+               <td>19th January 2012</td>
+       </tr>
+       <tr>
+               <td>Disease</td>
+               <td><a href="http://www.omim.org/">OMIM</a></td>
+               <td>Human</td>
+               <td>19th October 2010</td>
+       </tr>  
+       <tr>
+               <td>Orthologues</td>
+               <td><a href="http://www.ensembl.org/info/docs/compara/index.html">Ensembl Compara</a></td>
+               <td>Human, Mouse, Rat</td>
+               <td>Ensembl 65</td>
+       </tr>
+       <tr>
+               <td>Alleles</td>
+               <td><a href="http://www.informatics.jax.org/">MGI</a></td>
+               <td>Mouse</td>
+               <td>12th January 2012</td>
+       </tr>  
+</table>
+
 </div>
 </div>
 <!-- /dataCategories -->
