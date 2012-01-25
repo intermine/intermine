@@ -56,4 +56,61 @@
   </script>
 </div>
 
+<c:if test="${collection != null}">
+  <%-- collection table --%>
+  <div id="mouse-alleles-collection" class="collection-table">
+    <h3>Alleles</h3>
+    <c:set var="inlineResultsTable" value="${collection}" />
+    <tiles:insert page="/reportCollectionTable.jsp">
+    <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
+    <tiles:put name="object" beanName="reportObject.object" />
+    <tiles:put name="fieldName" value="alleles" />
+    </tiles:insert>
+    <div class="toggle">
+        <a class="more" style="float:right;"><span>Show more rows</span></a>
+    </div>
+    <div class="show-in-table">
+      <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=alleles&amp;trail=${param.trail}">
+        Show all in a table &raquo;
+      </html:link>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+  (function() {
+      <%-- hide more than 10 rows --%>
+     var bodyRows = jQuery("#mouse-alleles-collection.collection-table table tbody tr");
+     if (bodyRows.length > 10) {
+       bodyRows.each(function(i) {
+         if (i > 9) {
+           jQuery(this).hide();
+         }
+       });
+       <%-- 'provide' toggler --%>
+       jQuery("#mouse-alleles-collection.collection-table div.toggle").show();
+       <%-- attach toggler event --%>
+       jQuery('#mouse-alleles-collection.collection-table div.toggle a.more').click(function(e) {
+         jQuery("#mouse-alleles-collection.collection-table table tbody tr:hidden").each(function(i) {
+           if (i < 10) {
+             jQuery(this).show();
+           }
+         });
+         jQuery("#mouse-alleles-collection.collection-table div.toggle a.less").show();
+         if (jQuery("#mouse-alleles-collection.collection-table table tbody tr:hidden").length == 0) {
+           jQuery('#mouse-alleles-collection.collection-table div.toggle a.more').hide();
+         }
+       });
+      }
+
+      jQuery('#mouse-alleles-collection input.toggle-table').click(function() {
+        jQuery('#mouse-alleles-collection.collection-table').toggle();
+        if (jQuery('#mouse-alleles-collection.collection-table:visible')) {
+          jQuery("#mouse-alleles-collection.collection-table").scrollTo('fast', 'swing', -20);
+          jQuery(this).hide();
+        }
+      });
+  })();
+  </script>
+</c:if>
+
 <!-- /mouseAllelesDisplayer.jsp -->
