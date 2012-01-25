@@ -12,11 +12,6 @@ package org.intermine.api.profile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,8 +21,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -38,13 +31,9 @@ import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
-import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
-import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
-import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -56,8 +45,6 @@ import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.sql.writebatch.Batch;
-import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
 import org.intermine.util.TypeUtil;
 
 
@@ -443,8 +430,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
             state = BagState.CURRENT;
             uosw.store(savedBag);
             if (updateBagValues) {
-                deleteAllBagValues();
-                addBagValues();
+                updateBagValues();
             }
         } finally {
             if (oswProduction != null) {
@@ -866,5 +852,10 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
             throw new IllegalArgumentException("values cannot be null");
         }
         deleteSomeBagValues(values);
+    }
+
+    @Override
+    public void deleteAllBagValues() {
+        deleteSomeBagValues(null);
     }
 }
