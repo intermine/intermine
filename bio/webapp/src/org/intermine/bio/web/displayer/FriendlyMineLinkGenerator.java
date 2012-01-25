@@ -194,7 +194,6 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
      *****************************************************************************************/
 
     private static Map<String, Set<String[]>> runQuery(Mine mine, PathQuery q, String organism) {
-        String[] identifiers = new String[2];
         Map<String, Set<String[]>> results = new HashMap<String, Set<String[]>>();
         Set<String> mineOrganisms = mine.getDefaultValues();
         try {
@@ -207,6 +206,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
             }
             String line = null;
             while ((line = reader.readLine()) != null) {
+                String[] identifiers = new String[2];
                 String[] bits = line.split("\\t");
                 if (bits.length != 3) {
                     return null;
