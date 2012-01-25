@@ -139,6 +139,7 @@ public final class Util
      * @return     the SQL LIKE parameter
      * @deprecated I don't think this is used anymore?
      */
+    @Deprecated
     public static String wildcardSqlToUser(String exp) {
         StringBuffer sb = new StringBuffer();
 
@@ -273,7 +274,7 @@ public final class Util
         } else if ("java.math.BigDecimal".equals(type)) {
             return java.math.BigDecimal.class;
         } else if ("org.intermine.objectstore.query.ClobAccess".equals(type)) {
-        	return String.class;
+            return String.class;
         } else {
             throw new IllegalArgumentException("Unknown type \"" + type + "\"");
         }
