@@ -15,6 +15,7 @@
   #mouse-alleles div.header h3 { border:0; }
   #mouse-alleles ul li:not(:last-child) { margin-right:10px; }
   #mouse-alleles ul li:not(.top) { display:none; }
+  #mouse-alleles ul li a span { display:none; }
   #mouse-alleles div.toggle { margin:0 auto; text-align:center; }
   </style>
 
@@ -31,7 +32,8 @@
         <c:when test="${term.value.count < 2}">1</c:when>
         <c:when test="${term.value.count < 5}">2</c:when>
         <c:otherwise>3</c:otherwise>
-      </c:choose>"><html:link action="/report?id=${homologue.value['homologueId']}">${term.key}</html:link> (${term.value.count})</span>
+      </c:choose>"><html:link action="/loadQuery.do">
+        <span>${term.value.url}</span> ${term.key}</html:link> (${term.value.count})</span>
       </li>
     </c:forEach>
     </ul>
@@ -39,9 +41,17 @@
   </c:forEach>
   </c:if>
   <script type="text/javascript">
+    <%-- toggler --%>
     jQuery("#mouse-alleles div.toggle a").click(function() {
       jQuery('#mouse-alleles ul li').css('display', 'inline');
       jQuery("#mouse-alleles div.toggle").remove();
+    });
+
+    <%-- encode XML --%>
+    jQuery("#mouse-alleles ul li a").each(function() {
+      var span = jQuery(this).find('span');
+      var xml = encodeURIComponent(span.html());
+      jQuery(this).attr('href', jQuery(this).attr('href') + "?skipBuilder=true&method=xml&trail=%7Cquery&query=" + xml);
     });
   </script>
 </div>

@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -127,7 +126,8 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             if (!counts.containsKey(sourceGeneSymbol)) {
                 HashMap<String, Object> wrapper = new HashMap<String, Object>();
                 wrapper.put("terms", terms = new LinkedHashMap<String, Integer>());
-                wrapper.put("homologueId", row.get(2).getField().toString());
+                wrapper.put("homologueId", (mouser) ? row.get(2).getField().toString()
+                        : row.get(4).getField().toString());
                 wrapper.put("isMouser", mouser);
                 counts.put(sourceGeneSymbol, wrapper);
             } else {
@@ -170,6 +170,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                     }
                     m.put("top", topTerm);
                     m.put("count", (Integer) sorted.get(term));
+                    m.put("url", getUrl((String) gene.get("homologueId")));
 
                     // save it
                     marked.put(term, m);
@@ -185,6 +186,17 @@ public class MouseAllelesDisplayer extends ReportDisplayer
         }
 
         request.setAttribute("counts", top);
+    }
+
+    private String getUrl(String geneId) {
+
+        String url = "<query name=\"\" model=\"genomic\" view=\"Gene.alleles.genotypes.phenotypeTerms.name Gene.alleles.symbol Gene.alleles.primaryIdentifier Gene.alleles.genotypes.name Gene.alleles.name Gene.alleles.type Gene.alleles.genotypes.geneticBackground Gene.alleles.genotypes.zygosity Gene.alleles.organism.name\" longDescription=\"\" constraintLogic=\"B and C and A\">" +
+          "<constraint path=\"Gene.alleles.genotypes.phenotypeTerms.name\" code=\"B\" op=\"=\" value=\"abnormal adipose tissue distribution\"/>" +
+          "<constraint path=\"Gene.organism.species\" code=\"C\" op=\"=\" value=\"musculus\"/>" +
+          "<constraint path=\"Gene.id\" code=\"A\" op=\"=\" value=\"" + geneId + "\"/>" +
+        "</query>";
+
+        return url;
     }
 
 /**
