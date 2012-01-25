@@ -170,7 +170,7 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                     }
                     m.put("top", topTerm);
                     m.put("count", (Integer) sorted.get(term));
-                    m.put("url", getUrl((String) gene.get("homologueId")));
+                    m.put("url", getUrl((String) gene.get("homologueId"), term));
 
                     // save it
                     marked.put(term, m);
@@ -188,10 +188,10 @@ public class MouseAllelesDisplayer extends ReportDisplayer
         request.setAttribute("counts", top);
     }
 
-    private String getUrl(String geneId) {
+    private String getUrl(String geneId, String term) {
 
         String url = "<query name=\"\" model=\"genomic\" view=\"Gene.alleles.genotypes.phenotypeTerms.name Gene.alleles.symbol Gene.alleles.primaryIdentifier Gene.alleles.genotypes.name Gene.alleles.name Gene.alleles.type Gene.alleles.genotypes.geneticBackground Gene.alleles.genotypes.zygosity Gene.alleles.organism.name\" longDescription=\"\" constraintLogic=\"B and C and A\">" +
-          "<constraint path=\"Gene.alleles.genotypes.phenotypeTerms.name\" code=\"B\" op=\"=\" value=\"abnormal adipose tissue distribution\"/>" +
+          "<constraint path=\"Gene.alleles.genotypes.phenotypeTerms.name\" code=\"B\" op=\"=\" value=\"" + term + "\"/>" +
           "<constraint path=\"Gene.organism.species\" code=\"C\" op=\"=\" value=\"musculus\"/>" +
           "<constraint path=\"Gene.id\" code=\"A\" op=\"=\" value=\"" + geneId + "\"/>" +
         "</query>";
