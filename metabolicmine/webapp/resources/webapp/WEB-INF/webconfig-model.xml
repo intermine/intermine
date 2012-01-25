@@ -7,6 +7,11 @@
     </fields>
   </class>
   <class className="org.intermine.model.bio.Pathway">
+    <headerconfig>
+      <titles>
+        <title mainTitles="name" />
+      </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier" />
       <fieldconfig fieldExpr="name" />
