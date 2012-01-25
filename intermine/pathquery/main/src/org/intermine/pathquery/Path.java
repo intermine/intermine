@@ -458,7 +458,10 @@ public class Path
      */
     public ClassDescriptor getSecondLastClassDescriptor() {
         List<ClassDescriptor> l = getElementClassDescriptors();
-        return l.get(l.size() - 2);
+        if (l.size() >1) {
+            return l.get(l.size() - 2);
+        }
+        return null;
     }
 
     /**
