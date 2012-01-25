@@ -155,7 +155,7 @@ public class GoPostprocess extends PostProcessor
                 // we've already seen this evidence code, just merge pubs
                 if (c.equals(alreadySeenCode)) {
                     foundMatch = true;
-                    alreadySeenPubs.addAll(pubs);
+                    alreadySeenPubs = mergePubs(alreadySeenPubs, pubs);
                 }
             }
             if (!foundMatch) {
@@ -163,6 +163,16 @@ public class GoPostprocess extends PostProcessor
                 alreadySeenAnnotation.addEvidence(g);
             }
         }
+    }
+
+    private Set<Publication> mergePubs(Set<Publication> alreadySeenPubs, Set<Publication> pubs) {
+        if (alreadySeenPubs == null) {
+            alreadySeenPubs = new HashSet<Publication>();
+        }
+        if (pubs != null) {
+            alreadySeenPubs.addAll(pubs);
+        }
+        return alreadySeenPubs;
     }
 
     /**
