@@ -30,6 +30,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.search.Scope;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
 import org.intermine.pathquery.PathConstraintLookup;
@@ -210,19 +211,27 @@ public class TemplateController extends TilesAction
     }
 
     private void verifyDisplayExtraValue(List<DisplayConstraint> displayConstraintList) {
-       List<DisplayConstraint> dcl = new ArrayList<DisplayConstraint>(displayConstraintList);
-       ClassDescriptor cd = null;
-       for (DisplayConstraint dc : displayConstraintList) {
-           if (dc.isExtraConstraint()) {
-               String extraFieldClass = dc.getExtraValueFieldClass();
-               for (DisplayConstraint displayConstraint : dcl) {
-                   cd = displayConstraint.getPath().getPath().getLastClassDescriptor();
-                   if (cd != null && cd.getName().equals(extraFieldClass)) {
-                       dc.setShowExtraConstraint(false);
-                       break;
-                   }
-               }
-           }
-       }
+        List<DisplayConstraint> dcl = new ArrayList<DisplayConstraint>(displayConstraintList);
+        ClassDescriptor lastCd = null;
+        ClassDescriptor secondLastCd = null;
+        for (DisplayConstraint dc : displayConstraintList) {
+            Path pathDc = dc.getPath().getPath();
+            if (dc.isExtraConstraint()) {
+                String extraFieldClass = dc.getExtraValueFieldClass();
+                for (DisplayConstraint displayConstraint : dcl) {
+                    Path path = displayConstraint.getPath().getPath();
+                    lastCd = path.getLastClassDescriptor();
+                    secondLastCd = path.getSecondLastClassDescriptor();
+                    if (lastCd != null) {
+                        if (lastCd.getName().equals(extraFieldClass) && secondLastCd != null
+                            && secondLastCd.getName().equals(pathDc.getStartClassDescriptor()
+                                                                   .getName())) {
+                            dc.setShowExtraConstraint(false);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
