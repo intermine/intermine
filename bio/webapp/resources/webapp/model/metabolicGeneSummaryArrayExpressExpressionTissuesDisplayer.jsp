@@ -28,7 +28,7 @@
         </ul>
       </c:when>
       <c:otherwise>
-        No highly expressed tissues.
+        No high differential expression (p < 1e-20).
       </c:otherwise>
     </c:choose>
   </div>
