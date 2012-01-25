@@ -10,6 +10,7 @@ package org.intermine.bio.web.displayer;
  *
  */
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Constraints;
@@ -32,6 +34,8 @@ import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
+import org.intermine.web.logic.results.InlineResultsTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -111,6 +115,33 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                     "A");
             // we want only those homologues that have a non-empty alleles collection
             q.addConstraint(Constraints.isNotNull("Gene.alleles.id"));
+
+            // mouser has a collection table of alleles as well
+            for (FieldDescriptor fd : reportObject.getClassDescriptor().getAllFieldDescriptors()) {
+                if ("alleles".equals(fd.getName()) && fd.isCollection()) {
+                    // fetch the collection
+                    Collection<?> collection = null;
+                    try {
+                        collection = (Collection<?>)
+                            reportObject.getObject().getFieldValue("alleles");
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+
+                    List<Class<?>> lc = PathQueryResultHelper.
+                            queryForTypesInCollection(reportObject.getObject(), "alleles",
+                                    im.getObjectStore());
+
+                    // create an InlineResultsTable
+                    InlineResultsTable t = new InlineResultsTable(collection,
+                            fd.getClassDescriptor().getModel(),
+                            SessionMethods.getWebConfig(request), im.getClassKeys(),
+                            collection.size(), false, lc);
+
+                    request.setAttribute("collection", t);
+                    break;
+                }
+            }
         }
 
         ExportResultsIterator qResults = executor.execute((PathQuery) q);
