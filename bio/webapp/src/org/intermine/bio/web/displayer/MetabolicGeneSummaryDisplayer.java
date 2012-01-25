@@ -74,14 +74,46 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         summary.addCollectionCount("Gene Ontology", "description", "goAnnotation",
                 "GeneOntologyDisplayer");
 
-        // 4. ArrayExpress Gene Expression Diseases
-        summary.addCustom("Expression", "ArrayExpress", this.arrayAtlasExpressionDiseases(summary
-                .getNewPathQuery(), summary), "gene-expression-atlas-diseases",
+        // 5. ArrayExpress Gene Expression Tissues
+        summary.addCustom("Tissues Expression", "ArrayExpress", this.arrayAtlasExpressionTissues(
+                summary.getNewPathQuery(), summary), "gene-expression-atlas-tissues",
+                "metabolicGeneSummaryArrayExpressExpressionTissuesDisplayer.jsp");
+
+        // 6. ArrayExpress Gene Expression Diseases
+        summary.addCustom("Diseases Expression", "ArrayExpress", this.arrayAtlasExpressionDiseases(
+                summary.getNewPathQuery(), summary), "gene-expression-atlas-diseases",
                 "metabolicGeneSummaryArrayExpressExpressionDiseasesDisplayer.jsp");
 
         request.setAttribute("summary", summary);
     }
 
+
+    private Object arrayAtlasExpressionTissues(PathQuery query, GeneSummary summary) {
+        query.addViews("Gene.atlasExpression.condition", "Gene.atlasExpression.expression");
+
+        query.addOrderBy("Gene.atlasExpression.pValue", OrderDirection.ASC);
+
+        query.addConstraint(Constraints.eq("Gene.id", summary.getObjectId().toString()), "A");
+        query.addConstraint(Constraints.lessThan("Gene.atlasExpression.pValue", "1E-20"), "B");
+        query.addConstraint(Constraints.neq("Gene.atlasExpression.pValue", "0"), "C");
+        query.addConstraint(Constraints.eq("Gene.atlasExpression.type", "organism_part"), "D");
+        query.addConstraint(Constraints.greaterThan("Gene.atlasExpression.tStatistic", "8"), "E");
+        query.addConstraint(Constraints.lessThan("Gene.atlasExpression.tStatistic", "-8"), "F");
+        query.setConstraintLogic("A and B and C and D and (E or F)");
+
+        ExportResultsIterator results = summary.getExecutor().execute((PathQuery) query);
+
+        HashMap<String, String> tissues = new HashMap<String, String>();
+        while (results.hasNext()) {
+            List<ResultElement> item = results.next();
+            String tissue = item.get(0).getField().toString();
+            String regulation = item.get(1).getField().toString();
+            // obviously, we can have the same disease appear 2x (we will), but we don't care...
+            tissues.put(tissue, regulation);
+        }
+
+        return tissues;
+    }
 
     private Object arrayAtlasExpressionDiseases(PathQuery query, GeneSummary summary) {
         query.addViews("Gene.atlasExpression.condition", "Gene.atlasExpression.expression");
