@@ -166,13 +166,14 @@ public class GoPostprocess extends PostProcessor
     }
 
     private Set<Publication> mergePubs(Set<Publication> alreadySeenPubs, Set<Publication> pubs) {
-        if (alreadySeenPubs == null) {
-            alreadySeenPubs = new HashSet<Publication>();
+        Set<Publication> newPubs = new HashSet<Publication>();
+        if (alreadySeenPubs != null) {
+            newPubs.addAll(alreadySeenPubs);
         }
         if (pubs != null) {
-            alreadySeenPubs.addAll(pubs);
+            newPubs.addAll(pubs);
         }
-        return alreadySeenPubs;
+        return newPubs;
     }
 
     /**
