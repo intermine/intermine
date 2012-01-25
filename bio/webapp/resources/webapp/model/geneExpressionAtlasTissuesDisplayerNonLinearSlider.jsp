@@ -59,16 +59,16 @@
 </div>
 
 <script type="text/javascript">
-geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier} = {};
-geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier}.init = function() {
+geneExpressionAtlasTissuesDisplayer.dragdealers.${sliderIdentifier} = {};
+geneExpressionAtlasTissuesDisplayer.dragdealers.${sliderIdentifier}.init = function() {
   <%-- init the slider --%>
   new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
     <%-- derive value from slider --%>
     var handle = jQuery("#${sliderIdentifier}.slider-wrap #${sliderIdentifier}-slider div.handle");
     jQuery("#${sliderIdentifier}.slider-wrap input.value").val(function() {
       <%-- call a log that something has updated --%>
-      if (typeof geneExpressionAtlasDisplayer == 'object') {
-        geneExpressionAtlasDisplayer.settingsUpdated();
+      if (typeof geneExpressionAtlasTissuesDisplayer == 'object') {
+        geneExpressionAtlasTissuesDisplayer.settingsUpdated();
       }
 
       var distance = handle.css('left').replace(/[^0-9.]/g, '');
@@ -95,8 +95,8 @@ geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier}.init = function() {
       var pValue = jQuery("#${sliderIdentifier}.slider-wrap input.value").val();
       if (!isNaN(parseFloat(pValue)) && isFinite(pValue) && pValue >= 0 && pValue <= 1) {
         <%-- call a log that something has updated --%>
-        if (typeof geneExpressionAtlasDisplayer == 'object') {
-          geneExpressionAtlasDisplayer.settingsUpdated();
+        if (typeof geneExpressionAtlasTissuesDisplayer == 'object') {
+          geneExpressionAtlasTissuesDisplayer.settingsUpdated();
         }
 
         var width = jQuery("#${sliderIdentifier}-slider div.handle").css('width').replace(/[^0-9]/g, '');
@@ -121,7 +121,7 @@ geneExpressionAtlasDisplayer.dragdealers.${sliderIdentifier}.init = function() {
   .bind('keypress', function(e) {
     if (e.keyCode == 13) {
       adjustSliderPosition();
-      jQuery("#gene-expression-atlas div.settings input.update").click();
+      jQuery("#gene-expression-atlas-tissues div.settings input.update").click();
     }
   });
 

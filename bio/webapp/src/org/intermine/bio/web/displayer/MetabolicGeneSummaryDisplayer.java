@@ -76,7 +76,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
 
         // 4. ArrayExpress Gene Expression Diseases
         summary.addCustom("Expression", "ArrayExpress", this.arrayAtlasExpressionDiseases(summary
-                .getNewPathQuery(), summary), "gene-expression-atlas",
+                .getNewPathQuery(), summary), "gene-expression-atlas-diseases",
                 "metabolicGeneSummaryArrayExpressExpressionDiseasesDisplayer.jsp");
 
         request.setAttribute("summary", summary);
