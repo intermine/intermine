@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,9 +34,8 @@ import org.intermine.web.logic.results.ReportObject;
 public class PathwaysDisplayer extends ReportDisplayer
 {
 
-    private Map<InterMineObject, Integer> pathways = new HashMap<InterMineObject, Integer>();
-    private Map<InterMineObject, Map<InterMineObject, Integer>> cache
-        = new HashMap<InterMineObject, Map<InterMineObject, Integer>>();
+    private Map<Integer, Map<InterMineObject, Integer>> cache =
+        new ConcurrentHashMap<Integer, Map<InterMineObject, Integer>>();
 
     /**
      * Construct with config and the InterMineAPI.
@@ -50,10 +50,21 @@ public class PathwaysDisplayer extends ReportDisplayer
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
         InterMineObject gene = reportObject.getObject();
-        if (cache.get(gene) != null) {
-            pathways = cache.get(gene);
+        Map<InterMineObject, Integer> pathways = getPathways(gene);
+        if (pathways.isEmpty()) {
+            request.setAttribute("noPathwayResults", "No pathways found");
         } else {
+            SortedMap<InterMineObject, Integer> sortedPathways =
+                new TreeMap<InterMineObject, Integer>(new ValueComparator(pathways));
+            sortedPathways.putAll(pathways);
+            request.setAttribute("pathways", sortedPathways);
+        }
+    }
+
+    private Map<InterMineObject, Integer> getPathways(InterMineObject gene) {
+        if (!cache.containsKey(gene.getId())) {
             try {
+                Map<InterMineObject, Integer> pathways = new HashMap<InterMineObject, Integer>();
                 Collection col = (Collection) gene.getFieldValue("pathways");
                 for (Object item : col) {
                     InterMineObject pathway = (InterMineObject) item;
@@ -62,19 +73,12 @@ public class PathwaysDisplayer extends ReportDisplayer
                         pathways.put(pathway, genes.size());
                     }
                 }
-                cache.put(gene, pathways);
+                cache.put(gene.getId(), pathways);
             } catch (IllegalAccessException e) {
                 // oops
             }
         }
-        if (pathways.isEmpty()) {
-            request.setAttribute("noPathwayResults", "No pathways found");
-        } else {
-            SortedMap sortedPathways = new TreeMap<InterMineObject, Integer>(
-                    new ValueComparator(pathways));
-            sortedPathways.putAll(pathways);
-            request.setAttribute("pathways", sortedPathways);
-        }
+        return cache.get(gene.getId());
     }
 }
 
