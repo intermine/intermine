@@ -112,7 +112,7 @@ public class BagUploadConfirmAction extends InterMineAction
             SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName,
                     bagAttributes);
         }
-
+        confirmForm.reset(mapping, request);
         ForwardParameters forwardParameters = new ForwardParameters(
                 mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);
