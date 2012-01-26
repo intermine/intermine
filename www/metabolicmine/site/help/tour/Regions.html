@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
-    <title>metabolicMine Tour page 5 - Results Page</title>
+    <title>metabolicMine Tour page 11 - Regions</title>
     <link media="screen,print" href="../style/genhelp.css" type="text/css" rel="stylesheet" />
     <link media="screen,print" href="../style/tabtastic.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="../js/addclasskillclass.js"></script>
@@ -28,23 +28,23 @@
         <table width="100%">
           <tr>
             <td width="20%" align="left" valign="top">
-<a href="Run_a_Template_Search.html">previous</a>
+<a href="Query_Builder.html">previous</a>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-Results Page &#160; &#160; (5/12)
+Regions &#160; &#160; (11/12)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
-<a href="Creating_a_List.html">next</a>
+<a href="MyMine.html">next</a>
             </td>
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Run a Template Search
+Query Builder
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-Creating a List
+MyMine
             </td>
           </tr>
         </table>
@@ -124,32 +124,64 @@ Creating a List
         <div >
 
 
-<p>
-The results table for the Template search 'Gene --> GO terms' shows the starting Gene (primary 
-identifier and symbol) with details of each GO term applied to the Gene.
+<p> The Regions Search allows you to explore the features contained within a genomic interval or set of regions.  To access the Regions Search 
+click on the Regions tab in the top menu bar:</p>
+
+<img alt="[Regions Tab]"  src="mmTabBarRegion.png"/>
+
+<p>Region search is available for the Human and Mouse genomes.  First select the organism you wish to use:
+
+<img alt="[Regions Organism]"   src="mmRegionsOrganm.png"/>
+
+<p>Next you will see a set of feature types that you can look for in your genomic region(s). By default, all features are selected.  Deselect any features you do not wish to search for.  Alternatively un-check <strong>Select Feature Types</strong> to turn all features off and re-select those that are relevant.</p>
+
+
+<img alt="[Regions Features]"   src="mmRegionsFeatType.png"/>
+
+
+<p>A set of chromosome interval co-ordinates is only relevant in the context of the genome build that it is based upon. As such, working between one genome release and another may require co-ordinates to be re-mapped - a process known as <strong>lift-over</strong>. Using the radio buttons, select the genomic build that the co-ordinates originate from.</p>
+
+<img alt="[Regions Liftover]"   src="mmRegionsLiftover.png"/>
+
+
+<p>You can either type, cut and paste or upload the genomic regions from a file. Each region should be on new line.  <p>Genome regions in the following formats are accepted:
+<ul>
+
+<li>
+chromosome:start..end, eg. chr3:185000000..189000000 or 3:185000000..189000000
+
+</li>
+<li>
+chromosome:start-end, eg. 9:79835469-83810180
+</li>
+<li>
+tab delimited, eg. chr start end (chr11 90460352 94560352)
+</li>
+</ul>
 </p>
 
-<img alt="[Results table]"  src="mmGeneGOresTable_2.png"/>
+You also need to select the co-ordinate system that you're using. Both base coordinate (e.g. BLAST, GFF/GFF3) and interbase coordinate (e.g. UCSC BED, Chado) systems are supported. By default, the base coordinate is selected. </p>
 
-<p>
-Summary buttons <img alt="[icon]"  src="summary_maths.png" valign="center"/> at the top of 
-each column allow you to view some summary statistics.  For names and identifiers it will 
-tell you about unique values, numerical data gives the min, max, mean and standard deviation.
-</p>
+<img alt="[Regions BaseCoord]"   src="mmRegionsPaste.png"/>
 
-<p><strong>Click the summary button for the column 'GO annotation > ontologyTerm > name'</strong></p>
+<p>Optionally, using the slider, you can choose to extend the regions to include a distance on either side of your start and end position(s). This is particularly useful when working with small regions.</p>
 
-<p>
-The table shows the most commonly occurring GO terms applied to the Gene:
-</p>
 
-<img alt="[Summary table]"  src="mmGOnameColSum.png"/>
+<img alt="[Regions Extend]"   src="mmRegionsExtendReg.png"/>
 
-<p>
-All results pages have a number of export options:
-</p>
+<p>Finally, Click the <strong>Search</strong> button to start the analysis. [Be sure not to click the <strong>Reset</strong> button next to it!] </p>
 
-<img alt="[Export]"  src="mmGeneGOexport.png"/>
+<img alt="[Regions Search]"   src="mmRegionsSearch.png"/>
+
+<p>metabolicMine executes your search and then loads the analysis results. Depending on the size of the regions, this may take a minute - a bar, top-centre of the page shows progress of the search. </p>
+
+
+<img alt="[Regions ProgressBar]"   src="mmRegionsProgr.png"/>
+
+<p>Search results are reported in table format with results displayed separately for each interval. From the results page you can export in a number of formats (TAB | CSV | GFF3 | SEQ), either per region or for the entire results set. Feature identifiers in blue are linked to the corresponding entries in the database; click the identifier name to see the report page. Importantly, from your results you can also create Lists (by feature type) which can then be used for further analysis. </p>
+
+
+<img alt="[Regions Results]"   src="mmRegionsResults_annot2.png"/>
 
 
 
@@ -159,23 +191,23 @@ All results pages have a number of export options:
         <table width="100%">
           <tr>
             <td width="20%" align="left" valign="top">
-<a href="Run_a_Template_Search.html">previous</a>
+<a href="Query_Builder.html">previous</a>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-5/12
+11/12
               </span>
             </td>
             <td width="20%" align="right" valign="top">
-<a href="Creating_a_List.html">next</a>
+<a href="MyMine.html">next</a>
             </td>
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Run a Template Search
+Query Builder
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-Creating a List
+MyMine
             </td>
           </tr>
         </table>

@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" style="padding: 0px">
   <head>
-    <title>metabolicMine Tour page 5 - Results Page</title>
+    <title>metabolicMine Tour page 9 - Use Lists in Template Searches</title>
     <link media="screen,print" href="../style/genhelp.css" type="text/css" rel="stylesheet" />
     <link media="screen,print" href="../style/tabtastic.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="../js/addclasskillclass.js"></script>
@@ -28,23 +28,23 @@
         <table width="100%">
           <tr>
             <td width="20%" align="left" valign="top">
-<a href="Run_a_Template_Search.html">previous</a>
+<a href="List_Analysis_Page.html">previous</a>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-Results Page &#160; &#160; (5/12)
+Use Lists in Template Searches &#160; &#160; (9/12)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
-<a href="Creating_a_List.html">next</a>
+<a href="Query_Builder.html">next</a>
             </td>
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Run a Template Search
+List Analysis Page
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-Creating a List
+Query Builder
             </td>
           </tr>
         </table>
@@ -125,32 +125,52 @@ Creating a List
 
 
 <p>
-The results table for the Template search 'Gene --> GO terms' shows the starting Gene (primary 
-identifier and symbol) with details of each GO term applied to the Gene.
+You can use Lists in any Template search, or in queries you create yourself in the QueryBuilder.  
+As the List analysis page suggested, some of the Genes in our List are involved in lipid 
+pathways so it might be interesting to see if any of them are linked to a Disease. metabolicMine
+includes human Disease / Gene relationships from <a href="http://www.ncbi.nlm.nih.gov/omim" target="_new">OMIM</a>. 
+OMIM is a curated database of human Genes and Genetic disorders which we can search with 
+one of our predefined Template searches. 
 </p>
 
-<img alt="[Results table]"  src="mmGeneGOresTable_2.png"/>
+<p><strong>Click on the Templates Tab (located on the top menu bar) and search the Templates for 'disease'. 
+Now select the Template </strong></p>
+<p><strong>'Gene --> Disease (OMIM)':</strong></p>
 
-<p>
-Summary buttons <img alt="[icon]"  src="summary_maths.png" valign="center"/> at the top of 
-each column allow you to view some summary statistics.  For names and identifiers it will 
-tell you about unique values, numerical data gives the min, max, mean and standard deviation.
+<img alt="[Select Template]"  src="mmTemplateSearch_Dis_2.png"/>
+
+<p>Now that we have created a list the template search gives us the option to use it 
+instead of entering an identifier.</p>
+
+<p><strong>Click the checkbox to select the List you named earlier, and then run the search.</strong></p>
+
+<img alt="[Run Template with List]"  src="mmDiseaseTemplList_2.png"/>
+
+<p>The results table shows the Genes from our original List that have associations with 
+Diseases (according to the OMIM database). Using the Column Summary button on the 'Gene > Symbol' we 
+can see that 10 of our Genes have Disease associations (Total unique values: 10).</p>
+
+<p>You can also create new lists from results tables.  We can save the list <strong>Disease Genes</strong> 
+from this query to view in the List analysis page or to use in more Template searches.</p>
+
+<p><strong>Click on the checkbox by 'Gene > primaryIdentifier' to select all of the entries. 
+Now click on the 'Create List' button (just above the primaryIdentifier column) and choose a 
+name for the saved List.</strong>
+
+If you wanted to select a subset you can click on the individual entries. Alternatively, 
+holding the SHIFT key and clicking will allow you to select a range of entries.</p>
+
+<img alt="[Save column in a List]"  src="mmResultsPage_2.png"/>
+<br/>
+
+<p>Using Lists is an excellent way to retrieve information about collections of data. 
+For example we could also retrieve:
+<ul>
+<li>all the orthologues in another organism, e.g. <i>M. musculus</i></li>
+<li>all associated SNPs</li>
+<li>Protein-Protein interactions for these Genes</li>
+</ul>
 </p>
-
-<p><strong>Click the summary button for the column 'GO annotation > ontologyTerm > name'</strong></p>
-
-<p>
-The table shows the most commonly occurring GO terms applied to the Gene:
-</p>
-
-<img alt="[Summary table]"  src="mmGOnameColSum.png"/>
-
-<p>
-All results pages have a number of export options:
-</p>
-
-<img alt="[Export]"  src="mmGeneGOexport.png"/>
-
 
 
         </div>
@@ -159,23 +179,23 @@ All results pages have a number of export options:
         <table width="100%">
           <tr>
             <td width="20%" align="left" valign="top">
-<a href="Run_a_Template_Search.html">previous</a>
+<a href="List_Analysis_Page.html">previous</a>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-5/12
+9/12
               </span>
             </td>
             <td width="20%" align="right" valign="top">
-<a href="Creating_a_List.html">next</a>
+<a href="Query_Builder.html">next</a>
             </td>
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Run a Template Search
+List Analysis Page
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-Creating a List
+Query Builder
             </td>
           </tr>
         </table>
