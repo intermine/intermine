@@ -82,7 +82,7 @@ public class ImportQueriesAction extends InterMineAction
             StringBuffer sb = new StringBuffer();
             for (String queryName : queries.keySet()) {
                 PathQuery query = queries.get(queryName);
-                queryName = NameUtil.validateName(queries.keySet(), queryName);
+                queryName = NameUtil.validateName(allBags.keySet(), queryName);
                 SessionMethods.saveQuery(session, queryName, query);
                 if (sb.length() > 0) {
                     sb.append(", ");
