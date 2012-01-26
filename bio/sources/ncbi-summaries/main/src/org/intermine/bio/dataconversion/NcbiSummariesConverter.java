@@ -30,12 +30,9 @@ import org.intermine.xml.full.Item;
  */
 public class NcbiSummariesConverter extends BioFileConverter
 {
-    //
     private static final String DATASET_TITLE = "NCBI Gene summaries";
     private static final String DATA_SOURCE_NAME = "NCBI Gene";
-
     private static final String HUMAN_TAXON_ID = "9606";
-
     protected static final Logger LOG = Logger.getLogger(NcbiSummariesConverter.class);
 
     /**
@@ -50,20 +47,18 @@ public class NcbiSummariesConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         // Data has format:
         // id | summary
-        int counter = 0;
-        BufferedReader bufferedReader = new BufferedReader(reader);
-
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            String[] cols = line.split("\t");
-            counter++;
+        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        int count = 0;
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
             try {
-                String entrez = cols[0];
-                String summary = cols[1];
-
+                String entrez = line[0];
+                String summary = line[1];
+                LOG.error("summary " + count++ + " " + summary);
                 if (!StringUtils.isBlank(summary)) {
                     Item gene = createItem("Gene");
                     gene.setAttribute("ncbiGeneNumber", entrez);
