@@ -16,8 +16,8 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import au.com.bytecode.opencsv.*;
 import au.com.bytecode.opencsv.CSVParser;
+import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * Class for methods and util methods for parsing csv files and others.
@@ -26,12 +26,15 @@ import au.com.bytecode.opencsv.CSVParser;
  **/
 public final class FormattedTextParser
 {
+    private static final char DEFAULT_QUOTE = '"';
+
     private FormattedTextParser() {
+        // don't
     }
 
     /**
      * Return an Iterator over a tab delimited file.  Iterator.next() splits the current line at the
-     * tabs and returns a String[] of the bits.  No attempt is made to deal with quoted tabs.
+     * tabs and returns a String[] of the bits.  Double quotes are ignored.
      * Lines beginning with # are ignored.
      * @param reader the Reader to read from
      * @return an Iterator over the lines of the Reader
@@ -39,7 +42,7 @@ public final class FormattedTextParser
      */
     public static Iterator<String[]> parseTabDelimitedReader(final Reader reader)
         throws IOException {
-        return parseDelimitedReader(reader, '\t');
+        return parseDelimitedReader(reader, '\t', CSVParser.NULL_CHARACTER);
     }
 
     /**
@@ -52,12 +55,12 @@ public final class FormattedTextParser
      */
     public static Iterator<String[]> parseCsvDelimitedReader(final Reader reader)
         throws IOException {
-        return parseDelimitedReader(reader, ',');
+        return parseDelimitedReader(reader, ',', DEFAULT_QUOTE);
     }
 
     /**
      * Return an Iterator over a delimited file.  Iterator.next() splits the current line
-     * and returns a String[] of the bits.
+     * and returns a String[] of the bits.  Double quotes are ignored.
      * Lines beginning with # are ignored.
      * @param reader the Reader to read from
      * @param delim character to split the files, eg "|"
@@ -66,12 +69,25 @@ public final class FormattedTextParser
      */
     public static Iterator<String[]> parseDelimitedReader(final Reader reader, final char delim)
         throws IOException {
+        return parseDelimitedReader(reader, delim, CSVParser.NULL_CHARACTER);
+    }
 
-        final CSVReader bufferedReader = new CSVReader(reader, delim, '"');
+    /**
+     * Return an Iterator over a delimited file.  Iterator.next() splits the current line
+     * and returns a String[] of the bits.
+     * Lines beginning with # are ignored.
+     * @param reader the Reader to read from
+     * @param delim character to split the files, eg "|"
+     * @param quoteChar the character to use for quoted elements
+     * @return an Iterator over the lines of the Reader
+     * @throws IOException if there is an error while reading from the Reader
+     */
+    private static Iterator<String[]> parseDelimitedReader(final Reader reader, final char delim,
+            char quoteChar) throws IOException {
+        final CSVReader bufferedReader = new CSVReader(reader, delim, quoteChar);
 
         return new Iterator<String[]>() {
             String[] currentLine = null;
-
             {
                 currentLine = getNextNonCommentLine();
             }
