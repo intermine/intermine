@@ -95,8 +95,8 @@
     jQuery("#${sliderIdentifier}-slider div.handle").css('left', function() {
       var eValue = jQuery.trim(jQuery("#${sliderIdentifier}.slider-wrap input.value").val());
 
-      // regular expression - ^\d*[0-9](\.\d*[0-9])?(k|K|m|M)?(b|B|bp|BP)?$
-      var reg = new RegExp("^\\d*[0-9](\\.\\d*[0-9])?(k|K|m|M)?(b|B|bp|BP)?$");
+      // regular expression - ^((\d+)|(\d*[0-9](\.\d*[0-9])?(k|K|m|M|g|G)))(b|bp)?$
+      var reg = new RegExp("^((\\d+)|(\\d*[0-9](\\.\\d*[0-9])?(k|K|m|M|g|G)))(b|bp)?$");
       if (reg.test(eValue)) {
          var number = new Number(eValue.match(/^\d*[0-9](\.\d*[0-9])?/g));
 
@@ -104,11 +104,13 @@
              number = number * 1000;
          } else if (eValue.search(/m/gi) != -1) {
              number = number * 1000000;
-         } else if (number % 1 != 0) { // (integer) bp
-             alert('Please input a value such as 100, 1.2k or 2M');
+         } else if (eValue.search(/g/gi) != -1) {
+             number = number * 1000000000;
          }
       } else {
           alert('Please input a value such as 100, 1.2k or 2M');
+          jQuery("input#${sliderIdentifier}-input-box").val(0);
+          adjustSliderPosition();
       }
 
       eValue = number;
