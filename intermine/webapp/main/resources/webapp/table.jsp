@@ -59,14 +59,14 @@
        </c:if>
      </c:if>
 
-     <c:if test="${!empty templateQuery.description || !empty param.templateQueryDescription}">
+     <c:if test="${!empty pathQuery.description || !empty param.templateQueryDescription}">
        <div class="templateDescription">
          <c:choose>
            <c:when test="${!empty param.templateQueryDescription}">
              <c:out value="${param.templateQueryDescription}"/>
            </c:when>
            <c:otherwise>
-             <c:out value="${templateQuery.description}"/>
+             <c:out value="${pathQuery.description}"/>
            </c:otherwise>
          </c:choose>
          </div>
