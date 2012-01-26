@@ -12,6 +12,7 @@ package org.intermine.bio.web.logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -134,12 +136,31 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 new HashMap<String, Map<GenomicRegion, List<List<String>>>>();
         }
 
+        @SuppressWarnings("unchecked")
+        // map of sequence feature statistics: key - class name. value - count of feature
+        Map<String, Map<GenomicRegion, Map<String, Integer>>> spanOverlapFullStatMap =
+             (Map<String, Map<GenomicRegion, Map<String, Integer>>>) request
+                            .getSession().getAttribute("spanOverlapFullStatMap");
+
+        if (spanOverlapFullStatMap == null) {
+            spanOverlapFullStatMap =
+                new HashMap<String, Map<GenomicRegion, Map<String, Integer>>>();
+        }
+
         Map<GenomicRegion, List<List<String>>> spanOverlapResultDisplayMap = Collections
                 .synchronizedMap(new LinkedHashMap<GenomicRegion, List<List<String>>>());
 
-        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)) {
+        Map<GenomicRegion, Map<String, Integer>> spanOverlapResultStatMap = Collections
+        .synchronizedMap(new LinkedHashMap<GenomicRegion, Map<String, Integer>>());
+
+        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)
+                && !spanOverlapFullStatMap.containsKey(spanUUIDString)) {
+
             spanOverlapFullResultMap.put(spanUUIDString, spanOverlapResultDisplayMap);
             request.getSession().setAttribute("spanOverlapFullResultMap", spanOverlapFullResultMap);
+
+            spanOverlapFullStatMap.put(spanUUIDString, spanOverlapResultStatMap);
+            request.getSession().setAttribute("spanOverlapFullStatMap", spanOverlapFullStatMap);
 
             try {
                 ObjectStore os = SessionMethods.getInterMineAPI(
@@ -149,6 +170,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                     Results results = os.execute(e.getValue());
 
                     List<List<String>> spanResults = new ArrayList<List<String>>();
+
+                    Map<String, Integer> spanStatMap = new HashMap<String, Integer>();
+                    ValueComparator bvc =  new ValueComparator(spanStatMap);
+                    @SuppressWarnings("unchecked")
+                    TreeMap<String, Integer> sortedStatMap = new TreeMap<String, Integer>(bvc);
+
                     if (results == null || results.isEmpty()) {
                         spanOverlapResultDisplayMap.put(e.getKey(), null);
                     }
@@ -166,6 +193,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
                                 if (o instanceof Class) {
                                     item = ((Class) o).getSimpleName();
+                                    // add class stat to spanStatMap
+                                    if (spanStatMap.containsKey(item)) {
+                                        spanStatMap.put(item, spanStatMap.get(item) + 1);
+                                    } else {
+                                        spanStatMap.put(item, 1);
+                                    }
                                 } else {
                                     item = o.toString();
                                 }
@@ -175,9 +208,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                             spanResults.add(resultRow);
                         }
                         spanOverlapResultDisplayMap.put(e.getKey(), spanResults);
+
+                        sortedStatMap.putAll(spanStatMap);
+                        spanOverlapResultStatMap.put(e.getKey(), sortedStatMap);
                     }
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -355,8 +390,34 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
             orgTaxonIdMap.put(orgName, orgTaxonId);
         }
-
         return orgTaxonIdMap;
+    }
+}
 
+/**
+ * Comparator to sort a map on values (integer)
+ * @author Fengyuan Hu
+ *
+ */
+class ValueComparator implements Comparator
+{
+    Map<String, Integer> base;
+
+    /**
+     * @param base the map itself
+     */
+    public ValueComparator(Map<String, Integer> base) {
+        this.base = base;
+    }
+
+    @Override
+    public int compare(Object a, Object b) {
+        if ((Integer) base.get(a) < (Integer) base.get(b)) {
+            return 1;
+        } else if ((Integer) base.get(a) == (Integer) base.get(b)) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 }

@@ -44,7 +44,7 @@
        if ("${noneValidGenomicRegions}"=="true") {
            jQuery("#resultDiv").addClass("altmessage").html("<br>All genomic regions are invalid.<br>");
        } else {
-           init();
+            init();
 
             // polling
             jQuery.PeriodicalUpdater("genomicRegionSearchAjax.do", {
@@ -66,8 +66,8 @@
                     is_all_queries_finished = true;
                     jQuery("#progressbar_div").hide();
                     displayJBrowse();
-                    enableExportAll();
-                    updatePageNavBarAfterQueryFinish();
+                      enableExportAll();
+                      updatePageNavBarAfterQueryFinish(current_page_no, current_page_size);
                 }
              });
 
@@ -101,20 +101,20 @@
     }
 
     function disableExportAll() {
-        jQuery("#exportAll").empty();
-        jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
+        jQuery("#export-all-div").empty();
+        jQuery("#export-all-div").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
     }
 
     function enableExportAll() {
-        jQuery("#exportAll").empty();
+        jQuery("#export-all-div").empty();
 
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', isEmptyFeature: "true" }, function(isEmptyFeature){
             if (isEmptyFeature.trim() == "hasFeature") {
                 jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', generateCreateListHtml: "true" }, function(createListHtml){
-                    jQuery("#exportAll").append('Export for all regions:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>' + createListHtml);
+                    jQuery("#export-all-div").append('Export for all regions:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>' + createListHtml);
                 });
             } else {
-                jQuery("#exportAll").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
+                jQuery("#export-all-div").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
             }
          });
     }
@@ -123,17 +123,20 @@
         jQuery.download("genomicRegionSearchAjax.do", "exportFeatures=true&spanUUIDString=${spanUUIDString}&criteria=" + criteria + "&facet=" + facet + "&format=" + format);
     }
 
-    function createList(criteria, id) { // id e.g. I-100-200
-        var facet = jQuery("#"+id).val();
+    function createList(criteria, id, facet) { // id e.g. I-100-200
+        if (id) { // JS will convert null, undefined, 0 and "" to bollean false
+          facet = jQuery("#"+id).val();
+        }
+
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', createList: "true", criteria: criteria, facet: facet }, function(bagName){
             window.location.href = "/${WEB_PROPERTIES['webapp.path']}/bagDetails.do?bagName=" + bagName;
         }, "text");
     }
 
-    function exportToGalaxy(genomicRegion, orgName) {
-        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getFeatures: "true", spanString: genomicRegion }, function(featureIds){
+    function exportToGalaxy(genomicRegion) {
+        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getFeatures: "true", grString: genomicRegion }, function(featureIds){
             featureIds ='<input type="hidden" name="featureIds" value="' + featureIds + '" />';
-            orgName ='<input type="hidden" name="orgName" value="' + orgName + '" />';
+            orgName ='<input type="hidden" name="orgName" value="' + genomicRegion.split("|")[genomicRegion.split("|").length - 1] + '" />';
             jQuery('<form action="galaxyExportOptions.do" method="post">' + featureIds + orgName + '</form>').appendTo('body').submit().remove();
         }, "text");
     }
@@ -147,7 +150,7 @@
       if(finishedQueryCount < spanQueryTotalCount){
             updatePageNavBarBeforeQueryFinish();
         } else {
-            updatePageNavBarAfterQueryFinish();
+            updatePageNavBarAfterQueryFinish(current_page_no, current_page_size);
         }
     }
 
@@ -170,7 +173,7 @@
 
         function waitingForSpanResult()
         {
-          jQuery("#spanResultsTable > tbody").html('<img src="images/wait30.gif"/>');
+          jQuery("#genomic-region-results-table > tbody").html('<img src="images/wait30.gif"/>');
           if ((finishedQueryCount - 1) >= to_index) {
               clearInterval(spanResultWaitingIntervalId);
               paginationGetResult(from_index, to_index);
@@ -180,15 +183,15 @@
 
     function paginationGetResult(from_index, to_index) {
 
-        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getData: "true", fromIdx: from_index, toIdx: to_index }, function(spanResult){
-            addResultToTable(spanResult);
+        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getData: "true", fromIdx: from_index, toIdx: to_index }, function(results){
+            addResultToTable(results);
         }, "html");
     }
 
     function addResultToTable(spanResult) {
-        jQuery("#spanResultsTable").empty();
+        jQuery("#genomic-region-results-table").empty();
         resultToDisplay = spanResult.paginatedSpanResult;
-        jQuery("#spanResultsTable").append(spanResult);
+        jQuery("#genomic-region-results-table").append(spanResult);
 
        // for contextMenu
        jQuery(".exportMenu").hide();
@@ -223,7 +226,7 @@
         // jQuery("#gbrowseThumbnail").dialog("option", "position", [50, 50]);
     }
 
-    function updatePageNavBarAfterQueryFinish() {
+    function updatePageNavBarAfterQueryFinish(current_page_no, current_page_size) {
         jQuery("#upperNav").empty();
         jQuery("#lowerNav").empty();
 
@@ -357,7 +360,7 @@
         if(finishedQueryCount < spanQueryTotalCount){
             updatePageNavBarBeforeQueryFinish();
         } else {
-            updatePageNavBarAfterQueryFinish();
+            updatePageNavBarAfterQueryFinish(current_page_no, current_page_size);
         }
     }
 
@@ -370,7 +373,39 @@
 
     function displayJBrowse() {
       jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getDropDownList: "true" }, function(data){
-            // alert(data);
+          var regions = data.split(",");
+
+          jQuery.each(regions, function(index, value) {
+              bits = value.split("|"); // e.g. 2L:14615455..14619002|0|D. melanogaster
+              jQuery('#region-select-list').append( new Option(bits[0],jQuery.trim(value)) );
+
+          });
+
+          jQuery("#region-select-list").change(function () {
+            var selectedRegion = jQuery(this).val();
+
+            // change JBrowse
+            // mock up:
+            var url = "http://www.metabolicmine.org/jbrowse?loc=Homo_sapiens_chr_3:12328867..12475843&tracks=Gene%20Track,mRNA%20Track,%20SNPs"
+            window.open(url, 'jbrowse'); // open in iframe id = jbrowse
+
+            // change results view
+            if (selectedRegion != "all") {
+                jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', getGivenRegionsResults: "true", regions: selectedRegion }, function(results){
+                    jQuery("#upper-pag-div").hide();
+                    jQuery("#export-all-div").hide();
+                    jQuery("#bottom-pag-div").hide();
+                    addResultToTable(results);
+                }, "html");
+            } else {
+                updatePageNavBarAfterQueryFinish(1, 10);
+                jQuery("#upper-pag-div").show();
+                jQuery("#export-all-div").show();
+                jQuery("#bottom-pag-div").show();
+                loadResultData(10, 1);
+            }
+          }); // add .change() at the tail will trigger on load
+
         }, "text");
     }
 
@@ -496,43 +531,82 @@ img.tinyQuestionMark {
     </table>
 </div>
 
+<%-- experiment --%>
+<%--
 <div id="region-select-div">
+    <select id="region-select-list" >
+        <option value="all">All Regions</option>
+    </select>
 </div>
 
-<%--
-<div id="jbrowse-div">
-    <iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="http://www.metabolicmine.org/jbrowse/"></iframe>
+<div id="grouping-div">
+    <input text="text" id="group-input" />
+    <p id="group-search">Search</p>
+    <script>
+        jQuery("#group-search").click(function () {
+            // regular expression check
+            var ddotsRegex = /^[^:\t\s]+: ?\d+\.\.\d+$/;
+            var empty = /^\s*$/;
+
+            var interval = jQuery("#group-input").val();
+
+            if (interval.match(empty)) {
+                jQuery("#group-input").focus();
+            }
+            else if (!interval.match(ddotsRegex)) {
+                alert(interval + " is in an invalid format...");
+                jQuery("#group-input").focus();
+            } else {
+                // ajax call
+                jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', groupRegions: "true", interval: interval }, function(results){
+                    jQuery("#upper-pag-div").hide();
+                    jQuery("#export-all-div").hide();
+                    jQuery("#bottom-pag-div").hide();
+                    addResultToTable(results);
+                }, "html");
+            }
+
+        });
+    </script>
 </div>
 --%>
+<%-- experiment --%>
+
+<c:choose>
+    <c:when test="${WEB_PROPERTIES['genomicRegionSearch.jbrowse.display'] eq 'true'}">
+        <div id="genome-browser-div">
+            <iframe name="genome-browser" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="http://www.metabolicmine.org/jbrowse/"></iframe>
+        </div>
+    </c:when>
+</c:choose>
+
 
 <div id="resultDiv" align="left" style="font-size:0.8em; padding-top:10px;">
 
     <%-- Pagination --%>
-    <div style="float: right; margin-right: 35px;">Page size
-    <select id="pageSizeList" onchange="changePageSize()" name="pageSize">
-        <option value="10">10</option>
-        <option value="25">25</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-    </select>
+    <div id="upper-pag-div" style="float: right; margin-right: 35px;">Page size
+        <select id="pageSizeList" onchange="changePageSize()" name="pageSize">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
 
-    <span id="upperNav">
-    </span>
-
+        <span id="upperNav"></span>
     </div>
     <%-- /Pagination --%>
 
     <%-- Export All links, refer to attributeLinkDisplayer.jsp --%>
-    <div id="exportAll" style="display: inline; padding: 0px 0px 0px 23px; line-height: 22px;">
+    <div id="export-all-div" style="display: inline; padding: 0px 0px 0px 23px; line-height: 22px;">
     </div>
     <%-- /Export links --%>
 
 <div>
-  <table id="spanResultsTable" cellpadding="0" cellspacing="0" border="0" class="regions" width="97%" style="min-width: 450px">
+  <table id="genomic-region-results-table" cellpadding="0" cellspacing="0" border="0" class="regions" width="97%" style="min-width: 450px">
   </table>
 </div>
 
-<div id="bottomDiv" align="center">
+<div id="bottom-pag-div" align="center">
     <%-- Pagination at bottom --%>
     <span id="lowerNav"></span>
     <%-- /Pagination at bottom --%>

@@ -71,6 +71,7 @@ public class GenomicRegionSearchAjaxAction extends Action
     private String spanUUIDString;
     private GenomicRegionSearchService grsService;
     private Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap;
+    private Map<String, Map<GenomicRegion, Map<String, Integer>>> spanOverlapFullStatMap;
     private Map<GenomicRegionSearchConstraint, String> spanConstraintMap;
     private HttpSession session;
     private WebConfig webConfig;
@@ -87,6 +88,8 @@ public class GenomicRegionSearchAjaxAction extends Action
         // key - UUID
         this.spanOverlapFullResultMap = (Map<String, Map<GenomicRegion, List<List<String>>>>)
             session.getAttribute("spanOverlapFullResultMap");
+        this.spanOverlapFullStatMap = (Map<String, Map<GenomicRegion, Map<String, Integer>>>)
+            session.getAttribute("spanOverlapFullStatMap");
         this.spanConstraintMap = (HashMap<GenomicRegionSearchConstraint, String>) session
                 .getAttribute("spanConstraintMap");
         this.webConfig = SessionMethods.getWebConfig(request);
@@ -227,6 +230,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
+                spanOverlapFullStatMap.get(spanUUIDString),
                 genomicRegionList, fromIdx, toIdx, session);
 
         out.println(htmlStr);
@@ -244,6 +248,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
+                spanOverlapFullStatMap.get(spanUUIDString),
                 grList, 0, grList.size() - 1, session);
 
         out.println(htmlStr);
@@ -503,7 +508,6 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         out.flush();
         out.close();
-
     }
 
     /**
@@ -518,6 +522,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
+                spanOverlapFullStatMap.get(spanUUIDString),
                 grList, 0, grList.size() - 1, session);
 
         PrintWriter out = response.getWriter();
