@@ -70,8 +70,11 @@
 
           var value = 1 - ((total - distance - width) / (total - width));
 
-          // region extension, the function is the solution of the function derived by curve fitting
-          var e = Math.round(Math.pow(Math.E, (value + 0.445)/0.089) - 143.57);
+          var e = 0;
+          if (value != 0) {
+              // region extension, the function is the solution of the function derived by curve fitting
+              e = Math.round(Math.pow(Math.E, (value + 0.445)/0.089) - 143.57);
+          }
 
           jQuery( "#extendedRegionSize" ).val(e);
 
