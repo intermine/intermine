@@ -600,6 +600,13 @@ public class DisplayConstraint
         return null;
     }
 
+    public String getExtraConnectFieldPath() {
+        if (isExtraConstraint()) {
+            return path.toStringNoConstraints() + "." + bagQueryConfig.getConnectField();
+        }
+        return null;
+    }
+
     /**
      * If a LOOKUP constraint and an extra constraint is available for this path, return a list of
      * the possible values for populating a dropdown.  Otherwise return null.
