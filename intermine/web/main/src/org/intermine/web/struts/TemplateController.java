@@ -212,22 +212,19 @@ public class TemplateController extends TilesAction
 
     private void verifyDisplayExtraValue(List<DisplayConstraint> displayConstraintList) {
         List<DisplayConstraint> dcl = new ArrayList<DisplayConstraint>(displayConstraintList);
-        ClassDescriptor lastCd = null;
-        ClassDescriptor secondLastCd = null;
         for (DisplayConstraint dc : displayConstraintList) {
-            Path pathDc = dc.getPath().getPath();
             if (dc.isExtraConstraint()) {
-                String extraFieldClass = dc.getExtraValueFieldClass();
+                String mainPath = dc.getPath().getPath().toStringNoConstraints();
+                String connectField = dc.getExtraConnectFieldPath();
                 for (DisplayConstraint displayConstraint : dcl) {
-                    Path path = displayConstraint.getPath().getPath();
-                    lastCd = path.getLastClassDescriptor();
-                    secondLastCd = path.getSecondLastClassDescriptor();
-                    if (lastCd != null) {
-                        if (lastCd.getName().equals(extraFieldClass) && secondLastCd != null
-                            && secondLastCd.getName().equals(pathDc.getStartClassDescriptor()
-                                                                   .getName())) {
+                    String  path = displayConstraint.getPath().getPath().toStringNoConstraints();
+                    if (!mainPath.equals(path)) {
+                        if (path.equals(connectField)
+                            || (path.startsWith(connectField)
+                               && connectField.split("\\.").length
+                                  == displayConstraint.getPath().getIndentation())
+                               && displayConstraint.getPath().isAttribute()) {
                             dc.setShowExtraConstraint(false);
-                            break;
                         }
                     }
                 }
