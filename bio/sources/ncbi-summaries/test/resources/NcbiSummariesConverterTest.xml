@@ -1,47 +1,4 @@
 <items>
-<item id="3_1" class="Gene">
-<attribute name="ncbiGeneNumber" value="1"/>
-<attribute name="summary" value="The protein encoded by this gene is a plasma glycoprotein of unknown function. The protein shows sequence similarity to the variable regions of some immunoglobulin supergene family member proteins. [provided by RefSeq, Jul 2008]"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="5_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="3_8" class="Gene">
-<attribute name="ncbiGeneNumber" value="15"/>
-<attribute name="summary" value="The protein encoded by this gene belongs to the acetyltransferase superfamily. It is the penultimate enzyme in melatonin synthesis and controls the night/day rhythm in melatonin production in the vertebrate pineal gland. Melatonin is essential for the function of the circadian clock that influences activity and sleep. This enzyme is regulated by cAMP-dependent phosphorylation that promotes its interaction with 14-3-3 proteins and thus protects the enzyme against proteasomal degradation. This gene may contribute to numerous genetic diseases such as delayed sleep phase syndrome. Alternatively spliced transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Oct 2009]"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="3_9" class="Gene">
-<attribute name="ncbiGeneNumber" value="16"/>
-<attribute name="summary" value="The human alanyl-tRNA synthetase (AARS) belongs to a family of tRNA synthases, of the class II enzymes. Class II tRNA synthases evolved early in evolution and are highly conserved. This is reflected by the fact that 498 of the 968-residue polypeptide human AARS shares 41% identity witht the E.coli protein. tRNA synthases are the enzymes that interpret the RNA code and attach specific aminoacids to the tRNAs that contain the cognate trinucleotide anticodons. They consist of a catalytic domain which interacts with the amino acid acceptor-T psi C helix of the tRNA, and a second domain which interacts with the rest of the tRNA structure. [provided by RefSeq, Jul 2008]"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="4_1" class="Organism">
-<attribute name="taxonId" value="9606"/>
-</item>
-<item id="3_2" class="Gene">
-<attribute name="ncbiGeneNumber" value="2"/>
-<attribute name="summary" value="Alpha-2-macroglobulin is a protease inhibitor and cytokine transporter. It inhibits many proteases, including trypsin, thrombin and collagenase. A2M is implicated in Alzheimer disease (AD) due to its ability to mediate the clearance and degradation of A-beta, the major component of beta-amyloid deposits. [provided by RefSeq, Jul 2008]"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="3_6" class="Gene">
-<attribute name="ncbiGeneNumber" value="13"/>
-<attribute name="summary" value="Microsomal arylacetamide deacetylase competes against the activity of cytosolic arylamine N-acetyltransferase, which catalyzes one of the initial biotransformation pathways for arylamine and heterocyclic amine carcinogens [provided by RefSeq, Jul 2008]"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="3_4" class="Gene">
 <attribute name="ncbiGeneNumber" value="10"/>
 <attribute name="summary" value="This gene encodes an enzyme that functions to both activate and deactivate arylamine and hydrazine drugs and carcinogens. Polymorphisms in this gene are responsible for the N-acetylation polymorphism in which human populations segregate into rapid, intermediate, and slow acetylator phenotypes. Polymorphisms in this gene are also associated with higher incidences of cancer and drug toxicity. A second arylamine N-acetyltransferase gene (NAT1) is located near this gene (NAT2). [provided by RefSeq, Jul 2008]"/>
@@ -60,30 +17,38 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_7" class="Gene">
-<attribute name="ncbiGeneNumber" value="14"/>
-<attribute name="summary" value="The gene product is an immunoglobulin-type protein. It is found to be expressed strongly in endothelial cells, cytotrophoblasts, and poorly differentiated colon adenocarcinoma cells found in lymphatics. The protein contains a heparin-binding domain and mediates heparin-sensitive cell adhesion. [provided by RefSeq, Jul 2008]"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="NCBI Gene"/>
-</item>
-<item id="3_5" class="Gene">
-<attribute name="ncbiGeneNumber" value="12"/>
-<attribute name="summary" value="The protein encoded by this gene is a plasma protease inhibitor and member of the serine protease inhibitor class. Polymorphisms in this protein appear to be tissue specific and influence protease targeting. Variations in this protein's sequence have been implicated in Alzheimer's disease, and deficiency of this protein has been associated with liver disease. Mutations have been identified in patients with Parkinson disease and chronic obstructive pulmonary disease. [provided by RefSeq, Jul 2008]"/>
+<item id="3_1" class="Gene">
+<attribute name="ncbiGeneNumber" value="1"/>
+<attribute name="summary" value="The V0 domain consists of five different subunits: a, c, c', c&quot;, and d."/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_10" class="Gene">
-<attribute name="ncbiGeneNumber" value="18"/>
-<attribute name="summary" value="4-aminobutyrate aminotransferase (ABAT) is responsible for catabolism of gamma-aminobutyric acid (GABA), an important, mostly inhibitory neurotransmitter in the central nervous system, into succinic semialdehyde. The active enzyme is a homodimer of 50-kD subunits complexed to pyridoxal-5-phosphate. The protein sequence is over 95% similar to the pig protein. GABA is estimated to be present in nearly one-third of human synapses. ABAT in liver and brain is controlled by 2 codominant alleles with a frequency in a Caucasian population of 0.56 and 0.44. The ABAT deficiency phenotype includes psychomotor retardation, hypotonia, hyperreflexia, lethargy, refractory seizures, and EEG abnormalities. Multiple alternatively spliced transcript variants encoding the same protein isoform have been found for this gene. [provided by RefSeq, Jul 2008]"/>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="NCBI Gene"/>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="ncbiGeneNumber" value="2"/>
+<attribute name="summary" value="Alpha-2-macroglobulin is a protease inhibitor and cytokine transporter. It inhibits many proteases, including trypsin, thrombin and collagenase. A2M is implicated in Alzheimer disease (AD) due to its ability to mediate the clearance and degradation of A-beta, the major component of beta-amyloid deposits. [provided by RefSeq, Jul 2008]"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="3_5" class="Gene">
+<attribute name="ncbiGeneNumber" value="12"/>
+<attribute name="summary" value="The protein encoded by this gene is a plasma protease inhibitor and member of the serine protease inhibitor class. Polymorphisms in this protein appear to be tissue specific and influence protease targeting. Variations in this protein's sequence have been implicated in Alzheimer's disease, and deficiency of this protein has been associated with liver disease. Mutations have been identified in patients with Parkinson disease and chronic obstructive pulmonary disease. [provided by RefSeq, Jul 2008]"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
