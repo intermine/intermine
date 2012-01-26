@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2011 metabolicMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.Model;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
