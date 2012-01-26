@@ -296,7 +296,7 @@ im.timestampFormat = function() {
       var d = new Date(timestamp - offset);
       // format
       var formattedTime = d.getFullYear() + "-" +
-        pad(d.getMonth()) + "-" +
+        pad(d.getMonth() + 1) + "-" +
         pad(d.getDate()) + " " +
         pad(d.getHours()) + ":" +
         pad(d.getMinutes());
