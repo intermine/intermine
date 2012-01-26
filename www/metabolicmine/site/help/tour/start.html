@@ -32,7 +32,7 @@
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-What is metabolicMine? &#160; &#160; (1/11)
+What is metabolicMine? &#160; &#160; (1/12)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
@@ -64,13 +64,13 @@ Report Page
 <ol>
 <li></li></ol></div></li>
 <li>
-<a href="Template_Queries.html" class="chapter-item" id="Template_Queries">Template Queries</a>
-<div style="display: none;" class="chapter-tab-box" id="Template_Queries-tab-box">
+<a href="Template_Searches.html" class="chapter-item" id="Template_Searches">Template Searches</a>
+<div style="display: none;" class="chapter-tab-box" id="Template_Searches-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
-<a href="Run_a_Template.html" class="chapter-item" id="Run_a_Template">Run a Template</a>
-<div style="display: none;" class="chapter-tab-box" id="Run_a_Template-tab-box">
+<a href="Run_a_Template_Search.html" class="chapter-item" id="Run_a_Template_Search">Run a Template Search</a>
+<div style="display: none;" class="chapter-tab-box" id="Run_a_Template_Search-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
@@ -94,13 +94,18 @@ Report Page
 <ol>
 <li></li></ol></div></li>
 <li>
-<a href="Use_Lists_in_Templates.html" class="chapter-item" id="Use_Lists_in_Templates">Use Lists in Templates</a>
-<div style="display: none;" class="chapter-tab-box" id="Use_Lists_in_Templates-tab-box">
+<a href="Use_Lists_in_Template_Searches.html" class="chapter-item" id="Use_Lists_in_Template_Searches">Use Lists in Template Searches</a>
+<div style="display: none;" class="chapter-tab-box" id="Use_Lists_in_Template_Searches-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
 <a href="Query_Builder.html" class="chapter-item" id="Query_Builder">Query Builder</a>
 <div style="display: none;" class="chapter-tab-box" id="Query_Builder-tab-box">
+<ol>
+<li></li></ol></div></li>
+<li>
+<a href="Regions.html" class="chapter-item" id="Regions">Regions</a>
+<div style="display: none;" class="chapter-tab-box" id="Regions-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
@@ -121,9 +126,9 @@ Report Page
 
 
 <p>metabolicMine is a data warehouse that integrates diverse biological data sets and 
-the tools to explore them. The main focus of metaboliMine is genomics and proteomics of 
+the tools to explore them. The main focus of metabolicMine is genomics and proteomics of 
 common metabolic diseases. By integrating such data into one place it is possible to 
-construct queries across domains of biological knowledge.</p>
+construct searches across domains of biological knowledge.</p>
 
 <p> See a List of all the data sources from the toolbar on any metabolicMine page:</p>
 <img alt="[Quick Search]" src="mmToolbar_Data_2.png"/>
@@ -133,31 +138,29 @@ construct queries across domains of biological knowledge.</p>
 up an identifier and viewing a report page.  This quick tour will
 introduce some of the features:</p>
 
-<p>The first thing you'll see is the <strong>First Time Here</strong> box. 
+<p>The first thing you'll see is the <strong>First Time Here</strong> box.</p> 
 
-<img alt="[First Time Here]" src="mmFTHbox.png"/></p>
+<img alt="[First Time Here]" src="mmFTHbox.png"/>
 
 <p>Here's where you'll find our handy <strong>Feature Hints</strong>. Scroll through when you 
 need a quick reminder of the different parts of metabolicMine and what everything does.
 Don't worry - you can minimize the box when you're done with it.</p>
 
 <p>Moving down the page we encounter three colour-coded boxes showing the main ways of 
-interacting with the database. On the left (in orange) we have the Search box, in the middle 
-(in green) the Lists and on the right (in purple) our predefined Templates.</p>
+interacting with the database. On the left (in orange) we have the Search box, on the right
+(in green) the Lists and below (in purple) our predefined Template searches.</p>
 
-<img alt="[Function Boxes]" src="mmFunctionBoxes.png"/>
+<img alt="[Function Boxes]" src="mmHomePage_dec2011.png"/>
 
-<p><strong>Search</strong> is available, just like on other sites, simply type in
+<p>To <strong>Search</strong>, simply type in
 an identifier to see a report page. You can search with identifiers 
 (Gene symbols, accession codes, PubMed IDs etc.) or keywords (eg. Diabetes) and Authors (eg. Sanger F). 
 Additionally, you can use Boolean (AND, OR, NOT) and wildcards (*) to refine your results.</p>
 
-<p><u>Filtering with Facets</u>
+<p><u>Filtering your search</u>
 <br>Our search engine operates across all data fields giving you the highest chance 
-of getting a result. <strong>Facets</strong> show you the different places where your 
-search words were found (eg. Gene, Protein, Go Term, Template). You can use the facets 
-to filter for the type of results that are most important to you. When you filter by facet you
-can even save a List straight from your results. There's more about Lists later.</p>
+of getting a result. <strong>Filters</strong> show you the different places where your 
+search words were found (eg. Gene, Protein, Go Term, Template search), allowing you to easily find the type of results that are most important to you. Certain filters (for example Gene or Protein) also allow you to save a List straight from your results. There's more about Lists later.</p>
 
 <p><img alt="[Facets]" src="mmLuceneFacets_diabet.png"/></p>
 
@@ -166,7 +169,7 @@ upload your own Lists (favourite Genes, SNPs etc) or save them from results tabl
 We also create useful <strong>Public Lists</strong> for everyone to use. You can start to explore 
 your data on the List Analysis Page. 
 Here are just some of the things you can do:<UL>
-<LI>Ask questions about the data using our predefined Templates</LI>
+<LI>Ask questions about the data using our predefined Template Searches</LI>
 <LI>Combine or subtract the content of other Lists</LI>
 <LI>Uncover hidden relationships with our analysis <strong>Widgets</strong></LI>
 </UL>
@@ -176,32 +179,32 @@ Here are just some of the things you can do:<UL>
 <br>You're automatically taken to the List Analysis Page when you first create a List 
 or when you visit a List that you've stored previously.</p>
 
-<p><strong>Template queries</strong> are 'predefined' queries that are designed around specific tasks. 
-Templates provide you with a simple form that lets you define your starting point and optional 
+<p><strong>Template Searches</strong> are 'predefined' searches that are designed around specific tasks. 
+Template searches provide you with a simple form that lets you define your starting point and optional 
 filters to help focus your search.
 
-Our Templates are designed around the common tasks performed by our Biologist Community. 
+Our Template Searches are designed around the common tasks performed by our Biologist Community. 
 They cover common questions like:<UL>
 <LI>I have a List of SNPs - do any of them affect Genes?</LI>
 <LI>This Gene came up in my results - what can I find out about it?</LI>
 <LI>I'm interested in this chromosome region - what's in there that could be linked with this disease?</LI>
 </UL>
 
-<br>You can create your own Templates after you create a <strong>MyMine</strong> account and log in. 
-You can modify our pre-existing Templates or start from scratch with the QueryBuilder.
-Alternatively, the metabolicMine Team are search speciaLists so we can quickly build Custom 
-Templates for you.</p>
+<br>You can create your own Template searches after you create a <strong>MyMine</strong> account and log in. 
+You can modify our pre-existing Template searches or start from scratch with the QueryBuilder.
+Alternatively, the metabolicMine Team are search specialists so we can quickly build Custom 
+Template searches for you.</p>
 
 <p>The Powerhouse of metabolicMine, <strong>QueryBuilder (QB)</strong> allows you to construct your own 
 custom queries, modify your previous queries and Edit Templates. The easiest way to get started 
-with QB is by editing one of our pre-existing Template queries. Follow the simple tutorial in the 
-QueryBuilder section to change a Template output or add a filter.</p>
+with QB is by editing one of our pre-existing Template Searches. Follow the simple tutorial in the 
+QueryBuilder section to change a Template search output or add a filter.</p>
 
 <p><strong>MyMine</strong> is your <u>personal space</u> on metabolicMine. Creating an account allows you 
-to save your Queries, Lists and Templates you've modified for later use. You can also mark the 
-most useful Public Templates as favourites so they're easier to find.</p>
+to save your Queries, Lists and Template searches you've modified for later use. You can also mark the 
+most useful Public Template searches as favourites so they're easier to find.</p>
 
-<p> All these features are accessible from the Tab toolbar on every matabolicMine page:</p>
+<p> All these features are accessible from the Tab toolbar on every metabolicMine page:</p>
 
 <img alt="[Tab Shortcuts]" src="mmToolbar_home.png"/>
 
@@ -217,7 +220,7 @@ most useful Public Templates as favourites so they're easier to find.</p>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-1/11
+1/12
               </span>
             </td>
             <td width="20%" align="right" valign="top">
