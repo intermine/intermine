@@ -17,14 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
@@ -68,21 +66,18 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
                     "MouseAllelesDisplayer");
         } else {
             summary.addCollectionCount("Mouse Alleles (MGI)", "mouse alleles",
-                    allelesPathQuery(summary.getNewPathQuery(),
-                    summary.getObjectId()), "MouseAllelesDisplayer");
+                    allelesPathQuery(summary.getObjectId()), "MouseAllelesDisplayer");
         }
         // 4. GOTerm count
         summary.addCollectionCount("Gene Ontology", "&nbsp;",
-                "goAnnotation", "GeneOntologyDisplayer");
+                goTermPathQuery(summary.getObjectId()), "GeneOntologyDisplayer");
 
         // on sapien pages:
         if (summary.isThisAHuman()) {
             // ArrayExpress Gene Expression Tissues & Tissues
             ArrayList arr = new ArrayList();
-            arr.add(this.arrayAtlasExpressionTissues(
-                    summary.getNewPathQuery(), summary));
-            arr.add(this.arrayAtlasExpressionDiseases(
-                    summary.getNewPathQuery(), summary));
+            arr.add(this.arrayAtlasExpressionTissues(summary));
+            arr.add(this.arrayAtlasExpressionDiseases(summary));
             summary.addCustom("Expression", "Array Express (E-MTAB 62)",
                     arr, "GeneExpressionAtlasTissuesDisplayer",
                     "metabolicGeneSummaryArrayExpressExpressionDisplayer.jsp");
@@ -92,7 +87,8 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
     }
 
 
-    private Object arrayAtlasExpressionTissues(PathQuery query, GeneSummary summary) {
+    private Object arrayAtlasExpressionTissues(GeneSummary summary) {
+        PathQuery query = new PathQuery(im.getModel());
         query.addViews("Gene.atlasExpression.condition", "Gene.atlasExpression.expression");
 
         query.addOrderBy("Gene.atlasExpression.pValue", OrderDirection.ASC);
@@ -120,7 +116,8 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         return tissues;
     }
 
-    private Object arrayAtlasExpressionDiseases(PathQuery query, GeneSummary summary) {
+    private Object arrayAtlasExpressionDiseases(GeneSummary summary) {
+        PathQuery query = new PathQuery(im.getModel());
         query.addViews("Gene.atlasExpression.condition", "Gene.atlasExpression.expression");
 
         query.addOrderBy("Gene.atlasExpression.pValue", OrderDirection.ASC);
@@ -169,7 +166,8 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
      * @param objectId
      * @return
      */
-    private PathQuery allelesPathQuery(PathQuery query, Integer objectId) {
+    private PathQuery allelesPathQuery(Integer objectId) {
+        PathQuery query = new PathQuery(im.getModel());
         query.addViews("Gene.homologues.homologue.alleles.primaryIdentifier");
         query.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
                 "M. musculus"), "A");
@@ -185,12 +183,16 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
      * @param objectId
      * @return
      */
-    @SuppressWarnings("unused")
-    private PathQuery goTermPathQuery(PathQuery query, Integer objectId) {
-        query.addViews("Gene.goAnnotation.ontologyTerm.namespace");
-        query.addOrderBy("Gene.goAnnotation.ontologyTerm.namespace", OrderDirection.ASC);
+    private PathQuery goTermPathQuery(Integer objectId) {
+        PathQuery query = new PathQuery(im.getModel());
+        query.addViews("Gene.goAnnotation.ontologyTerm.name");
+        query.addOrderBy("Gene.goAnnotation.ontologyTerm.name", OrderDirection.ASC);
         query.addConstraint(Constraints.eq("Gene.id", objectId.toString()));
-
+        // parents have to be main ontology, to exclude the root terms
+        query.addConstraint(Constraints.oneOfValues("Gene.goAnnotation.ontologyTerm.parents.name",
+                GeneOntologyDisplayer.ONTOLOGIES));
+        // not a NOT relationship
+        query.addConstraint(Constraints.isNull("Gene.goAnnotation.qualifier"));
         return query;
     }
 
@@ -203,9 +205,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
     public class GeneSummary
     {
         private InterMineObject imObj;
-        private HttpServletRequest request;
-        private PathQueryExecutor executor;
-        private Model model = null;
+        private PathQueryExecutor executor = null;
         private LinkedHashMap<String, HashMap<String, Object>> storage;
 
         /**
@@ -215,8 +215,8 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
          */
         public GeneSummary(InterMineObject imObj, HttpServletRequest request) {
             this.imObj = imObj;
-            this.request = request;
             storage = new LinkedHashMap<String, HashMap<String, Object>>();
+            executor = im.getPathQueryExecutor(SessionMethods.getProfile(request.getSession()));
         }
 
         /**
@@ -251,7 +251,8 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
             } else if (param instanceof String) {
                 Collection<?> coll = null;
                 try {
-                    if ((coll = (Collection<?>) imObj.getFieldValue((String) param)) != null) {
+                    coll = (Collection<?>) imObj.getFieldValue(param.toString());
+                    if (coll != null) {
                         storage.put(key, createWrapper("integer", coll.size(), anchor,
                                 description, null));
                     }
@@ -313,20 +314,6 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
          */
         public void addImageLink(String key, String link, String anchor, String description) {
             storage.put(key, createWrapper("image", link, anchor, description, null));
-        }
-
-        /**
-         * Give us a new PathQuery to work on.
-         * @return PathQuery
-         */
-        public PathQuery getNewPathQuery() {
-            if (model == null) {
-                HttpSession session = request.getSession();
-                final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                model = im.getModel();
-                executor = im.getPathQueryExecutor(SessionMethods.getProfile(session));
-            }
-            return new PathQuery(model);
         }
 
         /**
