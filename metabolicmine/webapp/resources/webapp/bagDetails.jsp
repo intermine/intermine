@@ -387,21 +387,10 @@
               columns.push(jQuery(this).attr('title'));
             });
 
-            <%-- only valid columns --%>
+            <%-- add the "first" two columns --%>
             var previewColumns = Array();
-            jQuery.each('${showInPreviewTable}'.replace(/\[|\]/g, '').split(', '), function(index, value) {
-              if (jQuery("#list-table table thead th[title='"+value+"']").exists()) {
-              previewColumns.push(value);
-              }
-            });
-
-            <%-- no config, add the "first" two columns --%>
-            if (previewColumns.length == 0) {
-              previewColumns.push(columns[1]);
-              if (columns.length > 2) {
-                previewColumns.push(columns[2]);
-              }
-            }
+            previewColumns.push(columns[0]);
+            previewColumns.push(columns[1]);
 
             var limit = 3;
             jQuery("#list-table table tbody tr").each(function(index) {
@@ -414,7 +403,12 @@
                       jQuery.each(previewColumns, function(index, value) {
                         jQuery('<td/>', {
                           'text': function() {
-                            return jQuery(sourceTr).find("td:nth-child("+(columns.indexOf(value)+1)+")").text();
+                            // shift by 1 as first column is the checkbox
+                            var column = jQuery(sourceTr).find("td:eq("+(columns.indexOf(value))+")");
+                            if (column.find('a').exists()) {
+                              return column.find('a').text();
+                            }
+                            return column.text();
                           }
                         }).appendTo(tr);
                       });
@@ -591,11 +585,25 @@
 
 </c:when>
 <c:otherwise>
+
+  <script type="text/javascript">
+    (function() {
+      jQuery(document).ready(function() {
+        // parse the message because the messaging is eeeu
+        var m = jQuery(jQuery('#error_msg.topBar.errors').html()).text().replace('Hide', '').trim();
+        // append link to all lists
+        var l = ', <html:link styleClass="inline" action="/bag?subtab=view">view all lists</html:link> instead.';
+        jQuery('#error_msg.topBar.errors').html(jQuery('#error_msg.topBar.errors').html().replace(m, m+l));
+      });
+    })();
+  </script>
+
 <!--  No list found with this name -->
 <div class="bigmessage">
  <br />
  <html:link action="/bag?subtab=view">View all lists</html:link>
 </div>
+
 </c:otherwise>
 </c:choose>
 
