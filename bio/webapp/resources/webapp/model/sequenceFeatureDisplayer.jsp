@@ -14,12 +14,13 @@
 #object_header #sequencefeaturedisplayer-wrapper.wrapper { margin-bottom:10px; }
 #object_header #sequence-feature-displayer { margin:0 0 0 3px; }
 #object_header #sequence-feature-displayer h3 { display:none; }
-#object_header #sequence-feature-displayer table { width:50%; }
+#object_header #sequence-feature-displayer table { width:0%; }
 #object_header #sequence-feature-displayer table td { padding:0; }
 #object_header #sequence-feature-displayer table,
 #object_header #sequence-feature-displayer table tr,
 #object_header #sequence-feature-displayer table td,
 #object_header #sequence-feature-displayer table th { border:0; background:transparent; }
+#object_header #sequence-feature-displayer table tr td:not(:first-child) { padding-right:20px; }
 </style>
 
 <c:set var="feature" value="${reportObject.object}"/>
@@ -40,12 +41,12 @@
       <tr>
         <c:choose>
           <c:when test="${!empty feature.length}">
-            <td>Region:</td>
+            <td class="label">Region:</td>
             <td>
               <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
               <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
             </td>
-            <td>Length:</td>
+            <td class="label">Length:</td>
             <td>
               <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
               <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
@@ -66,7 +67,7 @@
       <c:choose>
         <c:when test="${!empty feature.length}">
           <tr>
-            <td>Length:</td>
+            <td class="label">Length:</td>
             <td colspan="3">
               <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
               <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
@@ -80,7 +81,7 @@
   </c:choose>
 
   <tr>
-    <td>Location:</td>
+    <td class="label">Location:</td>
       <c:choose>
         <c:when test="${!empty feature.chromosomeLocation}">
           <td>
@@ -150,13 +151,13 @@
     </td>
     <c:choose>
       <c:when test="${!empty cytoLocation}">
-        <td>Cyto location:</td>
+        <td class="label">Cyto location:</td>
         <td>
           <strong><c:out value="${cytoLocation}"/></strong>
         </td>
       </c:when>
       <c:when test="${!empty mapLocation}">
-        <td>Map location:</td>
+        <td class="label">Map location:</td>
         <td>
           <strong><c:out value="${mapLocation}"/></strong>
         </td>

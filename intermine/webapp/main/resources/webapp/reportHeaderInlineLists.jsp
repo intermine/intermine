@@ -53,7 +53,7 @@
     <div class="inline-list" id="header-inline-list-${outerStatus.count}">
       <a name="${list.prefix}" class="anchor"></a>
       <ul>
-        <li><span class="name">${list.prefix}</span>:</li>
+        <li><span class="name label">${list.prefix}:</span></li>
         <c:choose>
           <c:when test="${list.showLinksToObjects}">
             <c:forEach items="${list.items}" var="item" varStatus="status">
