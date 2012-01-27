@@ -94,7 +94,7 @@ div.heading.results #tool_bar_div li { border:1px solid #D2D2D2; background:#EEE
 
 #tool_bar_div { background:#F5F5F5; }
   #tool_bar_div ul#button_bar li.tb_button { cursor:pointer; border:outset 1px #CCCCCC; background-image:url("../../images/buttons/button-bg.gif");
-  background-position:left top; background-color:#999999; background-repeat:repeat-x; vertical-align:middle; margin-right:2px; }
+  background-position:left top; background-color:#999999; background-repeat:repeat-x; vertical-align:middle; margin-right:2px; height:16px; }
 
 /* my templates */
 #all_templates_template_container.wsListContainer #all_templates_template_ws_list.wsList div.wsLine_my,
