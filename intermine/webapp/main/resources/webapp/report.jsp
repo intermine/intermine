@@ -98,7 +98,7 @@
               <c:set var="tableCount" value="${tableCount+1}" scope="page" />
             </c:when>
             <c:otherwise>
-              <c:if test="${!field.doNotTruncate}">
+              <c:if test="${!field.doNotTruncate && !empty field.value}">
                 <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
                 <td><strong>${field.value}</strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
@@ -113,8 +113,10 @@
       <c:forEach var="field" items="${object.objectSummaryFields}">
         <c:if test="${field.doNotTruncate}">
           <tr>
-            <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
-            <td><strong>${field.value}</strong></td>
+            <c:if test="${!empty field.value}">
+              <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+              <td><strong>${field.value}</strong></td>
+            </c:if>
           </tr>
         </c:if>
       </c:forEach>
