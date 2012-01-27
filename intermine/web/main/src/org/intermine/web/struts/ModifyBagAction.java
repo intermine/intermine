@@ -278,8 +278,8 @@ public class ModifyBagAction extends InterMineAction
     private static void deleteQueriesThatMentionBag(Profile profile, String bagName) {
         // delete query from history
         Map<String, SavedQuery> savedQueries = profile.getHistory();
-        for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
-            String queryName = (String) i.next();
+        Set<String> savedQueriesNames = new HashSet<String>(profile.getHistory().keySet());
+        for (String queryName : savedQueriesNames) {
             SavedQuery query = (SavedQuery) savedQueries.get(queryName);
             if (query.getPathQuery().getBagNames().contains(bagName)) {
                 profile.deleteHistory(queryName);
@@ -288,8 +288,8 @@ public class ModifyBagAction extends InterMineAction
 
         // delete query from saved queries
         savedQueries = profile.getSavedQueries();
-        for (Iterator<String> i = savedQueries.keySet().iterator(); i.hasNext();) {
-            String queryName = (String) i.next();
+        savedQueriesNames = new HashSet<String>(profile.getSavedQueries().keySet());
+        for (String queryName : savedQueriesNames) {
             SavedQuery query = (SavedQuery) savedQueries.get(queryName);
             if (query.getPathQuery().getBagNames().contains(bagName)) {
                 profile.deleteQuery(queryName);
