@@ -83,7 +83,7 @@ function clearBagName(element) {
           </c:if>
           <c:if test="${PROFILE.loggedIn}">
             <a href="javascript:filterFavourites('${type}', '${wsListId}');"><img id="filter_favourites_${wsListId}_${type}" src="images/filter_favourites.png" width="20" height="20" title="Show Only Favourites" style="vertical-align: middle;"/></a>
-            <a href="javascript:changeScope('${type}', '${wsListId}');">modifyBag<img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" title="Show all or mine only" style="vertical-align: middle;"/></a>
+            <a href="javascript:changeScope('${type}', '${wsListId}');"><img id="filter_scope_${wsListId}_${type}" src="images/filter_all.png" width="20" height="20" title="Show all or mine only" style="vertical-align: middle;"/></a>
             <c:if test="${type == 'bag'}">
               <script type="text/javascript">
                   function filterByTag(tag) {
