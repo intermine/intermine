@@ -130,6 +130,9 @@ public class ProteinDomainLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new ContainsConstraint(qr2, ConstraintOp.CONTAINS, qcProtein));
         }
 
+        // can't be null, we need a way to determine if a gene is unique
+        cs.addConstraint(new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.IS_NOT_NULL));
+
         Query q = new Query();
         q.setDistinct(false);
 
