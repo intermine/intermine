@@ -17,23 +17,23 @@ $.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/serv
     var url = "${WEB_PROPERTIES['webapp.path']}/categorySummary.do?category=";
     var items = [];
     items.push('<tr>');
-    $.each(data, function(key, val) {         
+    $.each(data, function(key, val) {
         $.each(val, function (k,v){
             // alert("AA" + k + " ++ " + v.organisms[0].experiments[0].experiment_name);
-            items.push('<td id="' + k + '"><a href="/' + url + v.category + '">' + v.category 
+            items.push('<td id="' + k + '"><a href="/' + url + v.category + '">' + v.category
                     +  '<img src="images/right-arrow.gif" /></a></td>');
         });
     });
-    
+
     $('<table/>', {
         'class': 'projects',
         html: items.join('')
     }).appendTo('#catnavigation');
-});   
+});
 </script>
 
 
-      
+
 
 <div id="ctxHelpDiv" class="welcome" style="display:none;">
   <div class="topBar info">
@@ -54,9 +54,14 @@ $.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/serv
             <div id="welcome-content" class="span-42 last current">
               <div style="padding:0 20px;">
               <h2>Welcome to modMine</h2>
-<p>The <strong>modENCODE</strong> project aims to identify all sequence-based functional elements in the <i><strong>C. elegans</strong></i> and <i><strong>D. melanogaster</strong></i> genomes. modENCODE labs submit data to the Data Coordination Center (DCC) where we organize and present the results.</p>
-<br />
-<p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong> and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong> results and access the GBrowse <strong>genome browser</strong>.  Explore some of the tools provided below.</p>
+<p>The <strong>modENCODE</strong> project aims to identify all sequence-based functional elements
+in the <i><strong>C. elegans</strong></i> and <i><strong>D. melanogaster</strong></i> genomes.
+modENCODE labs submit data to the Data Coordination Center (DCC) where we organize and present the results.</p>
+<p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong>
+and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong>
+results and access the GBrowse <strong>genome browser</strong>. Explore some of the tools provided below and
+check out our <b><a href="http://www.modencode.org/quickstart/">quick start guide</a></b>!
+</p>
 <br />
 <p><strong>modMine</strong> release <strong>${WEB_PROPERTIES['project.releaseVersion']}</strong> uses genome annotations <strong>${WEB_PROPERTIES['genomeVersion.fly']}</strong> for fly and <strong>${WEB_PROPERTIES['genomeVersion.worm']}</strong> for worm.</p>
 <br />
@@ -68,15 +73,15 @@ $.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/serv
 
 <h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
         <div class="span-42 last">
-          
+
 <%--
         <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
 --%>
         <div id="catnavigation" style="padding: 10px 20px;">
-     
+
         </div>
-        
-        
+
+
               <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
             </div>
           </div>
