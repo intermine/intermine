@@ -19,31 +19,34 @@
   </tr>
   </thead>
   <tbody>
-	  <tr>
-	  <c:forEach items="${homologues}" var="entry">
-	    <c:set var="genes" value="${entry.value}"/>
-	    <c:choose>
-	      <c:when test="${empty genes}">
-	        <td></td>
-	      </c:when>
-	      <c:otherwise>
-	        <td class="one-line">
-	          <c:forEach items="${genes}" var="resultElement">
-	            <a href="report.do?id=${resultElement.id}">${resultElement.field}</a>
-	          </c:forEach>
-	        </td>
-	      </c:otherwise>
-	    </c:choose>
-	  </c:forEach>
-	  </tr>
+    <tr>
+    <c:forEach items="${homologues}" var="entry">
+      <c:set var="genes" value="${entry.value}"/>
+      <c:choose>
+        <c:when test="${empty genes}">
+          <td></td>
+        </c:when>
+        <c:otherwise>
+          <td class="one-line">
+            <c:forEach items="${genes}" var="resultElement">
+              <a href="report.do?id=${resultElement.id}">${resultElement.field}</a>
+            </c:forEach>
+          </td>
+        </c:otherwise>
+      </c:choose>
+    </c:forEach>
+    </tr>
   </tbody>
 </table>
 </c:when>
+<c:when test="${homologues != null && empty homologues}">
+  <p style="font-style:italic;">No data found</p>
+</c:when>
 <c:otherwise>
-	<p>There was a problem rendering the displayer.</p>
-	<script type="text/javascript">
-		jQuery('#homologue-displayer').addClass('warning');
-	</script>
+  <p>There was a problem rendering the displayer.</p>
+  <script type="text/javascript">
+    jQuery('#homologue-displayer').addClass('warning');
+  </script>
 </c:otherwise>
 </c:choose>
 </div>
