@@ -23,8 +23,12 @@ h2 { margin-bottom:10px; }
     #object_header p.description { margin:0; padding-bottom:10px; }
       #object_header p.description img { vertical-align:top; }
 
+    #object_header td.label,
+    #object_header span.label { min-width:100px; display:inline-block; white-space:nowrap; }
+
     /* header items */
-    #object_header table.fields { width:50%; }
+    #object_header table.fields { width:0%; }
+    #object_header table.fields tr td:not(:first-child) { padding-right:20px; }
 
     /* header inline lists */
   #object_header div.inline-list { margin:0; }

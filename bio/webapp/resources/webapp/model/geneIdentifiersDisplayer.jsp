@@ -5,7 +5,7 @@
 <c:if test="${!empty identifiers}">
   <div id="gene-identifiers-displayer" class="inline-list">
   <ul>
-  <li><span class="name">identifiers</span>:</li>
+  <li><span class="name label">identifiers:</span></li>
   <c:set var="size" value="${fn:length(identifiers)}" />
   <c:forEach var="identifier" items="${identifiers}" varStatus="status">
     <li>${identifier.value}<c:if test="${status.count < size}">, </c:if></li>

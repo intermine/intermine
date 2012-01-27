@@ -84,7 +84,7 @@
             value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
           <c:choose>
             <c:when test="${field.valueHasDisplayer}">
-              <td>
+              <td class="label">
                   ${fieldDisplayText}&nbsp;
                   <im:typehelp type="${field.pathString}"/>
               </td>
@@ -99,7 +99,7 @@
             </c:when>
             <c:otherwise>
               <c:if test="${!field.doNotTruncate}">
-                <td>${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+                <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
                 <td><strong>${field.value}</strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
               </c:if>
@@ -113,7 +113,7 @@
       <c:forEach var="field" items="${object.objectSummaryFields}">
         <c:if test="${field.doNotTruncate}">
           <tr>
-            <td>${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+            <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
             <td><strong>${field.value}</strong></td>
           </tr>
         </c:if>
