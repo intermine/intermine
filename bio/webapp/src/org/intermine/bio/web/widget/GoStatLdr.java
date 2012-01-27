@@ -11,13 +11,10 @@ package org.intermine.bio.web.widget;
  */
 
 import java.util.ArrayList;
-import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.apache.commons.collections.CollectionUtils.collect;
-import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
@@ -219,6 +216,9 @@ public class GoStatLdr extends EnrichmentWidgetLdr
         // can't be a NOT relationship!
         cs.addConstraint(new SimpleConstraint(qfQualifier, ConstraintOp.IS_NULL));
 
+        // can't be null, we need a way to determine if a gene is unique
+        cs.addConstraint(new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.IS_NOT_NULL));
+
         // gene is from organism
         QueryObjectReference c9 = new QueryObjectReference(qcGene, "organism");
         cs.addConstraint(new ContainsConstraint(c9, ConstraintOp.CONTAINS, qcOrganism));
@@ -235,6 +235,8 @@ public class GoStatLdr extends EnrichmentWidgetLdr
                 = new QueryCollectionReference(qcSNP, "overlappingFeatures");
             cs.addConstraint(new ContainsConstraint(c10, ConstraintOp.CONTAINS, qcGene));
         }
+
+
 
         Query q = new Query();
         q.setDistinct(true);

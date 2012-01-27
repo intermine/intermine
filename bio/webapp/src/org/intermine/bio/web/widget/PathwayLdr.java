@@ -152,6 +152,9 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
 
+        // can't be null, we need a way to determine if a gene is unique
+        cs.addConstraint(new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.IS_NOT_NULL));
+
         Query q = new Query();
 
         if (KEGG.equals(dataset) || REACTOME.equals(dataset)) {
