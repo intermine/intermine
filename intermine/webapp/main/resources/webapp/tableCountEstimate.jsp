@@ -8,7 +8,7 @@
 
 <!-- tableCountEstimate.jsp -->
 
-<tiles:useAttribute id="pagedTable" name="pagedTable" 
+<tiles:useAttribute id="pagedTable" name="pagedTable"
                     classname="org.intermine.web.logic.results.PagedTable"/>
 <fmt:message key="results.pageinfo.rowrange">
   <fmt:param value="${resultsTable.startRow+1}"/>
@@ -36,6 +36,7 @@ function callback(size) {
     document.getElementById('resultsCountExact').style.display='inline';
     document.getElementById('resultsCountExactSize').innerHTML=size;
     document.resultsCountText = "${exactMessage} " + size;
+
     return true;
 }
 
