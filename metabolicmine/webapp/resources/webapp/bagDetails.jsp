@@ -38,7 +38,7 @@
     <a name="summary"></a>
     <div class="title">
       <h1 class="title">
-          ${bag.type} list analysis: <strong>${bag.name}</strong> <a class="rename">rename</a>
+          ${bag.type} list analysis: <strong>${bag.name}</strong> <c:if test="${!isBagPublic}"><a class="rename">rename</a></c:if>
       </h1>
       <div class="form" style="display:none;">
         <input type="text" class="text" value="${bag.name}" />
@@ -127,10 +127,10 @@
             <c:choose>
               <c:when test="${! empty bag.description}">
                 <p><span class="text"><c:out value="${bag.description}" escapeXml="false" /></span></p>
-                <a class="edit">edit</a>
+                <c:if test="${!isBagPublic}"><a class="edit">edit</a></c:if>
               </c:when>
               <c:otherwise>
-                <p><span class="text"></span></p> <a class="edit">set</a>
+                <p><span class="text"></span></p> <c:if test="${!isBagPublic}"><a class="edit">set</a></c:if>
               </c:otherwise>
             </c:choose>
           </div>

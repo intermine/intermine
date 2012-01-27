@@ -41,6 +41,7 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.search.Scope;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.config.FieldConfig;
@@ -134,17 +135,17 @@ public class BagDetailsController extends TilesAction
             pagedResults = SessionMethods.doQueryGetPagedTable(request, imBag);
         }
 
-        // tracks the list execution only if the list hasn't 
+        // tracks the list execution only if the list hasn't
         // just been created
         if (request.getParameter("trackExecution") == null
             || "true".equals(request.getParameter("trackExecution"))) {
-            im.getTrackerDelegate().trackListExecution(imBag.getType(), 
+            im.getTrackerDelegate().trackListExecution(imBag.getType(),
                     bagSize, profile, session.getId());
         }
 
         // Get the widget toggle state
         // TODO this needs to be re-implemented.  see #1660
-        // request.setAttribute("toggledElements", 
+        // request.setAttribute("toggledElements",
         //   SessionMethods.getWebState(session).
         // getToggledElements());
 
@@ -205,6 +206,16 @@ public class BagDetailsController extends TilesAction
         }
 
         pagedResults.setPageAndPageSize(page, PAGE_SIZE);
+
+        // is this list public?
+        Boolean isPublic = false;
+        for (Tag tag : bagManager.getTagsForBag(imBag)) {
+            if ("im:public".equals(tag.getTagName())) {
+                isPublic = true;
+                break;
+            }
+        }
+        request.setAttribute("isBagPublic", isPublic);
 
         request.setAttribute("addparameter", request.getParameter("addparameter"));
         request.setAttribute("myBag", myBag);
