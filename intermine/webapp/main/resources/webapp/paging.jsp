@@ -48,6 +48,7 @@
         <script language="JavaScript">
           <!--
               document.resultsCountText = "<img src='images/spinner.gif'/> ${estimateMessage} ${resultsTable.estimatedSize}";
+              if (jQuery("span#top-estimated-size").exists()) jQuery("span#top-estimated-size").html(document.resultsCountText);
             -->
         </script>
       </c:when>
@@ -72,6 +73,7 @@
         <script language="JavaScript">
           <!--
               document.resultsCountText = "${exactMessage} ${resultsTable.estimatedSize}";
+              if (jQuery("span#top-estimated-size").exists()) jQuery("span#top-estimated-size").html(document.resultsCountText);
             -->
         </script>
       </c:otherwise>

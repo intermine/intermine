@@ -101,14 +101,14 @@
         <c:when test="${!empty templateQuery || !empty param.templateQueryTitle}">
          <c:if test="${empty param.bagName}">
            <h3><fmt:message key="results.templateTitle"/></h3>
-           Total rows: ${resultsTable.estimatedSize}
+           Total rows: <span id="top-estimated-size">${resultsTable.estimatedSize}</span>
          </c:if>
         </c:when>
         <c:when test="${!empty param.bagName}">
-          <div><strong id="numberOfResults">${resultsTable.estimatedSize}</strong> results for list:  <c:out value="${param.bagName}"/></div>
+          <div><strong id="numberOfResults"><span id="top-estimated-size">${resultsTable.estimatedSize}</span></strong> results for list:  <c:out value="${param.bagName}"/></div>
         </c:when>
         <c:otherwise>
-          Total rows: ${resultsTable.estimatedSize}
+          Total rows: <span id="top-estimated-size">${resultsTable.estimatedSize}</span>
         </c:otherwise>
       </c:choose>
        </div>
