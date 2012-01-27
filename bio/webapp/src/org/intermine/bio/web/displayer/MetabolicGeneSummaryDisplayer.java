@@ -10,6 +10,7 @@ package org.intermine.bio.web.displayer;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -76,17 +77,15 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
 
         // on sapien pages:
         if (summary.isThisAHuman()) {
-            // 5. ArrayExpress Gene Expression Tissues
-            summary.addCustom("Tissues Expression", "ArrayExpress",
-                    this.arrayAtlasExpressionTissues(
-                    summary.getNewPathQuery(), summary), "gene-expression-atlas-tissues",
-                    "metabolicGeneSummaryArrayExpressExpressionTissuesDisplayer.jsp");
-
-            // 6. ArrayExpress Gene Expression Diseases
-            summary.addCustom("Diseases Expression", "ArrayExpress",
-                    this.arrayAtlasExpressionDiseases(
-                    summary.getNewPathQuery(), summary), "gene-expression-atlas-diseases",
-                    "metabolicGeneSummaryArrayExpressExpressionDiseasesDisplayer.jsp");
+            // ArrayExpress Gene Expression Tissues & Tissues
+            ArrayList arr = new ArrayList();
+            arr.add(this.arrayAtlasExpressionTissues(
+                    summary.getNewPathQuery(), summary));
+            arr.add(this.arrayAtlasExpressionDiseases(
+                    summary.getNewPathQuery(), summary));
+            summary.addCustom("Expression", "ArrayExpress",
+                    arr, "GeneExpressionAtlasTissuesDisplayer",
+                    "metabolicGeneSummaryArrayExpressExpressionDisplayer.jsp");
         }
 
         request.setAttribute("summary", summary);
