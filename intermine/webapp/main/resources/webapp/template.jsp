@@ -71,7 +71,7 @@
 
                 <c:set var="constraintHeadingClass" value=""/>
                 <c:if test="${dec.disabled}">
-                    <c:set var="constraintHeadingClass" value="constraintHeadingDisabled"/>
+                    <c:set var="constraintHeadingClass" value=" constraintHeadingDisabled"/>
                 </c:if>
 
                 <td>
