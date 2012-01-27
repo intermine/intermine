@@ -520,6 +520,7 @@
       }
     });
 
+    geneExpressionAtlasDiseasesDisplayer.dragdealers.initialized = false;
     // switcher between tables this displayer haz
     jQuery("#gene-expression-atlas-diseases div.sidebar div.collection-of-collections div.switchers a").each(function(i) {
       jQuery(this).bind(
@@ -539,9 +540,10 @@
             });
 
            // init Dragdealers?
-            if (jQuery(this).attr('title') == 'controls') {
+            if (jQuery(this).attr('title') == 'controls' && !geneExpressionAtlasDiseasesDisplayer.dragdealers.initialized) {
               geneExpressionAtlasDiseasesDisplayer.dragdealers.diseasesPValue.init();
               geneExpressionAtlasDiseasesDisplayer.dragdealers.diseasesTStatistic.init();
+              geneExpressionAtlasDiseasesDisplayer.dragdealers.initialized = true;
             }
 
             // we are active
