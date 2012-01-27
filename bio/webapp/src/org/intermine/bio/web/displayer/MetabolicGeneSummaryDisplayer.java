@@ -74,15 +74,20 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         summary.addCollectionCount("Gene Ontology", "description", "goAnnotation",
                 "GeneOntologyDisplayer");
 
-        // 5. ArrayExpress Gene Expression Tissues
-        summary.addCustom("Tissues Expression", "ArrayExpress", this.arrayAtlasExpressionTissues(
-                summary.getNewPathQuery(), summary), "gene-expression-atlas-tissues",
-                "metabolicGeneSummaryArrayExpressExpressionTissuesDisplayer.jsp");
+        // on sapien pages:
+        if (summary.isThisAHuman()) {
+            // 5. ArrayExpress Gene Expression Tissues
+            summary.addCustom("Tissues Expression", "ArrayExpress",
+                    this.arrayAtlasExpressionTissues(
+                    summary.getNewPathQuery(), summary), "gene-expression-atlas-tissues",
+                    "metabolicGeneSummaryArrayExpressExpressionTissuesDisplayer.jsp");
 
-        // 6. ArrayExpress Gene Expression Diseases
-        summary.addCustom("Diseases Expression", "ArrayExpress", this.arrayAtlasExpressionDiseases(
-                summary.getNewPathQuery(), summary), "gene-expression-atlas-diseases",
-                "metabolicGeneSummaryArrayExpressExpressionDiseasesDisplayer.jsp");
+            // 6. ArrayExpress Gene Expression Diseases
+            summary.addCustom("Diseases Expression", "ArrayExpress",
+                    this.arrayAtlasExpressionDiseases(
+                    summary.getNewPathQuery(), summary), "gene-expression-atlas-diseases",
+                    "metabolicGeneSummaryArrayExpressExpressionDiseasesDisplayer.jsp");
+        }
 
         request.setAttribute("summary", summary);
     }
@@ -340,6 +345,20 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         public Boolean isThisAMouser() {
             try {
                 return "Mus".equals(((InterMineObject) imObj.getFieldValue("organism"))
+                        .getFieldValue("genus"));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        /**
+        *
+        * @return true if we are on a sapien gene
+        */
+        public Boolean isThisAHuman() {
+            try {
+                return "Homo".equals(((InterMineObject) imObj.getFieldValue("organism"))
                         .getFieldValue("genus"));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
