@@ -198,7 +198,7 @@ public class LoadBagValuesTask extends Task
             SavedBag savedBag = (SavedBag) row.get(0);
             osbids.append(savedBag.getOsbId() + ",");
         }
-        LOG.info("BAGVAL - userprofile osbids:" + osbids.length());
+        LOG.info("BAGVAL - userprofile osbids:" + totalBags);
         LOG.info("BAGVAL - userprofile ids:" + osbids);
         if (!"".equals(osbids)) {
             osbids.deleteCharAt(osbids.length() - 1);
@@ -210,7 +210,8 @@ public class LoadBagValuesTask extends Task
                 result.next();
                 bagsMatching = result.getInt(1);
                 LOG.info("BAGVAL - found in production: " + bagsMatching);
-                if ( bagsMatching/totalBags < 0.8) {
+                LOG.info("BAGVAL - bagsMatching/totalBags = " + bagsMatching / totalBags);
+                if (bagsMatching / totalBags < 0.8) {
                     return false;
                 }
                 return true;
