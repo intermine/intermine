@@ -70,15 +70,11 @@ public class OverlappingFeaturesDisplayer extends ReportDisplayer
         Map<String, InlineResultsTable> featureTables = new TreeMap<String, InlineResultsTable>();
 
         SequenceFeature startFeature = (SequenceFeature) reportObject.getObject();
-
-        Set<Integer> geneModelIds = GeneModelCache.getGeneModelIds(startFeature, im.getModel());
         try {
             Collection<InterMineObject> overlappingFeatures =
                 (Collection<InterMineObject>) startFeature.getFieldValue("overlappingFeatures");
             for (InterMineObject feature : overlappingFeatures) {
-                if (!geneModelIds.contains(feature.getId())) {
-                    incrementCount(featureCounts, feature);
-                }
+                incrementCount(featureCounts, feature);
             }
         } catch (IllegalAccessException e) {
             LOG.error("Error accessing overlappingFeatures collection for feature: "
