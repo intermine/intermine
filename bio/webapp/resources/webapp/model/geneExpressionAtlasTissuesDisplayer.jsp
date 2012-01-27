@@ -520,6 +520,7 @@
       }
     });
 
+    geneExpressionAtlasTissuesDisplayer.dragdealers.initialized = false;
     // switcher between tables this displayer haz
     jQuery("#gene-expression-atlas-tissues div.sidebar div.collection-of-collections div.switchers a").each(function(i) {
       jQuery(this).bind(
@@ -539,9 +540,10 @@
             });
 
            // init Dragdealers?
-            if (jQuery(this).attr('title') == 'controls') {
+            if (jQuery(this).attr('title') == 'controls' && !geneExpressionAtlasTissuesDisplayer.dragdealers.initialized) {
               geneExpressionAtlasTissuesDisplayer.dragdealers.tissuesPValue.init();
               geneExpressionAtlasTissuesDisplayer.dragdealers.tissuesTStatistic.init();
+              geneExpressionAtlasTissuesDisplayer.dragdealers.initialized = true;
             }
 
             // we are active
