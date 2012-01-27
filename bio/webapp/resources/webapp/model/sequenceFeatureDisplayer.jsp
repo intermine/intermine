@@ -55,7 +55,8 @@
             </td>
           </c:when>
           <c:otherwise>
-            <td colspan="4">
+            <td class="label">Region:</td>
+            <td colspan="3">
               <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
               <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
             </td>
