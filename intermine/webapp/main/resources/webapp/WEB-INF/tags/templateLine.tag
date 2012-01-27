@@ -51,16 +51,16 @@
   <div class="right"></div>
   <c:if test="${ templateType != 'aspect' }"><div class="loading-spinner"></div></c:if>
   <img src="images/icons/templates-16.png" />
-  
+
   <c:choose>
-  	<c:when test="${ templateType != 'aspect' }">
-  		${!empty name ? name : templateQuery.title}
-  	</c:when>
-  	<c:otherwise>
-  		<html:link action="${actionLink}" title="${linkTitle}">${!empty name ? name : templateQuery.title}</html:link>
-  	</c:otherwise>
+    <c:when test="${ templateType != 'aspect' }">
+      <span class="name">${!empty name ? name : templateQuery.title}</span>
+    </c:when>
+    <c:otherwise>
+      <html:link action="${actionLink}" title="${linkTitle}">${!empty name ? name : templateQuery.title}</html:link>
+    </c:otherwise>
   </c:choose>
-  
+
   <div class="favorites">
     <tiles:insert name="setFavourite.tile">
       <tiles:put name="name" value="${templateQuery.name}"/>
