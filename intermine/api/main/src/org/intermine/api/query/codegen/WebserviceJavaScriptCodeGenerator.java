@@ -24,6 +24,7 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 
@@ -96,7 +97,6 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
 
         if (query instanceof TemplateQuery) {
 
-
             TemplateQuery template = (TemplateQuery) query;
 
             String templateName = template.getName();
@@ -115,6 +115,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             int constraintNo = 1;
             while (conIter.hasNext()) {
                 PathConstraint pc = conIter.next();
+                if (template.getSwitchOffAbility(pc) == SwitchOffAbility.OFF) {
+                    continue;
+                }
                 // Add comments for constraints
                 String constraintDes = template.getConstraintDescription(pc);
                 sb.append(ENDL);
