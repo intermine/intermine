@@ -210,8 +210,9 @@ public class LoadBagValuesTask extends Task
                 result.next();
                 bagsMatching = result.getInt(1);
                 LOG.info("BAGVAL - found in production: " + bagsMatching);
-                LOG.info("BAGVAL - bagsMatching/totalBags = " + bagsMatching / totalBags);
-                if (bagsMatching / totalBags < 0.8) {
+                LOG.info("BAGVAL - bagsMatching / (float) totalBags = "
+                        + bagsMatching / (float) totalBags);
+                if (bagsMatching / (float) totalBags < 0.8) {
                     return false;
                 }
                 return true;
