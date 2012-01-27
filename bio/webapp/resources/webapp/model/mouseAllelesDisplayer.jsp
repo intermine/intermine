@@ -34,28 +34,33 @@
     </c:choose>
   </div>
 
-  <c:if test="${not empty counts}">
-  <c:forEach var="homologue" items="${counts}">
-    <c:if test="${not homologue.value['isMouser']}">
-      <div class="header"><h3>${homologue.key} Mouse Homologue</h3></div>
-    </c:if>
-    <div class="inline-list">
-      <ul>
-      <c:forEach var="term" items="${homologue.value['terms']}">
-        <li <c:if test="${term.value.top}">class="top"</c:if>>
-        <span class="size-<c:choose>
-          <c:when test="${term.value.count < 2}">1</c:when>
-          <c:when test="${term.value.count < 5}">2</c:when>
-          <c:otherwise>3</c:otherwise>
-        </c:choose>"><html:link action="/loadQuery.do">
-          <span>${term.value.url}</span> ${term.key}</html:link> (${term.value.count})</span>
-        </li>
-      </c:forEach>
-      </ul>
-    </div>
-    <div class="toggle"><a class="more" title="Show more terms">Show more terms</a></div>
-  </c:forEach>
-  </c:if>
+  <c:choose>
+    <c:when test="${not empty counts}">
+    <c:forEach var="homologue" items="${counts}">
+      <c:if test="${not homologue.value['isMouser']}">
+        <div class="header"><h3>${homologue.key} Mouse Homologue</h3></div>
+      </c:if>
+      <div class="inline-list">
+        <ul>
+        <c:forEach var="term" items="${homologue.value['terms']}">
+          <li <c:if test="${term.value.top}">class="top"</c:if>>
+          <span class="size-<c:choose>
+            <c:when test="${term.value.count < 2}">1</c:when>
+            <c:when test="${term.value.count < 5}">2</c:when>
+            <c:otherwise>3</c:otherwise>
+          </c:choose>"><html:link action="/loadQuery.do">
+            <span>${term.value.url}</span> ${term.key}</html:link> (${term.value.count})</span>
+          </li>
+        </c:forEach>
+        </ul>
+      </div>
+      <div class="toggle"><a class="more" title="Show more terms">Show more terms</a></div>
+    </c:forEach>
+    </c:when>
+    <c:otherwise>
+      <p style="font-style:italic;">No data found</p>
+    </c:otherwise>
+  </c:choose>
   <script type="text/javascript">
     <%-- toggler --%>
     jQuery("#mouse-alleles div.toggle a").click(function() {
