@@ -552,7 +552,7 @@
     />
 
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
-        pathStrings="SNP.consequences.type"
+        pathStrings="SNP.consequences.description"
         link="org.metabolicmine.web.widget.SNPConsequenceTypesURLQuery"
         description="Consequence types for SNPs in this list"
         displayFields="type"
