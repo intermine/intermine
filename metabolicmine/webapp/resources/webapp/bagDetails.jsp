@@ -145,7 +145,9 @@
           (function() {
               /** show more */
               function moreDescription() {
-                var t = jQuery('table.fields td.description div.text span.text').html();
+                var e = jQuery('table.fields td.description div.text span.text');
+                var t = e.html();
+                e.remove();
                 if (t.length > 120) {
                     jQuery('table.fields td.description div.text p').html('')
                     .append(jQuery('<span/>', {
@@ -176,7 +178,7 @@
               }
               moreDescription();
 
-              /** description edit toggler */
+              /** description show more toggler */
               jQuery('table.fields td.description a.more').live('click', function() {
                 jQuery(this).parent().find('span.text').html(
                     jQuery(this).parent().find('span.text').html() + jQuery(this).parent().find('span.hidden').html()
@@ -207,10 +209,10 @@
 
                     // set the link name based on whether we've cleared or not
                     if (returnedDescription.length > 0) {
-                      jQuery('table.fields td.description div.text a.edit').html('Edit');
+                      jQuery('table.fields td.description div.text a.edit').html('edit');
                     }
                     else {
-                      jQuery('table.fields td.description div.text a.edit').html('Set');
+                      jQuery('table.fields td.description div.text a.edit').html('set');
                     }
 
                     moreDescription();
