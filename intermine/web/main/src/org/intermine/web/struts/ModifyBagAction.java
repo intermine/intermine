@@ -129,7 +129,7 @@ public class ModifyBagAction extends InterMineAction
 
             String newBagName;
             if (newNameTextBox != null) {
-                newBagName = newNameTextBox;
+                newBagName = NameUtil.validateName(allBags.keySet(), newNameTextBox);
             } else {
                 newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
             }
