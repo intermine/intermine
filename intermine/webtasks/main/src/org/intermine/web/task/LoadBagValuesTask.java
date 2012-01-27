@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -38,6 +39,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
+import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
  * Task to load bagvalues table in the userprofile database.
@@ -52,6 +54,8 @@ public class LoadBagValuesTask extends Task
     private String userProfileAlias;
     private ObjectStore uos = null;
     private ObjectStore os = null;
+
+    private static final Logger LOG = Logger.getLogger(LoadBagValuesTask.class);
 
     /**
      * Set the alias of the main object store.
@@ -194,6 +198,8 @@ public class LoadBagValuesTask extends Task
             SavedBag savedBag = (SavedBag) row.get(0);
             osbids.append(savedBag.getOsbId() + ",");
         }
+        LOG.info("BAGVAL - userprofile osbids:" + osbids.length());
+        LOG.info("BAGVAL - userprofile ids:" + osbids);
         if (!"".equals(osbids)) {
             osbids.deleteCharAt(osbids.length() - 1);
             Connection conn = null;
@@ -203,7 +209,7 @@ public class LoadBagValuesTask extends Task
                 ResultSet result = conn.createStatement().executeQuery(sqlCountBagsMatching);
                 result.next();
                 bagsMatching = result.getInt(1);
-
+                LOG.info("BAGVAL - found in production: " + bagsMatching);
                 if ( bagsMatching/totalBags < 0.8) {
                     return false;
                 }
