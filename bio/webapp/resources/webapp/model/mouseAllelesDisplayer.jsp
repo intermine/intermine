@@ -7,36 +7,52 @@
 
 <!-- mouseAllelesDisplayer.jsp -->
 
-<div class="inline-list" id="mouse-alleles">
+<div class="collection-of-collections" id="mouse-alleles">
   <style>
   #mouse-alleles span.size-1 { font-size:10px; }
   #mouse-alleles span.size-2 { font-size:14px; }
   #mouse-alleles span.size-3 { font-size:22px; }
   #mouse-alleles div.header h3 { border:0; }
+  #mouse-alleles ul li { display:inline; }
   #mouse-alleles ul li:not(:last-child) { margin-right:10px; }
   #mouse-alleles ul li:not(.top) { display:none; }
   #mouse-alleles ul li a span { display:none; }
-  #mouse-alleles div.toggle { margin:0 auto; text-align:center; }
+  #mouse-alleles div.toggle { margin:0 auto; margin-bottom:20px; text-align:center; }
+  #mouse-alleles div.inline-list { margin:0; }
+  #mouse-alleles-collection { margin-top:20px; }
   </style>
 
-  <h3>Mouse Alleles</h3>
+  <div class="header">
+    <h3>Mouse Allele Phenotypes</h3>
+    <c:choose>
+      <c:when test="${isThisAMouser}">
+        <p><img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?"> Most frequent phenotypes associated with the mouse alleles (MGI) by gene</p>
+      </c:when>
+      <c:otherwise>
+        <p><img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?"> From the mouse orthologue(s), most frequent phenotypes associated with the mouse alleles (MGI) of this gene</p>
+      </c:otherwise>
+    </c:choose>
+  </div>
+
   <c:if test="${not empty counts}">
   <c:forEach var="homologue" items="${counts}">
     <c:if test="${not homologue.value['isMouser']}">
       <div class="header"><h3>${homologue.key} Mouse Homologue</h3></div>
     </c:if>
-    <ul>
-    <c:forEach var="term" items="${homologue.value['terms']}">
-      <li <c:if test="${term.value.top}">class="top"</c:if>>
-      <span class="size-<c:choose>
-        <c:when test="${term.value.count < 2}">1</c:when>
-        <c:when test="${term.value.count < 5}">2</c:when>
-        <c:otherwise>3</c:otherwise>
-      </c:choose>"><html:link action="/loadQuery.do">
-        <span>${term.value.url}</span> ${term.key}</html:link> (${term.value.count})</span>
-      </li>
-    </c:forEach>
-    </ul>
+    <div class="inline-list">
+      <ul>
+      <c:forEach var="term" items="${homologue.value['terms']}">
+        <li <c:if test="${term.value.top}">class="top"</c:if>>
+        <span class="size-<c:choose>
+          <c:when test="${term.value.count < 2}">1</c:when>
+          <c:when test="${term.value.count < 5}">2</c:when>
+          <c:otherwise>3</c:otherwise>
+        </c:choose>"><html:link action="/loadQuery.do">
+          <span>${term.value.url}</span> ${term.key}</html:link> (${term.value.count})</span>
+        </li>
+      </c:forEach>
+      </ul>
+    </div>
     <div class="toggle"><a class="more" title="Show more terms">Show more terms</a></div>
   </c:forEach>
   </c:if>
@@ -59,7 +75,11 @@
 <c:if test="${collection != null}">
   <%-- collection table --%>
   <div id="mouse-alleles-collection" class="collection-table">
-    <h3>Alleles</h3>
+    <div class="header">
+      <h3>Mouse Alleles </h3>
+      <p><img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?"> Most frequent phenotypes associated with the mouse alleles (MGI) by gene</p>
+    </div>
+
     <c:set var="inlineResultsTable" value="${collection}" />
     <tiles:insert page="/reportCollectionTable.jsp">
     <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />

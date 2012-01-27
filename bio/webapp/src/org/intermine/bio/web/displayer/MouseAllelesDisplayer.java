@@ -216,6 +216,8 @@ public class MouseAllelesDisplayer extends ReportDisplayer
             }
         }
 
+        request.setAttribute("thisIsAMouser", mouser);
+
         request.setAttribute("counts", top);
     }
 
