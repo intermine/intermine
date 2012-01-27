@@ -232,7 +232,8 @@
                     jQuery('#' + tableId + ' div.toggle a.more').text(function() {
                       return 'Show ' + ((exactSize < 11) ? 'all ' + exactSize : 'first ' + 10) + ' rows';
                     });
-                    jQuery(this).hide();
+                    jQuery(this).parent().find('a.more').show(); // show the expander
+                    jQuery(this).hide(); // hide us
                   }
               })
             ).append(
@@ -254,15 +255,21 @@
                   var remaining = jQuery('#' + tableId + ' table tbody tr:hidden').length;
                   if (remaining > 0) {
                       jQuery(this).text(function() {
-                          return 'Show ' + ((remaining < 11) ? 'last ' + remaining : 'further ' + 10) + ' rows';
+                          return 'Show ' + ((remaining < 11) ? 'more' : 'further ' + 10) + ' rows';
                       });
-                      jQuery('#' + tableId + ' div.toggle a.less').show();
                   } else {
-                      jQuery(this).parent().remove();
+                      jQuery(this).hide();
                   }
+                  jQuery('#' + tableId + ' div.toggle a.less').show();
                 }
             })
           );
+
+            <%-- make the header clickable to expand --%>
+            jQuery('#' + tableId).find('h3 span.name').click(function() {
+              jQuery(this).closest('div.template').find('div.toggle a.more').click();
+            });
+
           } else {
             jQuery('#' + tableId).find("h3 div.right").text('1 result');
         jQuery('#' + tableId + ' table').parent().show();
