@@ -59,21 +59,21 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
         GeneSummary summary = new GeneSummary(reportObject.getObject(), request);
 
         // 1. Pathways count
-        summary.addCollectionCount("Pathways", "description", "pathways", "pathways");
+        summary.addCollectionCount("Pathways", "Reactome, KEGG", "pathways", "pathways");
         // 2. Diseases count
-        summary.addCollectionCount("Diseases", "description", "diseases", "diseases");
+        summary.addCollectionCount("Diseases", "OMIM", "diseases", "diseases");
         // 3. Mouse Alleles count
         if (summary.isThisAMouser()) {
-            summary.addCollectionCount("Phenotypes", "straight off mouse", "alleles",
+            summary.addCollectionCount("Mouse Alleles (MGI)", "mouse alleles", "alleles",
                     "MouseAllelesDisplayer");
         } else {
-            summary.addCollectionCount("Phenotypes", "through mouse",
+            summary.addCollectionCount("Mouse Alleles (MGI)", "mouse alleles",
                     allelesPathQuery(summary.getNewPathQuery(),
                     summary.getObjectId()), "MouseAllelesDisplayer");
         }
         // 4. GOTerm count
-        summary.addCollectionCount("Gene Ontology", "description", "goAnnotation",
-                "GeneOntologyDisplayer");
+        summary.addCollectionCount("Gene Ontology", "&nbsp;",
+                "goAnnotation", "GeneOntologyDisplayer");
 
         // on sapien pages:
         if (summary.isThisAHuman()) {
@@ -83,7 +83,7 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
                     summary.getNewPathQuery(), summary));
             arr.add(this.arrayAtlasExpressionDiseases(
                     summary.getNewPathQuery(), summary));
-            summary.addCustom("Expression", "ArrayExpress",
+            summary.addCustom("Expression", "Array Express (E-MTAB 62)",
                     arr, "GeneExpressionAtlasTissuesDisplayer",
                     "metabolicGeneSummaryArrayExpressExpressionDisplayer.jsp");
         }

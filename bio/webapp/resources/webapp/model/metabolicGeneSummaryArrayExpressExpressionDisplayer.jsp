@@ -14,7 +14,7 @@
       width:10px; height:10px; border:1px solid #000; margin-right:5px; }
     #arrayexpress-expression-displayer div.data span.regulation.up { background:#59BB14; }
     #arrayexpress-expression-displayer div.data span.regulation.down { background:#0000FF; }
-    #arrayexpress-expression-displayer div.label span.title { display:block; margin-right:10px; }
+    #arrayexpress-expression-displayer div.label span.title { display:block; margin:0 10px 10px 0; }
   </style>
 
   <c:forEach items="${field.value['data']}" var="entry" varStatus="rowCounter">
