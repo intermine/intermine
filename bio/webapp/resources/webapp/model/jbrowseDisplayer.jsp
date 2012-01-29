@@ -5,7 +5,7 @@
 
 <!-- jBrowseDisplayer.jsp -->
 
-<c:if test="${((!empty object.chromosomeLocation && !empty object.chromosome)
+<c:if test="${((!empty reportObject.object.chromosomeLocation && !empty reportObject.object.chromosome)
                 || cld.unqualifiedName == 'Chromosome') && cld.unqualifiedName != 'ChromosomeBand'}">
 
   <div class="geneInformation">
@@ -13,15 +13,15 @@
     <h3 class="overlapping">Genome Browser</h3>
 
     <c:set var="baseUrl" value="/jbrowse"/>
-    <c:set var="chr" value="${object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
+    <c:set var="chr" value="${reportObject.object.chromosomeLocation.locatedOn.primaryIdentifier}"/>
     <c:set var="padding" value="${10}"/>
-    <c:set var="offset" value="${fn:substringBefore((object.length * 0.1), '.')}"/>
+    <c:set var="offset" value="${fn:substringBefore((reportObject.object.length * 0.1), '.')}"/>
 
-    <c:set var="start" value="${object.chromosomeLocation.start - offset}"/>
-    <c:set var="end" value="${object.chromosomeLocation.end + offset}"/>
+    <c:set var="start" value="${reportObject.object.chromosomeLocation.start - offset}"/>
+    <c:set var="end" value="${reportObject.object.chromosomeLocation.end + offset}"/>
     <c:set var="tracks" value="Gene Track,mRNA Track, SNPs"/>
-	<c:set var="genus" value="${object.organism.genus}"/>
-	<c:set var="species" value="${object.organism.species}"/>
+	<c:set var="genus" value="${reportObject.object.organism.genus}"/>
+	<c:set var="species" value="${reportObject.object.organism.species}"/>
 
     <c:set var="jbLink" value="${baseUrl}?loc=${genus}_${species}_chr_${chr}:${start}..${end}&tracks=${tracks}"/>
 
@@ -29,7 +29,7 @@
 	   panel to see the data. Clicking on individual features to open a report page for that feature.
 	    <br/>
 	    <strong>*</strong> denotes SNPs that are mapped to multiple genome position.
-    <a href="${jbLink}" target="jbrowse">Centre on ${object.symbol}</a></p>
+    <a href="${jbLink}" target="jbrowse">Centre on ${reportObject.object.symbol}</a></p>
 	<iframe name="jbrowse" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="${jbLink}"></iframe>
     <p><a href="javascript:;" onclick="jQuery('iframe').css({height: '600px'});">Expand viewer</a>&nbsp;(more about <a href="http://jbrowse.org">JBrowse</a>)</p>
 </div>
