@@ -20,8 +20,8 @@
   <c:forEach items="${field.value['data']}" var="entry" varStatus="rowCounter">
     <c:if test="${rowCounter.count == 2}">
       <div class="label">
-        <span class="title">&lt;- Tissues Expression</span>
-        <span class="title">Diseases Expression -&gt;</span>
+        <span class="title">&lt;- Tissue Expression</span>
+        <span class="title">Disease Expression -&gt;</span>
         <span class="description">${field.value['description']}</span>
       </div>
     </c:if>

@@ -10,7 +10,7 @@
   #gene-summary-displayer { margin-left:3px; }
   #gene-summary-displayer a { color:inherit; text-decoration:none; }
   #gene-summary-displayer li { margin:0; }
-  #gene-summary-displayer ul li.main { display:inline-block; border:1px solid #d1d0d0; padding:6px; margin:0 20px 10px 0; }
+  #gene-summary-displayer ul li.main { display:inline-block; border:1px solid #d1d0d0; padding:6px; margin:0 4px 0 0; }
   #gene-summary-displayer div.data { margin-right:10px; font-size:30px; font-weight:bold; line-height:27px; }
   #gene-summary-displayer div.data,
   #gene-summary-displayer div.label { float:left; }
