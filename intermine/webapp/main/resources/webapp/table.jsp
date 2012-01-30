@@ -82,7 +82,7 @@
               &gt;&nbsp;${fieldDisplay}
           </c:if>
           &nbsp;${dec.selectedOp.label}
-          <c:if test="${!empty dec.selectedValue}">
+          <c:if test="${!empty dec.selectedValue && !dec.nullSelected}">
               &nbsp;${dec.selectedValue}
           </c:if>
           <c:if test="${!empty dec.multiValuesAsString}">
