@@ -99,7 +99,9 @@ public class PortalQueryAction extends InterMineAction
         if (StringUtils.isEmpty(welcomeMsg)) {
             welcomeMsg = properties.getProperty("portal.welcome");
         }
-        SessionMethods.recordMessage(welcomeMsg, session);
+        if (!StringUtils.isBlank(welcomeMsg)) {
+            SessionMethods.recordMessage(welcomeMsg, session);
+        }
 
         if (extId == null || extId.length() == 0) {
             recordError(new ActionMessage("errors.badportalidentifiers"), request);
