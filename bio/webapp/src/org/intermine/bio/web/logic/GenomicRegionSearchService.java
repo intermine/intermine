@@ -475,10 +475,15 @@ public class GenomicRegionSearchService
                 + ftString.substring(0, ftString.lastIndexOf(", ")));
 
         if (Integer.parseInt(extendedRegionSize) > 0) {
-            if (Integer.parseInt(extendedRegionSize) >= 1000) {
+            if (Integer.parseInt(extendedRegionSize) >= 1000
+                    && Integer.parseInt(extendedRegionSize) < 1000000) {
                 selectionInfo.add("<b>Extend Regions: </b>"
                         + new DecimalFormat("#.##").format(Integer
                                 .parseInt(extendedRegionSize) / 1000) + " kbp");
+            } else if (Integer.parseInt(extendedRegionSize) >= 1000000) {
+                selectionInfo.add("<b>Extend Regions: </b>"
+                        + new DecimalFormat("#.##").format(Integer
+                                .parseInt(extendedRegionSize) / 1000000) + " Mbp");
             } else {
                 selectionInfo.add("<b>Extend Regions: </b>" + extendedRegionSize + "bp");
             }
@@ -1687,19 +1692,21 @@ public class GenomicRegionSearchService
                     + s.getExtendedStart() + ".." + s.getExtendedEnd();
         }
 
-        if (featureTypes != null) {
-            List<String> tracks = new ArrayList<String>();
-            Map<String, String> trackMap = getJBrowseTracks();
-            if (trackMap != null) {
+        List<String> tracks = new ArrayList<String>();
+        Map<String, String> trackMap = getJBrowseTracks();
+        if (trackMap != null) {
+            if (featureTypes == null) {
+                tracks = new ArrayList<String>(trackMap.values());
+            } else {
                 for (String featureType : featureTypes) {
                     if (trackMap.keySet().contains(featureType.toLowerCase())) {
                         tracks.add(trackMap.get(featureType.toLowerCase()));
                     }
                 }
+            }
 
-                if (tracks.size() > 0) {
-                    jbUrl = jbUrl + "&tracks=" + StringUtil.join(tracks, ",");
-                }
+            if (tracks.size() > 0) {
+                jbUrl = jbUrl + "&tracks=" + StringUtil.join(tracks, ",");
             }
         }
 
