@@ -42,7 +42,7 @@
     jQuery(document).ready(function(){
 
        if ("${noneValidGenomicRegions}"=="true") {
-           jQuery("#resultDiv").addClass("altmessage").html("<br>All genomic regions are invalid.<br>");
+           jQuery("#resultDiv").addClass("altmessage").html("<br>All genomic regions are invalid. <a href=\"/${WEB_PROPERTIES['webapp.path']}/genomicRegionSearch.do\">Start a new search?</a><br>");
        } else {
             init();
 
