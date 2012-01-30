@@ -173,7 +173,7 @@ public class AttributeLinksController extends TilesAction
                         if (imo != null) {
                             attrValue = imo.getFieldValue(attrName);
                         } else { //it's a bag!
-                            attrValue = BagHelper.getIdList(bag, os, dbName, attrName);
+                            attrValue = BagHelper.getAttributesFromBag(bag, os, dbName, attrName);
                             if (!"*".equalsIgnoreCase(taxId)) {
                                 taxIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
 
