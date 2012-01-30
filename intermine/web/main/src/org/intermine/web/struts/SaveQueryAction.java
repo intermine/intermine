@@ -89,6 +89,7 @@ public class SaveQueryAction extends InterMineAction
         }
         messages.add("saveQuery", new ActionMessage("saveQuery.message", queryName));
         request.setAttribute(Globals.MESSAGE_KEY, messages);
+        form.reset(mapping, request);
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "saved").forward();
     }
