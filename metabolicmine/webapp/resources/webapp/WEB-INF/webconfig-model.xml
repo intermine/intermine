@@ -287,6 +287,11 @@
   </class>
 
   <class className="org.intermine.model.bio.Publication">
+      <headerconfig>
+      <titles>
+        <title mainTitles="title" />
+      </titles>
+    </headerconfig>
     <fields>
       <fieldconfig fieldExpr="firstAuthor"/>
       <fieldconfig fieldExpr="title"/>
