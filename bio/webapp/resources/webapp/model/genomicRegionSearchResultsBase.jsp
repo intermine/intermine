@@ -531,57 +531,56 @@ img.tinyQuestionMark {
     </table>
 </div>
 
-<%-- experiment --%>
-<%--
-<div id="region-select-div">
-    <select id="region-select-list" >
-        <option value="all">All Regions</option>
-    </select>
-</div>
-
-<div id="grouping-div">
-    <input text="text" id="group-input" />
-    <p id="group-search">Search</p>
-    <script>
-        jQuery("#group-search").click(function () {
-            // regular expression check
-            var ddotsRegex = /^[^:\t\s]+: ?\d+\.\.\d+$/;
-            var empty = /^\s*$/;
-
-            var interval = jQuery("#group-input").val();
-
-            if (interval.match(empty)) {
-                jQuery("#group-input").focus();
-            }
-            else if (!interval.match(ddotsRegex)) {
-                alert(interval + " is in an invalid format...");
-                jQuery("#group-input").focus();
-            } else {
-                // ajax call
-                jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', groupRegions: "true", interval: interval }, function(results){
-                    jQuery("#upper-pag-div").hide();
-                    jQuery("#export-all-div").hide();
-                    jQuery("#bottom-pag-div").hide();
-                    addResultToTable(results);
-                }, "html");
-            }
-
-        });
-    </script>
-</div>
---%>
-<%-- experiment --%>
-
-<c:choose>
-    <c:when test="${WEB_PROPERTIES['genomicRegionSearch.jbrowse.display'] eq 'true'}">
-        <div id="genome-browser-div">
-            <iframe name="genome-browser" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="http://www.metabolicmine.org/jbrowse/"></iframe>
-        </div>
-    </c:when>
-</c:choose>
-
-
 <div id="resultDiv" align="left" style="font-size:0.8em; padding-top:10px;">
+
+    <%-- experiment --%>
+    <%--
+    <div id="region-select-div">
+        <select id="region-select-list" >
+            <option value="all">All Regions</option>
+        </select>
+    </div>
+
+    <div id="grouping-div">
+        <input text="text" id="group-input" />
+        <p id="group-search">Search</p>
+        <script>
+            jQuery("#group-search").click(function () {
+                // regular expression check
+                var ddotsRegex = /^[^:\t\s]+: ?\d+\.\.\d+$/;
+                var empty = /^\s*$/;
+
+                var interval = jQuery("#group-input").val();
+
+                if (interval.match(empty)) {
+                    jQuery("#group-input").focus();
+                }
+                else if (!interval.match(ddotsRegex)) {
+                    alert(interval + " is in an invalid format...");
+                    jQuery("#group-input").focus();
+                } else {
+                    // ajax call
+                    jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', groupRegions: "true", interval: interval }, function(results){
+                        jQuery("#upper-pag-div").hide();
+                        jQuery("#export-all-div").hide();
+                        jQuery("#bottom-pag-div").hide();
+                        addResultToTable(results);
+                    }, "html");
+                }
+
+            });
+        </script>
+    </div>
+    --%>
+    <%-- experiment --%>
+
+    <c:choose>
+        <c:when test="${WEB_PROPERTIES['genomicRegionSearch.jbrowse.display'] eq 'true'}">
+            <div id="genome-browser-div">
+                <iframe name="genome-browser" height="300px" width="98%" style="border: 1px solid #dfdfdf; padding: 1%" src="http://www.metabolicmine.org/jbrowse/"></iframe>
+            </div>
+        </c:when>
+    </c:choose>
 
     <%-- Pagination --%>
     <div id="upper-pag-div" style="float: right; margin-right: 35px;">Page size

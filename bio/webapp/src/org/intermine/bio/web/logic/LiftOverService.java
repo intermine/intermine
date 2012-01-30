@@ -80,7 +80,7 @@ public class LiftOverService
                     + URLEncoder.encode(genomeVersionTarget, "UTF-8");
 
             // Send data
-            URL url = new URL(liftOverServerURL + organism);
+            URL url = new URL(liftOverServerURL + organism); // liftOverServerURL ends with "/"
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -105,7 +105,7 @@ public class LiftOverService
                     String coord = (String) liftedArray.get(i);
                     coord.trim();
                     GenomicRegion gr = new GenomicRegion();
-                    gr.setOrganism(organism);
+                    gr.setOrganism(org);
                     gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
                     gr.setChr(coord.split("\t")[0].trim());
                     gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
@@ -118,7 +118,7 @@ public class LiftOverService
                     String coord = (String) unmappedArray.get(i);
                     coord.trim();
                     GenomicRegion gr = new GenomicRegion();
-                    gr.setOrganism(organism);
+                    gr.setOrganism(org);
                     gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
                     gr.setChr(coord.split("\t")[0].trim());
                     gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
