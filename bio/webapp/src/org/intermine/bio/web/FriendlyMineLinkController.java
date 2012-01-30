@@ -60,7 +60,7 @@ public class FriendlyMineLinkController  extends TilesAction
             organisms = StringUtil.join(organismsInBag, ",");
         }
         String identifierField = getIdentifierField(bag);
-        String identifierList = BagHelper.getIdList(bag, im.getObjectStore(), "", identifierField);
+        String identifierList = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "", identifierField);
         request.setAttribute("identifiers", identifierList);
         if (StringUtils.isNotEmpty(organisms)) {
             request.setAttribute("organisms", organisms);

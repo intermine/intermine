@@ -119,8 +119,8 @@ public final class BagHelper
      * @return the string of comma separated identifiers
      *    */
 
-    public static String getIdList(InterMineBag bag, ObjectStore os, String dbName, String attrName)
-    {
+    public static String getAttributesFromBag(InterMineBag bag, ObjectStore os, String dbName,
+            String attrName) {
         Results results;
 
         Query q = new Query();
@@ -150,12 +150,6 @@ public final class BagHelper
 
         results = os.executeSingleton(q, 10000, true, true, true);
 
-        String delim = null;
-        if (dbName.equalsIgnoreCase("flybase")) {
-            delim = "|";
-        } else if (StringUtils.isEmpty(delim)) {
-            delim = ",";
-        }
-        return StringUtil.join(results, delim);
+        return StringUtil.join(results, ",");
     }
 }
