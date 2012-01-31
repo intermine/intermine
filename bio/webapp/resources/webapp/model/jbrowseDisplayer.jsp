@@ -19,9 +19,16 @@
 
     <c:set var="start" value="${reportObject.object.chromosomeLocation.start - offset}"/>
     <c:set var="end" value="${reportObject.object.chromosomeLocation.end + offset}"/>
-    <c:set var="tracks" value="Gene Track,mRNA Track, SNPs"/>
-	<c:set var="genus" value="${reportObject.object.organism.genus}"/>
-	<c:set var="species" value="${reportObject.object.organism.species}"/>
+    <c:choose>
+        <c:when test="${reportObject.type == 'SNP'}">
+            <c:set var="tracks" value="Gene Track,SNPs"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="tracks" value="Gene Track,mRNA Track"/>
+        </c:otherwise>
+    </c:choose>
+    <c:set var="genus" value="${reportObject.object.organism.genus}"/>
+    <c:set var="species" value="${reportObject.object.organism.species}"/>
 
     <c:set var="jbLink" value="${baseUrl}?loc=${genus}_${species}_chr_${chr}:${start}..${end}&tracks=${tracks}"/>
 
