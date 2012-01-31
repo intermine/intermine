@@ -88,7 +88,7 @@
       </li>
     </ul>
   <ul id="loginbar">
-        <li><a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a></li>
+        <li><im:popupHelp pageName="${pageName}">Help</im:popupHelp></li>
         <c:if test="${PROFILE.loggedIn}">
             <li>
               <!-- display (optionally trimmed) username -->
