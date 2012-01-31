@@ -34,7 +34,7 @@ div.filterBar{background:#D3D3D3;color:#4B3F4B;border:1px solid #000;border-bott
 h1 a:hover,h1 a:visited:hover{color:#333;text-decoration:underline;}
 html,body{background-color:#FFF;color:#000;font-family:"Lucida Grande",Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif;}
 ul#nav{font-size:13px;margin-left:-5px;margin-top:10px;}
-ul#nav a{color:#4B3F4B;font-weight:700;text-decoration:none;}
+ul#nav a{color:#4B3F4B;font-weight:700;text-decoration:none; padding:0 6px; }
 ul#nav li{background:url(img/menu-gray-left.png) repeat-x top;text-align:center;padding:4px 2px;}
 ul#nav li#mymine{background:url(img/menu-gray-hover-left.png) repeat-x top;}
 ul#nav li#mymine a,ul#nav a:hover,#submenu.submenu_mymine form{color:#FFF;}
