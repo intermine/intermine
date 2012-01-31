@@ -6,26 +6,12 @@
 
 <!-- subListDetailsDisplayer.jsp -->
 
-<script type="text/javascript" charset="utf-8">
-jQuery(document).ready(function () {
-    jQuery("#sis").click(function () {
-       if(jQuery("#details").is(":hidden")) {
-         jQuery("#co").attr("src", "images/disclosed.gif");
-       } else {
-         jQuery("#co").attr("src", "images/undisclosed.gif");
-       }
-       jQuery("#details").toggle("slow");
-    });
-})
-</script>
-
-
-<html:link linkName="#" styleId="sis" style="cursor:pointer">
+<a name="#" id="sis" style="cursor:pointer" onclick='if(jQuery("#details").is(":hidden")) { jQuery("#co").attr("src", "images/disclosed.gif"); } else { jQuery("#co").attr("src", "images/undisclosed.gif"); } jQuery("#details").toggle("slow");'>
 <h3>
     Submissions Details (click to toggle)
     <img src="images/undisclosed.gif" id="co">
 </h3>
-</html:link>
+</a>
 
 <script type="text/javascript" charset="utf-8">
 
