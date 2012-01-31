@@ -80,7 +80,13 @@ public class LiftOverService
                     + URLEncoder.encode(genomeVersionTarget, "UTF-8");
 
             // Send data
-            URL url = new URL(liftOverServerURL + organism); // liftOverServerURL ends with "/"
+            URL url;
+            // liftOverServerURL ends with "/"
+            if (!liftOverServerURL.endsWith("/")) {
+                url = new URL(liftOverServerURL + "/" + organism);
+            } else {
+                url = new URL(liftOverServerURL + organism);
+            }
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
