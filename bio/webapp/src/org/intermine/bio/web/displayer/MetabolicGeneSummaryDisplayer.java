@@ -95,12 +95,11 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
 
         query.addConstraint(Constraints.eq("Gene.id", summary.getObjectId().toString()), "A");
         query.addConstraint(Constraints.lessThan("Gene.atlasExpression.pValue", "1E-20"), "B");
-        query.addConstraint(Constraints.neq("Gene.atlasExpression.pValue", "0"), "C");
         query.addConstraint(Constraints.eq("Gene.atlasExpression.type", "organism_part"), "D");
         query.addConstraint(Constraints.greaterThan("Gene.atlasExpression.tStatistic", "10"), "E");
         query.addConstraint(Constraints.lessThan("Gene.atlasExpression.tStatistic", "-10"), "F");
         query.addConstraint(Constraints.neq("Gene.atlasExpression.condition", "(empty)"), "G");
-        query.setConstraintLogic("A and B and C and D and (E or F) and G");
+        query.setConstraintLogic("A and B and D and (E or F) and G");
 
         ExportResultsIterator results = summary.getExecutor().execute((PathQuery) query);
 
@@ -124,12 +123,11 @@ public class MetabolicGeneSummaryDisplayer extends ReportDisplayer
 
         query.addConstraint(Constraints.eq("Gene.id", summary.getObjectId().toString()), "A");
         query.addConstraint(Constraints.lessThan("Gene.atlasExpression.pValue", "1E-20"), "B");
-        query.addConstraint(Constraints.neq("Gene.atlasExpression.pValue", "0"), "C");
         query.addConstraint(Constraints.eq("Gene.atlasExpression.type", "disease_state"), "D");
         query.addConstraint(Constraints.greaterThan("Gene.atlasExpression.tStatistic", "10"), "E");
         query.addConstraint(Constraints.lessThan("Gene.atlasExpression.tStatistic", "-10"), "F");
         query.addConstraint(Constraints.neq("Gene.atlasExpression.condition", "(empty)"), "G");
-        query.setConstraintLogic("A and B and C and D and (E or F) and G");
+        query.setConstraintLogic("A and B and D and (E or F) and G");
 
         ExportResultsIterator results = summary.getExecutor().execute((PathQuery) query);
 
