@@ -299,7 +299,7 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
 
                  with a flanking region of
 
-
+<!--
               <html:select styleId="typeSelector" property="distance">
               <html:option value="0">0</html:option>
               <html:option value="0.5kb">.5kb</html:option>
@@ -308,6 +308,14 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
               <html:option value="5.0kb">5kb</html:option>
               <html:option value="10.0kb">10kb</html:option>
            </html:select>
+-->
+            <!-- insert slider -->
+            <html:hidden styleId="distance" property="distance" value="0" />
+
+            <tiles:insert name="submissionOverlapsNonLinearSlider.jsp">
+               <tiles:put name="sliderIdentifier" value="distance-slider" />
+               <tiles:put name="defaultValue" value="0" />
+            </tiles:insert>
 
             <html:select styleId="typeSelector" property="direction">
             <html:option value="bothways">both ways</html:option>
