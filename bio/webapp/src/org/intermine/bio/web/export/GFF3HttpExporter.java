@@ -35,6 +35,7 @@ import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.GFF3ExportForm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
@@ -113,6 +114,17 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
                 for (Path path : newPathCollection) {
                     paths.add(path.toStringNoConstraints());
                 }
+            } else {
+                // Views might be rubbish, should do PathQuery.makePath(view) (this should validate
+                // the view), and convert back to string, throws PathException
+                PathQuery pq = pt.getPathQuery();
+                List<String> views = pq.getView();
+                for (String view : views) {
+                    paths.add(pq.makePath(view).toStringNoConstraints());
+                }
+
+                // An unsafe way would be:
+                //paths.addAll(pt.getPathQuery().getView());
             }
 
             removeFirstItemInPaths(paths);
