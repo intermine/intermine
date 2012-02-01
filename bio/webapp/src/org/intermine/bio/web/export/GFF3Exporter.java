@@ -495,7 +495,11 @@ public class GFF3Exporter implements Exporter
 
         List<ResultElement> newRow = new ArrayList<ResultElement>();
 
-        if (newPathCollection != null && unionPathCollection.containsAll(newPathCollection)) {
+        if (unionPathCollection == null && newPathCollection == null) {
+            return row;
+        }
+
+        if (unionPathCollection.containsAll(newPathCollection)) {
             for (Path p : newPathCollection) {
                 ResultElement el = row.get(((List<Path>) unionPathCollection).indexOf(p));
                 if (el != null) {
