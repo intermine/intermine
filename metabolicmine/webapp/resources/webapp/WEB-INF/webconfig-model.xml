@@ -467,6 +467,12 @@
                      placement="summary"
                      types="BioEntity"/>
 
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinSequenceDisplayer"
+                     jspName="model/proteinSequenceDisplayer.jsp"
+                     replacesFields="sequence"
+                     placement="summary"
+                     types="Protein"/>
+
 </reportdisplayers>
 
 <!-- widgets -->
