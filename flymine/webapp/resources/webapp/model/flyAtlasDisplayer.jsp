@@ -125,13 +125,11 @@ function drawFlyAtlasChart(event, sortBySignal, useLinearScale, showSignal) {
 
   google.visualization.events.addListener(viz, 'select', function() {
          var selection = viz.getSelection();
-         console.log(selection);
          for (var i = 0; i < selection.length; i++) {
            var item = selection[i];
            if (item.row != null && item.column != null) {
              // it is a cell
              var objectId = objectIds[item.row];
-             console.log(objectId);
              window.location.assign(baseUrl + objectId);
            }
          }
