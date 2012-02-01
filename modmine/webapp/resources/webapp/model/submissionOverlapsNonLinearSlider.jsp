@@ -59,35 +59,44 @@
 </div>
 
 <script type="text/javascript">
-  <%-- init the slider --%>
-  new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
-      <%-- derive value from slider --%>
-      var handle = jQuery("#${sliderIdentifier}.slider-wrap #${sliderIdentifier}-slider div.handle");
-      jQuery("#${sliderIdentifier}.slider-wrap input.value").val(function() {
-          var distance = handle.css('left').replace(/[^0-9.]/g, '');
-          var width = handle.css('width').replace(/[^0-9.]/g, '');
-          var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
-
-          var value = 1 - ((total - distance - width) / (total - width));
-
-          var e = 0;
-          if (value != 0) {
-              // region extension, the function is the solution of the function derived by curve fitting
-              e = Math.round(Math.pow(Math.E, (value + 0.445)/0.089) - 143.57);
-          }
-
-          jQuery( "#distance" ).val(e);
-
-          if (e >= 1000 && e < 1000000) {
-              e = roundWithPrecision(e/1000, 2) + "k";
-          } else if (e >= 1000000) {
-              e = roundWithPrecision(e/1000000, 2) + "M"
-          }
-
-          return e;
-      });
+  // dragdeal and ajax issue?
+  timer();
+  function timer()
+  {
+      var t=setTimeout("initDragDealer()", 1);
   }
-  });
+
+  function initDragDealer() {
+    <%-- init the slider --%>
+    new Dragdealer('${sliderIdentifier}-slider', {callback: function() {
+        <%-- derive value from slider --%>
+        var handle = jQuery("#${sliderIdentifier}.slider-wrap #${sliderIdentifier}-slider div.handle");
+        jQuery("#${sliderIdentifier}.slider-wrap input.value").val(function() {
+            var distance = handle.css('left').replace(/[^0-9.]/g, '');
+            var width = handle.css('width').replace(/[^0-9.]/g, '');
+            var total = handle.parent().css('width').replace(/[^0-9.]/g, '');
+
+            var value = 1 - ((total - distance - width) / (total - width));
+
+            var e = 0;
+            if (value != 0) {
+                // region extension, the function is the solution of the function derived by curve fitting
+                e = Math.round(Math.pow(Math.E, (value + 0.445)/0.089) - 143.57);
+            }
+
+            jQuery( "#distance" ).val(e);
+
+            if (e >= 1000 && e < 1000000) {
+                e = roundWithPrecision(e/1000, 2) + "k";
+            } else if (e >= 1000000) {
+                e = roundWithPrecision(e/1000000, 2) + "M"
+            }
+
+            return e;
+        });
+      }
+    });
+  }
 
   adjustSliderPosition();
   <%-- derive slider position from value --%>
