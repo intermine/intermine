@@ -143,7 +143,7 @@ ${expressionScoreJSONCellLine}
                   ${ExpressionType}
                 </c:otherwise>
               </c:choose>
-            <br>Further information: check the <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=${expressionScoreDCCid}">
+            <br>Further information: check the <a href="/${WEB_PROPERTIES['webapp.path']}/portal.do?class=Submission&externalids=modENCODE_3305">
 modENCODE submission</a>, with links to the original score files for <a href="http://submit.modencode.org/submit/public/get_file/3305/extracted/Drosophila_Cell_Lines_and_Developmental_Stages_Gene_Scores.txt" target="_blank">genes</a>
             and <a href="http://submit.modencode.org/submit/public/get_file/3305/extracted/Drosophila_Cell_Lines_and_Developmental_Stages_Exon_Scores.txt" target="_blank">exons</a>.
             </i>
