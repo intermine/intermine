@@ -8,12 +8,13 @@ ARKDIR=/micklem/releases/modmine
 DBHOST=modfast
 DBUSER=modmine
 DATADIR=/micklem/data/modmine/subs/chado
+RELDIR="$DATADIR/ark"
 LOADDIR="$DATADIR/load"
 INTERACT=y
 DOIT=y
 
-PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
-#PRO="lieb macalpine snyder karpen celnikerlai waterstonpiano"
+#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+PRO="henikoff karpen waterstonpiano"
 
 progname=$0
 
@@ -240,6 +241,61 @@ echo "done"
 echo
 }
 
+function do_modlog {
+RETURNDIR=$PWD
+echo
+
+if [ ! -s "$RELDIR/$REL" ]
+then
+echo
+echo "Creating directory $RELDIR/$REL..."
+mkdir $RELDIR/$REL
+echo "... and copying the .live files"
+cp $DATADIR/*.live  $RELDIR/$REL
+cp $DATADIR/deprecation.table $RELDIR/$REL
+cp $DATADIR/deprecations $RELDIR/$REL
+cp $DATADIR/superseded.table $RELDIR/$REL
+mkdir $RELDIR/$REL/delta
+fi
+
+DELTA=$RELDIR/$REL/delta
+
+echo
+echo "--------------------------------------------------------------"
+echo "Building modification log between releases $REL and $PREL"
+echo "The projects considered are:"
+echo "$PRO"
+echo "--------------------------------------------------------------"
+echo
+
+LOG="$DATADIR/$REL"_changes.log
+echo "modMine $REL changelog" > $LOG
+echo "=========================================" >>$LOG
+
+
+cd $DATADIR
+
+for p in $PRO
+do
+echo "$p.."
+echo "$p project" >> $LOG
+echo >> $LOG
+grep -vwf $RELDIR/$PREL/$p.live $p.live > $DELTA/$p.delta
+
+grep -wf $DELTA/$p.delta deprecation.table | sed 's/->/deprecated by/g' >> $LOG
+grep -wf $DELTA/$p.delta superseded.table | sed 's/->/superseded by/g' >> $LOG
+grep -vwf $LOG $DELTA/$p.delta |  sed '1i\---- new ----'>> $LOG
+
+echo "=========================================" >>$LOG
+done
+
+cd $RETURNDIR
+echo "done"
+echo   
+}
+
+
+
 function interact {
 if [ "$INTERACT" = "y" ]
 then
@@ -282,6 +338,12 @@ interact "Start archived webapp modmine $PREL:"
 if [ "$DOIT" != "n" ]
 then
 start_archive_webapp
+fi
+
+interact "Build a log of the modifications in the $REL release vs $PREL:"
+if [ "$DOIT" != "n" ]
+then
+do_modlog
 fi
 
 interact "Archiving xml files for all the projects:"
