@@ -800,7 +800,11 @@ function validateBagName(formName) {
 }*/
 
 function setConstraintLogic(expression) {
-  AjaxServices.setConstraintLogic(expression, function() {
+    AjaxServices.setConstraintLogic(expression, function(messages) {
+    if (messages != "") {
+      jQuery('#msg').append(messages);
+      jQuery('#msg').fadeIn(2000);
+    }
     reDrawConstraintLogic();
     jQuery('#constraintLogic').toggle();
     jQuery('#editConstraintLogic').toggle();

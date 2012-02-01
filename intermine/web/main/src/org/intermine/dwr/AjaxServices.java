@@ -1424,17 +1424,21 @@ public class AjaxServices
      * Set the constraint logic on a query to be the given expression.
      *
      * @param expression the constraint logic for the query
+     * @return messages to display in the jsp page
      * @throws PathException if the query is invalid
      */
-    public static void setConstraintLogic(String expression) throws PathException {
+    public static String setConstraintLogic(String expression) throws PathException {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         query.setConstraintLogic(expression);
         List<String> messages = query.fixUpForJoinStyle();
+        StringBuffer messagesToDisplay = new StringBuffer();
         for (String message : messages) {
-            SessionMethods.recordMessage(message, session);
+            messagesToDisplay.append(message);
+            //SessionMethods.recordMessage(message, session);
         }
+        return messagesToDisplay.toString();
     }
 
     /**
