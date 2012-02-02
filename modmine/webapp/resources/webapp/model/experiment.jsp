@@ -920,7 +920,7 @@ Expression Levels:&nbsp;
                  <c:out value="${aRef[1]}" /> </a>
             </c:otherwise>
             </c:choose>
-            <br></br>
+            <br>
          </c:if>
 
          <c:if test="${ref_status.count == 6}">
