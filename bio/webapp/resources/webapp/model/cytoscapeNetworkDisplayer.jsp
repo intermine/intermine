@@ -17,7 +17,6 @@
     fullInteractingGeneSet = '${fullInteractingGeneSet}'; // a string arrray of gene object store ids
     dataNotIncludedMessage = '${dataNotIncludedMessage}'; // case: interaction data is not integrated
     orgWithNoDataMessage = '${orgWithNoDataMessage}'; // case: no interaction data for the whole species
-
 })();
 </script>
 
@@ -276,7 +275,7 @@
                                '</form>' +
                                '<form action="loadQuery.do" id="network-inline-query-form" method="post" style="display: none;">' +
                                '<input type="hidden" name="skipBuilder" value="true" />' +
-                               '<input type="hidden" name="query" value=\'${queryXML}\' />' +
+                               '<input type="hidden" name="query" id="cytoscape-network-query-xml" />' +
                                '<input type="hidden" name="trail" value="|query" />' +
                                '<input type="hidden" name="method" value="xml" />' +
                                '</form>' +
@@ -287,6 +286,8 @@
                     jQuery("#interactions-wrap").html(html)
                                   .css({'font-style': 'italic', 'border': 'none'})
                                   .width(550);
+
+                    jQuery("#cytoscape-network-query-xml").val('${cytoscapeNetworkQueryXML}');
                 }
                 else {
                     networkdata = response;
