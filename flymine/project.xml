@@ -158,7 +158,7 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
-    <source name="go" type="go">
+    <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
 <!--
@@ -166,10 +166,12 @@
       <property name="src.data.file" location="/micklem/data/old_shared_data/uberon/uberon.obo"/>
     </source>
 -->
-    <source name="go-annotation" type="go-annotation" dump="true">
+    <source name="go-annotation" type="ontology-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
+      <property name="ontologyPrefix" value="GO"/>
     </source>
+    
     <source name="flybase-expression" type="flybase-expression">
       <property name="src.data.dir" location="/micklem/data/modMine_flyRNAseq"/>
       <property name="src.data.dir.includes" value="HTD_modENCODE_BinData_2010-10-05.txt"/>
