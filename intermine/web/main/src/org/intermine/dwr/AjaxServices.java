@@ -14,8 +14,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,6 +37,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
@@ -66,6 +70,7 @@ import org.intermine.api.tag.TagNames;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
+import org.intermine.api.tracker.Tracker;
 import org.intermine.api.util.NameUtil;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.metadata.FieldDescriptor;
@@ -283,7 +288,8 @@ public class AjaxServices
                 try {
                     profile.fixInvalidBag(name, newName);
                     InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session)).start();
+                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session))
+                        .start();
                 } catch (UnknownBagTypeException e) {
                     return "<i>" + e.getMessage() + "</i>";
                 } catch (ObjectStoreException e) {
@@ -1512,5 +1518,20 @@ public class AjaxServices
         }
 
         return lists.toString();
+    }
+
+    public void updateTemplate(String field, String value) {
+        HttpSession session = WebContextFactory.get().getSession();
+        boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null)
+                                ? true : false;
+        TemplateQuery templateQuery = (TemplateQuery) SessionMethods.getQuery(session);
+        if (!isNewTemplate && session.getAttribute(Constants.PREV_TEMPLATE_NAME) == null) {
+            session.setAttribute(Constants.PREV_TEMPLATE_NAME, templateQuery.getName());
+        }
+        try {
+            PropertyUtils.setSimpleProperty(templateQuery, field, value);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }

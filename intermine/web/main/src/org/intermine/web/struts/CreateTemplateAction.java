@@ -73,7 +73,7 @@ public class CreateTemplateAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
-        String prevTemplateName = template.getName();
+        String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
 
         boolean seenProblem = false;
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
@@ -195,6 +195,7 @@ public class CreateTemplateAction extends InterMineAction
             }
         }
         session.removeAttribute(Constants.NEW_TEMPLATE);
+        session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
 
         SessionMethods.loadQuery(toSave, request.getSession(), response);
         if ("SAVE".equals(tsf.getActionType())) {

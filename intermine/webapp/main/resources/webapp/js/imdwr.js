@@ -859,3 +859,6 @@ function getHTML(status, bagName) {
       return "<a href='bagUpgrade.do?bagName=" + bagName + "' class='bagToUpgrade'>Upgrade</html:link>";
 }
 
+function updateTemplate(field, value) {
+    AjaxServices.updateTemplate(field, value);
+}

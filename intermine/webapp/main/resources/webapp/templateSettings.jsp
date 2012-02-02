@@ -12,7 +12,6 @@
 <!-- templateSettings.jsp -->
 
 <html:xhtml/>
-
 <c:if test="${EDITING_TEMPLATE != null || NEW_TEMPLATE != null}">
 
   <div class="listHeading">
@@ -42,7 +41,7 @@
           </c:if>
         </td>
         <td nowrap>
-          <input type="text" value="<c:if test="${not empty QUERY.name}"><c:out value="${QUERY.name}" escapeXml="true"/></c:if>" size="32" name="name">
+          <input type="text" onchange="updateTemplate('name', this.value);" value="<c:if test="${not empty QUERY.name}"><c:out value="${QUERY.name}" escapeXml="true"/></c:if>" size="32" name="name">
           <br/>
           <small><i><fmt:message key="templateBuilder.nameHelp"/></i></small>
         </td>
@@ -54,7 +53,7 @@
           </c:if>
         </td>
         <td nowrap>
-          <input type="text" value="<c:if test="${not empty QUERY.title}"><c:out value="${QUERY.title}" escapeXml="true"/></c:if>" size="55" name="title">
+          <input type="text" onchange="updateTemplate('title', this.value);" value="<c:if test="${not empty QUERY.title}"><c:out value="${QUERY.title}" escapeXml="true"/></c:if>" size="55" name="title">
           <br/>
           <small><i><fmt:message key="templateBuilder.titleHelp"/></i></small>
         </td>
@@ -62,13 +61,13 @@
       <tr>
         <td align="right"><fmt:message key="templateBuilder.templateDescription"/></td>
         <td nowrap>
-          <textarea rows="3" cols="55" name="description"><c:if test="${not empty QUERY.description}"><c:out value="${QUERY.description}" escapeXml="true"/></c:if></textarea>
+          <textarea rows="3" cols="55" name="description" onchange="updateTemplate('description', this.value);"><c:if test="${not empty QUERY.description}"><c:out value="${QUERY.description}" escapeXml="true"/></c:if></textarea>
         </td>
       </tr>
       <tr>
         <td align="right"><fmt:message key="templateBuilder.templateComment"/></td>
         <td nowrap>
-          <input type="text" value="<c:if test="${not empty QUERY.comment}"><c:out value="${QUERY.comment}" escapeXml="true"/></c:if>" size="55" name="comment">
+          <input type="text" onchange="updateTemplate('comment', this.value);" value="<c:if test="${not empty QUERY.comment}"><c:out value="${QUERY.comment}" escapeXml="true"/></c:if>" size="55" name="comment">
         </td>
       </tr>
     </table>
