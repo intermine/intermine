@@ -66,7 +66,7 @@ public class FlyRegulatoryNetworkController extends TilesAction
 
         if (interactionNodeSet == null || interactionEdgeSet == null) {
             request.setAttribute("classMissingMessage",
-                "Interaction Class is missiong in the model...");
+                "Interaction Class is missing in the model...");
             return null;
         }
 
