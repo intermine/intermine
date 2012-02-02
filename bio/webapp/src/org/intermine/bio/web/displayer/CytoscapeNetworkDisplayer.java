@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -48,8 +49,9 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class CytoscapeNetworkDisplayer extends ReportDisplayer
 {
-    private static final int LARGE_NETWORK_ELEMENT_COUNT = 2000;;
-//    private static final String LARGE_NETWORK = "large_network";
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(CytoscapeNetworkDisplayer.class);
+
     private static String DATA_NOT_INTEGRATED = "Interaction data is not integrated.";
     private static String EXCEPTION_OCCURED = "An exception occured";
 
@@ -155,28 +157,22 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
                 fullInteractingGeneSet), "A");
         q.setConstraintLogic("B and A");
 
-        // === Test large network ===
-        if (fullInteractingGeneSet.size() >= LARGE_NETWORK_ELEMENT_COUNT) {
-            // set large_network in request
-//            request.setAttribute("large_network", LARGE_NETWORK);
+        // set inline query xml in request
+        String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
+                PathQuery.USERPROFILE_VERSION);
+        request.setAttribute("cytoscapeNetworkQueryXML", queryXML);
 
-            // set inline query xml in request
-            String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
-                    PathQuery.USERPROFILE_VERSION);
-            request.setAttribute("queryXML", queryXML);
-
-        } else {
-            // set inline table in request
-            try {
-                WebResultsExecutor we = im.getWebResultsExecutor(profile);
-                WebResults webResults = we.execute(q);
-                PagedTable pagedResults = new PagedTable(webResults,
-                        reportObject.getNumberOfTableRowsToShow().intValue());
-                pagedResults.setTableid("CytoscapeNetworkDisplayer");
-                request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
-            }
+        // set inline table in request
+        try {
+            WebResultsExecutor we = im.getWebResultsExecutor(profile);
+            WebResults webResults = we.execute(q);
+            PagedTable pagedResults = new PagedTable(webResults,
+                    reportObject.getNumberOfTableRowsToShow().intValue());
+            pagedResults.setTableid("CytoscapeNetworkDisplayer");
+            request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
         }
+
     }
 }
