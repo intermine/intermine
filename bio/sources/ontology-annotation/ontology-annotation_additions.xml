@@ -16,6 +16,4 @@
   <reference name="code" referenced-type="GOEvidenceCode"/>
   <collection name="publications" referenced-type="Publication"/>
 </class>
-
-
 </classes>
