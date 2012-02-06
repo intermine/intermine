@@ -83,7 +83,7 @@
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
     <source name="rnai" type="rnai">
-      <property name="src.data.dir" location="/micklem/data/wormbase-rnai/current"/>
+      <property name="src.data.dir" location="/micklem/data/flymine/rnai/current"/>
     </source>
     <source name="arbeitman-items-xml" type="arbeitman-items-xml">
       <property name="src.data.file" location="/micklem/data/flymine/mage/arbeitman/arbeitman-tgt-items.xml"/>
@@ -190,11 +190,7 @@
       <property name="src.data.dir" location="/micklem/data/redfly/current/crm"/>
       <property name="src.data.dir.includes" value="crm_dump.gff"/>
     </source>
-    <source name="flyrnai-screens" type="flyrnai-screens">
-      <property name="src.data.dir" location="/micklem/data/drsc/current"/>
-      <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
-      <property name="screenDetailsFile" location="/micklem/data/drsc/current/RNAi_screen_details"/>
-    </source>
+
     <source name="fly-fish" type="fly-fish">
       <property name="src.data.dir" location="/micklem/data/flymine/flyfish"/>
       <property name="src.data.dir.includes" value="annotation_matrix_filter_3.csv"/>
