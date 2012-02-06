@@ -63,6 +63,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private static final String GENUS_LOOKUP = "Drosophila";
+    private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
@@ -427,7 +428,15 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (StringUtils.isNotEmpty(commentText)) {
                     Item item = createItem("Comment");
                     item.setAttribute("type", entry.getCommentType());
-                    item.setAttribute("text", commentText);
+                    if (commentText.length() > POSTGRES_INDEX_SIZE) {
+                        // comment text is a string
+                        String ellipses = "...";
+                        String choppedComment = commentText.substring(
+                                0, POSTGRES_INDEX_SIZE - ellipses.length());
+                        item.setAttribute("text", choppedComment + ellipses);
+                    } else {
+                        item.setAttribute("text", commentText);
+                    }
                     String refId = item.getIdentifier();
                     try {
                         Integer objectId = store(item);

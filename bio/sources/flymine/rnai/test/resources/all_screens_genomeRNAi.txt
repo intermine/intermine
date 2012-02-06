@@ -1,0 +1,23 @@
+#Stable ID=GR00001-A-0
+#Screen Title=PDGF/VEGF signaling
+#Publication Title=PDGF/VEGF signaling controls cell size in Drosophila
+#Authors=Sims et al.
+#Publication Year=2009
+#Pubmed ID=19216764
+#Organism=Drosophila melanogaster
+#Screen Type=cell-based
+#Biosource=Cell line
+#Biomodel=S2
+#Assay=Cell size inspection
+#Method=High content (microscopy)
+#Library Manufacturer=
+#Library=DRSC
+#Scope=Z-score
+#Reagent Type=dsRNA
+#Score Type=Z-score
+#Cutoff=-2
+#Notes=
+
+#Stable ID	Entrez ID	Gene ID	Gene Symbol	Reagent ID	Score	Phenotype	Conditions	Follow Up	Comment
+GR00001-A-0	38654	FBgn0015806		DRSC11276	-0.81	ND		no
+GR00001-A-0	41899	FBgn0053207		DRSC13110	-2.15	Round		no
