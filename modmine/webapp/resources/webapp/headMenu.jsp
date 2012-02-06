@@ -74,7 +74,7 @@
         </a>
       </li>
       <li id="category"  <c:if test="${tab == 'dataCategories'}">class="activelink"</c:if>>
-        <a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do">
+        <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">
           <fmt:message key="menu.dataCategories"/>
         </a>
       </li>
