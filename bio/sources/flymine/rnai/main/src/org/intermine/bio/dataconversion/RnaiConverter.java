@@ -59,25 +59,14 @@ public class RnaiConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(reader);
         String line;
-        int lineNumber = 0;
-
         while ((line = bufferedReader.readLine()) != null) {
-            lineNumber++;
             if (line.startsWith("#")) {
                 processScreen(line);
-                System.out.println("A " + lineNumber);
             } else {
                 String[] cols = line.split("\t");
                 if (cols.length < 8) {
-                    System.out.println("C " + cols.length);
                     continue;
-//                    final String msg = "Incorrect number of entries in line number " + lineNumber
-//                            + ": " + line.toString()
-//                            + ".  Should be 10 but is " + line.length + " instead."
-//                            + "  content:" + line[0];
-//                    throw new RuntimeException(msg);
                 }
-                System.out.println("B " + lineNumber);
                 processResult(cols);
             }
         }
@@ -86,22 +75,14 @@ public class RnaiConverter extends BioFileConverter
     private void processScreen(String line) throws ObjectStoreException {
         String[] bits = line.split("=");
         if (bits.length != 2) {
-            System.out.println("BITS " + bits.length);
             return;
         }
 
         String key = bits[0];
         key = key.replace("#", "");
         String value = bits[1];
-        if (value == null) {
-            System.out.println("bad value " + key);
-        }
-        if (screen == null) {
-            System.out.println("bad key " + key);
-        }
         if ("Stable ID".equals(key)) {
             screen = createItem("RNAiScreen");
-            System.out.println("key " + key);
         } else if ("Screen Title".equals(key)) {
             screen.setAttribute("name", value);
         } else if ("Pubmed ID".equals(key)) {
@@ -128,9 +109,9 @@ public class RnaiConverter extends BioFileConverter
                 comments = attr.getValue();
             }
             if (comments == null) {
-                screen.setAttribute("comments", key + ":  "+ value);
+                screen.setAttribute("comments", key + ":  " + value);
             } else {
-                screen.setAttribute("comments", comments + "; " + key + ":  "+ value);
+                screen.setAttribute("comments", comments + "; " + key + ":  " + value);
             }
         }
     }
@@ -143,31 +124,27 @@ public class RnaiConverter extends BioFileConverter
     }
 
     private void processResult(String[] line) throws ObjectStoreException {
-//#Stable ID      Entrez ID       Gene ID Gene Symbol     Reagent ID      Score
-//        Phenotype       Conditions      Follow Up       Comment
+        String screenId = line[0];
+        String geneId = getGene(line[2]);
+        String reagentId = line[4];
+        String score = line[5];
 
-        //GR00001-A-0 38654   FBgn0015806     DRSC11276   -0.81   ND      no
-            String screenId = line[0];
-            String geneId = getGene(line[2]);
-            String reagentId = line[4];
-            String score = line[5];
+        String phenotype = line[6];
+        String conditions = line[7];
+        screen.setAttribute("identifier", reagentId);
+        storeScreen(screenId);
 
-            String phenotype = line[6];
-            String conditions = line[7];
-            screen.setAttribute("identifier", reagentId);
-            storeScreen(screenId);
-
-            Item result = createItem("RNAiResult");
-            result.setAttribute("phenotype", phenotype);
-            if (StringUtils.isNotEmpty(conditions)) {
-                result.setAttribute("conditions", conditions);
-            }
-            result.setAttribute("score", score);
-            if (geneId != null) {
-                result.setReference("gene", geneId);
-            }
-            result.setReference("rnaiScreen", screen);
-            store(result);
+        Item result = createItem("RNAiResult");
+        result.setAttribute("phenotype", phenotype);
+        if (StringUtils.isNotEmpty(conditions)) {
+            result.setAttribute("conditions", conditions);
+        }
+        result.setAttribute("score", score);
+        if (geneId != null) {
+            result.setReference("gene", geneId);
+        }
+        result.setReference("rnaiScreen", screen);
+        store(result);
     }
 
     private String getPublication(String pubmedId) throws ObjectStoreException {
@@ -212,96 +189,5 @@ public class RnaiConverter extends BioFileConverter
         }
         return refId;
     }
-
-    /**
-     * RNAi Screen (RNAi result is below)
-
-#Stable ID=GR00001-A-0
-
-ignored
-
-#Screen Title=PDGF/VEGF signaling
-
-RNAiScreen.name
-
-#Publication Title=PDGF/VEGF signaling controls cell size in Drosophila
-#Authors=Sims et al.
-#Publication Year=2009
-#Pubmed ID=19216764
-
-RNAiScreen.publication
-
-#Organism=Drosophila melanogaster
-
-ignored
-
-#Screen Type=cell-based
-
-ignored
-
-#Biosource=Cell line
-
-RNAiScreen.bioSourceType
-
-#Biomodel=S2
-
-RNAiScreen.bioSourceName
-
-#Assay=Cell size inspection
-
-RNAiScreen.assay
-
-#Method=High content (microscopy)
-
-RNAiScreen.method
-
-#Library Manufacturer=
-
-PUT IN RNAiScreen.comments
-
-#Library=DRSC
-
-PUT IN RNAiScreen.comments
-
-#Scope=Z-score
-
-ignored?
-
-#Reagent Type=dsRNA
-
-RNAiScreen.reagent
-
-#Score Type=Z-score
-
-RNAiScreen.scoreType
-
-#Cutoff=-2
-
-RNAiScreen.scoreCutoff
-
-#Notes=
-
-ignored
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-RNAi Results
-
-#Stable ID      Entrez ID       Gene ID Gene Symbol     Reagent ID      Score
-Phenotype       Conditions      Follow Up       Comment
-
-gene ID - gene
-symbol - ignored
-reagent ID = screen ID
-score - rnairesults.score
-Phenotype - rnairesults.Phenotype
-conditions - put in comments
-follow up - ignored
-comment - ignored
-
-
-
-     */
 }
 
