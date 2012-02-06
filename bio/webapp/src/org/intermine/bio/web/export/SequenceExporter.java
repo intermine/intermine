@@ -88,11 +88,12 @@ public class SequenceExporter implements Exporter
         return writtenResultsCount;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
         export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
-    
+
     /**
      * {@inheritDoc} Lines are always separated with \n because third party tool
      * writeFasta is used for writing sequence.
@@ -243,43 +244,40 @@ public class SequenceExporter implements Exporter
                 String locString = chr + ':' + start + '-' + end;
                 headerBits.add(locString);
             }
+
             for (ResultElement re : subRow) {
                 // to avoid failure in modmine when no experimental factors (sub 2745)
                 if (re == null) {
                     continue;
                 }
 
-                if (object.equals(re.getObject())) {
-                    Object fieldValue = re.getField();
-                    if (fieldValue == null) {
-                        headerBits.add("-");
-                    } else {
-                        // ignore the primaryIdentifier and Location in
-                        // ResultElement
-                        if (fieldValue.toString().equals(keyFieldValue)
-                                || (fieldValue instanceof Location)) {
-                            continue;
-                        } else {
-                            headerBits.add(fieldValue.toString());
-                        }
-                    }
+                Object fieldValue = re.getField();
+                if (fieldValue == null) {
+                    headerBits.add("-");
+                } else if (fieldValue.toString().equals(keyFieldValue)
+                        || (fieldValue instanceof Location)) {
+                    // ignore the primaryIdentifier and Location in
+                    // ResultElement
+                    continue;
+                } else {
+                    headerBits.add(fieldValue.toString());
                 }
             }
 
         } else if (object instanceof Protein) {
 
             for (ResultElement re : subRow) {
-                if (object.equals(re.getObject())) {
-                    Object fieldValue = re.getField();
-                    if (fieldValue == null) {
-                        headerBits.add("-");
-                    } else {
-                        if (fieldValue.toString().equals(keyFieldValue)) {
-                            continue;
-                        } else {
-                            headerBits.add(fieldValue.toString());
-                        }
-                    }
+                if (re == null) {
+                    continue;
+                }
+
+                Object fieldValue = re.getField();
+                if (fieldValue == null) {
+                    headerBits.add("-");
+                } else if (fieldValue.toString().equals(keyFieldValue)) {
+                    continue;
+                } else {
+                    headerBits.add(fieldValue.toString());
                 }
             }
         }
