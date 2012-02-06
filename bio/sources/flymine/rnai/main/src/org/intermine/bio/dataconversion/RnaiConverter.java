@@ -83,6 +83,7 @@ public class RnaiConverter extends BioFileConverter
         String value = bits[1];
         if ("Stable ID".equals(key)) {
             screen = createItem("RNAiScreen");
+            screen.setAttribute("identifier", value);
         } else if ("Screen Title".equals(key)) {
             screen.setAttribute("name", value);
         } else if ("Pubmed ID".equals(key)) {
@@ -131,15 +132,21 @@ public class RnaiConverter extends BioFileConverter
 
         String phenotype = line[6];
         String conditions = line[7];
-        screen.setAttribute("identifier", reagentId);
+        if (StringUtils.isNotEmpty(reagentId)) {
+            screen.setAttribute("reagentId", reagentId);
+        }
         storeScreen(screenId);
 
         Item result = createItem("RNAiResult");
-        result.setAttribute("phenotype", phenotype);
+        if (StringUtils.isNotEmpty(phenotype)) {
+            result.setAttribute("phenotype", phenotype);
+        }
         if (StringUtils.isNotEmpty(conditions)) {
             result.setAttribute("conditions", conditions);
         }
-        result.setAttribute("score", score);
+        if (StringUtils.isNotEmpty(score)) {
+            result.setAttribute("score", score);
+        }
         if (geneId != null) {
             result.setReference("gene", geneId);
         }
