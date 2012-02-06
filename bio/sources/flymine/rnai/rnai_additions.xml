@@ -10,6 +10,7 @@
     <attribute name="method" type="java.lang.String"/>
     <attribute name="scoreType" type="java.lang.String"/>
     <attribute name="reagent" type="java.lang.String"/>
+    <attribute name="reagentId" type="java.lang.String"/>
     <attribute name="scoreCutoff" type="java.lang.String"/>
     <reference name="publication" referenced-type="Publication"/>
     <collection name="rnaiResults" referenced-type="RNAiResult" reverse-reference="rnaiScreen"/>
