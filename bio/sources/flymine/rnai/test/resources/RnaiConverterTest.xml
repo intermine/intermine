@@ -46,11 +46,12 @@
 <attribute name="name" value="German Cancer Research Center (DKFZ)"/>
 </item>
 <item id="3_1" class="RNAiScreen">
+<attribute name="identifier" value="GR00001-A-0"/>
 <attribute name="assay" value="Cell size inspection"/>
 <attribute name="bioSourceName" value="S2"/>
 <attribute name="bioSourceType" value="Cell line"/>
-<attribute name="comments" value="Library:  DRSC"/>
-<attribute name="identifier" value="DRSC11276"/>
+<attribute name="library" value="Library:  DRSC"/>
+<attribute name="reagentId" value="DRSC11276"/>
 <attribute name="method" value="High content (microscopy)"/>
 <attribute name="name" value="PDGF/VEGF signaling"/>
 <attribute name="reagent" value="dsRNA"/>
