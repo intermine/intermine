@@ -682,16 +682,10 @@
   </sources>
   <post-processing>
     <post-process name="create-utr-references"/>
-<!-- tmp out
-    <post-process name="transfer-sequences"/>
-    -->
     <post-process name="create-references" />
     <post-process name="set-missing-chromosome-locations"/>
     <post-process name="create-intergenic-region-features"/>
-    <!--
     <post-process name="create-gene-flanking-features" />
-    -->
-<!-- TODO tmp -->
     <post-process name="transfer-sequences" dump="true"/>
 
     <post-process name="do-sources"/>
