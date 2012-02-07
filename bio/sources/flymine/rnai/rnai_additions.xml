@@ -5,7 +5,7 @@
     <attribute name="name" type="java.lang.String"/>
     <attribute name="bioSourceName" type="java.lang.String"/>
     <attribute name="bioSourceType" type="java.lang.String"/>
-    <attribute name="comments" type="java.lang.String"/>
+    <attribute name="library" type="java.lang.String"/>
     <attribute name="assay" type="java.lang.String"/>
     <attribute name="method" type="java.lang.String"/>
     <attribute name="scoreType" type="java.lang.String"/>

@@ -51,7 +51,7 @@ public class RnaiConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "rnai-converter-tgt.xml");
+        //writeItemsFile(itemWriter.getItems(), "rnai-converter-tgt.xml");
 
         assertEquals(readItemSet("RnaiConverterTest.xml"), itemWriter.getItems());
     }

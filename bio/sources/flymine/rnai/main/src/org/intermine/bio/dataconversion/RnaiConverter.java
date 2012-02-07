@@ -104,15 +104,15 @@ public class RnaiConverter extends BioFileConverter
         } else if ("Cutoff".equals(key)) {
             screen.setAttribute("scoreCutoff", value);
         } else if (key.startsWith("Library")) {
-            Attribute attr = screen.getAttribute("comments");
-            String comments = null;
+            Attribute attr = screen.getAttribute("library");
+            String library = null;
             if (attr != null) {
-                comments = attr.getValue();
+                library = attr.getValue();
             }
-            if (comments == null) {
-                screen.setAttribute("comments", key + ":  " + value);
+            if (library == null) {
+                screen.setAttribute("library", key + ":  " + value);
             } else {
-                screen.setAttribute("comments", comments + "; " + key + ":  " + value);
+                screen.setAttribute("library", library + "; " + key + ":  " + value);
             }
         }
     }
