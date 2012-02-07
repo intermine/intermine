@@ -90,8 +90,6 @@ public class GenomicRegionSearchService
         "genomic_region_search_results_default";
     private static final int READ_AHEAD_CHARS = 10000;
     private GenomicRegionSearchConstraint grsc = null;
-    // Key - organism : Value - map <key - chr : value - chromosome information>
-    private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
     private static Set<String> featureTypesInOrgs = null;
     private static Map<String, List<String>> featureTypeToSOTermMap = null;
     private static Map<String, Integer> orgTaxonIdMap = null;
@@ -680,12 +678,7 @@ public class GenomicRegionSearchService
      * @return chrInfoMap
      */
     public Map<String, Map<String, ChromosomeInfo>> getChromosomeInfomationMap() {
-        if (chrInfoMap == null) {
-            chrInfoMap = GenomicRegionSearchQueryRunner
-                    .getChromosomeInfo(interMineAPI, profile);
-        }
-
-        return chrInfoMap;
+        return GenomicRegionSearchQueryRunner.getChromosomeInfo(interMineAPI, profile);
     }
 
     /**
@@ -749,7 +742,7 @@ public class GenomicRegionSearchService
         List<GenomicRegion> passedSpanList = new ArrayList<GenomicRegion>();
         List<GenomicRegion> errorSpanList = new ArrayList<GenomicRegion>();
 
-        Map<String, ChromosomeInfo> chrInfo = chrInfoMap.get(grsc.getOrgName());
+        Map<String, ChromosomeInfo> chrInfo = getChromosomeInfomationMap().get(grsc.getOrgName());
 
         if (chrInfo == null) { // this should not happen
             throw new Exception("ChromosomeInfo map should not be null");
@@ -1034,6 +1027,8 @@ public class GenomicRegionSearchService
         String baseURL = webProperties.getProperty("webapp.baseurl");
         String path = webProperties.getProperty("webapp.path");
         String galaxyDisplay = webProperties.getProperty("galaxy.display");
+        String exportChromosomeSegment = webProperties
+                .getProperty("genomicRegionSearch.exportChromosomeSegment");
 
         List<GenomicRegion> subGenomicRegionList = genomicRegionList.subList(fromIdx, toIdx + 1);
 
@@ -1054,26 +1049,28 @@ public class GenomicRegionSearchService
             List<List<String>> features = resultMap.get(s);
             Map<String, Integer> stat = resultStat.get(s);
 
-            int topCount = stat.values().iterator().next();
-            // map key - class name, value - boolean (to tag if a feature type
-            // has been visited for duplicated features)
-            Set<String> aboveCutOffFeatureTypeSet = new LinkedHashSet<String>();
-            if (topCount >= maxRecordCutOff) {
-                for (Entry<String, Integer> e : stat.entrySet()) {
-                    if (e.getValue() > maxRecordCutOff) {
-                        aboveCutOffFeatureTypeSet.add(e.getKey());
-                    } else {
-                        break;
+            String ftHtml = "";
+            Set<String> ftSet = null;
+            Set<String> aboveCutOffFeatureTypeSet = null;
+            if (stat != null) {
+                // get list of featureTypes
+                ftHtml = categorizeFeatureTypes(stat.keySet(), s);
+                ftSet = getFeatureTypeSetInAlphabeticalOrder(stat.keySet());
+                aboveCutOffFeatureTypeSet = new LinkedHashSet<String>();
+                int topCount = stat.values().iterator().next();
+                if (topCount >= maxRecordCutOff) {
+                    for (Entry<String, Integer> e : stat.entrySet()) {
+                        if (e.getValue() > maxRecordCutOff) {
+                            aboveCutOffFeatureTypeSet.add(e.getKey());
+                        } else {
+                            break;
+                        }
                     }
                 }
             }
 
             String span = s.getExtendedRegionSize() == 0 ? s
                     .getOriginalRegion() : s.getExtendedRegion();
-
-            // get list of featureTypes
-            String ftHtml = categorizeFeatureTypes(stat.keySet(), s);
-            Set<String> ftSet = getFeatureTypeSetInAlphabeticalOrder(stat.keySet());
 
             /*
              * order: 0.id
@@ -1086,7 +1083,7 @@ public class GenomicRegionSearchService
              * see query fields in createQueryList method
              */
             if (features != null) {
-                if (aboveCutOffFeatureTypeSet.size() == 0) {
+                if (aboveCutOffFeatureTypeSet == null || aboveCutOffFeatureTypeSet.size() == 0) {
                     int length = features.size();
                     List<String> firstFeature = features.get(0);
 
@@ -1120,6 +1117,15 @@ public class GenomicRegionSearchService
                                 + "'>" + span + "</a></b>");
                     } else {
                         sb.append("<b>" + span + "</b>");
+                    }
+
+                    if (!"false".equals(exportChromosomeSegment)) {
+                        sb.append("<span style=\"padding: 10px;\">"
+                                + "<a href='javascript: exportFeatures(\""
+                                + s.getFullRegionInfo()
+                                + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
+                                + "segment as FASTA\" class=\"fasta\" "
+                                + "src=\"model/images/fasta.gif\"></a></span>");
                     }
 
                     sb.append("<br>");
@@ -1292,6 +1298,15 @@ public class GenomicRegionSearchService
                                 + "'>" + span + "</a></b>");
                     } else {
                         sb.append("<b>" + span + "</b>");
+                    }
+
+                    if (!"false".equals(exportChromosomeSegment)) {
+                        sb.append("<span style=\"padding: 10px;\">"
+                                + "<a href='javascript: exportFeatures(\""
+                                + s.getFullRegionInfo()
+                                + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
+                                + "segment as FASTA\" class=\"fasta\" "
+                                + "src=\"model/images/fasta.gif\"></a></span>");
                     }
 
                     sb.append("<br>");
