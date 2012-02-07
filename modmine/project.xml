@@ -81,14 +81,15 @@
 
 <!--    ADDED FOR r20 -->
     <source name="rnai" type="rnai" dump="true">
-      <property name="src.data.dir" location="/micklem/data/wormbase-rnai/current"/>
+       <property name="src.data.dir" location="/micklem/data/flymine/rnai/current"/>
     </source>
+<!--
+    <property name="src.data.dir" location="/micklem/data/wormbase-rnai/current"/>
     <source name="flyrnai-screens" type="flyrnai-screens">
       <property name="src.data.dir" location="/micklem/data/drsc/current"/>
       <property name="src.data.dir.includes" value="RNAi_all_hits*"/>
       <property name="screenDetailsFile" location="/micklem/data/drsc/current/RNAi_screen_details"/>
     </source>
-<!--
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
