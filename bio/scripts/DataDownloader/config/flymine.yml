@@ -22,9 +22,7 @@ default_sources:
   - "Reactome"
   - "RedFly"
   - "RGDIdentifiers"
-  - "RNAiScreens"
   - "UniProt"
-  - "WormbaseRNAi"
   - "WormIdentifiers"
 
 UniProt:
