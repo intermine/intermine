@@ -526,8 +526,8 @@ public class GenomicRegionSearchAjaxAction extends Action
                 }
 
                 if ("bed".equals(format)) {
-                    String ucscCompatibleCheck = "yes"; // TODO parameter pass from
-                                                        // webpage
+                    // TODO parameter passed from webpage?
+                    String ucscCompatibleCheck = "yes";
                     exportForm = new BEDExportForm();
                     exportForm.setDoGzip(doGzip);
                     ((BEDExportForm) exportForm).setOrgansimString(organism);
