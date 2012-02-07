@@ -14,9 +14,7 @@ default_sources:
   - "PDB"
   - "PubMed"
   - "Reactome"
-  - "RNAiScreens"
   - "UniProt"
-  - "WormbaseRNAi"
   - "WormIdentifiers"
 
 
