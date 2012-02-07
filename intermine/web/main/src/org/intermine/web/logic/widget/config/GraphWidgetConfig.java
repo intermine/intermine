@@ -22,11 +22,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.QueryField;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.GraphWidgetLoader;
 
 /**
  * Configuration object describing details of a graph displayer
@@ -39,8 +36,15 @@ public class GraphWidgetConfig extends WidgetConfig
     private String domainLabel;
     private String rangeLabel;
     private String graphType;
-    private int width = 430;
-    private int height = 350;
+    private String startClass;
+    private String bagType;
+    private String bagPath;
+    private String categoryPath;
+    private String seriesPath;
+    private String seriesValues;
+    private String seriesLabels;
+    private String dataSetPath;
+    private String dataSetValue;
     private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private String editable;
@@ -121,6 +125,77 @@ public class GraphWidgetConfig extends WidgetConfig
                + " urlGen=\"" + getLink() + "\" />";
     }
 
+    public String getStartClass() {
+        return startClass;
+    }
+
+    public void setStartClass(String startClass) {
+        this.startClass = startClass;
+    }
+
+    public String getBagType() {
+        return bagType;
+    }
+
+    public void setBagType(String bagType) {
+        this.bagType = bagType;
+    }
+
+    public String getBagPath() {
+        return bagPath;
+    }
+
+    public void setBagPath(String bagPath) {
+        this.bagPath = bagPath;
+    }
+
+    public String getCategoryPath() {
+        return categoryPath;
+    }
+
+    public void setCategoryPath(String categoryPath) {
+        this.categoryPath = categoryPath;
+    }
+
+    public String getSeriesPath() {
+        return seriesPath;
+    }
+
+    public void setSeriesPath(String seriesPath) {
+        this.seriesPath = seriesPath;
+    }
+
+    public String getSeriesValues() {
+        return seriesValues;
+    }
+
+    public void setSeriesValues(String seriesValues) {
+        this.seriesValues = seriesValues;
+    }
+
+    public String getSeriesLabels() {
+        return seriesLabels;
+    }
+
+    public void setSeriesLabels(String seriesLabels) {
+        this.seriesLabels = seriesLabels;
+    }
+
+    public String getDataSetPath() {
+        return dataSetPath;
+    }
+
+    public void setDataSetPath(String dataSetPath) {
+        this.dataSetPath = dataSetPath;
+    }
+
+    public String getDataSetValue() {
+        return dataSetValue;
+    }
+
+    public void setDataSetValue(String dataSetValue) {
+        this.dataSetValue = dataSetValue;
+    }
 
     /**
      * @return the extraAttributeClass
@@ -207,49 +282,10 @@ public class GraphWidgetConfig extends WidgetConfig
     }
 
     /**
-     * @return the width
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * @return the height
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * @param width the width to set
-     */
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    /**
-     * @param height the height to set
-     */
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public GraphWidget getWidget(InterMineBag imBag, ObjectStore os,
                                  List<String> selectedExtraAttribute) {
-        /*GraphWidgetLoader gwlFlyFish = new GraphWidgetLoader(imBag, os, "MRNAExpressionResult",
-                 "stageRange", "expressed", "dataSet", "fly-Fish data set", "Gene",
-                 "Gene.mRNAExpressionResults");*/
-        String[] seriesPath = {"Up", "Down"};
-        String[] seriesValue = {"Up", "Down"};
-        GraphWidgetLoader gwlFlyAtlas = new GraphWidgetLoader(imBag, os, "FlyAtlasResult",
-                "Tissue", "tissue.name", "affyCall", seriesPath, seriesValue,
-                null, null, "Gene", "FlyAtlasResult.genes");
-       /* GraphWidgetLoader gwlBDGP = new GraphWidgetLoader(imBag, os, "MRNAExpressionResult",
-               "stageRange", "expressed", "dataSet", "BDGP in situ data set", "Gene",
-               "Gene.mRNAExpressionResults");*/
         return new GraphWidget(this, imBag, os, selectedExtraAttribute.get(0));
     }
 

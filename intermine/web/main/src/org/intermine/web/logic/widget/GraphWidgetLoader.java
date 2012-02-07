@@ -10,11 +10,12 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
@@ -39,72 +40,35 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 
 public class GraphWidgetLoader implements DataSetLdr
 {
-    private String startClass;
-    private String rangeLabel;
-    private String categoryPath;
-    private String seriesPath;
-    String[] seriesValue;
-    String[] seriesLabels;
-    private String bagType;
-    private String bagPath;
-    private String dataSetPath;
-    private String dataSetValue;
-
-    private Results results;
     private ObjectStore os;
     private InterMineBag bag;
+    private GraphWidgetConfig config;
+    private Results results;
     private int items;
     private List<List<Object>> resultTable = new LinkedList<List<Object>>();
 
     // TODO the parameters need to be updated
-    public GraphWidgetLoader(InterMineBag bag, ObjectStore os, String startClass, String rangeLabel, String categoryPath, String seriesPath,
-        String[] seriesValue, String[] seriesLabels, String dataSetPath, String dataSetValue, String bagType, String bagPath) {
+    public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config) {
         this.bag = bag;
         this.os = os;
-        this.startClass = startClass;
-        this.rangeLabel = rangeLabel;
-        this.categoryPath = categoryPath;
-        this.seriesPath = seriesPath;
-        this.seriesValue = seriesValue;
-        this.seriesLabels = seriesLabels;
-        this.dataSetPath = dataSetPath;
-        this.dataSetValue = dataSetValue;
-        this.bagType = bagType;
-        this.bagPath = bagPath;
+        this.config = config;
 
-        if (!bag.getType().equals(bagType)) {
+        String[] typeClasses = config.getTypeClass().split("\\,");
+        boolean typeMatch = false;
+        String packageName = os.getModel().getPackageName();
+        for (String typeClass : typeClasses) {
+            if (typeClass.equals(packageName + "." + bag.getType())) {
+                typeMatch = true;
+                break;
+            }
+        }
+        if (!typeMatch) {
             return;
         }
-
         Query q = createQuery(false);
         results = os.execute(q);
 
-        LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
-        for (Iterator<?> it = results.iterator(); it.hasNext();) {
-            ResultsRow<?> row = (ResultsRow<?>) it.next();
-            String category = (String) row.get(0);
-            String series = (String) row.get(1);
-            long count = (Long) row.get(2);
-            if (series != null) {
-                if (categorySeriesMap.get(category) != null) {
-                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
-                        if (seriesValue[indexSeries].equals(series)) {
-                            (categorySeriesMap.get(category))[indexSeries] = count;
-                            break;
-                        }
-                    }
-                } else {
-                    long[] counts = new long[seriesValue.length];
-                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
-                        if (seriesValue[indexSeries].equals(series)) {
-                            counts[indexSeries] = count;
-                            break;
-                        }
-                    }
-                    categorySeriesMap.put(category, counts);
-                }
-            }
-        }
+        LinkedHashMap<String, long[]> categorySeriesMap = buildCategorySeriesMap();
 
         //populate resultTable
         populateResultTable(categorySeriesMap);
@@ -120,12 +84,14 @@ public class GraphWidgetLoader implements DataSetLdr
 
         try {
             QueryClass startClassQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                    + "." + startClass));
+                    + "." + config.getStartClass()));
             query.addFrom(startClassQueryClass);
 
             QueryField qfCategoryPath = null;
             QueryField qfSeriesPath = null;
             if (!calcTotal) {
+                String categoryPath = config.getCategoryPath();
+                String seriesPath = config.getSeriesPath();
                 if (categoryPath.contains(".")) {
                     qfCategoryPath = updateQuery(model, query, startClassQueryClass, categoryPath);
                 } else {
@@ -146,17 +112,18 @@ public class GraphWidgetLoader implements DataSetLdr
             //update query adding the bag
             //TODO if bagtype != Gene
             QueryClass bagTypeQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                                                                        + "." + bagType));
+                                                          + "." + bag.getType()));
 
             query.addFrom(bagTypeQueryClass);
             QueryField idQueryField = new QueryField(bagTypeQueryClass, "id");
             cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN, bag.getOsb()));
 
             QueryClass qc = null;
+            String bagPath = config.getBagPath();
             String path = bagPath.split("\\.")[1];
             try {
                 QueryObjectReference qor = null;
-                if (bagPath.startsWith(startClass)) {
+                if (bagPath.startsWith(config.getStartClass())) {
                     qor = new QueryObjectReference(startClassQueryClass, path);
                     qc = bagTypeQueryClass;
                 } else {
@@ -167,7 +134,7 @@ public class GraphWidgetLoader implements DataSetLdr
             } catch (IllegalArgumentException e) {
                 // Not a reference - try collection instead
                 QueryCollectionReference qcr = null;
-                if (bagPath.startsWith(startClass)) {
+                if (bagPath.startsWith(config.getStartClass())) {
                     qcr = new QueryCollectionReference(startClassQueryClass, path);
                     qc = bagTypeQueryClass;
                 } else {
@@ -178,18 +145,18 @@ public class GraphWidgetLoader implements DataSetLdr
             }
 
             //add dataset constraint
-            if (dataSetPath != null) {
+            if (config.getDataSetPath() != "") {
                 QueryClass dataSetQueryClass = new QueryClass(Class.forName(model.getPackageName()
                                                                             + ".DataSet"));
                 query.addFrom(dataSetQueryClass);
                 QueryObjectReference qor = new QueryObjectReference(startClassQueryClass,
-                                                                    dataSetPath);
+                                                                    config.getDataSetPath());
                 cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS,
                                                         dataSetQueryClass));
                 QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
                         new QueryField(dataSetQueryClass, "name"));
                 cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
-                    new QueryValue(dataSetValue.toLowerCase())));
+                    new QueryValue(config.getDataSetValue().toLowerCase())));
             }
 
             QueryFunction qfCount = new QueryFunction();
@@ -222,12 +189,12 @@ public class GraphWidgetLoader implements DataSetLdr
             }
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("Class not found while processing bag with type"
-                                               + bagPath, e);
+                                               + bag.getType(), e);
         }
     }
 
     /*
-     * 
+     *
      */
     private QueryField updateQuery(Model model, Query query, QueryClass startQueryClass, String path) {
         String[] paths = path.split("\\.");
@@ -261,10 +228,50 @@ public class GraphWidgetLoader implements DataSetLdr
         return qf;
     }
 
+    private LinkedHashMap<String, long[]> buildCategorySeriesMap() {
+        LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
+        String[] seriesValue = config.getSeriesValues().split("\\,");
+        for (Iterator<?> it = results.iterator(); it.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) it.next();
+            String category = (String) row.get(0);
+            Object series = row.get(1);
+            long count = (Long) row.get(2);
+            if (series != null) {
+                if (categorySeriesMap.get(category) != null) {
+                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
+                        if (isSeriesValue(seriesValue[indexSeries], series)) {
+                            (categorySeriesMap.get(category))[indexSeries] = count;
+                            break;
+                        }
+                    }
+                } else {
+                    long[] counts = new long[seriesValue.length];
+                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
+                        if (isSeriesValue(seriesValue[indexSeries], series)) {
+                            counts[indexSeries] = count;
+                            break;
+                        }
+                    }
+                    categorySeriesMap.put(category, counts);
+                }
+            }
+        }
+        return categorySeriesMap;
+    }
+
+    private boolean isSeriesValue(String seriesValue, Object series) {
+        if ("true".equalsIgnoreCase(seriesValue) || "false".equalsIgnoreCase(seriesValue)) {
+            return (Boolean.parseBoolean(seriesValue) == (Boolean) series);
+        } else {
+            return seriesValue.equals(series);
+        }
+    }
+
     private void populateResultTable(LinkedHashMap<String, long[]> categorySeriesMap) {
         List<Object> headerRow = new LinkedList<Object>();
         List<Object> dataRow = null;
-        headerRow.add(rangeLabel);
+        headerRow.add(config.getRangeLabel());
+        String[] seriesLabels = config.getSeriesLabels().split(",");
         for (String seriesLabel : seriesLabels) {
             headerRow.add(seriesLabel);
         }
