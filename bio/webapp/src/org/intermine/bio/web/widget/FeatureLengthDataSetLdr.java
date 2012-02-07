@@ -12,6 +12,8 @@ package org.intermine.bio.web.widget;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
@@ -189,4 +191,8 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
         return q;
     }
 
+    @Override
+    public List<List<Object>> getResultTable() {
+        return new LinkedList<List<Object>>();
+    }
 }
