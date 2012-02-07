@@ -33,8 +33,9 @@ import org.intermine.xml.full.Item;
 
 
 /**
+ * Converter to parse modENCODE expression data.
  *
- * @author
+ * @author Julie Sullivan
  */
 public class FlybaseExpressionConverter extends BioFileConverter
 {
@@ -62,10 +63,10 @@ public class FlybaseExpressionConverter extends BioFileConverter
         organism = createItem("Organism");
         organism.setAttribute("taxonId", TAXON_ID);
         try {
-			store(organism);
-		} catch (ObjectStoreException e) {
-			throw new RuntimeException(e);
-		}
+            store(organism);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -73,6 +74,7 @@ public class FlybaseExpressionConverter extends BioFileConverter
      * level from modMine and FlyBase, eg. ME_01   No expression
      *
      * The "ME_O1" is used in the scores file to represent the expression level.
+     * @param flybaseExpressionLevelsFile data file
      *
      * @param expressionLevelsFile screen input file
      */
@@ -81,13 +83,12 @@ public class FlybaseExpressionConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         try {
-        	processTermFile(new FileReader(flybaseExpressionLevelsFile));
+            processTermFile(new FileReader(flybaseExpressionLevelsFile));
         } catch (IOException err) {
             throw new RuntimeException("error reading expressionLevelsFile", err);
         }
@@ -106,8 +107,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
             String[] line = (String[]) tsvIter.next();
 
             if (line.length < 5) {
-            	LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
-            	continue;
+                LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
+                continue;
             }
 
             String fbgn = line[2];	// FBgn0000003
@@ -117,28 +118,28 @@ public class FlybaseExpressionConverter extends BioFileConverter
             result.setAttribute("stage", stage);
 
             if (line.length > 5) {
-            	String rpkm = line[5];	// 6825 - OPTIONAL
-            	if (StringUtils.isNotEmpty(rpkm)) {
-            		try {
-            			Integer.valueOf(rpkm);
-            			result.setAttribute("expressionScore", rpkm);
-            		} catch (NumberFormatException e) {
-            			LOG.warn("bad score: " + rpkm, e);
-            		}
-            	}
+                String rpkm = line[5];	// 6825 - OPTIONAL
+                if (StringUtils.isNotEmpty(rpkm)) {
+                    try {
+                        Integer.valueOf(rpkm);
+                        result.setAttribute("expressionScore", rpkm);
+                    } catch (NumberFormatException e) {
+                        LOG.warn("bad score: " + rpkm, e);
+                    }
+                }
             }
             if (line.length > 7) {
-            	String levelIdentifier = line[7];	// ME_07 - OPTIONAL
-            	String levelName = terms.get(levelIdentifier);
-            	if (StringUtils.isNotEmpty(levelName)) {
-            		result.setAttribute("expressionLevel", levelName);
-            	}
+                String levelIdentifier = line[7];	// ME_07 - OPTIONAL
+                String levelName = terms.get(levelIdentifier);
+                if (StringUtils.isNotEmpty(levelName)) {
+                    result.setAttribute("expressionLevel", levelName);
+                }
             }
 
             String gene = getGene(fbgn);
             if (StringUtils.isNotEmpty(gene)) {
-            	result.setReference("gene", gene);
-            	store(result);
+                result.setReference("gene", gene);
+                store(result);
             }
         }
     }
@@ -156,8 +157,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
             String[] line = (String[]) tsvIter.next();
 
             if (line.length != 6) {
-            	LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
-            	continue;
+                LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
+                continue;
             }
 
             String identifier = line[2];	// ME_01
@@ -168,10 +169,10 @@ public class FlybaseExpressionConverter extends BioFileConverter
     }
 
     private String getGene(String fbgn) throws ObjectStoreException {
-    	String identifier = resolveGene(fbgn);
-    	if (StringUtils.isEmpty(identifier)) {
-    		return null;
-    	}
+        String identifier = resolveGene(fbgn);
+        if (StringUtils.isEmpty(identifier)) {
+            return null;
+        }
         if (genes.containsKey(identifier)) {
             return genes.get(identifier);
         }
@@ -186,13 +187,10 @@ public class FlybaseExpressionConverter extends BioFileConverter
 
     private String resolveGene(String fbgn) {
         resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, fbgn);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                     + fbgn + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, fbgn));
-            return null;
+        boolean currentGene = resolver.isPrimaryIdentifier(TAXON_ID, fbgn);
+        if (currentGene) {
+            return fbgn;
         }
-        return resolver.resolveId(TAXON_ID, fbgn).iterator().next();
+        return null;
     }
 }
