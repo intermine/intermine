@@ -116,6 +116,7 @@ pageContext.setAttribute("now",now);
 <c:set var="project" value="${exp.piSurname}"/>
 <c:set var="proGFF" value="PianoWaterstonCelniker"/>
 <c:set var="ANTIBODY" value="antibody"/>
+<c:set var="STRAIN" value="strain"/>
 
 
 <im:boxarea title="${exp.name}" stylename="gradientbox">
@@ -634,18 +635,21 @@ All GBrowse tracks generated for this experiment:
               </im:querylink>
               </span>
 
-<%--if antibody add target gene --%>
-<c:if test="${factor.type == ANTIBODY && !fn:contains(factor.name, 'oldid')}">
-                  <br>target:
+<%--if antibody or strain add target gene --%>
+<c:if test="${(factor.type == ANTIBODY || factor.type == STRAIN) && !fn:contains(factor.name, 'oldid')}">
 <c:choose>
 <c:when test="${fn:length(factor.property.target.symbol) > 1}">
+<br>target:
 <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.target.id}"
  title="More about this target">
-<c:out value="${factor.property.target.symbol}"/></html:link>
+<c:out value="${factor.property.target.name}"/></html:link>
 
 </c:when>
 <c:otherwise>
- ${factor.property.targetName}
+<c:if test="{fn:length(factor.property.targetName) > 1}">
+<br>target:
+${factor.property.targetName}
+</c:if>
 </c:otherwise>
 </c:choose>
                   </c:if>
