@@ -1142,35 +1142,30 @@ public class GenomicRegionSearchService
                         }
                     }
 
-                    sb.append("<div style='align:center; padding-bottom:12px'>"
-                            + "<span class='fakelink exportDiv'> Export data </span>"
-                            + "<img class='exportDiv' style='position:relative; top:3px;' "
-                            + "border='0' src='model/images/download.png' title='export data' "
-                            + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
-                            + "<a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo() + "\", "
-                            + "\"" + facet + "\", \"tab\");' class='ext_link'>TAB</a></li>"
-                            + "<li class='csv'><a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo()
-                            + "\", \"" + facet + "\", \"csv\");' class='ext_link'>CSV</a></li>"
-                            + "<li class='gff'><a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo()
-                            + "\", \"" + facet + "\", \"gff3\");' class='ext_link'>GFF3</a>"
-                            + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo()
-                            + "\", \"" + facet + "\", \"sequence\");' class='ext_link'>SEQ</a>"
-                            + "</li></ul></div>");
+                    sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
+                            + "<span class='tab export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"tab\");'></a></span>"
+                            + "<span class='csv export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"csv\");'></a></span>"
+                            + "<span class='gff3 export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"gff3\");'></a></span>"
+                            + "<span class='fasta export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"sequence\");'></a></span>"
+                            + "<span class='bed export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"bed\");'></a></span>");
 
                     // Display galaxy export
                     if (!"false".equals(galaxyDisplay)) {
-                        sb.append("<div style='align:center'>"
-                                + "<a href='javascript: exportToGalaxy(\"" + s.getFullRegionInfo()
-                                + "\");' class='ext_link'> Export to Galaxy "
-                                + "<img border='0' title='Export to Galaxy' "
-                                + "src='model/images/Galaxy_logo_small.png' "
-                                + "class='arrow' style='height:5%; width:5%'></a></div>"
-                        );
+                        sb.append("<span class='galaxy export-region'><a href='javascript: "
+                            + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
                     }
+
+                    sb.append("</div>");
 
                     // Add create list by feature types link
                     sb.append(ftHtml);
@@ -1323,35 +1318,30 @@ public class GenomicRegionSearchService
                         }
                     }
 
-                    sb.append("<div style='align:center; padding-bottom:12px'>"
-                            + "<span class='fakelink exportDiv'> Export data </span>"
-                            + "<img class='exportDiv' style='position:relative; top:3px;' "
-                            + "border='0' src='model/images/download.png' title='export data' "
-                            + "height='18' width='18'/><ul class='contextMenu'><li class='tab'>"
-                            + "<a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo() + "\", "
-                            + "\"" + facet + "\", \"tab\");' class='ext_link'>TAB</a></li>"
-                            + "<li class='csv'><a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo()
-                            + "\", \"" + facet + "\", \"csv\");' class='ext_link'>CSV</a></li>"
-                            + "<li class='gff'><a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo()
-                            + "\", \"" + facet + "\", \"gff3\");' class='ext_link'>GFF3</a>"
-                            + "</li><li class='seq'><a href='#javascript: exportFeatures(\""
-                            + s.getFullRegionInfo()
-                            + "\", \"" + facet + "\", \"sequence\");' class='ext_link'>SEQ</a>"
-                            + "</li></ul></div>");
+                    sb.append("<div style='align:center; padding:8px 0 4px 0;'>"
+                            + "<span class='tab export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"tab\");'></a></span>"
+                            + "<span class='csv export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"csv\");'></a></span>"
+                            + "<span class='gff3 export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"gff3\");'></a></span>"
+                            + "<span class='fasta export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"sequence\");'></a></span>"
+                            + "<span class='bed export-region'><a href='javascript: "
+                            + "exportFeatures(\"" + s.getFullRegionInfo() + "\", " + "\""
+                            + facet + "\", \"bed\");'></a></span>");
 
                     // Display galaxy export
                     if (!"false".equals(galaxyDisplay)) {
-                        sb.append("<div style='align:center'>"
-                                + "<a href='javascript: exportToGalaxy(\"" + s.getFullRegionInfo()
-                                + "\");' class='ext_link'> Export to Galaxy "
-                                + "<img border='0' title='Export to Galaxy' "
-                                + "src='model/images/Galaxy_logo_small.png' "
-                                + "class='arrow' style='height:5%; width:5%'></a></div>"
-                        );
+                        sb.append("<span class='galaxy export-region'><a href='javascript: "
+                            + "exportToGalaxy(\"" + s.getFullRegionInfo() + "\");'></a></span>");
                     }
+
+                    sb.append("</div>");
 
                     // Add create list by feature types link
                     sb.append(ftHtml);

@@ -16,7 +16,6 @@
 <link href="model/jquery_contextMenu/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="model/jquery_superfish/css/superfish.css" media="screen">
 <link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.13.custom.css"/>
-<link type="text/css" rel="stylesheet" href="model/genomic_region_search/css/${resultsCss}.css"/>
 
 <script type="text/javascript" src="model/jquery_contextMenu/jquery.contextMenu.js"></script>
 <script type="text/javascript" src="model/jquery_expander/jquery.expander.js"></script>
@@ -111,7 +110,12 @@
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', isEmptyFeature: "true" }, function(isEmptyFeature){
             if (isEmptyFeature.trim() == "hasFeature") {
                 jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: '${spanUUIDString}', generateCreateListHtml: "true" }, function(createListHtml){
-                    jQuery("#export-all-div").append('Export for all regions:&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');" class="ext_link">TAB</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');" class="ext_link">CSV</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');" class="ext_link">GFF3</a>&nbsp;|&nbsp;<a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');" class="ext_link">SEQ</a>' + createListHtml);
+                    jQuery("#export-all-div").append('<span class="export-region">Export for all regions:</span>' +
+                        '<span class="tab export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');"></a></span>' +
+                        '<span class="csv export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');"></a></span>' +
+                        '<span class="gff3 export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');"></a></span>' +
+                        '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
+                        '<span class="bed export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'bed\');"></a></span>' + createListHtml);
                 });
             } else {
                 jQuery("#export-all-div").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
@@ -411,31 +415,8 @@
 
 </script>
 
-<style type="text/css">
+<link type="text/css" rel="stylesheet" href="model/genomic_region_search/css/${resultsCss}.css"/>
 
-#selectionInfo.information {
-  background-color:#E6F7FE;
-  border:1px solid #BEDCE4;
-}
-
-#selectionInfo {
-  background-position:10px 6px;
-  background-repeat:no-repeat;
-  font-size:13px;
-  margin:10px 10px 0;
-  padding:6px 6px 6px 0;
-}
-
-#selectionInfo table td {font-size:13px;}
-
-#spanWithNoFt a {float:none;}
-
-img.tinyQuestionMark {
-  padding-bottom:4px;
-  padding-left:3px;
-}
-
-</style>
 <%--
         <ul class="sf-menu">
             <li class="current">
@@ -596,8 +577,7 @@ img.tinyQuestionMark {
     <%-- /Pagination --%>
 
     <%-- Export All links, refer to attributeLinkDisplayer.jsp --%>
-    <div id="export-all-div" style="display: inline; padding: 0px 0px 0px 23px; line-height: 22px;">
-    </div>
+    <div id="export-all-div"></div>
     <%-- /Export links --%>
 
 <div>
