@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
@@ -293,5 +295,10 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
      */
     public int getWidgetTotal() {
         return widgetTotal;
+    }
+
+    @Override
+    public List<List<Object>> getResultTable() {
+        return new LinkedList<List<Object>>();
     }
 }

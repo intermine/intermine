@@ -12,6 +12,8 @@ package org.intermine.bio.web.widget;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -267,4 +269,8 @@ public class OverlapsDataSetLdr implements DataSetLdr
         return q;
     }
 
+    @Override
+    public List<List<Object>> getResultTable() {
+        return new LinkedList<List<Object>>();
+    }
 }
