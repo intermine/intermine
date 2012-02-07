@@ -601,41 +601,41 @@ All GBrowse tracks generated for this experiment:
 
        <td class="sorting" bgcolor="white">
           <c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
-            <c:if test="${factor.type == factorType}">
+            <c:if test="${factor.type == factorType && !fn:startsWith(factor.name, 'No Antibody')}" >
                 <c:choose>
                    <c:when test="${factor.property != null}">
 
     <c:set var="thisTypeCount" value="${thisTypeCount + 1}"></c:set>
 
-                   <c:choose>
-                   <c:when test="${thisTypeCount <= 5}">
-                     <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
-                    <span class="tinylink">
-                       <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
-                         <query name="" model="genomic"
-                           view="Submission.DCCid Submission.project.surnamePI Submission.title Submission.experimentType Submission.properties.type Submission.properties.name"
-                           sortOrder="Submission.experimentType asc">
-                      <node path="Submission.properties.type" type="String">
-                        <constraint op="=" value="${factor.type}" description=""
-                                    identifier="" code="A">
-                        </constraint>
-                      </node>
-                      <node path="Submission.properties.name" type="String">
-                        <constraint op="=" value="${factor.name}" description=""
-                                    identifier="" code="B">
-                        </constraint>
-                      </node>
-                      <node path="Submission.organism.taxonId" type="Integer">
-                        <constraint op="=" value="${sub.organism.taxonId}" description=""
-                                    identifier="" code="C">
-                        </constraint>
-                      </node>
-                    </query>
-                  </im:querylink>
-                  </span>
+           <c:choose>
+             <c:when test="${thisTypeCount <= 5}">
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
+              <span class="tinylink">
+              <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
+              <query name="" model="genomic"
+              view="Submission.DCCid Submission.project.surnamePI Submission.title Submission.experimentType Submission.properties.type Submission.properties.name"
+              sortOrder="Submission.experimentType asc">
+              <node path="Submission.properties.type" type="String">
+              <constraint op="=" value="${factor.type}" description=""
+              identifier="" code="A">
+              </constraint>
+              </node>
+              <node path="Submission.properties.name" type="String">
+              <constraint op="=" value="${factor.name}" description=""
+              identifier="" code="B">
+              </constraint>
+              </node>
+              <node path="Submission.organism.taxonId" type="Integer">
+              <constraint op="=" value="${sub.organism.taxonId}" description=""
+              identifier="" code="C">
+              </constraint>
+              </node>
+              </query>
+              </im:querylink>
+              </span>
 
 <%--if antibody add target gene --%>
-<c:if test="${factor.type == ANTIBODY && !fn:contains(factor.name, 'oldid') && !fn:startsWith(factor.name, 'No Antibody')}">
+<c:if test="${factor.type == ANTIBODY && !fn:contains(factor.name, 'oldid')}">
                   <br>target:
 <c:choose>
 <c:when test="${fn:length(factor.property.target.symbol) > 1}">
