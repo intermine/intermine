@@ -1,8 +1,8 @@
 var CHART_OPTS = {
     fontName: 'Sans-Serif',
-    fontSize: 10,
+    fontSize: 09,
     width: 400,
-    height:420,
+    height:450,
     legend: 'bottom',
     colors:['#2F72FF', '#9FC0FF'],
     chartArea:{top:30}
@@ -32,7 +32,7 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
           jQuery.extend(options, {reverseCategories: true});
       } else if (res.chartType == "BarChart") {
           Chart = viz.BarChart;
-          jQuery.extend(options, {isStacked: true, height: 450});
+          //jQuery.extend(options, {height: 450});
       } else if (res.chartType == "ScatterPlot") {
           Chart = viz.ScatterChart;
       } else if (res.chartType == "PieChart") {
@@ -42,10 +42,10 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
       }
 
       if (domainLabel) {
-          jQuery.extend(options, {hAxis: {title: domainLabel, titleTextStyle: {fontName: 'Sans-Serif'}}});
+          jQuery.extend(options, {hAxis: {title: rangeLabel, titleTextStyle: {fontName: 'Sans-Serif'}}});
       }
       if (rangeLabel) {
-          jQuery.extend(options, {vAxis: {title: rangeLabel, titleTextStyle: {fontName: 'Sans-Serif'}}});
+          jQuery.extend(options, {vAxis: {title: domainLabel, titleTextStyle: {fontName: 'Sans-Serif'}}});
       }
       var viz;
       if (Chart) {
@@ -174,14 +174,14 @@ function displayEnrichmentWidgetConfig(widgetId, label, bagName) {
     }
     var extraAttr = getExtraValue(widgetId);
 
-    var wsCall = function wsCall(token) {
+    var wsCall = function wsCall(tokenId) {
       var request_data = {
             widget: widgetId,
             list: bagName,
             correction: errorCorrection,
             maxp: max,
             filter: extraAttr,
-            token: token
+            token: tokenId
       };
       jQuery.getJSON(service + "list/enrichment", request_data, function(res) {
         jQuery("#tablewidget"+widgetId+"head").empty();
