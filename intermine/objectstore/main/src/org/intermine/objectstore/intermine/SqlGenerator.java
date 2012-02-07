@@ -1027,7 +1027,8 @@ public final class SqlGenerator
             }
             return new boolean[] {whereSafe, havingSafe};
         } else if (o instanceof BagConstraint) {
-            return whereHavingSafe(((BagConstraint) o).getQueryNode(), q);
+            //return whereHavingSafe(((BagConstraint) o).getQueryNode(), q);
+            return new boolean[] {true, false};
         } else if (o instanceof MultipleInBagConstraint) {
             boolean whereSafe = true;
             boolean havingSafe = true;
