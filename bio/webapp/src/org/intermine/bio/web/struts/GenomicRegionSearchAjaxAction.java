@@ -414,6 +414,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
                 List<String> headerBits = new ArrayList<String>();
                 headerBits.add(gr.getChr() + ":" + start + ".." + end);
+                headerBits.add(end - start + 1 + "bp");
                 headerBits.add(gr.getOrganism());
                 String header = StringUtil.join(headerBits, " ");
 
