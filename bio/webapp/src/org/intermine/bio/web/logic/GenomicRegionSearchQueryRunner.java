@@ -401,6 +401,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
 /**
  * Comparator to sort a map on values (integer)
+ * http://stackoverflow.com/questions/109383/how-to-sort-a-mapkey-value-on-the-values-in-java
  * @author Fengyuan Hu
  *
  */
@@ -420,7 +421,7 @@ class ValueComparator implements Comparator
         if ((Integer) base.get(a) < (Integer) base.get(b)) {
             return 1;
         } else if ((Integer) base.get(a) == (Integer) base.get(b)) {
-            return 0;
+            return -1;
         } else {
             return -1;
         }
