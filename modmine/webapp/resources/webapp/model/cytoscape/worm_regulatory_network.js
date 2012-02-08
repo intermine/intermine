@@ -180,6 +180,7 @@ function showNetwork(wormRegulatoryNetwork, webapp_baseurl, webapp_path, project
             window.open(url);
         })
 
+        /*
         .addContextMenuItem("Export network as SIF...", "none", function(evt) {
           vis.exportNetwork('sif', 'cytoscapeNetworkExport.do?type=sif');
         })
@@ -191,6 +192,7 @@ function showNetwork(wormRegulatoryNetwork, webapp_baseurl, webapp_path, project
         .addContextMenuItem("Export network as SVG...", "none", function(evt) {
           vis.exportNetwork('svg', 'cytoscapeNetworkExport.do?type=svg');
         })
+        */
 
         .addListener("mouseover", "nodes", function(evt) {
             _mouseOverNode = evt.target; //global, once this function is called
