@@ -24,9 +24,9 @@ import org.intermine.model.InterMineObject;
 public class InlineList
 {
 
-    private String path;
+    private String path = null;
     private Boolean showLinksToObjects = false;
-    private Set<InlineListObject> listOfObjects;
+    private Set<InlineListObject> listOfObjects = null;
     private Boolean showInHeader = false;
     private FieldDescriptor fieldDescriptor = null;
     private Integer lineLength = null;

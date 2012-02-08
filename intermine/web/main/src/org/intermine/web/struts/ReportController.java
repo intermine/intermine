@@ -65,11 +65,13 @@ public class ReportController extends InterMineAction
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unused")
     @Override
     public ActionForward execute(@SuppressWarnings("unused") ActionMapping mapping,
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
+        aaa(SessionMethods.getReportObjects(request.getSession()), SessionMethods.getInterMineAPI(request.getSession()).getObjectStore());
 
         long startTime = System.currentTimeMillis();
 
@@ -128,6 +130,7 @@ public class ReportController extends InterMineAction
                     }
                 }
             }
+
             // any lists that aren't tagged will be 'unplaced'
             List<InlineList> unplacedInlineLists =
                 new ArrayList<InlineList>(reportObject.getNormalInlineLists());
@@ -238,6 +241,21 @@ public class ReportController extends InterMineAction
         }
 
         return null;
+    }
+
+    private void aaa(ReportObjectFactory reportObjectFactory, ObjectStore os) throws ObjectStoreException {
+        ReportObject apoa1A = reportObjectFactory.get(os.getObjectById(27000999));
+        Integer apoa1ListSizeA = apoa1A.getNormalInlineLists().get(0).getSize(); // should be 19
+
+        ReportObject pparg = reportObjectFactory.get(os.getObjectById(27008684));
+        Integer ppargListSize = pparg.getNormalInlineLists().get(0).getSize(); // should be 5
+
+        ReportObject apoa1B = reportObjectFactory.get(os.getObjectById(27000999));
+        Integer apoa1ListSizeB = apoa1B.getNormalInlineLists().get(0).getSize(); // should be 19
+
+        if (apoa1ListSizeA != apoa1ListSizeB) {
+            LOG.error("A call to a different ReportObject messed ur InlineLists!");
+        }
     }
 
     private InterMineObject getRequestedObject(InterMineAPI im, HttpServletRequest request) {
