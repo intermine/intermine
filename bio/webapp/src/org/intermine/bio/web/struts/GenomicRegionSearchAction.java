@@ -141,7 +141,7 @@ public class GenomicRegionSearchAction extends InterMineAction
 
             if (resultMap.get("error").size() == grsService.getConstraint()
                     .getGenomicRegionList().size()) { // all genomic regions are invalid
-                request.setAttribute("noneValidGenomicRegions", "true");
+                request.setAttribute("invalidGenomicRegions", "true");
                 return mapping.findForward("genomicRegionSearchResults");
             } else {
                 grsService.getConstraint().setGenomicRegionList(resultMap.get("pass"));
@@ -163,6 +163,8 @@ public class GenomicRegionSearchAction extends InterMineAction
 
         // Results Page css
         request.setAttribute("resultsCss", grsService.getResultsCss());
+        // Results Page javascript
+        request.setAttribute("resultsJavascript", grsService.getResultsJavascript());
 
         return mapping.findForward("genomicRegionSearchResults");
     }
