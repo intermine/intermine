@@ -77,6 +77,7 @@ public class ReportObject
     private List<InlineList> inlineListsHeader = null;
     /** @var List of 'unplaced' normal InlineLists */
     private List<InlineList> inlineListsNormal = null;
+    private Integer pisvejc = null;
 
     private Map<String, Object> attributes = null;
     private Map<String, FieldDescriptor> attributeDescriptors = null;
@@ -787,10 +788,8 @@ public class ReportObject
         refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
 
         /** InlineLists **/
-        inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader
-                : new ArrayList<InlineList>();
-        inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal
-                : new ArrayList<InlineList>();
+        inlineListsHeader = new ArrayList<InlineList>();
+        inlineListsNormal = new ArrayList<InlineList>();
 
         Type type = webConfig.getTypes().get(getClassDescriptor().getName());
         // init lists from WebConfig Type
