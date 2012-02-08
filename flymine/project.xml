@@ -590,13 +590,13 @@
     </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
-      <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245"/>
+      <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
     </source>
 
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
-      <property name="biogrid.organisms" value="7227 6239"/>
+      <property name="biogrid.organisms" value="7227 6239 4932"/>
     </source>
 
     <source name="affy-probes" type="affy-probes">
