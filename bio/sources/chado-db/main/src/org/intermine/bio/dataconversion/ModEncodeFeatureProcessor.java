@@ -495,6 +495,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                 && "gene".equals(chadoFeatureType)) {
             realInterMineType = "Transcript";
         }
+        if (uniqueName.contains("depleted")) {
+            realInterMineType = "DepletedRegion";
+        }
         return getChadoDBConverter().createItem(realInterMineType);
     }
     /**
