@@ -56,6 +56,16 @@ public class ObjectStoreSummaryTest extends StoreDataTestCase
         assertEquals(2, oss.getClassCount("org.intermine.model.testmodel.Company"));
     }
 
+    public void testIgnore() throws Exception {
+        ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        Properties config = new Properties();
+        config.put("max.field.value", "10");
+        config.put("ignore.counts", "org.intermine.model.testmodel.Employee.age");
+        ObjectStoreSummary oss = new ObjectStoreSummary(os, config);
+        assertNull(oss.getFieldValues("org.intermine.model.testmodel.Employee", "age"));
+    }
+
+
     public void testGetFieldValues() throws Exception {
         Properties config = new Properties();
         config.put("max.field.value", "10");
