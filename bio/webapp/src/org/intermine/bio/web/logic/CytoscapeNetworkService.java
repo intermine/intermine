@@ -78,7 +78,7 @@ public class CytoscapeNetworkService
         List<String> fullInteractingGeneList = StringUtil.tokenize(fullInteractingGeneSetStr, ",");
 
         if (fullInteractingGeneList.size() >= LARGE_NETWORK_ELEMENT_COUNT) {
-                return LARGE_NETWORK;
+            return LARGE_NETWORK;
         }
 
         Set<Integer> fullInteractingGeneSet = new HashSet<Integer>();
@@ -147,7 +147,7 @@ public class CytoscapeNetworkService
                 interactionNodeMap, interactionEdgeMap);
 
         return networkdata;
-    }    
+    }
 
     /**
      * Create a map of CytoscapeNetworkNodeData objects for parsing them to xgmml.
@@ -180,7 +180,7 @@ public class CytoscapeNetworkService
                 CytoscapeNetworkNodeData targetNode = new CytoscapeNetworkNodeData();
 
                 sourceNode.setInterMineId(sourceId);
-                sourceNode.setSoureceId(String.valueOf(sourceId)); // Use intermine id for source id
+                sourceNode.setSourceId(String.valueOf(sourceId)); // Use intermine id for source id
 
                 Object sourceGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
                         .getObjectById(sourceId), im.getClassKeys());
@@ -198,7 +198,7 @@ public class CytoscapeNetworkService
                 interactionNodeMap.put(String.valueOf(sourceId), sourceNode);
 
                 targetNode.setInterMineId(targetId);
-                targetNode.setSoureceId(String.valueOf(targetId)); // Use intermine id for source id
+                targetNode.setSourceId(String.valueOf(targetId)); // Use intermine id for source id
 
                 Object targetGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
                         .getObjectById(targetId), im.getClassKeys());
@@ -225,7 +225,7 @@ public class CytoscapeNetworkService
                 CytoscapeNetworkNodeData sourceNode = new CytoscapeNetworkNodeData();
 
                 sourceNode.setInterMineId(sourceId);
-                sourceNode.setSoureceId(String.valueOf(sourceId)); // Use intermine id for source id
+                sourceNode.setSourceId(String.valueOf(sourceId)); // Use intermine id for source id
 
                 Object sourceGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
                         .getObjectById(sourceId), im.getClassKeys());
@@ -253,7 +253,7 @@ public class CytoscapeNetworkService
                 CytoscapeNetworkNodeData targetNode = new CytoscapeNetworkNodeData();
 
                 targetNode.setInterMineId(targetId);
-                targetNode.setSoureceId(String.valueOf(targetId)); // Use intermine id for source id
+                targetNode.setSourceId(String.valueOf(targetId)); // Use intermine id for source id
 
                 Object targetGenekeyFldVal = ClassKeyHelper.getKeyFieldValue(im.getObjectStore()
                         .getObjectById(targetId), im.getClassKeys());

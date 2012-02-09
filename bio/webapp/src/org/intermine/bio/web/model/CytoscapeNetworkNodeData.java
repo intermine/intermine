@@ -22,7 +22,7 @@ import java.util.Map;
 public class CytoscapeNetworkNodeData
 {
     private Integer interMineId;
-    private String soureceId; // TODO combine interMineId to only one id
+    private String sourceId; // TODO combine interMineId to only one id
     private String sourceLabel; // sometimes no values
     private String featueType; //e.g. miRNA/TF
     private String position;
@@ -44,17 +44,17 @@ public class CytoscapeNetworkNodeData
     }
 
     /**
-     * @return the soureceId
+     * @return the sourceId
      */
-    public String getSoureceId() {
-        return soureceId;
+    public String getSourceId() {
+        return sourceId;
     }
 
     /**
-     * @param soureceId the soureceId to set
+     * @param sourceId the sourceId to set
      */
-    public void setSoureceId(String soureceId) {
-        this.soureceId = soureceId;
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
     }
 
     /**
