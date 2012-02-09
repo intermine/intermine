@@ -122,7 +122,7 @@ public final class RegulatoryNetworkDBUtil
 
             CytoscapeNetworkNodeData aNode = new CytoscapeNetworkNodeData();
             aNode.setInterMineId(featureIMId);
-            aNode.setSoureceId(featurePId);
+            aNode.setSourceId(featurePId);
 
             if (featureSymbol == null || featureSymbol.length() < 1) {
                 aNode.setSourceLabel(featurePId);
@@ -329,7 +329,7 @@ public final class RegulatoryNetworkDBUtil
 
             CytoscapeNetworkNodeData aNode = new CytoscapeNetworkNodeData();
             aNode.setInterMineId(id);
-            aNode.setSoureceId(String.valueOf(id)); // Use IM Id instead of PId
+            aNode.setSourceId(String.valueOf(id)); // Use IM Id instead of PId
 
             if (featureSymbol == null || featureSymbol.length() < 1) {
                 aNode.setSourceLabel(featurePId);

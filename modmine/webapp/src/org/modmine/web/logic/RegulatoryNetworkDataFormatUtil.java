@@ -148,10 +148,10 @@ public final class RegulatoryNetworkDataFormatUtil
 
         for (CytoscapeNetworkNodeData node : interactionNodeSet) {
             if (node.getSourceLabel() == null || "".equals(node.getSourceLabel())) {
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
-                        + node.getSoureceId() + "\">");
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
+                        + node.getSourceId() + "\">");
             } else {
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel() + "\">");
             }
 
@@ -374,8 +374,9 @@ public final class RegulatoryNetworkDataFormatUtil
 
         for (CytoscapeNetworkNodeData node : interactionNodeSet) {
             if (node.getSourceLabel().startsWith("mir")) { // miRNA node
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel().replace("mir-", "miR") + "\">");
+
                 if ("left".equals(node.getExtraInfo().get("hposition"))) {
                     if ("top".equals(node.getExtraInfo().get("vposition"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
@@ -436,9 +437,10 @@ public final class RegulatoryNetworkDataFormatUtil
                     }
                 }
             } else { // TF node
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel().split("-")[0].toUpperCase()
                         + node.getSourceLabel().split("-")[1] + "\">");
+
                 if ("top".equals(node.getExtraInfo().get("vposition"))) {
                     if ("yellow".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
