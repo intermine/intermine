@@ -522,6 +522,24 @@
   </filter-mapping>
 
   <filter>
+  <filter-name>AllowCORSWebServiceRequests</filter-name>
+  <filter-class>org.intermine.web.filters.HeaderFilter</filter-class>
+      <init-param>
+        <param-name>Access-Control-Allow-Origin</param-name>
+        <param-value>*</param-value>
+      </init-param>
+      <init-param>
+        <param-name>Access-Control-Allow-Headers</param-name>
+        <param-value>Origin, X-Requested-With, Content-Type, Accept</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>AllowCORSWebServiceRequests</filter-name>
+    <url-pattern>/service/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>DontCache</filter-name>
     <filter-class>org.intermine.web.filters.HeaderFilter</filter-class>
     <init-param>
@@ -530,8 +548,9 @@
     </init-param>
     <init-param>
       <param-name>Expires</param-name>
-    <param-value>0</param-value>
+      <param-value>0</param-value>
     </init-param>
+
   </filter>
 
   <filter-mapping>
