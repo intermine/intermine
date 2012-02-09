@@ -128,6 +128,13 @@ public class ObjectStoreSummary
         maxValues =
             (maxValuesString == null ? DEFAULT_MAX_VALUES : Integer.parseInt(maxValuesString));
 
+        // always empty references and collections
+        LOG.info("Looking for empty collections and references...");
+        Set<String> ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
+        if (ignoreFields.size() > 0) {
+            LOG.warn("Not counting ignored fields: " + ignoreFields);
+        }
+
         Set<String> doneFields = new HashSet<String>();
         for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
 
@@ -143,7 +150,7 @@ public class ObjectStoreSummary
                 }
 
                 String clsFieldName = cld.getName() + "." + fieldName;
-                if (doneFields.contains(clsFieldName)) {
+                if (doneFields.contains(clsFieldName) || ignoreFields.contains(clsFieldName)) {
                     continue;
                 }
 
@@ -199,12 +206,7 @@ public class ObjectStoreSummary
             }
         }
 
-        // always empty references and collections
-        LOG.info("Looking for empty collections and references...");
-        Set<String> ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
-        if (ignoreFields.size() > 0) {
-            LOG.warn("Not counting ignored fields: " + ignoreFields);
-        }
+
 
         // This is faster as a bottom up traversal, though this may save fewer queres the saved
         // queries would take longer. If a ref/col is not empty it must not be empty in all parents.
