@@ -411,8 +411,7 @@
             <a href="http://genome.ucsc.edu/FAQ/FAQformat#format1" target="_blank">UCSC BED</a>,
             <a href="http://gmod.org/wiki/Introduction_to_Chado#Interbase_Coordinates" target="_blank">Chado</a>)
             systems are supported, e.g. for a DNA piece <b>GCCATGTA</b>,
-            the position of the <b>ATG</b> in interbase is [3, 6],
-            and the position of the <b>ATG</b> in base coordinates is [4, 6].
+            the position of the <b>ATG</b> in interbase is [3, 6], and in base coordinates is [4, 6].
             Users need to explicitly select one. By default, the base coordinate is selected.
         </li>
         <li>Each genome region needs to take a <b>new line</b>.</li>
