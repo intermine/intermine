@@ -190,7 +190,11 @@
       });
 
     function exportNet(type) {
-        vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
+        if (type == "sif") {
+            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type, { interactionAttr: "label", nodeAttr: "label" });
+        } else {
+            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
+        }
     }
 
 </script>
