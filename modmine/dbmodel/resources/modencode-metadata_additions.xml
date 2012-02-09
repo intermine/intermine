@@ -15,7 +15,7 @@
 <class name="PeptideCollection" extends="BioEntity" is-interface="true">
   <collection name="polypeptideRegions" referenced-type="PolypeptideRegion"/>
   <collection name="submissions" referenced-type="Submission" reverse-reference="peptides"/>
-<!--  
+<!--
 <reference name="submission" referenced-type="Submission" reverse-reference="peptides"/>
   <reference name="submission" referenced-type="Submission" />
 -->
@@ -146,6 +146,12 @@
 
 
 <!-- OTHER modENCODE classes -->
+
+<class name="DepletedRegion" extends="SequenceFeature" is-interface="true">
+  <attribute name="qvalue" type="java.lang.Double" />
+  <attribute name="sourceFile" type="java.lang.String" />
+</class>
+
 
   <class name="Antibody" extends="SubmissionProperty" is-interface="true">
     <attribute name="hostOrganism" type="java.lang.String"/>
