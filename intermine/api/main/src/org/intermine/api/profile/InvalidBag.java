@@ -10,13 +10,11 @@ package org.intermine.api.profile;
  *
  */
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.UnknownBagTypeException;
-import org.intermine.api.search.WebSearchable;
+import org.intermine.api.search.DeletionEvent;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -29,7 +27,7 @@ import org.intermine.util.TypeUtil;
  * @author Alex Kalderimis.
  *
  */
-public class InvalidBag extends StorableBag implements WebSearchable
+public class InvalidBag extends StorableBag
 {
     // Static constants.
     protected static final Logger LOG = Logger.getLogger(InvalidBag.class);
@@ -212,6 +210,7 @@ public class InvalidBag extends StorableBag implements WebSearchable
      */
     @Override
     public void delete() throws ObjectStoreException {
+        super.delete();
         if (!deleted) {
             SavedBag savedBag = (SavedBag) uosw.getObjectStore().getObjectById(savedBagId,
                     SavedBag.class);
@@ -234,6 +233,7 @@ public class InvalidBag extends StorableBag implements WebSearchable
         if (os.getModel().getClassDescriptorByName(newType) == null) {
             throw new UnknownBagTypeException(newType + " is not a valid class name");
         }
+        fireEvent(new DeletionEvent(this));
         InvalidBag amended = new InvalidBag(name, newType, description, dateCreated, os,
                 savedBagId, profileId, osb, uosw);
         SavedBag sb = amended.storeSavedBag();
