@@ -67,8 +67,9 @@ public class PathQuery implements Cloneable
         = new LinkedHashMap<String, OuterJoinStatus>();
     private Map<String, String> descriptions = new LinkedHashMap<String, String>();
     private String description = null;
-    private String title = null;
 
+    /** Query title **/
+    private String title = null;
 
     // Verification variables:
     private boolean isVerified = false;

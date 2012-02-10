@@ -42,8 +42,6 @@ public class TemplateQuery extends PathQuery
 {
     /** Template query name. */
     protected String name;
-    /** Template query title. */
-    protected String title;
     /** The private comment for this query. */
     protected String comment;
     /** Whether this is an edited version of another template. */
@@ -69,8 +67,8 @@ public class TemplateQuery extends PathQuery
     public TemplateQuery(String name, String title, String comment, PathQuery query) {
         super(query);
         this.name = name;
-        this.title = title;
         this.comment = comment;
+        setTitle(title);
     }
 
     /**
@@ -81,8 +79,8 @@ public class TemplateQuery extends PathQuery
      */
     public TemplateQuery(TemplateQuery prototype) {
         super(prototype);
+        setTitle(prototype.getTitle());
         this.name = prototype.name;
-        this.title = prototype.title;
         this.comment = prototype.comment;
         this.edited = prototype.edited;
         this.editableConstraints
@@ -430,16 +428,6 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Get the template title.
-     *
-     * @return the title
-     */
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    /**
      * Get the private comment for this template.
      * @return the comment
      */
@@ -478,16 +466,6 @@ public class TemplateQuery extends PathQuery
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Sets the template title.
-     *
-     * @param title the title
-     */
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     /**
