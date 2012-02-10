@@ -93,24 +93,13 @@
   <tr>
     <td rowspan="3"  class="leftcol"><p><h2>Proteins</h2></p></td>
     <td>
-        <p><i>D. melanogaster</i></p>
+        <p><i>Drosophila</i></p>
         <p><i>A. gambiae</i></p>
         <p><i>C. elegans</i></p>
         <p><i>H. sapiens</i></p>
         <p><i>M. musculus</i></p>
         <p><i>R. norvegicus</i></p>
         <p><i>S. cerevisiae</i></p>
-        <p><i>D. ananassae</i></p>
-        <p><i>D. erecta</i></p>
-        <p><i>D. grimshawi</i></p>
-        <p><i>D. mojavensis</i></p>
-        <p><i>D. persimilis</i></p>
-        <p><i>D. pseudoobscura</i></p>
-        <p><i>D. sechellia</i></p>
-        <p><i>D. simulans</i></p>
-        <p><i>D. virilis</i></p>
-        <p><i>D. willistoni</i></p>
-        <p><i>D. yakuba (R1.3)</i></p>
     </td>
     <td> Protein annotation</td>
     <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_01</td>
@@ -284,7 +273,7 @@
   </tr>
   <tr>
     <td rowspan="3" class="leftcol"><p> <h2>Pathways</h2></p></td>
-    <td> <p><i>D. melanogaster</i></p><p><i>C. elegans</i></p></td>
+    <td> <p><i>D. melanogaster</i></p></td>
     <td> Curated pathway information and the genes involved in them</td>
     <td> <a href="http://www.genome.jp/kegg/" target="_new" class="extlink">KEGG</a> - Release 58, 31 May 2011</td>
     <td> Kanehisa et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381885" target="_new" class="extlink">PubMed: 16381885</a></td>
@@ -367,9 +356,8 @@
   </tr>
   <tr>
     <td>
-       <p><i>D. melanogaster</i></p>
+       <p><i>Drosophila</i></p>
        <p><i>C. elegans</i></p>
-       <p><i>S. cerevisiae</i></p>
     </td>
     <td> Gene versus publications</td>
     <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new" class="extlink">NCBI</a> - 08 Feb 2012</td>
