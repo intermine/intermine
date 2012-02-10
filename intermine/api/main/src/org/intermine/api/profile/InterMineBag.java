@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
+import org.intermine.api.search.PropertyChangeEvent;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
@@ -236,6 +237,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      */
     @Override
     public void delete() throws ObjectStoreException {
+        super.delete();
         if (profileId != null) {
             SavedBag savedBag = (SavedBag) uosw.getObjectStore().getObjectById(savedBagId,
                     SavedBag.class);
@@ -502,6 +504,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     public void setName(String name) throws ObjectStoreException {
         checkAndSetName(name);
         storeSavedBag();
+        fireEvent(new PropertyChangeEvent(this));
     }
 
     // Always set the name via this method to avoid saving bags with blank names
@@ -537,6 +540,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
         throws ObjectStoreException {
         this.description = description;
         storeSavedBag();
+        fireEvent(new PropertyChangeEvent(this));
     }
 
     /**
