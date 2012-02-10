@@ -79,7 +79,7 @@ public class OboConverter extends DataConverter
      * @param createrelations property to parse
      */
     public void setCreaterelations(String createrelations) {
-        if (createrelations.equalsIgnoreCase("true")) {
+        if ("true".equals(createrelations)) {
             this.createRelations = true;
         } else {
             this.createRelations = false;
