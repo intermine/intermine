@@ -533,7 +533,9 @@ public class DisplayConstraint
 
         // otherwise, we may have possible values from the ObjectStoreSummary
         List<Object> fieldValues = oss.getFieldValues(className, fieldName);
-
+        if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
+            return null;
+        }
         if (path.endIsAttribute()) {
             Class<?> type = path.getEndType();
             if (Date.class.equals(type)) {
