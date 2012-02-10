@@ -153,7 +153,7 @@ public class BagManager
     public void addTagsToBag(Collection<String> tags, InterMineBag bag, Profile profile)
         throws TagNameException, TagNamePermissionException {
         for (String tag: tags) {
-            tagManager.addTag(tag, bag.getName(), TagTypes.BAG, profile);
+            tagManager.addTag(tag, bag, profile);
         }
     }
 
