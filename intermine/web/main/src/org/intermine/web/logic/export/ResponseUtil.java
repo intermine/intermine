@@ -18,9 +18,11 @@ import javax.servlet.http.HttpServletResponse;
  * util methods for setting headers controlling cache.
  * @author Jakub Kulaviak
  **/
-public class ResponseUtil
+public final class ResponseUtil
 {
-
+    private ResponseUtil() {
+        // do nothing
+    }
 
     /**
      * Sets response header and content type for tab separated
