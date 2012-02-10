@@ -22,10 +22,13 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.search.Scope;
+import org.intermine.api.search.CreationEvent;
+import org.intermine.api.search.DeletionEvent;
 import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
@@ -39,11 +42,15 @@ import org.intermine.objectstore.ObjectStoreWriter;
 /**
  * Class to represent a user of the webapp
  *
+ * The profile is responsible for informing its search repository of all web-searchable objects
+ * created or deleted on its watch.
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
 public class Profile
 {
+    private static final Logger LOG = Logger.getLogger(Profile.class);
     protected ProfileManager manager;
     protected String username;
     protected Integer userId;
@@ -97,7 +104,7 @@ public class Profile
         if (savedTemplates != null) {
             this.savedTemplates.putAll(savedTemplates);
         }
-        searchRepository = new SearchRepository(this, Scope.USER);
+        searchRepository = new UserRepository(this);
         this.token = token;
     }
 
@@ -245,8 +252,9 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
-        reindex(TagTypes.TEMPLATE);
-        reindex(TagTypes.BAG);
+        // Why were these calls here in the first place?
+        //reindex(TagTypes.TEMPLATE);
+        //reindex(TagTypes.BAG);
     }
 
     /**
@@ -267,8 +275,8 @@ public class Profile
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
-            reindex(TagTypes.TEMPLATE);
         }
+        searchRepository.receiveEvent(new CreationEvent(template));
     }
 
     /**
@@ -287,17 +295,24 @@ public class Profile
      * @param trackerDelegate used to rename the template tracks.
      */
     public void deleteTemplate(String name, TrackerDelegate trackerDelegate, boolean deleteTracks) {
-        savedTemplates.remove(name);
-        if (manager != null) {
-            if (!savingDisabled) {
-                manager.saveProfile(this);
-                reindex(TagTypes.TEMPLATE);
+        ApiTemplate template = savedTemplates.get(name);
+        if (template == null) {
+            LOG.warn("Attempt to delete non-existant template: " + name);
+        } else {
+            savedTemplates.remove(name);
+            if (manager != null) {
+                if (!savingDisabled) {
+                    manager.saveProfile(this);
+                }
             }
-        }
-        TagManager tagManager = getTagManager();
-        tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
-        if (trackerDelegate != null && deleteTracks) {
-            trackerDelegate.updateTemplateName(name, "deleted_" + name);
+
+            searchRepository.receiveEvent(new DeletionEvent(template));
+
+            TagManager tagManager = getTagManager();
+            tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
+            if (trackerDelegate != null && deleteTracks) {
+                trackerDelegate.updateTemplateName(name, "deleted_" + name);
+            }
         }
     }
 
@@ -449,6 +464,19 @@ public class Profile
      * Stores a new bag in the profile. Note that bags are always present in the user profile
      * database, so this just adds the bag to the in-memory list of this profile.
      *
+     * @param bag the InterMineBag object
+     */
+    public void saveBag(InterMineBag bag) {
+        if (bag == null) {
+            throw new IllegalArgumentException("bag may not be null");
+        }
+        saveBag(bag.getName(), bag);
+    }
+
+    /**
+     * Stores a new bag in the profile. Note that bags are always present in the user profile
+     * database, so this just adds the bag to the in-memory list of this profile.
+     *
      * @param name the name of the bag
      * @param bag the InterMineBag object
      */
@@ -457,7 +485,7 @@ public class Profile
             throw new RuntimeException("No name specified for the list to save.");
         }
         savedBags.put(name, bag);
-        reindex(TagTypes.BAG);
+        searchRepository.receiveEvent(new CreationEvent(bag));
     }
 
     /**
@@ -479,8 +507,7 @@ public class Profile
                                     classKeys, type);
         InterMineBag bag = new InterMineBag(name, type, description, new Date(),
                                BagState.CURRENT, os, userId, uosw, keyFielNames);
-        savedBags.put(name, bag);
-        reindex(TagTypes.BAG);
+        saveBag(name, bag);
         return bag;
     }
 
@@ -509,7 +536,6 @@ public class Profile
 
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.BAG, username);
-        reindex(TagTypes.BAG);
     }
 
     /**
@@ -532,7 +558,7 @@ public class Profile
         } else {
             InterMineBag recovered = savedInvalidBags.get(name).amendTo(newType);
             savedInvalidBags.remove(name);
-            savedBags.put(recovered.getName(), recovered);
+            saveBag(recovered.getName(), recovered);
         }
     }
 
@@ -559,8 +585,9 @@ public class Profile
             saveBag(newName, bag);
         } else {
             InvalidBag bag = savedInvalidBags.get(oldName);
+            InvalidBag newBag = bag.rename(newName);
             savedInvalidBags.remove(oldName);
-            savedInvalidBags.put(newName, bag.rename(newName));
+            savedInvalidBags.put(newName, newBag);
         }
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
     }
@@ -602,15 +629,6 @@ public class Profile
 
     private TagManager getTagManager() {
         return new TagManagerFactory(manager).getTagManager();
-    }
-
-    /**
-     * Create a map from category name to a list of templates contained
-     * within that category.
-     */
-    private void reindex(String type) {
-        // We also take this opportunity to index the user's template queries, bags, etc.
-        searchRepository.addWebSearchables(type);
     }
 
     /**

@@ -47,11 +47,12 @@ public class TagManagerFactory
      * @param manager profile manager
      */
     public TagManagerFactory(ProfileManager manager) {
-        init(manager.getProfileObjectStoreWriter());
+        if (manager != null) { // The anonymous profile has no profile manager.
+            init(manager.getProfileObjectStoreWriter());
+        }
     }
 
     /**
-     *
      * @return tag manager
      */
     public TagManager getTagManager() {
