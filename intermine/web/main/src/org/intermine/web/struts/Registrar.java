@@ -182,12 +182,15 @@ public class Registrar extends Thread
         } catch (JSONException e) {
             handleProblem("Problem registering mine - server returned bad response: " + e);
         } catch (IOException e) {
-            handleProblem("Problem connecting to registry:" + e);
+            handleProblem("Problem connecting to registry: " + e);
         } catch (Exception e) {
             handleProblem("Unanticipated problem encountered registering mine: " + e);
         }
         if (!emailContent.isEmpty()) {
-            String feedbackEmail = props.getProperty("superuser.account");
+            String feedbackEmail = props.getProperty("registration.emailto");
+            if (feedbackEmail == null) {
+                feedbackEmail = props.getProperty("superuser.account");
+            }
             try {
                 MailUtils.email(feedbackEmail, subject, emailIntro + emailContent, props);
             } catch (MessagingException e) {

@@ -40,6 +40,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.SearchResults;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.Tag;
@@ -134,7 +135,7 @@ public class WebSearchableListController extends TilesAction
 
         Map<String, Object> wsMapForJS = new HashMap<String, Object>();
 
-        SearchRepository.filterOutInvalidTemplates(filteredWebSearchables);
+        SearchResults.filterOutInvalidTemplates(filteredWebSearchables);
         for (String wsName: (Set<String>) filteredWebSearchables.keySet()) {
             wsMapForJS.put(wsName, new Integer(1));
         }

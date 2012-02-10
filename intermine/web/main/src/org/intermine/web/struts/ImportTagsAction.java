@@ -25,6 +25,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.search.ChangeEvent;
+import org.intermine.api.search.MassTaggingEvent;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.xml.TagBinding;
@@ -77,11 +79,16 @@ public class ImportTagsAction extends InterMineAction
         }
         recordMessage(new ActionMessage("history.importedTags", new Integer(count)), request);
 
-        if (SessionMethods.isSuperUser(session)) {
-            SearchRepository sr = SessionMethods.getGlobalSearchRepository(
-                                                 session.getServletContext());
-            sr.globalChange(TagTypes.TEMPLATE);
-            sr.globalChange(TagTypes.BAG);
+        // We can't know what the tags were, or indeed what exactly what
+        // was tagged, and thus be more fine grained about
+        // this notification.
+        if (count > 0) {
+            ChangeEvent e = new MassTaggingEvent();
+            profile.getSearchRepository().receiveEvent(e);
+            if (SessionMethods.isSuperUser(session)) {
+                SessionMethods.getGlobalSearchRepository(session.getServletContext())
+                              .receiveEvent(e);
+            }
         }
         f.reset();
         return mapping.findForward("success");
