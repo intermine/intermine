@@ -307,7 +307,7 @@ public class DisplayConstraint
         String type = getPath().getType();
         return ("boolean".equals(type) || "Boolean".equals(type));
     }
-    
+
     /**
      * Return true if editing an existing constraint and an attribute value or LOOKUP constraint
      * was selected.
@@ -649,8 +649,8 @@ public class DisplayConstraint
     }
 
     /**
-     * Get a list of public and user bag names available and currentfor this path.  If none available return
-     * null.
+     * Get a list of public and user bag names available and currentfor this path.
+     * If none available return null.
      * @return a list of available bag names or null
      */
     public List<String> getBags() {
