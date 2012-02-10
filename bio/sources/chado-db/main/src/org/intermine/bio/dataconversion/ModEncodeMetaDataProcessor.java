@@ -280,7 +280,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processSubmission(connection);
         processSubmissionAttributes(connection);
         processProtocolTable(connection);
-        // processProtocolAttributes(connection);
         processAppliedProtocolTable(connection);
         processProtocolAttributes(connection);
 
@@ -288,14 +287,13 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processAppliedData(connection);
         processAppliedDataAttributes(connection);
         processExperiment(connection);
-        // processDag(connection);
         findScoreProtocols();
 
         processFeatures(connection, submissionMap);
 
         // set references
         setSubmissionRefs(connection);
-        setSubmissionExperimetRefs(connection);
+        setSubmissionExperimentRefs(connection);
         setDAGRefs(connection);
 
         // create DatabaseRecords where necessary for each submission
@@ -826,7 +824,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer currentId = pap.next();
             // add the DAG level here only if these are the first AP
             if (step == 1) {
-                appliedProtocolMap.get(currentId).step = step;
+                    appliedProtocolMap.get(currentId).step = step;
             }
             outputs.addAll(appliedProtocolMap.get(currentId).outputs);
             Integer submissionId = appliedProtocolMap.get(currentId).submissionId;
@@ -1908,10 +1906,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     IOException, ObjectStoreException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
-        final String ANTIBOY_SP = "antibody";
-        final String CELLLINE_SP = "cell line";
-        final String ARRAY_SP = "array";
-        final String DEVSTAGE_SP = "developmental stage";
+//        final String ANTIBOY_SP = "antibody";
+//        final String CELLLINE_SP = "cell line";
+//        final String ARRAY_SP = "array";
+//        final String DEVSTAGE_SP = "developmental stage";
 
         ResultSet res = getAppliedDataAll(connection);
         final String comma = ",";
@@ -1919,16 +1917,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 + getChadoDBConverter().getDatabase().getName() + "_subs_report.csv";
         File f = new File(reportName);
         FileWriter writer = new FileWriter(f);
-
-        writer.write("submission" + comma);
-        writer.write("data_heading" + comma);
-        writer.write("data_name" + comma);
-        writer.write("data_value" + comma);
-        writer.write("cv_term" + comma);
-        writer.write("att_heading" + comma);
-        writer.write("att_name" + comma);
-        writer.write("att_value" + comma);
-        writer.write(System.getProperty("line.separator"));
+        writeHeader(comma, writer);
 
         SubmissionProperty buildSubProperty = null;
         Integer lastDataId = new Integer(-1);
@@ -1967,19 +1956,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // Currently using attValue for referenced submission DCC id, should be dbUrl but seems
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
-                if (attValue.indexOf(":") > 0) {
-                    attValue = DCC_PREFIX + attValue.substring(0, attValue.indexOf(":"));
-                }
-                Integer referencedSubId = getSubmissionIdFromDccId(attValue);
-                if (referencedSubId != null) {
-                    SubmissionReference subRef =
-                            new SubmissionReference(referencedSubId, wikiPageUrl);
-                    Util.addToListMap(submissionRefs, submissionId, subRef);
-                    LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
-                            + attValue + " (" + referencedSubId + ")");
-                } else {
-                    LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
-                }
+                attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
             }
 
             // we are starting a new data row
@@ -2014,6 +1991,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         addSubmissionPropsFromReferencedSubmissions(subToTypes, props, submissionRefs);
 
         // create and store properties of submission
+        storeSubProperties(subToTypes);
+        LOG.info("PROCESS TIME submission properties: "
+                + (System.currentTimeMillis() - bT) + " ms");
+    }
+
+    /**
+     * @param subToTypes
+     * @throws ObjectStoreException
+     */
+    private void storeSubProperties(
+            Map<Integer, Map<String, List<SubmissionProperty>>> subToTypes)
+        throws ObjectStoreException {
         for (Integer submissionId : subToTypes.keySet()) {
             Integer storedSubmissionId = submissionMap.get(submissionId).interMineObjectId;
 
@@ -2189,8 +2178,49 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             storeSubmissionCollection(storedSubmissionId, "properties", allPropertyItems);
         }
-        LOG.info("PROCESS TIME submission properties: "
-                + (System.currentTimeMillis() - bT) + " ms");
+    }
+
+    /**
+     * @param wikiPageUrl
+     * @param attValue
+     * @param submissionId
+     * @param dccId
+     * @return
+     */
+    private String checkRefSub(String wikiPageUrl, String attValue,
+            Integer submissionId, String dccId) {
+        if (attValue.indexOf(":") > 0) {
+            attValue = DCC_PREFIX + attValue.substring(0, attValue.indexOf(":"));
+        }
+        Integer referencedSubId = getSubmissionIdFromDccId(attValue);
+        if (referencedSubId != null) {
+            SubmissionReference subRef =
+                    new SubmissionReference(referencedSubId, wikiPageUrl);
+            Util.addToListMap(submissionRefs, submissionId, subRef);
+            LOG.info("Submission " + dccId + " (" + submissionId + ") has reference to "
+                    + attValue + " (" + referencedSubId + ")");
+        } else {
+            LOG.warn("Could not find submission " + attValue + " referenced by " + dccId);
+        }
+        return attValue;
+    }
+
+    /**
+     * @param comma
+     * @param writer
+     * @throws IOException
+     */
+    private void writeHeader(final String comma, FileWriter writer)
+        throws IOException {
+        writer.write("submission" + comma);
+        writer.write("data_heading" + comma);
+        writer.write("data_name" + comma);
+        writer.write("data_value" + comma);
+        writer.write("cv_term" + comma);
+        writer.write("att_heading" + comma);
+        writer.write("att_name" + comma);
+        writer.write("att_value" + comma);
+        writer.write(System.getProperty("line.separator"));
     }
 
     //    /**
@@ -3557,7 +3587,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     //sub -> exp
-    private void setSubmissionExperimetRefs(Connection connection)
+    private void setSubmissionExperimentRefs(Connection connection)
         throws ObjectStoreException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
 
