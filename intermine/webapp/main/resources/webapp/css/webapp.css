@@ -1607,3 +1607,6 @@ table.summary.results td {
  background-color: #EFE7D1;
  border: 1px solid grey;
 }
+
+/* Previously hard-coded colour in high-lighted search results */
+.im-highlighted-search-term: { background-color: #ffff77; }
