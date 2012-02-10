@@ -71,8 +71,6 @@ public class ReportController extends InterMineAction
             @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
             @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
 
-        aaa(SessionMethods.getReportObjects(request.getSession()), SessionMethods.getInterMineAPI(request.getSession()).getObjectStore());
-
         long startTime = System.currentTimeMillis();
 
         HttpSession session = request.getSession();
