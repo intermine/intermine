@@ -183,16 +183,6 @@ public class CreateTemplateAction extends InterMineAction
             im.getTrackerDelegate().updateTemplateName(oldTemplateName, template.getName());
         }
 
-        // If superuser then rebuild shared templates
-        if (SessionMethods.isSuperUser(session)) {
-            ServletContext servletContext = session.getServletContext();
-            SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
-            if (!isNewTemplate) {
-                tr.webSearchableUpdated(toSave, TagTypes.TEMPLATE);
-            } else {
-                tr.webSearchableAdded(toSave, TagTypes.TEMPLATE);
-            }
-        }
         session.removeAttribute(Constants.NEW_TEMPLATE);
         session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
 

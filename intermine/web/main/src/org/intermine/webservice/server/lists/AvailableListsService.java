@@ -86,17 +86,18 @@ public class AvailableListsService extends WebService
 
     private ListFormatter getFormatter() {
         int format = getFormat();
+        boolean jsDates = Boolean.parseBoolean(request.getParameter("jsDates"));
         switch(format) {
             case (WebService.TSV_FORMAT): {
                 return new FlatListFormatter();
             }
             case (WebService.JSON_FORMAT): {
                 Profile profile = SessionMethods.getProfile(request.getSession());
-                return new JSONListFormatter(im, profile);
+                return new JSONListFormatter(im, profile, jsDates);
             }
             case (WebService.JSONP_FORMAT): {
                 Profile profile = SessionMethods.getProfile(request.getSession());
-                return new JSONListFormatter(im, profile);
+                return new JSONListFormatter(im, profile, jsDates);
             }
             default: {
                 throw new BadRequestException("Unknown request format");

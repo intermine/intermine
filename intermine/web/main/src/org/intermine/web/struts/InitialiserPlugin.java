@@ -55,6 +55,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.UserNotFoundException;
+import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
@@ -191,8 +192,7 @@ public class InitialiserPlugin implements PlugIn
                     blockingErrorKeys.put("errors.init.superuser", null);
                 }
                 // index global webSearchables
-                SearchRepository searchRepository =
-                     new SearchRepository(superProfile, Scope.GLOBAL);
+                SearchRepository searchRepository = new GlobalRepository(superProfile);
                 SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
 
                 servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());

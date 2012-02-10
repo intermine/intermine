@@ -95,11 +95,6 @@ public class TemplatesImportAction extends InterMineAction
                 }
             }
 
-            if (SessionMethods.isSuperUser(session)) {
-                SearchRepository sr = SessionMethods.getGlobalSearchRepository(servletContext);
-                sr.globalChange(TagTypes.TEMPLATE);
-            }
-
             recordMessage(new ActionMessage("importTemplates.done", new Integer(deleted),
                         new Integer(imported), new Integer(renamed)), request);
             if (!validConstraints) {

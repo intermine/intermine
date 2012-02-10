@@ -10,9 +10,8 @@ package org.intermine.web.filters;
  *
  */
 
-import java.util.Enumeration;
-
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -41,7 +40,9 @@ public class HeaderFilter implements Filter
         Enumeration<String> e = fc.getInitParameterNames();
         while (e.hasMoreElements()) {
             String headerName = e.nextElement();
-            response.addHeader(headerName, fc.getInitParameter(headerName));
+            String headerValue = fc.getInitParameter(headerName);
+
+            response.addHeader(headerName, headerValue);
         }
 
         chain.doFilter(req, response);

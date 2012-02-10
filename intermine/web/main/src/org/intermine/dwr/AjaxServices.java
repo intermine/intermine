@@ -46,6 +46,7 @@ import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
@@ -58,18 +59,23 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
-import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.SearchResult;
+import org.intermine.api.search.SearchResults;
+import org.intermine.api.search.SearchTarget;
+import org.intermine.api.search.TagFilter;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
-import org.intermine.api.bag.UnknownBagTypeException;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -87,9 +93,9 @@ import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
-import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
@@ -118,6 +124,8 @@ public class AjaxServices
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
 
+    private static final Set<String> NON_WS_TAG_TYPES = new HashSet<String>(Arrays.asList(
+            TagTypes.CLASS, TagTypes.COLLECTION, TagTypes.REFERENCE));
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -127,26 +135,16 @@ public class AjaxServices
      * @param isFavourite whether or not this item is currently a favourite
      */
     public void setFavourite(String name, String type, boolean isFavourite) {
+        String nameCopy = name.replaceAll("#039;", "'");
         try {
-            WebContext ctx = WebContextFactory.get();
-            HttpSession session = ctx.getSession();
-            Profile profile = SessionMethods.getProfile(session);
-            String nameCopy = name.replaceAll("#039;", "'");
-            TagManager tagManager = getTagManager();
-
             // already a favourite.  turning off.
             if (isFavourite) {
-                tagManager.deleteTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
+                AjaxServices.deleteTag(TagNames.IM_FAVOURITE, nameCopy, type);
             // not a favourite.  turning on.
             } else {
-                try {
-                    tagManager.addTag(TagNames.IM_FAVOURITE, nameCopy, type, profile);
-                } catch (TagManager.TagException e) {
-                    throw new RuntimeException(e);
-                }
-
+                AjaxServices.addTag(TagNames.IM_FAVOURITE, nameCopy, type);
             }
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             processException(e);
         }
     }
@@ -360,7 +358,6 @@ public class AjaxServices
                 throw new InterMineException("List \"" + bagName + "\" not found.");
             }
             bag.setDescription(description);
-            profile.getSearchRepository().descriptionChanged(bag);
             return description;
         } catch (RuntimeException e) {
             processException(e);
@@ -533,15 +530,25 @@ public class AjaxServices
 
     /**
      * Given a scope, type, tags and some filter text, produce a list of matching WebSearchable, in
-     * a format useful in JavaScript.  Each element of the returned List is a List containing a
+     * a format useful in JavaScript.
+     * <p>
+     * Each element of the returned List is a List containing a
      * WebSearchable name, a score (from Lucene) and a string with the matching parts of the
      * description highlighted.
-     * @param scope the scope (from TemplateHelper.GLOBAL_TEMPLATE or TemplateHelper.USER_TEMPLATE,
-     * even though not all WebSearchables are templates)
-     * @param type the type (from TagTypes)
-     * @param tags the tags to filter on
-     * @param filterText the text to pass to Lucene
-     * @param filterAction toggles favourites filter off an on; will be blank or 'favourites'
+     * <p>
+     * ie - search for "<code>me</code>":
+     * <pre>
+     *   [
+     *     [ "Some name", 0.123, "So&lt;i&gt;me&lt;/i&gt; name" ],
+     *     ...
+     *   ]
+     * </pre>
+     *
+     * @param scope the scope (either Scope.GLOBAL or Scope.USER).
+     * @param type the type (from TagTypes).
+     * @param tags the tags to filter on.
+     * @param filterText the text to pass to Lucene.
+     * @param filterAction toggles favourites filter off and on; will be blank or 'favourites'
      * @param callId unique id
      * @return a List of Lists
      */
@@ -549,70 +556,30 @@ public class AjaxServices
                                                     List<String> tags, String filterText,
                                                     String filterAction, String callId) {
         try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
+            final ServletContext servletContext = WebContextFactory.get().getServletContext();
+            final HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            ProfileManager pm = im.getProfileManager();
-            Profile profile = SessionMethods.getProfile(session);
-            Map<String, WebSearchable> wsMap;
-            Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
-            Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
+            final ProfileManager pm = im.getProfileManager();
+            final Profile profile = SessionMethods.getProfile(session);
+            final TagManager tm = getTagManager();
+            final SearchRepository userRepository = profile.getSearchRepository();
+            final SearchTarget target = new SearchTarget(scope, type);
+            final SearchResults results;
 
-            if (filterText != null && filterText.length() > 1) {
-                wsMap = new LinkedHashMap<String, WebSearchable>();
-                //Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
-                SearchRepository globalSearchRepository =
-                    SessionMethods.getGlobalSearchRepository(servletContext);
-                try {
-                    long time =
-                        SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
-                                                        globalSearchRepository,
-                                                        hitMap, null, highlightedDescMap);
-                    LOG.info("Lucene search took " + time + " milliseconds");
-                } catch (ParseException e) {
-                    LOG.error("couldn't run lucene filter", e);
-                    ArrayList<String> emptyList = new ArrayList<String>();
-                    emptyList.add(callId);
-                    return emptyList;
-                } catch (IOException e) {
-                    LOG.error("couldn't run lucene filter", e);
-                    ArrayList<String> emptyList = new ArrayList<String>();
-                    emptyList.add(callId);
-                    return emptyList;
-                }
-
-                //long time = System.currentTimeMillis();
-
-                for (WebSearchable ws: hitMap.keySet()) {
-                    wsMap.put(ws.getName(), ws);
-                }
-            } else {
-
-                if (scope.equals(Scope.USER)) {
-                    SearchRepository searchRepository = profile.getSearchRepository();
-                    wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
-                } else {
-                    SearchRepository globalRepository = SessionMethods
-                        .getGlobalSearchRepository(servletContext);
-                    if (scope.equals(Scope.GLOBAL)) {
-                        wsMap = (Map<String, WebSearchable>) globalRepository.
-                            getWebSearchableMap(type);
-                    } else {
-                        // must be "all"
-                        SearchRepository userSearchRepository = profile.getSearchRepository();
-                        Map<String, ? extends WebSearchable> userWsMap =
-                            userSearchRepository.getWebSearchableMap(type);
-                        Map<String, ? extends WebSearchable> globalWsMap =
-                            globalRepository.getWebSearchableMap(type);
-                        wsMap = new HashMap<String, WebSearchable>(userWsMap);
-                        wsMap.putAll(globalWsMap);
-                    }
-                }
+            try {
+                results = SearchResults.runLuceneSearch(filterText, target, userRepository);
+            } catch (ParseException e) {
+                LOG.error("couldn't run lucene filter", e);
+                ArrayList<String> emptyList = new ArrayList<String>();
+                emptyList.add(callId);
+                return emptyList;
+            } catch (IOException e) {
+                LOG.error("couldn't run lucene filter", e);
+                ArrayList<String> emptyList = new ArrayList<String>();
+                emptyList.add(callId);
+                return emptyList;
             }
 
-
-            Map<String, ? extends WebSearchable> filteredWsMap
-                = new LinkedHashMap<String, WebSearchable>();
             //Filter by aspects (defined in superuser account)
             List<String> aspectTags = new ArrayList<String>();
             List<String> userTags = new ArrayList<String>();
@@ -620,42 +587,30 @@ public class AjaxServices
                 if (tag.startsWith(TagNames.IM_ASPECT_PREFIX)) {
                     aspectTags.add(tag);
                 } else {
-                    userTags.add(tag);
+                    if (profile.getUsername() != null) {
+                        // Only allow filtering from registered users.
+                        userTags.add(tag);
+                    }
                 }
             }
-            if (aspectTags.size() > 0) {
-                wsMap = new SearchFilterEngine().filterByTags(wsMap, aspectTags, type,
-                                                              pm.getSuperuser(), getTagManager());
-            }
 
-            if (profile.getUsername() != null && userTags.size() > 0) {
-                filteredWsMap = new SearchFilterEngine().filterByTags(wsMap, userTags, type,
-                        profile.getUsername(), getTagManager());
-            } else {
-                filteredWsMap = wsMap;
-            }
+            TagFilter aspects = new TagFilter(aspectTags, pm.getSuperuserProfile(), type);
+            TagFilter requiredTags = new TagFilter(userTags, profile, type);
 
-            List returnList = new ArrayList<String>();
+            List returnList = new ArrayList();
 
             returnList.add(callId);
 
-            // We need a modifiable map so we can filter out invalid templates
-            LinkedHashMap<String, ? extends WebSearchable> modifiableWsMap =
-                new LinkedHashMap(filteredWsMap);
-
-            SearchRepository.filterOutInvalidTemplates(modifiableWsMap);
-            for (WebSearchable ws: modifiableWsMap.values()) {
-                List row = new ArrayList();
-                row.add(ws.getName());
-                if (filterText != null && filterText.length() > 1) {
-                    row.add(highlightedDescMap.get(ws));
-                    row.add(hitMap.get(ws));
-                } else {
-                    row.add(ws.getDescription());
+            for (SearchResult sr: results) {
+                WebSearchable ws = sr.getItem();
+                if (SearchResults.isInvalidTemplate(ws)) {
+                    continue;
                 }
-                returnList.add(row);
+                if (!(aspects.hasAllTags(ws) && requiredTags.hasAllTags(ws))) {
+                    continue;
+                }
+                returnList.add(sr.asList());
             }
-
             return returnList;
         } catch (RuntimeException e) {
             processException(e);
@@ -1293,10 +1248,10 @@ public class AjaxServices
                 + taggedObject + " type: " + type);
 
         try {
-            HttpServletRequest request = getRequest();
-            Profile profile = getProfile(request);
+            final HttpServletRequest request = getRequest();
+            final Profile profile = getProfile(request);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request);
             tagName = tagName.trim();
-            HttpSession session = request.getSession();
 
             if (profile.getUsername() != null
                     && !StringUtils.isEmpty(tagName)
@@ -1307,27 +1262,42 @@ public class AjaxServices
                 }
 
                 TagManager tagManager = getTagManager();
-                try {
-                    tagManager.addTag(tagName, taggedObject, type, profile);
-                } catch (TagManager.TagNameException e) {
-                    LOG.error("Adding tag failed", e);
-                    return e.getMessage();
-                } catch (TagManager.TagNamePermissionException e) {
-                    LOG.error("Adding tag failed", e);
-                    return e.getMessage();
-                }
-
-                ServletContext servletContext = session.getServletContext();
-                if (SessionMethods.isSuperUser(session)) {
-                    SearchRepository tr = SessionMethods.
-                        getGlobalSearchRepository(servletContext);
-                    tr.webSearchableTagChange(type, tagName);
+                BagManager bm = im.getBagManager();
+                TemplateManager tm = im.getTemplateManager();
+                if (NON_WS_TAG_TYPES.contains(type)) {
+                    if (TagTypes.CLASS.equals(type)) {
+                        ClassDescriptor cd = im.getModel().getClassDescriptorByName(taggedObject);
+                        tagManager.addTag(tagName, cd, profile);
+                    } else {
+                        String[] bits = taggedObject.split("\\.");
+                        ClassDescriptor cd = im.getModel().getClassDescriptorByName(bits[0]);
+                        ReferenceDescriptor rd = cd.getReferenceDescriptorByName(bits[1]);
+                        tagManager.addTag(tagName, rd, profile);
+                    }
+                } else {
+                    WebSearchable ws = null;
+                    if (TagTypes.BAG.equals(type)) {
+                        ws = bm.getUserOrGlobalBag(profile, taggedObject);
+                    } else if (TagTypes.TEMPLATE.equals(type)) {
+                        ws = tm.getUserOrGlobalTemplate(profile, taggedObject);
+                    }
+                    if (ws == null) {
+                        throw new RuntimeException("Could not find " + type + " " + taggedObject);
+                    } else {
+                        tagManager.addTag(tagName, ws, profile);
+                    }
                 }
                 return "ok";
             }
             LOG.error("Adding tag failed: tag='" + tag + "', taggedObject='" + taggedObject
                     + "', type='" + type + "'");
             return "Adding tag failed.";
+        } catch (TagManager.TagNamePermissionException e) {
+            LOG.error("Adding tag failed", e);
+            return e.getMessage();
+        } catch (TagManager.TagNameException e) {
+            LOG.error("Adding tag failed", e);
+            return e.getMessage();
         } catch (Throwable e) {
             LOG.error("Adding tag failed", e);
             return "Adding tag failed.";
@@ -1350,12 +1320,30 @@ public class AjaxServices
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile  = getProfile(request);
             TagManager manager = im.getTagManager();
-            manager.deleteTag(tagName, tagged, type, profile.getUsername());
-            ServletContext servletContext = session.getServletContext();
-            if (SessionMethods.isSuperUser(session)) {
-                SearchRepository tr =
-                    SessionMethods.getGlobalSearchRepository(servletContext);
-                tr.webSearchableTagChange(type, tagName);
+            BagManager bm = im.getBagManager();
+
+            if (NON_WS_TAG_TYPES.contains(type)) {
+                if (TagTypes.CLASS.equals(type)) {
+                    ClassDescriptor cd = im.getModel().getClassDescriptorByName(tagged);
+                    manager.deleteTag(tagName, cd, profile);
+                } else {
+                    String[] bits = tagged.split("\\.");
+                    ClassDescriptor cd = im.getModel().getClassDescriptorByName(bits[0]);
+                    ReferenceDescriptor rd = cd.getReferenceDescriptorByName(bits[1]);
+                    manager.deleteTag(tagName, rd, profile);
+                }
+                return "ok";
+            } else {
+                WebSearchable ws = null;
+                if (TagTypes.BAG.equals(type)) {
+                    ws = bm.getUserBag(profile, tagged);
+                } else if (TagTypes.TEMPLATE.equals(type)) {
+                    ws = profile.getTemplate(tagged);
+                }
+                if (ws == null) {
+                    throw new RuntimeException("Could not find " + type + " " + tagged);
+                }
+                manager.deleteTag(tagName, ws, profile);
             }
             return "ok";
         } catch (Throwable e) {

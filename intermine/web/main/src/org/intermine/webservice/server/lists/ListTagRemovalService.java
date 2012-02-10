@@ -68,8 +68,7 @@ public class ListTagRemovalService extends ListTagService
 
         for (Tag tag: bagManager.getTagsForBag(list)) {
             if (tagset.contains(tag.getTagName())) {
-                tm.deleteTag(tag.getTagName(), list.getName(),
-                        TagTypes.BAG, profile.getUsername());
+                tm.deleteTag(tag.getTagName(), list, profile);
             }
         }
         List<Tag> allTags = bagManager.getTagsForBag(list);
