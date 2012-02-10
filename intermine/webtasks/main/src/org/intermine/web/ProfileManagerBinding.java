@@ -32,6 +32,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.StorableBag;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
+import org.intermine.api.search.MassTaggingEvent;
 import org.intermine.api.tracker.xml.TrackManagerBinding;
 import org.intermine.api.tracker.xml.TrackManagerHandler;
 import org.intermine.metadata.FieldDescriptor;
@@ -274,6 +275,7 @@ class ProfileManagerHandler extends DefaultHandler
                     }
                 }
             }
+            profile.getSearchRepository().receiveEvent(new MassTaggingEvent());
             profileHandler = null;
             long totalTime = System.currentTimeMillis() - startTime;
             LOG.info("Finished profile: " + profile.getUsername() + " took " + totalTime + "ms.");
