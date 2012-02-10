@@ -1,7 +1,7 @@
 package org.intermine.api.search;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,18 +10,16 @@ package org.intermine.api.search;
  *
  */
 
+import org.intermine.api.profile.Taggable;
+
 /**
  * An interface implemented by objects that we want to index with Lucene.
+ *
  * @author Kim Rutherford
+ * @author Alex Kalderimis
  */
-public interface WebSearchable
+public interface WebSearchable extends Taggable
 {
-    /**
-     * The name (or identifier) used as the primary key for storing this object.
-     * @return the name
-     */
-    String getName();
-
     /**
      * The user-friendly title for this object.
      * @return the title
@@ -33,4 +31,26 @@ public interface WebSearchable
      * @return the description
      */
     String getDescription();
+
+    /**
+     * Add this observer to the list of interested parties. The observer should be notified
+     * of every change event this web searchable object has cause to issue.
+     * @param wsw The observer.
+     */
+    void addObserver(WebSearchWatcher wsw);
+
+    /**
+     * Remove this observer from the list of interested parties. The observer should not be notified
+     * of any subsequent events this web searchable object has cause to generate.
+     * @param wsw The observer.
+     */
+    void removeObserver(WebSearchWatcher wsw);
+
+    /**
+     * Notify all your observers of this event which originates at this web searchable.
+     * @param e The event that has just occurred.
+     */
+    void fireEvent(OriginatingEvent e);
+
+
 }
