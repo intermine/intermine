@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
+import org.intermine.api.search.TaggingEvent;
+import org.intermine.api.search.TaggingEvent.TagChange;
+import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
@@ -43,7 +46,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
-import org.intermine.template.TemplateQuery;
 import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 
@@ -51,6 +53,7 @@ import org.intermine.util.DynamicUtil;
  * Manager class for tags. Implements retrieving, adding and deleting tags in user profile
  * database.
  * @author Jakub Kulaviak <jakub@flymine.org>
+ * @author Alex Kalderimis
  */
 public class TagManager
 {
@@ -92,6 +95,24 @@ public class TagManager
         }
     }
 
+    public void deleteTag(String tagName, WebSearchable ws, Profile profile) {
+        deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
+        ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
+    }
+
+    public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
+        deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
+    }
+
+    public void deleteTag(String tagName, ReferenceDescriptor rd, Profile profile) {
+        String objIdentifier = rd.getReferencedClassName() + "." + rd.getName();
+        if (rd instanceof CollectionDescriptor) {
+            deleteTag(tagName, objIdentifier, TagTypes.COLLECTION, profile.getUsername());
+        } else {
+            deleteTag(tagName, objIdentifier, TagTypes.REFERENCE, profile.getUsername());
+        }
+    }
+
     /**
      * Deletes tag object from the database.
      * @param tagName tag name
@@ -99,7 +120,7 @@ public class TagManager
      * @param type tag type
      * @param userName user name
      */
-    public void deleteTag(String tagName, String taggedObject, String type, String userName) {
+    protected void deleteTag(String tagName, String taggedObject, String type, String userName) {
         List<Tag> tags = getTags(tagName, taggedObject, type, userName);
         if (tags.size() > 0 && tags.get(0) != null) {
             deleteTag(tags.get(0));
@@ -163,6 +184,16 @@ public class TagManager
     public Set<String> getObjectTagNames(String taggedObject, String type, String userName) {
         List<Tag> tags = getTags(null, taggedObject, type, userName);
         return tagsToTagNames(tags);
+    }
+
+    /**
+     * Returns names of tagged tags for specified object. For anonymous user returns empty set.
+     * @param taggable A taggable object.
+     * @param profile The profile of the user with access to these tags.
+     * @return tag names
+     */
+    public Set<String> getObjectTagNames(Taggable taggable, Profile profile) {
+        return getObjectTagNames(taggable.getName(), taggable.getTagType(), profile.getUsername());
     }
 
     /**
@@ -296,6 +327,9 @@ public class TagManager
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
      * "ClassName.fieldName".
+     *
+     * Don't use this method.... It makes kittens cry,
+     *
      * @param tagName the tag name - any String
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
@@ -327,19 +361,6 @@ public class TagManager
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
 
-    /**
-     * Associate a bag with a certain tag.
-     * @param tagName The tag we want to give this bag.
-     * @param bag The bag to tag.
-     * @param profile The profile to associate this tag with.
-     * @return A tag object.
-     * @throws TagNameException If the name is invalid (contains illegal characters)
-     * @throws TagNamePermissionException If this tag name is restricted.
-     */
-    public synchronized Tag addTag(String tagName, InterMineBag bag, Profile profile)
-        throws TagNameException, TagNamePermissionException {
-        return addTag(tagName, bag.getName(), TagTypes.BAG, profile);
-    }
 
     /**
      * Associate a template with a certain tag.
@@ -350,9 +371,11 @@ public class TagManager
      * @throws TagNameException If the name is invalid (contains illegal characters)
      * @throws TagNamePermissionException If this tag name is restricted.
      */
-    public synchronized Tag addTag(String tagName, TemplateQuery template, Profile profile)
+    public synchronized Tag addTag(String tagName, WebSearchable ws, Profile profile)
         throws TagNameException, TagNamePermissionException {
-        return addTag(tagName, template.getName(), TagTypes.TEMPLATE, profile);
+        Tag ret = addTag(tagName, ws.getName(), ws.getTagType(), profile);
+        ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.ADDED));
+        return ret;
     }
 
     /**

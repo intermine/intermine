@@ -1,5 +1,15 @@
 package org.intermine.api.profile;
 
+/*
+ * Copyright (C) 2002-2012 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,14 +18,20 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.ConstantTransformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.search.OriginatingEvent;
+import org.intermine.api.search.DeletionEvent;
+import org.intermine.api.search.WebSearchWatcher;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStoreException;
@@ -33,7 +49,7 @@ import org.intermine.sql.writebatch.BatchWriterPostgresCopyImpl;
  * @author Alex Kalderimis
  *
  */
-public abstract class StorableBag
+public abstract class StorableBag implements WebSearchable
 {
 
     private static final Logger LOG = Logger.getLogger(StorableBag.class);
@@ -66,8 +82,7 @@ public abstract class StorableBag
     public abstract int getSize() throws ObjectStoreException;
 
     /**
-     * Returns the size of the bag.
-     *
+     * Returns the number of elements in the bag.
      * @return the number of elements in the bag
      * @throws ObjectStoreException if something goes wrong
      */
@@ -75,12 +90,22 @@ public abstract class StorableBag
         return getSize();
     }
 
+    @Override
     public abstract String getName();
 
+    @Override
     public abstract String getDescription();
 
+    /**
+     * Get the date that this bag was created at.
+     * @return A date.
+     */
     public abstract Date getDateCreated();
 
+    /**
+     * Get the unqualified name of class that the objects in this bag represent.
+     * @return A name of a class.
+     */
     public abstract String getType();
 
     /** @return the id of the profile belonging to the user this list belongs to */
@@ -93,20 +118,45 @@ public abstract class StorableBag
         return savedBagId;
     }
 
+    /**
+     * Return a reference to the object store bag contained in the production database.
+     * @return A reference to the backing store of objects.
+     */
     protected abstract ObjectStoreBag getOsb();
 
+    /**
+     * Return a string representing the state of this bag (eg. CURRENT).
+     * @return A valid representation of a BagState
+     */
     public abstract String getState();
 
+    /**
+     * Get a  reference to a connection to the database where user data is persisted.
+     * @return An object capable of storing information in the user data store.
+     */
     protected abstract ObjectStoreWriter getUserProfileWriter();
 
-    public abstract void delete() throws ObjectStoreException;
+    /**
+     * Delete this bag.
+     *
+     * Contrary to appearances, implementations MUST override this method in order to actually
+     * delete the bag. They MUST ALSO call this method (as super.delete()). This is to ensure that
+     * bag deletion events are registered correctly.
+     *
+     * @throws ObjectStoreException
+     */
+    public void delete() throws ObjectStoreException {
+        fireEvent(new DeletionEvent(this));
+    }
 
     /**
-     * Save the bag into the userprofile database
+     * Save the bag into the userprofile database, along with information about what kinds of values
+     * this bag contains. These bag values can then be used later to reconstruct the contents of the
+     * bag if when the bag is used with a different production database.
      *
      * @param profileId the ID of the userprofile
      * @param bagValues the list of the key field values of the objects contained by the bag
-     * @throws ObjectStoreException if something goes wrong
+     * @throws ObjectStoreException if something goes wrong when inserting data into the database.
      */
     public void saveWithBagValues(Integer profileId, Collection<BagValue> bagValues)
         throws ObjectStoreException {
@@ -119,6 +169,11 @@ public abstract class StorableBag
         addBagValues(bagValues);
     }
 
+    /**
+     * Perform the actual insertion of data into the userprofile database.
+     * @return The object that represents the database record for this bag.
+     * @throws ObjectStoreException If we cannot store the bag.
+     */
     protected SavedBag storeSavedBag() throws ObjectStoreException {
         SavedBag savedBag = new SavedBag();
         savedBag.setId(getSavedBagId());
@@ -202,6 +257,11 @@ public abstract class StorableBag
         return getContents(Order.BY_EXTRA);
     }
 
+    /**
+     * Get the contents of this list, in a specified order.
+     * @param order How to order the items when fetching from the database.
+     * @return A list of the contents of the bag.
+     */
     private List<BagValue> getContents(Order order) {
         String name = getName();
         Integer savedBagId = getSavedBagId();
@@ -253,7 +313,7 @@ public abstract class StorableBag
         Batch batch = null;
         Boolean oldAuto = null;
         ObjectStoreWriter uosw = getUserProfileWriter();
-        Integer savedBagId = getSavedBagId();
+        Integer sbid = getSavedBagId();
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
             oldAuto = conn.getAutoCommit();
@@ -261,14 +321,14 @@ public abstract class StorableBag
             batch = new Batch(new BatchWriterPostgresCopyImpl());
             String[] colNames = new String[] {"savedbagid", "value", "extra"};
             for (BagValue bagValue : bagValues) {
-                batch.addRow(conn, InterMineBag.BAG_VALUES, savedBagId, colNames,
-                            new Object[] {savedBagId, bagValue.value, bagValue.extra});
+                batch.addRow(conn, InterMineBag.BAG_VALUES, sbid, colNames,
+                            new Object[] {sbid, bagValue.value, bagValue.extra});
             }
             batch.flush(conn);
             conn.commit();
             conn.setAutoCommit(oldAuto);
         } catch (SQLException sqle) {
-            LOG.error("Exception committing bagValues for bag: " + savedBagId, sqle);
+            LOG.error("Exception committing bagValues for bag: " + sbid, sqle);
             try {
                 conn.rollback();
                 if (oldAuto != null) {
@@ -286,4 +346,34 @@ public abstract class StorableBag
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
+
+    // WebSearchable Implementation //
+    private final Set<WebSearchWatcher> observers = new HashSet<WebSearchWatcher>();
+
+    @Override
+    public void addObserver(WebSearchWatcher wsw) {
+        observers.add(wsw);
+    }
+
+    @Override
+    public void removeObserver(WebSearchWatcher wsw) {
+        observers.remove(wsw);
+    }
+
+    @Override
+    public String getTagType() {
+        return TagTypes.BAG;
+    }
+
+    @Override
+    public void fireEvent(OriginatingEvent e) {
+        if (observers != null) { // Can be due the order of initialisation of static fields...
+            Collection<WebSearchWatcher> watchers = new ArrayList<WebSearchWatcher>(observers);
+            for (WebSearchWatcher wsw: watchers) {
+                wsw.receiveEvent(e);
+            }
+        }
+    }
+
+
 }
