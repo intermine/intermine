@@ -32,6 +32,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.SequenceFeature;
@@ -255,7 +256,8 @@ public class SequenceExporter implements Exporter
                 if (fieldValue == null) {
                     headerBits.add("-");
                 } else if (fieldValue.toString().equals(keyFieldValue)
-                        || (fieldValue instanceof Location)) {
+                        || (re.getObject() instanceof Location)
+                        || (re.getObject() instanceof Chromosome)) {
                     // ignore the primaryIdentifier and Location in
                     // ResultElement
                     continue;
