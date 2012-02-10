@@ -81,12 +81,25 @@
         jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: span_uuid_string, isEmptyFeature: "true" }, function(isEmptyFeature){
             if (isEmptyFeature.trim() == "hasFeature") {
                 jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: span_uuid_string, generateCreateListHtml: "true" }, function(createListHtml){
-                    jQuery("#export-all-div").append('<span class="export-region">Export for all regions:</span>' +
-                        '<span class="tab export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');"></a></span>' +
-                        '<span class="csv export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');"></a></span>' +
-                        '<span class="gff3 export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');"></a></span>' +
-                        '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
-                        '<span class="bed export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'bed\');"></a></span>' + createListHtml);
+                    if (export_chromosome_segment == "false") {
+                        jQuery("#export-all-div").append('<span class="export-region">Export for all regions:</span>' +
+                                '<span class="tab export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');"></a></span>' +
+                                '<span class="csv export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');"></a></span>' +
+                                '<span class="gff3 export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');"></a></span>' +
+                                '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
+                                '<span class="bed export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'bed\');"></a></span>' +
+                                createListHtml);
+                    } else {
+                        jQuery("#export-all-div").append('<span class="export-region">Export for all regions:</span>' +
+                                '<span class="tab export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');"></a></span>' +
+                                '<span class="csv export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');"></a></span>' +
+                                '<span class="gff3 export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');"></a></span>' +
+                                '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
+                                '<span class="bed export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'bed\');"></a></span>' +
+                                '<span class="export-region"><a href="javascript: exportFeatures(\'all\', \'\', \'chrSeg\');"><img title="export all chromosome regions as FASTA" class="fasta" style="margin-top: 0px;" src="model/images/fasta.gif"></a></span>' +
+                                createListHtml);
+                    }
+
                 });
             } else {
                 jQuery("#export-all-div").append('Export for all regions:&nbsp;<span style="color:grey;">TAB</span>&nbsp;|&nbsp;<span style="color:grey;">CSV</span>&nbsp;|&nbsp;<span style="color:grey;">GFF3</span>&nbsp;|&nbsp;<span style="color:grey;">SEQ</span> or Create List by feature type: <select></select>');
