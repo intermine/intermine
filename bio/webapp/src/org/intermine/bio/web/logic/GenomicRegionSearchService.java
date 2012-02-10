@@ -1124,7 +1124,7 @@ public class GenomicRegionSearchService
                                 + "<a href='javascript: exportFeatures(\""
                                 + s.getFullRegionInfo()
                                 + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
-                                + "segment as FASTA\" class=\"fasta\" "
+                                + "region as FASTA\" class=\"fasta\" "
                                 + "src=\"model/images/fasta.gif\"></a></span>");
                     }
 
@@ -1300,7 +1300,7 @@ public class GenomicRegionSearchService
                                 + "<a href='javascript: exportFeatures(\""
                                 + s.getFullRegionInfo()
                                 + "\", \"\", \"chrSeg\");'><img title=\"export chromosome "
-                                + "segment as FASTA\" class=\"fasta\" "
+                                + "region as FASTA\" class=\"fasta\" "
                                 + "src=\"model/images/fasta.gif\"></a></span>");
                     }
 
