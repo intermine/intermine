@@ -168,7 +168,7 @@
     <td> &nbsp;</td>
   </tr>
   <tr>
-    <td rowspan="4" class="leftcol"><p> <h2>Gene Ontology</h2></p></td>
+    <td rowspan="3" class="leftcol"><p> <h2>Gene Ontology</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> GO annotations </td>
     <td> <a href="http://www.geneontology.org" target="_new" class="extlink">Gene Ontology Site</a> - 25 Jan 2012</td>
