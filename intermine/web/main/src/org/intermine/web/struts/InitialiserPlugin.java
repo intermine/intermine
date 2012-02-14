@@ -225,6 +225,10 @@ public class InitialiserPlugin implements PlugIn
                 }
 
                 doRegistration(webProperties);
+
+                FriendlyMineManager friendlyMineManager
+                    = FriendlyMineManager.getInstance(im, webProperties);
+                im.setFriendlyMineManager(friendlyMineManager);
             }
         }
     }
