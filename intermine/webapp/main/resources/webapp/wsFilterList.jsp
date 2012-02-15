@@ -70,7 +70,7 @@ function clearBagName(element) {
 </script>
 
 <div class="filterBar">
-            Search Queries:&nbsp;
+            Filter:&nbsp;
             <input type="text" id="filterText" name="newName_${name}" size="20"
                 onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
                 onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
