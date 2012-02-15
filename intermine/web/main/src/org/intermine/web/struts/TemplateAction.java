@@ -132,7 +132,6 @@ public class TemplateAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         TemplateManager templateManager = im.getTemplateManager();
 
-
         TemplateQuery template = templateManager.getTemplate(profile, templateName, scope);
         //If I'm browsing from the history or from saved query the template is in the session
         //with the values edited by the user, from this template we retrieve the original name
@@ -148,6 +147,10 @@ public class TemplateAction extends InterMineAction
                 template = templateManager.getTemplate(profile,
                                            (String) session.getAttribute("templateName"), scope);
             }
+        }
+        if (template == null) {
+            throw new RuntimeException("Could not find a template called "
+                    + session.getAttribute("templateName"));
         }
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
                 template, templateFormToTemplateValues(tf, template));
