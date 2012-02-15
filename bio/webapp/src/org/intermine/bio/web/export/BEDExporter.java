@@ -95,6 +95,7 @@ public class BEDExporter implements Exporter
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
         export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
