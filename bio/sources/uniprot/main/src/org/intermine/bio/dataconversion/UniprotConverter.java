@@ -486,9 +486,10 @@ public class UniprotConverter extends BioDirectoryConverter
                 try {
                     processCommentEvidence(entry);
                     Set<UniprotEntry> isoforms = processEntry(entry);
-
-                    for (UniprotEntry isoform : isoforms) {
-                        processEntry(isoform);
+                    if (isoforms != null) {
+                        for (UniprotEntry isoform : isoforms) {
+                            processEntry(isoform);
+                        }
                     }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
