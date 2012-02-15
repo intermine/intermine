@@ -46,7 +46,7 @@ public class BEDExporter implements Exporter
     private boolean headerPrinted = false;
     private List<Integer> featureIndexes;
     private IntPresentSet exportedIds = new IntPresentSet();
-    private String organismString;
+    private List<String> orgSet = null;
 
      /* Header */
     private static final String FORMAT = "# UCSC BED format";
@@ -80,7 +80,6 @@ public class BEDExporter implements Exporter
         this.out = out;
         this.featureIndexes = featureIndexes;
         this.sourceName = sourceName;
-        this.organismString = organismString;
         this.makeUcscCompatible = makeUcscCompatible;
         this.trackDescription = trackDescription;
 
@@ -89,6 +88,10 @@ public class BEDExporter implements Exporter
             this.trackDescription = "A Custom Track";
         } else {
             this.trackName = trackDescription.replaceAll(" ", "_");
+        }
+
+        if (!"".equals(organismString) && organismString != null) {
+            this.orgSet = StringUtil.tokenize(organismString, ",");
         }
     }
 
@@ -156,8 +159,7 @@ public class BEDExporter implements Exporter
     private String getHeader() {
         StringBuffer header = new StringBuffer();
 
-        if (!"".equals(organismString) && organismString != null) {
-            List<String> orgSet = StringUtil.tokenize(organismString, ",");
+        if (orgSet != null) {
             // TODO the way to store genome build information should be changed ...
             // TODO handle multipe orgs
             if (orgSet != null) {
@@ -208,8 +210,15 @@ public class BEDExporter implements Exporter
     }
 
     private void makeRecord() {
+        BEDRecord bedRecord = null;
 
-        BEDRecord bedRecord = BEDUtil.makeBEDRecord(lastLsf, makeUcscCompatible);
+        if (orgSet != null) {
+            if (orgSet.contains(lastLsf.getOrganism().getShortName())) {
+                bedRecord = BEDUtil.makeBEDRecord(lastLsf, makeUcscCompatible);
+            }
+        } else {
+            bedRecord = BEDUtil.makeBEDRecord(lastLsf, makeUcscCompatible);
+        }
 
         if (bedRecord != null) {
             // have a chromosome ref and chromosomeLocation ref
@@ -231,7 +240,15 @@ public class BEDExporter implements Exporter
     }
 
     private void finishLastRow() {
-        BEDRecord bedRecord = BEDUtil.makeBEDRecord(lastLsf, makeUcscCompatible);
+        BEDRecord bedRecord = null;
+
+        if (orgSet != null) {
+            if (orgSet.contains(lastLsf.getOrganism().getShortName())) {
+                bedRecord = BEDUtil.makeBEDRecord(lastLsf, makeUcscCompatible);
+            }
+        } else {
+            bedRecord = BEDUtil.makeBEDRecord(lastLsf, makeUcscCompatible);
+        }
 
         if (bedRecord != null) {
             // have a chromsome ref and chromosomeLocation ref
