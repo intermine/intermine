@@ -281,15 +281,22 @@ public class GraphWidget extends Widget
         ChartRenderingInfo info = new ChartRenderingInfo(new StandardEntityCollection());
 
         // generate the image and imagemap
+//        try {
+//            fileName = ServletUtilities.saveChartAsPNG(chart,
+//                    ((GraphWidgetConfig) config).getWidth(),
+//                    ((GraphWidgetConfig) config).getHeight(), info,
+//                    ((GraphWidgetConfig) config).getSession());
+//        } catch (IOException e) {
+//            throw new RuntimeException("error rendering html", e);
+//        }
         try {
-            fileName = ServletUtilities.saveChartAsPNG(chart,
+            fileName = ServletUtilities.saveChartAsJPEG(chart,
                     ((GraphWidgetConfig) config).getWidth(),
                     ((GraphWidgetConfig) config).getHeight(), info,
                     ((GraphWidgetConfig) config).getSession());
         } catch (IOException e) {
             throw new RuntimeException("error rendering html", e);
         }
-
         imageMap = ImageMapUtilities.getImageMap("chart" + fileName, info);
     }
 
