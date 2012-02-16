@@ -10,8 +10,6 @@ package org.modmine.web;
  *
  */
 
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
@@ -30,12 +28,13 @@ public class SpanUploadForm extends ActionForm
 
     private String orgName;
     private String[] experiments;
-    private Set<String> dccIDSetOfExp; // the DCCids of experiments
     private String[] featureTypes;
     private String text;
     private FormFile formFile;
     private String whichInput;
-    private String[] submissions; // DCCid
+    private String submissions; // comma separated DCCid
+    private String source; // from facted search or modMine
+
     private String isInterBaseCoordinate; // by default, intermine use base coordinate
 
     /**
@@ -74,7 +73,7 @@ public class SpanUploadForm extends ActionForm
      *
      * @return submissions
      */
-    public String[] getSubmissions() {
+    public String getSubmissions() {
         return submissions;
     }
 
@@ -82,7 +81,7 @@ public class SpanUploadForm extends ActionForm
      *
      * @param submissions A string array of submission DCCid
      */
-    public void setSubmissions(String[] submissions) {
+    public void setSubmissions(String submissions) {
         this.submissions = submissions;
     }
 
@@ -165,17 +164,17 @@ public class SpanUploadForm extends ActionForm
     }
 
     /**
-     * @return the dccIDSetOfExp
+     * @return source
      */
-    public Set<String> getDccIDSetOfExp() {
-        return dccIDSetOfExp;
+    public String getSource() {
+        return source;
     }
 
     /**
-     * @param dccIDSetOfExp the dccIDSetOfExp to set
+     * @param source the source to set
      */
-    public void setDccIDSetOfExp(Set<String> dccIDSetOfExp) {
-        this.dccIDSetOfExp = dccIDSetOfExp;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     /**
@@ -204,11 +203,11 @@ public class SpanUploadForm extends ActionForm
         orgName = "";
         featureTypes = null;
         experiments = null;
-        dccIDSetOfExp = null;
         text = "";
         formFile = null;
         whichInput = "";
-        submissions = null;
+        submissions = "";
+        source = "";
         isInterBaseCoordinate = "isNotInterBaseCoordinate";
     }
 }
