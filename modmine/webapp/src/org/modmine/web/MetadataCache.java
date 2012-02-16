@@ -507,7 +507,13 @@ public final class MetadataCache
         if (submissionIdCache == null) {
             readSubmissionIds(os);
         }
-        return (Submission) os.getObjectById(submissionIdCache.get(dccId));
+
+        if (submissionIdCache.get(dccId) != null) {
+            return (Submission) os.getObjectById(submissionIdCache.get(dccId));
+        } else {
+            return null;
+        }
+
     }
 
     /**
