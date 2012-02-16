@@ -482,6 +482,23 @@
     <url-pattern>/service/list/chart/*</url-pattern>
   </servlet-mapping>
 
+   <!-- NEW IN VERSION 9 -->
+
+  <servlet>
+    <servlet-name>ws-quick-search</servlet-name>
+    <servlet-class>org.intermine.webservice.server.search.QuickSearchServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-quick-search</servlet-name>
+    <url-pattern>/service/search</url-pattern>
+  </servlet-mapping>
+
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
@@ -531,6 +548,10 @@
       <init-param>
         <param-name>Access-Control-Allow-Headers</param-name>
         <param-value>Origin, X-Requested-With, Content-Type, Accept</param-value>
+    </init-param>
+    <init-param>
+        <param-name>Access-Control-Allow-Methods</param-name>
+        <param-value>DELETE, POST, GET, OPTIONS, PUT</param-value>
     </init-param>
   </filter>
 
