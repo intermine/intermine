@@ -230,7 +230,7 @@ public class DisplayConstraint
     }
 
     /**
-     * 
+     *
      */
     public String getOriginalValue() {
         if (con != null) {
@@ -444,17 +444,15 @@ public class DisplayConstraint
             // <c:if test="${!(editingNode.type == 'String' && (op.value == '<='
                                                              //|| op.value == '>='))}">
             // TODO this should show different options if a dropdown is to be used
-            boolean existPossibleValues =
-                (getPossibleValues() != null && getPossibleValues().size() > 0) ? true : false;
+            boolean multiVal = (getPossibleValues() != null && getPossibleValues().size() > 0);
             for (ConstraintOp op : allOps) {
-                if (existPossibleValues
-                    || (!op.getIndex().equals(ConstraintOp.MATCHES.getIndex())
-                        && !op.getIndex().equals(ConstraintOp.DOES_NOT_MATCH.getIndex()))
-                ) {
-                    validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
+                // If we know all the values, then skip the LIKE/NOT LIKE constraints.
+                if (multiVal && (op == ConstraintOp.MATCHES || op == ConstraintOp.DOES_NOT_MATCH)) {
+                    continue;
                 }
+                validOps.add(new DisplayConstraintOption(op.toString(), op.getIndex()));
             }
-            if (existPossibleValues) {
+            if (multiVal) {
                 for (ConstraintOp op : PathConstraintMultiValue.VALID_OPS) {
                     validOps.add(new DisplayConstraintOption(op.toString(),
                         op.getIndex()));
