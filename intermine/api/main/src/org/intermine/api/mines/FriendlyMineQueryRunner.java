@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -112,7 +113,7 @@ public final class FriendlyMineQueryRunner
 
     private static BufferedReader runWebServiceQuery(Mine mine, String xmlQuery) {
         try {
-            String urlString = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH + xmlQuery;
+            String urlString = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH + URLEncoder.encode("" + xmlQuery, "UTF-8");
             URL url = new URL(urlString);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             return reader;
