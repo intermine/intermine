@@ -29,6 +29,9 @@ import org.intermine.webservice.client.util.HttpConnection;
 public class Service
 {
 
+    /** The version of this client library. **/
+    public static final Version VERSION = new Version(3, 0, 0);
+
     private static final String VERSION_HEADER = "InterMine-Version";
 
     private static final String USER_AGENT_HEADER = "User-Agent";
@@ -236,10 +239,10 @@ public class Service
     }
 
     /**
-     * @return service version
+     * @return The client version
      */
     public Version getVersion() {
-        return new Version("1.3");
+        return VERSION;
     }
 
     /**
@@ -291,5 +294,13 @@ public class Service
     public int getAPIVersion() {
         Request r = createGetRequest(getRootUrl() + "/version", ContentType.TEXT_PLAIN);
         return getIntResponse(r);
+    }
+
+    /**
+     * @return the server's release.
+     */
+    public String getRelease() {
+        Request r = createGetRequest(getRootUrl() + "/version/release", ContentType.TEXT_PLAIN);
+        return getStringResponse(r);
     }
 }
