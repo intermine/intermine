@@ -19,10 +19,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +57,7 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
-import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
-import org.intermine.api.search.SearchResult;
 import org.intermine.api.search.SearchResults;
 import org.intermine.api.search.SearchTarget;
 import org.intermine.api.search.TagFilter;
@@ -556,12 +552,10 @@ public class AjaxServices
                                                     List<String> tags, String filterText,
                                                     String filterAction, String callId) {
         try {
-            final ServletContext servletContext = WebContextFactory.get().getServletContext();
             final HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             final ProfileManager pm = im.getProfileManager();
             final Profile profile = SessionMethods.getProfile(session);
-            final TagManager tm = getTagManager();
             final SearchRepository userRepository = profile.getSearchRepository();
             final SearchTarget target = new SearchTarget(scope, type);
             final SearchResults results;
@@ -601,7 +595,7 @@ public class AjaxServices
 
             returnList.add(callId);
 
-            for (SearchResult sr: results) {
+            for (org.intermine.api.search.SearchResult sr: results) {
                 WebSearchable ws = sr.getItem();
                 if (SearchResults.isInvalidTemplate(ws)) {
                     continue;
@@ -681,10 +675,9 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         FriendlyMineManager fmm = im.getFriendlyMineManager();
         InterMineLinkGenerator linkGen = null;
-        Class<?> clazz
-            = TypeUtil.instantiate("org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
         Constructor<?> constructor;
         try {
+            Class<?> clazz = TypeUtil.instantiate("org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
             constructor = clazz.getConstructor(new Class[] {});
             linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
         } catch (Exception e) {
