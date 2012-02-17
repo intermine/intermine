@@ -140,7 +140,6 @@
     <inlinelist>
       <table path="synonyms.value" showInHeader="true" lineLength="100" />
       <table path="probeSets.primaryIdentifier" showLinksToObjects="true" />
-      <table path="pathways.name" showLinksToObjects="true" />
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
