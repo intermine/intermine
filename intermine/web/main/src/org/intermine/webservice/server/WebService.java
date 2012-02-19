@@ -335,7 +335,7 @@ public abstract class WebService
                 }
 
                 // Strip off the "Basic" part - but don't require it.
-                final String encoded = authString.substring(authString.indexOf("Basic ") + 1);
+                final String encoded = StringUtils.removeStart(authString, "Basic ");
                 final String decoded = new String(Base64.decodeBase64(encoded.getBytes()));
                 final String[] parts = decoded.split(":", 2);
                 if (parts.length != 2) {
