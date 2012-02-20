@@ -15,9 +15,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -38,6 +41,7 @@ import org.intermine.util.Util;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
+import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * For all friendly mines, query for pathways
@@ -70,7 +74,11 @@ public class MinePathwaysDisplayer extends ReportDisplayer
             mineToOrthologues = minePathwayCache.get(reportObject);
         } else {
             Map<String, Set<String>> orthologues = getLocalHomologues(gene);
-            FriendlyMineManager linkManager = im.getFriendlyMineManager();
+            HttpSession session = request.getSession();
+            ServletContext servletContext = session.getServletContext();
+            final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+            final FriendlyMineManager linkManager
+                = FriendlyMineManager.getInstance(im, webProperties);
             Collection<Mine> mines = linkManager.getFriendlyMines();
             mineToOrthologues = buildHomologueMap(mines, orthologues);
             minePathwayCache.put(reportObject, mineToOrthologues);
