@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,8 +35,6 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.Model;
 import org.intermine.util.TypeUtil;
-import org.intermine.web.logic.PortalHelper;
-import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
@@ -83,17 +82,7 @@ public class ConvertBagController extends TilesAction
         String bagType = imBag.getType();
         Set<AdditionalConverter> additionalConverters
             = bagQueryConfig.getAdditionalConverters(bagType);
-        Map<AdditionalConverter, Map<String, Integer>> customConverters = new HashMap();
-        if (additionalConverters != null) {
-            for (AdditionalConverter additionalConverter : additionalConverters) {
-                BagConverter bagConverter = PortalHelper.getBagConverter(
-                        im, webConfig, additionalConverter.getClassName());
-                Map<String, Integer> counts = bagConverter.getCounts(
-                        SessionMethods.getProfile(session), bagType, imBag.getContentsAsIds());
-                customConverters.put(additionalConverter, counts);
-            }
-        }
-        request.setAttribute("customConverters", customConverters);
+        request.setAttribute("customConverters", additionalConverters);
         request.setAttribute("conversionTypes", conversionTypes);
         request.setAttribute("fastaMap", fastaMap);
         return null;

@@ -11,10 +11,12 @@ package org.intermine.bio.web;
  */
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -24,9 +26,6 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.Mine;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -45,15 +44,13 @@ public class OtherMinesLinkController extends TilesAction
                                  HttpServletRequest request, HttpServletResponse response) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        InterMineObject o = (InterMineObject) request.getAttribute("object");
-        Model model = im.getModel();
-        Set<ClassDescriptor> classDescriptors = model.getClassDescriptorsForClass(o.getClass());
-        ClassDescriptor gene = model.getClassDescriptorByName("org.intermine.model.bio.Gene");
-        if (classDescriptors.contains(gene)) {
-            FriendlyMineManager linkManager = im.getFriendlyMineManager();
-            Collection<Mine> mines = linkManager.getFriendlyMines();
-            request.setAttribute("otherMines", mines);
-        }
+        final HttpSession session = request.getSession();
+        final ServletContext servletContext = session.getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager
+            = FriendlyMineManager.getInstance(im, webProperties);
+        Collection<Mine> mines = linkManager.getFriendlyMines();
+        request.setAttribute("otherMines", mines);
         return null;
     }
 

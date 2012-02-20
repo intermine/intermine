@@ -12,14 +12,19 @@ package org.intermine.api.mines;
 
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.webservice.client.core.ServiceFactory;
+import org.json.JSONObject;
 
 /**
  * Class to manage friendly mines
@@ -38,6 +43,8 @@ public class FriendlyMineManager
     private static Mine localMine = null;
     private static Properties webProperties;
     private static InterMineAPI im;
+    private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
+        = new CacheMap<MultiKey, Collection<JSONObject>>();
 
 /**
  * @param interMineAPI intermine api
@@ -97,8 +104,56 @@ public class FriendlyMineManager
         if (timeSinceLastRefresh > ONE_HOUR || !cached || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
-            FriendlyMineQueryRunner.updateReleaseVersion(mines);
+            for (Mine mine : mines.values()) {
+                String webserviceURL = mine.getUrl() + "/service";
+                ServiceFactory services = new ServiceFactory(webserviceURL);
+                String currentReleaseVersion = mine.getReleaseVersion();
+                String newReleaseVersion = null;
+                try {
+                    newReleaseVersion = services.getQueryService().getRelease();
+                } catch (Exception e) {
+                    final String msg = "Unable to retrieve release version for " + mine.getName();
+                    LOG.warn(msg);
+                    continue;
+                }
+
+                if (StringUtils.isEmpty(newReleaseVersion)
+                        && StringUtils.isEmpty(currentReleaseVersion)) {
+                    // didn't get a release version this time or last time
+                    final String msg = "Unable to retrieve release version for " + mine.getName();
+                    LOG.warn(msg);
+                    continue;
+                }
+
+                // if release version is different
+                if (StringUtils.isEmpty(newReleaseVersion)
+                        || StringUtils.isEmpty(currentReleaseVersion)
+                        || !newReleaseVersion.equals(currentReleaseVersion)
+                        || DEBUG) {
+
+                    // update release version
+                    mine.setReleaseVersion(newReleaseVersion);
+
+                    intermineLinkCache = new HashMap<MultiKey, Collection<JSONObject>>();
+                }
+            }
         }
+    }
+
+    /**
+     * @param key mine + identifier + organism
+     * @return homologues for this key combo
+     */
+    public Collection<JSONObject> getLink(MultiKey key) {
+        return intermineLinkCache.get(key);
+    }
+
+    /**
+     * @param key mine + identifier + organism
+     * @param results homologues for this key combo
+     */
+    public void addLink(MultiKey key, Collection<JSONObject> results) {
+        intermineLinkCache.put(key, results);
     }
 
     private Map<String, Mine> readConfig(InterMineAPI im, String localMineName) {

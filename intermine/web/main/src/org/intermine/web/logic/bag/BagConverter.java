@@ -16,7 +16,10 @@ import java.util.Map;
 
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.config.WebConfig;
 
@@ -69,11 +72,10 @@ public abstract class BagConverter
     * Method to return list of values and the counts of converted objects for that object
     * used for display on list analysis page.
     *
-    * @param profile user's profile
-    * @param bagType class of list
-    * @param bagList list of intermine object IDs
+    * @param os objectstore
+    * @param model data model
+    * @param bag intermine bag
     * @return map of values to counts
     */
-    public abstract Map<String, Integer> getCounts(Profile profile, String bagType,
-            List<Integer> bagList);
+    public abstract Map<String, String> getCounts(ObjectStore os, Model model, InterMineBag bag);
 }

@@ -11,9 +11,12 @@ package org.intermine.bio.web;
  */
 
 import java.util.Collection;
+import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionForm;
@@ -47,9 +50,7 @@ public class FriendlyMineLinkController  extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(ComponentContext context,
-            ActionMapping mapping,
-            ActionForm form,
+    public ActionForward execute(ComponentContext context, ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
         InterMineBag bag = (InterMineBag) request.getAttribute("bag");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
@@ -60,12 +61,16 @@ public class FriendlyMineLinkController  extends TilesAction
             organisms = StringUtil.join(organismsInBag, ",");
         }
         String identifierField = getIdentifierField(bag);
-        String identifierList = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "", identifierField);
+        String identifierList = BagHelper.getAttributesFromBag(bag, im.getObjectStore(), "",
+                identifierField);
         request.setAttribute("identifiers", identifierList);
         if (StringUtils.isNotEmpty(organisms)) {
             request.setAttribute("organisms", organisms);
         }
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Collection<Mine> mines = linkManager.getFriendlyMines();
         request.setAttribute("mines", mines);
         return null;

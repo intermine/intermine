@@ -34,7 +34,6 @@ import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.CacheMap;
 import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.web.displayer.InterMineLinkGenerator;
@@ -52,8 +51,6 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
 {
     private static final String WEBSERVICE_URL = "/service";
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
-    private static Map<MultiKey, Collection<JSONObject>> intermineLinkCache
-        = new CacheMap<MultiKey, Collection<JSONObject>>();
     private boolean debug = false;
     private static final String EMPTY = "\"\""; // webservices returns "" as empty
 
@@ -91,8 +88,9 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
         }
 
         MultiKey key = new MultiKey(mineName, primaryIdentifier, organismShortName);
-        if (intermineLinkCache.get(key) != null && !debug) {
-            return intermineLinkCache.get(key);
+        Collection<JSONObject> cachedResults = olm.getLink(key);
+        if (cachedResults != null && !debug) {
+            return cachedResults;
         }
 
         Mine mine = olm.getMine(mineName);
@@ -138,10 +136,12 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
             LOG.warn("error generating friendly mine links", e);
             return null;
         }
-        return resultsToJSON(key, genes);
+        Collection<JSONObject> results = resultsToJSON(key, genes);
+        olm.addLink(key, results);
+        return results;
     }
 
-    // TODO just get JSON back from webservice
+    // TODO just get JSON back from webservice instead
     private Collection<JSONObject> resultsToJSON(MultiKey key, Map<String, Set<String[]>> results) {
         Collection<JSONObject> organisms = new ArrayList<JSONObject>();
         // now we have a list of orthologues, add to JSON Organism object
@@ -167,7 +167,6 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
             }
             organisms.add(organism);
         }
-        intermineLinkCache.put(key, organisms);
         return organisms;
     }
 
