@@ -145,7 +145,7 @@
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
