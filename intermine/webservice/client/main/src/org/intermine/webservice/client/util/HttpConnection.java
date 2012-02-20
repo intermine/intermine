@@ -115,18 +115,19 @@ public class HttpConnection
     private void executeMethod() {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(timeout);
-        String url = null;
+        String url = request.getEncodedUrl();
         if (request.getType() == RequestType.GET) {
-            executedMethod = new GetMethod(request.getEncodedUrl());
+            executedMethod = new GetMethod(url);
         } else if (request.getType() == RequestType.DELETE) {
-            executedMethod = new DeleteMethod(request.getEncodedUrl());
+            executedMethod = new DeleteMethod(url);
         } else {
             PostMethod postMethod;
             if (request.getContentType() == ContentType.MULTI_PART_FORM) {
-                postMethod = new PostMethod(request.getEncodedUrl());
+                postMethod = new PostMethod(url);
                 setMultiPartPostEntity(postMethod, ((MultiPartRequest) request));
             } else {
-                postMethod = new PostMethod(request.getServiceUrl());
+                url = request.getServiceUrl();
+                postMethod = new PostMethod(url);
                 setPostMethodParameters(postMethod, request.getParameterMap());
             }
             executedMethod = postMethod;
