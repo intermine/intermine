@@ -31,22 +31,13 @@
 <c:if test="${orientation=='h'}">
 
   <div class="orthologues">
-  <c:forEach items="${customConverters}" var="entry">
-     <c:set var="converter" value="${entry.key}" />
-     <c:set var="results" value="${entry.value}" />
-
+  <c:forEach items="${customConverters}" var="converter">
     <h3 class="goog">${converter.title}</h3>
     <p>
-    <c:forEach items="${results}" var="resultsEntry">
-      <a href="#">${resultsEntry.key}</a> (${resultsEntry.value})
-    </c:forEach>
-    <html:select property="extraFieldValue" styleId="extraConstraintSelect" style="display:none;">
-        <c:forEach items="${results}" var="resultsEntry">
-         <html:option value="${resultsEntry.key}">${resultsEntry.key}</html:option>
-       </c:forEach>
-    </html:select>
-    &nbsp;
-    <html:submit property="convertToThing" style="display:none;">Convert</html:submit>
+    <script type="text/javascript" charset="utf-8">
+        getCustomConverterCounts('${bag.name}', '${converter.className}');
+    </script>
+    <span id="customConverter">&nbsp;</span>
     </p>
   </c:forEach>
   </div>
@@ -57,9 +48,9 @@
 <script type="text/javascript">
 (function() {
     jQuery('#convert-and-orthologues div.orthologues a').click(function() {
-      var t 	  = jQuery(this).text(),
+        var t = jQuery(this).text(),
         ortho = jQuery(this).closest('div.orthologues');
-      ortho.find('select option').each(function() {
+        ortho.find('select option').each(function() {
         if (jQuery(this).text() == t) {
           jQuery(this).attr('selected', 'selected');
           ortho.find('input[name="convertToThing"]').click();

@@ -42,6 +42,7 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.UnknownBagTypeException;
@@ -87,6 +88,8 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.UpgradeBagList;
@@ -628,26 +631,54 @@ public class AjaxServices
             Profile profile = SessionMethods.getProfile(session);
             BagManager bagManager = im.getBagManager();
             TemplateManager templateManager = im.getTemplateManager();
-
             WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
-
-            InterMineBag imBag = null;
             int count = 0;
-            try {
-                imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-                List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
-
-                PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
+            InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
+            PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
-                count = webResultsExecutor.count(pathQuery);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            count = webResultsExecutor.count(pathQuery);
             return count;
-        } catch (RuntimeException e) {
-            processException(e);
+        } catch (Exception e) {
+            LOG.error("failed to get type converted counts", e);
             return 0;
+        }
+    }
+
+    /**
+     * For a list and a converter, return types and related counts
+     *
+     * @param bagName the name of the bag
+     * @param converterName Java class that processes the data
+     * @return the number of converted objects
+     */
+    public static String getCustomConverterCounts(String bagName, String converterName) {
+        try {
+            final HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            final Profile profile = SessionMethods.getProfile(session);
+            final BagManager bagManager = im.getBagManager();
+            final InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            final ServletContext servletContext = WebContextFactory.get().getServletContext();
+            final ObjectStore os = im.getObjectStore();
+            final Model model =  os.getModel();
+            final WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
+            final BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
+                    converterName);
+            // should be ordered
+            Map<String, String> results = bagConverter.getCounts(os, model, imBag);
+            List<JSONObject> jsonResults = new LinkedList<JSONObject>();
+            for (Map.Entry<String, String> entry : results.entrySet()) {
+                JSONObject organism = new JSONObject();
+                organism.put("name", entry.getKey());
+                organism.put("count", entry.getValue());
+                jsonResults.add(organism);
+            }
+            return jsonResults.toString();
+        } catch (Exception e) {
+            LOG.error("failed to get custom converter counts", e);
+            return null;
         }
     }
 
@@ -671,13 +702,16 @@ public class AjaxServices
                 || StringUtils.isEmpty(identifiers)) {
             return null;
         }
-        HttpSession session = WebContextFactory.get().getSession();
+        final HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager fmm = im.getFriendlyMineManager();
+        final ServletContext servletContext = WebContextFactory.get().getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager fmm = FriendlyMineManager.getInstance(im, webProperties);
         InterMineLinkGenerator linkGen = null;
         Constructor<?> constructor;
         try {
-            Class<?> clazz = TypeUtil.instantiate("org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
+            Class<?> clazz = TypeUtil.instantiate(
+                    "org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
             constructor = clazz.getConstructor(new Class[] {});
             linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
         } catch (Exception e) {
@@ -706,7 +740,9 @@ public class AjaxServices
         }
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        final ServletContext servletContext = WebContextFactory.get().getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Mine mine = linkManager.getMine(mineName);
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
@@ -746,7 +782,9 @@ public class AjaxServices
         }
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        final ServletContext servletContext = WebContextFactory.get().getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Mine mine = linkManager.getMine("RatMine");
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
