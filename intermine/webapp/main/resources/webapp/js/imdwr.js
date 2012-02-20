@@ -670,12 +670,18 @@ function getConvertCountForBag(bagName, type, idname) {
     });
 }
 
+// I don't think this is used anymore
 function getURL(bagName, type, idname) {
     AjaxServices.getConvertCountForBag(bagName, type, function(count) {
         dwr.util.setValue(type + '_convertcount_'+idname, count)
     });
 }
 
+function getCustomConverterCounts(bagName, converter) {
+    AjaxServices.getCustomConverterCounts(bagName, converter, function(resultsArray) {
+        dwr.util.setValue('customConverter', resultsArray);
+    });
+}
 
 
 function saveToggleState(elementId) {

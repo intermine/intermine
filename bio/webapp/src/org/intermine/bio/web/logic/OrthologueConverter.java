@@ -13,20 +13,37 @@ package org.intermine.bio.web.logic;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.Model;
+import org.intermine.model.bio.Gene;
+import org.intermine.model.bio.Organism;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
@@ -38,7 +55,7 @@ import org.intermine.web.logic.config.WebConfig;
 public class OrthologueConverter extends BagConverter
 {
     private Model model;
-
+    private static final Logger LOG = Logger.getLogger(OrthologueConverter.class);
     /**
      * @param im intermine api
      * @param webConfig the webconfig
@@ -85,32 +102,65 @@ public class OrthologueConverter extends BagConverter
         return ids;
     }
 
-    /**
-     * runs the orthologue conversion pathquery and returns list of intermine IDs
-     * used in the portal
-     * @param profile the user's profile
-     * @param bagType not used, always gene
-     * @param bagList list of intermine object IDs
-     * @return list of intermine IDs
-     */
-    public Map<String, Integer> getCounts(Profile profile, String bagType, List<Integer> bagList) {
-        PathQuery pathQuery = constructPathQuery(null);
-        pathQuery.addConstraint(Constraints.inIds("Gene", bagList));
-        pathQuery.addView("Gene.homologues.homologue.organism.shortName");
-        pathQuery.addView("Gene.homologues.homologue.id");
-        pathQuery.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
-        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-        ExportResultsIterator it = executor.execute(pathQuery);
-        Map<String, Integer> results = new HashMap<String, Integer>();
-        while (it.hasNext()) {
-            List<ResultElement> row = it.next();
-            String homologue = (String) row.get(0).getField();
-            Integer count = results.get(homologue);
-            if (count == null) {
-                count = 0;
-            }
-            int plusOne = count.intValue();
-            results.put(homologue, new Integer(++plusOne));
+
+    public Map<String, String> getCounts(ObjectStore os, Model model, InterMineBag bag) {
+
+        QueryClass qcGene = new QueryClass(Gene.class);
+        QueryClass qcHomologue = null;
+        QueryClass qcOrganism = new QueryClass(Organism.class);
+        QueryClass qcHomologueGene = new QueryClass(Gene.class);
+
+        try {
+            qcHomologue = new QueryClass(Class.forName(model.getPackageName() + ".Homologue"));
+        } catch (ClassNotFoundException e) {
+            LOG.error("Error counting orthologues on list analysis page", e);
+            return null;
+        }
+
+        QueryField qfId = new QueryField(qcGene, "id");
+        QueryField qfOrganism = new QueryField(qcOrganism, "shortName");
+
+        QueryFunction objectCount = new QueryFunction();
+
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+
+        // genes in list
+        cs.addConstraint(new BagConstraint(qfId, ConstraintOp.IN, bag.getContentsAsIds()));
+
+        // gene.homologues
+        QueryCollectionReference qr = new QueryCollectionReference(qcGene, "homologues");
+        cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qcHomologue));
+
+        // gene.homologues.homologue
+        QueryObjectReference qor1 = new QueryObjectReference(qcHomologue, "homologue");
+        cs.addConstraint(new ContainsConstraint(qor1, ConstraintOp.CONTAINS, qcHomologueGene));
+
+        // gene.homologue.homologue.organism.shortName
+        QueryObjectReference qor2 = new QueryObjectReference(qcHomologueGene, "organism");
+        cs.addConstraint(new ContainsConstraint(qor2, ConstraintOp.CONTAINS, qcOrganism));
+
+        Query q = new Query();
+
+        q.addFrom(qcGene);
+        q.addFrom(qcOrganism);
+        q.addFrom(qcHomologue);
+        q.addFrom(qcHomologueGene);
+
+        q.setConstraint(cs);
+
+        q.addToSelect(qfOrganism);
+        q.addToSelect(objectCount);
+        q.addToGroupBy(qfOrganism);
+        q.addToOrderBy(qfOrganism);
+
+        Map<String, String> results = new LinkedHashMap<String, String>();
+        Results r = os.execute(q);
+        Iterator iter = r.iterator();
+        while (iter.hasNext()) {
+            ResultsRow rr =  (ResultsRow) iter.next();
+            String name = String.valueOf(rr.get(0));
+            String count = String.valueOf(rr.get(1));
+            results.put(name, count);
         }
         return results;
     }
