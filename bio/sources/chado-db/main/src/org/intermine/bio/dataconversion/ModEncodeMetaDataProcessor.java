@@ -231,10 +231,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         private String actualValue;
         private String type;
         private String name;
-        private String url;      // in particular, it stores the dccid of the related sub needed for
-        // linking to a result file
+        private String url;    // in particular, it stores the dccid of the related sub needed for
+                               // linking to a result file
         // the list of applied protocols for which this data item is an input
         private List<Integer> nextAppliedProtocols = new ArrayList<Integer>();
+        // the list of applied protocols for which this data item is an output
         private List<Integer> previousAppliedProtocols = new ArrayList<Integer>();
 
         private AppliedData() {
@@ -710,6 +711,20 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 }
             }
             count++;
+//            if (appliedDataMap.get(dataId) != null) {
+//
+//                if (appliedDataMap.get(dataId).value != null) {
+//                    LOG.info("EEFF DAG data: " + appliedDataMap.get(dataId).value);
+//                }
+//                if (!appliedDataMap.get(dataId).nextAppliedProtocols.isEmpty()) {
+//                    LOG.info("EEFF DAG nap: " + dataId + "|"
+//                            + appliedDataMap.get(dataId).nextAppliedProtocols);
+//                }
+//                if (!appliedDataMap.get(dataId).previousAppliedProtocols.isEmpty()) {
+//                    LOG.info("EEFF DAG pap: " + dataId + "||"
+//                            + appliedDataMap.get(dataId).previousAppliedProtocols);
+//                }
+//            }
         }
         LOG.info("created " + appliedProtocolMap.size()
                 + "(" + count + " applied data points) DAG nodes (= applied protocols) in map");
@@ -824,7 +839,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer currentId = pap.next();
             // add the DAG level here only if these are the first AP
             if (step == 1) {
-                    appliedProtocolMap.get(currentId).step = step;
+                appliedProtocolMap.get(currentId).step = step;
             }
             outputs.addAll(appliedProtocolMap.get(currentId).outputs);
             Integer submissionId = appliedProtocolMap.get(currentId).submissionId;
@@ -1104,13 +1119,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             exp.setAttribute("name", name);
 
             // find experiment category from map (take first available)
+            // use the commented lines to get a report of assignments
             String category =  null;
             for (Integer ii : expSubMap.get(name)) {
+//                String dccId = dccIdMap.get(ii);
                 category = submissionExpCatMap.get(ii);
                 if (category != null && !category.isEmpty()) {
+//                    LOG.info("ECS " + name + "|" + dccId + ": " + category);
                     exp.setAttribute("category", category);
                     break;
-                }
+                } //else {
+                    //LOG.warn("ECS " + name + "|" + dccId + ": no category");
+                //}
             }
 
             String project = expProMap.get(name);
@@ -1815,6 +1835,99 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      *    DATA ATTRIBUTES
      * =====================
      */
+    private void processAppliedDataAttributesNEW(Connection connection)
+        throws SQLException, ObjectStoreException {
+        // attempts to collate attributes
+        // TODO check!
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
+
+        ResultSet res = getAppliedDataAttributes(connection);
+        int count = 0;
+        Integer previousDataId = 0;
+        String previousName = null;
+        String value = null;
+        String type = null;
+        while (res.next()) {
+            Integer dataId = new Integer(res.getInt("data_id"));
+            // check if not belonging to a deleted sub
+            // better way?
+            Integer submissionId = dataSubmissionMap.get(dataId);
+            if (submissionId == null || deletedSubMap.containsKey(submissionId)) {
+                continue;
+            }
+            String name  = res.getString("heading");
+
+//            LOG.info("DA " + dataId + ": " + name);
+
+            if (previousDataId == 0) { //first pass
+                value = res.getString("value");
+                type  = res.getString("name");
+                previousDataId = dataId;
+                previousName = name;
+                LOG.info("DA0 " + dataId + ": " + name + "|" + value);
+                continue;
+            }
+
+            if (dataId > previousDataId) {
+                Item dataAttribute = storeDataAttribute(value, type, previousDataId, previousName);
+                value = res.getString("value");
+                type  = res.getString("name");
+                count++;
+                previousDataId = dataId;
+                previousName = name;
+                LOG.info("DA1 new: " + previousDataId + ": " + previousName + "|" + value);
+                continue;
+            }
+
+            if (!name.equalsIgnoreCase(previousName)) {
+                Item dataAttribute = storeDataAttribute(value, type, dataId, previousName);
+//                LOG.info("DA2 store: " + dataId + ": " + previousName + "|" + value);
+                count ++;
+                value = res.getString("value");
+                previousName = name;
+                LOG.info("DA2 new: " + dataId + ": " + previousName + "|" + value);
+            } else {
+                value = value + ", " + res.getString("value");
+            }
+            type  = res.getString("name");
+
+            previousDataId = dataId;
+            if (res.isLast()) {
+                Item dataAttribute = storeDataAttribute(value, type, dataId, name);
+                count++;
+            }
+        }
+        LOG.info("created " + count + " data attributes");
+        res.close();
+        LOG.info("PROCESS TIME data attributes: " + (System.currentTimeMillis() - bT) + " ms");
+    }
+
+    /**
+     * @param value
+     * @param type
+     * @param dataId
+     * @param name
+     * @return
+     * @throws ObjectStoreException
+     */
+    private Item storeDataAttribute(String value, String type, Integer dataId,
+            String name) throws ObjectStoreException {
+        Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
+        if (name != null && !"".equals(name)) {
+            dataAttribute.setAttribute("name", name);
+        }
+        if (!StringUtils.isEmpty(value)) {
+            dataAttribute.setAttribute("value", value);
+        }
+        if (!StringUtils.isEmpty(type)) {
+            dataAttribute.setAttribute("type", type);
+        }
+        // setting references to SubmissionData
+        dataAttribute.setReference("submissionData", appliedDataMap.get(dataId).itemIdentifier);
+        getChadoDBConverter().store(dataAttribute);
+        return dataAttribute;
+    }
+
     private void processAppliedDataAttributes(Connection connection)
         throws SQLException, ObjectStoreException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
@@ -1833,19 +1946,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String name  = res.getString("heading");
             String value = res.getString("value");
             String type  = res.getString("name");
-            Item dataAttribute = getChadoDBConverter().createItem("SubmissionDataAttribute");
-            if (name != null && !"".equals(name)) {
-                dataAttribute.setAttribute("name", name);
-            }
-            if (!StringUtils.isEmpty(value)) {
-                dataAttribute.setAttribute("value", value);
-            }
-            if (!StringUtils.isEmpty(type)) {
-                dataAttribute.setAttribute("type", type);
-            }
-            // setting references to SubmissionData
-            dataAttribute.setReference("submissionData", appliedDataMap.get(dataId).itemIdentifier);
-            getChadoDBConverter().store(dataAttribute);
+            Item dataAttribute = storeDataAttribute(value, type, dataId, name);
             count++;
         }
         LOG.info("created " + count + " data attributes");
@@ -1957,6 +2058,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
                 attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
+                LOG.info("EEFF " + attValue + "|" + wikiPageUrl);
             }
 
             // we are starting a new data row
@@ -2019,7 +2121,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 continue;
             }
             Set<String> exFactorNames = unifyFactorNames(ef.efNames);
-            LOG.debug("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());
+            LOG.info("PROPERTIES " + dccId + " typeToProp keys: " + typeToProp.keySet());
             List<Item> allPropertyItems = new ArrayList<Item>();
 
             // DEVELOPMENTAL STAGE
@@ -2034,8 +2136,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             "tissue source.developmental stage",
                             "cell line.developmental stage",
                             "cell id.developmental stage"
+                            //, "RNA extract.Cell Type"
                         }));
             }
+
             if (devStageItems.isEmpty()) {
                 addNotApplicable(devStageItems, "DevelopmentalStage", "developmental stage");
             }
@@ -2265,23 +2369,27 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         subProperty.setAttribute("name", NA_PROP);
         items.add(subProperty);
         getChadoDBConverter().store(subProperty);
-        LOG.info("NANA " + propName + ": " + items);
     }
 
     // Traverse DAG following previous applied protocol links to build a list of all AppliedData
     private void findAppliedProtocolsAndDataFromEarlierInDag(Integer startDataId,
             List<AppliedData> foundAppliedData, List<AppliedProtocol> foundAppliedProtocols) {
         AppliedData aData = appliedDataMap.get(startDataId);
+
+        LOG.info("EEFF earlierinDAG: " + startDataId + "|" + aData.actualValue);
+
         if (foundAppliedData != null) {
             foundAppliedData.add(aData);
         }
 
         for (Integer previousAppliedProtocolId : aData.previousAppliedProtocols) {
             AppliedProtocol ap = appliedProtocolMap.get(previousAppliedProtocolId);
+            LOG.info("EEFF earlierinDAG get proto " + ap.inputs + "|" + ap.outputs);
             if (foundAppliedProtocols != null) {
                 foundAppliedProtocols.add(ap);
             }
             for (Integer previousDataId : ap.inputs) {
+                LOG.info("EEFF earlierinDAG get proto2 " + ap.inputs + "|" + ap.outputs);
                 findAppliedProtocolsAndDataFromEarlierInDag(previousDataId, foundAppliedData,
                         foundAppliedProtocols);
             }
@@ -2426,10 +2534,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Map<String, SubmissionProperty> props,
             Map<Integer, List<SubmissionReference>> submissionRefs) {
 
+
         for (Map.Entry<Integer, List<SubmissionReference>> entry : submissionRefs.entrySet()) {
             Integer submissionId = entry.getKey();
-
             List<SubmissionReference> lref = entry.getValue();
+
             Iterator<SubmissionReference> i = lref.iterator();
             while (i.hasNext()) {
                 SubmissionReference ref = i.next();
@@ -2438,6 +2547,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     String possibleWikiUrl = aData.actualValue;
                     if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
                         SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
+                        LOG.info("EEFF from referenced sub: " + propFromReferencedSub.details);
                         addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
                     }
                 }
@@ -2468,17 +2578,18 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         for (AppliedData aData : appliedDataMap.values()) {
             String currentDataValue = aData.value;
             Integer currentDataSubId = dataSubmissionMap.get(aData.dataId);
-
             // added check that referenced and referring are not the same.
             // TODO check
-            if (refDataValue.equals(currentDataValue) && refSubId.equals(currentDataSubId)
-                    && !refSubId.equals(currentDataSubId)) {
+            if (refDataValue.equals(currentDataValue)
+                    && refSubId.equals(currentDataSubId)) {
                 LOG.info("Found a matching data value: " + currentDataValue + " in sub "
                         + dccIdMap.get(currentDataSubId) + " for referenced sub "
                         + dccIdMap.get(refSubId));
 
+//                Integer refDataId = getDataFromRefSub(currentDataValue,refSubId);
                 Integer foundDataId = aData.dataId;
 
+                LOG.info("EEFF referenced data_id: " + foundDataId + "|" + aData.actualValue);
                 findAppliedProtocolsAndDataFromEarlierInDag(foundDataId, foundAppliedData,
                         foundAppliedProtocols);
             }
@@ -2805,6 +2916,77 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return items;
     }
+
+
+    private List<Item> lookForAttributesInOtherWikiPagesNEW(String dccId, String clsName,
+            Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor)
+        throws ObjectStoreException {
+
+        List<Item> items = new ArrayList<Item>();
+        for (String typeProp : lookFor) {
+            if (typeProp.indexOf(".") > 0) {
+                String[] bits = StringUtils.split(typeProp, '.');
+
+                String type = bits[0];
+                String propName = bits[1];
+                LOG.info("EEFFinotherW: " + type + "|" + propName);
+                if (typeToProp.containsKey(type)) {
+                    for (SubmissionProperty subProp : typeToProp.get(type)) {
+                        LOG.info("EEFFinotherWo: " + subProp + "|" + propName);
+
+                        if (subProp.details.containsKey(propName)) {
+                            int count = 0;
+                            int max = subProp.details.get(propName).size();
+                            StringBuffer compoundValue = new StringBuffer();
+                            for (String value : subProp.details.get(propName)) {
+                                count++;
+                                if (count > 1) {
+                                    compoundValue.append(", ");
+                                }
+                                if (count < max) {
+                                    compoundValue.append(value);
+                                } else {
+                                    LOG.info("EEFFinotherW " + max + ": " + count + "|" + value
+                                            + "||" + compoundValue.toString());
+                                    compoundValue.append(value);
+                                    items.add(createNonWikiSubmissionPropertyItem(dccId, clsName,
+                                            getPreferredSynonym(propName),
+                                            correctAttrValue(compoundValue.toString())));
+                                    compoundValue.setLength(0);
+                                }
+                            }
+                        }
+                    }
+                    if (!items.isEmpty()) {
+                        break;
+                    }
+                }
+            } else {
+                // no attribute type given so use the data.value (SubmissionProperty.wikiPageUrl)
+                // which probably won't be a wiki page
+                if (typeToProp.containsKey(typeProp)) {
+                    LOG.info("EEFFinotherWelse: " + typeProp);
+                    for (SubmissionProperty subProp : typeToProp.get(typeProp)) {
+
+                        String value = subProp.wikiPageUrl;
+                        LOG.info("EEFFinotherWelsefor: " + value);
+
+                        // This is an ugly special case to deal with 'exposure time/24 hours'
+                        if (subProp.details.containsKey("Unit")) {
+                            String unit = subProp.details.get("Unit").get(0);
+                            value = value + " " + unit + (unit.endsWith("s") ? "" : "s");
+                        }
+
+                        items.add(createNonWikiSubmissionPropertyItem(dccId, clsName, subProp.type,
+                                correctAttrValue(value)));
+                    }
+                }
+            }
+        }
+        return items;
+    }
+
+
 
     private String correctAttrValue(String value) {
         if (value == null) {
