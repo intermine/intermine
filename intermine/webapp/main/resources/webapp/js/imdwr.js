@@ -677,9 +677,9 @@ function getURL(bagName, type, idname) {
     });
 }
 
-function getCustomConverterCounts(bagName, converter) {
+function getCustomConverterCounts(bagName, converter, callback) {
     AjaxServices.getCustomConverterCounts(bagName, converter, function(resultsArray) {
-        dwr.util.setValue('customConverter', resultsArray);
+      callback.call(window, resultsArray);
     });
 }
 
@@ -737,7 +737,7 @@ function validateBagOperations(formName, operation) {
             // if the list they are trying to delete is in use, prompt for response
             // then delete list if the user clicks OK
             if (operation == 'delete' && errMsg.substring(0,33) == msgBagInUse) {
-                Boxy.confirm(errMsg, function() { 
+                Boxy.confirm(errMsg, function() {
                     frm.listsButton.value = operation;
                     frm.submit();
                 }, {title: 'Warning', modal: false});
