@@ -109,7 +109,8 @@ public class ListsService extends AvailableListsService
         }
 
         final PathQuery pathQuery = new PathQuery(model);
-        pathQuery.addConstraint(Constraints.lookup(input.getType(), input.getPublicId(), null));
+        pathQuery.addConstraint(Constraints.lookup(input.getType(),
+                input.getPublicId(), input.getExtraValue()));
         pathQuery.addViews(getViewAccordingClasskeys(request, input.getType()));
 
         final Profile profile = SessionMethods.getProfile(request.getSession());
