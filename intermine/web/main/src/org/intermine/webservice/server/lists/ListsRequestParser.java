@@ -75,6 +75,7 @@ public class ListsRequestParser
                 throw new BadRequestException("invalid parameter: " + MINE_ID_PARAMETER);
             }
         }
+        ret.setExtraValue(request.getParameter("extraValue"));
         return ret;
     }
 }
