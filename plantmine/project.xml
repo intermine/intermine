@@ -50,6 +50,9 @@
      <property name="organism" value="3702"/>
      <property name="sources" value="Ensembl"/>
     </source>
+    <source name="ensembl-gwas-db" type="ensembl-gwas-db"> 
+      <property name="source.db.name" value="ensembl.3702.variation"/> 
+    </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
     </source>
