@@ -709,6 +709,12 @@
                      placement="summary"
                      types="Protein"/>
 
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.FlyBaseExpressionDisplayer"
+                     jspName="model/flybaseExpressionDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
+
   </reportdisplayers>
 
    <widgets>
