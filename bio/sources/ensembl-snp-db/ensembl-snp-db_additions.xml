@@ -6,6 +6,8 @@
      <attribute name="uniqueLocation" type="java.lang.Boolean"/>
      <collection name="validations" referenced-type="ValidationState" />
      <collection name="consequences" referenced-type="Consequence"/>
+     <collection name="strainGenotypes" referenced-type="StrainGenotype" reverse-reference="snp"/>
+     <collection name="populationGenotypes" referenced-type="PopulationGenotype" reverse-reference="snp"/>
      <reference name="source" referenced-type="Source"/>
    </class>
    <class name="ValidationState" is-interface="true">
@@ -27,4 +29,25 @@
   <class name="Source" is-interface="true">
      <attribute name="name" type="java.lang.String"/>
    </class>
+    <class name="Strain" is-interface="true">
+      <attribute name="name" type="java.lang.String"/>
+      <collection name="genotypes" referenced-type="StrainGenotype" reverse-reference="strain"/>
+    </class>
+    <class name="Population" is-interface="true">
+      <attribute name="name" type="java.lang.String"/>
+      <attribute name="description" type="java.lang.String"/>
+      <collection name="genotypes" referenced-type="PopulationGenotype" reverse-reference="population"/>
+    </class>
+    <class name="StrainGenotype" extends="java.lang.Object" is-interface="false">
+      <attribute name="allele1" type="java.lang.String"/>
+      <attribute name="allele2" type="java.lang.String"/>
+      <reference name="snp" referenced-type="SNP" reverse-reference="strainGenotypes"/>
+      <reference name="strain" referenced-type="Strain" reverse-reference="genotypes"/>
+    </class>
+    <class name="PopulationGenotype" extends="java.lang.Object" is-interface="false">
+      <attribute name="allele" type="java.lang.String"/>
+      <attribute name="frequency" type="java.lang.Double"/>
+      <reference name="snp" referenced-type="SNP" reverse-reference="populationGenotypes"/>
+      <reference name="population" referenced-type="Population" reverse-reference="genotypes"/>
+    </class>
 </classes>
