@@ -8,7 +8,7 @@
   <sources>
 
     <source name="plant-identifiers" type="plant-identifiers">
-     <property name="src.data.dir" location="/micklem/data/users/rns/plant/genes-ids/"/>
+     <property name="src.data.dir" location="/micklem/data/plantmine/gene-identifiers/current"/>
      </source>
     <source name="ensembl-plant" type="ensembl" dump="true">
      <property name="src.data.dir" location="/micklem/data/ensembl/arabidopsis_thaliana/current_core"/>
@@ -16,7 +16,7 @@
     </source>
     <source name="uniprot" type="uniprot" dump="true">
       <property name="uniprot.organisms" value="3702"/>
-      <property name="src.data.dir" location="/micklem/data/plantmine/uniprot"/>
+      <property name="src.data.dir" location="/micklem/data/plantmine/uniprot/current"/>
       <property name="createinterpro" value="true"/>
       <property name="creatego" value="true"/>
     </source>
@@ -37,7 +37,7 @@
     </source>
    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/micklem/data/users/rns/plant/go-annotation/"/>
+      <property name="src.data.dir" location="/micklem/data/plantmine/go-annotation/current"/>
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
