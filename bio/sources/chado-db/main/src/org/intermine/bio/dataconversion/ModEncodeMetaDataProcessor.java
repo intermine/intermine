@@ -581,24 +581,28 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * @throws SQLException
      * @throws ObjectStoreException
      */
+
     private void processDag(Connection connection)
         throws SQLException, ObjectStoreException {
-        long bT = System.currentTimeMillis();     // to monitor time spent in the process
+        long bT = System.currentTimeMillis();          // to monitor time spent in the process
 
         ResultSet res = getDAG(connection);
         AppliedProtocol node = new AppliedProtocol();
         AppliedData branch = null;
         Integer count = new Integer(0);
-        Integer actualSubmissionId = new Integer(0);      // to store the experiment id (see below)
-
+        Integer actualSubmissionId = new Integer(0);  // to store the experiment id (see below)
         Integer previousAppliedProtocolId = new Integer(0);
         boolean isADeletedSub = false;
+
         while (res.next()) {
             Integer submissionId = new Integer(res.getInt("experiment_id"));
             Integer protocolId = new Integer(res.getInt("protocol_id"));
             Integer appliedProtocolId = new Integer(res.getInt("applied_protocol_id"));
             Integer dataId = new Integer(res.getInt("data_id"));
             String direction = res.getString("direction");
+
+            LOG.debug("DAG: " + submissionId + " p:" + protocolId + " ap:" + appliedProtocolId
+                    + " d:" + dataId + " | " + direction);
 
             // the results are ordered, first ap have a subId
             // if we find a deleted sub, we know that subsequent records with null
@@ -629,10 +633,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // could use > (order by apid, apdataid, direction)
             // NB: using isLast() is expensive
             if (!appliedProtocolId.equals(previousAppliedProtocolId) || res.isLast()) {
-
                 // the submissionId != null for the first applied protocol
                 if (submissionId > 0) {
                     firstAppliedProtocols.add(appliedProtocolId);
+                    LOG.debug("DAG fap subId:" + submissionId + " apID: " + appliedProtocolId);
                     // set actual submission id
                     // we can either be at a first applied protocol (submissionId > 0)..
                     actualSubmissionId = submissionId;
@@ -665,18 +669,19 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     // add this applied protocol to the list of nextAppliedProtocols
                     branch.nextAppliedProtocols.add(appliedProtocolId);
                     // ..and update the map
-                    if (appliedDataMap.containsKey(dataId)) {
-                        appliedDataMap.remove(dataId);
-                    }
-                    appliedDataMap.put(dataId, branch);
+                    updateAppliedDataMap(branch, dataId);
                     // .. and add the dataId to the list of input Data for this applied protocol
                     newNode.inputs.add(dataId);
+                    mapSubmissionAndData(submissionId, dataId); //***
+
                 } else if (direction.startsWith("out")) {
                     // add the dataId to the list of output Data for this applied protocol:
                     // it will be used to link to the next set of applied protocols
                     newNode.outputs.add(dataId);
-                    if (!"0".equals(previousAppliedProtocolId)) {
+                    if (previousAppliedProtocolId > 0) {
                         branch.previousAppliedProtocols.add(previousAppliedProtocolId);
+                        updateAppliedDataMap(branch, dataId); //***
+                        mapSubmissionAndData(submissionId, dataId); //****
                     }
                 } else {
                     // there is some problem with the strings 'input' or 'output'
@@ -686,8 +691,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // for the new round..
                 node = newNode;
                 previousAppliedProtocolId = appliedProtocolId;
+
             } else {
                 // keep feeding IN et OUT
+                LOG.debug("DAG keep: current->" + appliedProtocolId + " prev->"
+                        + previousAppliedProtocolId);
                 if (direction.startsWith("in")) {
                     node.inputs.add(dataId);
                     if (submissionId > 0) {
@@ -696,35 +704,17 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     }
                     // as above
                     branch.nextAppliedProtocols.add(appliedProtocolId);
-                    if (!appliedDataMap.containsKey(dataId)) {
-                        appliedDataMap.put(dataId, branch);
-                    } else {
-                        appliedDataMap.remove(dataId);
-                        appliedDataMap.put(dataId, branch);
-                    }
+                    updateAppliedDataMap(branch, dataId);
                 } else if (direction.startsWith("out")) {
                     node.outputs.add(dataId);
-                    branch.previousAppliedProtocols.add(previousAppliedProtocolId);
+                    branch.previousAppliedProtocols.add(appliedProtocolId);
+                    updateAppliedDataMap(branch, dataId); //***
                 } else {
                     throw new IllegalArgumentException("Data direction not valid for dataId: "
                             + dataId + "|" + direction + "|");
                 }
             }
             count++;
-//            if (appliedDataMap.get(dataId) != null) {
-//
-//                if (appliedDataMap.get(dataId).value != null) {
-//                    LOG.info("EEFF DAG data: " + appliedDataMap.get(dataId).value);
-//                }
-//                if (!appliedDataMap.get(dataId).nextAppliedProtocols.isEmpty()) {
-//                    LOG.info("EEFF DAG nap: " + dataId + "|"
-//                            + appliedDataMap.get(dataId).nextAppliedProtocols);
-//                }
-//                if (!appliedDataMap.get(dataId).previousAppliedProtocols.isEmpty()) {
-//                    LOG.info("EEFF DAG pap: " + dataId + "||"
-//                            + appliedDataMap.get(dataId).previousAppliedProtocols);
-//                }
-//            }
         }
         LOG.info("created " + appliedProtocolMap.size()
                 + "(" + count + " applied data points) DAG nodes (= applied protocols) in map");
@@ -738,7 +728,40 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         LOG.info("PROCESS TIME DAG: " + (System.currentTimeMillis() - bT) + " ms");
     }
 
+
     /**
+     * @param newAD
+     * @param dataId
+     */
+    private void updateAppliedDataMap(AppliedData newAD, Integer dataId) {
+        if (appliedDataMap.containsKey(dataId)) {
+            appliedDataMap.remove(dataId);
+        }
+        appliedDataMap.put(dataId, newAD);
+    }
+
+    /**
+     * @param newAD
+     * @param dataId
+     */
+    private void updateADMap(AppliedData newAD, Integer dataId, Integer intermineObjectId) {
+        if (appliedDataMap.containsKey(dataId)) {
+//            LOG.info("UPADdetails: " + dataId);
+            AppliedData datum = appliedDataMap.get(dataId);
+            datum.intermineObjectId = newAD.intermineObjectId;
+            datum.itemIdentifier = newAD.itemIdentifier;
+            datum.value = newAD.value;
+            datum.actualValue = newAD.actualValue;
+            datum.dataId = dataId;
+            datum.type = newAD.type;
+            datum.name = newAD.name;
+            datum.url = newAD.url;
+//            appliedDataMap.put(dataId, datum);
+        } else {
+            appliedDataMap.put(dataId, newAD);
+        }
+    }
+   /**
      * to set the step attribute for the applied protocols
      */
     private void setAppliedProtocolSteps(Connection connection)
@@ -751,8 +774,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             } else {
                 AppliedProtocol ap = appliedProtocolMap.get(appliedProtocolId);
                 LOG.warn("AppliedProtocol.step not set for chado id: " + appliedProtocolId
-                        + " sub " + ap.submissionId + " inputs " + ap.inputs + " outputs "
-                        + ap.outputs);
+                        + " sub " + dccIdMap.get(ap.submissionId) + " inputs " + ap.inputs
+                        + " outputs " + ap.outputs);
             }
         }
     }
@@ -855,7 +878,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     if (appliedDataMap.get(currentOD).nextAppliedProtocols.isEmpty()) {
                         // this is a leaf!!
                         // TODO check this
-                        LOG.info("XXXL " + submissionId);
+                        LOG.info("DAG leaf: " + submissionId + " dataId: " + currentOD);
                     }
                 }
 
@@ -1748,7 +1771,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             aData.type = heading;
             aData.name = name;
             aData.url = url;
-            appliedDataMap.put(dataId, aData);            count++;
+            updateADMap(aData,dataId,intermineObjectId);
+            //appliedDataMap.put(dataId, aData);
+            count++;
         }
         LOG.info("created " + count + " SubmissionData");
         res.close();
@@ -2006,11 +2031,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private void processSubmissionProperties(Connection connection) throws SQLException,
     IOException, ObjectStoreException {
         long bT = System.currentTimeMillis();     // to monitor time spent in the process
-
-//        final String ANTIBOY_SP = "antibody";
-//        final String CELLLINE_SP = "cell line";
-//        final String ARRAY_SP = "array";
-//        final String DEVSTAGE_SP = "developmental stage";
 
         ResultSet res = getAppliedDataAll(connection);
         final String comma = ",";
@@ -2294,8 +2314,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private String checkRefSub(String wikiPageUrl, String attValue,
             Integer submissionId, String dccId) {
         if (attValue.indexOf(":") > 0) {
-            attValue = DCC_PREFIX + attValue.substring(0, attValue.indexOf(":"));
+            attValue = attValue.substring(0, attValue.indexOf(":"));
         }
+        attValue = DCC_PREFIX + attValue;
         Integer referencedSubId = getSubmissionIdFromDccId(attValue);
         if (referencedSubId != null) {
             SubmissionReference subRef =
@@ -2376,7 +2397,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<AppliedData> foundAppliedData, List<AppliedProtocol> foundAppliedProtocols) {
         AppliedData aData = appliedDataMap.get(startDataId);
 
-        LOG.info("EEFF earlierinDAG: " + startDataId + "|" + aData.actualValue);
+        LOG.info("EEFF earlierinDAG: " + startDataId + "|" + aData.actualValue + " ->pap: "
+                + aData.previousAppliedProtocols);
 
         if (foundAppliedData != null) {
             foundAppliedData.add(aData);
@@ -2384,7 +2406,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         for (Integer previousAppliedProtocolId : aData.previousAppliedProtocols) {
             AppliedProtocol ap = appliedProtocolMap.get(previousAppliedProtocolId);
-            LOG.info("EEFF earlierinDAG get proto " + ap.inputs + "|" + ap.outputs);
+            LOG.info("EEFF earlierinDAG get proto " + previousAppliedProtocolId + ": in "
+                    + ap.inputs + "| out " + ap.outputs);
             if (foundAppliedProtocols != null) {
                 foundAppliedProtocols.add(ap);
             }
@@ -2546,9 +2569,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 for (AppliedData aData : refAppliedData) {
                     String possibleWikiUrl = aData.actualValue;
                     if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
+                        LOG.info("EEFF possible wikiurl: " + possibleWikiUrl);
                         SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
-                        LOG.info("EEFF from referenced sub: " + propFromReferencedSub.details);
-                        addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
+                        if (propFromReferencedSub != null) { //??
+                            addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
+                            LOG.info("EEFF from referenced sub: " + propFromReferencedSub.details);
+                        }
                     }
                 }
             }
@@ -3332,10 +3358,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // note: the map should contain only live submissions
         for (Integer submissionId : submissionDataMap.keySet()) {
             for (Integer dataId : submissionDataMap.get(submissionId)) {
+                LOG.debug("DAG subRef subid: " + submissionId + " dataId: " + dataId);
                 if (appliedDataMap.get(dataId).intermineObjectId == null) {
                     continue;
                 }
-
                 Reference reference = new Reference();
                 reference.setName("submission");
                 reference.setRefId(submissionMap.get(submissionId).itemIdentifier);
@@ -3876,7 +3902,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 for (Integer outputId : ap.outputs) {
                     collection.addRefId(appliedDataMap.get(outputId).itemIdentifier);
                 }
+                if (collection.getRefIds().contains(null)) {
+                    LOG.warn("Applied Protocol " + thisAP + " has null AD.itemidentifiers");
+                    continue;
+                }
                 getChadoDBConverter().store(collection, appliedProtocolIdMap.get(thisAP));
+
             }
         }
         LOG.info("TIME setting DAG references: " + (System.currentTimeMillis() - bT) + " ms");
@@ -3990,7 +4021,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         debugMap .put(i.getIdentifier(), i.getClassName());
     }
-
 
     private void mapSubmissionAndData(Integer submissionId, Integer dataId) {
         Util.addToListMap(submissionDataMap, submissionId, dataId);
