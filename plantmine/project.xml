@@ -24,6 +24,11 @@
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="src.data.dir.includes" value="keywlist.xml"/>
     </source>
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/micklem/data/plantmine/biogrid/"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+      <property name="biogrid.organisms" value="3702"/>
+    </source>
     <source name="interpro" type="interpro">
       <property name="src.data.dir" location="/micklem/data/interpro/current"/>
     </source>
