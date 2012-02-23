@@ -121,8 +121,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         chrNames.add("Pt");
 
         for (String chrName : chrNames) {
-            //process(connection, chrName);
-            //createSynonyms(connection, chrName);
+            process(connection, chrName);
+            createSynonyms(connection, chrName);
         }
         storeFinalSnps();
 
@@ -411,7 +411,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             strainIds.put(strainId, storedStrainId);
 
             // for each strain query and store genotypes
-            //processGenotypesForStrain(connection, strainId, strain.getIdentifier());
+            processGenotypesForStrain(connection, strainId, strain.getIdentifier());
 
             strainCounter++;
             if (strainCounter >= 100) {
@@ -478,7 +478,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             popIdentifiers.put(popId, pop.getIdentifier());
 
             // for each population query and store genotypes
-            //processAllelesForPopulation(connection, popId, pop.getIdentifier());
+            processAllelesForPopulation(connection, popId, pop.getIdentifier());
         }
     }
 
@@ -540,14 +540,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
             strainPopIdentifiers.add(popIdentifiers.get(popId));
         }
-        int counter = 0;
-        System.out.println("StringIds: " + strainIds.size() + " " + strainIds);
         for (Integer strainId : strainToPopulation.keySet()) {
             ReferenceList populations = new ReferenceList("populations",
                     strainToPopulation.get(strainId));
-            counter++;
-            LOG.warn("" + counter + " Storing population identifiers: " + populations + " for id: " + strainIds.get(strainId));
-            System.out.println("" + counter + "Storing population identifiers: " + populations + " for id: " + strainIds.get(strainId));
             if (strainIds.containsKey(strainId)) {
                 store(populations, strainIds.get(strainId));
             }
@@ -555,7 +550,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     }
 
     private ResultSet queryStrainPopulationReferences(Connection connection)
-    throws SQLException {
+        throws SQLException {
         String query = "SELECT individual_sample_id, population_sample_id"
             + " FROM individual_population";
         LOG.warn(query);
