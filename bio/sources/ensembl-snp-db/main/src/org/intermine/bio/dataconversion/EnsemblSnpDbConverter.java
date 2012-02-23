@@ -413,10 +413,10 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             // for each strain query and store genotypes
             processGenotypesForStrain(connection, strainId, strain.getIdentifier());
 
-            strainCounter++;
-            if (strainCounter >= 100) {
-                break;
-            }
+            //strainCounter++;
+            //if (strainCounter >= 100) {
+            //    break;
+            //}
         }
     }
 
