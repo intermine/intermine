@@ -32,11 +32,13 @@
     <class name="Strain" is-interface="true">
       <attribute name="name" type="java.lang.String"/>
       <collection name="genotypes" referenced-type="StrainGenotype" reverse-reference="strain"/>
+      <collection name="populations" referenced-type="Population" reverse-reference="strains"/>
     </class>
     <class name="Population" is-interface="true">
       <attribute name="name" type="java.lang.String"/>
       <attribute name="description" type="java.lang.String"/>
       <collection name="genotypes" referenced-type="PopulationGenotype" reverse-reference="population"/>
+      <collection name="strains" referenced-type="Strain" reverse-reference="populations"/>
     </class>
     <class name="StrainGenotype" extends="java.lang.Object" is-interface="false">
       <attribute name="allele1" type="java.lang.String"/>

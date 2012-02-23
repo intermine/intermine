@@ -65,6 +65,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private Map<String, String> transcripts = new HashMap<String, String>();
     private Map<String, String> consequenceTypes = new HashMap<String, String>();
 
+    private Map<Integer, Integer> strainIds = new HashMap<Integer, Integer>();
+    private Map<Integer, String> popIdentifiers = new HashMap<Integer, String>();
+
     private static final Logger LOG = Logger.getLogger(EnsemblSnpDbConverter.class);
     /**
      * Construct a new EnsemblSnpDbConverter.
@@ -118,13 +121,15 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         chrNames.add("Pt");
 
         for (String chrName : chrNames) {
-            process(connection, chrName);
-            createSynonyms(connection, chrName);
+            //process(connection, chrName);
+            //createSynonyms(connection, chrName);
         }
         storeFinalSnps();
 
         if (PLANT == this.taxonId.intValue()) {
             processGenotypes(connection);
+            processPopulations(connection);
+            processStrainPopulationReferences(connection);
         }
         connection.close();
     }
@@ -402,10 +407,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
             Item strain = createItem("Strain");
             strain.setAttribute("name", strainName);
-            store(strain);
+            Integer storedStrainId = store(strain);
+            strainIds.put(strainId, storedStrainId);
 
             // for each strain query and store genotypes
-            processGenotypesForStrain(connection, strainId, strain.getIdentifier());
+            //processGenotypesForStrain(connection, strainId, strain.getIdentifier());
 
             strainCounter++;
             if (strainCounter >= 100) {
@@ -416,8 +422,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
     private void processGenotypesForStrain(Connection connection, Integer strainId,
             String strainIdentifier) throws Exception {
-        ResultSet res = queryGenotypesForStrain(connection, strainId);
+        // One table contains SNPs and once contains bigger indels, etc.
+        ResultSet res = queryGenotypesForStrainSingleBp(connection, strainId);
+        createGeneotypesForStrain(res, strainId, strainIdentifier);
 
+        res = queryGenotypesForStrainMultipleBp(connection, strainId);
+        createGeneotypesForStrain(res, strainId, strainIdentifier);
+    }
+
+    private void createGeneotypesForStrain(ResultSet res, Integer strainId, String strainIdentifier)
+        throws Exception {
         int snpReferenceCount = 0;
         int ignoredCount = 0;
         while (res.next()) {
@@ -427,7 +441,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
             String snpItemIdentifier = variationIdToItemIdentifier.get(variationId);
 
-            Item genotype = createItem("Genotype");
+            Item genotype = createItem("StrainGenotype");
             genotype.setAttribute("allele1", allele1);
             genotype.setAttribute("allele2", allele2);
             if (snpItemIdentifier != null) {
@@ -441,8 +455,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             genotype.setReference("strain", strainIdentifier);
 
             store(genotype);
-
-
         }
         String message = "For strain " + strainId + " snp ref: " + snpReferenceCount + ", no ref: "
             + ignoredCount;
@@ -450,11 +462,142 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         System.out.println(message);
     }
 
-    private ResultSet queryGenotypesForStrain(Connection connection, Integer strainId)
-        throws SQLException{
+
+    private void processPopulations(Connection connection) throws Exception {
+
+        ResultSet res = queryPopulations(connection);
+        while (res.next()) {
+            Integer popId = res.getInt("sample_id");
+            String popName = res.getString("name");
+            String popDesc = res.getString("description");
+
+            Item pop = createItem("Population");
+            pop.setAttribute("name", popName);
+            pop.setAttribute("description", popDesc);
+            store(pop);
+            popIdentifiers.put(popId, pop.getIdentifier());
+
+            // for each population query and store genotypes
+            //processAllelesForPopulation(connection, popId, pop.getIdentifier());
+        }
+    }
+
+    private void processAllelesForPopulation(Connection connection, Integer popId,
+            String popIdentifier) throws SQLException, ObjectStoreException {
+        ResultSet res = queryAllelesForPopulation(connection, popId);
+
+        int snpReferenceCount = 0;
+        int ignoredCount = 0;
+        int counter = 0;
+        while (res.next()) {
+            Integer variationId = res.getInt("variation_id");
+            String allele = res.getString("allele");
+            String frequency = res.getString("frequency");
+
+            String snpItemIdentifier = variationIdToItemIdentifier.get(variationId);
+
+            Item genotype = createItem("PopulationGenotype");
+            genotype.setAttribute("allele", allele);
+            genotype.setAttribute("frequency", frequency);
+            if (snpItemIdentifier != null) {
+                genotype.setReference("snp", snpItemIdentifier);
+                snpReferenceCount++;
+            }
+            else {
+                ignoredCount++;
+            }
+            genotype.setReference("population", popIdentifier);
+
+            store(genotype);
+
+            counter++;
+            if (counter % 100000 == 0) {
+                String message = "Read " + counter + " alleles.";
+                LOG.info(message);
+                System.out.println(message);
+            }
+
+        }
+        String message = "For population " + popId + " snp ref: " + snpReferenceCount + ", no ref: "
+            + ignoredCount;
+        LOG.info(message);
+        System.out.println(message);
+    }
+
+    private void processStrainPopulationReferences(Connection connection)
+        throws SQLException, ObjectStoreException {
+        ResultSet res = queryStrainPopulationReferences(connection);
+
+        Map<Integer, List<String>> strainToPopulation = new HashMap<Integer, List<String>>();
+        while (res.next()) {
+            Integer strainId = res.getInt("individual_sample_id");
+            Integer popId = res.getInt("population_sample_id");
+
+            List<String> strainPopIdentifiers = strainToPopulation.get(strainId);
+            if (strainPopIdentifiers == null) {
+                strainPopIdentifiers = new ArrayList<String>();
+                strainToPopulation.put(strainId, strainPopIdentifiers);
+            }
+            strainPopIdentifiers.add(popIdentifiers.get(popId));
+        }
+        int counter = 0;
+        System.out.println("StringIds: " + strainIds.size() + " " + strainIds);
+        for (Integer strainId : strainToPopulation.keySet()) {
+            ReferenceList populations = new ReferenceList("populations",
+                    strainToPopulation.get(strainId));
+            counter++;
+            LOG.warn("" + counter + " Storing population identifiers: " + populations + " for id: " + strainIds.get(strainId));
+            System.out.println("" + counter + "Storing population identifiers: " + populations + " for id: " + strainIds.get(strainId));
+            if (strainIds.containsKey(strainId)) {
+                store(populations, strainIds.get(strainId));
+            }
+        }
+    }
+
+    private ResultSet queryStrainPopulationReferences(Connection connection)
+    throws SQLException {
+        String query = "SELECT individual_sample_id, population_sample_id"
+            + " FROM individual_population";
+        LOG.warn(query);
+        System.out.println(query);
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    private ResultSet queryGenotypesForStrainSingleBp(Connection connection, Integer strainId)
+        throws SQLException {
         String query = "SELECT variation_id, allele_1, allele_2"
             + " FROM tmp_individual_genotype_single_bp"
             + " WHERE sample_id = " + strainId;
+        LOG.warn(query);
+        System.out.println(query);
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    private ResultSet queryGenotypesForStrainMultipleBp(Connection connection, Integer strainId)
+        throws SQLException {
+        String query = "SELECT variation_id, allele_1, allele_2"
+            + " FROM tmp_individual_genotype_single_bp"
+            + " WHERE sample_id = " + strainId;
+        LOG.warn(query);
+        System.out.println(query);
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
+
+    private ResultSet queryAllelesForPopulation(Connection connection, Integer popId)
+    throws SQLException {
+        String query = "SELECT a.variation_id, a.sample_id, ac.allele, a.frequency"
+            + " FROM allele a, allele_code ac"
+            + " WHERE a.sample_id = " + popId
+            + " AND a.allele_code_id = ac.allele_code_id";
         LOG.warn(query);
         System.out.println(query);
 
@@ -591,6 +734,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " vf.consequence_type,"
             + " tv.cdna_start,tv.consequence_types,tv.pep_allele_string,tv.feature_stable_id,"
             + " tv.sift_prediction, tv.sift_score, tv.polyphen_prediction, tv.polyphen_score"
+            //+ " tv.sift_prediction, tv.polyphen_prediction"
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
@@ -656,7 +800,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private ResultSet queryStrains(Connection connection)
         throws SQLException {
 
-        String query = "SELECT sample_id, name from sample";
+        String query = "SELECT s.sample_id, s.name"
+            + " FROM sample s, individual i"
+            + " WHERE i.sample_id = s.sample_id";
         LOG.warn(query);
         System.out.println(query);
 
@@ -665,7 +811,19 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
+    private ResultSet queryPopulations(Connection connection)
+    throws SQLException {
 
+        String query = "SELECT s.sample_id, s.name, s.description"
+            + " FROM sample s, population p"
+            + " WHERE p.sample_id = s.sample_id";
+        LOG.warn(query);
+        System.out.println(query);
+
+        Statement stmt = connection.createStatement();
+        ResultSet res = stmt.executeQuery(query);
+        return res;
+    }
     /**
      * {@inheritDoc}
      */
