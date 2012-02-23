@@ -30,11 +30,15 @@
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
-
-
    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/users/rns/plant/go-annotation/"/>
+    </source>
+    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+      <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
+      <property name="pubmed.organisms" value="3702"/>
+      <property name="src.data.dir.includes" value="gene2pubmed"/>
+      <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
     </source>
     <source name="ensembl-plant-chr-fasta" type="fasta">
       <property name="fasta.taxonId" value="10090"/>
