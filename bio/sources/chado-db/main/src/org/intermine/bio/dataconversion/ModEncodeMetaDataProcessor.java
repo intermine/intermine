@@ -694,8 +694,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             } else {
                 // keep feeding IN et OUT
-                LOG.debug("DAG keep: current->" + appliedProtocolId + " prev->"
-                        + previousAppliedProtocolId);
                 if (direction.startsWith("in")) {
                     node.inputs.add(dataId);
                     if (submissionId > 0) {
@@ -741,12 +739,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     }
 
     /**
-     * @param newAD
-     * @param dataId
+     * @param newAD   the new appliedData
+     * @param dataId  the data id
+     * @param intermineObjectId  just a flag to do an update of attributes instead of a replecament
      */
     private void updateADMap(AppliedData newAD, Integer dataId, Integer intermineObjectId) {
         if (appliedDataMap.containsKey(dataId)) {
-//            LOG.info("UPADdetails: " + dataId);
             AppliedData datum = appliedDataMap.get(dataId);
             datum.intermineObjectId = newAD.intermineObjectId;
             datum.itemIdentifier = newAD.itemIdentifier;
@@ -756,7 +754,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             datum.type = newAD.type;
             datum.name = newAD.name;
             datum.url = newAD.url;
-//            appliedDataMap.put(dataId, datum);
         } else {
             appliedDataMap.put(dataId, newAD);
         }
@@ -877,8 +874,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     nextProtocols.addAll(appliedDataMap.get(currentOD).nextAppliedProtocols);
                     if (appliedDataMap.get(currentOD).nextAppliedProtocols.isEmpty()) {
                         // this is a leaf!!
-                        // TODO check this
-                        LOG.info("DAG leaf: " + submissionId + " dataId: " + currentOD);
+                        LOG.debug("DAG leaf: " + submissionId + " dataId: " + currentOD);
                     }
                 }
 
@@ -1771,7 +1767,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             aData.type = heading;
             aData.name = name;
             aData.url = url;
-            updateADMap(aData,dataId,intermineObjectId);
+            updateADMap(aData, dataId, intermineObjectId);
             //appliedDataMap.put(dataId, aData);
             count++;
         }
@@ -2078,7 +2074,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             // to be filled in incorrectly
             if (attHeading != null && attHeading.startsWith("modENCODE Reference")) {
                 attValue = checkRefSub(wikiPageUrl, attValue, submissionId, dccId);
-                LOG.info("EEFF " + attValue + "|" + wikiPageUrl);
             }
 
             // we are starting a new data row
@@ -2397,22 +2392,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             List<AppliedData> foundAppliedData, List<AppliedProtocol> foundAppliedProtocols) {
         AppliedData aData = appliedDataMap.get(startDataId);
 
-        LOG.info("EEFF earlierinDAG: " + startDataId + "|" + aData.actualValue + " ->pap: "
-                + aData.previousAppliedProtocols);
-
         if (foundAppliedData != null) {
             foundAppliedData.add(aData);
         }
 
         for (Integer previousAppliedProtocolId : aData.previousAppliedProtocols) {
             AppliedProtocol ap = appliedProtocolMap.get(previousAppliedProtocolId);
-            LOG.info("EEFF earlierinDAG get proto " + previousAppliedProtocolId + ": in "
-                    + ap.inputs + "| out " + ap.outputs);
             if (foundAppliedProtocols != null) {
                 foundAppliedProtocols.add(ap);
             }
             for (Integer previousDataId : ap.inputs) {
-                LOG.info("EEFF earlierinDAG get proto2 " + ap.inputs + "|" + ap.outputs);
                 findAppliedProtocolsAndDataFromEarlierInDag(previousDataId, foundAppliedData,
                         foundAppliedProtocols);
             }
@@ -2605,17 +2594,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             String currentDataValue = aData.value;
             Integer currentDataSubId = dataSubmissionMap.get(aData.dataId);
             // added check that referenced and referring are not the same.
-            // TODO check
             if (refDataValue.equals(currentDataValue)
                     && refSubId.equals(currentDataSubId)) {
-                LOG.info("Found a matching data value: " + currentDataValue + " in sub "
-                        + dccIdMap.get(currentDataSubId) + " for referenced sub "
-                        + dccIdMap.get(refSubId));
-
-//                Integer refDataId = getDataFromRefSub(currentDataValue,refSubId);
+                LOG.info("Found a matching data value: " + currentDataValue + " in referenced sub "
+                        + dccIdMap.get(currentDataSubId) + " for value "
+                        + aData.actualValue);
                 Integer foundDataId = aData.dataId;
-
-                LOG.info("EEFF referenced data_id: " + foundDataId + "|" + aData.actualValue);
                 findAppliedProtocolsAndDataFromEarlierInDag(foundDataId, foundAppliedData,
                         foundAppliedProtocols);
             }
