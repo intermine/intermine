@@ -255,10 +255,15 @@ public class Service
     /**
      * Performs the request and returns the result as a string.
      * @param request The Request object
+     * @param retryCount The number of times to retry. If null, the default value of HttpConnection
+     *        will be used.
      * @return a string containing the body of the response
      */
-    protected String getStringResponse(Request request) {
+    protected String getStringResponse(Request request, Integer retryCount) {
         HttpConnection connection = executeRequest(request);
+        if (retryCount != null) {
+            connection.setRetryCount(retryCount.intValue());
+        }
         String res = null;
         try {
             res = connection.getResponseBodyAsString().trim();
@@ -266,6 +271,15 @@ public class Service
             connection.close();
         }
         return res;
+    }
+
+    /**
+     * Performs the request and returns the result as a string.
+     * @param request The Request object
+     * @return a string containing the body of the response
+     */
+    protected String getStringResponse(Request request) {
+        return getStringResponse(request, null);
     }
 
     /**
@@ -301,6 +315,6 @@ public class Service
      */
     public String getRelease() {
         Request r = createGetRequest(getRootUrl() + "/version/release", ContentType.TEXT_PLAIN);
-        return getStringResponse(r);
+        return getStringResponse(r, 0);
     }
 }
