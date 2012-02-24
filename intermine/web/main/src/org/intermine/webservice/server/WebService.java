@@ -549,13 +549,6 @@ public abstract class WebService
         }
         int format = getFormat();
 
-        // HTML is a special case
-        if (format == HTML_FORMAT) {
-            output = new MemoryOutput();
-            ResponseUtil.setHTMLContentType(response);
-            return;
-        }
-
         PrintWriter out;
         OutputStream os;
         try {
@@ -574,6 +567,11 @@ public abstract class WebService
 
         String filename = getDefaultFileName();
         switch (format) {
+        // HTML is a special case
+            case HTML_FORMAT:
+                output = new StreamedOutput(out, new PlainFormatter(), separator);
+                ResponseUtil.setHTMLContentType(response);
+                break;
             case XML_FORMAT:
                 output = makeXMLOutput(out, separator);
                 break;
