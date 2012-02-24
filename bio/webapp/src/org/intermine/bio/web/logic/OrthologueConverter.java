@@ -102,7 +102,9 @@ public class OrthologueConverter extends BagConverter
         return ids;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String> getCounts(ObjectStore os, Model model, InterMineBag bag) {
 
         QueryClass qcGene = new QueryClass(Gene.class);
@@ -153,6 +155,8 @@ public class OrthologueConverter extends BagConverter
         q.addToGroupBy(qfOrganism);
         q.addToOrderBy(qfOrganism);
 
+        LOG.error("querying for orthologues " + q.toString());
+
         Map<String, String> results = new LinkedHashMap<String, String>();
         Results r = os.execute(q);
         Iterator iter = r.iterator();
@@ -161,6 +165,7 @@ public class OrthologueConverter extends BagConverter
             String name = String.valueOf(rr.get(0));
             String count = String.valueOf(rr.get(1));
             results.put(name, count);
+            LOG.error(name + " - # orthologues : " + count);
         }
         return results;
     }
