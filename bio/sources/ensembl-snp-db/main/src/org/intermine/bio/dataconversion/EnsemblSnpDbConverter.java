@@ -409,6 +409,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             strain.setAttribute("name", strainName);
             Integer storedStrainId = store(strain);
             strainIds.put(strainId, storedStrainId);
+            LOG.warn("Read strain: " + strainId);
+            System.out.println("Read strain: " + strainId);
 
             // for each strain query and store genotypes
             processGenotypesForStrain(connection, strainId, strain.getIdentifier());
@@ -476,6 +478,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             pop.setAttribute("description", popDesc);
             store(pop);
             popIdentifiers.put(popId, pop.getIdentifier());
+            LOG.warn("Processing population: " + popId);
+            System.out.println("Processing population: " + popId);
 
             // for each population query and store genotypes
             processAllelesForPopulation(connection, popId, pop.getIdentifier());
@@ -577,7 +581,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private ResultSet queryGenotypesForStrainMultipleBp(Connection connection, Integer strainId)
         throws SQLException {
         String query = "SELECT variation_id, allele_1, allele_2"
-            + " FROM tmp_individual_genotype_single_bp"
+            + " FROM individual_genotype_multiple_bp"
             + " WHERE sample_id = " + strainId;
         LOG.warn(query);
         System.out.println(query);
