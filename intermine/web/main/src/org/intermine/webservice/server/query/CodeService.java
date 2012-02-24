@@ -69,7 +69,7 @@ public class CodeService extends AbstractQueryService
             return new WebservicePythonCodeGenerator();
         } else if ("javascript".equals(lang) || "js".equals(lang)) {
             return new WebserviceJavaScriptCodeGenerator();
-        } else if ("ruby".equals(lang) || "js".equals(lang)) {
+        } else if ("ruby".equals(lang) || "rb".equals(lang)) {
             return new WebserviceRubyCodeGenerator();
         } else {
             throw new BadRequestException("Unknown code generation language: " + lang);

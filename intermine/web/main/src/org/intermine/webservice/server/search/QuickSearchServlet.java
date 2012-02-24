@@ -1,4 +1,4 @@
-package org.intermine.webservice.server.widget;
+package org.intermine.webservice.server.search;
 
 import java.io.IOException;
 
@@ -10,18 +10,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
-public class AvailableWidgetsServlet extends HttpServlet {
+public class QuickSearchServlet extends HttpServlet {
 
-    /**
-     * Generated serial id.
-     */
-    private static final long serialVersionUID = 4536224836847168699L;
+    private static final long serialVersionUID = 1L;
+
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
+        runService(req, resp);
+    }
 
     /**
      * {@inheritDoc}}
      */
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-                    IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+        throws ServletException, IOException {
         runService(req, resp);
     }
 
@@ -31,7 +33,7 @@ public class AvailableWidgetsServlet extends HttpServlet {
         // according new data
         // and not remember fields initialized according previous request data
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        new AvailableWidgetsService(im).service(request, response);
+        new QuickSearch(im).service(request, response);
     }
 
 }

@@ -33,8 +33,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
   */
 public class AvailableServicesServlet extends HttpServlet
 {
-
-    private static final Logger LOGGER = Logger.getLogger(VersionServlet.class);
+    private static final Logger LOGGER = Logger.getLogger(AvailableServicesServlet.class);
 
     private static final long serialVersionUID = 1L;
 

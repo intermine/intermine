@@ -50,6 +50,7 @@ public class SummaryService extends WebService
     @Override
     protected void execute() throws Exception {
 
+        Boolean refsAllowed = !Boolean.valueOf(request.getParameter("norefs"));
         Map<String, List<String>> summaryFieldsForCd = new HashMap<String, List<String>>();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model m = im.getModel();
@@ -59,7 +60,8 @@ public class SummaryService extends WebService
             if (!"org.intermine.model.InterMineObject".equals(cd.getName())) {
                 for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
                     Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
-                    if (p.endIsAttribute() && fc.getDisplayer() == null && fc.getShowInSummary()) {
+                    if (p.endIsAttribute() && (!p.containsReferences() || refsAllowed)
+                            && fc.getShowInSummary()) {
                         summaryFields.add(p.getNoConstraintsString());
                     }
                 }
@@ -71,7 +73,7 @@ public class SummaryService extends WebService
         output.addResultItem(Collections.singletonList(jo.toString()));
     }
 
-    private Map<String, Object> getHeaderAttributes() {
+    protected Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
             attributes.put(JSONFormatter.KEY_INTRO, "\"classes\":");
