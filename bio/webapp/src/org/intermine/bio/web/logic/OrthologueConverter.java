@@ -143,6 +143,8 @@ public class OrthologueConverter extends BagConverter
 
         Query q = new Query();
 
+        q.setDistinct(true);
+
         q.addFrom(qcGene);
         q.addFrom(qcOrganism);
         q.addFrom(qcHomologue);
