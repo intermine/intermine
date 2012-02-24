@@ -266,7 +266,8 @@ public class SequenceOntology
              * child  = exon
              * Transcript has a collection of exons
              */
-            if (("part_of".equals(relationshipType) || "member_of".equals(relationshipType))
+            if (("part_of".equals(relationshipType) || "member_of".equals(relationshipType)
+                    || "variant_of".equals(relationshipType))
                     && r.direct) {
                 assignPartOf(parent, child);
             } else if ("is_a".equals(relationshipType) && r.direct) {
