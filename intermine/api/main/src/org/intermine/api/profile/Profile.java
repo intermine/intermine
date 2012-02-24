@@ -426,7 +426,7 @@ public class Profile
     }
 
     /**
-     * Get the saved bags in a map of "status key" -> map of lists
+     * Get the saved bags in a map of "status key" =&gt; map of lists
      * @return
      */
     public Map<String, Map<String, InterMineBag>> getSavedBagsByStatus() {
