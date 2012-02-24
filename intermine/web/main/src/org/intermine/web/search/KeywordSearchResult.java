@@ -1,4 +1,4 @@
-package org.intermine.web.struts;
+package org.intermine.web.search;
 
 /*
  * Copyright (C) 2002-2011 FlyMine
