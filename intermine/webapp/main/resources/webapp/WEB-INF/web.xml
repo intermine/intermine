@@ -780,7 +780,7 @@
 
    <servlet>
      <servlet-name>ws-displayers</servlet-name>
-     <servlet-class>org.intermine.webservice.server.displayer.DisplayerService</servlet-class>
+     <servlet-class>org.intermine.webservice.server.displayer.DisplayerServlet</servlet-class>
    </servlet>
 
    <servlet-mapping>
