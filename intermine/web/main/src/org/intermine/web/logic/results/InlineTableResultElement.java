@@ -11,6 +11,7 @@ package org.intermine.web.logic.results;
  */
 
 import org.intermine.api.results.ResultElement;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
 import org.intermine.util.DynamicUtil;
@@ -33,7 +34,7 @@ public class InlineTableResultElement extends ResultElement
      * @param fc FieldConfig
      * @param isKeyField is this a key field?
      */
-    public InlineTableResultElement(InterMineObject imObj, Path path, FieldConfig fc,
+    public InlineTableResultElement(FastPathObject imObj, Path path, FieldConfig fc,
             Boolean isKeyField) {
         super(imObj, path, isKeyField);
         this.fc = fc;
