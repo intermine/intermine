@@ -124,6 +124,18 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.Population">
+    <headerconfig>
+      <titles>
+        <title mainTitles="name"/>
+      </titles>
+    </headerconfig>
+     <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="description"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.PopulationGenotype">
     <fields>
       <fieldconfig fieldExpr="allele"/>
@@ -174,6 +186,15 @@
     </fields>
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
+
+  <class className="org.intermine.model.bio.Strain">
+    <headerconfig>
+      <titles>
+        <title mainTitles="name"/>
+      </titles>
+    </headerconfig>
+  </class>
+
 
   <class className="org.intermine.model.bio.StrainGenotype">
     <fields>
