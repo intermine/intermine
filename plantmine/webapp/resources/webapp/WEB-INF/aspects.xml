@@ -1,4 +1,12 @@
 <aspects>
+  <aspect name="Function">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
   <aspect name="Genes">
     <subtitle>Genome annotation</subtitle>
     <icon-image>model/images/genomics.gif</icon-image>
@@ -29,7 +37,7 @@
     </intro-text>
     <tile-name></tile-name>
   </aspect>
-  <aspect name="Function">
+    <aspect name="Phenotypes">
     <subtitle></subtitle>
     <icon-image></icon-image>
     <large-image></large-image>
