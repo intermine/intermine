@@ -17,12 +17,24 @@
        <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${organism.key}" style="text-decoration: none;"><strong>${organism.value}</strong></a>
      </c:forEach>
    </td>
-   <td valign="top">Strain:</td>
-   <td>
+
+
+
+   <td valign="top">Strin/Target:</td>
+   <td id="strainContent" >
      <c:choose>
-       <c:when test="${not empty strainMap}">
-         <c:forEach var="strain" items="${strainMap}" varStatus="status">
-           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.key}" style="text-decoration: none;"><strong>${strain.value}</strong></a>
+       <c:when test="${not empty strainInfoList}">
+         <c:forEach var="strain" items="${strainInfoList}" varStatus="status">
+           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.id}" style="text-decoration: none;"><strong>${strain.name}</strong></a>
+           /
+           <c:choose>
+               <c:when test="${not empty strain.targetName}">
+                 <a href="${strain.wikiLink}" style="text-decoration: none;" class="value extlink"><strong>${strain.targetName}</strong></a>
+               </c:when>
+               <c:otherwise>
+                 <i>target not available</i>
+               </c:otherwise>
+           </c:choose>
            <c:if test="${!status.last}">,  </c:if>
          </c:forEach>
        </c:when>
@@ -31,7 +43,32 @@
        </c:otherwise>
      </c:choose>
    </td>
- </tr>
+
+<%--
+   <td valign="top">Strain:</td>
+   <td>
+     <c:choose>
+       <c:when test="${not empty strainMap}">
+         <c:forEach var="strain" items="${strainMap}" varStatus="status">
+           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.key}" style="text-decoration: none;"><strong>${strain.value}</strong></a>
+
+           <c:if test="${not empty strain.targetName}">
+             <a href="${strain.wikiLink}" style="text-decoration: none;" class="value extlink">
+             <strong>/${strain.targetName}</strong></a>
+           </c:if>
+
+
+           <c:if test="${!status.last}">,  </c:if>
+         </c:forEach>
+       </c:when>
+       <c:otherwise>
+         <i>not available</i>
+       </c:otherwise>
+     </c:choose>
+   </td>
+--%>
+
+   </tr>
  <tr>
    <td valign="top">Cell Line:</td>
    <td>
