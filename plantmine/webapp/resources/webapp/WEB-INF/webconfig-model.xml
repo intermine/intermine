@@ -124,6 +124,15 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.PopulationGenotype">
+    <fields>
+      <fieldconfig fieldExpr="allele"/>
+      <fieldconfig fieldExpr="frequency"/>
+      <fieldconfig fieldExpr="population.description"/>
+      <fieldconfig fieldExpr="snp.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Protein">
     <inlinelist>
       <table path="synonyms.value" showLinksToObjects="true" />
@@ -166,6 +175,15 @@
     <tabledisplayer src="/model/sequenceShortDisplayer.jsp"/>
   </class>
 
+  <class className="org.intermine.model.bio.StrainGenotype">
+    <fields>
+      <fieldconfig fieldExpr="allele1"/>
+      <fieldconfig fieldExpr="allele2"/>
+      <fieldconfig fieldExpr="strain.name"/>
+      <fieldconfig fieldExpr="snp.primaryIdentifier"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.Synonym">
     <fields>
       <fieldconfig fieldExpr="value"/>
@@ -205,7 +223,7 @@
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
-                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
+                     replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation,organism"
                      placement="summary"
                      types="SequenceFeature"/>
 
@@ -233,6 +251,12 @@
                      replacesFields="publications"
                      placement="Genes"
                      types="BioEntity"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.SnpToGeneDisplayer"
+                     jspName="model/snpToGeneDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="SNP"/>
 
   </reportdisplayers>
 
