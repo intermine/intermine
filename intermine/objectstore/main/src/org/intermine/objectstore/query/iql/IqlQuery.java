@@ -782,6 +782,41 @@ public class IqlQuery
     }
 
     /**
+     * Return a string version of the IqlQuery but truncated the parameters (lists of bag contents)
+     * to the specified length.
+     *
+     * @param maxSize the maximum length
+     * @return a String version of the query
+     */
+    public String toStringTruncateParameters(int maxSize) {
+        StringBuffer ret = new StringBuffer();
+        ret.append(queryString);
+        int i = 0;
+        for (Object o : parameters) {
+            if (Collection.class.isAssignableFrom(o.getClass())) {
+                Collection<Object> col = (Collection<Object>) o;
+                if (col.size() > maxSize) {
+                    ArrayList<Object> truncated = new ArrayList<Object>();
+                    int counter = 0;
+                    for (Object element : col) {
+                        if (counter >= maxSize) {
+                            break;
+                        }
+                        truncated.add(element);
+                        counter++;
+                    }
+                    o = truncated.toString() + " (showing " + maxSize + " of " + col.size() + ")";
+                }
+            }
+            ret.append(" ")
+                .append(++i)
+                .append(": ")
+                .append(o.toString());
+        }
+        return ret.toString();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -10,8 +10,11 @@ package org.intermine.objectstore.query.iql;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.Test;
 
@@ -82,5 +85,14 @@ public class IqlQueryTest extends IqlQueryTestCase
             fail("Expected: IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    public void testToStringTruncatedParameters() throws Exception {
+        String iql = "SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.id IN ?";
+        List<Object> bags = new ArrayList<Object>();
+        bags.add(Arrays.asList(new Integer[] {new Integer(1), new Integer(2), new Integer(3)}));
+        IqlQuery q = new IqlQuery(iql, null, bags);
+        String expected = "SELECT a1_ FROM org.intermine.model.InterMineObject AS a1_ WHERE a1_.id IN ? 1: [1, 2] (showing 2 of 3)";
+        assertEquals(expected, q.toStringTruncateParameters(2));
     }
 }
