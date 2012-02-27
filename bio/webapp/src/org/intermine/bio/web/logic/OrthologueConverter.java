@@ -13,7 +13,7 @@ package org.intermine.bio.web.logic;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +97,7 @@ public class OrthologueConverter extends BagConverter
         pathQuery.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
         PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         ExportResultsIterator it = executor.execute(pathQuery);
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new LinkedHashMap<String, String>();
         while (it.hasNext()) {
             List<ResultElement> row = it.next();
             String homologue = (String) row.get(0).getField();
