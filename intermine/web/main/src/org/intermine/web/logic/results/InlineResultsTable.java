@@ -24,6 +24,7 @@ import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.proxy.LazyCollection;
 import org.intermine.objectstore.proxy.ProxyReference;
@@ -83,7 +84,7 @@ public class InlineResultsTable
     public InlineResultsTable(Collection<?> results, Model model,
                               WebConfig webConfig, Map<String, List<FieldDescriptor>> classKeys,
                               int size, boolean ignoreDisplayers, List<Class<?>> listOfTypes) {
-
+        long startTime = System.currentTimeMillis();
         this.listOfTypes = listOfTypes;
 
         this.results = results;
@@ -118,6 +119,8 @@ public class InlineResultsTable
             }
             rowObjects.add(o);
         }
+        long took = System.currentTimeMillis() - startTime;
+        LOG.info("TIME - InlineResultsTable constructor took: " + took + "ms.");
     }
 
     /**
@@ -287,7 +290,6 @@ public class InlineResultsTable
      *  types of table row objects
      * @return a list of lists of ResultElements
      */
-    @SuppressWarnings("null")
     public List<Object> getResultElementRows() {
         if (listOfTableRows == null) {
             listOfTableRows = new LinkedList<Object>();
@@ -310,12 +312,12 @@ public class InlineResultsTable
                         // column name also known as field expression
                         column = fc.getFieldExpr();
                         // determine the class of the object
-                        Class<?> clazz = DynamicUtil.getSimpleClass((InterMineObject) o);
+                        Class<?> clazz = DynamicUtil.getSimpleClass((FastPathObject) o);
                         // does THIS row object have THIS column?
                         if (isThisFieldConfigInThisObject(clazz, fc)) {
                             // resolve class name
                             className =
-                                DynamicUtil.getSimpleClass((InterMineObject) o).getSimpleName();
+                                DynamicUtil.getSimpleClass((FastPathObject) o).getSimpleName();
                             setClassNameOnTableRow(className, columnList);
                             // form a new path
                             path = new Path(model, className + '.' + column);
@@ -327,16 +329,20 @@ public class InlineResultsTable
                                     lastFieldName);
 
                             // finalObject
-                            InterMineObject imObj = null;
+                            FastPathObject imObj = null;
                             try {
-                                imObj = (InterMineObject) PathUtil.resolvePath(path.getPrefix(), o);
+                                imObj = (FastPathObject) PathUtil.resolvePath(path.getPrefix(), o);
                             } catch (PathException e) {
                                 e.printStackTrace();
                             }
 
                             // save the InterMine Object identifier
                             if (!foundMainIdentifier) {
-                                saveObjectIdOnTableRow(imObj.getId(), columnList);
+                                Class<?> objectType = DynamicUtil.getSimpleClass(imObj);
+                                if (InterMineObject.class.isAssignableFrom(objectType)) {
+                                    saveObjectIdOnTableRow(((InterMineObject) imObj).getId(),
+                                            columnList);
+                                }
                                 foundMainIdentifier = true;
                             }
 
