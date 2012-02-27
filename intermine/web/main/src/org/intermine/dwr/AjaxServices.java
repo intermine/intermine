@@ -661,13 +661,11 @@ public class AjaxServices
             final BagManager bagManager = im.getBagManager();
             final InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
             final ServletContext servletContext = WebContextFactory.get().getServletContext();
-            final ObjectStore os = im.getObjectStore();
-            final Model model =  os.getModel();
             final WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
             final BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
                     converterName);
             // should be ordered
-            Map<String, String> results = bagConverter.getCounts(os, model, imBag);
+            Map<String, String> results = bagConverter.getCounts(profile, imBag);
             List<JSONObject> jsonResults = new LinkedList<JSONObject>();
             for (Map.Entry<String, String> entry : results.entrySet()) {
                 JSONObject organism = new JSONObject();
