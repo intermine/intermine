@@ -636,7 +636,7 @@
         <!-- 6238=briggsae 31234=remanei 135651=brenneri 281687=japonica-->
         <source name="modencode-waterstonpiano-metadata" type="chado-db" dump="true">
          <!--   <property name="organisms" value="6239 6238 31234 135651 281687"/>-->
-            <property name="organisms" value="6239 6238"/>
+            <property name="organisms" value="6239"/>
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
             <property name="source.db.name" value="modencode-waterstonpiano-metadata"/>
