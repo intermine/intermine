@@ -105,7 +105,7 @@ public class TagManager
     }
 
     public void deleteTag(String tagName, ReferenceDescriptor rd, Profile profile) {
-        String objIdentifier = rd.getReferencedClassName() + "." + rd.getName();
+        String objIdentifier = rd.getClassDescriptor().getSimpleName() + "." + rd.getName();
         if (rd instanceof CollectionDescriptor) {
             deleteTag(tagName, objIdentifier, TagTypes.COLLECTION, profile.getUsername());
         } else {
@@ -403,7 +403,7 @@ public class TagManager
      */
     public synchronized Tag addTag(String tagName, ReferenceDescriptor ref, Profile profile)
         throws TagNameException, TagNamePermissionException {
-        String objIdentifier = ref.getReferencedClassName() + "." + ref.getName();
+        String objIdentifier = ref.getClassDescriptor().getSimpleName() + "." + ref.getName();
         if (ref instanceof CollectionDescriptor) {
             return addTag(tagName, objIdentifier, TagTypes.COLLECTION, profile);
         } else {
