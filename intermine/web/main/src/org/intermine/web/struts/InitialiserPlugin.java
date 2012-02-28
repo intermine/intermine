@@ -149,11 +149,12 @@ public class InitialiserPlugin implements PlugIn
 
         final ObjectStoreWriter userprofileOSW = getUserprofileWriter(webProperties);
 
-        //verify if intermine_state exists in the savedbag table and if it has the right type
         if (userprofileOSW != null) {
+            //verify all table mapping classes exist in the userprofile db
             if (!verifyTablesExist(userprofileOSW)) {
                 return;
             }
+            //verify if intermine_state exists in the savedbag table and if it has the right type
             if (!verifyListTables(userprofileOSW)) {
                 return;
             }
