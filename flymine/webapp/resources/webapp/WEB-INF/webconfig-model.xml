@@ -723,6 +723,13 @@
                      placement="summary"
                      types="Gene"/>
 
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwayDescriptionDisplayer"
+                     jspName="model/pathwayDescriptionDisplayer.jsp"
+                     showImmediately="true"
+                     replacesFields="description"
+                     placement="top"
+                     types="Pathway"/>
+
   </reportdisplayers>
 
    <widgets>
