@@ -576,6 +576,14 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.RNASeqResult">
+    <fields>
+      <fieldconfig fieldExpr="stage"/>
+      <fieldconfig fieldExpr="expressionScore"/>
+      <fieldconfig fieldExpr="expressionLevel"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.UniProtFeature" label="Uniprot Feature">
     <fields>
       <fieldconfig fieldExpr="type"/>

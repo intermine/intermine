@@ -87,12 +87,12 @@
             height:			 (10 * n) + 50,
             chartArea:		 {left: windowSize/4, top: 0, height: 10 * n},
             backgroundColor: ["0", "CCCCCC", "0.2", "FFFFFF", "0.2"],
-            colors: 		 ['#8931BC'],
+            colors: 		 ["#f8f3fb", "#ecdef4", "#dec4ec", "#cea9e3", "#bc8bd9", "#ac6ed0", "#9e55c8", "#9240c1", '#8931BC'],
             fontName: 		 "Lucida Grande,Verdana,Geneva,Lucida,Helvetica,Arial,sans-serif",
             fontSize: 		 11,
             vAxis: 			 {title: 'Stage'},
             legend: 		 'none',
-            hAxis:			 {title: "Expression"}
+            hAxis:			 {title: "Expression", textStyle: {color: '#FFF'}}
           };
 
           <%-- aim & shoot --%>
