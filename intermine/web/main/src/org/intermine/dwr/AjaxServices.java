@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -774,6 +775,7 @@ public class AjaxServices
      * @param orthologues list of rat genes
      * @return JSONobject.toString of JSON object
      */
+    @SuppressWarnings("unchecked")
     public static String getRatDiseases(String orthologues) {
         if (StringUtils.isEmpty(orthologues)) {
             return null;
@@ -784,9 +786,14 @@ public class AjaxServices
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
         final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Mine mine = linkManager.getMine("RatMine");
+
+        HashMap map = new HashMap();
+
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
-            return null;
+            map.put("status", "offline");
+            JSONObject o = new JSONObject();
+            return new JSONObject(map).toString();
         }
         final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
             + "\"Gene.doAnnotation.ontologyTerm.id Gene.doAnnotation.ontologyTerm.name\"  "
@@ -796,11 +803,13 @@ public class AjaxServices
             + "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"" + orthologues
             + "\" extraValue=\"\"/></query>";
         try {
+            map.put("status", "online");
             JSONObject results
                 = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
             if (results != null) {
                 results.put("mineURL", mine.getUrl());
-                return results.toString();
+                map.put("results", results);
+                return new JSONObject(map).toString();
             }
         } catch (IOException e) {
             LOG.error("Couldn't query ratmine for diseases", e);

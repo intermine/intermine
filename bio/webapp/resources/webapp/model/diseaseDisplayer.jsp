@@ -47,14 +47,19 @@ function generateDiseases(jSONObject, target) {
 }
 
 (function() {
-    AjaxServices.getRatDiseases('${ratGenes}', function(diseases) {
+    AjaxServices.getRatDiseases('${ratGenes}', function(response) {
         jQuery("#mine-rat-disease h3").removeClass('loading');
-        if (diseases) {
-            var jSONObject = jQuery.parseJSON(diseases);
-            if (jSONObject && jSONObject['results'].length > 0) {
-               generateDiseases(jSONObject, "#intermine_rat_disease");
+        if (response) {
+            var jSONObject = jQuery.parseJSON(response);
+
+            if (jSONObject["status"] != "offline") {
+                if (jSONObject && jSONObject['results'].length > 0) {
+                    generateDiseases(jSONObject, "#intermine_rat_disease");
+                 } else {
+                   jQuery("#intermine_rat_disease").html("<p>No diseases found.</p>");
+                 }
             } else {
-              jQuery("#intermine_rat_disease").html("<p>No diseases found.</p>");
+              jQuery("#intermine_rat_disease").html("<p>RatMine offline.</p>");
             }
        }
      });
