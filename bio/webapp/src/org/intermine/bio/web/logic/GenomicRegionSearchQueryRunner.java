@@ -418,9 +418,9 @@ class ValueComparator implements Comparator
 
     @Override
     public int compare(Object a, Object b) {
-        if ((Integer) base.get(a) < (Integer) base.get(b)) {
+        if (base.get(a) < base.get(b)) {
             return 1;
-        } else if ((Integer) base.get(a) == (Integer) base.get(b)) {
+        } else if (base.get(a) == base.get(b)) {
             return -1;
         } else {
             return -1;

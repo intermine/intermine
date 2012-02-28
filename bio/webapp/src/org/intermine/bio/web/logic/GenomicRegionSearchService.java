@@ -1051,17 +1051,17 @@ public class GenomicRegionSearchService
 
             String ftHtml = "";
             Set<String> ftSet = null;
-            Set<String> aboveCutOffFeatureTypeSet = null;
+            Map<String, Integer> aboveCutOffFeatureTypeMap = null;
             if (stat != null) {
                 // get list of featureTypes
                 ftHtml = categorizeFeatureTypes(stat.keySet(), s);
                 ftSet = getFeatureTypeSetInAlphabeticalOrder(stat.keySet());
-                aboveCutOffFeatureTypeSet = new LinkedHashSet<String>();
+                aboveCutOffFeatureTypeMap = new LinkedHashMap<String, Integer>();
                 int topCount = stat.values().iterator().next();
                 if (topCount >= maxRecordCutOff) {
                     for (Entry<String, Integer> e : stat.entrySet()) {
                         if (e.getValue() > maxRecordCutOff) {
-                            aboveCutOffFeatureTypeSet.add(e.getKey());
+                            aboveCutOffFeatureTypeMap.put(e.getKey(), e.getValue());
                         } else {
                             break;
                         }
@@ -1083,7 +1083,7 @@ public class GenomicRegionSearchService
              * see query fields in createQueryList method
              */
             if (features != null) {
-                if (aboveCutOffFeatureTypeSet == null || aboveCutOffFeatureTypeSet.size() == 0) {
+                if (aboveCutOffFeatureTypeMap == null || aboveCutOffFeatureTypeMap.size() == 0) {
                     int length = features.size();
                     List<String> firstFeature = features.get(0);
 
@@ -1263,7 +1263,7 @@ public class GenomicRegionSearchService
                 } else { // some feature sizes are over cutoff
                     int length = features.size();
 
-                    String firstFeatureType = aboveCutOffFeatureTypeSet.iterator().next();
+                    String firstFeatureType = aboveCutOffFeatureTypeMap.keySet().iterator().next();
 
                     // translatedClassName
                     String firstSoTerm = WebUtil.formatPath(firstFeatureType, interMineAPI,
@@ -1278,11 +1278,11 @@ public class GenomicRegionSearchService
 
                     // row span is smaller than the feature size
                     int totalDupCount = 0;
-                    for (String ft : aboveCutOffFeatureTypeSet) {
-                        totalDupCount = totalDupCount + stat.get(ft);
+                    for (String ft : aboveCutOffFeatureTypeMap.keySet()) {
+                        totalDupCount = totalDupCount + aboveCutOffFeatureTypeMap.get(ft);
                     }
                     int rowSpan = length - totalDupCount
-                            + aboveCutOffFeatureTypeSet.size();
+                            + aboveCutOffFeatureTypeMap.size();
 
                     sb.append("<tr><td valign='top' rowspan='" + rowSpan + "'>");
 
@@ -1355,7 +1355,7 @@ public class GenomicRegionSearchService
 
                     sb.append("</td>");
 
-                    int firstRecordCount = stat.get(firstFeatureType);
+                    int firstRecordCount = aboveCutOffFeatureTypeMap.get(firstFeatureType);
 
                     sb.append("<td colspan='3'><b>" + firstRecordCount + "</b> "
                             + firstSoTerm
@@ -1379,9 +1379,9 @@ public class GenomicRegionSearchService
 
                     sb.append("</td></tr>");
 
-                    if (aboveCutOffFeatureTypeSet.size() > 1) {
+                    if (aboveCutOffFeatureTypeMap.size() > 1) {
                         List<String> aboveCutOffFeatureTypeList = new ArrayList<String>(
-                                aboveCutOffFeatureTypeSet);
+                                aboveCutOffFeatureTypeMap.keySet());
                         for (int i = 1; i < aboveCutOffFeatureTypeList.size(); i++) {
                             String featureType = aboveCutOffFeatureTypeList.get(i);
 
@@ -1395,7 +1395,7 @@ public class GenomicRegionSearchService
 
                             soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
-                            int recordCount = stat.get(featureType);
+                            int recordCount = aboveCutOffFeatureTypeMap.get(featureType);
 
                             sb.append("<tr><td colspan='3'><b>" + recordCount + "</b> "
                                 + soTerm
@@ -1435,7 +1435,7 @@ public class GenomicRegionSearchService
 
                         String location = chr + ":" + start + ".." + end;
 
-                        if (!aboveCutOffFeatureTypeSet.contains(featureType)) {
+                        if (!aboveCutOffFeatureTypeMap.keySet().contains(featureType)) {
                             sb.append("<tr><td><a target='' title='' href='"
                                     + baseURL + "/" + path + "/report.do?id="  + id + "'>");
 
