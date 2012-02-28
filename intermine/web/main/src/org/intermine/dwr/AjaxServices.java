@@ -1309,8 +1309,10 @@ public class AjaxServices
                     } else {
                         String[] bits = taggedObject.split("\\.");
                         ClassDescriptor cd = im.getModel().getClassDescriptorByName(bits[0]);
-                        ReferenceDescriptor rd = cd.getReferenceDescriptorByName(bits[1]);
-                        tagManager.addTag(tagName, rd, profile);
+                        FieldDescriptor fd = cd.getFieldDescriptorByName(bits[1]);
+                        if (fd.isCollection() || fd.isReference()) {
+                            tagManager.addTag(tagName, (ReferenceDescriptor) fd, profile);
+                        }
                     }
                 } else {
                     WebSearchable ws = null;
@@ -1367,8 +1369,10 @@ public class AjaxServices
                 } else {
                     String[] bits = tagged.split("\\.");
                     ClassDescriptor cd = im.getModel().getClassDescriptorByName(bits[0]);
-                    ReferenceDescriptor rd = cd.getReferenceDescriptorByName(bits[1]);
-                    manager.deleteTag(tagName, rd, profile);
+                    FieldDescriptor fd = cd.getFieldDescriptorByName(bits[1]);
+                    if (fd.isCollection() || fd.isReference()) {
+                        manager.deleteTag(tagName, (ReferenceDescriptor) fd, profile);
+                    }
                 }
                 return "ok";
             } else {
