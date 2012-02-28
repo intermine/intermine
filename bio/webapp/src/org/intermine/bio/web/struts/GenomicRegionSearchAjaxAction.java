@@ -44,7 +44,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
-import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
@@ -557,7 +556,7 @@ public class GenomicRegionSearchAjaxAction extends Action
                         session.getServletContext()).getProperty(
                         "genomicRegionSearch.query." + facet + ".sortOrder");
 
-                if (exportFeaturesViewsStr != null) {
+                if (!exportFeaturesViewsStr.isEmpty() && exportFeaturesViewsStr != null) {
                     try {
                         exportFeaturesViews = new LinkedHashSet<String>(
                                 Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
