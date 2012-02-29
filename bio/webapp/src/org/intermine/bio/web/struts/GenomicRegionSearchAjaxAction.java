@@ -557,7 +557,7 @@ public class GenomicRegionSearchAjaxAction extends Action
                         session.getServletContext()).getProperty(
                         "genomicRegionSearch.query." + facet + ".sortOrder");
 
-                if (exportFeaturesViewsStr != null) {
+                if (!exportFeaturesViewsStr.isEmpty() && exportFeaturesViewsStr != null) {
                     try {
                         exportFeaturesViews = new LinkedHashSet<String>(
                                 Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
