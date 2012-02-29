@@ -78,7 +78,7 @@
         <label>${entry.key}:</label>
         <select name="selectedExtraAttribute" id="widgetselect${widget.id}"
           onChange="<c:if test="${type == 'GraphWidgetConfig'}">display${type}('${widget.id}', '${widget.domainLabel}',
-          '${widget.rangeLabel}', '${widget.link}', '${bag.name}');</c:if>
+          '${widget.rangeLabel}', '${bag.name}');</c:if>
           <c:if test="${type ne 'GraphWidgetConfig'}">display${type}('${widget.id}', '${widget.label}',
             '${bag.name}');</c:if>"
           >
@@ -145,7 +145,7 @@
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
       google.setOnLoadCallback(function() {displayGraphWidgetConfig('${widget.id}', '${widget.domainLabel}',
-                              '${widget.rangeLabel}', '${widget.link}', '${bag.name}');});
+                              '${widget.rangeLabel}', '${widget.seriesLabels}','${widget.seriesValues}','${bag.name}');});
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
       getProcessTableWidgetConfig('${widget.id}','${bag.name}');
