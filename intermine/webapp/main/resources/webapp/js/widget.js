@@ -8,7 +8,7 @@ var CHART_OPTS = {
     chartArea:{top:30}
 };
 
-function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagName) {
+function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, seriesLabels, seriesValues, bagName) {
   jQuery('#widgetdata' + widgetId).hide();
   jQuery('#widgetdatanoresults' + widgetId).hide();
   jQuery('#widgetdatawait' + widgetId).show();
@@ -29,7 +29,6 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
       var options = jQuery.extend({}, CHART_OPTS, {title: res.title});
       if (res.chartType == "ColumnChart") {
           Chart = viz.ColumnChart;
-          jQuery.extend(options, {reverseCategories: true});
       } else if (res.chartType == "BarChart") {
           Chart = viz.BarChart;
           //jQuery.extend(options, {height: 450});
@@ -51,24 +50,25 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
       if (Chart) {
           viz = new Chart(targetElem);
           viz.draw(data, options);
-          if (link != "") {
-            google.visualization.events.addListener(viz, 'select', function() {
+          var pathQuery = res.pathQuery;
+          google.visualization.events.addListener(viz, 'select', function() {
               var selection = viz.getSelection();
               for (var i = 0; i < selection.length; i++) {
                 var item = selection[i];
                 if (item.row != null && item.column != null) {
                     var category = res.results[item.row + 1][0];
                     var series = res.results[0][item.column];
-                    window.location.assign(webappUrl + "queryForGraphAction.do?bagName=" + bagName
-                      + "&category=" + category + "&series=" + series + "&urlGen=" + link);
+                    var seriesValue = getSeriesValue(series, seriesLabels, seriesValues);
+                    var pathQueryWithConstraintValues = pathQuery.replace("%category", category);
+                    pathQueryWithConstraintValues = pathQueryWithConstraintValues.replace("%series", seriesValue);
+                    window.open(service + "query/results?query=" + pathQueryWithConstraintValues + "&format=html");
                 } else if (item.row != null) {
                   category = res.results[item.row + 1][0];
-                  window.location.assign(webappUrl + "queryForGraphAction.do?bagName=" + bagName
-                          + "&category=" + category + "&series=&urlGen=" + link);
+                  pathQuery = pathQuery.replace("%category", category);
+                  window.open(service + "query/results?query=" + pathQuery + "&format=html");
                 }
               }
             });
-          }
       } else {
           alert("Don't know how to draw " + res.chartType + "s yet!");
       }
@@ -81,6 +81,16 @@ function displayGraphWidgetConfig(widgetId, domainLabel, rangeLabel, link, bagNa
   });
   }
   AjaxServices.getSingleUseKey(wsCall);
+}
+
+function getSeriesValue(seriesLabel, seriesLabels, seriesValues) {
+    var arraySeriesLabels = seriesLabels.split(",");
+    var arraySeriesValues = seriesValues.split(",");
+    for (var i = 0; i < arraySeriesLabels.length; i++) {
+        if (seriesLabel == arraySeriesLabels[i]) {
+           return arraySeriesValues[i];
+        }
+    }
 }
 
 function getExtraValue(widgetId) {
