@@ -14,7 +14,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.widget.GraphCategoryURLGenerator;
 import org.jfree.data.category.CategoryDataset;
 
 
@@ -22,7 +21,7 @@ import org.jfree.data.category.CategoryDataset;
  *
  * @author Julie Sullivan
  */
-public class ChromosomeDistributionGraphURLGenerator implements GraphCategoryURLGenerator
+public class ChromosomeDistributionGraphURLGenerator
 {
     private String bagName;
     private String organism = null;
