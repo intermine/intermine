@@ -285,6 +285,6 @@ if (!window.Widgets) {
         	loadEnrichment: loadEnrichmentWidget
         };
     };
-} else if (typeof widgets != 'object') {
+} else if (typeof window.Widgets != 'function') {
     throw new Error("Widgets library already exists and is not an object");
 }
