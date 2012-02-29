@@ -39,9 +39,9 @@
 <div class="heading results">
   <img src="images/icons/lists-64.png" alt="lists icon"/>
   <h1>
-      <fmt:message key="bagDetails.title"/> 
+      <fmt:message key="bagDetails.title"/>
       <span style="font-size:0.9em;font-weight:normal">
-          for <b>${bag.name}</b> 
+          for <b>${bag.name}</b>
           (${bag.size}&nbsp;<c:out value="${imf:formatPathStr(bag.type, INTERMINE_API, WEBCONFIG)}s"/>)
       </span>
   </h1>
@@ -293,6 +293,11 @@
 <div style="clear:both;"></div>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
+
+<script type="text/javascript">
+	window.widgets = new window.Widgets(window.service);
+</script>
+
 <c:forEach items="${widgets}" var="widget">
   <tiles:insert name="widget.tile">
     <tiles:put name="widget" beanName="widget"/>
