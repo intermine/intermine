@@ -19,21 +19,24 @@
    </td>
 
 
-
-   <td valign="top">Strin/Target:</td>
+   <td valign="top">Strain/Target:</td>
    <td id="strainContent" >
      <c:choose>
        <c:when test="${not empty strainInfoList}">
          <c:forEach var="strain" items="${strainInfoList}" varStatus="status">
-           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.id}" style="text-decoration: none;"><strong>${strain.name}</strong></a>
-           /
+           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.id}" style="text-decoration: none;">
+           <strong>${strain.name}</strong></a>
            <c:choose>
-               <c:when test="${not empty strain.targetName}">
-                 <a href="${strain.wikiLink}" style="text-decoration: none;" class="value extlink"><strong>${strain.targetName}</strong></a>
-               </c:when>
-               <c:otherwise>
-                 <i>target not available</i>
-               </c:otherwise>
+           <c:when test="${not empty strain.target.name}">/
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.target.id}"
+                title="More about this target">
+            <c:out value="${strain.target.name}"/></html:link>
+           </c:when>
+           <c:otherwise>
+            <c:if test="{not empty strain.targetName}">/
+             <a href="${strain.wikiLink}" style="text-decoration: none;" class="value extlink"><strong>${strain.targetName}</strong></a>
+            </c:if>
+           </c:otherwise>
            </c:choose>
            <c:if test="${!status.last}">,  </c:if>
          </c:forEach>
@@ -44,32 +47,8 @@
      </c:choose>
    </td>
 
-<%--
-   <td valign="top">Strain:</td>
-   <td>
-     <c:choose>
-       <c:when test="${not empty strainMap}">
-         <c:forEach var="strain" items="${strainMap}" varStatus="status">
-           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${strain.key}" style="text-decoration: none;"><strong>${strain.value}</strong></a>
-
-           <c:if test="${not empty strain.targetName}">
-             <a href="${strain.wikiLink}" style="text-decoration: none;" class="value extlink">
-             <strong>/${strain.targetName}</strong></a>
-           </c:if>
-
-
-           <c:if test="${!status.last}">,  </c:if>
-         </c:forEach>
-       </c:when>
-       <c:otherwise>
-         <i>not available</i>
-       </c:otherwise>
-     </c:choose>
-   </td>
---%>
-
-   </tr>
- <tr>
+</tr>
+<tr>
    <td valign="top">Cell Line:</td>
    <td>
      <c:choose>
@@ -131,31 +110,54 @@
      </tr>
      <tr>
 
+     <td valign="top">Antibody/Target:</td>
+     <td id="antibodyContent" colspan=3>
+       <c:choose>
+         <c:when test="${not empty antibodyInfoList}">
+           <c:forEach var="antibody" items="${antibodyInfoList}" varStatus="status">
+           <c:if test="${!fn:containsIgnoreCase(antibody.name, 'No Antibody')}">
+
+             <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.id}" style="text-decoration: none;">
+             <strong>${antibody.name}</strong></a>
+
+             <c:choose>
+             <c:when test="${not empty antibody.target.name}">/
+             <strong>
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.target.id}"
+                  title="More about this target">
+              <c:out value="${antibody.target.name}"/></html:link>
+              </strong>
+             </c:when>
+             <c:otherwise>
+             <c:choose>
+             <c:when test="${not empty antibody.target.symbol}">/
+             <strong>
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.target.id}"
+                  title="More about this target">
+              <c:out value="${antibody.target.symbol}"/></html:link>
+              </strong>
+             </c:when>
+             <c:otherwise>
+             <c:if test="${not empty antibody.targetName}">/
+             </c:if>
+               <a href="${antibody.wikiLink}" style="text-decoration: none;" class="value extlink">
+               <strong>${antibody.targetName}</strong></a>
+             </c:otherwise>
+             </c:choose>
+             </c:otherwise>
+             </c:choose>
 
 
-   <td valign="top">Antibody/Target:</td>
-   <td id="antibodyContent" colspan=3>
-     <c:choose>
-       <c:when test="${not empty antibodyInfoList}">
-         <c:forEach var="antibody" items="${antibodyInfoList}" varStatus="status">
-           <a href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${antibody.id}" style="text-decoration: none;"><strong>${antibody.name}</strong></a>
-           /
-           <c:choose>
-               <c:when test="${not empty antibody.targetName}">
-                 <a href="${antibody.wikiLink}" style="text-decoration: none;" class="value extlink"><strong>${antibody.targetName}</strong></a>
-               </c:when>
-               <c:otherwise>
-                 <i>target not available</i>
-               </c:otherwise>
-           </c:choose>
-           <c:if test="${!status.last}">,  </c:if>
-         </c:forEach>
-       </c:when>
-       <c:otherwise>
-         <i>not available</i>
-       </c:otherwise>
-     </c:choose>
-   </td>
+             <c:if test="${!status.last}">,  </c:if>
+             </c:if>
+
+             </c:forEach>
+         </c:when>
+         <c:otherwise>
+           <i>not available</i>
+         </c:otherwise>
+       </c:choose>
+     </td>
 
 
  </tr>
