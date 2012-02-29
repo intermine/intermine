@@ -141,21 +141,12 @@
     <div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
   </c:if>
   <script language="javascript">
-  google.load('visualization', '1.0', {'packages':['corechart']});
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
-      google.setOnLoadCallback(function() {displayGraphWidgetConfig('${widget.id}', '${widget.domainLabel}',
-                              '${widget.rangeLabel}', '${widget.seriesLabels}','${widget.seriesValues}','${bag.name}');});
-    </c:when>
-    <c:when test="${type == 'TableWidgetConfig'}" >
-      getProcessTableWidgetConfig('${widget.id}','${bag.name}');
+    	window.widgets.loadGraph('${widget.id}', '${widget.domainLabel}', '${widget.rangeLabel}', '${widget.seriesLabels}','${widget.seriesValues}','${bag.name}');
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
-      google.setOnLoadCallback(function() {displayEnrichmentWidgetConfig('${widget.id}', '${widget.label}',
-            '${bag.name}');});
-    </c:when>
-    <c:when test="${type == 'HTMLWidgetConfig'}" >
-      getProcessHTMLWidgetConfig('${widget.id}','${bag.name}');
+    	window.widgets.loadEnrichment('${widget.id}', '${widget.label}', '${bag.name}');
     </c:when>
   </c:choose>
   </script>
