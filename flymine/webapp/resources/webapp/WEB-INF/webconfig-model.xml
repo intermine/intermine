@@ -731,8 +731,9 @@
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
                       dataSetPath=""
-                      dataSetValue=""/>
- 
+                      dataSetValue=""
+                      views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
+
       <graphdisplayer id="flyfish"
                       title="mRNA subcellular localisation (fly-FISH)"
                       description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
@@ -741,13 +742,14 @@
                       rangeLabel="Gene count"
                       startClass="MRNAExpressionResult"
                       typeClass="org.intermine.model.bio.Gene"
-                      bagPath="Gene.mRNAExpressionResults"
+                      bagPath="MRNAExpressionResult.gene"
                       categoryPath="stageRange"
                       seriesPath="expressed"
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
                       dataSetPath="dataSet"
-                      dataSetValue="fly-Fish data set"/>
+                      dataSetValue="fly-Fish data set"
+                      views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
  
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
@@ -763,13 +765,16 @@
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
                       dataSetPath="dataSet"
-                      dataSetValue="BDGP in situ data set"/>
+                      dataSetValue="BDGP in situ data set"
+                      views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
 <!--
-      <enrichmentwidgetdisplayer id="miranda_enrichment" title="MiRNA Enrichment"
-                                 link="org.flymine.web.widget.MirandaURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.MirandaLdr"
+      <enrichmentwidgetdisplayer id="miranda_enrichment"
+                                 title="MiRNA Enrichment"
                                  description="MiRNAs enriched for items in this list."
+                                 link="org.flymine.web.widget.MirandaURLQuery"
                                  label="MiRNAs"
+                                 startClass="MiRNATarget"
+                                 dataSetLoader="org.flymine.web.widget.MirandaLdr"
                                  typeClass="org.intermine.model.bio.Gene" />
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
