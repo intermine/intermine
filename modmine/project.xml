@@ -692,7 +692,7 @@
 
     <post-process name="create-bioseg-location-index"/>
     <post-process name="create-overlap-view"/>
-    <post-process name="create-attribute-indexes"/>
+    <post-process name="create-attribute-indexes" dump="true"/>
 <!--    <post-process name="precompute-queries"/>
 to be run from weapp
 ant -v precompute-queries -Drelease=test
