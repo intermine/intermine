@@ -28,6 +28,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.config.WebConfig;
 
 import org.intermine.web.logic.export.ResponseUtil;
@@ -106,6 +108,9 @@ public class GraphService extends JSONService
             throw new InternalErrorException("Problem loading widget");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
+        String pathQuery = PathQueryBinding.marshal(widget.getPathQuery(),
+            "pathQuery" + widgetConfig.getId(), model.getName(), PathQuery.USERPROFILE_VERSION);
+        addOutputInfo("pathQuery", pathQuery);
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
