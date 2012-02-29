@@ -111,7 +111,7 @@
      <tr>
 
      <td valign="top">Antibody/Target:</td>
-     <td id="antibodyContent" colspan=3>
+     <td id="antibodyContent" >
        <c:choose>
          <c:when test="${not empty antibodyInfoList}">
            <c:forEach var="antibody" items="${antibodyInfoList}" varStatus="status">
@@ -158,7 +158,9 @@
          </c:otherwise>
        </c:choose>
      </td>
-
+     <td valign="top">Technique:</td>
+     <td><strong>${technique}</strong>
+</td>
 
  </tr>
 </tbody>

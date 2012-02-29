@@ -138,6 +138,10 @@ public class SubmissionPropertiesDisplayer extends ReportDisplayer
 
         request.setAttribute("arrayMap", arrayMap);
 
+        // set the technique for the properties displayer
+        request.setAttribute("technique", sub.getExperimentType());
+
+
         //== SubmissionProperty ==
         request.setAttribute("submissionPropertyJSON", getSubmissionPropertyJSON(sub));
     }
