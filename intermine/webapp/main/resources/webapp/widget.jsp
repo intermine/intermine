@@ -18,7 +18,9 @@
 <c:set var="type" value="${split[fn:length(split)-1]}"/>
 
 <html:xhtml/>
+
 <form action="widgetAction.do" id="widgetaction${widget.id}">
+
 <html:hidden property="link" value="${widget.link}"/>
 <html:hidden property="bagType" value="${bag.type}"/>
 <html:hidden property="bagName" value="${bag.name}" />
@@ -135,11 +137,7 @@
       </table>
     </c:if>
   </div>
-  <div id="widgetdatawait${widget.id}" class="widgetdatawait"><img src="images/wait30.gif" title="Searching..."/></div>
-  <div id="widgetdatanoresults${widget.id}" class="widgetdatawait" style="display:none;"><i>no results found</i></div>
-  <c:if test="${type == 'HTMLWidgetConfig'}" >
-    <div id="widgetdatacontent${widget.id}" class="widgetdatawait" style="display:none;">${widget.content}</div>
-  </c:if>
+
   <script language="javascript">
   <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
