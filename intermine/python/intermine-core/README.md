@@ -100,7 +100,12 @@ Changes:
 0.99.03  Allow query construction from Columns with "where" and "filter"
          Allow list and query objects as the value in an add_constraint call with "IN" and "NOT IN" operators.
          Ensure lists and queries share the same overloading
-0.99.04  Merged list.to_query and list.to_attribute_query in response to the changes in list upload behaviour.
+0.99.04  Merged 'list.to_query and 'list.to_attribute_query' in response to the changes in list upload behaviour.
+0.99.05  Allow template parameters of the form 'A = "zen"', where only the value is being replaced.
+0.99.06  Fixed bug whereby constraint codes in xml were being ignored when queries were deserialised.
+0.99.07  Wed Jan 18 14:42:41 GMT 2012
+         Fixed bugs with lazy reference fetching handling empty collections and null references.
+0.99.08  Added simpler constraint definition with kwargs.
 
 
 

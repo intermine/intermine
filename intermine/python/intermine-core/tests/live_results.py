@@ -48,10 +48,23 @@ class LiveListTest(unittest.TestCase):
 
         self.assertEqual(expected, managers)
 
+    def testLazyReferenceFetching(self):
+        dave = self.SERVICE.select("Employee.*").where(name = "David Brent").one()
+        self.assertEqual("Sales", dave.department.name)
+        self.assertIsNotNone(dave.address)
+
+        # Can handle null references.
+        b1 = self.SERVICE.select("Employee.*").where(name = "EmployeeB1").one();
+        self.assertIsNone(b1.address)
+
     def testLazyCollectionFetching(self):
         results = self.SERVICE.select("Department.*").results()
         age_sum = reduce(lambda x, y: x + reduce(lambda a, b: a + b.age, y.employees, 0), results, 0)
         self.assertEqual(5924, age_sum)
+
+        # Can handle empty collections as well as populated ones.
+        banks = self.SERVICE.select("Bank.*").results()
+        self.assertEqual([1, 0, 0, 2, 2], [len(bank.corporateCustomers) for bank in banks])
 
     def testAllFormats(self):
         q = self.SERVICE.select("Manager.age")
@@ -61,7 +74,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="object"))))
         self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="objects"))))
         self.assertEqual(expected_sum, sum(map(lambda x: x.age, q.results(row="jsonobjects"))))
-        
+
         self.assertEqual(expected_sum, sum(map(lambda x: x["age"], q.results(row="rr"))))
         self.assertEqual(expected_sum, sum(map(lambda x: x[0], q.results(row="rr"))))
 
