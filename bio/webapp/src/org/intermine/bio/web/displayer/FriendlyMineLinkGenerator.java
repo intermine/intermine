@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -40,6 +41,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.web.displayer.InterMineLinkGenerator;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -206,6 +208,13 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 LOG.warn(mine.getName() + " could not run query " + webserviceURL);
                 return null;
             }
+//            String contents = IOUtils.toString(reader);
+//            JSONObject jo = new JSONObject(contents);
+//            JSONArray jrsults = jo.getJSONArray("results");
+//            for (;;) {
+//                JSONArray row jrsults.get(i);
+//                o.getObject("value");
+//            }
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] identifiers = new String[2];
@@ -217,6 +226,11 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 String newIdentifier = bits[0];
                 String symbol = bits[1];
                 String organismName = bits[2];
+
+                newIdentifier = newIdentifier.replaceAll("\"", "");
+                symbol = symbol.replaceAll("\"", "");
+                organismName = organismName.replaceAll("\"", "");
+
                 if (!mineOrganisms.contains(organismName)) {
                     // we only want genes and homologues that are relevant to mine
                     continue;
