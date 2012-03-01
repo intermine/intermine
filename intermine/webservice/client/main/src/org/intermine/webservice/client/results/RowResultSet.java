@@ -11,6 +11,8 @@ package org.intermine.webservice.client.results;
  */
 
 import org.intermine.webservice.client.util.HttpConnection;
+
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
 import java.util.ArrayList;
@@ -40,9 +42,25 @@ public class RowResultSet extends ResultSet
      * Construct a new result-set with an HttpConnection and a list of output columns.
      * @param connection The connection to receive results from.
      * @param views The columns selected for output.
+     * @param version The web service version of the service these results come from.
      */
     public RowResultSet(HttpConnection connection, List<String> views, int version) {
         super(connection);
+        init(views);
+        useNewAPI = version >= 8;
+    }
+
+    /**
+     * Constructor with a reader.
+     *
+     * Use this constructor when you want to make the request yourself.
+     *
+     * @param reader A presupplied reader, presumably obtained by opening a URL or a file.
+     * @param views The columns selected for output.
+     * @param version The web service version of the service these results come from.
+     */
+    public RowResultSet(BufferedReader reader, List<String> views, int version) {
+        super(reader);
         init(views);
         useNewAPI = version >= 8;
     }
