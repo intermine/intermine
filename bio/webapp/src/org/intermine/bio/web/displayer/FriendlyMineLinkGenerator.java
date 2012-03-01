@@ -54,9 +54,9 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
 {
     private static final String WEBSERVICE_URL = "/service";
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
-    private boolean debug = true;
+    private boolean debug = false;
     private static final String EMPTY = "\"\""; // webservices returns "" as empty
-    private static final String QUERY_PATH = "/query/results?size=1000&format=jsonrows&query=";
+    private static final String QUERY_PATH = "/query/results?size=1000&format=tab&query=";
 
     /**
      * Constructor
@@ -226,6 +226,11 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 String newIdentifier = bits[0];
                 String symbol = bits[1];
                 String organismName = bits[2];
+
+                newIdentifier = newIdentifier.replaceAll("\"", "");
+                symbol = symbol.replaceAll("\"", "");
+                organismName = organismName.replaceAll("\"", "");
+
                 if (!mineOrganisms.contains(organismName)) {
                     // we only want genes and homologues that are relevant to mine
                     continue;
