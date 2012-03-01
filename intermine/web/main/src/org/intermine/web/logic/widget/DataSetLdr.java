@@ -13,7 +13,6 @@ package org.intermine.web.logic.widget;
 import java.util.List;
 
 import org.intermine.objectstore.query.Results;
-import org.jfree.data.general.Dataset;
 
 /**
  * An Interface which defines a frame
