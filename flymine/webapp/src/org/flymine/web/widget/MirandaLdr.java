@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MRNA;
-import org.intermine.model.bio.MiRNATarget;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -38,10 +39,11 @@ import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 public class MirandaLdr extends EnrichmentWidgetLdr
 {
 
-//    private static final Logger LOG = Logger.getLogger(MirandaLdr.class);
+    private static final Logger LOG = Logger.getLogger(MirandaLdr.class);
     private Collection<String> organisms = new ArrayList<String>();
     private Collection<String> organismsLower = new ArrayList<String>();
     private InterMineBag bag;
+    private Model model = null;
 
     /**
      * Create a new Loader.
@@ -51,7 +53,7 @@ public class MirandaLdr extends EnrichmentWidgetLdr
      */
     public MirandaLdr(InterMineBag bag, ObjectStore os, String extraAttribute) {
         this.bag = bag;
-
+        model = os.getModel();
         organisms = BioUtil.getOrganisms(os, bag, false);
 
         for (String s : organisms) {
@@ -65,7 +67,12 @@ public class MirandaLdr extends EnrichmentWidgetLdr
     public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcMiRNATarget = null;
-        qcMiRNATarget = new QueryClass(MiRNATarget.class);
+        try {
+            qcMiRNATarget = new QueryClass(Class.forName(model.getPackageName() + ".MiRNATarget"));
+        } catch (ClassNotFoundException e) {
+            LOG.error("MiRNATarget not in the model, failed to load widget");
+            return null;
+        }
 
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcMiR = new QueryClass(Gene.class);
