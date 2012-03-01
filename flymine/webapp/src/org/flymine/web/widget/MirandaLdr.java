@@ -18,6 +18,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.MRNA;
+import org.intermine.model.bio.MiRNATarget;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -64,11 +65,8 @@ public class MirandaLdr extends EnrichmentWidgetLdr
     public Query getQuery(String action, List<String> keys) {
 
         QueryClass qcMiRNATarget = null;
-        try {
-            qcMiRNATarget = new QueryClass(Class.forName("MiRNATarget"));
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
+        qcMiRNATarget = new QueryClass(MiRNATarget.class);
+
         QueryClass qcGene = new QueryClass(Gene.class);
         QueryClass qcMiR = new QueryClass(Gene.class);
         QueryClass qcTranscript = new QueryClass(MRNA.class);
