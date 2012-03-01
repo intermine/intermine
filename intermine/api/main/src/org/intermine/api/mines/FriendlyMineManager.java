@@ -12,7 +12,6 @@ package org.intermine.api.mines;
 
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +22,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.webservice.client.core.ServiceFactory;
 import org.json.JSONObject;
 
 /**
@@ -104,39 +102,41 @@ public class FriendlyMineManager
         if (timeSinceLastRefresh > ONE_HOUR || !cached || DEBUG) {
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
-            for (Mine mine : mines.values()) {
-                String webserviceURL = mine.getUrl() + "/service";
-                ServiceFactory services = new ServiceFactory(webserviceURL);
-                String currentReleaseVersion = mine.getReleaseVersion();
-                String newReleaseVersion = null;
-                try {
-                    newReleaseVersion = services.getQueryService().getRelease();
-                } catch (Exception e) {
-                    final String msg = "Unable to retrieve release version for " + mine.getName();
-                    LOG.warn(msg);
-                    continue;
-                }
-
-                if (StringUtils.isEmpty(newReleaseVersion)
-                        && StringUtils.isEmpty(currentReleaseVersion)) {
-                    // didn't get a release version this time or last time
-                    final String msg = "Unable to retrieve release version for " + mine.getName();
-                    LOG.warn(msg);
-                    continue;
-                }
-
-                // if release version is different
-                if (StringUtils.isEmpty(newReleaseVersion)
-                        || StringUtils.isEmpty(currentReleaseVersion)
-                        || !newReleaseVersion.equals(currentReleaseVersion)
-                        || DEBUG) {
-
-                    // update release version
-                    mine.setReleaseVersion(newReleaseVersion);
-
-                    intermineLinkCache = new HashMap<MultiKey, Collection<JSONObject>>();
-                }
-            }
+            FriendlyMineQueryRunner.updateReleaseVersion(mines);
+            // FIXME there is a delay when using the client, See #2829
+//            for (Mine mine : mines.values()) {
+//                String webserviceURL = mine.getUrl() + "/service";
+//                ServiceFactory services = new ServiceFactory(webserviceURL);
+//                String currentReleaseVersion = mine.getReleaseVersion();
+//                String newReleaseVersion = null;
+//                try {
+//                    newReleaseVersion = services.getQueryService().getRelease();
+//                } catch (Exception e) {
+//                    final String msg = "Unable to retrieve release version for " + mine.getName();
+//                    LOG.warn(msg);
+//                    continue;
+//                }
+//
+//                if (StringUtils.isEmpty(newReleaseVersion)
+//                        && StringUtils.isEmpty(currentReleaseVersion)) {
+//                    // didn't get a release version this time or last time
+//                    final String msg = "Unable to retrieve release version for " + mine.getName();
+//                    LOG.warn(msg);
+//                    continue;
+//                }
+//
+//                // if release version is different
+//                if (StringUtils.isEmpty(newReleaseVersion)
+//                        || StringUtils.isEmpty(currentReleaseVersion)
+//                        || !newReleaseVersion.equals(currentReleaseVersion)
+//                        || DEBUG) {
+//
+//                    // update release version
+//                    mine.setReleaseVersion(newReleaseVersion);
+//
+//                    intermineLinkCache = new HashMap<MultiKey, Collection<JSONObject>>();
+//                }
+//            }
         }
     }
 
