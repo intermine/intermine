@@ -10,6 +10,8 @@ package org.intermine.bio.web.displayer;
  *
  */
 
+import java.io.BufferedReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.mines.FriendlyMineManager;
+import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.PathQueryExecutor;
@@ -37,8 +40,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.web.displayer.InterMineLinkGenerator;
-import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.results.Page;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,6 +54,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
     private boolean debug = false;
     private static final String EMPTY = "\"\""; // webservices returns "" as empty
+    private static final String QUERY_PATH = "/query/results?size=1000&format=tab&query=";
 
     /**
      * Constructor
@@ -99,15 +101,13 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
             return null;
         }
 
-        String webserviceURL = mine.getUrl() + WEBSERVICE_URL;
-        ServiceFactory services = new ServiceFactory(webserviceURL);
-        Model model = services.getModel();
+        Model model = olm.getInterMineAPI().getModel();
 
         Map<String, Set<String[]>> genes = new HashMap<String, Set<String[]>>();
         try {
             // query for homologues in remote mine
             PathQuery q = getHomologueQuery(model, organismShortName, primaryIdentifier);
-            Map<String, Set<String[]>> results = runQuery(services, mine, q, organismShortName);
+            Map<String, Set<String[]>> results = runQuery(mine, q, organismShortName);
             if (results != null && !results.isEmpty()) {
                 genes.putAll(results);
             } else {
@@ -120,7 +120,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                         String identifiers = StringUtil.join(matchingHomologues, ",");
                         // query remote mine for genes found in local mine
                         q = getGeneQuery(model, remoteMineOrganism, identifiers);
-                        results = runQuery(services, mine, q, remoteMineOrganism);
+                        results = runQuery(mine, q, remoteMineOrganism);
                         if (results != null && !results.isEmpty()) {
                             genes.putAll(results);
                         }
@@ -128,7 +128,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 }
             }
             q = getGeneQuery(model, organismShortName, primaryIdentifier);
-            results = runQuery(services, mine, q, organismShortName);
+            results = runQuery(mine, q, organismShortName);
             if (results != null && !results.isEmpty()) {
                 genes.putAll(results);
             }
@@ -195,26 +195,32 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 GENES
      *****************************************************************************************/
 
-    private static Map<String, Set<String[]>> runQuery(ServiceFactory services, Mine mine,
-            PathQuery q, String organism) {
+    private static Map<String, Set<String[]>> runQuery(Mine mine, PathQuery q, String organism) {
         Map<String, Set<String[]>> results = new HashMap<String, Set<String[]>>();
         Set<String> mineOrganisms = mine.getDefaultValues();
         try {
-            List<List<String>> result = services.getQueryService().getResults(q, Page.DEFAULT);
-            for (List<String> row : result) {
-                if (row.size() != 3) {
+            final String webserviceURL = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH
+                    + URLEncoder.encode("" + q.toXml(), "UTF-8");
+            BufferedReader reader = FriendlyMineQueryRunner.runWebServiceQuery(webserviceURL);
+            if (reader == null) {
+                LOG.warn(mine.getName() + " could not run query " + webserviceURL);
+                return null;
+            }
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] identifiers = new String[2];
+                String[] bits = line.split("\\t");
+                if (bits.length != 3) {
                     return null;
                 }
 
-                String newIdentifier = row.get(0);
-                String symbol = row.get(1);
-                String organismName = row.get(2);
-
+                String newIdentifier = bits[0];
+                String symbol = bits[1];
+                String organismName = bits[2];
                 if (!mineOrganisms.contains(organismName)) {
                     // we only want genes and homologues that are relevant to mine
                     continue;
                 }
-                String[] identifiers = new String[2];
 
                 if (!StringUtils.isEmpty(newIdentifier) && !EMPTY.equals(newIdentifier)) {
                     identifiers[0] = newIdentifier;
