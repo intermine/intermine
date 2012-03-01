@@ -208,12 +208,10 @@ class List(object):
 
         @rtype: intermine.query.Query
         """
-        q = self._service.new_query()
-        attributes = q.model.get_class(self.list_type).attributes
-        q.add_view(map(lambda x: self.list_type + "." + x.name, attributes))
+        q = self._service.new_query(self.list_type)
         q.add_constraint(self.list_type, "IN", self.name)
         return q
-    
+
     def __iter__(self):
         """Return an iterator over the objects in this list, with all attributes selected for output"""
         return iter(self.to_query())

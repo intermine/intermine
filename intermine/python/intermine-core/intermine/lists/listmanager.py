@@ -16,15 +16,15 @@ class ListManager(object):
     A Class for Managing List Content and Operations
     ================================================
 
-    This class serves as a delegate for the intermine.webservice.Service class, 
-    managing list content and operations. 
+    This class serves as a delegate for the intermine.webservice.Service class,
+    managing list content and operations.
 
     This class is not meant to be called itself, but rather for its
     methods to be called by the service object.
 
-    Note that the methods for creating lists can conflict in threaded applications, if 
+    Note that the methods for creating lists can conflict in threaded applications, if
     two threads are each allocated the same unused list name. You are
-    strongly advised to use locks to synchronise any list creation requests (create_list, 
+    strongly advised to use locks to synchronise any list creation requests (create_list,
     or intersect, union, subtract, diff) unless you are choosing your own names each time.
     """
 
@@ -57,11 +57,11 @@ class ListManager(object):
 
     @staticmethod
     def safe_dict(d):
-        """Recursively clone json structure with UTF-8 dictionary keys""" 
-        if isinstance(d, dict): 
-            return dict([(k.encode('utf-8'), v) for k,v in d.iteritems()]) 
-        else: 
-            return d 
+        """Recursively clone json structure with UTF-8 dictionary keys"""
+        if isinstance(d, dict):
+            return dict([(k.encode('utf-8'), v) for k,v in d.iteritems()])
+        else:
+            return d
 
     def get_list(self, name):
         """Return a list from the service by name, if it exists"""
@@ -87,21 +87,21 @@ class ListManager(object):
 
     def get_list_count(self):
         """
-        Return the number of lists accessible at the given webservice. 
+        Return the number of lists accessible at the given webservice.
         This number will vary depending on who you are authenticated as.
         """
         return len(self.get_all_list_names())
 
     def get_unused_list_name(self):
         """
-        Get an unused list name 
+        Get an unused list name
         =======================
 
         This method returns a new name that does not conflict
-        with any currently existing list name. 
+        with any currently existing list name.
 
         The list name is only guaranteed to be unused at the time
-        of allocation. 
+        of allocation.
         """
         list_names = self.get_all_list_names()
         counter = 1
@@ -116,7 +116,7 @@ class ListManager(object):
         q = queryable.to_query()
         if not q.views:
             q.add_view(q.root.name + ".id")
-        else: 
+        else:
             # Check to see if the class of the selected items is unambiguous
             up_to_attrs = set((v[0:v.rindex(".")] for v in q.views))
             if len(up_to_attrs) == 1:
@@ -134,7 +134,7 @@ class ListManager(object):
         resp = self.service.opener.open(uri, form)
         data = resp.read()
         resp.close()
-        return self.parse_list_upload_response(data) 
+        return self.parse_list_upload_response(data)
 
     def create_list(self, content, list_type="", name=None, description=None, tags=[]):
         """
@@ -169,9 +169,9 @@ class ListManager(object):
 
         uri = self.service.root + self.service.LIST_CREATION_PATH
         query_form = {
-            'name': name, 
-            'type': list_type, 
-            'description': description, 
+            'name': name,
+            'type': list_type,
+            'description': description,
             'tags': ";".join(tags)
         }
         uri += "?" + urllib.urlencode(query_form)
@@ -329,7 +329,7 @@ class ListManager(object):
                 t = l.list_type
                 list_names.append(l.name)
             except AttributeError:
-                try: 
+                try:
                     m = l.model
                     list_names.append(self.create_list(l).name)
                 except AttributeError:
