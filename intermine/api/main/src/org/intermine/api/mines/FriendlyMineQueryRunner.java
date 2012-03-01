@@ -97,6 +97,12 @@ public final class FriendlyMineQueryRunner
         return jsonMine;
     }
 
+    /**
+     * Run a query on a mine using XML query
+     * @param mine mine to query
+     * @param xmlQuery pathQuery.toXML()
+     * @return results
+     */
     private static BufferedReader runWebServiceQuery(Mine mine, String xmlQuery) {
         try {
             String urlString = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH
@@ -161,7 +167,7 @@ public final class FriendlyMineQueryRunner
      * @param urlString url to query
      * @return reader
      */
-    private static BufferedReader runWebServiceQuery(String urlString) {
+    public static BufferedReader runWebServiceQuery(String urlString) {
         try {
             URL url = new URL(urlString);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));

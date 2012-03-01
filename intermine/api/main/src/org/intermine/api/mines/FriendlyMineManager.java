@@ -12,7 +12,6 @@ package org.intermine.api.mines;
 
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +22,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.webservice.client.core.ServiceFactory;
 import org.json.JSONObject;
 
 /**
