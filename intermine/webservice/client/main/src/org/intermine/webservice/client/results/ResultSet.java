@@ -53,6 +53,16 @@ public abstract class ResultSet
     }
 
     /**
+     * Constructor with a reader.
+     *
+     * Use this constructor when you want to make the request yourself.
+     * @param reader A presupplied reader, presumably obtained by opening a URL or a file.
+     */
+    public ResultSet(BufferedReader reader) {
+        this.reader = reader;
+    }
+
+    /**
      * Constructor for use in testing.
      * @param is The source of data.
      */

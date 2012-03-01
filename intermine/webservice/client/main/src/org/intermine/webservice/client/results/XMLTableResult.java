@@ -10,6 +10,7 @@ package org.intermine.webservice.client.results;
  *
  */
 
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -71,6 +72,17 @@ public class XMLTableResult extends ResultSet
      */
     public XMLTableResult(String s) {
         super(s);
+        init();
+    }
+
+    /**
+    * Constructor with a reader.
+    *
+    * Use this constructor when you want to make the request yourself.
+    * @param reader A presupplied reader, presumably obtained by opening a URL or a file.
+    */
+    public XMLTableResult(BufferedReader reader) {
+        super(reader);
         init();
     }
 
