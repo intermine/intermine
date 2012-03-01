@@ -109,7 +109,7 @@ public class PathQueryUnmarshalTest extends  TestCase
             PathQuery query = createQuery("BadValueTags.xml");
         } catch (RuntimeException e) {
             assertEquals(e.getMessage(),
-                    "org.xml.sax.SAXException: Cannot have any tags inside a value tag");
+                    "Cannot have any tags inside a value tag");
             return;
         }
         fail("Expected exception");
