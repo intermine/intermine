@@ -1491,6 +1491,15 @@ div.floatRight { float:right; }
 .intermine.timestamp { white-space:nowrap; display:none; }
 .timestamp { display:inline-block; }
 
+.mine > span {
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  font-weight: bold;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  margin-top: 0.2em;
+  text-outline: 1px 1px white;
+}
+
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */
 div.inline-list { margin:0 0 30px 0; }
