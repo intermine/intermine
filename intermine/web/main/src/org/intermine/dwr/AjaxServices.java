@@ -792,7 +792,6 @@ public class AjaxServices
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
             map.put("status", "offline");
-            JSONObject o = new JSONObject();
             return new JSONObject(map).toString();
         }
         final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
