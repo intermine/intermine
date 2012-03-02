@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
@@ -737,22 +738,20 @@ public class AjaxServices
         if (StringUtils.isEmpty(orthologues)) {
             return null;
         }
+        Mine mine;
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         final ServletContext servletContext = WebContextFactory.get().getServletContext();
         final Properties webProperties = SessionMethods.getWebProperties(servletContext);
         final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
-        Mine mine = linkManager.getMine(mineName);
+        mine = linkManager.getMine(mineName);
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
             return null;
         }
-        final String xmlQuery = "<query name=\"\" model=\"genomic\" view=\"Gene.pathways.id "
-            + "Gene.pathways.name\" sortOrder=\"Gene.pathways.name asc\"><constraint path=\"Gene\" "
-            + "op=\"LOOKUP\" value=\"" + orthologues + "\" extraValue=\"\"/></query>";
+        final String xmlQuery = getXMLQuery("FriendlyMinesPathways.xml", orthologues);
         try {
-            JSONObject results
-                = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            JSONObject results = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
             if (results == null) {
                 LOG.error("Couldn't query " + mine.getName() + " for pathways");
                 return null;
@@ -765,6 +764,26 @@ public class AjaxServices
         } catch (JSONException e) {
             LOG.error("Error adding Mine URL to pathways results", e);
             return null;
+        } catch (Throwable t) {
+            LOG.error(t);
+            return null;
+        }
+    }
+
+    private static String getXMLQuery(String filename, Object... positionalArgs) {
+        try {
+            return String.format(
+                IOUtils.toString(
+                        AjaxServices.class.getResourceAsStream(filename)), positionalArgs);
+        } catch (IOException e) {
+            LOG.error(e);
+            throw new RuntimeException("Could not read " + filename, e);
+        } catch (NullPointerException npe) {
+            LOG.error(npe);
+            throw new RuntimeException(filename + " not found", npe);
+        } catch (Throwable e) {
+            LOG.error(e);
+            throw new RuntimeException("Unexpected exception", e);
         }
     }
 
@@ -787,28 +806,20 @@ public class AjaxServices
         final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Mine mine = linkManager.getMine("RatMine");
 
-        HashMap map = new HashMap();
+        HashMap<String, Object> map = new HashMap<String, Object>();
 
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
             map.put("status", "offline");
             return new JSONObject(map).toString();
         }
-        final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
-            + "\"Gene.doAnnotation.ontologyTerm.id Gene.doAnnotation.ontologyTerm.name\"  "
-            + "sortOrder=\"Gene.doAnnotation.ontologyTerm.name asc\"> "
-            + "<pathDescription pathString=\"Gene.doAnnotation.ontologyTerm\" "
-            + "description=\"Disease Ontology Term\"/> "
-            + "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"" + orthologues
-            + "\" extraValue=\"\"/></query>";
+        final String xmlQuery = getXMLQuery("RatDiseases.xml", orthologues);
         try {
-            map.put("status", "online");
-            JSONObject results
-                = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            JSONObject results = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
             if (results != null) {
                 results.put("mineURL", mine.getUrl());
-                map.put("results", results);
-                return new JSONObject(map).toString();
+                results.put("status", "online");
+                return results.toString();
             }
         } catch (IOException e) {
             LOG.error("Couldn't query ratmine for diseases", e);
