@@ -17,13 +17,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -41,7 +41,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.web.displayer.InterMineLinkGenerator;
-import org.json.JSONArray;
+import org.intermine.webservice.client.results.XMLTableResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,7 +56,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
     private boolean debug = false;
     private static final String EMPTY = "\"\""; // webservices returns "" as empty
-    private static final String QUERY_PATH = "/query/results?size=1000&format=tab&query=";
+    private static final String QUERY_PATH = "/query/results?size=1000&format=xml&query=";
 
     /**
      * Constructor
@@ -208,44 +208,21 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
                 LOG.warn(mine.getName() + " could not run query " + webserviceURL);
                 return null;
             }
-//            String contents = IOUtils.toString(reader);
-//            JSONObject jo = new JSONObject(contents);
-//            JSONArray jrsults = jo.getJSONArray("results");
-//            for (;;) {
-//                JSONArray row jrsults.get(i);
-//                o.getObject("value");
-//            }
-            String line = null;
-            while ((line = reader.readLine()) != null) {
+            Iterator<List<String>> table = new XMLTableResult(reader).getIterator();
+            while (table.hasNext()) {
+                List<String> row = table.next();
                 String[] identifiers = new String[2];
-                String[] bits = line.split("\\t");
-                if (bits.length != 3) {
-                    return null;
-                }
 
-                String newIdentifier = bits[0];
-                String symbol = bits[1];
-                String organismName = bits[2];
-
-                newIdentifier = newIdentifier.replaceAll("\"", "");
-                symbol = symbol.replaceAll("\"", "");
-                organismName = organismName.replaceAll("\"", "");
-
+                String organismName = row.get(2);
                 if (!mineOrganisms.contains(organismName)) {
                     // we only want genes and homologues that are relevant to mine
                     continue;
                 }
+                final String ident = StringUtils.isBlank(row.get(0)) ? row.get(1) : row.get(0);
+                final String symbol = StringUtils.isBlank(row.get(1)) ? row.get(0) : row.get(1);
+                identifiers[0] = ident;
+                identifiers[1] = symbol;
 
-                if (!StringUtils.isEmpty(newIdentifier) && !EMPTY.equals(newIdentifier)) {
-                    identifiers[0] = newIdentifier;
-                    identifiers[1] = newIdentifier;
-                }
-                if (!StringUtils.isEmpty(symbol) && !EMPTY.equals(symbol)) {
-                    identifiers[1] = symbol;
-                    if (StringUtils.isEmpty(newIdentifier)) {
-                        identifiers[0] = symbol;
-                    }
-                }
                 Util.addToSetMap(results, organismName, identifiers);
             }
         } catch (Exception e) {
