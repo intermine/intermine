@@ -25,24 +25,44 @@
 <c:choose>
   <c:when test="${ratGenes != null && !empty(ratGenes)}">
 
+<style type="text/css">
+    .disease-item {
+        float: left;
+        display: inline-block;
+        min-width: 30em;
+        padding-bottom: 0.5em;
+    }
+    .less { display: none; }
+</style>
+
 <script type="text/javascript" charset="utf-8">
 function generateDiseases(jSONObject, target) {
-   var url;
+   var url, len, $ul;
+   var maxRows = 12;
+   var $morer = jQuery('<div class="toggle" style="margin-top: 5px"><a class="more">Show <span class="more-count"></span> more diseases</a></div>');
    if (jSONObject['mineURL'] != undefined) {
      url = jSONObject['mineURL'];
    }
 
-   if (jSONObject['results'] != undefined) {
-      jQuery('<ul/>').appendTo(target);
-      jQuery.each(jSONObject['results'], function(index, pathway) {
+   if (jSONObject.results != undefined) {
+      $ul = jQuery('<ul/>').appendTo(target);
+      len = jSONObject.results.length;
+      jQuery.each(jSONObject.results, function(index, pathway) {
            jQuery('<li/>', {
              'html': jQuery('<a/>', {
              'href': url + "/report.do?id=" + pathway['id'],
              'text': pathway['name'],
-             'target': '_blank'
-         })
-         }).appendTo(target + ' ul');
+               'target': '_blank'
+             })
+         }).appendTo($ul).addClass("disease-item").toggleClass("less", index >= maxRows);
       });
+      jQuery(target).append('<div style="clear:both"></div>');
+      if (len > maxRows) {
+          $morer.appendTo(target).click(function() {
+            jQuery(target).find('.less').show();
+            jQuery(this).remove();
+          }).find('.more-count').text(len - maxRows);
+      }
    }
 }
 
