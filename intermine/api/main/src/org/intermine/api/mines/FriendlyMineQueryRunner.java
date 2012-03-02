@@ -78,8 +78,16 @@ public final class FriendlyMineQueryRunner
             }
             JSONObject gene = new JSONObject();
             try {
-                gene.put("id", bits[0]);
-                gene.put("name", bits[1]);
+                String id = bits[0];
+                String name = bits[1];
+                if (StringUtils.isNotEmpty(id)) {
+                    id = id.replace("\"", "");
+                }
+                if (StringUtils.isNotEmpty(name)) {
+                    name = name.replace("\"", "");
+                }
+                gene.put("id", id);
+                gene.put("name", name);
                 results.add(gene);
             } catch (JSONException e) {
                 LOG.info("couldn't parse results for " + mine.getName() + " for query " + xmlQuery);
