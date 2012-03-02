@@ -6,7 +6,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-pathquery"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="src" path="/intermine-web"/>
 	<classpathentry exported="true" kind="lib" path="/intermine-integrate-main/lib/json20110106.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
