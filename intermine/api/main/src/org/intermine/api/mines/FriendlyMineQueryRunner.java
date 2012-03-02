@@ -15,16 +15,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.CacheMap;
-import org.json.JSONException;
+import org.intermine.webservice.client.results.XMLTableResult;
 import org.json.JSONObject;
 
 /**
@@ -64,43 +65,23 @@ public final class FriendlyMineQueryRunner
         if (jsonMine != null) {
             return jsonMine;
         }
-        Set<JSONObject> results = new LinkedHashSet<JSONObject>();
+        List<Map<String, String>> genes = new ArrayList<Map<String, String>>();
+
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
-            LOG.info("no results found for " + mine.getName() + " for query " + xmlQuery);
+            LOG.info(String.format("no results found for %s for query \"%s\"",
+                    mine.getName(), xmlQuery));
             return null;
         }
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            String[] bits = line.split("\\t");
-            if (bits.length == 0) {
-                return null;
-            }
-            JSONObject gene = new JSONObject();
-            try {
-                String id = bits[0];
-                String name = bits[1];
-                if (StringUtils.isNotEmpty(id)) {
-                    id = id.replace("\"", "");
-                }
-                if (StringUtils.isNotEmpty(name)) {
-                    name = name.replace("\"", "");
-                }
-                gene.put("id", id);
-                gene.put("name", name);
-                results.add(gene);
-            } catch (JSONException e) {
-                LOG.info("couldn't parse results for " + mine.getName() + " for query " + xmlQuery);
-                continue;
-            }
+        XMLTableResult table = new XMLTableResult(reader);
+        for (List<String> row: table.getData()) {
+            Map<String, String> gene = new HashMap<String, String>();
+            gene.put("id", row.get(0));
+            gene.put("name", row.get(1));
         }
-        jsonMine = new JSONObject();
-        try {
-            jsonMine.put("results", results);
-        } catch (JSONException e) {
-            LOG.info("couldn't process results for " + mine.getName() + " for query " + xmlQuery);
-            return null;
-        }
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("results", genes);
+        jsonMine = new JSONObject(data);
         queryResultsCache.put(key, jsonMine);
         return jsonMine;
     }
@@ -135,30 +116,24 @@ public final class FriendlyMineQueryRunner
             String url = mine.getUrl() + WEBSERVICE_URL + RELEASE_VERSION_URL;
             BufferedReader reader = runWebServiceQuery(url);
             final String msg = "Unable to retrieve release version for " + mine.getName();
-            String newReleaseVersion = null;
+            String newReleaseVersion;
             try {
-                if (reader != null) {
-                    newReleaseVersion = reader.readLine();
-                } else {
-                    LOG.info(msg);
-                    continue;
-                }
-            } catch (Exception e) {
-                LOG.warn(msg);
+                newReleaseVersion = IOUtils.toString(reader);
+            } catch (IOException e) {
+                LOG.warn(msg, e);
                 continue;
             }
 
-            if (StringUtils.isEmpty(newReleaseVersion)
-                    && StringUtils.isEmpty(currentReleaseVersion)) {
+            if (StringUtils.isBlank(newReleaseVersion)
+                    && StringUtils.isBlank(currentReleaseVersion)) {
                 // didn't get a release version this time or last time
                 LOG.warn(msg);
                 continue;
             }
 
             // if release version is different
-            if (StringUtils.isEmpty(newReleaseVersion)
-                    || StringUtils.isEmpty(currentReleaseVersion)
-                    || !newReleaseVersion.equals(currentReleaseVersion)
+            if (!StringUtils.equals(newReleaseVersion, currentReleaseVersion)
+                    || StringUtils.isBlank(currentReleaseVersion)
                     || DEBUG) {
 
                 // update release version
