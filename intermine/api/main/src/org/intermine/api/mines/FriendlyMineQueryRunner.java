@@ -39,7 +39,7 @@ public final class FriendlyMineQueryRunner
 {
     private static final Logger LOG = Logger.getLogger(FriendlyMineQueryRunner.class);
     private static final String WEBSERVICE_URL = "/service";
-    private static final String QUERY_PATH = "/query/results?size=1000&format=xml&query=";
+    private static final String QUERY_PATH = "/query/results?format=xml&query=";
     private static Map<MultiKey, JSONObject> queryResultsCache
         = new CacheMap<MultiKey, JSONObject>();
     private static final String RELEASE_VERSION_URL = "/version/release";
