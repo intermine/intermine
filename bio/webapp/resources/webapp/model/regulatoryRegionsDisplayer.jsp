@@ -53,10 +53,7 @@
       </div>
     </c:when>
     <c:otherwise>
-    <p>There was a problem rendering the displayer.</p>
-    <script type="text/javascript">
-      jQuery('#regulatory-regions').addClass('warning');
-    </script>
+    <p>No results found.</p>    
     </c:otherwise>
   </c:choose>
 
