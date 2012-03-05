@@ -190,7 +190,7 @@
   </tr>
 
   <tr>
-    <td rowspan="5" class="leftcol"><p><h2>Expression</h2></p></td>
+    <td rowspan="6" class="leftcol"><p><h2>Expression</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Microarray-based gene expression data for the life cycle of D. melanogaster</td>
     <td> <a href="http://www.ebi.ac.uk/arrayexpress" target="_new" class="extlink"> ArrayExpress </a> - Experiment E-FLYC-6</td>
@@ -217,10 +217,19 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Expression patterns of mRNAs during embryogenesis</td>
-    <td> <a href="http://www.fruitfly.org/cgi-bin/ex/insitu.pl" target="_new" class="extlink">BDGP</a> - 9th May 2008 </td>
+    <td> <a href="http://www.fruitfly.org/cgi-bin/ex/insitu.pl" target="_new" class="extlink">BDGP</a> - Release 3.0 </td>
     <td> Tomancak et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17645804" target="_new" class="extlink">PubMed:17645804</a></td>
     <td> &nbsp;</td>
   </tr>
+
+  <tr>
+    <td> <i>D. melanogaster</i> </td>
+    <td> Genome-wide RNA_seq Expression Data: raw data produced by modENCODE analysed by FlyBase</td>
+    <td> <a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_01</td>
+    <td> Gelbart and Emmert - 2010<a href="http://flybase.org/reports/FBrf0212041.html" target="_new" class="extlink">FlyBase Report</a></td>
+    <td> &nbsp;</td>
+  </tr>
+
 
   <tr>
     <td> <i>A. gambiae</i> </td>
@@ -242,7 +251,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcription factor binding sites</td>
-    <td> <a href="http://www.flyreg.org" target="_new" class="extlink">REDfly</a> - 21 October 2010</td>
+    <td> <a href="http://www.flyreg.org" target="_new" class="extlink">REDfly</a> - 9th June 2011</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15572468" target="_new" class="extlink">PubMed: 15572468</a></td>
     <td>  &nbsp; </td>
   </tr>
@@ -267,8 +276,8 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput cell-based RNAi screens</td>
-    <td> <a href="http://flyrnai.org" target="_new" class="extlink">Drosophila RNAi Screening Center</a> - 29 Nov 2011</td>
-    <td> Flockhart et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381918" target="_new" class="extlink">PubMed: 16381918</a></td>
+    <td> <a href="http://genomernai.org" target="_new" class="extlink">GenomeRNAi</a> - Version 6.0; 12th Jan 2012</td>
+    <td> Gilsdorf et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/19910367" target="_new" class="extlink">PubMed: 19910367</a></td>
     <td> &nbsp;</td>
   </tr>
   <tr>
