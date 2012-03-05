@@ -55,8 +55,7 @@ public final class FriendlyMineLinkGenerator extends InterMineLinkGenerator
     private static final String WEBSERVICE_URL = "/service";
     private static final Logger LOG = Logger.getLogger(FriendlyMineLinkGenerator.class);
     private boolean debug = false;
-    private static final String EMPTY = "\"\""; // webservices returns "" as empty
-    private static final String QUERY_PATH = "/query/results?size=1000&format=xml&query=";
+    private static final String QUERY_PATH = "/query/results?format=xml&query=";
 
     /**
      * Constructor
