@@ -13,7 +13,9 @@ package org.intermine.api.mines;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,9 +154,24 @@ public final class FriendlyMineQueryRunner
      * @return reader
      */
     public static BufferedReader runWebServiceQuery(String urlString) {
+        if (StringUtils.isEmpty(urlString)) {
+            return null;
+        }
+        String[] params = urlString.split("?");
         try {
+            if (params.length != 2) {
+                LOG.error("couldn't parse URL string " + urlString);
+                return null;
+            }
+            String queryString = params[1];
             URL url = new URL(urlString);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            URLConnection conn = url.openConnection();
+            conn.setDoOutput(true);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(queryString);
+            wr.flush();
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
             return reader;
         } catch (Exception e) {
             LOG.info("Unable to access " + urlString + " exception: " + e.getMessage());
