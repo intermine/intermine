@@ -164,6 +164,7 @@ public final class FriendlyMineQueryRunner
                 // GET
                 URL url = new URL(urlString);
                 reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                LOG.info("FriendlyMine URL (GET) " + urlString);
             } else {
                 // POST
                 String[] params = urlString.split("\\?");
@@ -176,6 +177,7 @@ public final class FriendlyMineQueryRunner
                 wr.write(queryString);
                 wr.flush();
                 reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                LOG.info("FriendlyMine URL (POST) " + urlString);
             }
             return reader;
         } catch (Exception e) {
