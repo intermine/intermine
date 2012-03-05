@@ -81,8 +81,10 @@ public class KeywordSearchResult
                 }
 
                 if (fieldConfig.getDisplayer() == null) {
-                    fieldValues.put(fieldConfig.getFieldExpr(), getValueForField(object,
-                            fieldConfig.getFieldExpr()));
+                	Object value = getValueForField(object, fieldConfig.getFieldExpr());
+                	if (value != null) {
+                		fieldValues.put(fieldConfig.getFieldExpr(), value);
+                	}
                 }
             }
         }
