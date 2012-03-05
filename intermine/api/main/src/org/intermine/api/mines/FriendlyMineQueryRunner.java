@@ -147,6 +147,7 @@ public final class FriendlyMineQueryRunner
         }
     }
 
+
     /**
      * Run a query via the web service
      *
@@ -157,21 +158,24 @@ public final class FriendlyMineQueryRunner
         if (StringUtils.isEmpty(urlString)) {
             return null;
         }
-        String[] params = urlString.split("?");
+        BufferedReader reader = null;
         try {
-            if (params.length != 2) {
-                LOG.error("couldn't parse URL string " + urlString);
-                return null;
+            if (!urlString.contains("\\?")) {
+                // GET
+                URL url = new URL(urlString);
+                reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            } else {
+                // POST
+                String[] params = urlString.split("\\?");
+                String queryString = params[1];
+                URL url = new URL(urlString);
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(queryString);
+                wr.flush();
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             }
-            String queryString = params[1];
-            URL url = new URL(urlString);
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(queryString);
-            wr.flush();
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
             return reader;
         } catch (Exception e) {
             LOG.info("Unable to access " + urlString + " exception: " + e.getMessage());
