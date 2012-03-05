@@ -160,7 +160,7 @@ public final class FriendlyMineQueryRunner
         }
         BufferedReader reader = null;
         try {
-            if (!urlString.contains("\\?")) {
+            if (!urlString.contains("?")) {
                 // GET
                 URL url = new URL(urlString);
                 reader = new BufferedReader(new InputStreamReader(url.openStream()));
