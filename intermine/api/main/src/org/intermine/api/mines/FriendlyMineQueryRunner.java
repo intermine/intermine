@@ -167,8 +167,9 @@ public final class FriendlyMineQueryRunner
             } else {
                 // POST
                 String[] params = urlString.split("\\?");
+                String newUrlString = params[0];
                 String queryString = params[1];
-                URL url = new URL(urlString);
+                URL url = new URL(newUrlString);
                 URLConnection conn = url.openConnection();
                 conn.setDoOutput(true);
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
