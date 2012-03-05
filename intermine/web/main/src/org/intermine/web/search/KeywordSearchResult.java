@@ -119,10 +119,9 @@ public class KeywordSearchResult
             } else {
                 value = object.getFieldValue(expression);
             }
-        } catch (IllegalAccessException e) {
-            Log.warn(null, e);
+        } catch (Exception e) {
+            Log.error("Value/reference not found", e);
         }
-
         return value;
     }
 
