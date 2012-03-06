@@ -104,6 +104,7 @@ public class EnrichmentWidgetResultService extends JSONService
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
+        addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
