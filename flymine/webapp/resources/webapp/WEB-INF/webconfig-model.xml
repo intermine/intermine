@@ -464,14 +464,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.RNAiPhenotype">
-    <fields>
-      <fieldconfig fieldExpr="comment"/>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="code"/>
-    </fields>
-  </class>
-
 
   <class className="org.intermine.model.bio.RNAiScreen">
     <fields>
@@ -480,12 +472,11 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.RNAiScreenHit">
+  <class className="org.intermine.model.bio.RNAiResult">
     <fields>
-      <fieldconfig fieldExpr="result"/>
-      <fieldconfig fieldExpr="pcrProduct.primaryIdentifier" label="PCR Product"/>
-      <fieldconfig fieldExpr="rnaiScreen" showInInlineCollection="false" showInSummary="false" showInResults="false" label="RNAi Screen"/>
-      <fieldconfig fieldExpr="pcrProduct" showInInlineCollection="false" showInSummary="false" showInResults="false" label="PCR Product"/>
+      <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="score"/>
+      <fieldconfig fieldExpr="condition"/>
       <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
       <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" label="PubMed ID"/>
     </fields>
@@ -660,13 +651,13 @@
                      replacesFields="regulatoryRegions"
                      placement="Regulation"
                      types="Gene"/>
-
+<!-- update to new model
     <reportdisplayer javaClass="org.flymine.web.displayer.RNAiDisplayer"
                      jspName="model/rnaiDisplayer.jsp"
                      replacesFields="rnaiResults"
                      placement="Regulation"
                      types="Gene"/>
-
+-->
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
