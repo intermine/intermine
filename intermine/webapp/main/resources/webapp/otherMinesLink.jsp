@@ -50,7 +50,7 @@ function generateMineLinks(jSONObject, url, organismShortName, target) {
               })
               .attr('href', function() {
                 var homologue = (organismShortName == shortName) ? '&orthologue=' + organismShortName : '';
-                return (url + "/portal.do?externalids=" + jQuery(this).text() + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
+                return (url + "/portal.do?externalids=" + gene['primaryIdentifier'] + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
               })
               )
               .appendTo(self);
