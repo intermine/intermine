@@ -96,7 +96,9 @@ public class EnrichmentWidgetResultService extends JSONService
         if (widgetConfig == null || !(widgetConfig instanceof EnrichmentWidgetConfig)) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
-
+        addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
+        addOutputInfo("title", ((EnrichmentWidgetConfig) widgetConfig).getTitle());
+        addOutputInfo("description", ((EnrichmentWidgetConfig) widgetConfig).getDescription());
         EnrichmentWidget widget = null;
         try {
             widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(), input.getExtraAttributes());
@@ -104,7 +106,6 @@ public class EnrichmentWidgetResultService extends JSONService
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
-        addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
