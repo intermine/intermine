@@ -417,7 +417,7 @@ public class WriteGFFTask extends Task
                 // special case for Chromosome location
                 lineBuffer.append(1).append("\t").append(chr.getLength()).append("\t");
             } else {
-                throw new RuntimeException("no chromomsome location for: " + bioEntity);
+                LOG.error("No valid chromomsome location found, not writing to GFF: " + bioEntity);
             }
         } else {
             lineBuffer.append(chromosomeLocation.getStart()).append("\t");
