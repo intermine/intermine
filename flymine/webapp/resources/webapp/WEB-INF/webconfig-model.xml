@@ -773,9 +773,11 @@
                                  description="MiRNAs enriched for items in this list."
                                  link="org.flymine.web.widget.MirandaURLQuery"
                                  label="MiRNAs"
-                                 startClass="MiRNATarget"
-                                 dataSetLoader="org.flymine.web.widget.MirandaLdr"
-                                 typeClass="org.intermine.model.bio.Gene" />
+                                 startClass="Gene"
+                                 startClassDisplay="symbol"
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 bagPath="MiRNATarget.gene"
+                                 views="Gene.symbol,Gene.miRNAtargets.target.gene.symbol"/>
 
       <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
                                  link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
@@ -818,11 +820,15 @@
                                  typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
 
-      <enrichmentwidgetdisplayer id="bdgp_enrichment" title="BDGP Enrichment"
-                                 link="org.flymine.web.widget.BDGPURLQuery"
-                                 dataSetLoader="org.flymine.web.widget.BDGPLdr"
+      <enrichmentwidgetdisplayer id="bdgp_enrichment"
+                                 title="BDGP Enrichment"
                                  label="Terms"
                                  description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BDGP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
+                                 constraints="mRNAExpressionResults.expressed=true,mRNAExpressionResults.dataSet.name=BDGP in situ data set"
+                                 link="org.flymine.web.widget.BDGPURLQuery"
                                  typeClass="org.intermine.model.bio.Gene" />
 
       <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
