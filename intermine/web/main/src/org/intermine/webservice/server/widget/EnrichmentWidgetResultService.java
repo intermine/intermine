@@ -99,12 +99,12 @@ public class EnrichmentWidgetResultService extends JSONService
         addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
         addOutputInfo("title", ((EnrichmentWidgetConfig) widgetConfig).getTitle());
         addOutputInfo("description", ((EnrichmentWidgetConfig) widgetConfig).getDescription());
-        addOutputInfo("extraAttributeLabel",
+        /*addOutputInfo("extraAttributeLabel",
             ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeLabel());
         addOutputInfo("extraAttributeSelectedValue",
             ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeSelectedValue());
         addOutputInfo("extraAttributePossibleValues",
-            ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributePossibleValues());
+            ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributePossibleValues());*/
         EnrichmentWidget widget = null;
         try {
             widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(), input.getExtraAttributes());
