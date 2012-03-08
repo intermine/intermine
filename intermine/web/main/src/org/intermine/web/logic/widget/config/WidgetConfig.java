@@ -29,6 +29,7 @@ public abstract class WidgetConfig
     private String id;
     private String description;
     private String title;
+    private String startClass;
     private String dataSetLoader;
     private String link;
     private String typeClass;
@@ -81,6 +82,14 @@ public abstract class WidgetConfig
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getStartClass() {
+        return startClass;
+    }
+
+    public void setStartClass(String startClass) {
+        this.startClass = startClass;
     }
 
     /**

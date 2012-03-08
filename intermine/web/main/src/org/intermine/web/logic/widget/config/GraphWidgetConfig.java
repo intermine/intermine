@@ -36,7 +36,6 @@ public class GraphWidgetConfig extends WidgetConfig
     private String domainLabel;
     private String rangeLabel;
     private String graphType;
-    private String startClass;
     private String bagType;
     private String bagPath;
     private String categoryPath;
@@ -124,14 +123,6 @@ public class GraphWidgetConfig extends WidgetConfig
         return "< title=\"" + getTitle() + " domainLabel=\"" + domainLabel + " rangeLabel=\""
                + rangeLabel + " dataSetLoader=\"" + getDataSetLoader()
                + " urlGen=\"" + getLink() + "\" />";
-    }
-
-    public String getStartClass() {
-        return startClass;
-    }
-
-    public void setStartClass(String startClass) {
-        this.startClass = startClass;
     }
 
     public String getBagType() {

@@ -75,12 +75,14 @@ public class EnrichmentWidget extends Widget
     @Override
     public void process() {
         try {
-            Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
+/*            Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
             Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
                 ObjectStore.class, String.class});
 
             EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
-                .newInstance(new Object[] {bag, os, filter});
+                .newInstance(new Object[] {bag, os, filter});*/
+            EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
+                (EnrichmentWidgetConfig) config, filter);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
             results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection);
@@ -97,19 +99,8 @@ public class EnrichmentWidget extends Widget
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage(), e);
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-            throw new RuntimeException(e.getCause().getMessage(), e.getCause());
         }
     }
 
@@ -143,12 +134,14 @@ public class EnrichmentWidget extends Widget
     }
 
     private Map<String, List<String>> getTermsToIds(List<String> selectedIds) throws Exception {
-        Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
+        /*Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
         Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
             ObjectStore.class, String.class});
 
         EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[] {bag, os,
-            filter});
+            filter});*/
+        EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
+                (EnrichmentWidgetConfig) config, filter);
 
         Query q = ldr.getExportQuery(selectedIds);
 
