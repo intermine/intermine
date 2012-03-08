@@ -10,8 +10,6 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -31,7 +29,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 
 /**
@@ -75,12 +72,6 @@ public class EnrichmentWidget extends Widget
     @Override
     public void process() {
         try {
-/*            Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
-            Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
-                ObjectStore.class, String.class});
-
-            EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr
-                .newInstance(new Object[] {bag, os, filter});*/
             EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
@@ -98,8 +89,6 @@ public class EnrichmentWidget extends Widget
             LOG.error(e.getMessage(), e);
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
     }
@@ -134,12 +123,6 @@ public class EnrichmentWidget extends Widget
     }
 
     private Map<String, List<String>> getTermsToIds(List<String> selectedIds) throws Exception {
-        /*Class<?> clazz = TypeUtil.instantiate(config.getDataSetLoader());
-        Constructor<?> constr = clazz.getConstructor(new Class[] {InterMineBag.class,
-            ObjectStore.class, String.class});
-
-        EnrichmentWidgetLdr ldr = (EnrichmentWidgetLdr) constr.newInstance(new Object[] {bag, os,
-            filter});*/
         EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
 
