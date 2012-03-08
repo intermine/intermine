@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget.config;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +19,9 @@ import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
@@ -29,6 +33,13 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     private String label;
     private String externalLink, externalLinkLabel;
     private String append;
+    private String enrich;
+    private String startClassDisplay;
+    private List<PathConstraint> pathConstraints = new ArrayList<PathConstraint>();
+    private String constraints;
+    private String extraAttributeLabel;
+    private String extraAttributeSelectedValue;
+    private String extraAttributePossibleValues;
 
     /**
      * @return the label
@@ -139,6 +150,81 @@ public class EnrichmentWidgetConfig extends WidgetConfig
      */
     public void setExternalLinkLabel(String externalLinkLabel) {
         this.externalLinkLabel = externalLinkLabel;
+    }
+
+    public String getEnrich() {
+        return enrich;
+    }
+
+    public void setEnrich(String enrich) {
+        this.enrich = enrich;
+    }
+
+    public String getStartClassDisplay() {
+        return startClassDisplay;
+    }
+
+    public void setStartClassDisplay(String startClassDisplay) {
+        this.startClassDisplay = startClassDisplay;
+    }
+
+    public String getConstraints() {
+        return constraints;
+    }
+
+    public void setConstraints(String constraints) {
+        this.constraints = constraints;
+        setPathConstraints();
+    }
+
+    public void setPathConstraints() {
+        String[] constraintsList = constraints.split("\\,");
+        String path, value;
+        ConstraintOp op = null;
+        //Constraint
+        for (String constraint : constraintsList) {
+            int opIndex = constraint.indexOf("!=");
+            if (opIndex != -1) {
+                op = ConstraintOp.NOT_EQUALS;
+                value = constraint.substring(opIndex + 2);
+            } else {
+                opIndex = constraint.indexOf("=");
+                value = constraint.substring(opIndex + 1);
+                if (opIndex != -1) {
+                    op = ConstraintOp.EQUALS;
+                }
+            }
+            path = constraint.substring(0, opIndex);
+            this.pathConstraints.add(new PathConstraintAttribute(path, op, value));
+        }
+    }
+
+    public List<PathConstraint> getPathConstraints() {
+        return pathConstraints;
+    }
+
+    public String getExtraAttributeLabel() {
+        return extraAttributeLabel;
+    }
+
+    public void setExtraAttributeLabel(String extraAttributeLabel) {
+        this.extraAttributeLabel = extraAttributeLabel;
+    }
+
+    public String getExtraAttributeSelectedValue() {
+        return extraAttributeSelectedValue;
+    }
+
+    public void setExtraAttributeSelectedValue(String extraAttributeSelectedValue) {
+        this.extraAttributeSelectedValue = extraAttributeSelectedValue;
+    }
+
+    public String getExtraAttributePossibleValues() {
+        return extraAttributePossibleValues;
+    }
+
+    public void setExtraAttributePossibleValues(String extraAttributePossibleValues) {
+        this.extraAttributePossibleValues = extraAttributePossibleValues;
     }
 
     /**
