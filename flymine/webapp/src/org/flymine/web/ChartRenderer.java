@@ -39,7 +39,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
-import org.jfree.chart.ChartRenderingInfo;
+/*import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.CategoryAxis;
@@ -49,7 +49,7 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.servlet.ServletUtilities;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;*/
 
 /**
  * Graph the microarray results for a particular gene/experiment
@@ -85,7 +85,7 @@ public class ChartRenderer extends InterMineAction
         String filename = (String) graphImageCache.get(request.getQueryString());
 
         if (filename != null) {
-            ServletUtilities.sendTempFile(filename, response);
+            //ServletUtilities.sendTempFile(filename, response);
             return null;
         }
         Method method = getClass().getMethod(request.getParameter("method"), SIG);
@@ -108,7 +108,7 @@ public class ChartRenderer extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward microarray(ActionMapping mapping, ActionForm form,
+/*    public ActionForward microarray(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -212,5 +212,5 @@ public class ChartRenderer extends InterMineAction
         chart.setAntiAlias(false);
         chart.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_OFF));
-    }
+    }*/
 }
