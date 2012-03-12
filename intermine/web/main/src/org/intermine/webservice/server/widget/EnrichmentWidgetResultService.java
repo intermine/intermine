@@ -99,12 +99,8 @@ public class EnrichmentWidgetResultService extends JSONService
         addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
         addOutputInfo("title", ((EnrichmentWidgetConfig) widgetConfig).getTitle());
         addOutputInfo("description", ((EnrichmentWidgetConfig) widgetConfig).getDescription());
-        /*addOutputInfo("extraAttributeLabel",
-            ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeLabel());
-        addOutputInfo("extraAttributeSelectedValue",
-            ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeSelectedValue());
-        addOutputInfo("extraAttributePossibleValues",
-            ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributePossibleValues());*/
+        addExtraAttributes((EnrichmentWidgetConfig) widgetConfig);
+
         EnrichmentWidget widget = null;
         try {
             widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(), input.getExtraAttributes());
@@ -121,6 +117,21 @@ public class EnrichmentWidgetResultService extends JSONService
                 processed.add("");
             }
             output.addResultItem(processed);
+        }
+    }
+
+    private void addExtraAttributes(EnrichmentWidgetConfig widgetConfig) {
+        String extraAttributeLabel = ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeLabel();
+        if (extraAttributeLabel != null && !"".equals(extraAttributeLabel)) {
+            addOutputInfo("extraAttributeLabel", extraAttributeLabel);
+        }
+        String extraAttributeSelectedValue = ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeSelectedValue();
+        if (extraAttributeSelectedValue != null && !"".equals(extraAttributeSelectedValue)) {
+            addOutputInfo("extraAttributeSelectedValue", extraAttributeSelectedValue);
+        }
+        String extraAttributePossibleValues = ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributePossibleValues();
+        if (extraAttributePossibleValues != null && !"".equals(extraAttributePossibleValues)) {
+            addOutputInfo("extraAttributePossibleValues", extraAttributePossibleValues);
         }
     }
 
