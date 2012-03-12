@@ -36,13 +36,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.util.CacheMap;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.jfree.data.function.Function2D;
-import org.jfree.data.function.NormalDistributionFunction2D;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.general.DatasetUtilities;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
@@ -51,13 +44,11 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class FeatureLengthDataSetLdr implements DataSetLdr
 {
     private static final Logger LOG = Logger.getLogger(FeatureLengthDataSetLdr.class);
-    private XYDataset dataSet;
     private Model model;
     private String bagType;
     private Results results;
     private int widgetTotal = 0;
     private static final double MINIMUM_VALUE = 0.0;
-    private static CacheMap<String, XYSeries> featureLengthCache = new CacheMap<String, XYSeries>();
 
     /**
      * Creates a FeatureLengthDataSetLdr used to retrieve, organise
@@ -80,18 +71,11 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             return;
         }
 
-        XYSeries actual = getSeries(bag, os, organismName);
+/*        XYSeries actual = getSeries(bag, os, organismName);
         XYSeries expected = getSeries(null, os, organismName);
         dataSet = new XYSeriesCollection();
         ((XYSeriesCollection) dataSet).addSeries(actual);
-        ((XYSeriesCollection) dataSet).addSeries(expected);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Dataset getDataSet() {
-        return dataSet;
+        ((XYSeriesCollection) dataSet).addSeries(expected);*/
     }
 
     /**
@@ -109,17 +93,17 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
     }
 
     @SuppressWarnings("boxing")
-    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName)
+/*    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName)
         throws ClassNotFoundException {
 
         Query q = getQuery(organismName, bag);
         XYSeries series = featureLengthCache.get(q.toString());
 
-        /**
+        *//**
          * actual   = series will always be null for bag queries, we probably don't want to cache
          *            those, the bag could change
          * expected = series will only be null if this is the first time the query is run
-         */
+         *//*
         if (series == null) {
             results = os.execute(q, 50000, true, true, true);
             DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -155,7 +139,7 @@ public class FeatureLengthDataSetLdr implements DataSetLdr
             LOG.info("using cached feature length results:" + q.toString());
         }
         return series;
-    }
+    }*/
 
     private Query getQuery(String organism, InterMineBag bag)
         throws ClassNotFoundException {
