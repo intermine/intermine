@@ -14,8 +14,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
-import org.jfree.data.category.CategoryDataset;
-
 
 /**
  *
@@ -44,9 +42,9 @@ public class ChromosomeDistributionGraphURLGenerator
      *      org.jfree.data.category.CategoryDataset,
      *      int, int)
      */
-    public String generateURL(CategoryDataset dataset, int series, int category) {
+    public String generateURL(int series, int category) {
         StringBuffer sb = new StringBuffer("queryForGraphAction.do?bagName=" + bagName);
-        sb.append("&category=" + dataset.getColumnKey(category));
+        sb.append("&category=" /*+ dataset.getColumnKey(category)*/);
         sb.append("&series=");
         sb.append("&urlGen=org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator");
         sb.append("&extraKey=" + organism);
