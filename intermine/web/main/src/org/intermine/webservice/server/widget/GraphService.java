@@ -95,6 +95,8 @@ public class GraphService extends JSONService
         addOutputInfo("title", widgetConfig.getTitle());
         addOutputInfo("description", widgetConfig.getDescription());
         addOutputInfo("chartType", ((GraphWidgetConfig) widgetConfig).getGraphType());
+        addOutputInfo("seriesValues", ((GraphWidgetConfig) widgetConfig).getSeriesValues());
+        addOutputInfo("seriesLabels", ((GraphWidgetConfig) widgetConfig).getSeriesLabels());
 
         GraphWidget widget = null;
         try {
