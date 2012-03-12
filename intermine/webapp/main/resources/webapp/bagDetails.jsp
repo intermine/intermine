@@ -283,7 +283,6 @@
   }
 </script>
 
-<%--
 <p id="toggleWidgets">Click to select widgets you would like to display:
   <ol class="widgetList">
   <c:forEach items="${widgets}" var="widget">
@@ -292,18 +291,18 @@
   </ol>
 </p>
 <div style="clear:both;"></div>
---%>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
+
 <script type="text/javascript">
-  (function() {
-    widgets = new Widgets("<html:rewrite page='/service/'/>");
-  })();
+	window.widgets = new window.Widgets(window.service);
 </script>
+
 <c:forEach items="${widgets}" var="widget">
   <tiles:insert name="widget.tile">
     <tiles:put name="widget" beanName="widget"/>
     <tiles:put name="bag" beanName="bag"/>
+    <tiles:put name="widget2extraAttrs" beanName="widget2extraAttrs" />
   </tiles:insert>
 </c:forEach>
 <div style="clear:both;"></div>

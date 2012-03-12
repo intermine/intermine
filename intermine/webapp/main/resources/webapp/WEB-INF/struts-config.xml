@@ -197,10 +197,6 @@
     <action path="/addToBagAction" type="org.intermine.web.struts.AddToBagAction">
       <forward name="report" redirect="true" path="/report.do"/>
     </action>
-    <action path="/queryForGraphAction" type="org.intermine.web.struts.QueryForGraphAction">
-      <forward name="results" redirect="true" path="/results.do"/>
-      <forward name="waiting" redirect="true" path="/pollTemplateQuery.do"/>
-    </action>
     <action path="/pollQuery" type="org.intermine.web.struts.PollQueryAction">
       <!-- some kind of error in the action to do with session state or the request -->
       <forward name="error" path="error.page"/>

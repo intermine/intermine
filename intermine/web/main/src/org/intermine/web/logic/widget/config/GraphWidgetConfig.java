@@ -44,6 +44,7 @@ public class GraphWidgetConfig extends WidgetConfig
     private String seriesLabels;
     private String dataSetPath;
     private String dataSetValue;
+    private String views;
     private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private String editable;
@@ -186,6 +187,14 @@ public class GraphWidgetConfig extends WidgetConfig
 
     public void setDataSetValue(String dataSetValue) {
         this.dataSetValue = dataSetValue;
+    }
+
+    public String getViews() {
+        return views;
+    }
+
+    public void setViews(String views) {
+        this.views = views;
     }
 
     /**
