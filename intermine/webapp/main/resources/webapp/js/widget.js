@@ -11,12 +11,19 @@
   InterMineWidget = (function() {
 
     function InterMineWidget() {
-      $(this.el).html($('<div/>', {
+      this.error = __bind(this.error, this);      $(this.el).html($('<div/>', {
         "class": "inner",
         style: "height:572px;overflow:hidden"
       }));
       this.el = "" + this.el + " div.inner";
     }
+
+    InterMineWidget.prototype.error = function(err, template) {
+      return $(this.el).html(_.template(template, {
+        "title": err.statusText,
+        "text": err.responseText
+      }));
+    };
 
     return InterMineWidget;
 
@@ -50,7 +57,7 @@
 
     ChartWidget.prototype.templates = {
       normal: "<header>\n    <% if (title) { %>\n        <h3><%= title %></h3>\n    <% } %>\n    <% if (description) { %>\n        <p><%= description %></p>\n    <% } %>\n    <% if (notAnalysed > 0) { %>\n        <p>Number of Genes in this list not analysed in this widget: <span class=\"label label-info\"><%= notAnalysed %></span></p>\n    <% } %>\n</header>\n<div class=\"content\"></div>",
-      noresults: "<div class=\"alert alert-block\">\n    <h4 class=\"alert-heading\"><%= title %></h4>\n    <p><%= text %></p>\n</div>"
+      error: "<div class=\"alert alert-block\">\n    <h4 class=\"alert-heading\"><%= title %></h4>\n    <p><%= text %></p>\n</div>"
     };
 
     function ChartWidget(service, token, id, bagName, el, widgetOptions) {
@@ -117,10 +124,7 @@
           }
         },
         error: function(err) {
-          return $(_this.el).html(_.template(_this.templates.noresults, {
-            "title": err.statusText,
-            "text": err.responseText
-          }));
+          return _this.error(err, _this.templates.error);
         }
       });
     };
@@ -145,11 +149,13 @@
 
     EnrichmentWidget.prototype.templates = {
       normal: "<header>\n    <% if (title) { %>\n        <h3><%= title %></h3>\n    <% } %>\n    <% if (description) { %>\n        <p><%= description %></p>\n    <% } %>\n    <% if (notAnalysed > 0) { %>\n        <p>Number of Genes in this list not analysed in this widget: <span class=\"label label-info\"><%= notAnalysed %></span></p>\n    <% } %>\n    <div class=\"form\"></div>\n</header>\n<div class=\"content\" style=\"overflow:auto;overflow-x:hidden;height:400px\"></div>",
-      form: "<form>\n    <div class=\"group\" style=\"display:inline-block;margin-right:5px\">\n        <label>Test Correction</label>\n        <select name=\"errorCorrection\" class=\"span2\">\n            <% for (var i = 0; i < errorCorrections.length; i++) { %>\n                <% var correction = errorCorrections[i] %>\n                <option value=\"<%= correction %>\" <%= (options.errorCorrection == correction) ? 'selected=\"selected\"' : \"\" %>><%= correction %></option>\n            <% } %>\n        </select>\n    </div>\n\n    <div class=\"group\" style=\"display:inline-block;margin-right:5px\">\n        <label>Max p-value</label>\n        <select name=\"pValue\" class=\"span2\">\n            <% for (var i = 0; i < pValues.length; i++) { %>\n                <% var p = pValues[i] %>\n                <option value=\"<%= p %>\" <%= (options.pValue == p) ? 'selected=\"selected\"' : \"\" %>><%= p %></option>\n            <% } %>\n        </select>\n    </div>\n\n    <div class=\"group\" style=\"display:inline-block;margin-right:5px\">\n        <label>Dataset</label>\n        <select name=\"dataSet\" class=\"span2\">\n            <option value=\"All datasets\" selected=\"selected\">All datasets</option>\n        </select>\n    </div>\n</form>",
+      form: "<form>\n    <div class=\"group\" style=\"display:inline-block;margin-right:5px\">\n        <label>Test Correction</label>\n        <select name=\"errorCorrection\" class=\"span2\">\n            <% for (var i = 0; i < errorCorrections.length; i++) { %>\n                <% var correction = errorCorrections[i] %>\n                <option value=\"<%= correction %>\" <%= (options.errorCorrection == correction) ? 'selected=\"selected\"' : \"\" %>><%= correction %></option>\n            <% } %>\n        </select>\n    </div>\n\n    <div class=\"group\" style=\"display:inline-block;margin-right:5px\">\n        <label>Max p-value</label>\n        <select name=\"pValue\" class=\"span2\">\n            <% for (var i = 0; i < pValues.length; i++) { %>\n                <% var p = pValues[i] %>\n                <option value=\"<%= p %>\" <%= (options.pValue == p) ? 'selected=\"selected\"' : \"\" %>><%= p %></option>\n            <% } %>\n        </select>\n    </div>\n</form>",
+      extra: "<div class=\"group\" style=\"display:inline-block;margin-right:5px\">\n    <label><%= label %></label>\n    <select name=\"dataSet\" class=\"span2\">\n        <% for (var i = 0; i < possible.length; i++) { %>\n            <% var v = possible[i] %>\n            <option value=\"<%= v %>\" <%= (selected == v) ? 'selected=\"selected\"' : \"\" %>><%= v %></option>\n        <% } %>\n    </select>\n</div>",
       table: "<table class=\"table table-striped\">\n    <thead>\n        <tr>\n            <th><%= label %></th>\n            <th>p-Value</th>\n            <th>Matches</th>\n        </tr>\n    </thead>\n    <tbody></tbody>\n</table>",
       row: "<tr>\n    <td class=\"description\"><%= row[\"description\"] %></td>\n    <td class=\"pValue\"><%= row[\"p-value\"].toFixed(7) %></td>\n    <td class=\"matches\" style=\"position:relative\">\n        <span class=\"count label label-success\" style=\"cursor:pointer\"><%= row[\"matches\"].length %></span>\n    </td>\n</tr>",
       matches: "<div class=\"popover\" style=\"position:absolute;top:22px;right:0;z-index:1;display:block\">\n    <div class=\"popover-inner\" style=\"width:300px;margin-left:-300px\">\n        <a style=\"cursor:pointer;margin:2px 5px 0 0\" class=\"close\">×</a>\n        <h3 class=\"popover-title\"></h3>\n        <div class=\"popover-content\">\n            <% for (var i = 0; i < matches.length; i++) { %>\n                <a href=\"#\"><%= matches[i] %></a><%= (i < matches.length -1) ? \",\" : \"\" %>\n            <% } %>\n        </div>\n    </div>\n</div>",
-      noresults: "<div class=\"alert alert-block\">\n    <h4 class=\"alert-heading\"><%= title %></h4>\n    <p><%= text %></p>\n</div>"
+      noresults: "<div class=\"alert alert-info\">\n    <p>The Widget has no results.</p>\n</div>",
+      error: "<div class=\"alert alert-block\">\n    <h4 class=\"alert-heading\"><%= title %></h4>\n    <p><%= text %></p>\n</div>"
     };
 
     function EnrichmentWidget(service, token, id, bagName, el, widgetOptions) {
@@ -194,33 +200,41 @@
               "errorCorrections": _this.errorCorrections,
               "pValues": _this.pValues
             }));
-            height = $(_this.el).height() - $(_this.el).find('header').height() - 18;
-            $(_this.el).find("div.content").html($(_.template(_this.templates.table, {
-              "label": response.label
-            }))).css("height", "" + height + "px");
-            table = $(_this.el).find("div.content table");
-            _ref = response.results;
-            _fn = function(row) {
-              var td, tr;
-              table.append(tr = $(_.template(_this.templates.row, {
-                "row": row
-              })));
-              return td = tr.find("td.matches .count").click(function() {
-                return _this.matchesClick(td, row["matches"]);
-              });
-            };
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              row = _ref[_i];
-              _fn(row);
+            if (response.extraAttributeLabel != null) {
+              $(_this.l).find('div.form form').append(_.template(_this.templates.extra, {
+                "label": response.extraAttributeLabel,
+                "possible": response.extraAttributePossibleValues,
+                "selected": response.extraAttributeSelectedValue
+              }));
+            }
+            if (response.results.length > 0) {
+              height = $(_this.el).height() - $(_this.el).find('header').height() - 18;
+              $(_this.el).find("div.content").html($(_.template(_this.templates.table, {
+                "label": response.label
+              }))).css("height", "" + height + "px");
+              table = $(_this.el).find("div.content table");
+              _ref = response.results;
+              _fn = function(row) {
+                var td, tr;
+                table.append(tr = $(_.template(_this.templates.row, {
+                  "row": row
+                })));
+                return td = tr.find("td.matches .count").click(function() {
+                  return _this.matchesClick(td, row["matches"]);
+                });
+              };
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                row = _ref[_i];
+                _fn(row);
+              }
+            } else {
+              $(_this.el).find("div.content").html($(_.template(_this.templates.noresults)));
             }
             return $(_this.el).find("form select").change(_this.formClick);
           }
         },
         error: function(err) {
-          return $(_this.el).html(_.template(_this.templates.noresults, {
-            "title": err.statusText,
-            "text": err.responseText
-          }));
+          return _this.error(err, _this.templates.error);
         }
       });
     };
