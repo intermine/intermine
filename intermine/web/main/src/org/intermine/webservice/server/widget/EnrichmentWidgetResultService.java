@@ -99,7 +99,7 @@ public class EnrichmentWidgetResultService extends JSONService
         addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
         addOutputInfo("title", ((EnrichmentWidgetConfig) widgetConfig).getTitle());
         addOutputInfo("description", ((EnrichmentWidgetConfig) widgetConfig).getDescription());
-        addExtraAttributes((EnrichmentWidgetConfig) widgetConfig);
+        addOutputExtraAttributes((EnrichmentWidgetConfig) widgetConfig);
 
         EnrichmentWidget widget = null;
         try {
@@ -120,7 +120,7 @@ public class EnrichmentWidgetResultService extends JSONService
         }
     }
 
-    private void addExtraAttributes(EnrichmentWidgetConfig widgetConfig) {
+    private void addOutputExtraAttributes(EnrichmentWidgetConfig widgetConfig) {
         String extraAttributeLabel = widgetConfig.getExtraAttributeLabel();
         if (extraAttributeLabel != null && !"".equals(extraAttributeLabel)) {
             addOutputInfo("extraAttributeLabel", extraAttributeLabel);
