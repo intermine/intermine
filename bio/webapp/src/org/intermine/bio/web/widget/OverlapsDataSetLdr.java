@@ -39,13 +39,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.jfree.data.function.Function2D;
-import org.jfree.data.function.NormalDistributionFunction2D;
-import org.jfree.data.general.Dataset;
-import org.jfree.data.general.DatasetUtilities;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
@@ -55,7 +48,6 @@ public class OverlapsDataSetLdr implements DataSetLdr
 {
 
     private static final Logger LOG = Logger.getLogger(OverlapsDataSetLdr.class);
-    private XYDataset dataSet = null;
     private Model model;
     private String bagType;
     private Results results;
@@ -83,7 +75,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
             return;
         }
 
-        XYSeries upstream = getSeries(bag, os, organismName, "upstream");
+/*        XYSeries upstream = getSeries(bag, os, organismName, "upstream");
         XYSeries downstream = getSeries(bag, os, organismName, "downstream");
         if (upstream == null && downstream == null) {
             return;
@@ -94,14 +86,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
         }
         if (downstream != null) {
             ((XYSeriesCollection) dataSet).addSeries(downstream);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Dataset getDataSet() {
-        return dataSet;
+        }*/
     }
 
     /**
@@ -119,7 +104,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
     }
 
     @SuppressWarnings("boxing")
-    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName,
+/*    private XYSeries getSeries(InterMineBag bag, ObjectStore os,  String organismName,
                                String seriesName)
         throws ClassNotFoundException {
 
@@ -171,7 +156,7 @@ public class OverlapsDataSetLdr implements DataSetLdr
         widgetTotal = total;
         return DatasetUtilities.sampleFunction2DToSeries(actual, 0.0, stats.getMax(), total,
                                                          seriesName);
-    }
+    }*/
 
     private Query getQuery(String organism, InterMineBag bag, String seriesName)
         throws ClassNotFoundException {
