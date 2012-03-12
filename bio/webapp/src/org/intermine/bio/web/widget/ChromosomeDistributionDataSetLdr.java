@@ -19,12 +19,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.math.genetics.Chromosome;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.metadata.Model;
-import org.intermine.model.bio.Chromosome;
-import org.intermine.model.bio.Organism;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -198,7 +197,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
     private Query getQuery(String organism, String resultsType, InterMineBag bag)
         throws ClassNotFoundException {
 
-        QueryClass organismQC = new QueryClass(Organism.class);
+        QueryClass organismQC = new QueryClass(Class.forName(model.getPackageName() + "Organism"));
         QueryClass chromosomeQC = new QueryClass(Chromosome.class);
         Class<?> bagCls = Class.forName(model.getPackageName() + "." + bagType);
         QueryClass featureQC = new QueryClass(bagCls);

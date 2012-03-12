@@ -10,10 +10,12 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
@@ -33,8 +35,6 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 
@@ -311,32 +311,6 @@ public class GraphWidgetLoader implements DataSetLdr
     @Override
     public List<List<Object>> getResultTable() {
         return resultTable;
-    }
-
-    public PathQuery createPathQuery() {
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-        String[] views = config.getViews().split("\\,");
-        String prefix = config.getStartClass() + ".";
-        for (String view : views) {
-            if (!view.startsWith(prefix)) {
-                view = prefix + view;
-            }
-            q.addView(view);
-        }
-
-        // bag constraint
-        q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
-        //dataset constraint
-        if (config.getDataSetPath() != "") {
-        q.addConstraint(Constraints.eq(prefix + config.getDataSetPath() + ".name", config.getDataSetValue()));
-        }
-        //category constraint
-        q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
-        //series constraint
-        q.addConstraint(Constraints.eq(prefix + config.getSeriesPath(),"%series"));
-
-        return q;
     }
 
 }
