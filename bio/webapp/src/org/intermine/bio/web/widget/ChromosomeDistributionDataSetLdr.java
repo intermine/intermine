@@ -41,8 +41,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.web.logic.widget.DataSetLdr;
-import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -52,7 +50,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class ChromosomeDistributionDataSetLdr implements DataSetLdr
 {
     private static final Logger LOG = Logger.getLogger(ChromosomeDistributionDataSetLdr.class);
-    private DefaultCategoryDataset dataSet;
     private ObjectStore os;
     private Model model;
     private String bagType;
@@ -125,19 +122,12 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }
 
         // put all data in dataset rendered in graph
-        dataSet = new DefaultCategoryDataset();
+/*        dataSet = new DefaultCategoryDataset();
         for (Iterator<String> iterator = resultsTable.keySet().iterator(); iterator.hasNext();) {
             String chromosome = iterator.next();
             dataSet.addValue((resultsTable.get(chromosome))[0], "Actual", chromosome);
             dataSet.addValue((resultsTable.get(chromosome))[1], "Expected", chromosome);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CategoryDataset getDataSet() {
-        return dataSet;
+        }*/
     }
 
     @SuppressWarnings("unchecked")
