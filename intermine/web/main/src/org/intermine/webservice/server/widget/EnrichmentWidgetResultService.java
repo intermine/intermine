@@ -121,15 +121,15 @@ public class EnrichmentWidgetResultService extends JSONService
     }
 
     private void addExtraAttributes(EnrichmentWidgetConfig widgetConfig) {
-        String extraAttributeLabel = ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeLabel();
+        String extraAttributeLabel = widgetConfig.getExtraAttributeLabel();
         if (extraAttributeLabel != null && !"".equals(extraAttributeLabel)) {
             addOutputInfo("extraAttributeLabel", extraAttributeLabel);
         }
-        String extraAttributeSelectedValue = ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributeSelectedValue();
+        String extraAttributeSelectedValue = widgetConfig.getExtraAttributeSelectedValue();
         if (extraAttributeSelectedValue != null && !"".equals(extraAttributeSelectedValue)) {
             addOutputInfo("extraAttributeSelectedValue", extraAttributeSelectedValue);
         }
-        String extraAttributePossibleValues = ((EnrichmentWidgetConfig) widgetConfig).getExtraAttributePossibleValues();
+        String extraAttributePossibleValues = widgetConfig.getExtraAttributePossibleValues();
         if (extraAttributePossibleValues != null && !"".equals(extraAttributePossibleValues)) {
             addOutputInfo("extraAttributePossibleValues", extraAttributePossibleValues);
         }
