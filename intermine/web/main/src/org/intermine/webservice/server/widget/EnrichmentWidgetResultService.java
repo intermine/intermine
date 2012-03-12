@@ -121,18 +121,18 @@ public class EnrichmentWidgetResultService extends JSONService
     }
 
     private void addOutputExtraAttributes(EnrichmentWidgetConfig widgetConfig) {
-        String extraAttributeLabel = widgetConfig.getExtraAttributeLabel();
-        if (extraAttributeLabel != null && !"".equals(extraAttributeLabel)) {
-            addOutputInfo("extraAttributeLabel", extraAttributeLabel);
-        }
-        String extraAttributeSelectedValue = widgetConfig.getExtraAttributeSelectedValue();
-        if (extraAttributeSelectedValue != null && !"".equals(extraAttributeSelectedValue)) {
-            addOutputInfo("extraAttributeSelectedValue", extraAttributeSelectedValue);
-        }
-        String extraAttributePossibleValues = widgetConfig.getExtraAttributePossibleValues();
-        if (extraAttributePossibleValues != null && !"".equals(extraAttributePossibleValues)) {
-            addOutputInfo("extraAttributePossibleValues", extraAttributePossibleValues);
-        }
+    	String extraAttributeLabel = widgetConfig.getExtraAttributeLabel();
+    	if (extraAttributeLabel != null && !"".equals(extraAttributeLabel)) {
+    		addOutputInfo("extraAttributeLabel", extraAttributeLabel);
+    	}
+    	String extraAttributeSelectedValue = widgetConfig.getExtraAttributeSelectedValue();
+    	if (extraAttributeSelectedValue != null && !"".equals(extraAttributeSelectedValue)) {
+    		addOutputInfo("extraAttributeSelectedValue", extraAttributeSelectedValue);
+    	}
+    	String extraAttributePossibleValues = widgetConfig.getExtraAttributePossibleValues();
+    	if (extraAttributePossibleValues != null && !"".equals(extraAttributePossibleValues)) {
+    		addOutputInfo("extraAttributePossibleValues", extraAttributePossibleValues);
+    	}
     }
 
     @Override
