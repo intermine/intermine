@@ -90,7 +90,7 @@ ul#loginbar { margin-right:6px; }
 #header p { color:#1F1F20 !important; margin:54px 0 0 10px; }
 #header p#version { margin-left:260px; }
 
-body.stretched #menucontainer { width:100% !important; }
+body.stretched #menucontainer { width:99.4% !important; }
 body.stretched #menucontainer ul#nav { margin-left:18px; }
 body.stretched #menucontainer ul#loginbar { margin-right:54px; }
 body.stretched #submenudiv { width:auto; }
@@ -112,7 +112,7 @@ ul#nav li#mymine a{ color:#B4B4B4; }
 
 ul#nav li.activelink a{ color:#D2CEF7; }
 
-ul#submenulist li#subactive_bag {height:37px; font-weight:bold;color:#FFF;background:url('submenu-active.png') no-repeat bottom center;}
+ul#submenulist li#subactive_bag {height:37px; font-weight:bold;color:#4F4B83; text-shadow:1px 1px #FFF; background:url('submenu-active.png') no-repeat bottom center;}
 
 ul#submenulist li#subactive_mymine { font-weight:bold;color:#CCC;background:url('submenu-active.png') no-repeat bottom center;}
 
@@ -293,6 +293,10 @@ ul#submenulist li div { border-left-color:#4F4B83; }
   left center transparent; }
 
 #templates #tab-content #ribbon { background: url("homepage/ribbon-sand.png") no-repeat scroll right top transparent; }
+
+/* regions */
+table#genomic-region-results-table th { background:#980D0D; }
+table#genomic-region-results-table tbody tr:nth-child(2n) td { background:#FAFAE6; }
 
 /* widgets */
 div.widgetcontainer div.widgetdataoverflow table tbody tr:nth-child(2n) td { background:#FAFAE6; }
