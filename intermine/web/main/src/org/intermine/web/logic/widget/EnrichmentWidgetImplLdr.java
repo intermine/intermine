@@ -9,7 +9,9 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
@@ -35,12 +37,22 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
     private ObjectStore os;
     private InterMineBag bag;
     private EnrichmentWidgetConfig config;
+    private QueryClass startClass;
+    private Map<PathConstraint, Boolean> pathConstraintsProcessed =
+        new HashMap<PathConstraint, Boolean>();
+    private String action;
 
     public EnrichmentWidgetImplLdr(InterMineBag bag, ObjectStore os, EnrichmentWidgetConfig config,
         String extraAttribute) {
         this.bag = bag;
         this.os = os;
         this.config = config;
+        try {
+            startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
+                                        + config.getStartClass()));
+        } catch (ClassNotFoundException e) {
+            return;
+        }
         String[] typeClasses = config.getTypeClass().split("\\,");
         boolean bagTypeMatch = false;
         String packageName = os.getModel().getPackageName();
@@ -56,26 +68,20 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
     }
 
     public Query getQuery(String action, List<String> keys) {
+        this.action = action;
         Query query = new Query();
-        Model model = os.getModel();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         query.setConstraint(cs);
-
-        QueryClass startClass = null;
-        try {
-            startClass = new QueryClass(Class.forName(model.getPackageName() + "."
-                                        + config.getStartClass()));
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
         query.addFrom(startClass);
-        QueryField qfStartClassId = new QueryField(startClass, "id");
+        for (PathConstraint pathConstraint : config.getPathConstraints()) {
+            pathConstraintsProcessed.put(pathConstraint, false);
+        }
 
         QueryField qfEnrich = null;
         QueryField qfEnrichId = null;
         if (config.getEnrich().contains(".")) {
             QueryField[] enrichmentQueryFields =
-                createEnrichmentQueryFields(model, query, startClass);
+                createEnrichmentQueryFields(query);
             qfEnrich = enrichmentQueryFields[0];
             qfEnrichId = enrichmentQueryFields[1];
         } else {
@@ -87,8 +93,16 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new BagConstraint(qfEnrich, ConstraintOp.IN, keys));
         }
 
+        QueryField qfStartClassId = new QueryField(startClass, "id");
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+        }
+
+        //add constraints not processed before
+        for (PathConstraint pc : pathConstraintsProcessed.keySet()) {
+            if (!pathConstraintsProcessed.get(pc)) {
+                addConstraint(pc, query, startClass);
+            }
         }
 
         query.setDistinct(true);
@@ -114,7 +128,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             mainQuery.addToSelect(qfCount);
         // enrichment queries
         } else {
-            subQ.addToSelect(qfEnrichId);
+            //subQ.addToSelect(qfEnrichId);
             subQ.addToSelect(qfStartClassId);
             subQ.addToSelect(qfEnrich);
 
@@ -130,20 +144,18 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         return mainQuery;
     }
 
-    private QueryField[] createEnrichmentQueryFields(Model model, Query query, QueryClass startQueryClass) {
+    private QueryField[] createEnrichmentQueryFields(Query query) {
         QueryField[] enrichmentQueryFields = new QueryField[2];
         String enrichPath = config.getEnrich();
         String[] paths = enrichPath.split("\\.");
-        QueryClass qc = startQueryClass;
+        QueryClass qc = startClass;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
         QueryField qf = null;
-        QueryField qfConstraint = null;
         for (int i = 0; i < paths.length; i++) {
             if (i == paths.length - 1) {
                 qf = new QueryField(qc, paths[i]);
                 enrichmentQueryFields[0] = qf;
                 enrichmentQueryFields[1] = new QueryField(qc, "id");
-                /*query.addToSelect(qf);*/
             } else {
                 try {
                     QueryObjectReference qor = new QueryObjectReference(qc, paths[i]);
@@ -161,51 +173,13 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                                 qc));
                 }
                 if (i == 0) {
-                //check if there are any constraints starting with the same queryClass qc
+                //check if there are any constraints, not yet processed,
+                //starting with the same queryClass qc
                     for (PathConstraint pc : config.getPathConstraints()) {
-                        String path = pc.getPath();
-                        String[] pathsConstraint = path.split("\\.");
-                        if (pathsConstraint[0].equals(paths[0])) {
-                            String value = PathConstraint.getValue(pc);
-                            QueryValue queryValue = null;
-                            if ("true".equals(value)) {
-                                queryValue = new QueryValue(new Boolean(true));
-                            } else if ("false".equals(value)) {
-                                queryValue = new QueryValue(new Boolean(true));
-                            } else {
-                                queryValue = new QueryValue(value);
-                            }
-                            QueryClass qcConstraint = null;
-                            for (int index = 0; index < pathsConstraint.length - 1; index++) {
-                                if (index == pathsConstraint.length - 2) {
-                                    if (index == 0) {
-                                        qfConstraint = new QueryField(qc,
-                                            pathsConstraint[index + 1]);
-                                    } else {
-                                        qfConstraint = new QueryField(qcConstraint,
-                                            pathsConstraint[index + 1]);
-                                    }
-                                    cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
-                                                                          queryValue));
-                                } else {
-                                    try {
-                                        QueryObjectReference qor = new QueryObjectReference(qc,
-                                                                   pathsConstraint[index + 1]);
-                                        qcConstraint = new QueryClass(qor.getType());
-                                        query.addFrom(qcConstraint);
-                                        cs.addConstraint(new ContainsConstraint(qor,
-                                                         ConstraintOp.CONTAINS, qcConstraint));
-                                    } catch (IllegalArgumentException e) {
-                                        // Not a reference - try collection instead
-                                        QueryCollectionReference qcr = new QueryCollectionReference(qc,
-                                                                       pathsConstraint[index + 1]);
-                                        qcConstraint = new QueryClass(TypeUtil.getElementType(qc.getType(),
-                                                            pathsConstraint[index + 1]));
-                                        query.addFrom(qcConstraint);
-                                        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
-                                                                                qcConstraint));
-                                    }
-                                }
+                        if (!pathConstraintsProcessed.get(pc)) {
+                            String[] pathsConstraint = pc.getPath().split("\\.");
+                            if (pathsConstraint[0].equals(paths[0])) {
+                                addConstraint(pc, query, qc);
                             }
                         }
                     }
@@ -213,5 +187,87 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             }
         }
         return enrichmentQueryFields;
+    }
+
+    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
+        QueryField qfConstraint = null;
+        ConstraintSet cs = (ConstraintSet) query.getConstraint();
+        String value = PathConstraint.getValue(pc);
+        QueryValue queryValue = null;
+        boolean isListConstraint = false;
+        if ("true".equals(value)) {
+            queryValue = new QueryValue(true);
+        } else if ("false".equals(value)) {
+            queryValue = new QueryValue(false);
+        } else if ("[list]".equals(value)) {
+            isListConstraint = true;
+        } else {
+            queryValue = new QueryValue(value);
+        }
+        QueryClass qcConstraint = null;
+        String[] pathsConstraint = pc.getPath().split("\\.");
+        int limit = (qc == startClass) ? 0 : 1;
+        //subQuery used only for population
+        Query subQuery = new Query();
+        ConstraintSet csSubQuery = new ConstraintSet(ConstraintOp.AND);
+        subQuery.setConstraint(csSubQuery);
+
+        for (int index = 0; index < pathsConstraint.length - limit; index++) {
+            if (index == pathsConstraint.length - 1 - limit) {
+                if (index == 0) {
+                    qfConstraint = new QueryField(qc,
+                        pathsConstraint[index + limit]);
+                } else {
+                    qfConstraint = new QueryField(qcConstraint,
+                        pathsConstraint[index + limit]);
+                }
+                if (isListConstraint) {  
+                    if (action.startsWith("population")) {
+                        subQuery.addToSelect(qfConstraint);
+                        subQuery.addToOrderBy(qfConstraint);
+                        subQuery.addFrom(startClass);
+                        subQuery.addFrom(qcConstraint);
+                        QueryField qfStartClassId = new QueryField(startClass, "id");
+                        csSubQuery.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+                        QueryField outerQFConstraint = new QueryField(subQuery, qfConstraint);
+                        cs.addConstraint(new SimpleConstraint(qfConstraint, ConstraintOp.EQUALS, outerQFConstraint));
+                        query.addFrom(subQuery);
+                    }
+                } else {
+                    cs.addConstraint(new SimpleConstraint(qfConstraint,
+                                 pc.getOp(), queryValue));
+                }
+                pathConstraintsProcessed.put(pc, true);
+            } else {
+                try {
+                    QueryObjectReference qor = new QueryObjectReference(qc,
+                                               pathsConstraint[index + limit]);
+                    qcConstraint = new QueryClass(qor.getType());
+                    query.addFrom(qcConstraint);
+                    cs.addConstraint(new ContainsConstraint(qor,
+                                     ConstraintOp.CONTAINS, qcConstraint));
+                    if (isListConstraint && action.startsWith("population")) {
+                        csSubQuery.addConstraint(new ContainsConstraint(qor,
+                                ConstraintOp.CONTAINS, qcConstraint));
+                    }
+                    pathConstraintsProcessed.put(pc, true);
+                } catch (IllegalArgumentException e) {
+                    // Not a reference - try collection instead
+                    QueryCollectionReference qcr =
+                        new QueryCollectionReference(qc,
+                            pathsConstraint[index + 1]);
+                    qcConstraint = new QueryClass(TypeUtil.getElementType(
+                        qc.getType(), pathsConstraint[index + limit]));
+                    query.addFrom(qcConstraint);
+                    cs.addConstraint(new ContainsConstraint(qcr,
+                        ConstraintOp.CONTAINS, qcConstraint));
+                    if (isListConstraint && action.startsWith("population")) {
+                        csSubQuery.addConstraint(new ContainsConstraint(qcr,
+                                ConstraintOp.CONTAINS, qcConstraint));
+                    }
+                    pathConstraintsProcessed.put(pc, true);
+                }
+            }
+        }
     }
 }
