@@ -779,14 +779,17 @@
                                  extraAttributeSelectedValue=""
                                  extraAttributePossibleValues=""
                                  typeClass="org.intermine.model.bio.Gene"/>
-
-      <enrichmentwidgetdisplayer id="protein_features" title="UniProt Features"
-                                 link="org.intermine.bio.web.widget.UniProtFeaturesURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.UniProtFeaturesLdr"
-                                 label="Feature"
+-->
+      <enrichmentwidgetdisplayer id="protein_features" 
+                                 title="UniProt Features"
                                  description="UniProt features enriched for proteins in this list."
+                                 label="Feature"
+                                 startClass="Protein"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="features.type"
+                                 constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Protein" />
-
+<!--
       <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
                                  link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
@@ -829,9 +832,6 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
                                  constraints="mRNAExpressionResults.expressed=true,mRNAExpressionResults.dataSet.name=BDGP in situ data set"
-                                 extraAttributeLabel=""
-                                 extraAttributeSelectedValue=""
-                                 extraAttributePossibleValues=""
                                  typeClass="org.intermine.model.bio.Gene" />
 <!--
       <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
