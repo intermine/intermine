@@ -69,6 +69,7 @@ public class TrackerDelegate
 
         TrackerLogger trackerLogger = new TrackerLogger(connection, trackQueue);
         trackerLoggerThread = new Thread(trackerLogger);
+        trackerLoggerThread.setDaemon(true);
         trackerLoggerThread.start();
     }
 
