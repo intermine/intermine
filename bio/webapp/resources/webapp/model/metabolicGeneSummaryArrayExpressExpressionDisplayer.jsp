@@ -8,12 +8,10 @@
 <div id="arrayexpress-expression-displayer">
 
   <style>
-    #arrayexpress-expression-displayer div.data { font-size:12px; font-weight:normal; }
-    #arrayexpress-expression-displayer div.data ul li { line-height:14px; }
-    #arrayexpress-expression-displayer div.data span.regulation { display:block; float:left;
-      width:10px; height:10px; border:1px solid #000; margin-right:5px; }
-    #arrayexpress-expression-displayer div.data span.regulation.up { background:#59BB14; }
-    #arrayexpress-expression-displayer div.data span.regulation.down { background:#0000FF; }
+    #arrayexpress-expression-displayer div.data { font-size:16px; font-weight:normal; }
+    #arrayexpress-expression-displayer div.data span.regulation { font-weight:bold; }
+    #arrayexpress-expression-displayer div.data span.regulation.up { color:#59BB14; }
+    #arrayexpress-expression-displayer div.data span.regulation.down { color:#0000FF; }
     #arrayexpress-expression-displayer div.label span.title { display:block; margin:0 10px 10px 0; }
   </style>
 
@@ -27,20 +25,8 @@
     </c:if>
 
     <div class="data">
-      <c:choose>
-        <c:when test="${not empty entry}">
-          <ul>
-          <c:forEach var="thingie" items="${entry}">
-            <li title="${fn:toLowerCase(thingie.value)}regulated">
-              <span class="regulation ${fn:toLowerCase(thingie.value)}"></span>${thingie.key}
-            </li>
-          </c:forEach>
-          </ul>
-        </c:when>
-        <c:otherwise>
-          No high differential expression (p < 1e-20).
-        </c:otherwise>
-      </c:choose>
+       <span class="regulation up">&uArr;${entry.up}</span>
+       <span class="regulation down">&dArr;${entry.down}</span>
     </div>
   </c:forEach>
 </div>
