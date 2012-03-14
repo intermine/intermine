@@ -92,7 +92,7 @@ public class SequenceExportAction extends InterMineAction
                 SeqIOTools.writeFasta(out, bioSequence);
             } else {
                 PrintWriter out = response.getWriter();
-                out.write("Sequnce information not availble for this sequence feature...");
+                out.write("Sequence information not availble for this sequence feature...");
                 out.flush();
             }
         }
