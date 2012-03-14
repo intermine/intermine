@@ -38,7 +38,7 @@
     <c:when test="${not empty counts}">
     <c:forEach var="homologue" items="${counts}">
       <c:if test="${not homologue.value['isMouser']}">
-        <div class="header"><h3>${homologue.key} Mouse Homologue</h3></div>
+        <div class="header"><h3>${homologue.key} Mouse Homologue with ${homologue.value['alleleCount']} alleles</h3></div>
       </c:if>
       <div class="inline-list">
         <ul>
@@ -58,17 +58,22 @@
     </c:forEach>
     </c:when>
     <c:otherwise>
-      <p style="font-style:italic;">No data found</p>
+      <c:choose>
+        <c:when test="${alleleCount != 1}">
+          <p style="font-style:italic;">No data found for ${alleleCount} alleles</p>
+        </c:when>
+        <c:otherwise>
+          <p style="font-style:italic;">No data found for 1 allele</p>
+        </c:otherwise>
+      </c:choose>
     </c:otherwise>
   </c:choose>
   <script type="text/javascript">
-    <%-- toggler --%>
     jQuery("#mouse-alleles div.toggle a").click(function() {
       jQuery('#mouse-alleles ul li').css('display', 'inline');
       jQuery("#mouse-alleles div.toggle").remove();
     });
 
-    <%-- encode XML --%>
     jQuery("#mouse-alleles ul li a").each(function() {
       var span = jQuery(this).find('span');
       var xml = encodeURIComponent(span.html());
@@ -78,7 +83,6 @@
 </div>
 
 <c:if test="${collection != null}">
-  <%-- collection table --%>
   <div id="mouse-alleles-collection" class="collection-table">
     <div class="header">
       <h3>Mouse Alleles </h3>
@@ -103,7 +107,6 @@
 
   <script type="text/javascript">
   (function() {
-      <%-- hide more than 10 rows --%>
      var bodyRows = jQuery("#mouse-alleles-collection.collection-table table tbody tr");
      if (bodyRows.length > 10) {
        bodyRows.each(function(i) {
@@ -111,9 +114,7 @@
            jQuery(this).hide();
          }
        });
-       <%-- 'provide' toggler --%>
        jQuery("#mouse-alleles-collection.collection-table div.toggle").show();
-       <%-- attach toggler event --%>
        jQuery('#mouse-alleles-collection.collection-table div.toggle a.more').click(function(e) {
          jQuery("#mouse-alleles-collection.collection-table table tbody tr:hidden").each(function(i) {
            if (i < 10) {
