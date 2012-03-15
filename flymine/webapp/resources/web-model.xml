@@ -112,3 +112,17 @@
   <servlet-name>genomic-region-to-bed</servlet-name>
   <url-pattern>/service/regions/bed</url-pattern>
 </servlet-mapping>
+
+<servlet>
+  <servlet-name>genomic-region-sequence-export</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionSequenceExportServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-sequence-export</servlet-name>
+  <url-pattern>/service/regions/sequence</url-pattern>
+</servlet-mapping>

@@ -413,7 +413,7 @@ public final class GenomicRegionSearchUtil
      * @return a GenomicRegion object
      * @throws Exception with error message
      */
-    public static List<GenomicRegion> generateGenomicRegion(
+    public static List<GenomicRegion> generateGenomicRegions(
             Collection<String> genomicRegionStringCollection) throws Exception {
 
         List<GenomicRegion> genomicRegionList = new ArrayList<GenomicRegion>();
@@ -494,6 +494,71 @@ public final class GenomicRegionSearchUtil
         }
 
         return genomicRegionList;
+    }
+
+    /**
+     * Create a list of GenomicRegion objects from a collection of region strings
+     * @param regionStringList list of region strings
+     * @param organism short name
+     * @param extendedRegionSize flanking
+     * @param isInterBaseCoordinate inter base
+     * @return a list of GenomicRegion objects
+     */
+    public static List<GenomicRegion> createGenomicRegionsFromString(
+            Collection<String> regionStringList, String organism,
+            Integer extendedRegionSize, Boolean isInterBaseCoordinate) {
+        List<GenomicRegion> grList = new ArrayList<GenomicRegion>();
+        for (String grStr : regionStringList) {
+            GenomicRegion aSpan = new GenomicRegion();
+            aSpan.setOrganism(organism);
+            if (extendedRegionSize != null) {
+                aSpan.setExtendedRegionSize(extendedRegionSize);
+            }
+
+            if (DOT_DOT.matcher(grStr).find()) {
+                aSpan.setChr((grStr.split(":"))[0]);
+                String[] spanItems = (grStr.split(":"))[1].split("\\..");
+                String start = spanItems[0].trim();
+                if (isInterBaseCoordinate) {
+                    aSpan.setStart(Integer.valueOf(start) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(start));
+                }
+                aSpan.setEnd(Integer.valueOf(spanItems[1]));
+            } else if (BED.matcher(grStr).find()) {
+                String[] spanItems = grStr.split("\t");
+                aSpan.setChr(spanItems[0]);
+                if (isInterBaseCoordinate) {
+                    aSpan.setStart(Integer.valueOf(spanItems[1]) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(spanItems[1]));
+                }
+                aSpan.setEnd(Integer.valueOf(spanItems[2]));
+            } else if (DASH.matcher(grStr).find()) {
+                aSpan.setChr((grStr.split(":"))[0]);
+                String[] spanItems = (grStr.split(":"))[1].split("-");
+                String start = spanItems[0].trim();
+                if (isInterBaseCoordinate) {
+                    aSpan.setStart(Integer.valueOf(start) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(start));
+                }
+                aSpan.setEnd(Integer.valueOf(spanItems[1]));
+            } else if (SINGLE_POS.matcher(grStr).find()) {
+                aSpan.setChr((grStr.split(":"))[0]);
+                String start = (grStr.split(":"))[1].trim();
+                if (isInterBaseCoordinate) {
+                    aSpan.setStart(Integer.valueOf(start) + 1);
+                } else {
+                    aSpan.setStart(Integer.valueOf(start));
+                }
+                aSpan.setEnd(Integer.valueOf((grStr.split(":"))[1].trim()));
+            } else {
+                throw new IllegalArgumentException("Region string is in wrong format: " + grStr);
+            }
+            grList.add(aSpan);
+        }
+        return grList;
     }
 
     /**
