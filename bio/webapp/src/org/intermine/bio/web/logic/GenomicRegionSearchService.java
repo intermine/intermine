@@ -866,7 +866,7 @@ public class GenomicRegionSearchService
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
 
         GenomicRegion grToExport = GenomicRegionSearchUtil
-            .generateGenomicRegion(Arrays.asList(new String[] {grInfo}))
+            .generateGenomicRegions(Arrays.asList(new String[] {grInfo}))
             .get(0);
 
         for (List<String> sf : resultMap.get(grToExport)) {
@@ -893,7 +893,7 @@ public class GenomicRegionSearchService
         Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
 
         GenomicRegion grToExport = GenomicRegionSearchUtil
-                .generateGenomicRegion(Arrays.asList(new String[] {grInfo}))
+                .generateGenomicRegions(Arrays.asList(new String[] {grInfo}))
                 .get(0);
 
         for (List<String> sf : resultMap.get(grToExport)) {
