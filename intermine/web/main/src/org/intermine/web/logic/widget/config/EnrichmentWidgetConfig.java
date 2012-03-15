@@ -176,22 +176,26 @@ public class EnrichmentWidgetConfig extends WidgetConfig
 
     public void setPathConstraints() {
         String[] constraintsList = constraints.split("\\s*,\\s*");
-        String path, value;
+        String path = null;
+        String value = null;
         ConstraintOp op = null;
-        //Constraint
+        String[] splitConstraint;
         for (String constraint : constraintsList) {
             int opIndex = constraint.indexOf("!=");
             if (opIndex != -1) {
                 op = ConstraintOp.NOT_EQUALS;
-                value = constraint.substring(opIndex + 2);
+                splitConstraint = constraint.split("\\s*!=\\s*");
+                path = splitConstraint[0];
+                value = splitConstraint[1];
             } else {
                 opIndex = constraint.indexOf("=");
-                value = constraint.substring(opIndex + 1);
                 if (opIndex != -1) {
                     op = ConstraintOp.EQUALS;
+                    splitConstraint = constraint.split("\\s*=\\s*");
+                    path = splitConstraint[0];
+                    value = splitConstraint[1];
                 }
             }
-            path = constraint.substring(0, opIndex);
             this.pathConstraints.add(new PathConstraintAttribute(path, op, value));
         }
     }
