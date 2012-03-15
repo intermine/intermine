@@ -557,17 +557,18 @@ public class GenomicRegionSearchAjaxAction extends Action
                         session.getServletContext()).getProperty(
                         "genomicRegionSearch.query." + facet + ".sortOrder");
 
-                if (!exportFeaturesViewsStr.isEmpty() && exportFeaturesViewsStr != null) {
-                    try {
-                        exportFeaturesViews = new LinkedHashSet<String>(
-                                Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
-                                        ",")));
-
-                        exportFeaturesSortOrder =
-                                Arrays.asList(StringUtil.split(exportFeaturesSortOrderStr, " "));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
+                if (exportFeaturesViewsStr != null) {
+                     if (!exportFeaturesViewsStr.isEmpty()) {
+                         try {
+                             exportFeaturesViews = new LinkedHashSet<String>(
+                                     Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
+                                             ",")));
+                             exportFeaturesSortOrder = Arrays.asList(StringUtil
+                                     .split(exportFeaturesSortOrderStr, " "));
+                         } catch (Exception e) {
+                             throw new RuntimeException(e);
+                         }
+                     }
                 }
                 // == End of experimental code ==
 
