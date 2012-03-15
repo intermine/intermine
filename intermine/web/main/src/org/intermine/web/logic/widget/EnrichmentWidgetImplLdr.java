@@ -37,16 +37,18 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
     private ObjectStore os;
     private InterMineBag bag;
     private EnrichmentWidgetConfig config;
+    private String filter;
     private QueryClass startClass;
     private Map<PathConstraint, Boolean> pathConstraintsProcessed =
         new HashMap<PathConstraint, Boolean>();
     private String action;
 
     public EnrichmentWidgetImplLdr(InterMineBag bag, ObjectStore os, EnrichmentWidgetConfig config,
-        String extraAttribute) {
+        String filter) {
         this.bag = bag;
         this.os = os;
         this.config = config;
+        this.filter = "kegg pathways data set";
         try {
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
                                         + config.getStartClass()));
@@ -190,21 +192,19 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
     }
 
     private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
-        QueryField qfConstraint = null;
-        ConstraintSet cs = (ConstraintSet) query.getConstraint();
-        String value = PathConstraint.getValue(pc);
+        boolean isListConstraint = isListConstraint(pc);
+        boolean isFilterConstraint = isFilterConstraint(pc);
         QueryValue queryValue = null;
-        boolean isListConstraint = false;
-        if ("true".equals(value)) {
-            queryValue = new QueryValue(true);
-        } else if ("false".equals(value)) {
-            queryValue = new QueryValue(false);
-        } else if ("[list]".equals(value)) {
-            isListConstraint = true;
-        } else {
-            queryValue = new QueryValue(value);
+        if (!isFilterConstraint && !isListConstraint) {
+            queryValue = buildQueryValue(pc);
         }
+        if (isFilterConstraint) {
+            queryValue = new QueryValue(filter);
+        }
+
+        QueryField qfConstraint = null;
         QueryClass qcConstraint = null;
+        ConstraintSet cs = (ConstraintSet) query.getConstraint();
         String[] pathsConstraint = pc.getPath().split("\\.");
         int limit = (qc == startClass) ? 0 : 1;
         //subQuery used only for population
@@ -221,7 +221,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                     qfConstraint = new QueryField(qcConstraint,
                         pathsConstraint[index + limit]);
                 }
-                if (isListConstraint) {  
+                if (isListConstraint) {
                     if (action.startsWith("population")) {
                         subQuery.addToSelect(qfConstraint);
                         subQuery.addToOrderBy(qfConstraint);
@@ -269,5 +269,36 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                 }
             }
         }
+    }
+
+    private boolean isListConstraint(PathConstraint pc) {
+        String value = PathConstraint.getValue(pc);
+        value = value.replace(" ", "");
+        if ("[list]".equals(value)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isFilterConstraint(PathConstraint pc) {
+        String value = PathConstraint.getValue(pc);
+        value = value.replace(" ", "");
+        if (value.equals("[" + config.getFilterLabel() + "]")) {
+            return true;
+        }
+        return false;
+    }
+
+    private QueryValue buildQueryValue(PathConstraint pc) {
+        String value = PathConstraint.getValue(pc);
+        QueryValue queryValue = null;
+        if ("true".equals(value)) {
+            queryValue = new QueryValue(true);
+        } else if ("false".equals(value)) {
+            queryValue = new QueryValue(false);
+        } else {
+            queryValue = new QueryValue(value);
+        }
+        return queryValue;
     }
 }

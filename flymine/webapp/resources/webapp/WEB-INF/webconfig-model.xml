@@ -789,14 +789,17 @@
                                  enrich="features.type"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Protein" />
-<!--
-      <enrichmentwidgetdisplayer id="uniprot_keywords" title="UniProt Keywords"
-                                 link="org.intermine.bio.web.widget.UniProtKeywordsURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.UniProtKeywordsLdr"
-                                 label="Keyword"
-                                 description="UniProt keywords enriched for proteins in this list."
-                                 typeClass="org.intermine.model.bio.Protein" />
 
+      <enrichmentwidgetdisplayer id="uniprot_keywords" 
+                                 title="UniProt Keywords"
+                                 description="UniProt keywords enriched for proteins in this list."
+                                 label="Keyword"
+                                 startClass="Protein"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="keywords.name"
+                                 constraints="organism.name=[list]"
+                                 typeClass="org.intermine.model.bio.Protein" />
+<!--
       <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
                                  dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
@@ -833,16 +836,19 @@
                                  enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
                                  constraints="mRNAExpressionResults.expressed=true,mRNAExpressionResults.dataSet.name=BDGP in situ data set"
                                  typeClass="org.intermine.model.bio.Gene" />
-<!--
-      <enrichmentwidgetdisplayer id="pathway_enrichment" title="Pathway Enrichment"
-                                 link="org.intermine.bio.web.widget.PathwayURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.PathwayLdr"
-                                 label="Pathways"
-                                 filters="All datasets,KEGG,Reactome"
-                                 filterLabel="DataSet"
-                                 description="Pathways enriched for genes in this list - data from KEGG and Reactome"
-                                 typeClass="org.intermine.model.bio.Gene" />
 
+      <enrichmentwidgetdisplayer id="pathway_enrichment"
+                                 title="Pathway Enrichment"
+                                 description="Pathways enriched for genes in this list - data from KEGG and Reactome"
+                                 label="Pathways"
+                                 filterLabel="DataSet"
+                                 filters="All datasets,KEGG pathways data set,Reactome data set"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="pathways.identifier"
+                                 constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list]"
+                                 typeClass="org.intermine.model.bio.Gene" />
+<!--
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."

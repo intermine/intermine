@@ -37,9 +37,6 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     private String startClassDisplay;
     private List<PathConstraint> pathConstraints = new ArrayList<PathConstraint>();
     private String constraints;
-    private String extraAttributeLabel;
-    private String extraAttributeSelectedValue;
-    private String extraAttributePossibleValues;
 
     /**
      * @return the label
@@ -178,6 +175,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     }
 
     public void setPathConstraints() {
+        constraints = constraints.replace(" ", "");
         String[] constraintsList = constraints.split("\\,");
         String path, value;
         ConstraintOp op = null;
@@ -201,30 +199,6 @@ public class EnrichmentWidgetConfig extends WidgetConfig
 
     public List<PathConstraint> getPathConstraints() {
         return pathConstraints;
-    }
-
-    public String getExtraAttributeLabel() {
-        return extraAttributeLabel;
-    }
-
-    public void setExtraAttributeLabel(String extraAttributeLabel) {
-        this.extraAttributeLabel = extraAttributeLabel;
-    }
-
-    public String getExtraAttributeSelectedValue() {
-        return extraAttributeSelectedValue;
-    }
-
-    public void setExtraAttributeSelectedValue(String extraAttributeSelectedValue) {
-        this.extraAttributeSelectedValue = extraAttributeSelectedValue;
-    }
-
-    public String getExtraAttributePossibleValues() {
-        return extraAttributePossibleValues;
-    }
-
-    public void setExtraAttributePossibleValues(String extraAttributePossibleValues) {
-        this.extraAttributePossibleValues = extraAttributePossibleValues;
     }
 
     /**
