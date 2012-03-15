@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -79,7 +78,6 @@ public class GenomicRegionSearchAjaxAction extends Action
     private WebConfig webConfig;
     private Profile profile;
     private InterMineAPI api;
-    private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
 
     @SuppressWarnings("unchecked")
     private void init(HttpServletRequest request, HttpServletResponse response)
