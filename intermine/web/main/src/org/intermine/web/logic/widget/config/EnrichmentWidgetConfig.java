@@ -175,8 +175,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     }
 
     public void setPathConstraints() {
-        constraints = constraints.replace(" ", "");
-        String[] constraintsList = constraints.split("\\,");
+        String[] constraintsList = constraints.split("\\s*,\\s*");
         String path, value;
         ConstraintOp op = null;
         //Constraint
