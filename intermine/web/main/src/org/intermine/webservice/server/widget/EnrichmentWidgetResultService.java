@@ -96,10 +96,12 @@ public class EnrichmentWidgetResultService extends JSONService
         if (widgetConfig == null || !(widgetConfig instanceof EnrichmentWidgetConfig)) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
-        addOutputInfo("label", ((EnrichmentWidgetConfig) widgetConfig).getLabel());
-        addOutputInfo("title", ((EnrichmentWidgetConfig) widgetConfig).getTitle());
-        addOutputInfo("description", ((EnrichmentWidgetConfig) widgetConfig).getDescription());
-        addOutputExtraAttributes((EnrichmentWidgetConfig) widgetConfig);
+        EnrichmentWidgetConfig enrichmentWidgetConfig = (EnrichmentWidgetConfig) widgetConfig;
+        addOutputInfo("label", enrichmentWidgetConfig.getLabel());
+        addOutputInfo("title", enrichmentWidgetConfig.getTitle());
+        addOutputInfo("description", enrichmentWidgetConfig.getDescription());
+        String filterSelectedValue = input.getExtraAttributes().get(0);
+        addOutputFilter(enrichmentWidgetConfig, filterSelectedValue);
 
         EnrichmentWidget widget = null;
         try {
@@ -120,18 +122,20 @@ public class EnrichmentWidgetResultService extends JSONService
         }
     }
 
-    private void addOutputExtraAttributes(EnrichmentWidgetConfig widgetConfig) {
-        String extraAttributeLabel = widgetConfig.getExtraAttributeLabel();
-        if (extraAttributeLabel != null && !"".equals(extraAttributeLabel)) {
-            addOutputInfo("extraAttributeLabel", extraAttributeLabel);
+    private void addOutputFilter(EnrichmentWidgetConfig widgetConfig, String filterSelectedValue) {
+        String filterLabel = widgetConfig.getFilterLabel();
+        if (filterLabel != null && !"".equals(filterLabel)) {
+            addOutputInfo("filterLabel", filterLabel);
         }
-        String extraAttributeSelectedValue = widgetConfig.getExtraAttributeSelectedValue();
-        if (extraAttributeSelectedValue != null && !"".equals(extraAttributeSelectedValue)) {
-            addOutputInfo("extraAttributeSelectedValue", extraAttributeSelectedValue);
+        String filters = widgetConfig.getFilters();
+        if (filters != null && !"".equals(filters)) {
+            addOutputInfo("filters", filters);
         }
-        String extraAttributePossibleValues = widgetConfig.getExtraAttributePossibleValues();
-        if (extraAttributePossibleValues != null && !"".equals(extraAttributePossibleValues)) {
-            addOutputInfo("extraAttributePossibleValues", extraAttributePossibleValues);
+        if (filterSelectedValue != null &&!"".equals(filterSelectedValue)) {
+            addOutputInfo("filterSelectedValue", filterSelectedValue);
+        } else if (!"".equals(widgetConfig.getFilters())) {
+            String defaultFilterValue = widgetConfig.getFilters().split("\\,")[0];
+            addOutputInfo("filterSelectedValue", defaultFilterValue);
         }
     }
 
