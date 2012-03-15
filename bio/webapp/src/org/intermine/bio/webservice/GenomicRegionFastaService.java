@@ -19,7 +19,6 @@ import org.intermine.bio.web.export.SequenceExporter;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 
 /**
@@ -29,6 +28,7 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 */
 public class GenomicRegionFastaService extends AbstractRegionExportService
 {
+    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(GenomicRegionFastaService.class);
     protected static final String SUFFIX = ".fasta";
 
