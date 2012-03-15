@@ -131,9 +131,9 @@ public class EnrichmentWidgetResultService extends JSONService
         if (filters != null && !"".equals(filters)) {
             addOutputInfo("filters", filters);
         }
-        if (filterSelectedValue != null &&!"".equals(filterSelectedValue)) {
+        if (filterSelectedValue != null && !"".equals(filterSelectedValue)) {
             addOutputInfo("filterSelectedValue", filterSelectedValue);
-        } else if (!"".equals(widgetConfig.getFilters())) {
+        } else if (filters != null && !"".equals(filters)) {
             String defaultFilterValue = widgetConfig.getFilters().split("\\,")[0];
             addOutputInfo("filterSelectedValue", defaultFilterValue);
         }
