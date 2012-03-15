@@ -13,18 +13,23 @@ package org.intermine.api.mines;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.CacheMap;
-import org.json.JSONException;
+import org.intermine.webservice.client.results.XMLTableResult;
 import org.json.JSONObject;
 
 /**
@@ -36,7 +41,7 @@ public final class FriendlyMineQueryRunner
 {
     private static final Logger LOG = Logger.getLogger(FriendlyMineQueryRunner.class);
     private static final String WEBSERVICE_URL = "/service";
-    private static final String QUERY_PATH = "/query/results?size=1000&format=tab&query=";
+    private static final String QUERY_PATH = "/query/results?format=xml&query=";
     private static Map<MultiKey, JSONObject> queryResultsCache
         = new CacheMap<MultiKey, JSONObject>();
     private static final String RELEASE_VERSION_URL = "/version/release";
@@ -47,7 +52,7 @@ public final class FriendlyMineQueryRunner
     }
 
     /**
-     * Query a mine and recieve map of results.  only processes first two columns set as id and
+     * Query a mine and receive map of results.  only processes first two columns set as id and
      * name
      *
      * TODO use Java  webservice client instead.  See #2829
@@ -64,43 +69,24 @@ public final class FriendlyMineQueryRunner
         if (jsonMine != null) {
             return jsonMine;
         }
-        Set<JSONObject> results = new LinkedHashSet<JSONObject>();
+        List<Map<String, String>> genes = new ArrayList<Map<String, String>>();
+
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
-            LOG.info("no results found for " + mine.getName() + " for query " + xmlQuery);
+            LOG.info(String.format("no results found for %s for query \"%s\"",
+                    mine.getName(), xmlQuery));
             return null;
         }
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            String[] bits = line.split("\\t");
-            if (bits.length == 0) {
-                return null;
-            }
-            JSONObject gene = new JSONObject();
-            try {
-                String id = bits[0];
-                String name = bits[1];
-                if (StringUtils.isNotEmpty(id)) {
-                    id = id.replace("\"", "");
-                }
-                if (StringUtils.isNotEmpty(name)) {
-                    name = name.replace("\"", "");
-                }
-                gene.put("id", id);
-                gene.put("name", name);
-                results.add(gene);
-            } catch (JSONException e) {
-                LOG.info("couldn't parse results for " + mine.getName() + " for query " + xmlQuery);
-                continue;
-            }
+        XMLTableResult table = new XMLTableResult(reader);
+        for (List<String> row: table.getData()) {
+            Map<String, String> gene = new HashMap<String, String>();
+            gene.put("id", row.get(0));
+            gene.put("name", row.get(1));
+            genes.add(gene);
         }
-        jsonMine = new JSONObject();
-        try {
-            jsonMine.put("results", results);
-        } catch (JSONException e) {
-            LOG.info("couldn't process results for " + mine.getName() + " for query " + xmlQuery);
-            return null;
-        }
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("results", genes);
+        jsonMine = new JSONObject(data);
         queryResultsCache.put(key, jsonMine);
         return jsonMine;
     }
@@ -115,8 +101,7 @@ public final class FriendlyMineQueryRunner
         try {
             String urlString = mine.getUrl() + WEBSERVICE_URL + QUERY_PATH
                     + URLEncoder.encode("" + xmlQuery, "UTF-8");
-            URL url = new URL(urlString);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            BufferedReader reader = runWebServiceQuery(urlString);
             return reader;
         } catch (Exception e) {
             LOG.info("Unable to access " + mine.getName() + " exception: " + e.getMessage());
@@ -135,30 +120,24 @@ public final class FriendlyMineQueryRunner
             String url = mine.getUrl() + WEBSERVICE_URL + RELEASE_VERSION_URL;
             BufferedReader reader = runWebServiceQuery(url);
             final String msg = "Unable to retrieve release version for " + mine.getName();
-            String newReleaseVersion = null;
+            String newReleaseVersion;
             try {
-                if (reader != null) {
-                    newReleaseVersion = reader.readLine();
-                } else {
-                    LOG.info(msg);
-                    continue;
-                }
-            } catch (Exception e) {
-                LOG.warn(msg);
+                newReleaseVersion = IOUtils.toString(reader);
+            } catch (IOException e) {
+                LOG.warn(msg, e);
                 continue;
             }
 
-            if (StringUtils.isEmpty(newReleaseVersion)
-                    && StringUtils.isEmpty(currentReleaseVersion)) {
+            if (StringUtils.isBlank(newReleaseVersion)
+                    && StringUtils.isBlank(currentReleaseVersion)) {
                 // didn't get a release version this time or last time
                 LOG.warn(msg);
                 continue;
             }
 
             // if release version is different
-            if (StringUtils.isEmpty(newReleaseVersion)
-                    || StringUtils.isEmpty(currentReleaseVersion)
-                    || !newReleaseVersion.equals(currentReleaseVersion)
+            if (!StringUtils.equals(newReleaseVersion, currentReleaseVersion)
+                    || StringUtils.isBlank(currentReleaseVersion)
                     || DEBUG) {
 
                 // update release version
@@ -169,6 +148,7 @@ public final class FriendlyMineQueryRunner
         }
     }
 
+
     /**
      * Run a query via the web service
      *
@@ -176,14 +156,36 @@ public final class FriendlyMineQueryRunner
      * @return reader
      */
     public static BufferedReader runWebServiceQuery(String urlString) {
+        if (StringUtils.isEmpty(urlString)) {
+            return null;
+        }
+        BufferedReader reader = null;
         try {
-            URL url = new URL(urlString);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            if (!urlString.contains("?")) {
+                // GET
+                URL url = new URL(urlString);
+                reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                LOG.info("FriendlyMine URL (GET) " + urlString);
+            } else {
+                // POST
+                String[] params = urlString.split("\\?");
+                String newUrlString = params[0];
+                String queryString = params[1];
+                URL url = new URL(newUrlString);
+                URLConnection conn = url.openConnection();
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(queryString);
+                wr.flush();
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                LOG.info("FriendlyMine URL (POST) " + urlString);
+            }
             return reader;
         } catch (Exception e) {
             LOG.info("Unable to access " + urlString + " exception: " + e.getMessage());
             return null;
         }
     }
+
 }
 

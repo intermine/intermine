@@ -58,6 +58,8 @@ public class HttpConnection
 
     private int timeout;
 
+    private int retryCount = 3;
+
     private boolean opened = false;
 
     /**
@@ -134,7 +136,7 @@ public class HttpConnection
         }
         // Provide custom retry handler is necessary
         executedMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                new DefaultHttpMethodRetryHandler(3, false));
+                new DefaultHttpMethodRetryHandler(retryCount, false));
         for (String name : request.getHeaders().keySet()) {
             executedMethod.setRequestHeader(name, request.getHeader(name));
         }
@@ -173,6 +175,14 @@ public class HttpConnection
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * Sets retry count.
+     * @param times The number of times to flog a dead horse. (3 by default).
+     */
+    public void setRetryCount(int times) {
+        this.retryCount = times;
     }
 
     /**
