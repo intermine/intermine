@@ -799,6 +799,7 @@
                                  enrich="keywords.name"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Protein" />
+
 <!--
       <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
                                  link="org.intermine.bio.web.widget.GoStatURLQuery"
@@ -817,16 +818,17 @@
                                  description="Protein Domains enriched for items in this list."
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
-
-      <enrichmentwidgetdisplayer id="publication_enrichment" title="Publication Enrichment"
-                                 link="org.intermine.bio.web.widget.PublicationURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.PublicationLdr"
-                                 label="Publication"
-                                 description="Publications enriched for genes in this list."
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 typeClass="org.intermine.model.bio.Gene"
-                                 externalLinkLabel="PubMed:" />
 -->
+      <enrichmentwidgetdisplayer id="publication_enrichment" 
+                                 title="Publication Enrichment"
+                                 description="Publications enriched for genes in this list."
+                                 label="Publication"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="publications.title"
+                                 constraints="organism.name=[list]"
+                                 typeClass="org.intermine.model.bio.Gene"/>
+
       <enrichmentwidgetdisplayer id="bdgp_enrichment"
                                  title="BDGP Enrichment"
                                  description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BDGP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
@@ -834,7 +836,7 @@
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
-                                 constraints="mRNAExpressionResults.expressed=true,mRNAExpressionResults.dataSet.name=BDGP in situ data set"
+                                 constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
                                  typeClass="org.intermine.model.bio.Gene" />
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"
@@ -842,10 +844,10 @@
                                  description="Pathways enriched for genes in this list - data from KEGG and Reactome"
                                  label="Pathways"
                                  filterLabel="DataSet"
-                                 filters="All datasets,KEGG pathways data set,Reactome data set"
+                                 filters="All,KEGG pathways data set,Reactome data set"
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
-                                 enrich="pathways.identifier"
+                                 enrich="pathways.name"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list]"
                                  typeClass="org.intermine.model.bio.Gene" />
 <!--

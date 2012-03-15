@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -48,7 +47,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         this.bag = bag;
         this.os = os;
         this.config = config;
-        this.filter = "kegg pathways data set";
+        this.filter = filter;
         try {
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
                                         + config.getStartClass()));
@@ -198,7 +197,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         if (!isFilterConstraint && !isListConstraint) {
             queryValue = buildQueryValue(pc);
         }
-        if (isFilterConstraint) {
+        if (isFilterConstraint && !"All".equalsIgnoreCase(filter)) {
             queryValue = new QueryValue(filter);
         }
 
@@ -234,8 +233,10 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                         query.addFrom(subQuery);
                     }
                 } else {
-                    cs.addConstraint(new SimpleConstraint(qfConstraint,
-                                 pc.getOp(), queryValue));
+                    if (queryValue != null) {
+                        cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
+                                                              queryValue));
+                    }
                 }
                 pathConstraintsProcessed.put(pc, true);
             } else {
