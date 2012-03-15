@@ -44,6 +44,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
+import org.intermine.bio.web.export.GenomicRegionSequenceExporter;
 import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
@@ -254,7 +255,7 @@ public class GenomicRegionSearchAjaxAction extends Action
         PrintWriter out = response.getWriter();
 
         // Parse region string to a list of genomic region objects
-        List<GenomicRegion> grList = GenomicRegionSearchUtil.generateGenomicRegion(regionSet);
+        List<GenomicRegion> grList = GenomicRegionSearchUtil.generateGenomicRegions(regionSet);
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
@@ -350,181 +351,28 @@ public class GenomicRegionSearchAjaxAction extends Action
             stringExporter.export(exportResults);
         } else {
             if ("chrSeg".equals(format)) {
-                // download chromosome segment
-                // TODO port to webservice
+                // download genomic region DNA sequence
+                List<GenomicRegion> grList;
+                String exportFileName;
                 if ("all".equals(criteria)) {
-                    List<GenomicRegion> grList = new ArrayList<GenomicRegion>(
+                    grList = new ArrayList<GenomicRegion>(
                             spanOverlapFullResultMap.get(spanUUIDString).keySet());
-                    GenomicRegion aRegion = grList.get(0);
-                    Organism org = (Organism) DynamicUtil.createObject(Collections
-                            .singleton(Organism.class));
-                    org.setShortName(aRegion.getOrganism());
 
-                    try {
-                        org = (Organism) api.getObjectStore().getObjectByExample(org,
-                                Collections.singleton("shortName"));
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException(
-                                "unable to fetch Organism object", e);
-                    }
+                    exportFileName = "genomic_region_all.fasta";
 
-                    String exportFileName = "chromosome_region_all.fasta";
-                    response.setContentType("text/plain");
-                    response.setHeader("Content-Disposition",
-                            "attachment; filename=\"" + exportFileName + "\"");
-                    OutputStream out = response.getOutputStream();
-
-                    for (GenomicRegion gr : grList) {
-                        Chromosome chr = (Chromosome) DynamicUtil
-                        .createObject(Collections.singleton(Chromosome.class));
-                        chr.setPrimaryIdentifier(gr.getChr());
-                        chr.setOrganism(org);
-
-                        try {
-                            chr = (Chromosome) api.getObjectStore().getObjectByExample(
-                                    chr,
-                                    new HashSet<String>(Arrays.asList(new String[] {
-                                        "primaryIdentifier", "organism" })));
-                        } catch (ObjectStoreException e) {
-                            throw new RuntimeException(
-                                    "unable to fetch Chromosome object", e);
-                        }
-
-                        String chrResidueString;
-                        if (chromosomeSequenceMap.get(new MultiKey(gr.getChr(), gr
-                                .getOrganism())) == null) {
-                            chrResidueString = chr.getSequence().getResidues()
-                                    .toString();
-                            chromosomeSequenceMap.put(
-                                    new MultiKey(gr.getChr(), gr.getOrganism()), chr
-                                            .getSequence().getResidues().toString());
-                        } else {
-                            chrResidueString = chromosomeSequenceMap.get(new MultiKey(
-                                    gr.getChr(), gr.getOrganism()));
-                        }
-
-                        int chrLength = chr.getLength();
-                        int start;
-                        int end;
-
-                        if (gr.getExtendedRegionSize() > 0) {
-                            start = gr.getExtendedStart();
-                            end = gr.getExtendedEnd();
-                        } else {
-                            start = gr.getStart();
-                            end = gr.getEnd();
-                        }
-
-                        end = Math.min(end, chrLength);
-                        start = Math.max(start, 1);
-
-                        List<String> headerBits = new ArrayList<String>();
-                        headerBits.add(gr.getChr() + ":" + start + ".." + end);
-                        headerBits.add(end - start + 1 + "bp");
-                        headerBits.add(gr.getOrganism());
-                        String header = StringUtil.join(headerBits, " ");
-
-                        String seqName = "chromosome_region_" + gr.getChr() + "_"
-                                + start + "_" + end + "_"
-                                + gr.getOrganism().replace("\\. ", "_");
-
-                        Sequence chrSeg = DNATools
-                                .createDNASequence(
-                                        chrResidueString.substring(start - 1, end),
-                                        seqName);
-                        chrSeg.getAnnotation().setProperty(
-                                FastaFormat.PROPERTY_DESCRIPTIONLINE, header);
-
-                        // write it out
-                        SeqIOTools.writeFasta(out, chrSeg);
-                    }
-                    out.flush();
                 } else {
-                    GenomicRegion gr = GenomicRegionSearchUtil
-                    .generateGenomicRegion(Arrays.asList(new String[] {criteria}))
-                        .get(0);
+                    grList = GenomicRegionSearchUtil
+                    .generateGenomicRegions(Arrays.asList(new String[] {criteria}));
 
-                    Organism org = (Organism) DynamicUtil.createObject(Collections
-                            .singleton(Organism.class));
-                    org.setShortName(gr.getOrganism());
-
-                    try {
-                        org = (Organism) api.getObjectStore().getObjectByExample(org,
-                                Collections.singleton("shortName"));
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException(
-                                "unable to fetch Organism object", e);
-                    }
-
-                    Chromosome chr = (Chromosome) DynamicUtil
-                            .createObject(Collections.singleton(Chromosome.class));
-                    chr.setPrimaryIdentifier(gr.getChr());
-                    chr.setOrganism(org);
-
-                    try {
-                        chr = (Chromosome) api.getObjectStore().getObjectByExample(
-                                chr,
-                                new HashSet<String>(Arrays.asList(new String[] {
-                                    "primaryIdentifier", "organism" })));
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException(
-                                "unable to fetch Chromosome object", e);
-                    }
-
-                    String chrResidueString;
-                    if (chromosomeSequenceMap.get(new MultiKey(gr.getChr(), gr
-                            .getOrganism())) == null) {
-                        chrResidueString = chr.getSequence().getResidues()
-                                .toString();
-                        chromosomeSequenceMap.put(
-                                new MultiKey(gr.getChr(), gr.getOrganism()), chr
-                                        .getSequence().getResidues().toString());
-                    } else {
-                        chrResidueString = chromosomeSequenceMap.get(new MultiKey(
-                                gr.getChr(), gr.getOrganism()));
-                    }
-
-                    int chrLength = chr.getLength();
-                    int start;
-                    int end;
-
-                    if (gr.getExtendedRegionSize() > 0) {
-                        start = gr.getExtendedStart();
-                        end = gr.getExtendedEnd();
-                    } else {
-                        start = gr.getStart();
-                        end = gr.getEnd();
-                    }
-
-                    end = Math.min(end, chrLength);
-                    start = Math.max(start, 1);
-
-                    List<String> headerBits = new ArrayList<String>();
-                    headerBits.add(gr.getChr() + ":" + start + ".." + end);
-                    headerBits.add(end - start + 1 + "bp");
-                    headerBits.add(gr.getOrganism());
-                    String header = StringUtil.join(headerBits, " ");
-
-                    String seqName = "chromosome_segment_" + gr.getChr() + "_"
-                            + start + "_" + end + "_"
-                            + gr.getOrganism().replace("\\. ", "_");
-                    String exportFileName = seqName + ".fasta";
-
-                    Sequence chrSeg = DNATools
-                            .createDNASequence(
-                                    chrResidueString.substring(start - 1, end),
-                                    seqName);
-                    chrSeg.getAnnotation().setProperty(
-                            FastaFormat.PROPERTY_DESCRIPTIONLINE, header);
-
-                    // write it out
-                    response.setContentType("text/plain");
-                    response.setHeader("Content-Disposition",
-                            "attachment; filename=\"" + exportFileName + "\"");
-                    OutputStream out = response.getOutputStream();
-                    SeqIOTools.writeFasta(out, chrSeg);
-                    out.flush();
+                    exportFileName = "genomic_region.fasta";
                 }
+
+                response.setHeader("Content-Disposition",
+                        "attachment; filename=\"" + exportFileName + "\"");
+
+                GenomicRegionSequenceExporter grse = new GenomicRegionSequenceExporter(
+                        api.getObjectStore(), response);
+                grse.export(grList);
             } else {
                 boolean doGzip = false;
                 Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
@@ -556,16 +404,17 @@ public class GenomicRegionSearchAjaxAction extends Action
                         session.getServletContext()).getProperty(
                         "genomicRegionSearch.query." + facet + ".sortOrder");
 
-                if (!exportFeaturesViewsStr.isEmpty() && exportFeaturesViewsStr != null) {
-                    try {
-                        exportFeaturesViews = new LinkedHashSet<String>(
-                                Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
-                                        ",")));
-
-                        exportFeaturesSortOrder =
-                                Arrays.asList(StringUtil.split(exportFeaturesSortOrderStr, " "));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                if (exportFeaturesViewsStr != null) {
+                    if (!exportFeaturesViewsStr.isEmpty()) {
+                        try {
+                            exportFeaturesViews = new LinkedHashSet<String>(
+                                    Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
+                                            ",")));
+                            exportFeaturesSortOrder = Arrays.asList(StringUtil
+                                    .split(exportFeaturesSortOrderStr, " "));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 // == End of experimental code ==
