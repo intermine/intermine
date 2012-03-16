@@ -139,9 +139,9 @@
              </c:when>
              <c:otherwise>
              <c:if test="${not empty antibody.targetName}">/
-             </c:if>
                <a href="${antibody.wikiLink}" style="text-decoration: none;" class="value extlink">
                <strong>${antibody.targetName}</strong></a>
+               </c:if>
              </c:otherwise>
              </c:choose>
              </c:otherwise>
