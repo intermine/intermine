@@ -141,7 +141,7 @@ jQuery(document).ready(function () {
 </script>
 
 <c:choose>
-    <c:when test="${fn:length(pagedResults.rows) > 1}">
+    <c:when test="${fn:length(pagedResults.rows) >= 1}">
         <table cellspacing="0" width="100%">
             <tr>
                 <TD colspan=2 align="left" style="padding-bottom:10px">
@@ -291,8 +291,8 @@ jQuery(document).ready(function () {
               </node>
               <node path="AppliedProtocol.submission" type="Submission">
               </node>
-              <node path="AppliedProtocol.submission.id" type="Integer">
-                <constraint op="=" value="${subId}" description="" identifier="" code="A"></constraint>
+              <node path="AppliedProtocol.submission.DCCid" type="String">
+                <constraint op="=" value="${DCCid}" description="" identifier="" code="A"></constraint>
               </node>
             </query>
         </im:querylink>
