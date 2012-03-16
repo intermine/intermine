@@ -638,20 +638,34 @@ All GBrowse tracks generated for this experiment:
 <%--if antibody or strain add target gene --%>
 <c:if test="${(factor.type == ANTIBODY || factor.type == STRAIN) && !fn:contains(factor.name, 'oldid')}">
 <c:choose>
-<c:when test="${fn:length(factor.property.target.symbol) > 1}">
+<c:when test="${not empty factor.property.target.name}">
 <br>target:
 <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.target.id}"
  title="More about this target">
 <c:out value="${factor.property.target.name}"/></html:link>
+</c:when>
 
+<c:otherwise>
+<c:choose>
+<c:when test="${not empty factor.property.target.symbol}">/
+<strong>
+ <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.target.id}"
+     title="More about this target">
+ <c:out value="${factor.property.target.symbol}"/></html:link>
+ </strong>
 </c:when>
 <c:otherwise>
-<c:if test="{fn:length(factor.property.targetName) > 1}">
+<c:if test="${not empty factor.property.targetName}">/
 <br>target:
-${factor.property.targetName}
+  <a href="${factor.property.wikiLink}" style="text-decoration: none;" class="value extlink">
+  ${factor.property.targetName}</a>
 </c:if>
+  </c:otherwise>
+</c:choose>
 </c:otherwise>
 </c:choose>
+
+
                   </c:if>
 <br>
                    </c:when>
