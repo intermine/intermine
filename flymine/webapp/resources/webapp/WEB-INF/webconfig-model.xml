@@ -107,6 +107,7 @@
   <class className="org.intermine.model.bio.Disease">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
