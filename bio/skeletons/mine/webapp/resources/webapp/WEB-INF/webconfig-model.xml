@@ -82,7 +82,7 @@
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
-  
+
   <class className="org.intermine.model.bio.Ontology">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -91,7 +91,9 @@
 
   <class className="org.intermine.model.bio.OntologyTerm">
     <headerconfig>
-      <titles mainTitles="identifier|name" subTitles="ontology.name" />
+      <titles>
+      <title mainTitles="identifier|name" subTitles="ontology.name" />
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -117,7 +119,9 @@
 
   <class className="org.intermine.model.bio.Organism">
     <headerconfig>
-      <titles mainTitles="name"/>
+      <titles>
+      <title mainTitles="name"/>
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -139,7 +143,9 @@
 
   <class className="org.intermine.model.bio.Publication">
     <headerconfig>
-      <titles mainTitles="firstAuthor|year" />
+  <titles>
+    <title mainTitles="title" />
+ </titles>
     </headerconfig>
     <inlinelist>
       <table path="authors.name" showLinksToObjects="true" />
