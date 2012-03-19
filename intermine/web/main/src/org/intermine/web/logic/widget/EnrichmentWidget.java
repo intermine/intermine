@@ -122,7 +122,7 @@ public class EnrichmentWidget extends Widget
         return results.getPValues().size() > 0;
     }
 
-    private Map<String, List<String>> getTermsToIds(List<String> selectedIds) throws Exception {
+    private Map<String, List<String>> getTermsToIdsForExport(List<String> selectedIds) throws Exception {
         EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
 
@@ -144,6 +144,30 @@ public class EnrichmentWidget extends Widget
         return termsToIds;
     }
 
+    private Map<String, List<Map<String, Object>>> getTermsToIds(List<String> selectedIds) throws Exception {
+        EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
+                (EnrichmentWidgetConfig) config, filter);
+
+        Query q = ldr.getExportQuery(selectedIds);
+
+        Results res = os.execute(q);
+        Iterator iter = res.iterator();
+        HashMap<String, List<Map<String, Object>>> termsToIds = new HashMap();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            String termId = resRow.get(0).toString();
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("displayed", resRow.get(1).toString());
+            map.put("id", resRow.get(2).toString());
+            if (!termsToIds.containsKey(termId)) {
+                termsToIds.put(termId, new ArrayList<Map<String,Object>>());
+            }
+            termsToIds.get(termId).add(map);
+        }
+
+        return termsToIds;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -154,7 +178,7 @@ public class EnrichmentWidget extends Widget
         List<List<String>> exportResults = new ArrayList<List<String>>();
         List<String> selectedIds = Arrays.asList(selected);
 
-        Map<String, List<String>> termsToIds = getTermsToIds(selectedIds);
+        Map<String, List<String>> termsToIds = getTermsToIdsForExport(selectedIds);
 
         for (String id : selectedIds) {
             if (labels.get(id) != null) {
@@ -243,7 +267,7 @@ public class EnrichmentWidget extends Widget
                 row.add(labels.get(id));
                 row.add(pValues.get(id).doubleValue());
                 row.add(counts.get(id));
-                Map<String, List<String>> termsToIds = getTermsToIds(Arrays.asList(id));
+                Map<String, List<Map<String, Object>>> termsToIds = getTermsToIds(Arrays.asList(id));
                 row.add(termsToIds.get(id));
                 exportResults.add(row);
             }
