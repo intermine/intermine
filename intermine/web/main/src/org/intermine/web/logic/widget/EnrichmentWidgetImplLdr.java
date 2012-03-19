@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -27,7 +28,9 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 
@@ -302,5 +305,22 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             queryValue = new QueryValue(value);
         }
         return queryValue;
+    }
+
+    public PathQuery createPathQuery() {
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
+        String[] views = config.getViews().split("\\s*,\\s*");
+        String prefix = config.getStartClass() + ".";
+        for (String view : views) {
+            if (!view.startsWith(prefix)) {
+                view = prefix + view;
+            }
+            q.addView(view);
+        }
+
+        // bag constraint
+        q.addConstraint(Constraints.in(startClass + ".id", bag.getName()));
+        return q;
     }
 }
