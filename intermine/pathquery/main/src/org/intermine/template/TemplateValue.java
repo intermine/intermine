@@ -10,9 +10,10 @@ package org.intermine.template;
  *
  */
 
+import java.util.List;
+
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
-import java.util.List;
 
 
 /**
@@ -38,6 +39,14 @@ public class TemplateValue
      */
     public enum ValueType { SIMPLE_VALUE, BAG_VALUE, OBJECT_VALUE };
 
+    /**
+     * Constructor.Construct with details of what we are constraining, but without the value.
+     *
+     * @param constraint The constraint this value refers to.
+     * @param op The operation this constraint should have.
+     * @param valueType One of SIMPLE_VALUE, BAG_VALUE, or OBJECT_VALUE.
+     * @param switchOffAbility One of LOCKED, ON, OFF.
+     */
     public TemplateValue(PathConstraint constraint, ConstraintOp op,
             ValueType valueType, SwitchOffAbility switchOffAbility) {
         this(constraint, op, null, valueType, null, null, switchOffAbility);
@@ -114,7 +123,8 @@ public class TemplateValue
      * @param switchOffAbility the required/optional status of the constraint
      */
     private TemplateValue(PathConstraint constraint, ConstraintOp op, String value,
-            ValueType valueType, String extraValue, List<String> values, SwitchOffAbility switchOffAbility) {
+            ValueType valueType, String extraValue,
+            List<String> values, SwitchOffAbility switchOffAbility) {
         if (value != null && values != null) {
             throw new IllegalArgumentException("Cannot have both value and values");
         }

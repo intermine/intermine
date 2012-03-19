@@ -1,5 +1,5 @@
 //
-// Grammer for path expressions
+// Grammar for path expressions
 //
 
 header {
@@ -30,7 +30,7 @@ expr
 orExpr
     : andExpr ( "or"^ andExpr )*
     ;
-    
+
 andExpr
     : atom ( "and"^ atom )*
     ;
@@ -39,7 +39,7 @@ atom
     : IDENTIFIER
     | bracketedExpr
     ;
-    
+
 bracketedExpr
     : OPEN_PAREN! orExpr CLOSE_PAREN!
     ;
@@ -64,4 +64,4 @@ WS           : ' ' { $setType(Token.SKIP); } ; // Ignore this token
 IDENTIFIER
     :  ('a'..'z'|'_') ('a'..'z'|'_'|'0'..'9')*
     ;
-    
+

@@ -1,5 +1,9 @@
 package org.intermine.pathquery;
 
+import java.util.Collection;
+
+import org.intermine.objectstore.query.ConstraintOp;
+
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
@@ -10,7 +14,6 @@ package org.intermine.pathquery;
  *
  */
 
-import org.intermine.objectstore.query.ConstraintOp;
 
 /**
  * Representation of a constraint in the PathQuery. All PathConstraint subclasses must be
@@ -62,7 +65,12 @@ public abstract class PathConstraint
         return op;
     }
 
-    // Medium ugly, but more accessible than where it was...
+    /**
+     * A static method for accessing values without having to handle
+     * the subclasses manually.
+     * @param con The constraint.
+     * @return A string representing the value.
+     */
     public static String getValue(PathConstraint con) {
         if (con instanceof PathConstraintAttribute) {
             return ((PathConstraintAttribute) con).getValue();
@@ -80,6 +88,12 @@ public abstract class PathConstraint
         return null;
     }
 
+    /**
+     * A static method for getting the extra-value if there is one, or
+     * null if there is none to be got.
+     * @param con The constraint to get the extra value of.
+     * @return The constraint's extra-value, or null.
+     */
     public static String getExtraValue(PathConstraint con) {
         if (con instanceof PathConstraintLookup) {
             return ((PathConstraintLookup) con).getExtraValue();
@@ -88,6 +102,20 @@ public abstract class PathConstraint
         }
     }
 
+    public static Collection<String> getValues(PathConstraint con) {
+        if (con instanceof PathConstraintMultiValue) {
+            return ((PathConstraintMultiValue) con).getValues();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * A static method to get the type of this constraint if it is a
+     * sub-class constraint, or otherwise return null.
+     * @param con The constraint to get the type of.
+     * @return The type, or null.
+     */
     public static String getType(PathConstraint con) {
         if (con instanceof PathConstraintSubclass) {
             return ((PathConstraintSubclass) con).getType();
