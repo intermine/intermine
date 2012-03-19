@@ -43,7 +43,6 @@ public class TemplateQueryHandler extends PathQueryHandler
     /**
      * Constructor
      * @param templates Map from template name to TemplateQuery
-     * @param savedBags Map from bag name to bag
      * @param version the version of the XML, an attribute on the profile manager
      */
     public TemplateQueryHandler(Map<String, TemplateQuery> templates, int version) {

@@ -63,7 +63,7 @@ public class Node
     public void setModel(Model model) {
         ClassDescriptor cld = model.getClassDescriptorByName(getParentType());
         if (cld == null) {
-            throw new IllegalArgumentException("No class '" + getParentType() 
+            throw new IllegalArgumentException("No class '" + getParentType()
                 + "' found in model '" + model.getName() + "'.");
         }
         fd = cld.getFieldDescriptorByName(fieldName);
@@ -95,11 +95,14 @@ public class Node
         }
     }
 
+    /**
+     * @return the minimal path that describes this node (just the parent type and its field)
+     **/
     public Path getMinimalPath() {
         if (minimalPath == null) {
             String minimalPathString = getParentType() + "." + fd.getName();
             try {
-                minimalPath = new Path( model, minimalPathString );
+                minimalPath = new Path(model, minimalPathString);
             } catch (PathException e) {
                 throw new IllegalStateException(minimalPathString + " is not a valid path", e);
             }
@@ -107,6 +110,9 @@ public class Node
         return minimalPath;
     }
 
+    /**
+     * @return The field descriptor of this node.
+     */
     public FieldDescriptor getFieldDescriptor() {
         return fd;
     }

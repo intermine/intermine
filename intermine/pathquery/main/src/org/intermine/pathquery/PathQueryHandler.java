@@ -70,8 +70,7 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    @Override public void startElement(@SuppressWarnings("unused") String uri,
-            @SuppressWarnings("unused") String localName, String qName, Attributes attrs)
+    @Override public void startElement(String uri, String localName, String qName, Attributes attrs)
         throws SAXException {
         if (valueBuffer != null) {
             throw new SAXException("Cannot have any tags inside a value tag");
@@ -110,9 +109,13 @@ public class PathQueryHandler extends DefaultHandler
                 }
                 query.addViewSpaceSeparated(view);
             }
-            if (attrs.getValue("sortOrder") != null
-                    && !StringUtils.isBlank(attrs.getValue("sortOrder"))) {
-                query.addOrderBySpaceSeparated(attrs.getValue("sortOrder"));
+            String so = attrs.getValue("sortOrder");
+            if (!StringUtils.isBlank(so)) {
+                if (so.indexOf(' ') < 0) {
+                    // be accomodating of input as possible - assume asc.
+                    so += " asc";
+                }
+                query.addOrderBySpaceSeparated(so);
             }
             constraintLogic = attrs.getValue("constraintLogic");
             questionableSubclasses = new ArrayList<PathConstraintSubclass>();
@@ -213,7 +216,7 @@ public class PathQueryHandler extends DefaultHandler
             constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
         }
         if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
-            boolean isLoop = false;
+            boolean isLoop = (attrs.get("loopPath") != null);
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
                 try {
                     Path constraintPath2 = q.makePath(path);
@@ -221,7 +224,13 @@ public class PathQueryHandler extends DefaultHandler
                         isLoop = true;
                     }
                 } catch (PathException e) {
-                    LOG.error("Cannot recognise path in constraint: " + path, e);
+                    if (isLoop) {
+                        // A genuine error - rethrow
+                        throw new SAXException("Illegal loop constraint definition", e);
+                    } else {
+                        // Not actually a loop constraint. Ignore.
+                        LOG.error("Cannot recognise path in constraint: " + path, e);
+                    }
                 }
             }
             if (isLoop) {
@@ -277,8 +286,8 @@ public class PathQueryHandler extends DefaultHandler
     /**
      * {@inheritDoc}
      */
-    @Override public void endElement(@SuppressWarnings("unused") String uri,
-            @SuppressWarnings("unused") String localName, String qName) throws SAXException {
+    @Override public void endElement(String uri, String localName, String qName)
+        throws SAXException {
         if ("query".equals(qName)) {
             if (constraintLogic != null) {
                 query.setConstraintLogic(constraintLogic);

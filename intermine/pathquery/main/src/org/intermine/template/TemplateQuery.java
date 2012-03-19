@@ -24,15 +24,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.intermine.template.xml.TemplateQueryBinding;
-import org.intermine.pathquery.OrderElement;
-import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 
 /**
  * A template query, which consists of a PathQuery, description, category,
@@ -44,23 +40,18 @@ import org.intermine.pathquery.PathQuery;
  */
 public class TemplateQuery extends PathQuery
 {
-    private static final Logger LOG = Logger.getLogger(TemplateQuery.class);
-
     /** Template query name. */
     protected String name;
-    /** Template query title. */
-    protected String title;
     /** The private comment for this query. */
     protected String comment;
-    /** The path query itself. */
-    protected PathQuery query = null;
     /** Whether this is an edited version of another template. */
     protected boolean edited = false;
 
     /** List of those Constraints that are editable */
     protected List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
     /** Descriptions of constraints */
-    protected Map<PathConstraint, String> constraintDescriptions = new HashMap<PathConstraint, String>();
+    protected Map<PathConstraint, String> constraintDescriptions =
+        new HashMap<PathConstraint, String>();
     /** Configuration for switch-off-ability of constraints */
     protected Map<PathConstraint, SwitchOffAbility> constraintSwitchOffAbility =
         new HashMap<PathConstraint, SwitchOffAbility>();
@@ -76,9 +67,28 @@ public class TemplateQuery extends PathQuery
     public TemplateQuery(String name, String title, String comment, PathQuery query) {
         super(query);
         this.name = name;
-        this.title = title;
         this.comment = comment;
-        this.query = query;
+        setTitle(title);
+    }
+
+    /**
+     * Copy constructor.
+     * Construct a new template that is the same in all respects as the one
+     * passed to the constructor.
+     * @param prototype The template to copy.
+     */
+    public TemplateQuery(TemplateQuery prototype) {
+        super(prototype);
+        setTitle(prototype.getTitle());
+        this.name = prototype.name;
+        this.comment = prototype.comment;
+        this.edited = prototype.edited;
+        this.editableConstraints
+            = new ArrayList<PathConstraint>(prototype.editableConstraints);
+        this.constraintDescriptions
+            = new HashMap<PathConstraint, String>(prototype.constraintDescriptions);
+        this.constraintSwitchOffAbility =
+            new HashMap<PathConstraint, SwitchOffAbility>(prototype.constraintSwitchOffAbility);
     }
 
     /**
@@ -88,16 +98,8 @@ public class TemplateQuery extends PathQuery
      */
     @Override
     public synchronized TemplateQuery clone() {
-        TemplateQuery t = (TemplateQuery) super.clone();
-        t.name = name;
-        t.title = title;
-        t.comment = comment;
-        t.edited = edited;
-        t.editableConstraints = new ArrayList<PathConstraint>(editableConstraints);
-        t.constraintDescriptions = new HashMap<PathConstraint, String>(constraintDescriptions);
-        t.constraintSwitchOffAbility =
-            new HashMap<PathConstraint, SwitchOffAbility>(constraintSwitchOffAbility);
-        return t;
+        super.clone();
+        return new TemplateQuery(this);
     }
 
     /**
@@ -426,16 +428,6 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Get the template title.
-     *
-     * @return the title
-     */
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    /**
      * Get the private comment for this template.
      * @return the comment
      */
@@ -477,28 +469,11 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
-     * Sets the template title.
-     *
-     * @param title the title
-     */
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
      * Set the private comment for this template.
      * @param comment the comment
      */
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    /**
-     * @return the path query
-     */
-    public PathQuery getPathQuery() {
-        return query;
     }
 
     /**
@@ -525,8 +500,9 @@ public class TemplateQuery extends PathQuery
     @Override
     public synchronized String toString() {
         String res = super.toString();
-        res = getClass().getName() + "{ name: "  + getName() + ", title: " + getTitle() + ", comment: "
-                + getComment() + ", description: " + getDescription() +  ", " + res + "}";
+        res = getClass().getName() + "{ name: "  + getName() + ", title: " + getTitle()
+                + ", comment: " + getComment() + ", description: " + getDescription()
+                +  ", " + res + "}";
         return res;
     }
 
@@ -577,12 +553,11 @@ public class TemplateQuery extends PathQuery
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private String formatKVPair(String key, Object value) {
         if (value instanceof List) {
             StringBuffer sb = new StringBuffer("[");
             boolean needsSep = false;
-            for (Object obj: (List) value) {
+            for (Object obj: (List<?>) value) {
                 if (needsSep) {
                     sb.append(",");
                 }
@@ -617,38 +592,6 @@ public class TemplateQuery extends PathQuery
         this.edited = edited;
     }
 
-    /**
-     * Removed from the view all the direct attributes that aren't editable constraints
-     * @return altered template query
-     */
-    public TemplateQuery removeDirectAttributesFromView() {
-        TemplateQuery templateQuery = (TemplateQuery) super.clone();
-        List<String> viewPaths = templateQuery.getView();
-        PathQuery pathQuery = templateQuery.getPathQuery();
-        String rootClass = null;
-        try {
-            rootClass = templateQuery.getRootClass();
-            for (String viewPath : viewPaths) {
-                Path path = pathQuery.makePath(viewPath);
-                if (path.getElementClassDescriptors().size() == 1
-                    && path.getLastClassDescriptor().getUnqualifiedName().equals(rootClass)) {
-                    if (templateQuery.getEditableConstraints(viewPath).isEmpty()) {
-                        templateQuery.removeView(viewPath);
-                        for (OrderElement oe : templateQuery.getOrderBy()) {
-                            if (oe.getOrderPath().equals(viewPath)) {
-                                templateQuery.removeOrderBy(viewPath);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (PathException pe) {
-            LOG.error("Error updating the template's view", pe);
-        }
-        return templateQuery;
-    }
-
     @Override
     public boolean equals(Object other) {
         if (other == null) {
@@ -658,5 +601,10 @@ public class TemplateQuery extends PathQuery
             return ((TemplateQuery) other).toXml().equals(this.toXml());
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toXml().hashCode();
     }
 }

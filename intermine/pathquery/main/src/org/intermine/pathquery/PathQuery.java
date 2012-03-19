@@ -18,10 +18,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
@@ -31,6 +33,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -49,6 +52,15 @@ public class PathQuery implements Cloneable
     /** Version number for the userprofile and PathQuery XML format. */
     public static final int USERPROFILE_VERSION = 2;
 
+    /** The lowest code value a constraint may be assigned. **/
+    public static final char MIN_CODE = 'A';
+
+    /** The highest code value a constraint may be assigned. **/
+    public static final char MAX_CODE = 'Z';
+
+    /** The maximum number of coded constraints a PathQuery may hold. **/
+    public static final int MAX_CONSTRAINTS = MAX_CODE - MIN_CODE;
+
     private final Model model;
     private List<String> view = new ArrayList<String>();
     private List<OrderElement> orderBy = new ArrayList<OrderElement>();
@@ -58,8 +70,9 @@ public class PathQuery implements Cloneable
         = new LinkedHashMap<String, OuterJoinStatus>();
     private Map<String, String> descriptions = new LinkedHashMap<String, String>();
     private String description = null;
-    private String title = null;
 
+    /** Query title **/
+    private String title = null;
 
     // Verification variables:
     private boolean isVerified = false;
@@ -78,6 +91,7 @@ public class PathQuery implements Cloneable
      * constraint logic */
     private boolean doNotVerifyLogic = false;
 
+    private static final String NO_VIEW_ERROR = "No columns selected for output";
 
     // See http://intrac.flymine.org/wiki/PathQueryRefactor
 
@@ -524,7 +538,9 @@ public class PathQuery implements Cloneable
      * already present in the query with the same constraint code, then this method will do nothing.
      *
      * @param constraint the PathConstraint to add to this query
-     * @param code the constraint code to associate with this constraint
+     * @param code the constraint code to associate with this constraint. This must be a
+     *             string consisting of one of the following characters "A","B","C","D","E","F","G",
+     *             "H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z".
      * @throws NullPointerException if the constraint or the code is null
      * @throws IllegalStateException if the constraint is already associated with a different code,
      * or the code is already associated with a different constraint
@@ -543,12 +559,13 @@ public class PathQuery implements Cloneable
         if (code == null) {
             throw new NullPointerException("Cannot use a null code for a constraint in this query");
         }
-        if ((code.length() != 1) || (code.charAt(0) > 'Z') || (code.charAt(0) < 'A')) {
+        if ((code.length() != 1) || (code.charAt(0) > MAX_CODE) || (code.charAt(0) < MIN_CODE)) {
             throw new IllegalArgumentException("The constraint code must be a single plain latin "
                     + "uppercase character");
         }
         if (constraints.containsKey(constraint)) {
             if (code.equals(constraints.get(constraint))) {
+                // Trying to add an identical constraint at the same code.
                 return;
             } else {
                 throw new IllegalStateException("Given constraint is already associated with code "
@@ -780,7 +797,7 @@ public class PathQuery implements Cloneable
     /**
      * Returns the current constraint logic. The logic is returned in groups, according to the outer
      * join layout of the query. Two codes in separate groups can only be combined with an AND
-     * operation, not an OR operation.
+     * operation and OR operation.
      *
      * @return the current constraint logic
      */
@@ -794,6 +811,7 @@ public class PathQuery implements Cloneable
      * @param logic the constraint logic
      */
     public synchronized void setConstraintLogic(String logic) {
+        // TODO method does not work properly allowing (A and B) or C on Outer Joins
         deVerify();
         if (constraints.isEmpty()) {
             this.logic = null;
@@ -1059,7 +1077,7 @@ public class PathQuery implements Cloneable
             }
         }
         for (String desc : getDescriptions().keySet()) {
-            if (isPathUnder(path, desc)) {
+            if (isPathUnder(desc, path) && !isAnyViewWithPathUnder(desc)) {
                 setDescription(desc, null);
             }
         }
@@ -1070,6 +1088,15 @@ public class PathQuery implements Cloneable
             return true;
         }
         return child.startsWith(parent + ".");
+    }
+
+    private boolean isAnyViewWithPathUnder(String parent) {
+        for (String v : getView()) {
+            if (parent.equals(v) || v.startsWith(parent + ".")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1093,7 +1120,7 @@ public class PathQuery implements Cloneable
         validateConstraints(problems, validMainPaths);
         // Now the validMainPaths set contains all the main (ie class) paths that are permitted in
         // this query.
-        if (!problems.isEmpty()) {
+        if (!(problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems))) {
             throw new PathException(problems.toString(), null);
         }
         for (OrderElement order : getOrderBy()) {
@@ -1328,7 +1355,7 @@ public class PathQuery implements Cloneable
         return new Path(model, path, lSubclasses);
     }
 
-    private synchronized void deVerify() {
+    public synchronized void deVerify() {
         isVerified = false;
     }
 
@@ -1706,26 +1733,30 @@ public class PathQuery implements Cloneable
     }
 
     private Set<String> validateView(List<String> problems, Set<String> validMainPaths) {
-        for (String viewPath : view) {
-            try {
-                Path path = new Path(model, viewPath, subclasses);
-                if (!path.endIsAttribute()) {
-                    problems.add("Path " + viewPath + " in view list must be an attribute");
-                    continue;
-                }
-                if (rootClass == null) {
-                    rootClass = path.getStartClassDescriptor().getUnqualifiedName();
-                } else {
-                    String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
-                    if (!rootClass.equals(newRootClass)) {
-                        problems.add("Multiple root classes in query: " + rootClass + " and "
-                                + newRootClass);
+        if (view.isEmpty()) {
+            problems.add(NO_VIEW_ERROR);
+        } else {
+            for (String viewPath : view) {
+                try {
+                    Path path = new Path(model, viewPath, subclasses);
+                    if (!path.endIsAttribute()) {
+                        problems.add("Path " + viewPath + " in view list must be an attribute");
                         continue;
                     }
+                    if (rootClass == null) {
+                        rootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                    } else {
+                        String newRootClass = path.getStartClassDescriptor().getUnqualifiedName();
+                        if (!rootClass.equals(newRootClass)) {
+                            problems.add("Multiple root classes in query: " + rootClass + " and "
+                                    + newRootClass);
+                            continue;
+                        }
+                    }
+                    addValidPaths(validMainPaths, path.getPrefix());
+                } catch (PathException e) {
+                    problems.add("Path " + viewPath + " in view list is not in the model");
                 }
-                addValidPaths(validMainPaths, path.getPrefix());
-            } catch (PathException e) {
-                problems.add("Path " + viewPath + " in view list is not in the model");
             }
         }
         return validMainPaths;
@@ -1779,14 +1810,17 @@ public class PathQuery implements Cloneable
                 Class<?> parentClassType = subclassPath.getEndClassDescriptor().getType();
                 Class<?> subclassType = (subclassDesc == null ? null : subclassDesc.getType());
                 if (subclassType == null) {
-                    problems.add("Subclass " + subclass.getType() + " (for path " + subclass.getPath()
+                    problems.add("Subclass " + subclass.getType()
+                            + " (for path " + subclass.getPath()
                             + ") is not in the model");
                     continue;
                 }
                 if (!parentClassType.isAssignableFrom(subclassType)) {
                     problems.add("Subclass constraint on path " + subclass.getPath() + " (type "
-                            + DynamicUtil.getFriendlyName(parentClassType) + ") restricting to type "
-                            + DynamicUtil.getFriendlyName(subclassType) + " is not possible, as it is "
+                            + DynamicUtil.getFriendlyName(parentClassType)
+                            + ") restricting to type "
+                            + DynamicUtil.getFriendlyName(subclassType)
+                            + " is not possible, as it is "
                             + "not a subclass");
                     continue;
                 }
@@ -1803,7 +1837,8 @@ public class PathQuery implements Cloneable
      */
     public synchronized String getRootClass() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        // For the purposes of this method, we will permit empty views.
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return rootClass;
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -1817,10 +1852,18 @@ public class PathQuery implements Cloneable
      */
     public synchronized Map<String, String> getSubclasses() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableMap(new LinkedHashMap<String, String>(subclasses));
         }
         throw new PathException("Query does not verify: " + problems, null);
+    }
+
+    /**
+     * Returns true if the query has no features yet.
+     * @return whether or not this query is empty.
+     */
+    public synchronized boolean isEmpty() {
+        return view.isEmpty() && constraints.isEmpty();
     }
 
     /**
@@ -1848,7 +1891,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Map<String, String> getOuterJoinGroups() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableMap(new LinkedHashMap<String, String>(outerJoinGroups));
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -1863,7 +1906,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Set<String> getExistingLoops() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableSet(new HashSet<String>(existingLoops));
         }
         throw new PathException("Query does not verify: " + problems, null);
@@ -1941,6 +1984,9 @@ public class PathQuery implements Cloneable
         Set<String> toAdd = new HashSet<String>();
         while (!(groups.containsKey(groupPath.getNoConstraintsString()))) {
             toAdd.add(groupPath.toStringNoConstraints());
+            if (groupPath.isRootPath()) {
+                break;
+            }
             groupPath = groupPath.getPrefix();
         }
         String group = groups.get(groupPath.getNoConstraintsString());
@@ -1955,7 +2001,7 @@ public class PathQuery implements Cloneable
                 Path entryPath = makePath(entry.getKey());
                 if (type.isAssignableFrom(entryPath.getEndType())
                     || entryPath.getEndType().isAssignableFrom(type)) {
-                    if (group.equals(entry.getValue())) {
+                    if (group != null && group.equals(entry.getValue())) {
                         String desc = stringPath.compareTo(entry.getKey()) > 0
                                 ? entry.getKey() + " -- " + stringPath
                                 : stringPath + " -- " + entry.getKey();
@@ -1978,7 +2024,7 @@ public class PathQuery implements Cloneable
      */
     public synchronized Map<String, Set<String>> getConstraintGroups() throws PathException {
         List<String> problems = verifyQuery();
-        if (problems.isEmpty()) {
+        if (problems.isEmpty() || Arrays.asList(NO_VIEW_ERROR).equals(problems)) {
             return Collections.unmodifiableMap(new LinkedHashMap<String, Set<String>>(
                         constraintGroups));
         }
@@ -2164,6 +2210,109 @@ public class PathQuery implements Cloneable
      */
     public synchronized String toXml() {
         return this.toXml(PathQuery.USERPROFILE_VERSION);
+    }
+
+    /**
+     * Convert this PathQuery to a JSON serialisation.
+     *
+     * @return This query as json.
+     */
+    public synchronized String toJson() {
+    	StringBuilder sb = new StringBuilder();
+
+    	// VIEW
+    	sb.append("{\"select\":[");
+    	for(Iterator<String> it = getView().iterator(); it.hasNext();) {
+    		sb.append("\"" + it.next() + "\"");
+    		if (it.hasNext()) sb.append(",");
+    	}
+    	sb.append("]");
+
+    	// SORT ORDER
+    	List<OrderElement> order = getOrderBy();
+    	if (!order.isEmpty()) {
+    		sb.append(",\"orderBy\":");
+    		for (Iterator<OrderElement> it = order.iterator(); it.hasNext();) {
+    			OrderElement oe = it.next();
+    			sb.append(String.format("{\"path\":\"%s\",\"direction\":\"%s\"}",
+    					oe.getOrderPath(), oe.getDirection()));
+    			if (it.hasNext()) sb.append(",");
+    		}
+    		sb.append("]");
+    	}
+
+    	// LOGIC
+    	String constraintLogic = getConstraintLogic();
+    	if (constraintLogic != null && constraintLogic.length() > 1) { // "A" is pretty pointless
+    		sb.append(",\"constraintLogic\":\"" + constraintLogic + "\"");
+    	}
+
+    	// JOINS
+    	Map<String, OuterJoinStatus> ojs = getOuterJoinStatus();
+    	if (!ojs.isEmpty()) {
+    		StringBuilder sb2 = new StringBuilder();
+    		for (Iterator<Entry<String, OuterJoinStatus>> it = ojs.entrySet().iterator(); it.hasNext();) {
+    			Entry<String, OuterJoinStatus> pair = it.next();
+    			if (pair.getValue() == OuterJoinStatus.OUTER) {
+    				sb2.append("\"" + pair.getKey() + "\"");
+    				if (it.hasNext()) sb2.append(",");
+    			}
+    		}
+    		if (sb2.length() != 0) {
+    			sb.append(",\"joins\":[" + sb2.toString() + "]");
+    		}
+    	}
+
+    	// CONSTRAINTS
+    	Map<PathConstraint, String> constraints = getConstraints();
+    	if (!constraints.isEmpty()) {
+    		sb.append(",\"where\":[");
+    		for (Iterator<Entry<PathConstraint, String>> it = constraints.entrySet().iterator(); it.hasNext();) {
+    			Entry<PathConstraint, String> pair = it.next();
+    			sb.append(constraintToJson(pair.getKey(), pair.getValue()));
+    			if (it.hasNext()) sb.append(",");
+    		}
+    		sb.append("]");
+    	}
+    	sb.append("}");
+
+    	return sb.toString();
+    }
+
+    private String constraintToJson(PathConstraint constraint, String code) {
+    	String type = PathConstraint.getType(constraint);
+    	String path = constraint.getPath();
+
+    	if (type != null) {
+    		return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
+    	}
+
+    	String commonPrefix = "{\"path\":\"" + path + "\",\"code\":" + code + "\"";
+    	StringBuilder conb = new StringBuilder(commonPrefix);
+
+    	Collection<String> values = PathConstraint.getValues(constraint);
+    	if (values != null) {
+    		conb.append(",\"values\":[");
+    		for (Iterator<String> it = values.iterator(); it.hasNext();) {
+    			conb.append("\"" + StringEscapeUtils.escapeJava(it.next()) + "\"");
+    			if (it.hasNext()) conb.append(",");
+    		}
+    		conb.append("]");
+    	} else {
+
+	    	String value = PathConstraint.getValue(constraint);
+	    	String extraValue = PathConstraint.getExtraValue(constraint);
+	    	String op = constraint.getOp().toString();
+
+	    	if (value != null) {
+	    		conb.append(",\"value\":\"" + StringEscapeUtils.escapeJava(value) + "\"");
+	    	}
+	    	if (extraValue != null) {
+	    		conb.append(",\"extraValue\":\"" + StringEscapeUtils.escapeJava(extraValue) + "\"");
+	    	}
+    	}
+    	conb.append("}");
+		return conb.toString();
     }
 
     /**

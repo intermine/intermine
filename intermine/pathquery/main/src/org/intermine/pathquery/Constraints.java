@@ -244,12 +244,12 @@ public final class Constraints
     public static PathConstraintLoop notEqualToLoop(String path, String loopPath) {
         return new PathConstraintLoop(path, ConstraintOp.NOT_EQUALS, loopPath);
     }
-    
+
     /**
-     * Creates a constraint for a path to be not equal to a loopPath.
+     * Creates a constraint for a path to contain a value.
      *
      * @param path the path that the constraint is attached to
-     * @param loopPath the path that the constraint is looped onto
+     * @param contained the value this path's field should contain.
      * @return a new PathConstraint object
      */
     public static PathConstraintAttribute contains(String path, String contained) {

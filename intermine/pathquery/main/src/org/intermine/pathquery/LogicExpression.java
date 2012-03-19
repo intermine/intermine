@@ -12,12 +12,15 @@ package org.intermine.pathquery;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 import antlr.collections.AST;
 
@@ -340,22 +343,23 @@ public class LogicExpression
             throw new IllegalArgumentException("Variables in argument (" + presentVariables
                     + ") do not match variables in expression (" + getVariableNames() + ")");
         }
-        StringBuffer retval = new StringBuffer();
-        boolean needComma = false;
+        List<String> subLogics = new ArrayList<String>();
         for (Collection<String> group : variables) {
-            LogicExpression copy = new LogicExpression(toString());
-            try {
-                copy.removeAllVariablesExcept(group);
-                if (needComma) {
-                    retval.append(" and ");
+            if (group.containsAll(presentVariables)) {
+                // In this case all constraints are lumped together, but cannot be or-ed.
+                subLogics = new ArrayList<String>(Arrays.asList(StringUtils.join(group, " and ")));
+            } else {
+                LogicExpression copy = new LogicExpression(toString());
+                try {
+                    copy.removeAllVariablesExcept(group);
+                    subLogics.add("(" + copy + ")");
+                } catch (IllegalArgumentException e) {
+                    // Must have removed all variables
                 }
-                needComma = true;
-                retval.append("(" + copy + ")");
-            } catch (IllegalArgumentException e) {
-                // Must have removed all variables
             }
         }
-        return new LogicExpression(retval.toString());
+        String retval = StringUtils.join(subLogics, " and ");
+        return new LogicExpression(retval);
     }
 
     /**
