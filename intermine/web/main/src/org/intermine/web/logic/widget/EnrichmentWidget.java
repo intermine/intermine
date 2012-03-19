@@ -29,6 +29,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 
 /**
@@ -45,6 +46,7 @@ public class EnrichmentWidget extends Widget
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
+    private EnrichmentWidgetImplLdr ldr;
 
 
     /**
@@ -72,7 +74,7 @@ public class EnrichmentWidget extends Widget
     @Override
     public void process() {
         try {
-            EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
+            ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
@@ -273,6 +275,10 @@ public class EnrichmentWidget extends Widget
             }
         }
         return exportResults;
+    }
+
+    public PathQuery getPathQuery() {
+        return ldr.createPathQuery();
     }
 
     /**
