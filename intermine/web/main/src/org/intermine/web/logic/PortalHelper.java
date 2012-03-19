@@ -149,7 +149,7 @@ public final class PortalHelper
         String newBase = null;
 
         if (baseUrl.contains("release")) {
-            newBase = baseUrl.replaceFirst("release-\\d*", "query");
+            newBase = baseUrl.replaceFirst("release-\\d*.\\d*", "query");
         } else {
             newBase = baseUrl;
         }
