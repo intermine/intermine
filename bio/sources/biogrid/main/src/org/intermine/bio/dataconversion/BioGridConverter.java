@@ -104,6 +104,7 @@ public class BioGridConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         File file = getCurrentFile();
         if (file == null) {
@@ -159,9 +160,6 @@ public class BioGridConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
-            //10116.xref.ncbiGeneNumber = entrez gene/locuslink
-            //9606.secondaryIdentifier = shortLabel
-
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
 
@@ -201,6 +199,7 @@ public class BioGridConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close()  {
         if (idsToExperiments != null) {
             for (Item experiment : idsToExperiments.values()) {
@@ -238,6 +237,7 @@ public class BioGridConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             attName = null;
@@ -370,6 +370,7 @@ public class BioGridConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
