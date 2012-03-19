@@ -34,6 +34,7 @@ public abstract class WidgetConfig
     private String link;
     private String typeClass;
     private String style;
+    private String views;
 
     /**
      * The Constructor
@@ -181,6 +182,14 @@ public abstract class WidgetConfig
      */
     public void setTypeClass(String typeClass) {
         this.typeClass = typeClass;
+    }
+
+    public String getViews() {
+        return views;
+    }
+
+    public void setViews(String views) {
+        this.views = views;
     }
 
     /**
