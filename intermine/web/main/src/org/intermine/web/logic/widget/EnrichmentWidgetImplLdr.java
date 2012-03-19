@@ -9,6 +9,7 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -321,6 +322,10 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
 
         // bag constraint
         q.addConstraint(Constraints.in(startClass + ".id", bag.getName()));
+        //constraint on id
+        String[] keys = {"%id"};
+        q.addConstraint(Constraints.oneOfValues(startClass + "." + config.getEnrich().split("\\.")[0],
+                Arrays.asList(keys)));
         return q;
     }
 }
