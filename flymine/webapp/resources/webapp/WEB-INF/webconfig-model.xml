@@ -788,7 +788,10 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="features.type"
                                  constraints="organism.name=[list]"
-                                 typeClass="org.intermine.model.bio.Protein" />
+                                 typeClass="org.intermine.model.bio.Protein"
+                                 views="primaryIdentifier, primaryAccession, organism.name,
+                                       features.feature.name, features.type,features.description,
+                                       features.begin, features.end"/>
 
       <enrichmentwidgetdisplayer id="uniprot_keywords" 
                                  title="UniProt Keywords"
@@ -798,7 +801,9 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="keywords.name"
                                  constraints="organism.name=[list]"
-                                 typeClass="org.intermine.model.bio.Protein" />
+                                 typeClass="org.intermine.model.bio.Protein"
+                                 views="primaryIdentifier, primaryAccession, organism.name,
+                                       keywords.name, keywords.description"/>
 
 <!--
       <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
@@ -811,14 +816,28 @@
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
-                                 link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.ProteinDomainLdr"
-                                 label="Protein Domain"
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene" TO TEST
+                                 title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
-                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac=" />
+                                 label="Protein Domain"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="proteins.proteinDomains.name"
+                                 constraints="organism.name=[list]"
+                                 typeClass="org.intermine.model.bio.Gene"/>
 -->
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein" 
+                                 title="Protein Domain Enrichment"
+                                 description="Protein Domains enriched for items in this list."
+                                 label="Protein Domain"
+                                 startClass="Protein"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="proteinDomains.name"
+                                 constraints="organism.name=[list]"
+                                 typeClass="org.intermine.model.bio.Protein"
+                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier
+                                       proteinDomains.name"/>
+
       <enrichmentwidgetdisplayer id="publication_enrichment" 
                                  title="Publication Enrichment"
                                  description="Publications enriched for genes in this list."
