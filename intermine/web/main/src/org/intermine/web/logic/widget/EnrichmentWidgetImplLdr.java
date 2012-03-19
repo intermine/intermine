@@ -116,6 +116,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         if ("export".equals(action)) {
             subQ.addToSelect(qfEnrich);
             subQ.addToSelect(new QueryField(startClass, config.getStartClassDisplay()));
+            subQ.addToSelect(qfStartClassId);
             subQ.addToOrderBy(qfEnrich);
             return subQ;
         // analysed query:  return the gene only
