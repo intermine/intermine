@@ -316,7 +316,7 @@ public class GraphWidgetLoader implements DataSetLdr
     public PathQuery createPathQuery() {
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-        String[] views = config.getViews().split("\\,");
+        String[] views = config.getViews().split("\\s*,\\s*");
         String prefix = config.getStartClass() + ".";
         for (String view : views) {
             if (!view.startsWith(prefix)) {
