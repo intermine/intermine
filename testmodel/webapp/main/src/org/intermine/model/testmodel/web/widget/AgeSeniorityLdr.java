@@ -39,15 +39,26 @@ public class AgeSeniorityLdr implements DataSetLdr {
         List<Object> headers = new LinkedList<Object>();
         headers.add("");
         headers.add("Seniority");
+        headers.add("Trend");
         resultTable.add(headers);
+        List<List<Double>> points = new LinkedList<List<Double>>();
         while (it.hasNext()) {
             ResultsRow<?> row = (ResultsRow<?>) it.next();
             Manager manager = (Manager) row.get(0);
             List<Object> rowList = new LinkedList<Object>();
+            List<Double> point = new LinkedList<Double>();
             rowList.add(new Double(manager.getAge()));
+            point.add(new Double(manager.getAge()));
             rowList.add(new Double(manager.getSeniority()));
+            point.add(new Double(manager.getSeniority()));
+            points.add(point);
             resultTable.add(rowList);
             total++;
+        }
+
+        LinearRegression regression = new LinearRegression(points);
+        for (int i = 1; i < resultTable.size(); i++) {
+            resultTable.get(i).add(regression.regress((Double) resultTable.get(i).get(0)));
         }
     }
 

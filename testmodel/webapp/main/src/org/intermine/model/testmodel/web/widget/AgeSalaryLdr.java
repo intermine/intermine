@@ -37,15 +37,28 @@ public class AgeSalaryLdr implements DataSetLdr {
         List<Object> headers = new LinkedList<Object>();
         headers.add("");
         headers.add("Salary");
+        headers.add("Trend");
         resultTable.add(headers);
+        List<List<Double>> points = new LinkedList<List<Double>>();
         while (it.hasNext()) {
             ResultsRow<?> row = (ResultsRow<?>) it.next();
             CEO ceo = (CEO) row.get(0);
+
             List<Object> rowList = new LinkedList<Object>();
+            List<Double> point = new LinkedList<Double>();
             rowList.add(new Double(ceo.getAge()));
+            point.add(new Double(ceo.getAge()));
             rowList.add(new Double(ceo.getSalary()));
+            point.add(new Double(ceo.getSalary()));
+            points.add(point);
             resultTable.add(rowList);
+
             total++;
+        }
+
+        LinearRegression regression = new LinearRegression(points);
+        for (int i = 1; i < resultTable.size(); i++) {
+            resultTable.get(i).add(regression.regress((Double) resultTable.get(i).get(0)));
         }
     }
 
@@ -53,9 +66,11 @@ public class AgeSalaryLdr implements DataSetLdr {
     private Query getQuery(InterMineBag bag) {
         PathQuery pq = new PathQuery(os.getModel());
         pq.addViews("CEO.age", "CEO.salary");
-        pq.addConstraint(Constraints.in("CEO", bag.getName()));
         Map<String, InterMineBag> bags = new HashMap<String, InterMineBag>();
-        bags.put(bag.getName(), bag);
+        if (bag != null) {
+            pq.addConstraint(Constraints.in("CEO", bag.getName()));
+            bags.put(bag.getName(), bag);
+        }
         try {
             return MainHelper.makeQuery(pq, bags, new HashMap(), null, new HashMap());
         } catch (ObjectStoreException e) {

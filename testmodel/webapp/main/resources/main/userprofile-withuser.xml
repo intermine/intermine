@@ -1,4 +1,4 @@
-<userprofile username="intermine-test-user" password="intermine-test-user-password">
+<userprofile username="intermine-test-user" password="intermine-test-user-password" apikey="test-user-token">
     <bags>
         <bag name="My-Favourite-Employees" type="Manager">
             <bagValue value="David Brent"/>
@@ -36,7 +36,7 @@
         </bag>
     </bags>
     <template-queries>
-        <template name="private-template-1" title="A private template for testing" 
+        <template name="private-template-1" title="A private template for testing"
             longDescription="Find all full time basic employees for a certain company, and present them sorted by department name">
             <query name="private-template-1" model="testmodel" view="Employee.name Employee.department.name" sortOrder="Employee.department.name asc">
                 <constraint path="Employee.department.company.name" op="=" value="*" editable="true" code="A"/>

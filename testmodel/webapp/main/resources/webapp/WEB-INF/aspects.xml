@@ -1,6 +1,5 @@
-
 <aspects>
-  <aspect name="People">
+<aspect name="People">
     <subtitle>People sub-title</subtitle>
     <icon-image>peopleIcon.jpg</icon-image>
     <large-image>people.jpg</large-image>
