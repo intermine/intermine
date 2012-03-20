@@ -62,6 +62,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
+    private Map<String, String> ecNumbers = new HashMap<String, String>();
     private static final String GENUS_LOOKUP = "Drosophila";
     private static final int POSTGRES_INDEX_SIZE = 2712;
 
@@ -298,6 +299,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 attName = "component";
             } else if ("name".equals(qName) && "entry".equals(previousQName)) {
                 attName = "primaryIdentifier";
+            } else if ("ecNumber".equals(qName)) {
+                attName = "ecNumber";
             } else if ("accession".equals(qName)) {
                 attName = "value";
             } else if ("dbReference".equals(qName) && "organism".equals(previousQName)) {
@@ -423,6 +426,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry.setName(attValue.toString());
             } else if (StringUtils.isNotEmpty(attName) && "synonym".equals(attName)) {
                 entry.addProteinName(attValue.toString());
+            } else if (StringUtils.isNotEmpty(attName) && "ecNumber".equals(attName)) {
+                entry.addECNumber(attValue.toString());
             } else if ("text".equals(qName) && "comment".equals(previousQName)) {
                 String commentText = attValue.toString();
                 if (StringUtils.isNotEmpty(commentText)) {
@@ -575,6 +580,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 /* primaryAccession, primaryIdentifier, name, etc */
                 processIdentifiers(protein, uniprotEntry);
 
+                processECNumbers(protein, uniprotEntry);
+
                 String isCanonical = (uniprotEntry.isIsoform() ? "false" : "true");
                 protein.setAttribute("isUniprotCanonical", isCanonical);
 
@@ -705,6 +712,30 @@ public class UniprotConverter extends BioDirectoryConverter
             protein.setAttribute("primaryIdentifier", primaryIdentifier);
         }
 
+        private void processECNumbers(Item protein, UniprotEntry uniprotEntry)
+            throws SAXException {
+            List<String> ecs = uniprotEntry.getECNumbers();
+            if (ecs == null || ecs.isEmpty()) {
+                return;
+            }
+            for (String identifier : ecs) {
+                String refId = ecNumbers.get(identifier);
+
+                if (refId == null) {
+                    Item item = createItem("ECNumber");
+                    item.setAttribute("identifier", identifier);
+                    ecNumbers.put(identifier, item.getIdentifier());
+                    try {
+                        store(item);
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException(e);
+                    }
+                    refId = item.getIdentifier();
+                }
+                protein.addToCollection("ecNumbers", refId);
+            }
+        }
+
         private String getIsoformIdentifier(String primaryAccession, String primaryIdentifier) {
             String isoformIdentifier = primaryIdentifier;
             String[] bits = primaryAccession.split("\\-");
@@ -785,10 +816,6 @@ public class UniprotConverter extends BioDirectoryConverter
                 String key = dbref.getKey();
                 Set<String> values = dbref.getValue();
                 for (String identifier : values) {
-                    if ("EC".equals(key)) {
-                        protein.setAttribute("ecNumber", identifier);
-                        return;
-                    }
                     setCrossReference(protein.getIdentifier(), identifier, key, false);
                 }
             }
