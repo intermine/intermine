@@ -71,8 +71,7 @@ public class GraphService extends JSONService
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) {
+    protected void execute() {
         GraphInput input = new GraphInput(request);
         Profile profile = SessionMethods.getProfile(request.getSession());
 
