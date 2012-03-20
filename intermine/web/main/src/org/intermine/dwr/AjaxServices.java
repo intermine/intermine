@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryParser.ParseException;
@@ -43,8 +44,10 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
@@ -57,16 +60,21 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
-import org.intermine.api.search.Scope;
-import org.intermine.api.search.SearchFilterEngine;
 import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.SearchResults;
+import org.intermine.api.search.SearchTarget;
+import org.intermine.api.search.TagFilter;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -76,14 +84,17 @@ import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.PortalHelper;
+import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
 import org.intermine.web.logic.query.QueryMonitorTimeout;
 import org.intermine.web.logic.results.PagedTable;
@@ -99,7 +110,6 @@ import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.web.util.InterMineLinkGenerator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -114,8 +124,9 @@ public class AjaxServices
 {
     protected static final Logger LOG = Logger.getLogger(AjaxServices.class);
     private static final Object ERROR_MSG = "Error happened during DWR ajax service.";
-    private static final String INVALID_NAME_MSG = "Invalid name.  Names may only contain letters, "
-        + "numbers, spaces, and underscores.";
+
+    private static final Set<String> NON_WS_TAG_TYPES = new HashSet<String>(Arrays.asList(
+            TagTypes.CLASS, TagTypes.COLLECTION, TagTypes.REFERENCE));
 
     /**
      * Creates a favourite Tag for the given templateName
@@ -125,21 +136,16 @@ public class AjaxServices
      * @param isFavourite whether or not this item is currently a favourite
      */
     public void setFavourite(String name, String type, boolean isFavourite) {
+        String nameCopy = name.replaceAll("#039;", "'");
         try {
-            WebContext ctx = WebContextFactory.get();
-            HttpSession session = ctx.getSession();
-            Profile profile = SessionMethods.getProfile(session);
-            String nameCopy = name.replaceAll("#039;", "'");
-            TagManager tagManager = getTagManager();
-
             // already a favourite.  turning off.
             if (isFavourite) {
-                tagManager.deleteTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
+                AjaxServices.deleteTag(TagNames.IM_FAVOURITE, nameCopy, type);
             // not a favourite.  turning on.
             } else {
-                tagManager.addTag(TagNames.IM_FAVOURITE, nameCopy, type, profile.getUsername());
+                AjaxServices.addTag(TagNames.IM_FAVOURITE, nameCopy, type);
             }
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             processException(e);
         }
     }
@@ -243,7 +249,7 @@ public class AjaxServices
             }
             // TODO get error text from properties file
             if (!NameUtil.isValidName(newName)) {
-                return INVALID_NAME_MSG;
+                return NameUtil.INVALID_NAME_MSG;
             }
             if ("history".equals(type)) {
                 if (profile.getHistory().get(name) == null) {
@@ -271,6 +277,17 @@ public class AjaxServices
                     return "<i>" + name + " does not exist</i>";
                 } catch (ProfileAlreadyExistsException e) {
                     return "<i>" + newName + " already exists</i>";
+                }
+            } else if ("invalid.bag.type".equals(type)) {
+                try {
+                    profile.fixInvalidBag(name, newName);
+                    InterMineAPI im = SessionMethods.getInterMineAPI(session);
+                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session))
+                        .start();
+                } catch (UnknownBagTypeException e) {
+                    return "<i>" + e.getMessage() + "</i>";
+                } catch (ObjectStoreException e) {
+                    return "<i>Error fixing type</i>";
                 }
             } else {
                 return "Type unknown";
@@ -342,7 +359,6 @@ public class AjaxServices
                 throw new InterMineException("List \"" + bagName + "\" not found.");
             }
             bag.setDescription(description);
-            profile.getSearchRepository().descriptionChanged(bag);
             return description;
         } catch (RuntimeException e) {
             processException(e);
@@ -392,6 +408,30 @@ public class AjaxServices
     private static WebState getWebState() {
         HttpSession session = WebContextFactory.get().getSession();
         return SessionMethods.getWebState(session);
+    }
+
+    /**
+     * This method gets a map of ids of elements that were in the past (during session) toggled and
+     * returns them in JSON
+     * @return JSON serialized to a String
+     * @throws JSONException
+     */
+    public static String getToggledElements() {
+        HttpSession session = WebContextFactory.get().getSession();
+        WebState webState = SessionMethods.getWebState(session);
+        Collection<JSONObject> lists = new HashSet<JSONObject>();
+        try {
+            for (Map.Entry<String, Boolean> entry : webState.getToggledElements().entrySet()) {
+                JSONObject list = new JSONObject();
+                list.put("id", entry.getKey());
+                list.put("opened", entry.getValue().toString());
+                lists.add(list);
+            }
+        } catch (JSONException jse) {
+            LOG.error("Errors generating json objects", jse);
+        }
+
+        return lists.toString();
     }
 
     /**
@@ -491,15 +531,25 @@ public class AjaxServices
 
     /**
      * Given a scope, type, tags and some filter text, produce a list of matching WebSearchable, in
-     * a format useful in JavaScript.  Each element of the returned List is a List containing a
+     * a format useful in JavaScript.
+     * <p>
+     * Each element of the returned List is a List containing a
      * WebSearchable name, a score (from Lucene) and a string with the matching parts of the
      * description highlighted.
-     * @param scope the scope (from TemplateHelper.GLOBAL_TEMPLATE or TemplateHelper.USER_TEMPLATE,
-     * even though not all WebSearchables are templates)
-     * @param type the type (from TagTypes)
-     * @param tags the tags to filter on
-     * @param filterText the text to pass to Lucene
-     * @param filterAction toggles favourites filter off an on; will be blank or 'favourites'
+     * <p>
+     * ie - search for "<code>me</code>":
+     * <pre>
+     *   [
+     *     [ "Some name", 0.123, "So&lt;i&gt;me&lt;/i&gt; name" ],
+     *     ...
+     *   ]
+     * </pre>
+     *
+     * @param scope the scope (either Scope.GLOBAL or Scope.USER).
+     * @param type the type (from TagTypes).
+     * @param tags the tags to filter on.
+     * @param filterText the text to pass to Lucene.
+     * @param filterAction toggles favourites filter off and on; will be blank or 'favourites'
      * @param callId unique id
      * @return a List of Lists
      */
@@ -507,70 +557,28 @@ public class AjaxServices
                                                     List<String> tags, String filterText,
                                                     String filterAction, String callId) {
         try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
+            final HttpSession session = WebContextFactory.get().getSession();
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            ProfileManager pm = im.getProfileManager();
-            Profile profile = SessionMethods.getProfile(session);
-            Map<String, WebSearchable> wsMap;
-            Map<WebSearchable, Float> hitMap = new LinkedHashMap<WebSearchable, Float>();
-            Map<WebSearchable, String> highlightedDescMap = new HashMap<WebSearchable, String>();
+            final ProfileManager pm = im.getProfileManager();
+            final Profile profile = SessionMethods.getProfile(session);
+            final SearchRepository userRepository = profile.getSearchRepository();
+            final SearchTarget target = new SearchTarget(scope, type);
+            final SearchResults results;
 
-            if (filterText != null && filterText.length() > 1) {
-                wsMap = new LinkedHashMap<String, WebSearchable>();
-                //Map<WebSearchable, String> scopeMap = new LinkedHashMap<WebSearchable, String>();
-                SearchRepository globalSearchRepository =
-                    SessionMethods.getGlobalSearchRepository(servletContext);
-                try {
-                    long time =
-                        SearchRepository.runLeuceneSearch(filterText, scope, type, profile,
-                                                        globalSearchRepository,
-                                                        hitMap, null, highlightedDescMap);
-                    LOG.info("Lucene search took " + time + " milliseconds");
-                } catch (ParseException e) {
-                    LOG.error("couldn't run lucene filter", e);
-                    ArrayList<String> emptyList = new ArrayList<String>();
-                    emptyList.add(callId);
-                    return emptyList;
-                } catch (IOException e) {
-                    LOG.error("couldn't run lucene filter", e);
-                    ArrayList<String> emptyList = new ArrayList<String>();
-                    emptyList.add(callId);
-                    return emptyList;
-                }
-
-                //long time = System.currentTimeMillis();
-
-                for (WebSearchable ws: hitMap.keySet()) {
-                    wsMap.put(ws.getName(), ws);
-                }
-            } else {
-
-                if (scope.equals(Scope.USER)) {
-                    SearchRepository searchRepository = profile.getSearchRepository();
-                    wsMap = (Map<String, WebSearchable>) searchRepository.getWebSearchableMap(type);
-                } else {
-                    SearchRepository globalRepository = SessionMethods
-                        .getGlobalSearchRepository(servletContext);
-                    if (scope.equals(Scope.GLOBAL)) {
-                        wsMap = (Map<String, WebSearchable>) globalRepository.
-                            getWebSearchableMap(type);
-                    } else {
-                        // must be "all"
-                        SearchRepository userSearchRepository = profile.getSearchRepository();
-                        Map<String, ? extends WebSearchable> userWsMap =
-                            userSearchRepository.getWebSearchableMap(type);
-                        Map<String, ? extends WebSearchable> globalWsMap =
-                            globalRepository.getWebSearchableMap(type);
-                        wsMap = new HashMap<String, WebSearchable>(userWsMap);
-                        wsMap.putAll(globalWsMap);
-                    }
-                }
+            try {
+                results = SearchResults.runLuceneSearch(filterText, target, userRepository);
+            } catch (ParseException e) {
+                LOG.error("couldn't run lucene filter", e);
+                ArrayList<String> emptyList = new ArrayList<String>();
+                emptyList.add(callId);
+                return emptyList;
+            } catch (IOException e) {
+                LOG.error("couldn't run lucene filter", e);
+                ArrayList<String> emptyList = new ArrayList<String>();
+                emptyList.add(callId);
+                return emptyList;
             }
 
-
-            Map<String, ? extends WebSearchable> filteredWsMap
-                = new LinkedHashMap<String, WebSearchable>();
             //Filter by aspects (defined in superuser account)
             List<String> aspectTags = new ArrayList<String>();
             List<String> userTags = new ArrayList<String>();
@@ -578,42 +586,30 @@ public class AjaxServices
                 if (tag.startsWith(TagNames.IM_ASPECT_PREFIX)) {
                     aspectTags.add(tag);
                 } else {
-                    userTags.add(tag);
+                    if (profile.getUsername() != null) {
+                        // Only allow filtering from registered users.
+                        userTags.add(tag);
+                    }
                 }
             }
-            if (aspectTags.size() > 0) {
-                wsMap = new SearchFilterEngine().filterByTags(wsMap, aspectTags, type,
-                                                              pm.getSuperuser(), getTagManager());
-            }
 
-            if (profile.getUsername() != null && userTags.size() > 0) {
-                filteredWsMap = new SearchFilterEngine().filterByTags(wsMap, userTags, type,
-                        profile.getUsername(), getTagManager());
-            } else {
-                filteredWsMap = wsMap;
-            }
+            TagFilter aspects = new TagFilter(aspectTags, pm.getSuperuserProfile(), type);
+            TagFilter requiredTags = new TagFilter(userTags, profile, type);
 
-            List returnList = new ArrayList<String>();
+            List returnList = new ArrayList();
 
             returnList.add(callId);
 
-            // We need a modifiable map so we can filter out invalid templates
-            LinkedHashMap<String, ? extends WebSearchable> modifiableWsMap =
-                new LinkedHashMap(filteredWsMap);
-
-            SearchRepository.filterOutInvalidTemplates(modifiableWsMap);
-            for (WebSearchable ws: modifiableWsMap.values()) {
-                List row = new ArrayList();
-                row.add(ws.getName());
-                if (filterText != null && filterText.length() > 1) {
-                    row.add(highlightedDescMap.get(ws));
-                    row.add(hitMap.get(ws));
-                } else {
-                    row.add(ws.getDescription());
+            for (org.intermine.api.search.SearchResult sr: results) {
+                WebSearchable ws = sr.getItem();
+                if (SearchResults.isInvalidTemplate(ws)) {
+                    continue;
                 }
-                returnList.add(row);
+                if (!(aspects.hasAllTags(ws) && requiredTags.hasAllTags(ws))) {
+                    continue;
+                }
+                returnList.add(sr.asList());
             }
-
             return returnList;
         } catch (RuntimeException e) {
             processException(e);
@@ -637,26 +633,52 @@ public class AjaxServices
             Profile profile = SessionMethods.getProfile(session);
             BagManager bagManager = im.getBagManager();
             TemplateManager templateManager = im.getTemplateManager();
-
             WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
-
-            InterMineBag imBag = null;
             int count = 0;
-            try {
-                imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-                List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
-
-                PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
+            InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
+            PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
                     TypeUtil.instantiate(pckName + "." + type), imBag);
-                count = webResultsExecutor.count(pathQuery);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            count = webResultsExecutor.count(pathQuery);
             return count;
-        } catch (RuntimeException e) {
-            processException(e);
+        } catch (Exception e) {
+            LOG.error("failed to get type converted counts", e);
             return 0;
+        }
+    }
+
+    /**
+     * For a list and a converter, return types and related counts
+     *
+     * @param bagName the name of the bag
+     * @param converterName Java class that processes the data
+     * @return the number of converted objects
+     */
+    public static String getCustomConverterCounts(String bagName, String converterName) {
+        try {
+            final HttpSession session = WebContextFactory.get().getSession();
+            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+            final Profile profile = SessionMethods.getProfile(session);
+            final BagManager bagManager = im.getBagManager();
+            final InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            final ServletContext servletContext = WebContextFactory.get().getServletContext();
+            final WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
+            final BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
+                    converterName);
+            // should be ordered
+            Map<String, String> results = bagConverter.getCounts(profile, imBag);
+            List<JSONObject> jsonResults = new LinkedList<JSONObject>();
+            for (Map.Entry<String, String> entry : results.entrySet()) {
+                JSONObject organism = new JSONObject();
+                organism.put("name", entry.getKey());
+                organism.put("count", entry.getValue());
+                jsonResults.add(organism);
+            }
+            return jsonResults.toString();
+        } catch (Exception e) {
+            LOG.error("failed to get custom converter counts", e);
+            return null;
         }
     }
 
@@ -670,72 +692,38 @@ public class AjaxServices
      * remote mine.
      *
      * @param mineName name of mine to query
-     * @param organismName gene.organism
-     * @param primaryIdentifier identifier for gene
-     * @param symbol identifier for gene or NULL
+     * @param organisms gene.organism
+     * @param identifiers identifiers for gene
      * @return the links to friendly intermines
      */
-    public static String getFriendlyMineReportLinks(String mineName, String organismName,
-            String primaryIdentifier, String symbol) {
-        HttpSession session = WebContextFactory.get().getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager fmm = im.getFriendlyMineManager();
-        InterMineLinkGenerator linkGen = null;
-        Class<?> clazz
-            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineReportLinkGenerator");
-        Constructor<?> constructor;
-        try {
-            constructor = clazz.getConstructor(new Class[] {});
-            linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
-        } catch (Exception e) {
-            LOG.error("Failed to instantiate FriendlyMineReportLinkGenerator because: " + e);
-            return null;
-        }
-        Collection<JSONObject> results = linkGen.getLinks(fmm, mineName, organismName,
-                primaryIdentifier);
-        if (results == null || results.isEmpty()) {
-            return null;
-        }
-        return results.toString();
-    }
-
-    /**
-     * For LIST ANALYSIS page - For a mine, test if that mine has orthologues
-     *
-     * @param mineName name of a friendly mine
-     * @param organisms list of organisms for genes in this list
-     * @param identifiers list of identifiers of genes in this list
-     * @return the links to friendly intermines or an error message
-     */
-    public static String getFriendlyMineListLinks(String mineName, String organisms,
+    public static String getFriendlyMineLinks(String mineName, String organisms,
             String identifiers) {
         if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(organisms)
                 || StringUtils.isEmpty(identifiers)) {
             return null;
         }
-        HttpSession session = WebContextFactory.get().getSession();
+        final HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        final ServletContext servletContext = WebContextFactory.get().getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager fmm = FriendlyMineManager.getInstance(im, webProperties);
         InterMineLinkGenerator linkGen = null;
-        Class<?> clazz
-            = TypeUtil.instantiate("org.intermine.bio.web.util.FriendlyMineListLinkGenerator");
         Constructor<?> constructor;
-        Collection<JSONObject> results = null;
         try {
+            Class<?> clazz = TypeUtil.instantiate(
+                    "org.intermine.bio.web.displayer.FriendlyMineLinkGenerator");
             constructor = clazz.getConstructor(new Class[] {});
             linkGen = (InterMineLinkGenerator) constructor.newInstance(new Object[] {});
-            // runs remote templates (possibly)
-            results = linkGen.getLinks(linkManager, mineName, organisms, identifiers);
         } catch (Exception e) {
-            LOG.error("Failed to instantiate FriendlyMineListLinkGenerator because: " + e);
+            LOG.error("Failed to instantiate FriendlyMineLinkGenerator because: " + e);
             return null;
         }
+        Collection<JSONObject> results = linkGen.getLinks(fmm, mineName, organisms, identifiers);
         if (results == null || results.isEmpty()) {
             return null;
         }
         return results.toString();
     }
-
 
     /**
      * used on REPORT page
@@ -750,20 +738,20 @@ public class AjaxServices
         if (StringUtils.isEmpty(orthologues)) {
             return null;
         }
+        Mine mine;
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
-        Mine mine = linkManager.getMine(mineName);
+        final ServletContext servletContext = WebContextFactory.get().getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
+        mine = linkManager.getMine(mineName);
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
             return null;
         }
-        final String xmlQuery = "<query name=\"\" model=\"genomic\" view=\"Gene.pathways.id "
-            + "Gene.pathways.name\" sortOrder=\"Gene.pathways.name asc\"><constraint path=\"Gene\" "
-            + "op=\"LOOKUP\" value=\"" + orthologues + "\" extraValue=\"\"/></query>";
+        final String xmlQuery = getXMLQuery("FriendlyMinesPathways.xml", orthologues);
         try {
-            JSONObject results
-                = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            JSONObject results = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
             if (results == null) {
                 LOG.error("Couldn't query " + mine.getName() + " for pathways");
                 return null;
@@ -776,6 +764,26 @@ public class AjaxServices
         } catch (JSONException e) {
             LOG.error("Error adding Mine URL to pathways results", e);
             return null;
+        } catch (Throwable t) {
+            LOG.error(t);
+            return null;
+        }
+    }
+
+    private static String getXMLQuery(String filename, Object... positionalArgs) {
+        try {
+            return String.format(
+                IOUtils.toString(
+                        AjaxServices.class.getResourceAsStream(filename)), positionalArgs);
+        } catch (IOException e) {
+            LOG.error(e);
+            throw new RuntimeException("Could not read " + filename, e);
+        } catch (NullPointerException npe) {
+            LOG.error(npe);
+            throw new RuntimeException(filename + " not found", npe);
+        } catch (Throwable e) {
+            LOG.error(e);
+            throw new RuntimeException("Unexpected exception", e);
         }
     }
 
@@ -786,30 +794,31 @@ public class AjaxServices
      * @param orthologues list of rat genes
      * @return JSONobject.toString of JSON object
      */
+    @SuppressWarnings("unchecked")
     public static String getRatDiseases(String orthologues) {
         if (StringUtils.isEmpty(orthologues)) {
             return null;
         }
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        final ServletContext servletContext = WebContextFactory.get().getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Mine mine = linkManager.getMine("RatMine");
+
+        HashMap<String, Object> map = new HashMap<String, Object>();
+
         if (mine == null || mine.getReleaseVersion() == null) {
             // mine is dead
-            return null;
+            map.put("status", "offline");
+            return new JSONObject(map).toString();
         }
-        final String xmlQuery = "<query name=\"rat_disease\" model=\"genomic\" view="
-            + "\"Gene.doAnnotation.ontologyTerm.id Gene.doAnnotation.ontologyTerm.name\"  "
-            + "sortOrder=\"Gene.doAnnotation.ontologyTerm.name asc\"> "
-            + "<pathDescription pathString=\"Gene.doAnnotation.ontologyTerm\" "
-            + "description=\"Disease Ontology Term\"/> "
-            + "<constraint path=\"Gene\" op=\"LOOKUP\" value=\"" + orthologues
-            + "\" extraValue=\"\"/></query>";
+        final String xmlQuery = getXMLQuery("RatDiseases.xml", orthologues);
         try {
-            JSONObject results
-                = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
+            JSONObject results = FriendlyMineQueryRunner.runJSONWebServiceQuery(mine, xmlQuery);
             if (results != null) {
                 results.put("mineURL", mine.getUrl());
+                results.put("status", "online");
                 return results.toString();
             }
         } catch (IOException e) {
@@ -868,7 +877,7 @@ public class AjaxServices
             }
 
             if (!NameUtil.isValidName(bagName)) {
-                return INVALID_NAME_MSG;
+                return TagManager.INVALID_NAME_MSG;
             }
 
             if (profile.getSavedBags().get(bagName) != null) {
@@ -889,14 +898,13 @@ public class AjaxServices
 
     /**
      * validation that happens before new bag is saved
-     * @param bagName name of new bag
+     * @param bagName name of new list
      * @param selectedBags bags involved in operation
      * @param operation which operation is taking place - delete, union, intersect or subtract
      * @return error msg, if any
      */
     public static String validateBagOperations(String bagName, String[] selectedBags,
                                                String operation) {
-
         try {
             ServletContext servletContext = WebContextFactory.get().getServletContext();
             HttpSession session = WebContextFactory.get().getSession();
@@ -910,26 +918,32 @@ public class AjaxServices
                 for (int i = 0; i < selectedBags.length; i++) {
                     Set<String> queries = new HashSet<String>();
                     queries.addAll(queriesThatMentionBag(profile.getSavedQueries(),
-                                selectedBags[i]));
+                            selectedBags[i]));
                     queries.addAll(queriesThatMentionBag(profile.getHistory(), selectedBags[i]));
                     if (queries.size() > 0) {
-                        return "List " + selectedBags[i] + " cannot be deleted as it is referenced "
-                            + "by other queries " + queries;
+                        // TODO the javascript method relies on the content of this message.
+                        // which is dumb and should be fixed.  in the meantime, don't change this.
+                        final String msg = "You are trying to delete the list:  `"
+                                + selectedBags[i] + "`, which is used by these queries: "
+                                + queries + ".  Select OK to delete the list and queries or Cancel "
+                                + "to cancel this operation.";
+                        return msg;
                     }
                 }
                 for (int i = 0; i < selectedBags.length; i++) {
-                    if (profile.getSavedBags().get(selectedBags[i]) == null) {
-                        return "List " + selectedBags[i] + " cannot be deleted as it is a shared "
+                    Map allBags = profile.getAllBags();
+                    if (!allBags.containsKey(selectedBags[i])) {
+                        return "List `" + selectedBags[i] + "` cannot be deleted as it is a shared "
                             + "list";
                     }
                 }
             } else if (!"copy".equals(operation)) {
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 String defaultName = properties.getProperty("lists.input.example");
-                if (("".equals(bagName) || (bagName.equalsIgnoreCase(defaultName)))) {
+                if (bagName.equalsIgnoreCase(defaultName)) {
                     return "New list name is required";
                 } else if (!NameUtil.isValidName(bagName)) {
-                    return INVALID_NAME_MSG;
+                    return NameUtil.INVALID_NAME_MSG;
                 }
             }
             return "";
@@ -991,7 +1005,9 @@ public class AjaxServices
                     graphWidgetConf.setSession(session);
                     GraphWidget graphWidget = new GraphWidget(graphWidgetConf, imBag, os,
                                     selectedExtraAttribute);
-                    return graphWidget;
+                    if (!graphWidget.getResults().isEmpty()) {
+                        return graphWidget;
+                    }
                 }
             }
         } catch (RuntimeException e) {
@@ -1280,10 +1296,10 @@ public class AjaxServices
                 + taggedObject + " type: " + type);
 
         try {
-            HttpServletRequest request = getRequest();
-            Profile profile = getProfile(request);
+            final HttpServletRequest request = getRequest();
+            final Profile profile = getProfile(request);
+            final InterMineAPI im = SessionMethods.getInterMineAPI(request);
             tagName = tagName.trim();
-            HttpSession session = request.getSession();
 
             if (profile.getUsername() != null
                     && !StringUtils.isEmpty(tagName)
@@ -1292,27 +1308,46 @@ public class AjaxServices
                 if (tagExists(tagName, taggedObject, type)) {
                     return "Already tagged with this tag.";
                 }
-                if (!TagManager.isValidTagName(tagName)) {
-                    return INVALID_NAME_MSG;
-                }
-                if (tagName.startsWith(TagNames.IM_PREFIX)
-                        && !SessionMethods.isSuperUser(session)) {
-                    return "You cannot add a tag starting with " + TagNames.IM_PREFIX + ", "
-                        + "that is a reserved word.";
-                }
 
                 TagManager tagManager = getTagManager();
-                tagManager.addTag(tagName, taggedObject, type, profile.getUsername());
-
-                ServletContext servletContext = session.getServletContext();
-                if (SessionMethods.isSuperUser(session)) {
-                    SearchRepository tr = SessionMethods.
-                        getGlobalSearchRepository(servletContext);
-                    tr.webSearchableTagChange(type, tagName);
+                BagManager bm = im.getBagManager();
+                TemplateManager tm = im.getTemplateManager();
+                if (NON_WS_TAG_TYPES.contains(type)) {
+                    if (TagTypes.CLASS.equals(type)) {
+                        ClassDescriptor cd = im.getModel().getClassDescriptorByName(taggedObject);
+                        tagManager.addTag(tagName, cd, profile);
+                    } else {
+                        String[] bits = taggedObject.split("\\.");
+                        ClassDescriptor cd = im.getModel().getClassDescriptorByName(bits[0]);
+                        FieldDescriptor fd = cd.getFieldDescriptorByName(bits[1]);
+                        if (fd.isCollection() || fd.isReference()) {
+                            tagManager.addTag(tagName, (ReferenceDescriptor) fd, profile);
+                        }
+                    }
+                } else {
+                    WebSearchable ws = null;
+                    if (TagTypes.BAG.equals(type)) {
+                        ws = bm.getUserOrGlobalBag(profile, taggedObject);
+                    } else if (TagTypes.TEMPLATE.equals(type)) {
+                        ws = tm.getUserOrGlobalTemplate(profile, taggedObject);
+                    }
+                    if (ws == null) {
+                        throw new RuntimeException("Could not find " + type + " " + taggedObject);
+                    } else {
+                        tagManager.addTag(tagName, ws, profile);
+                    }
                 }
                 return "ok";
             }
+            LOG.error("Adding tag failed: tag='" + tag + "', taggedObject='" + taggedObject
+                    + "', type='" + type + "'");
             return "Adding tag failed.";
+        } catch (TagManager.TagNamePermissionException e) {
+            LOG.error("Adding tag failed", e);
+            return e.getMessage();
+        } catch (TagManager.TagNameException e) {
+            LOG.error("Adding tag failed", e);
+            return e.getMessage();
         } catch (Throwable e) {
             LOG.error("Adding tag failed", e);
             return "Adding tag failed.";
@@ -1335,12 +1370,32 @@ public class AjaxServices
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             Profile profile  = getProfile(request);
             TagManager manager = im.getTagManager();
-            manager.deleteTag(tagName, tagged, type, profile.getUsername());
-            ServletContext servletContext = session.getServletContext();
-            if (SessionMethods.isSuperUser(session)) {
-                SearchRepository tr =
-                    SessionMethods.getGlobalSearchRepository(servletContext);
-                tr.webSearchableTagChange(type, tagName);
+            BagManager bm = im.getBagManager();
+
+            if (NON_WS_TAG_TYPES.contains(type)) {
+                if (TagTypes.CLASS.equals(type)) {
+                    ClassDescriptor cd = im.getModel().getClassDescriptorByName(tagged);
+                    manager.deleteTag(tagName, cd, profile);
+                } else {
+                    String[] bits = tagged.split("\\.");
+                    ClassDescriptor cd = im.getModel().getClassDescriptorByName(bits[0]);
+                    FieldDescriptor fd = cd.getFieldDescriptorByName(bits[1]);
+                    if (fd.isCollection() || fd.isReference()) {
+                        manager.deleteTag(tagName, (ReferenceDescriptor) fd, profile);
+                    }
+                }
+                return "ok";
+            } else {
+                WebSearchable ws = null;
+                if (TagTypes.BAG.equals(type)) {
+                    ws = bm.getUserBag(profile, tagged);
+                } else if (TagTypes.TEMPLATE.equals(type)) {
+                    ws = profile.getTemplate(tagged);
+                }
+                if (ws == null) {
+                    throw new RuntimeException("Could not find " + type + " " + tagged);
+                }
+                manager.deleteTag(tagName, ws, profile);
             }
             return "ok";
         } catch (Throwable e) {
@@ -1356,10 +1411,10 @@ public class AjaxServices
      * @return tags
      */
     public static Set<String> getTags(String type) {
-        HttpServletRequest request = getRequest();
+        final HttpServletRequest request = getRequest();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        TagManager tagManager = im.getTagManager();
-        Profile profile = getProfile(request);
+        final TagManager tagManager = im.getTagManager();
+        final Profile profile = getProfile(request);
         if (profile.isLoggedIn()) {
             return tagManager.getUserTagNames(type, profile.getUsername());
         }
@@ -1415,17 +1470,21 @@ public class AjaxServices
      * Set the constraint logic on a query to be the given expression.
      *
      * @param expression the constraint logic for the query
+     * @return messages to display in the jsp page
      * @throws PathException if the query is invalid
      */
-    public static void setConstraintLogic(String expression) throws PathException {
+    public static String setConstraintLogic(String expression) throws PathException {
         WebContext ctx = WebContextFactory.get();
         HttpSession session = ctx.getSession();
         PathQuery query = SessionMethods.getQuery(session);
         query.setConstraintLogic(expression);
         List<String> messages = query.fixUpForJoinStyle();
+        StringBuffer messagesToDisplay = new StringBuffer();
         for (String message : messages) {
-            SessionMethods.recordMessage(message, session);
+            messagesToDisplay.append(message);
+            //SessionMethods.recordMessage(message, session);
         }
+        return messagesToDisplay.toString();
     }
 
     /**
@@ -1450,6 +1509,10 @@ public class AjaxServices
         ServletContext servletContext = WebContextFactory.get().getServletContext();
         AutoCompleter ac = SessionMethods.getAutoCompleter(servletContext);
         ac.createRAMIndex(className + "." + field);
+
+        // swap "-" for spaces, ticket #2357
+        suffix = suffix.replace("-", " ");
+
         if (!wholeList && suffix.length() > 0) {
             String[] shortList = ac.getFastList(suffix, field, 31);
             return shortList;
@@ -1461,23 +1524,32 @@ public class AjaxServices
         return defaultList;
     }
 
+    /**
+     * This method gets the latest bags from the session (SessionMethods) and returns them in JSON
+     * @return JSON serialized to a String
+     * @throws JSONException
+     */
     @SuppressWarnings("unchecked")
     public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
         @SuppressWarnings("unchecked")
-        Map<String, String> savedBagStatus =
-            (Map<String, String>) session.getAttribute(Constants.SAVED_BAG_STATUS);
+        Map<String, Map<String, Object>> savedBagStatus =
+            (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
 
         // this is where my lists go
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
-            for (Map.Entry<String, String> entry : savedBagStatus.entrySet()) {
+            for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
+                Map<String, Object> listAttributes = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
-                if (entry.getValue().equals(BagState.CURRENT.toString()) ||
-                        entry.getValue().equals(BagState.TO_UPGRADE.toString())) {
+                if (listAttributes.get("status").equals(BagState.CURRENT.toString()) ||
+                        listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
-                    list.put("status", entry.getValue());
+                    list.put("status", listAttributes.get("status"));
+                    if (listAttributes.containsKey("size")) {
+                        list.put("size", listAttributes.get("size"));
+                    }
                     lists.add(list);
                 }
             }
@@ -1488,4 +1560,18 @@ public class AjaxServices
         return lists.toString();
     }
 
+    public void updateTemplate(String field, String value) {
+        HttpSession session = WebContextFactory.get().getSession();
+        boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null)
+                                ? true : false;
+        TemplateQuery templateQuery = (TemplateQuery) SessionMethods.getQuery(session);
+        if (!isNewTemplate && session.getAttribute(Constants.PREV_TEMPLATE_NAME) == null) {
+            session.setAttribute(Constants.PREV_TEMPLATE_NAME, templateQuery.getName());
+        }
+        try {
+            PropertyUtils.setSimpleProperty(templateQuery, field, value);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
 }

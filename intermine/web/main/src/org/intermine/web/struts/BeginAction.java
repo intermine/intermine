@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -34,10 +34,9 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
-import org.intermine.template.TemplateQuery;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.Constants;
@@ -75,10 +74,10 @@ public class BeginAction extends InterMineAction
 
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
-        Set<String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
+        Map<String, String> errorKeys = SessionMethods.getErrorOnInitialiser(servletContext);
         if (errorKeys != null && !errorKeys.isEmpty()) {
-            for (String errorKey : errorKeys) {
-                recordError(new ActionMessage(errorKey), request);
+            for (String errorKey : errorKeys.keySet()) {
+                recordError(new ActionMessage(errorKey, errorKeys.get(errorKey)), request);
             }
             return mapping.findForward("blockingError");
         }

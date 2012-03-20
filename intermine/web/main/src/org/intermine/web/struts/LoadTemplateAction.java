@@ -122,7 +122,7 @@ public class LoadTemplateAction extends DispatchAction
         String path = request.getParameter("path");
         String bagName = template.getName() + "_results";
         bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(), bagName);
-        BagHelper.createBagFromPathQuery(template.getPathQuery(), bagName,
+        BagHelper.createBagFromPathQuery(template, bagName,
                 template.getDescription(), path, profile, im);
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));
@@ -169,7 +169,7 @@ public class LoadTemplateAction extends DispatchAction
             throw new RuntimeException("unknown export format: " + exportFormat);
         }
 
-        exporter.export(pt, request, response, null);
+        exporter.export(pt, request, response, null, null, null);
 
         // If null is returned then no forwarding is performed and
         // to the output is not flushed any jsp output, so user

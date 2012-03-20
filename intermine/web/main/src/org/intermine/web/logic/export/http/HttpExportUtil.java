@@ -23,8 +23,11 @@ import org.intermine.web.logic.export.Exporter;
  * Util for export.
  * @author Jakub Kulaviak
  **/
-public class HttpExportUtil
+public final class HttpExportUtil
 {
+    private HttpExportUtil() {
+
+    }
     /**
      * @param request request
      * @param out output stream

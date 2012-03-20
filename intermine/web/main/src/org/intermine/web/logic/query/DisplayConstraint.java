@@ -253,7 +253,7 @@ public class DisplayConstraint
 
     /**
      * If the constraint is a multivalue, returns the value collection
-     * represented as string separated by ',', otherwise return an empty String.
+     * represented as string separated by ', ', otherwise return an empty String.
      *
      * @return a String representing the multivalues of constraint
      */
@@ -261,8 +261,10 @@ public class DisplayConstraint
         String multiValuesAsString = "";
         if (getMultiValues() != null) {
             for (String value : getMultiValues()) {
-                multiValuesAsString += value + ",";
+                multiValuesAsString += value + ", ";
             }
+            multiValuesAsString = multiValuesAsString.substring(0,
+                                  multiValuesAsString.lastIndexOf(","));
         }
         return multiValuesAsString;
     }
@@ -305,6 +307,7 @@ public class DisplayConstraint
         String type = getPath().getType();
         return ("boolean".equals(type) || "Boolean".equals(type));
     }
+
     /**
      * Return true if editing an existing constraint and an attribute value or LOOKUP constraint
      * was selected.
@@ -530,13 +533,19 @@ public class DisplayConstraint
 
         // otherwise, we may have possible values from the ObjectStoreSummary
         List<Object> fieldValues = oss.getFieldValues(className, fieldName);
-
+        if (fieldValues != null) {
+            if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
+                return null;
+            }
+        }
         if (path.endIsAttribute()) {
             Class<?> type = path.getEndType();
             if (Date.class.equals(type)) {
                 List<Object> fieldValueFormatted = new ArrayList<Object>();
-                for (Object obj : fieldValues) {
-                    fieldValueFormatted.add(ConstraintValueParser.format((String) obj));
+                if (fieldValues != null) {
+                    for (Object obj : fieldValues) {
+                        fieldValueFormatted.add(ConstraintValueParser.format((String) obj));
+                    }
                 }
                 return fieldValueFormatted;
             }
@@ -595,6 +604,13 @@ public class DisplayConstraint
         return null;
     }
 
+    public String getExtraConnectFieldPath() {
+        if (isExtraConstraint()) {
+            return path.toStringNoConstraints() + "." + bagQueryConfig.getConnectField();
+        }
+        return null;
+    }
+
     /**
      * If a LOOKUP constraint and an extra constraint is available for this path, return a list of
      * the possible values for populating a dropdown.  Otherwise return null.
@@ -635,8 +651,8 @@ public class DisplayConstraint
     }
 
     /**
-     * Get a list of public and user bag names available and currentfor this path.  If none available return
-     * null.
+     * Get a list of public and user bag names available and currentfor this path.
+     * If none available return null.
      * @return a list of available bag names or null
      */
     public List<String> getBags() {

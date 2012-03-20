@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -44,9 +41,8 @@ public class AvailableListsService extends WebService
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        Collection<InterMineBag> lists = getLists(request);
+    protected void execute() throws Exception {
+        Collection<InterMineBag> lists = getLists();
         ListFormatter formatter = getFormatter();
         formatter.setSize(lists.size());
         output.setHeaderAttributes(getHeaderAttributes());
@@ -58,7 +54,11 @@ public class AvailableListsService extends WebService
         }
     }
 
-    protected Collection<InterMineBag> getLists(HttpServletRequest request) {
+    /**
+     * Get the lists for this request.
+     * @return The lists that are available.
+     */
+    protected Collection<InterMineBag> getLists() {
         ListManager listManager = new ListManager(request);
         return listManager.getLists();
     }
@@ -86,17 +86,18 @@ public class AvailableListsService extends WebService
 
     private ListFormatter getFormatter() {
         int format = getFormat();
+        boolean jsDates = Boolean.parseBoolean(request.getParameter("jsDates"));
         switch(format) {
             case (WebService.TSV_FORMAT): {
                 return new FlatListFormatter();
             }
             case (WebService.JSON_FORMAT): {
                 Profile profile = SessionMethods.getProfile(request.getSession());
-                return new JSONListFormatter(im, profile);
+                return new JSONListFormatter(im, profile, jsDates);
             }
             case (WebService.JSONP_FORMAT): {
                 Profile profile = SessionMethods.getProfile(request.getSession());
-                return new JSONListFormatter(im, profile);
+                return new JSONListFormatter(im, profile, jsDates);
             }
             default: {
                 throw new BadRequestException("Unknown request format");

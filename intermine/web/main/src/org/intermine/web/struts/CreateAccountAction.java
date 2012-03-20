@@ -42,6 +42,7 @@ public class CreateAccountAction extends LoginHandler
      * @return an ActionForward object defining where control goes next
      * @exception Exception if the application business logic throws an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
@@ -49,8 +50,7 @@ public class CreateAccountAction extends LoginHandler
         ProfileManager pm = im.getProfileManager();
         String username = ((CreateAccountForm) form).getUsername();
         String password = ((CreateAccountForm) form).getPassword();
-        pm.createProfile(new Profile(pm, username, null, password, new HashMap(), new HashMap(),
-                new HashMap(), null, true));
+        pm.createNewProfile(username, password);
         Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
         try {
             MailUtils.email(username, webProperties);
@@ -59,7 +59,8 @@ public class CreateAccountAction extends LoginHandler
                 && webProperties.getProperty("mail.mailing-list").length() > 0) {
                 MailUtils.subscribe(username, webProperties);
             }
-            SessionMethods.recordMessage("You have successfully created an account.", session);
+            SessionMethods.recordMessage("You have successfully created an account, and logged in.",
+                    session);
         } catch (Exception e) {
             SessionMethods.recordError("Failed to send confirmation email", session);
         }
@@ -76,6 +77,6 @@ public class CreateAccountAction extends LoginHandler
          * (NoSuchAlgorithmException e) { }
          */
         doLogin(request, username, password);
-        return mapping.findForward("mymine");
+        return new ActionForward("/begin.do");
     }
 }

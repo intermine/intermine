@@ -10,6 +10,7 @@ package org.intermine.web.logic.export.http;
  *
  */
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +35,12 @@ public interface TableHttpExporter
      * @param request The HTTP request we are processing
      * @param response The HTTP response we are creating
      * @param form the form containing the columns paths to export
+     * @param unionPathCollection a collection of Path combining old and new views from pathquery
+     * @param newPathCollection a collection of Path, from user columns paths
      */
     void export(PagedTable pt, HttpServletRequest request,
-                       HttpServletResponse response, TableExportForm form);
+            HttpServletResponse response, TableExportForm form,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection);
 
     /**
      * Check if this TableExporter can export the given PagedTable.

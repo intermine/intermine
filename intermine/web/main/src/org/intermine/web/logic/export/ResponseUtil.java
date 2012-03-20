@@ -18,9 +18,11 @@ import javax.servlet.http.HttpServletResponse;
  * util methods for setting headers controlling cache.
  * @author Jakub Kulaviak
  **/
-public class ResponseUtil
+public final class ResponseUtil
 {
-
+    private ResponseUtil() {
+        // do nothing
+    }
 
     /**
      * Sets response header and content type for tab separated
@@ -157,6 +159,7 @@ public class ResponseUtil
      */
     public static void setTabContentType(HttpServletResponse response) {
         response.setContentType("text/tab-separated-values");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -165,6 +168,7 @@ public class ResponseUtil
      */
     public static void setCSVContentType(HttpServletResponse response) {
         response.setContentType("text/comma-separated-values");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -173,6 +177,7 @@ public class ResponseUtil
      */
     public static void setPlainTextContentType(HttpServletResponse response) {
         response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -181,6 +186,7 @@ public class ResponseUtil
      */
     public static void setXMLContentType(HttpServletResponse  response) {
         response.setContentType("text/xml");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -189,6 +195,7 @@ public class ResponseUtil
      */
     public static void setHTMLContentType(HttpServletResponse response) {
         response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -223,6 +230,7 @@ public class ResponseUtil
      */
     public static void setJSONContentType(HttpServletResponse response) {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -231,6 +239,7 @@ public class ResponseUtil
      */
     public static void setJSONSchemaContentType(HttpServletResponse response) {
         response.setContentType("application/schema+json");
+        response.setCharacterEncoding("UTF-8");
     }
 
     /**
@@ -239,6 +248,7 @@ public class ResponseUtil
      */
     public static void setJSONPContentType(HttpServletResponse response) {
         response.setContentType("text/javascript");
+        response.setCharacterEncoding("UTF-8");
     }
 }
 

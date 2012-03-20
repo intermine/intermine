@@ -22,6 +22,7 @@ public class ListsServiceInput extends WebServiceInput
     private String publicId;
     private Integer mineId;
     private String type;
+    private String extraValue;
 
     /**
      * @return object type
@@ -68,4 +69,20 @@ public class ListsServiceInput extends WebServiceInput
     public void setMineId(Integer mineId) {
         this.mineId = mineId;
     }
+
+    /**
+     * An extra value, such as an organism, for use in lookup constraints.
+     * @param extra The extra value.
+     */
+    public void setExtraValue(String extra) {
+        this.extraValue = extra;
+    }
+
+    /**
+     * @return The extra value, such as an organism name.
+     */
+    public String getExtraValue() {
+        return this.extraValue;
+    }
 }
+

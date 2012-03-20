@@ -52,7 +52,10 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
 import org.intermine.util.StringUtil;
+import org.intermine.web.autocompletion.AutoCompleter;
 import org.intermine.web.logic.Constants;
+import org.intermine.web.logic.query.DisplayConstraint;
+import org.intermine.web.logic.query.DisplayConstraintFactory;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.template.result.TemplateResultLinkGenerator;
@@ -129,7 +132,6 @@ public class TemplateAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         TemplateManager templateManager = im.getTemplateManager();
 
-
         TemplateQuery template = templateManager.getTemplate(profile, templateName, scope);
         //If I'm browsing from the history or from saved query the template is in the session
         //with the values edited by the user, from this template we retrieve the original name
@@ -146,8 +148,22 @@ public class TemplateAction extends InterMineAction
                                            (String) session.getAttribute("templateName"), scope);
             }
         }
+        if (template == null) {
+            throw new RuntimeException("Could not find a template called "
+                    + session.getAttribute("templateName"));
+        }
         TemplateQuery populatedTemplate = TemplatePopulator.getPopulatedTemplate(
                 template, templateFormToTemplateValues(tf, template));
+
+        //displayconstraint list used to display  constraints edited by the user
+        DisplayConstraintFactory factory =  new DisplayConstraintFactory(im, null);
+        DisplayConstraint displayConstraint = null;
+        List<DisplayConstraint> displayConstraintList = new ArrayList<DisplayConstraint>();
+        for (PathConstraint pathConstraint : populatedTemplate.getEditableConstraints()) {
+            displayConstraint = factory.get(pathConstraint, profile, populatedTemplate);
+            displayConstraintList.add(displayConstraint);
+        }
+        session.setAttribute("dcl", displayConstraintList);
 
         String url = new URLGenerator(request).getPermanentBaseURL();
 

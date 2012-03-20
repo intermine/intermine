@@ -221,14 +221,18 @@ public class JSONResultsIterator implements Iterator<JSONObject>
      * @param jsonMap The map to set it onto,
      */
     protected void setOrCheckId(ResultElement cell, Map<String, Object> jsonMap) {
+        Integer cellId = cell.getId();
         if (jsonMap.containsKey(ID_KEY)) {
-            if (!jsonMap.get(ID_KEY).equals(cell.getId())) {
+            Object mapId = jsonMap.get(ID_KEY);
+            if (cellId != null && mapId != null && !jsonMap.get(ID_KEY).equals(cell.getId())) {
                 throw new JSONFormattingException(
                     "This result element (" + cell + ") does not belong on this map (" + jsonMap
                     + ") - objectIds don't match (" + jsonMap.get(ID_KEY) + " != " + cell.getId()
                     + ")");
             }
         } else {
+            // If these are simple objects, then just cross our fingers and pray...
+            // TODO: fix this abomination, and actually handle simple objects properly.
             jsonMap.put(ID_KEY, cell.getId());
         }
     }
@@ -330,7 +334,17 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         }
         boolean foundMap = false;
         for (Map<String, Object> obj : currentArray) {
-            foundMap = obj.get(ID_KEY).equals(cell.getId());
+            if (obj == null) {
+                throw new JSONFormattingException("null map found in current array");
+            }
+            if (cell == null) {
+                throw new JSONFormattingException("trying to add null cell to current array");
+            }
+            if (cell.getId() == null) {
+                foundMap = obj.get(ID_KEY) == null;
+            } else {
+                foundMap = obj.get(ID_KEY).equals(cell.getId());
+            }
             if (foundMap) {
                 currentMap = obj;
                 break;
@@ -363,7 +377,11 @@ public class JSONResultsIterator implements Iterator<JSONObject>
 
     private void addAttributeToCurrentNode(Path attributePath, ResultElement cell) {
         if (currentMap == null) {
-            setCurrentMapFromCurrentArray(cell);
+            try {
+                setCurrentMapFromCurrentArray(cell);
+            } catch (JSONFormattingException e) {
+                throw new JSONFormattingException("While adding processing " + attributePath, e);
+            }
         }
         addFieldToMap(cell, attributePath, currentMap);
     }

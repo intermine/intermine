@@ -95,8 +95,8 @@ public class CreateAccountForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
-                                 HttpServletRequest request) {
+    @Override
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ActionErrors errors = new ActionErrors();
@@ -124,8 +124,8 @@ public class CreateAccountForm extends ActionForm
     /**
      * {@inheritDoc}
      */
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    @Override
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         username = null;
         password = null;
         password2 = null;

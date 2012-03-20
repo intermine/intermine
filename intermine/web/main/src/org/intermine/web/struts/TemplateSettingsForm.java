@@ -32,6 +32,7 @@ public class TemplateSettingsForm extends ActionForm
     private String name = "";
     private String title = "";
     private String comment = "";
+    private String actionType = "";
 
     /**
      * Return the description.
@@ -121,4 +122,13 @@ public class TemplateSettingsForm extends ActionForm
         }
         return errors;
     }
+
+    public String getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(String actionType) {
+        this.actionType = actionType;
+    }
+
 }

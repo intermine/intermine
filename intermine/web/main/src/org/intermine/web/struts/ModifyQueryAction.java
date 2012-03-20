@@ -99,8 +99,7 @@ public class ModifyQueryAction extends InterMineAction
         }
 
         if ("history".equals(type)) {
-            return new ForwardParameters(mapping.findForward("mymine"))
-                .addParameter("subtab", "history").forward();
+            return mapping.findForward("history");
         }
         return new ForwardParameters(mapping.findForward("mymine"))
             .addParameter("subtab", "saved").forward();

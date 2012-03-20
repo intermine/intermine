@@ -37,16 +37,33 @@ public class QueryResultLinkGenerator extends LinkGeneratorBase
         return baseUrl + getLinkPath(queryXml, resultFormat);
     }
 
+    /**
+     * Get the link path for a query.
+     * @param queryXml The query represented as XML.
+     * @param resultFormat The desired result format.
+     * @return A string representing the path section of a webservice URL.
+     */
     public String getLinkPath(String queryXml, String resultFormat) {
-         return WebServiceConstants.MODULE_NAME + "/query/results"
+        return WebServiceConstants.MODULE_NAME + "/query/results"
             + "?" + QueryResultRequestParser.QUERY_PARAMETER + "=" + encode(queryXml) + "&"
             + WebServiceRequestParser.OUTPUT_PARAMETER + "=" + resultFormat;
     }
 
+    /**
+     * Get the link for a query that shows the results in a mine.
+     * @param baseUrl The base URL of the mine.
+     * @param queryXml The query represented as XML.
+     * @return A string representing a web-app URL.
+     */
     public String getMineResultsLink(String baseUrl, String queryXml) {
         return baseUrl + getMineResultsPath(queryXml);
     }
 
+    /**
+     * Get the link path for a query that shows the results in a mine.
+     * @param queryXml The query represented as XML.
+     * @return A string representing the path section of a web-app URL.
+     */
     public String getMineResultsPath(String queryXml) {
         String ret = "/loadQuery.do?";
         ret += "skipBuilder=true";

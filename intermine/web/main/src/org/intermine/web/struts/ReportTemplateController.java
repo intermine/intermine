@@ -32,6 +32,7 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Controller for an inline table created by running a template on a report page.
@@ -65,7 +66,7 @@ public class ReportTemplateController extends TilesAction
         try {
             if (reportObject != null) {
                 InterMineObject obj = reportObject.getObject();
-                template = template.removeDirectAttributesFromView();
+                template = TemplateHelper.removeDirectAttributesFromView(template);
                 populatedTemplate = TemplatePopulator.populateTemplateWithObject(template, obj);
             } else if (interMineBag != null) {
                 populatedTemplate = TemplatePopulator.populateTemplateWithBag(template,

@@ -15,8 +15,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +36,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.OrderElement;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
@@ -72,8 +77,20 @@ public class TableExportAction extends InterMineAction
             HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         TableExportForm tef = (TableExportForm) form;
+
+        if (tef.getPathsString().trim().isEmpty()) {
+            response.setContentType("text/plain");
+            OutputStream out = response.getOutputStream();
+            PrintWriter writer = new PrintWriter(out);
+            writer.println(ERROR_MSG + " No columns added.");
+            writer.flush();
+            writer.close();
+            return null;
+        }
+
         String type = tef.getType();
         String table = tef.getTable();
+        String pathsString = tef.getPathsString();
         PagedTable pt = null;
         try {
             WebConfig webConfig = SessionMethods.getWebConfig(request);
@@ -83,8 +100,38 @@ public class TableExportAction extends InterMineAction
 
             checkTable(pt);
 
-            PagedTable newPt = reorderPagedTable(pt, tef.getPathsString(), request);
-            exporter.export(newPt, request, response, tef);
+            // Create a union of old view (in pathquery) and new view (user selection)
+            PathQuery pathQuery = pt.getPathQuery();
+            List<String> oldPathList = pathQuery.getView();
+            List<String> newPathList;
+            try {
+                if (!pathsString.contains("[]=")) { // BED format case
+                    newPathList = Arrays.asList(pathsString.split(" "));
+                } else {
+                    newPathList = new ArrayList<String>(StringUtil
+                            .serializedSortOrderToMap(pathsString).keySet());
+                }
+            } catch (RuntimeException e) {
+                throw new RuntimeException("Error while converting " + pathsString, e);
+            }
+
+            Set<String> unionPathSet = new HashSet<String>();
+            unionPathSet.addAll(oldPathList);
+            unionPathSet.addAll(newPathList);
+
+            // make a collection of Path
+            List<Path> newPatCollection = new ArrayList<Path>();
+            for (String pathString : newPathList) {
+                newPatCollection.add(pathQuery.makePath(pathString));
+            }
+
+            List<Path> unionPathCollection = new ArrayList<Path>();
+            for (String pathString : unionPathSet) {
+                unionPathCollection.add(pathQuery.makePath(pathString));
+            }
+
+            PagedTable newPt = reorderPagedTable(pathQuery, unionPathSet, request);
+            exporter.export(newPt, request, response, tef, unionPathCollection, newPatCollection);
 
             // If null is returned then no forwarding is performed and
             // to the output is not flushed any jsp output, so user
@@ -97,7 +144,7 @@ public class TableExportAction extends InterMineAction
 
     private void checkTable(PagedTable pt) {
         if (pt == null) {
-            throw new ExportException("Export failed.");
+            throw new ExportException("Export failed: result is null.");
         }
 
         if (pt.getExactSize() > pt.getMaxRetrievableIndex()) {
@@ -110,11 +157,10 @@ public class TableExportAction extends InterMineAction
     /**
      * Copy the old PagedTable and make one with the new paths
      */
-    private PagedTable reorderPagedTable(PagedTable pt, String pathsString,
+    private PagedTable reorderPagedTable(PathQuery pathQuery, Collection<String> newViews,
             HttpServletRequest request) throws ObjectStoreException {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        PathQuery pathQuery = pt.getWebTable().getPathQuery();
         PathQuery newPathQuery = new PathQuery(pathQuery);
         if (pathQuery instanceof TemplateQuery) {
             TemplateQuery templateQuery = (TemplateQuery) pathQuery.clone();
@@ -128,16 +174,8 @@ public class TableExportAction extends InterMineAction
             }
         }
         newPathQuery.clearView();
-        try {
-            if (!pathsString.contains("[]=")) { // BED format case
-                newPathQuery.addViews(Arrays.asList(pathsString.split(" ")));
-            } else {
-                newPathQuery.addViews(new ArrayList<String>(StringUtil
-                        .serializedSortOrderToMap(pathsString).keySet()));
-            }
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Error while converting " + pathsString, e);
-        }
+        newPathQuery.addViews(newViews);
+
         // all order by paths should also be in the view, remove any that now aren't
         for (OrderElement orderElement : newPathQuery.getOrderBy()) {
             if (!newPathQuery.getView().contains(orderElement.getOrderPath())) {
@@ -146,17 +184,17 @@ public class TableExportAction extends InterMineAction
         }
         for (Entry<String, Boolean> outerEntry : newPathQuery.getOuterMap().entrySet()) {
             if (outerEntry.getValue().equals(Boolean.TRUE)) {
-               String joinPath = outerEntry.getKey();
-               boolean outherJoinStatusRelevant = false;
-               for (String viewPath : newPathQuery.getView()) {
-                   if (viewPath.startsWith(joinPath)) {
-                       outherJoinStatusRelevant = true;
-                       break;
-                   }
-               }
-               if (!outherJoinStatusRelevant) {
-                   newPathQuery.setOuterJoinStatus(joinPath, null);
-               }
+                String joinPath = outerEntry.getKey();
+                boolean outherJoinStatusRelevant = false;
+                for (String viewPath : newPathQuery.getView()) {
+                    if (viewPath.startsWith(joinPath)) {
+                        outherJoinStatusRelevant = true;
+                        break;
+                    }
+                }
+                if (!outherJoinStatusRelevant) {
+                    newPathQuery.setOuterJoinStatus(joinPath, null);
+                }
             }
         }
         Profile profile = SessionMethods.getProfile(session);

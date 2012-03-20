@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -37,7 +36,6 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -70,10 +68,11 @@ public class WebConfig
      * @return a WebConfig object
      * @throws SAXException if there is an error in the XML file
      * @throws IOException if there is an error reading the XML file
+     * @throws FileNotFoundException if the XML file doesn't exist
      * @throws ClassNotFoundException if a class is mentioned in the XML that isn't in the model
      */
     public static WebConfig parse(final ServletContext context, final Model model)
-        throws IOException, SAXException, ClassNotFoundException {
+        throws IOException, FileNotFoundException, SAXException, ClassNotFoundException {
 
         BasicConfigurator.configure();
 
@@ -125,7 +124,8 @@ public class WebConfig
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "fieldExpr", "fieldExpr");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "name", "name");
         digester.addSetProperties("webconfig/class/fields/fieldconfig", "displayer", "displayer");
-        digester.addSetProperties("webconfig/class/fields/fieldconfig", "showInListAnalysisPreviewTable", "showInListAnalysisPreviewTable");
+        digester.addSetProperties("webconfig/class/fields/fieldconfig",
+                "showInListAnalysisPreviewTable", "showInListAnalysisPreviewTable");
         digester.addSetNext("webconfig/class/fields/fieldconfig", "addFieldConfig");
 
         digester.addObjectCreate("webconfig/class/longdisplayers/displayer", Displayer.class);
@@ -425,7 +425,13 @@ public class WebConfig
      * @param type the Type to add
      */
     public void addType(final Type type) {
-        types.put(type.getClassName(), type);
+        String typeString = type.getClassName();
+        if (types.containsKey(typeString)) {
+            throw new IllegalArgumentException("Type " + typeString
+                    + " defined more that once in webconfig-model.xml");
+        } else {
+            types.put(type.getClassName(), type);
+        }
     }
 
     /**
@@ -596,30 +602,18 @@ public class WebConfig
                     // before, see setTitles() in HeaderConfig
                     final HeaderConfigTitle hc = superClassType.getHeaderConfigTitle();
                     if (hc != null) {
-
                         // set the HeaderConfig titles as HeaderConfig for thisClassType might have
                         //  been configured
-                        final HashMap<String, LinkedHashMap<String, Object>> titles
-                            = hc.getTitles();
+                        final HashMap<String, List<HeaderConfigTitle.TitlePart>> titles =
+                            hc.getTitles();
                         if (titles != null) {
-
                             // new childish HeaderConfig
-                            final HeaderConfigTitle newHC = thisClassType.getHeaderConfigTitle();
-                            if (newHC != null) {
+                            final HeaderConfigTitle subclassHc =
+                                thisClassType.getHeaderConfigTitle();
+                            if (subclassHc != null) {
                                 // type A behavior: inherit titles from the parent and append
-                                if (newHC.getAppendConfig()) {
-                                    // copy over main titles
-                                    if (titles.get("main") != null) {
-                                        for (final Object title : titles.get("main").keySet()) {
-                                            newHC.setMainTitles((String) title);
-                                        }
-                                    }
-                                    // copy over sub titles
-                                    if (titles.get("sub") != null) {
-                                        for (final Object title : titles.get("sub").keySet()) {
-                                            newHC.setSubTitles((String) title);
-                                        }
-                                    }
+                                if (subclassHc.getAppendConfig()) {
+                                    subclassHc.addTitleParts(hc.getTitles());
                                 }
                             } else {
                                 // type B behavior: inherit from parent if we are null
@@ -627,8 +621,6 @@ public class WebConfig
                             }
                         }
                     }
-
-
                     if (thisClassType.getFieldConfigs().size() == 0) {
                         // copy any FieldConfigs from the super class
                         for (final FieldConfig fc : superClassType.getFieldConfigs()) {
@@ -662,9 +654,9 @@ public class WebConfig
                         thisClassType.setTableDisplayer(superClassType.getTableDisplayer());
                     }
 
-                    if (//thisClassType.getWidgets().size() == 0 &&
-                                    superClassType.getWidgets() != null
-                                    && superClassType.getWidgets().size() > 0) {
+                    if (thisClassType.getWidgets().size() == 0
+                            && superClassType.getWidgets() != null
+                            && superClassType.getWidgets().size() > 0) {
                         @SuppressWarnings("rawtypes")
                         final Iterator widgetIter = superClassType.getWidgets().iterator();
 

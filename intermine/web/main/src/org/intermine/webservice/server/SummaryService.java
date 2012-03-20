@@ -1,16 +1,20 @@
-/**
+package org.intermine.webservice.server;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-package org.intermine.webservice.server;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.Model;
@@ -44,9 +48,9 @@ public class SummaryService extends WebService
      * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
 
+        Boolean refsAllowed = !Boolean.valueOf(request.getParameter("norefs"));
         Map<String, List<String>> summaryFieldsForCd = new HashMap<String, List<String>>();
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model m = im.getModel();
@@ -56,8 +60,9 @@ public class SummaryService extends WebService
             if (!"org.intermine.model.InterMineObject".equals(cd.getName())) {
                 for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
                     Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
-                    if (p.endIsAttribute() && fc.getDisplayer() == null && fc.getShowInSummary()) {
-                       summaryFields.add(p.getNoConstraintsString());
+                    if (p.endIsAttribute() && (!p.containsReferences() || refsAllowed)
+                            && fc.getShowInSummary()) {
+                        summaryFields.add(p.getNoConstraintsString());
                     }
                 }
                 summaryFieldsForCd.put(cd.getUnqualifiedName(), summaryFields);
@@ -68,7 +73,7 @@ public class SummaryService extends WebService
         output.addResultItem(Collections.singletonList(jo.toString()));
     }
 
-    private Map<String, Object> getHeaderAttributes() {
+    protected Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
             attributes.put(JSONFormatter.KEY_INTRO, "\"classes\":");

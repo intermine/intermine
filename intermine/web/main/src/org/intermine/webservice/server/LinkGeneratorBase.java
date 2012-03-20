@@ -18,7 +18,7 @@ import java.net.URLEncoder;
  * @author Jakub Kulaviak
  *
  */
-public class LinkGeneratorBase
+public abstract class LinkGeneratorBase
 {
 
     /**

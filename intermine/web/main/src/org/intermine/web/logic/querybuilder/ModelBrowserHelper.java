@@ -27,6 +27,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
@@ -59,14 +60,18 @@ public final class ModelBrowserHelper
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
+     * @param oss to determine which collections/references/attributes are empty
      * @throws PathException if the query is not valid
      */
     public static Collection<MetadataNode> makeSelectedNodes(String stringPath, String prefix,
             Model model, boolean isSuperUser, PathQuery query, WebConfig webConfig,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile)
+            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
+            ObjectStoreSummary oss)
         throws PathException {
+
+        // Gene.crossReferences, ...
         Collection<MetadataNode> nodes = makeNodes(stringPath, model, isSuperUser,
-                query.getSubclasses(), query, classKeys, bagManager, profile);
+                query, webConfig, classKeys, bagManager, profile, oss);
         List<String> view = query.getView();
         for (MetadataNode node : nodes) {
             // Update view nodes
@@ -122,10 +127,22 @@ public final class ModelBrowserHelper
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
+     * @param oss to determine which nodes are null
+     * @throws PathException if the query is invalid.
      */
     public static Collection<MetadataNode> makeNodes(String path, Model model, boolean isSuperUser,
-            Map<String, String> subclasses, PathQuery query,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile) {
+            PathQuery query, WebConfig webConfig, Map<String,
+            List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
+            ObjectStoreSummary oss)
+        throws PathException {
+
+        Map<String, String> subclasses;
+        if (query.isEmpty()) {
+            subclasses = Collections.EMPTY_MAP;
+        } else {
+            subclasses = query.getSubclasses();
+        }
+
         String className, subPath;
         if (path.indexOf(".") == -1) {
             className = path;
@@ -134,12 +151,14 @@ public final class ModelBrowserHelper
             className = path.substring(0, path.indexOf("."));
             subPath = path.substring(path.indexOf(".") + 1);
         }
+
         Map<String, MetadataNode> nodes = new LinkedHashMap<String, MetadataNode>();
         List<String> empty = Collections.emptyList();
         nodes.put(className, new MetadataNode(className, empty, query, classKeys, bagManager,
                 profile));
         makeNodes(model.getClassDescriptorByName(className), subPath, className, nodes,
-                isSuperUser, empty, subclasses, null, query, classKeys, bagManager, profile);
+                isSuperUser, empty, subclasses, null, query, classKeys, bagManager,
+                profile, oss, webConfig);
         return nodes.values();
     }
 
@@ -160,11 +179,18 @@ public final class ModelBrowserHelper
      * @param classKeys a Map of class keys, for working out if a path has any
      * @param bagManager a BagManager object, for working out if it is possible to constrain by bag
      * @param profile the profile of the current user, for fetching bags from the BagManager
+     * @param oss to determine which nodes are null
      */
     protected static void makeNodes(ClassDescriptor cld, String path, String currentPath,
             Map<String, MetadataNode> nodes, boolean isSuperUser, List<String> structure,
             Map<String, String> subclasses, String reverseFieldName, PathQuery query,
-            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile) {
+            Map<String, List<FieldDescriptor>> classKeys, BagManager bagManager, Profile profile,
+            ObjectStoreSummary oss, WebConfig webConfig) {
+
+        // null atrtributes, references and collections
+        Set<String> nullAttr = oss.getNullAttributes(cld.getName());
+        Set<String> nullRefsCols = oss.getNullReferencesAndCollections(cld.getName());
+
         List<FieldDescriptor> sortedNodes = new ArrayList<FieldDescriptor>();
 
         // compare FieldDescriptors by name
@@ -180,13 +206,16 @@ public final class ModelBrowserHelper
         Set<FieldDescriptor> referenceAndCollectionNodes = new TreeSet<FieldDescriptor>(comparator);
         for (Iterator<FieldDescriptor> i = cld.getAllFieldDescriptors().iterator(); i.hasNext();) {
             FieldDescriptor fd = i.next();
-            if (!fd.isReference() && !fd.isCollection()) {
-                attributeNodes.add(fd);
-            } else {
-                if (fd.getName().equals(reverseFieldName)) {
-                    sortedNodes.add(fd);
+            FieldConfig fc = FieldConfigHelper.getFieldConfig(webConfig, fd);
+            if (fc == null || !fc.isHideInQueryBuilder()) {
+                if (!fd.isReference() && !fd.isCollection()) {
+                    attributeNodes.add(fd);
                 } else {
-                    referenceAndCollectionNodes.add(fd);
+                    if (fd.getName().equals(reverseFieldName)) {
+                        sortedNodes.add(fd);
+                    } else {
+                        referenceAndCollectionNodes.add(fd);
+                    }
                 }
             }
         }
@@ -234,8 +263,12 @@ public final class ModelBrowserHelper
                 newStructure.add("ell");
             }
             MetadataNode parent = nodes.get(currentPath);
+
+            // is the field null/empty
+            Boolean isNull = (nullAttr.contains(fieldName) || nullRefsCols.contains(fieldName));
+
             MetadataNode node = new MetadataNode(parent, fieldName, button, newStructure, query,
-                    classKeys, bagManager, profile);
+                    classKeys, bagManager, profile, isNull);
             node.setModel(cld.getModel());
             String subclass = subclasses.get(node.getPathString());
             if (subclass != null) {
@@ -261,7 +294,7 @@ public final class ModelBrowserHelper
                     reverse = ((ReferenceDescriptor) fd).getReverseReferenceFieldName();
                 }
                 makeNodes(refCld, tail, currentPath + "." + head, nodes, isSuperUser, newStructure,
-                        subclasses, reverse, query, classKeys, bagManager, profile);
+                        subclasses, reverse, query, classKeys, bagManager, profile, oss, webConfig);
             }
         }
     }

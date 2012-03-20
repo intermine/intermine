@@ -16,7 +16,7 @@ import org.intermine.webservice.server.output.Output;
  * HTTP status code dictionary.
  * @author Jakub Kulaviak
  **/
-public class StatusDictionary
+public abstract class StatusDictionary
 {
     /**
      * @param statusCode status code
@@ -24,11 +24,11 @@ public class StatusDictionary
      */
     public static String getDescription(int statusCode) {
         String ret;
-    	switch (statusCode) {
+        switch (statusCode) {
             case Output.SC_BAD_REQUEST:
                 ret = "Bad request. There was a problem with your request parameters:"; break;
             case Output.SC_FORBIDDEN:
-                ret = "Forbidden. You do not have access to some part of this query - please log in."; break;
+                ret = "Forbidden."; break;
             case Output.SC_INTERNAL_SERVER_ERROR:
                 ret = "Internal server error."; break;
             case Output.SC_NO_CONTENT:
@@ -40,6 +40,6 @@ public class StatusDictionary
             default:
                 ret = "Unknown Status";
         }
-    	return statusCode + " " + ret;
+        return statusCode + " " + ret;
     }
 }

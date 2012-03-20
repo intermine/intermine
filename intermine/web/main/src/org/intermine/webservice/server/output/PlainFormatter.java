@@ -1,9 +1,29 @@
 package org.intermine.webservice.server.output;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.List;
 import java.util.Map;
 
-public class PlainFormatter extends Formatter {
+/**
+ * Simplest possible formatting. Output rows are just joined with commas.
+ * @author Alex Kalderimis
+ *
+ */
+public class PlainFormatter extends Formatter
+{
+    /**
+     * The string that begins an error line.
+     */
+    public static final String ERROR_INTRO = "[ERROR] ";
 
     @Override
     public String formatHeader(Map<String, Object> attributes) {
@@ -26,7 +46,11 @@ public class PlainFormatter extends Formatter {
 
     @Override
     public String formatFooter(String errorMessage, int errorCode) {
-        return "";
+        StringBuilder sb = new StringBuilder();
+        if (errorCode != Output.SC_OK) {
+            sb.append(ERROR_INTRO).append(errorCode).append(" " + errorMessage);
+        }
+        return sb.toString();
     }
 
 

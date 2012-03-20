@@ -25,14 +25,6 @@ public class AvailableWidgetsServlet extends HttpServlet {
         runService(req, resp);
     }
 
-    /**
-     * {@inheritDoc}}
-     */
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
-        runService(req, resp);
-    }
-
     private void runService(HttpServletRequest request, HttpServletResponse response) {
         // To avoid servlet caching always new service is created -->
         // Service has always new data and fields in executor are initialized

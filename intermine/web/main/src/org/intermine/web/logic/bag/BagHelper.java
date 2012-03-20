@@ -16,8 +16,9 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.MainHelper;
 import org.intermine.objectstore.ObjectStore;
@@ -73,6 +74,7 @@ public final class BagHelper
     public static InterMineBag createBagFromPathQuery(PathQuery pathQuery, String bagName,
             String bagDescription, String pathString, Profile profile, InterMineAPI im)
         throws ObjectStoreException {
+        pathQuery = pathQuery.clone(); // Since we may be changing its view.
         String bagType = pathString;
         try {
             Path idPath = pathQuery.makePath(pathQuery.getView().get(0));
@@ -95,9 +97,14 @@ public final class BagHelper
         Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null,
                 im.getBagQueryRunner(), null);
 
-        InterMineBag bag = new InterMineBag(bagName, bagType, bagDescription, new Date(),
+        InterMineBag bag = null;
+        try {
+            bag = new InterMineBag(bagName, bagType, bagDescription, new Date(),
                            BagState.CURRENT, os, profile.getUserId(),
                            profile.getProfileManager().getProfileObjectStoreWriter());
+        } catch (UnknownBagTypeException e) {
+            throw new RuntimeException("Bag type determined from query is invalid", e);
+        }
         osw.addToBagFromQuery(bag.getOsb(), q);
         profile.saveBag(bag.getName(), bag);
         return bag;
@@ -112,8 +119,8 @@ public final class BagHelper
      * @return the string of comma separated identifiers
      *    */
 
-    public static String getIdList(InterMineBag bag, ObjectStore os, String dbName, String attrName)
-    {
+    public static String getAttributesFromBag(InterMineBag bag, ObjectStore os, String dbName,
+            String attrName) {
         Results results;
 
         Query q = new Query();
@@ -143,12 +150,6 @@ public final class BagHelper
 
         results = os.executeSingleton(q, 10000, true, true, true);
 
-        String delim = null;
-        if (dbName.equalsIgnoreCase("flybase")) {
-            delim = "|";
-        } else if (StringUtils.isEmpty(delim)) {
-            delim = ",";
-        }
-        return StringUtil.join(results, delim);
+        return StringUtil.join(results, ",");
     }
 }

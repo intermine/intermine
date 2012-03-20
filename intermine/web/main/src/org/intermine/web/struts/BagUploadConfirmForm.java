@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
 
 /**
  * Form for the bagUploadConfirm page.
@@ -120,4 +123,15 @@ public class BagUploadConfirmForm extends ActionForm
     public void setExtraFieldValue(String extraFieldValue) {
         this.extraFieldValue = extraFieldValue;
     }
+
+    /**
+     * Reset the form to the initial state
+    *
+    * @param mapping the mapping
+    * @param request the request
+    */
+   @Override
+   public void reset(ActionMapping mapping, HttpServletRequest request) {
+       initialise();
+   }
 }

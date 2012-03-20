@@ -1,7 +1,7 @@
 package org.intermine.web.logic.bag;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,13 +12,13 @@ package org.intermine.web.logic.bag;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.results.WebResults;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.config.WebConfig;
 
 /**
@@ -40,21 +40,6 @@ public abstract class BagConverter
         this.im = im;
         this.webConfig = webConfig;
     }
-
-    /**
-     * Returns a List<ResultRows> of converted objects
-     * @param profile user's profile
-     * @param parameters the parameters
-     * @param fromList the list to convert
-     * @param type the type to convert to
-     * @return a List of ResultRow elements
-     * @throws ClassNotFoundException  class not found
-     * @throws ObjectStoreException objectstore
-     * @throws PathException bad path
-     */
-    public abstract WebResults getConvertedObjects(Profile profile, List<Integer> fromList,
-            String type, String parameters)
-        throws ClassNotFoundException, ObjectStoreException, PathException;
 
     /**
      * Get the ActionMessage to display in the webapp
@@ -80,4 +65,14 @@ public abstract class BagConverter
     */
     public abstract List<Integer> getConvertedObjectIds(Profile profile, String bagType,
             List<Integer> bagList, String constraintValue);
+
+    /**
+    * Method to return list of values and the counts of converted objects for that object
+    * used for display on list analysis page.
+    *
+    * @param bag intermine bag
+    * @param profile user profile
+    * @return map of values to counts
+    */
+    public abstract Map<String, String> getCounts(Profile profile, InterMineBag bag);
 }

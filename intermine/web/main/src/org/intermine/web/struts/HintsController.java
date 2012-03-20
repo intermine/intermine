@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.web.logic.help.HintManager;
@@ -60,11 +61,15 @@ public class HintsController extends TilesAction
 
         String pageName = (String) context.getAttribute("pageName");
 
-        HintManager hintManager = HintManager.getInstance(webProperties);
-
-        String hint = hintManager.getHintForPage(pageName, webState);
-        if (hint != null) {
-            request.setAttribute("hint", hint);
+        ActionMessages actionErrors = getErrors(request);
+        ActionMessages actionMessages = getMessages(request);
+        // Ticket #2449 - hide hints if messages are on a page
+        if (actionErrors.isEmpty() && actionMessages.isEmpty()) {
+	        HintManager hintManager = HintManager.getInstance(webProperties);
+	        String hint = hintManager.getHintForPage(pageName, webState);
+	        if (hint != null) {
+	            request.setAttribute("hint", hint);
+	        }
         }
 
         return null;

@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,12 +30,13 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.search.Scope;
-import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintBag;
-import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplateQuery;
@@ -182,9 +184,13 @@ public class TemplateController extends TilesAction
             }
             index++;
         }
-        verifyDisplayExtraValue(displayConstraintList);
+        verifyDisplayExtraValue(displayConstraintList, template);
         request.setAttribute("dcl", displayConstraintList);
         request.setAttribute("templateQuery", displayTemplate);
+        String constraintLogic = template.getConstraintLogic().toLowerCase();
+        if (constraintLogic.contains("or") || constraintLogic.contains("not")) {
+            request.setAttribute("displayLogicExpression", "true");
+        }
         return null;
     }
 
@@ -205,20 +211,31 @@ public class TemplateController extends TilesAction
         return factory;
     }
 
-    private void verifyDisplayExtraValue(List<DisplayConstraint> displayConstraintList) {
-       List<DisplayConstraint> dcl = new ArrayList<DisplayConstraint>(displayConstraintList);
-       ClassDescriptor cd = null;
-       for (DisplayConstraint dc : displayConstraintList) {
-           if (dc.isExtraConstraint()) {
-               String extraFieldClass = dc.getExtraValueFieldClass();
-               for (DisplayConstraint displayConstraint : dcl) {
-                   cd = displayConstraint.getPath().getPath().getLastClassDescriptor();
-                   if (cd != null && cd.getName().equals(extraFieldClass)) {
-                       dc.setShowExtraConstraint(false);
-                       break;
-                   }
-               }
-           }
-       }
+    private void verifyDisplayExtraValue(List<DisplayConstraint> displayConstraintList,
+        TemplateQuery template) {
+        Set<PathConstraint> pathConstraints = template.getConstraints().keySet();
+        Model model = template.getModel();
+        for (DisplayConstraint dc : displayConstraintList) {
+            if (dc.isExtraConstraint()) {
+                String mainPath = dc.getPath().getPath().toStringNoConstraints();
+                String connectField = dc.getExtraConnectFieldPath();
+                for (PathConstraint pathConstraint : pathConstraints) {
+                    String  path = pathConstraint.getPath();
+                    if (!mainPath.equals(path)) {
+                        try {
+                            if (path.equals(connectField)
+                                || (path.startsWith(connectField)
+                                    && connectField.split("\\.").length
+                                        == path.split("\\.").length - 1)
+                                    && (new Path(model, path)).endIsAttribute()) {
+                                dc.setShowExtraConstraint(false);
+                            }
+                        } catch (PathException pe) {
+                            //nothing
+                        }
+                    }
+                }
+            }
+        }
     }
 }

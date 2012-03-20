@@ -10,7 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,14 +21,16 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.WebResults;
-import org.intermine.metadata.Model;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.api.util.NameUtil;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
@@ -53,10 +56,9 @@ public class ModifyBagDetailsAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionForward execute(ActionMapping mapping,
-                                 ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    @Override
+    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                 HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -108,33 +110,28 @@ public class ModifyBagDetailsAction extends InterMineAction
         // orthologues form
         } else if (request.getParameter("convertToThing") != null) {
             BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-            Map<String, String []> additionalConverters
+            Set<AdditionalConverter> additionalConverters
                 = bagQueryConfig.getAdditionalConverters(imBag.getType());
-            if (additionalConverters != null) {
-                for (String converterClassName : additionalConverters.keySet()) {
+            if (additionalConverters != null && !additionalConverters.isEmpty()) {
+                for (AdditionalConverter additionalConverter : additionalConverters) {
                     BagConverter bagConverter = PortalHelper.getBagConverter(im,
-                            SessionMethods.getWebConfig(request), converterClassName);
-                    WebResults result = bagConverter.getConvertedObjects(profile,
-                            imBag.getContentsAsIds(), imBag.getType(), mbdf.getExtraFieldValue());
-                    PagedTable pc = new PagedTable(result);
-                    String identifier = "col" + index++;
-                    SessionMethods.setResultsTable(session, identifier, pc);
-                    String trail = "|bag." + imBag.getName();
-                    SessionMethods.removeQuery(session);
-                    return new ForwardParameters(mapping.findForward("results"))
-                        .addParameter("table", identifier).addParameter("trail", trail).forward();
+                            SessionMethods.getWebConfig(request),
+                            additionalConverter.getClassName());
+                    List<Integer> converted = bagConverter.getConvertedObjectIds(profile,
+                            imBag.getType(), imBag.getContentsAsIds(), mbdf.getExtraFieldValue());
+
+                    if (converted.size() == 1) {
+                        return goToReport(mapping, converted.get(0).toString());
+                    }
+
+                    String bagName = NameUtil.generateNewName(profile.getSavedBags().keySet(),
+                            mbdf.getExtraFieldValue() + " orthologues of " + imBag.getName());
+
+                    InterMineBag newBag = profile.createBag(bagName, imBag.getType(), "",
+                            im.getClassKeys());
+                    return createBagAndGoToBagDetails(mapping, newBag, converted);
                 }
             }
-        // "use in bag" link
-        } else if (request.getParameter("useBag") != null) {
-            PagedTable pc = SessionMethods.getResultsTable(session, bagIdentifier);
-            PathQuery pathQuery = pc.getWebTable().getPathQuery().clone();
-            SessionMethods.setQuery(session, pathQuery);
-            session.setAttribute("path", imBag.getType());
-            session.setAttribute("prefix", imBag.getType());
-            String msg = "You can now create a query using your list " + imBag.getName();
-            SessionMethods.recordMessage(msg, session);
-            return mapping.findForward("query");
         // convert links
         } else if (request.getParameter("convert") != null
                         && request.getParameter("bagName") != null) {
@@ -158,5 +155,17 @@ public class ModifyBagDetailsAction extends InterMineAction
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();
+    }
+
+    private ActionForward createBagAndGoToBagDetails(ActionMapping mapping, InterMineBag imBag,
+            List<Integer> bagList) throws ObjectStoreException {
+        imBag.addIdsToBag(bagList, imBag.getType());
+        return new ForwardParameters(mapping.findForward("bagDetails"))
+            .addParameter("bagName", imBag.getName()).forward();
+    }
+
+    private ActionForward goToReport(ActionMapping mapping, String id) {
+        return new ForwardParameters(mapping.findForward("report"))
+            .addParameter("id", id).forward();
     }
 }

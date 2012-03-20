@@ -1,0 +1,4 @@
+<query name="" model="genomic" view="Gene.pathways.id Gene.pathways.name"
+       sortOrder="Gene.pathways.name asc">
+       <constraint path="Gene" op="LOOKUP" value="%s"/>
+</query>
