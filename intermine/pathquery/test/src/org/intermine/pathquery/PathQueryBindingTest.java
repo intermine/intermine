@@ -49,7 +49,7 @@ public class PathQueryBindingTest extends TestCase
         Model model = Model.getInstanceByName("testmodel");
         // allCompanies
         PathQuery allCompanies = new PathQuery(model);
-        allCompanies.addView("Company");
+        allCompanies.addView("Company.name");
         expected.put("allCompanies", allCompanies);
 
         // employeesWithOldManagers
@@ -92,10 +92,6 @@ public class PathQueryBindingTest extends TestCase
         assertEquals(expected.get("employeesWithOldManagers").toString(), savedQueries.get("employeesWithOldManagers").toString());
     }
 
-    // this will fail to validate - attributes cannot be in bags
-    public void testVatNumberInBag() throws Exception {
-        //assertEquals(expected.get("vatNumberInBag"), savedQueries.get("vatNumberInBag"));
-    }
 
     public void testCompanyNumberInBag() throws Exception {
         assertEquals(expected.get("companyInBag").toString(), savedQueries.get("companyInBag").toString());
@@ -103,15 +99,6 @@ public class PathQueryBindingTest extends TestCase
 
     public void testQueryWithConstraint() throws Exception {
         assertEquals(expected.get("queryWithConstraint").toString(), savedQueries.get("queryWithConstraint").toString());
-    }
-
-    // this won't move bag constraint to parent, will not produce a valid query
-    public void employeeEndInBag() throws Exception {
-        /*assertEquals(expected.get("employeeEndInBag"), savedQueries.get("employeeEndInBag"));
-        System.out.println(((PathQuery) savedQueries.get("employeeEndInBag")));
-        List<Throwable> problems = Arrays.asList(((OldPathQuery) expected.get("employeeEndInBag")).getProblems());
-        assertEquals(problems,
-                ((OldPathQuery) savedQueries.get("employeeEndInBag")));*/
     }
 
     public void testMarshallings() throws Exception {
