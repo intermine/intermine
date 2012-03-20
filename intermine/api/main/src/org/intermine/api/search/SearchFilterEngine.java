@@ -57,6 +57,7 @@ public class SearchFilterEngine
     public <W extends WebSearchable> Map<String, W> filterByTags(
             Map<String, W> webSearchables, List<String> tagNames, String tagType, String userName,
             TagManager tagManager, boolean showHidden) {
+
         Map<String, W> returnMap = new LinkedHashMap<String, W>(webSearchables);
 
         // prime the cache

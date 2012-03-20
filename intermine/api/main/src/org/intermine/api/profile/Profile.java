@@ -17,13 +17,18 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.search.Scope;
+import org.intermine.api.search.CreationEvent;
+import org.intermine.api.search.DeletionEvent;
 import org.intermine.api.search.SearchRepository;
+import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
@@ -37,22 +42,28 @@ import org.intermine.objectstore.ObjectStoreWriter;
 /**
  * Class to represent a user of the webapp
  *
+ * The profile is responsible for informing its search repository of all web-searchable objects
+ * created or deleted on its watch.
+ *
  * @author Mark Woodbridge
  * @author Thomas Riley
  */
 public class Profile
 {
+    private static final Logger LOG = Logger.getLogger(Profile.class);
     protected ProfileManager manager;
     protected String username;
     protected Integer userId;
     protected String password;
+    protected boolean isSuperUser;
     protected Map<String, SavedQuery> savedQueries = new TreeMap<String, SavedQuery>();
-    protected Map<String, InterMineBag> savedBags = new TreeMap<String, InterMineBag>();
+    protected Map<String, InterMineBag> savedBags
+        = Collections.synchronizedMap(new TreeMap<String, InterMineBag>());
     protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
-    protected Map<String, InterMineBag> savedInvalidBags = new TreeMap<String, InterMineBag>();
+    protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
     protected Map queryHistory = new ListOrderedMap();
-    private boolean savingDisabled;
+    protected boolean savingDisabled;
     private final SearchRepository searchRepository;
     private String token;
 
@@ -72,15 +83,18 @@ public class Profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
      * @param token The token to use as an API key
+     * @param isSuperUser true if the user is a super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal) {
+                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
+                   boolean isSuperUser) {
         this.manager = manager;
         this.username = username;
         this.userId = userId;
         this.password = password;
         this.isLocal = isLocal;
+        this.isSuperUser = isSuperUser;
         if (savedQueries != null) {
             this.savedQueries.putAll(savedQueries);
         }
@@ -90,7 +104,7 @@ public class Profile
         if (savedTemplates != null) {
             this.savedTemplates.putAll(savedTemplates);
         }
-        searchRepository = new SearchRepository(this, Scope.USER);
+        searchRepository = new UserRepository(this);
         this.token = token;
     }
 
@@ -105,14 +119,27 @@ public class Profile
      * @param savedInvalidBags the saved bags which type doesn't match with the model
      * @param savedTemplates the saved templates for this profile
      * @param token The token to use as an API key
+     * @param isSuperUser the flag identifying the super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
                    Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
                    Map<String, InterMineBag> savedInvalidBags,
-                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal) {
+                   Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
+                   boolean isSuperUser) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates, token,
-            isLocal);
-        this.savedInvalidBags = savedInvalidBags;
+            isLocal, isSuperUser);
+        for (Entry<String, InterMineBag> pair: savedInvalidBags.entrySet()) {
+            this.savedInvalidBags.put(pair.getKey(), pair.getValue().invalidate());
+        }
+    }
+
+    public Profile(ProfileManager manager, String username, Integer userId, String password,
+            Map<String, SavedQuery> savedQueries, BagSet bagset,
+            Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
+            boolean isSuperUser) {
+        this(manager, username, userId, password, savedQueries, bagset.getBags(), savedTemplates,
+                token, isLocal, isSuperUser);
+        this.savedInvalidBags.putAll(bagset.getInvalidBags());
     }
 
     /**
@@ -127,9 +154,9 @@ public class Profile
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
-            Map<String, ApiTemplate> savedTemplates, boolean isLocal) {
+            Map<String, ApiTemplate> savedTemplates, boolean isLocal, boolean isSuperUser) {
         this(manager, username, userId, password, savedQueries, savedBags, savedTemplates,
-                null, isLocal);
+                null, isLocal, isSuperUser);
     }
 
     /**
@@ -178,10 +205,7 @@ public class Profile
      * @return Return true if superuser
      */
     public boolean isSuperuser() {
-        if (username != null && manager.getSuperuser().equals(username)) {
-            return true;
-        }
-        return false;
+        return isSuperUser;
     }
 
     /**
@@ -228,15 +252,16 @@ public class Profile
         if (manager != null) {
             manager.saveProfile(this);
         }
-        reindex(TagTypes.TEMPLATE);
-        reindex(TagTypes.BAG);
+        // Why were these calls here in the first place?
+        //reindex(TagTypes.TEMPLATE);
+        //reindex(TagTypes.BAG);
     }
 
     /**
      * Get the users saved templates
      * @return saved templates
      */
-    public Map<String, ApiTemplate> getSavedTemplates() {
+    public synchronized Map<String, ApiTemplate> getSavedTemplates() {
         return Collections.unmodifiableMap(savedTemplates);
     }
 
@@ -250,8 +275,8 @@ public class Profile
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
-            reindex(TagTypes.TEMPLATE);
         }
+        searchRepository.receiveEvent(new CreationEvent(template));
     }
 
     /**
@@ -270,17 +295,24 @@ public class Profile
      * @param trackerDelegate used to rename the template tracks.
      */
     public void deleteTemplate(String name, TrackerDelegate trackerDelegate, boolean deleteTracks) {
-        savedTemplates.remove(name);
-        if (manager != null) {
-            if (!savingDisabled) {
-                manager.saveProfile(this);
-                reindex(TagTypes.TEMPLATE);
+        ApiTemplate template = savedTemplates.get(name);
+        if (template == null) {
+            LOG.warn("Attempt to delete non-existant template: " + name);
+        } else {
+            savedTemplates.remove(name);
+            if (manager != null) {
+                if (!savingDisabled) {
+                    manager.saveProfile(this);
+                }
             }
-        }
-        TagManager tagManager = getTagManager();
-        tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
-        if (trackerDelegate != null && deleteTracks) {
-            trackerDelegate.updateTemplateName(name, "deleted_" + name);
+
+            searchRepository.receiveEvent(new DeletionEvent(template));
+
+            TagManager tagManager = getTagManager();
+            tagManager.deleteObjectTags(name, TagTypes.TEMPLATE, username);
+            if (trackerDelegate != null && deleteTracks) {
+                trackerDelegate.updateTemplateName(name, "deleted_" + name);
+            }
         }
     }
 
@@ -362,12 +394,39 @@ public class Profile
      * Get the value of savedBags
      * @return the value of savedBags
      */
-    public Map<String, InterMineBag> getSavedBags() {
+    public synchronized Map<String, InterMineBag> getSavedBags() {
         return Collections.unmodifiableMap(savedBags);
     }
 
     /**
-     * Get the saved bags in a map of "status key" -> map of lists
+     * @return the invalid bags for this profile.
+     */
+    public synchronized Map<String, InvalidBag> getInvalidBags() {
+        return Collections.unmodifiableMap(this.savedInvalidBags);
+    }
+
+    public synchronized void fixInvalidBag(String name, String newType)
+        throws UnknownBagTypeException, ObjectStoreException {
+        InvalidBag invb = savedInvalidBags.get(name);
+        InterMineBag imb = invb.amendTo(newType);
+        savedInvalidBags.remove(name);
+        saveBag(name, imb);
+    }
+
+    /**
+     * Get all bags associated with this profile, both valid and invalid.
+     *
+     * @return a map from name to bag.
+     */
+    public synchronized Map<String, StorableBag> getAllBags() {
+        Map<String, StorableBag> ret = new HashMap<String, StorableBag>();
+        ret.putAll(savedBags);
+        ret.putAll(savedInvalidBags);
+        return Collections.unmodifiableMap(ret);
+    }
+
+    /**
+     * Get the saved bags in a map of "status key" =&gt; map of lists
      * @return
      */
     public Map<String, Map<String, InterMineBag>> getSavedBagsByStatus() {
@@ -405,6 +464,19 @@ public class Profile
      * Stores a new bag in the profile. Note that bags are always present in the user profile
      * database, so this just adds the bag to the in-memory list of this profile.
      *
+     * @param bag the InterMineBag object
+     */
+    public void saveBag(InterMineBag bag) {
+        if (bag == null) {
+            throw new IllegalArgumentException("bag may not be null");
+        }
+        saveBag(bag.getName(), bag);
+    }
+
+    /**
+     * Stores a new bag in the profile. Note that bags are always present in the user profile
+     * database, so this just adds the bag to the in-memory list of this profile.
+     *
      * @param name the name of the bag
      * @param bag the InterMineBag object
      */
@@ -413,7 +485,7 @@ public class Profile
             throw new RuntimeException("No name specified for the list to save.");
         }
         savedBags.put(name, bag);
-        reindex(TagTypes.BAG);
+        searchRepository.receiveEvent(new CreationEvent(bag));
     }
 
     /**
@@ -427,15 +499,15 @@ public class Profile
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description,
-        Map<String, List<FieldDescriptor>> classKeys) throws ObjectStoreException {
+        Map<String, List<FieldDescriptor>> classKeys)
+        throws UnknownBagTypeException, ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
                                     classKeys, type);
         InterMineBag bag = new InterMineBag(name, type, description, new Date(),
                                BagState.CURRENT, os, userId, uosw, keyFielNames);
-        savedBags.put(name, bag);
-        reindex(TagTypes.BAG);
+        saveBag(name, bag);
         return bag;
     }
 
@@ -450,7 +522,7 @@ public class Profile
         if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
-        InterMineBag bagToDelete;
+        StorableBag bagToDelete;
         if (savedBags.containsKey(name)) {
             bagToDelete = savedBags.get(name);
             savedBags.remove(name);
@@ -464,7 +536,6 @@ public class Profile
 
         TagManager tagManager = getTagManager();
         tagManager.deleteObjectTags(name, TagTypes.BAG, username);
-        reindex(TagTypes.BAG);
     }
 
     /**
@@ -472,20 +543,22 @@ public class Profile
      * If there is no such bag associated with the account, no action is performed.
      * @param name the bag name
      * @param newType the type to set
-     * @throws ObjectStoreException if problems deleting bag
+     * @throws ObjectStoreException if problems storing bag
      */
-    public void updateBagType(String name, String newType) throws ObjectStoreException {
+    public void updateBagType(String name, String newType)
+        throws UnknownBagTypeException, BagDoesNotExistException, ObjectStoreException {
         if (!savedBags.containsKey(name) && !savedInvalidBags.containsKey(name)) {
             throw new BagDoesNotExistException(name + " not found");
         }
-        InterMineBag bagToUpdate;
         if (savedBags.containsKey(name)) {
-            bagToUpdate = savedBags.get(name);
+            InterMineBag bagToUpdate = savedBags.get(name);
+            if (isLoggedIn()) {
+                bagToUpdate.setType(newType);
+            }
         } else {
-            bagToUpdate = savedInvalidBags.get(name);
-        }
-        if (isLoggedIn()) {
-            bagToUpdate.setType(newType);
+            InterMineBag recovered = savedInvalidBags.get(name).amendTo(newType);
+            savedInvalidBags.remove(name);
+            saveBag(recovered.getName(), recovered);
         }
     }
 
@@ -498,18 +571,24 @@ public class Profile
      * @throws ObjectStoreException if problems storing
      */
     public void renameBag(String oldName, String newName) throws ObjectStoreException {
-        if (!savedBags.containsKey(oldName)) {
+        if (!getAllBags().containsKey(oldName)) {
             throw new BagDoesNotExistException("Attempting to rename " + oldName);
         }
-        if (savedBags.containsKey(newName)) {
+        if (getAllBags().containsKey(newName)) {
             throw new ProfileAlreadyExistsException("Attempting to rename a bag to a new name that"
                     + " already exists: " + newName);
         }
-
-        InterMineBag bag = savedBags.get(oldName);
-        savedBags.remove(oldName);
-        bag.setName(newName);
-        saveBag(newName, bag);
+        if (savedBags.containsKey(oldName)) {
+            InterMineBag bag = savedBags.get(oldName);
+            savedBags.remove(oldName);
+            bag.setName(newName);
+            saveBag(newName, bag);
+        } else {
+            InvalidBag bag = savedInvalidBags.get(oldName);
+            InvalidBag newBag = bag.rename(newName);
+            savedInvalidBags.remove(oldName);
+            savedInvalidBags.put(newName, newBag);
+        }
         moveTagsToNewObject(oldName, newName, TagTypes.BAG);
     }
 
@@ -537,22 +616,19 @@ public class Profile
         TagManager tagManager = getTagManager();
         List<Tag> tags = tagManager.getTags(null, oldTaggedObj, type, username);
         for (Tag tag : tags) {
-            tagManager.addTag(tag.getTagName(), newTaggedObj, type, username);
+            try {
+                tagManager.addTag(tag.getTagName(), newTaggedObj, type, this);
+            } catch (TagManager.TagNameException e) {
+                throw new IllegalStateException("Existing tag is illegal: " + tag.getTagName(), e);
+            } catch (TagManager.TagNamePermissionException e) {
+                throw new IllegalStateException("Object tagged with " + tag.getTagName(), e);
+            }
             tagManager.deleteTag(tag);
         }
     }
 
     private TagManager getTagManager() {
         return new TagManagerFactory(manager).getTagManager();
-    }
-
-    /**
-     * Create a map from category name to a list of templates contained
-     * within that category.
-     */
-    private void reindex(String type) {
-        // We also take this opportunity to index the user's template queries, bags, etc.
-        searchRepository.addWebSearchables(type);
     }
 
     /**
@@ -580,8 +656,7 @@ public class Profile
 
 
     /**
-     * Get the user's API key token.
-     * @return
+     * @return the user's API key token.
      */
     public String getApiKey() {
         return token;
@@ -594,7 +669,9 @@ public class Profile
      */
     public void setApiKey(String token) {
         this.token = token;
-        manager.saveProfile(this);
+        if (manager != null && !savingDisabled) {
+            manager.saveProfile(this);
+        }
     }
 
     /**

@@ -74,7 +74,7 @@ public class TypeConverterTest extends StoreDataTestCase
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
         ProfileManager pm = new ProfileManager(os, uosw);
-        profile = new Profile(pm, "test", null, "test", null, null, null, true);
+        profile = new Profile(pm, "test", null, "test", null, null, null, true, false);
         pm.createProfile(profile);
 
         ApiTemplate template = new ApiTemplate("convertEmployeesToAddresses", "", "", new PathQuery(os.getModel()));

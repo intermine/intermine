@@ -30,6 +30,11 @@ public final class NameUtil
         // don't
     }
 
+    /**
+     * error message for bad names.  should come from properties file instead, really
+     */
+    public static final String INVALID_NAME_MSG = "Names for lists and queries may only contain "
+            + "A-Z, a-z, 0-9, underscores and dashes.";
     private static final String QUERY_NAME_PREFIX = "query_";
     private static final Map<String, String> SPEC_CHAR_TO_TEXT = new HashMap<String, String>();
     // A-Z, a-z, 0-9, underscores and dashes.  And spaces.  And dots.
@@ -146,17 +151,17 @@ public final class NameUtil
 
     /**
      * Generate a new name for a list.  Used in situations where the user has a new list without
-     * creating one via the upload form, eg. when copying or posting a list from another site
+     * creating one via the upload form, e.g. when copying or posting a list from another site
      * @param listName original name for the list
      * @param listNames a list of all lists
      * @return a unique name for the list
      */
     public static String generateNewName(Set<String> listNames, String listName) {
         int i = 1;
-        while (listNames.contains(listName + "_copy" + i)) {
+        while (listNames.contains(listName + "_" + i)) {
             i++;
         }
-        return listName + "_copy" + i;
+        return listName + "_" + i;
     }
 
     /**
@@ -167,7 +172,7 @@ public final class NameUtil
      * @return a validated name for the query
      */
     public static String validateName(Collection<String> names, String name) {
-        String newName = name;
+        String newName = name.trim();
         if (!isValidName(name)) {
             newName = replaceSpecialChars(name);
         }

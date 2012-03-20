@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.apache.commons.lang.text.StrMatcher;
-import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import org.intermine.InterMineException;
 import org.intermine.api.bag.BagQueryConfig;
@@ -101,6 +99,8 @@ public final class MainHelper
 
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(MainHelper.class);
+
+    private static final LookupTokeniser LOOKUP_TOKENISER = LookupTokeniser.getLookupTokeniser();
 
     /**
      * Converts a PathQuery object into an ObjectStore Query object, and optionally populates a Map
@@ -420,14 +420,7 @@ public final class MainHelper
                         }
                         String identifiers = pcl.getValue();
                         BagQueryResult bagQueryResult;
-                        List<String> identifierList = new ArrayList<String>();
-                        StrTokenizer st = new StrTokenizer(identifiers,
-                                StrMatcher.charSetMatcher("\n\t,"),
-                                StrMatcher.doubleQuoteMatcher());
-                        while (st.hasNext()) {
-                            String token = st.nextToken();
-                            identifierList.add(token.trim());
-                        }
+                        List<String> identifierList = LOOKUP_TOKENISER.tokenise(identifiers);
                         try {
                             bagQueryResult = bagQueryRunner.searchForBag(qc.getType()
                                     .getSimpleName(), identifierList, pcl.getExtraValue(), true);

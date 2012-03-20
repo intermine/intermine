@@ -68,7 +68,12 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         template1.setEditable(nameCon1, true);
         superUser.saveTemplate("template1", template1);
         TagManager tagManager = new TagManager(uosw);
-        tagManager.addTag("im:public", "template1", TagTypes.TEMPLATE, "superUser");
+
+        try {
+            tagManager.addTag("im:public", "template1", TagTypes.TEMPLATE, superUser);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
 
         ApiTemplate template2 = new ApiTemplate("template2", "template2", "",
                 new PathQuery(model));

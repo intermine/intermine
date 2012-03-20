@@ -16,6 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.TagHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.util.SAXParser;
 import org.xml.sax.InputSource;

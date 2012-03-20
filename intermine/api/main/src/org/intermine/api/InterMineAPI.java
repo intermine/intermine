@@ -94,7 +94,7 @@ public class InterMineAPI
         this.templateManager = new TemplateManager(superUser, model,
                 trackerDelegate.getTemplateTracker());
         this.templateSummariser = new TemplateSummariser(objectStore,
-                profileManager.getProfileObjectStoreWriter());
+                profileManager.getProfileObjectStoreWriter(), oss);
         this.bagQueryRunner =
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
         this.trackerDelegate = trackerDelegate;
@@ -218,21 +218,5 @@ public class InterMineAPI
      */
     public LinkRedirectManager getLinkRedirector() {
         return linkRedirector;
-    }
-
-    /**
-     * Holds list of all intermines
-     * @return friendly mine manager
-     */
-    public FriendlyMineManager getFriendlyMineManager() {
-        return friendlyMineManager;
-    }
-
-    /**
-     * mine manager is initiased in initialiser plugin to make rendering report pages faster
-     * @param friendlyMineManager the friendly mine manager to set
-     */
-    public void setFriendlyMineManager(FriendlyMineManager friendlyMineManager) {
-        this.friendlyMineManager = friendlyMineManager;
     }
 }
