@@ -7,6 +7,7 @@
 <%@ attribute name="descr" required="false" type="java.lang.String" %>
 <%@ attribute name="bagName" required="false" type="java.lang.String" %>
 <%@ attribute name="trail" required="false" type="java.lang.String" %>
+<%@ attribute name="templateType" required="false" type="java.lang.String" %>
 
 <%@ include file="/shared/taglibs.jsp" %>
 
@@ -46,11 +47,20 @@
       <c:set var="actionLink" value="/modifyDetails?method=runTemplate&amp;name=${templateQuery.name}&amp;scope=${scope}${extra}"/>
     </c:otherwise>
   </c:choose>
-  <%--<html:link action="${actionLink}" title="${linkTitle}">--%>
   <h3>
   <div class="right"></div>
-  <div class="loading-spinner"></div>
-  <img src="images/icons/templates-16.png" /> ${!empty name ? name : templateQuery.title}
+  <c:if test="${ templateType != 'aspect' }"><div class="loading-spinner"></div></c:if>
+  <img src="images/icons/templates-16.png" />
+
+  <c:choose>
+    <c:when test="${ templateType != 'aspect' }">
+      <span class="name">${!empty name ? name : templateQuery.title}</span>
+    </c:when>
+    <c:otherwise>
+      <html:link action="${actionLink}" title="${linkTitle}">${!empty name ? name : templateQuery.title}</html:link>
+    </c:otherwise>
+  </c:choose>
+
   <div class="favorites">
     <tiles:insert name="setFavourite.tile">
       <tiles:put name="name" value="${templateQuery.name}"/>
