@@ -56,6 +56,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
         viewPaths.addAll(subIter.getViewPaths());
     }
 
+    @Override
     public boolean hasNext() {
         return subIter.hasNext();
     }
@@ -63,22 +64,22 @@ public class JSONRowIterator implements Iterator<JSONArray>
     /**
      * Get the JSONObject that represents each cell in the results row
      * @param cell The result element with the data
-     * @param path The path that represents the view column
      * @return A JSONObject
      */
-    protected JSONObject makeCell(ResultElement cell, Path path) {
+    protected JSONObject makeCell(ResultElement cell) {
         Map<String, Object> mapping = new HashMap<String, Object>();
         if (cell == null || cell.getId() == null) {
             mapping.put(CELL_KEY_URL, null);
             mapping.put(CELL_KEY_VALUE, null);
         } else {
+            String link = null;
             if (im.getLinkRedirector() != null) {
-                mapping.put(CELL_KEY_URL,
-                    im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject()));
+                link = im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject());
             }
-            if (mapping.get(CELL_KEY_URL) == null) {
-                mapping.put(CELL_KEY_URL, PortalHelper.generateReportPath(cell));
+            if (link == null) {
+                link = PortalHelper.generateReportPath(cell);
             }
+            mapping.put(CELL_KEY_URL, link);
             mapping.put(CELL_KEY_CLASS, cell.getType());
             mapping.put(CELL_KEY_ID, cell.getId());
             mapping.put(CELL_KEY_VALUE, cell.getField());
@@ -87,18 +88,19 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return ret;
     }
 
+    @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
-        List<JSONObject> jsonRow = new ArrayList<JSONObject>();
+        List<Object> jsonRow = new ArrayList<Object>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement re = row.get(i);
-            Path column = viewPaths.get(i);
-            jsonRow.add(makeCell(re, column));
+            jsonRow.add(makeCell(re));
         }
         JSONArray next = new JSONArray(jsonRow);
         return next;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported for this implementation");
     }

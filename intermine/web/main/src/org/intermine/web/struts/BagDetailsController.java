@@ -31,7 +31,6 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
-import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.results.ResultElement;
@@ -42,6 +41,7 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.search.Scope;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.config.FieldConfig;
@@ -93,6 +93,11 @@ public class BagDetailsController extends TilesAction
             if (imBag != null) {
                 myBag = Boolean.TRUE;
             }
+            if (profile.getInvalidBags().containsKey(bagName)) {
+                request.setAttribute("bag", profile.getInvalidBags().get(bagName));
+                request.setAttribute("invalid", true);
+                return null;
+            }
         }
 
         if (scope.equals(Scope.GLOBAL) || scope.equals(Scope.ALL)) {
@@ -115,7 +120,8 @@ public class BagDetailsController extends TilesAction
         Type type = webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
 
         LinkedList<WidgetConfig> widgets = type.getWidgets();
-        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String, Map<String, Collection<String>>>();
+        Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String,
+                Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
             widget2extraAttrs.put(widget2.getId(), widget2.getExtraAttributes(imBag, os));
         }
@@ -129,37 +135,19 @@ public class BagDetailsController extends TilesAction
             pagedResults = SessionMethods.doQueryGetPagedTable(request, imBag);
         }
 
-        //tracks the list execution only if the list has'n just been created
+        // tracks the list execution only if the list hasn't
+        // just been created
         if (request.getParameter("trackExecution") == null
             || "true".equals(request.getParameter("trackExecution"))) {
-            im.getTrackerDelegate().trackListExecution(imBag.getType(), bagSize, profile,
-                                                       session.getId());
-        }
-
-        // TODO this needs to be removed when InterMineBag can store the initial ids of when the
-        // bag was made.
-        BagQueryConfig bagQueryConfig = im.getBagQueryConfig();
-        Map<String, String[]> additionalConverters = bagQueryConfig.getAdditionalConverters(imBag
-                        .getType());
-        if (additionalConverters != null) {
-            for (String converterClassName : additionalConverters.keySet()) {
-                String[] paramArray = additionalConverters.get(converterClassName);
-                String[] urlFields = paramArray[0].split(",");
-                for (int i = 0; i < urlFields.length; i++) {
-                    if (request.getParameter(urlFields[i]) != null) {
-                        request.setAttribute("extrafield", urlFields[i]);
-                        request.setAttribute(urlFields[i], request.getParameter(urlFields[i]));
-                        request.setAttribute("externalids", request.getParameter("externalids"));
-                        break;
-                    }
-                }
-            }
+            im.getTrackerDelegate().trackListExecution(imBag.getType(),
+                    bagSize, profile, session.getId());
         }
 
         // Get the widget toggle state
         // TODO this needs to be re-implemented.  see #1660
-//        request.setAttribute("toggledElements", SessionMethods.getWebState(session).
-//                getToggledElements());
+        // request.setAttribute("toggledElements",
+        //   SessionMethods.getWebState(session).
+        // getToggledElements());
 
         // Set the size
         String pageStr = request.getParameter("page");
@@ -173,8 +161,8 @@ public class BagDetailsController extends TilesAction
         boolean gotoHighlighted = false;
         String gotoHighlightedStr = request.getParameter("gotoHighlighted");
         if (gotoHighlightedStr != null
-            && (gotoHighlightedStr.equalsIgnoreCase("t")
-                || gotoHighlightedStr.equalsIgnoreCase("true"))) {
+            && ("t".equalsIgnoreCase(gotoHighlightedStr)
+                || "true".equalsIgnoreCase(gotoHighlightedStr))) {
             gotoHighlighted = true;
         }
         if (highlightId != null && gotoHighlighted) {
@@ -218,6 +206,16 @@ public class BagDetailsController extends TilesAction
         }
 
         pagedResults.setPageAndPageSize(page, PAGE_SIZE);
+
+        // is this list public?
+        Boolean isPublic = false;
+        for (Tag tag : bagManager.getTagsForBag(imBag)) {
+            if ("im:public".equals(tag.getTagName())) {
+                isPublic = true;
+                break;
+            }
+        }
+        request.setAttribute("isBagPublic", isPublic);
 
         request.setAttribute("addparameter", request.getParameter("addparameter"));
         request.setAttribute("myBag", myBag);

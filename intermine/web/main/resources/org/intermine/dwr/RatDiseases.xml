@@ -1,0 +1,10 @@
+<query
+    name="rat_disease"
+    model="genomic"
+    view="Gene.doAnnotation.ontologyTerm.id Gene.doAnnotation.ontologyTerm.name"
+    sortOrder="Gene.doAnnotation.ontologyTerm.name asc">
+    <pathDescription
+        pathString="Gene.doAnnotation.ontologyTerm"
+        description="Disease Ontology Term"/>
+    <constraint path="Gene" op="LOOKUP" value="%s"/>
+</query>

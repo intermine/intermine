@@ -13,6 +13,7 @@ package org.intermine.webservice.server.query.result;
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,8 +39,11 @@ public class PathQueryBuilder
 
     private static Logger logger = Logger.getLogger(PathQueryBuilder.class);
 
-    protected PathQueryBuilder() {
-    	// empty constructor for testing
+    /**
+     * Constructor for testing.
+     */
+    PathQueryBuilder() {
+        // empty constructor for testing
     }
 
     /**
@@ -52,7 +56,13 @@ public class PathQueryBuilder
         buildQuery(xml, schemaUrl, savedBags);
     }
 
-    protected void buildQuery(String xml, String schemaUrl,
+    /**
+     * Perform the build operation.
+     * @param xml xml string from which will be PathQuery constructed
+     * @param schemaUrl url of XML Schema file, validation is performed according this file
+     * @param savedBags previously saved bags.
+     */
+    void buildQuery(String xml, String schemaUrl,
             Map<String, InterMineBag> savedBags) {
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
@@ -61,7 +71,7 @@ public class PathQueryBuilder
                     PathQuery.USERPROFILE_VERSION);
 
             if (!pathQuery.isValid()) {
-                throw new BadRequestException("XML is well formatted but query contains errors: "
+                throw new BadRequestException("XML is well formatted but query contains errors:\n"
                         + formatMessage(pathQuery.verifyQuery()));
             }
 
@@ -80,27 +90,31 @@ public class PathQueryBuilder
             }
             if (!missingBags.isEmpty()) {
                 throw new BadRequestException(
-                        "XML is well formatted but you do not have access to the "
-                        + "following mentioned lists: " + missingBags 
-                        + " query: " + xml);
+                        "The query XML is well formatted but you do not have access to the "
+                        + "following mentioned lists:\n"
+                        + formatMessage(missingBags));
             }
             if (!toUpgrade.isEmpty()) {
-                throw new InternalErrorException("XML is well formatted, but the following lists" +
-                		" are not 'current', and need to be manually upgraded: " + toUpgrade);
+                throw new InternalErrorException(
+                        "The query XML is well formatted, but the following lists"
+                        + " are not 'current', and need to be manually upgraded:\n"
+                        + formatMessage(toUpgrade));
             }
         } else {
             logger.debug("Received invalid xml: " + xml);
-            throw new BadRequestException(formatMessage(validator.getErrorsAndWarnings()));
+            throw new BadRequestException("Query does not pass XML validation:\n" 
+                    + formatMessage(validator.getErrorsAndWarnings()));
         }
     }
 
-    private String formatMessage(List<String> msgs) {
+    private String formatMessage(Collection<String> msgs) {
         StringBuilder sb = new StringBuilder();
         for (String msg : msgs) {
             sb.append(msg);
             if (!msg.endsWith(".")) {
                 sb.append(".");
             }
+            sb.append("\n");
         }
         return sb.toString();
     }

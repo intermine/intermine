@@ -1,5 +1,15 @@
 package org.intermine.webservice.server.widget;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,16 +21,25 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
-public class XMLWidgetProcessor extends WidgetProcessorImpl {
+/**
+ * A processor for handling requests for widget metadata.
+ * @author Alex Kalderimis
+ *
+ */
+public final class XMLWidgetProcessor extends WidgetProcessorImpl
+{
 
-    private static final WidgetProcessor instance = new XMLWidgetProcessor();
+    private static final WidgetProcessor INSTANCE = new XMLWidgetProcessor();
 
     private XMLWidgetProcessor() {
         // Do not construct;
     }
 
+    /**
+     * @return The singleton widget processor.
+     */
     public static WidgetProcessor instance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -31,8 +50,8 @@ public class XMLWidgetProcessor extends WidgetProcessorImpl {
         sb.append(formatCell("description", widgetConfig.getDescription()));
         String widgetType = getWidgetType(widgetConfig);
         sb.append(formatCell("widgetType", widgetType));
-        if (widgetType.equals("chart")) {
-            sb.append(formatCell("chartType", 
+        if ("chart".equals(widgetType)) {
+            sb.append(formatCell("chartType",
                     ((GraphWidgetConfig) widgetConfig).getGraphType()));
             sb.append(formatCell("labels", getLabels((GraphWidgetConfig) widgetConfig)));
         }

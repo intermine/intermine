@@ -11,7 +11,9 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +28,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tracker.util.ListBuildMode;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -45,6 +48,7 @@ public class BagUploadConfirmAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response)
         throws Exception {
@@ -56,7 +60,7 @@ public class BagUploadConfirmAction extends InterMineAction
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
 
         BagUploadConfirmForm confirmForm = (BagUploadConfirmForm) form;
-        String bagName = (! "".equals(confirmForm.getNewBagName()))
+        String bagName = (!"".equals(confirmForm.getNewBagName()))
                          ? confirmForm.getNewBagName()
                          : request.getParameter("upgradeBagName");
 
@@ -85,23 +89,32 @@ public class BagUploadConfirmAction extends InterMineAction
             return mapping.findForward("error");
         }
 
-        //if upgradeBagName is null we are creating a new bag, otherwise we are upgrading an existing bag
+        //if upgradeBagName is null we are creating a new bag,
+        // otherwise we are upgrading an existing bag
         if (request.getParameter("upgradeBagName") == null) {
             InterMineBag bag = profile.createBag(bagName, bagType, "", im.getClassKeys());
             bag.addIdsToBag(contents, bagType);
             //track the list creation
             im.getTrackerDelegate().trackListCreation(bagType, bag.getSize(),
-                                   ListBuildMode.IDENTIFIERS, profile, session.getId());
+                    ListBuildMode.IDENTIFIERS, profile, session.getId());
             session.removeAttribute("bagQueryResult");
         } else {
             InterMineBag bagToUpgrade = profile.getSavedBags().get(bagName);
             bagToUpgrade.upgradeOsb(contents, true);
             session.removeAttribute("bagQueryResult_" + bagName);
-            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName, BagState.CURRENT.toString());
+            Map<String, Object> bagAttributes = new HashMap<String, Object>();
+            bagAttributes.put("status", BagState.CURRENT.toString());
+            try {
+                bagAttributes.put("size", bagToUpgrade.getSize());
+            } catch (ObjectStoreException e) {
+                // nothing serious happens here...
+            }
+            SessionMethods.getNotCurrentSavedBagsStatus(session).put(bagName,
+                    bagAttributes);
         }
-
-        ForwardParameters forwardParameters
-            = new ForwardParameters(mapping.findForward("bagDetails"));
+        confirmForm.reset(mapping, request);
+        ForwardParameters forwardParameters = new ForwardParameters(
+                mapping.findForward("bagDetails"));
         forwardParameters.addParameter("bagName", bagName);
         forwardParameters.addParameter("trackExecution", "false");
         return forwardParameters.forward();

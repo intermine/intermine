@@ -18,6 +18,11 @@ package org.intermine.web.logic.export;
 public class ExportException extends RuntimeException
 {
     /**
+     * default serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Create a new ExportException.
      * @param message the Exception description
      */

@@ -17,7 +17,6 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.log4j.Logger;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -29,13 +28,12 @@ import org.xml.sax.SAXParseException;
 public class XMLValidator
 {
 
-    private static final Logger LOG = Logger.getLogger(XMLValidator.class);
     private XMLValidatorErrorHandler errorHandler = new XMLValidatorErrorHandler();
 
     /**
-     * Validates xml string according to an XML Schema at specified url.
-     * @param xml xml string
-     * @param xmlSchemaUrl XML Schema url
+     * Validates an XML string according to an XML Schema at a given URL.
+     * @param xml an XML string.
+     * @param xmlSchemaUrl the URL of an XML Schema.
      */
     public void validate(String xml, String xmlSchemaUrl) {
         // Made according to http://www.javaworld.com/javaworld/jw-08-2005/jw-0808-xml.html?page=5

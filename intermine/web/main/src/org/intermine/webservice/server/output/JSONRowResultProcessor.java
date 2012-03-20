@@ -18,6 +18,8 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
 
+import org.json.JSONArray;
+
 /**
  * A result processor for result rows.
  * @author Alex Kalderimis
@@ -25,18 +27,32 @@ import org.intermine.api.results.ResultElement;
  */
 public class JSONRowResultProcessor extends JSONResultProcessor
 {
+    public enum Verbosity {MINIMAL, FULL};
     private final InterMineAPI im;
+
+    private final Verbosity verbosity;
     /**
      * Constructor.
      * @param im The API settings bundle
      */
     public JSONRowResultProcessor(InterMineAPI im) {
         this.im = im;
+        verbosity = Verbosity.FULL;
+    }
+
+    public JSONRowResultProcessor(InterMineAPI im, Verbosity verbosity) {
+        this.im = im;
+        this.verbosity = verbosity;
     }
 
     @Override
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
-        JSONRowIterator jsonIter = new JSONRowIterator((ExportResultsIterator) it, im);
+        Iterator<JSONArray> jsonIter;
+        if (verbosity == Verbosity.MINIMAL) {
+            jsonIter = new MinimalJsonIterator((ExportResultsIterator) it, im);
+        } else {
+            jsonIter = new JSONRowIterator((ExportResultsIterator) it, im);
+        }
         return jsonIter;
     }
 

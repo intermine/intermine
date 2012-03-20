@@ -103,11 +103,6 @@ public class ModifyTemplateAction extends InterMineAction
 
                 profile.deleteTemplate(template, im.getTrackerDelegate(), true);
             }
-
-            if (SessionMethods.isSuperUser(session)) {
-                SearchRepository tr = SessionMethods.getGlobalSearchRepository(servletContext);
-                tr.globalChange(TagTypes.TEMPLATE);
-            }
         } finally {
             profile.enableSaving();
         }

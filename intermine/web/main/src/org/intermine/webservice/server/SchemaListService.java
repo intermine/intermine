@@ -1,7 +1,14 @@
-/**
+package org.intermine.webservice.server;
+
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-package org.intermine.webservice.server;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,9 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
@@ -40,8 +44,7 @@ public class SchemaListService extends WebService
      * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
 
         Properties webProperties =
             SessionMethods.getWebProperties(request.getSession().getServletContext());

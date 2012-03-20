@@ -9,10 +9,12 @@ package org.intermine.web.logic.export;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.api.results.ResultElement;
+import org.intermine.pathquery.Path;
 
 
 /**
@@ -31,8 +33,20 @@ public interface Exporter
     /**
      * Do export.
      * @param it iterator over stuff to be exported
+     * @param unionPathCollection a collection of Path combining old and new views
+     * @param newPathCollection a collection of Path to export from the results
      */
-    void export(Iterator<? extends List<ResultElement>> it);
+    void export(Iterator<? extends List<ResultElement>> it,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection);
+
+
+    /**
+     * Perform the export with the exporter's defaults in the absence of
+     * path collection changes.
+     * @param resultIt iterator over stuff to be exported.
+     */
+    void export(Iterator<? extends List<ResultElement>> resultIt);
 
     /**
      * This method finds out if result row composed from instances of these
@@ -46,4 +60,5 @@ public interface Exporter
      * @return count of written results
      */
     int getWrittenResultsCount();
+
 }

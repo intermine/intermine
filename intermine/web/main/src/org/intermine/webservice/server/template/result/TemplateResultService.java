@@ -13,9 +13,6 @@ package org.intermine.webservice.server.template.result;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
@@ -65,7 +62,7 @@ public class TemplateResultService extends QueryResultService
      * {@inheritDoc}}
      */
     @Override
-    protected void execute(HttpServletRequest request, HttpServletResponse response) {
+    protected void execute() {
         TemplateManager templateManager = this.im.getTemplateManager();
         TemplateResultInput input = getInput();
         TemplateQuery template;
@@ -102,7 +99,7 @@ public class TemplateResultService extends QueryResultService
             runPathQuery(populatedTemplate, input.getStart().intValue(),
                     input.getMaxCount().intValue(),  populatedTemplate.getTitle(),
                     populatedTemplate.getDescription(), input,
-                    getMineLinkURL(request, populatedTemplate, input), input.getLayout());
+                    getMineLinkURL(populatedTemplate, input), input.getLayout());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
                 + "with model: " + populatedTemplate.verifyQuery();
@@ -114,18 +111,16 @@ public class TemplateResultService extends QueryResultService
         return new TemplateResultRequestParser(request).getInput();
     }
 
-    private String getMineLinkURL(HttpServletRequest request, TemplateQuery template,
-            TemplateResultInput input) {
+    private String getMineLinkURL(TemplateQuery template, TemplateResultInput input) {
         String ret = new URLGenerator(request).getBaseURL();
         ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
-        ret += "?" + getQueryString(request, template, input);
+        ret += "?" + getQueryString(template, input);
         ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&"
             + TemplateResultService.TYPE_PARAMETER + "=" + Scope.ALL;
         return ret;
     }
 
-    private String getQueryString(HttpServletRequest request, TemplateQuery template,
-            TemplateResultInput input) {
+    private String getQueryString(TemplateQuery template, TemplateResultInput input) {
         String ret = "";
         ret += TemplateResultService.NAME_PARAMETER + "=" + encode(input.getName()) + "&";
         int i = 1;

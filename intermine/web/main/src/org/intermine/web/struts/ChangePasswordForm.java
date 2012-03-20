@@ -82,6 +82,7 @@ public class ChangePasswordForm extends ActionForm
     /**
      * {@inheritDoc}
      */
+    @Override
     public ActionErrors validate(@SuppressWarnings("unused") ActionMapping mapping,
                                  @SuppressWarnings("unused") HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
@@ -97,6 +98,7 @@ public class ChangePasswordForm extends ActionForm
     /**
      * {@inheritDoc}
      */
+    @Override
     public void reset(@SuppressWarnings("unused") ActionMapping mapping,
                       @SuppressWarnings("unused") HttpServletRequest request) {
         oldpassword = null;

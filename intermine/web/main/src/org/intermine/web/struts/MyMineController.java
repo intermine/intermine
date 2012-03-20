@@ -96,31 +96,40 @@ public class MyMineController extends TilesAction
                 // prime the tags cache so that the templates tags will be quick to access
                 String userName = profile.getUsername();
                 if (userName != null) {
-                    // discard result
+                    // discard result - we just want the query to be run.
                     tagManager.getTags(null, null, TagTypes.TEMPLATE, userName);
                 }
             }
         }
 
-        WebState webState = SessionMethods.getWebState(request.getSession());
         // get the precomputed and summarised info
-        if ((request.getParameter("subtab") != null && "templates".equals(request
-                .getParameter("subtab"))) || (webState.getSubtab("subtabmymine") != null
-                        && "templates".equals(webState.getSubtab("subtabmymine")))) {
+        if (onSubTab(request, "templates")) {
             session.removeAttribute(Constants.NEW_TEMPLATE);
             getPrecomputedSummarisedInfo(profile, session, request);
         }
-        if ((request.getParameter("subtab") != null && "lists".equals(request
-                .getParameter("subtab"))) || (webState.getSubtab("subtabmymine") != null
-                        && "lists".equals(webState.getSubtab("subtabmymine")))) {
+        if (onSubTab(request, "lists") || onSubTab(request, null)) {
+            ActionMessages actionErrors = getErrors(request);
             if (im.getBagManager().isAnyBagToUpgrade(profile)) {
-                ActionMessages actionErrors = getErrors(request);
                 actionErrors.add(ActionMessages.GLOBAL_MESSAGE,
-                                   new ActionMessage("login.upgradeListManually"));
-                saveErrors(request, actionErrors);
+                        new ActionMessage("login.upgradeListManually"));
             }
+            if (!profile.getInvalidBags().isEmpty()) {
+                actionErrors.add(ActionMessages.GLOBAL_MESSAGE,
+                        new ActionMessage("bags.invalid.notice"));
+            }
+            saveErrors(request, actionErrors);
         }
         return null;
+    }
+
+    private static boolean onSubTab(HttpServletRequest request, String inQuestion) {
+        WebState webState = SessionMethods.getWebState(request.getSession());
+        String subTab = request.getParameter("subtab");
+        String wsst = webState.getSubtab("subtabmymine");
+        if (inQuestion == null) {
+            return (subTab == null && wsst == null);
+        }
+        return (subTab != null && inQuestion.equals(subTab)) || (wsst != null && inQuestion.equals(wsst));
     }
 
     /**

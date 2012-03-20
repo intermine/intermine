@@ -50,6 +50,7 @@ public class AddColumnAction extends InterMineAction
      * @return action forward
      * @throws Exception if an error happens
      */
+    @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         String columnToAdd = request.getParameter("columnToAdd");

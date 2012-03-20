@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -32,15 +33,13 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.Path;
-import org.intermine.pathquery.PathException;
 import org.intermine.util.CollectionUtil;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.WebUtil;
 
 /**
  * Helper for everything related to PathQueryResults
@@ -181,7 +180,8 @@ public final class PathQueryResultHelper
     /**
      * Search for the classes in a collection for a given InterMineObject, for example find all of
      * the sub-classes of Employee in the Department.employees collection of a given Department.
-     * Will return an empty collection if the collection is empty.
+     * If there are no subclasses or the collection is empty a list with the type of the collection
+     * is returned.
      * @param object an InterMineObject to inspect
      * @param field the name if the collection to check
      * @param os the ObjectStore in which to execute the query
@@ -190,15 +190,35 @@ public final class PathQueryResultHelper
     public static List<Class<?>> queryForTypesInCollection(InterMineObject object, String field,
             ObjectStore os) {
         List<Class<?>> typesInCollection = new ArrayList<Class<?>>();
-        Query query = new Query();
-        QueryClass qc = new QueryClass(TypeUtil.getElementType(object.getClass(), field));
-        query.addFrom(qc);
-        query.addToSelect(new QueryField(qc, "class"));
-        query.setDistinct(true);
-        query.setConstraint(new ContainsConstraint(new QueryCollectionReference(object, field),
-                ConstraintOp.CONTAINS, qc));
-        for (Object o : os.executeSingleton(query)) {
-            typesInCollection.add((Class<?>) o);
+
+        // if there are no subclasses there can only be one type in the collection
+        Model model = os.getModel();
+        ClassDescriptor startCld =
+            model.getClassDescriptorByName(DynamicUtil.getSimpleClassName(object));
+        CollectionDescriptor col = startCld.getCollectionDescriptorByName(field, true);
+        ClassDescriptor colCld = col.getReferencedClassDescriptor();
+
+        if (model.getAllSubs(colCld).isEmpty()) {
+            // there aren't any subclasses, so no need to do a query
+            typesInCollection.add(colCld.getType());
+        } else {
+            // there may be multiple subclasses in the collection, need to run a query
+            Query query = new Query();
+            QueryClass qc = new QueryClass(colCld.getType());
+            query.addFrom(qc);
+            query.addToSelect(new QueryField(qc, "class"));
+            query.setDistinct(true);
+            query.setConstraint(new ContainsConstraint(new QueryCollectionReference(object, field),
+                    ConstraintOp.CONTAINS, qc));
+            for (Object o : os.executeSingleton(query)) {
+                typesInCollection.add((Class<?>) o);
+            }
+
+            // Collection was empty but add collection type to be consistent with collection types
+            // without subclasses.
+            if (typesInCollection.isEmpty()) {
+                typesInCollection.add(colCld.getType());
+            }
         }
         return typesInCollection;
     }
@@ -289,7 +309,7 @@ public final class PathQueryResultHelper
     /**
      * Get the view for a path query reformatted to obey the labels given in webconfig.
      * So if Employee has the alias "Arbeitnehmer", department the alias "Abteilung", then
-     * Employee.department.name would become "Arbeitnehmer > Abteilung > Name". Also, 
+     * Employee.department.name would become "Arbeitnehmer > Abteilung > Name". Also,
      * camel-cased names will be decamelised, so "Contractor.oldCompanys.vatNumber" would become
      * "Contractor > Old Companys > Vat Number". ("VAT Number" can be achieved if that field is
      * labelled as such).
@@ -310,7 +330,7 @@ public final class PathQueryResultHelper
                 throw new RuntimeException(e);
             }
             aliasedViews.add(WebUtil.formatPath(viewPath, webConfig));
-        }  
+        }
 
         return aliasedViews;
     }

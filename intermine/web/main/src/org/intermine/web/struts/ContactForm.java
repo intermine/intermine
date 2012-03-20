@@ -104,16 +104,18 @@ public class ContactForm extends ValidatorForm
      * @param request current servlet request
      * @return validation errors
      */
+    @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
 
         ActionErrors errors = super.validate(mapping, request);
 
-        if ((errors == null || errors.size() == 0) && getMonkey().indexOf('@') == -1) {
+        if ((errors == null || errors.size() == 0) && getMonkey() != null
+                && getMonkey().indexOf('@') == -1) {
             if (errors == null) {
                 errors = new ActionErrors();
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE, new ActionMessage("errors.email", getMonkey()));
-            request.setAttribute("response", "Please check that you have provided your email."); // ajax
+            request.setAttribute("response", "Please check that you have provided your email.");
         }
 
         StringBuffer buffer = new StringBuffer();
@@ -148,7 +150,8 @@ public class ContactForm extends ValidatorForm
             }
             errors.add(ActionErrors.GLOBAL_MESSAGE,
                     new ActionMessage("errors.contact.invalidmessage"));
-            request.setAttribute("response", "Please check that you have provided your message."); // ajax
+            // ajax
+            request.setAttribute("response", "Please check that you have provided your message.");
         }
 
         return errors;
@@ -190,6 +193,7 @@ public class ContactForm extends ValidatorForm
      * @param mapping  the action mapping associated with this form bean
      * @param request  the current http servlet request
      */
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
 

@@ -37,8 +37,10 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.query.MetadataNode;
 import org.intermine.web.logic.querybuilder.ModelBrowserHelper;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.objectstore.ObjectStoreSummary;
 
 /**
  * Controller for the main query builder tile. Generally, request attributes that are required by
@@ -52,7 +54,6 @@ import org.intermine.web.logic.session.SessionMethods;
 public class QueryBuilderController extends TilesAction
 {
     protected static final Logger LOG = Logger.getLogger(QueryBuilderController.class);
-
     /**
      * {@inheritDoc}
      */
@@ -66,7 +67,8 @@ public class QueryBuilderController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
         if (im.getBagManager().isAnyBagToUpgrade(profile)) {
             ActionMessages actionErrors = getErrors(request);
-            actionErrors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            actionErrors.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("login.upgradeListManually"));
             saveErrors(request, actionErrors);
         }
         populateRequest(request, response);
@@ -93,7 +95,7 @@ public class QueryBuilderController extends TilesAction
 
         try {
             // Create a Map from view path to sort style (disabled, asc, desc, none). At the moment,
-            // the order by list will only contain one element, as the web representation is only
+            // the order by list will only contain one element, as the web representation is not
             // able to represent multiple order elements
             request.setAttribute("viewStrings", findViewSortOrders(query));
             request.setAttribute("viewPaths", listToMap(query.getView()));
@@ -107,9 +109,14 @@ public class QueryBuilderController extends TilesAction
             if (path == null) {
                 path = prefix;
             }
-            request.setAttribute("nodes", ModelBrowserHelper.makeSelectedNodes(path, prefix, model,
-                    isSuperUser, query, webConfig, im.getClassKeys(), im.getBagManager(),
-                    SessionMethods.getProfile(session)));
+
+            // nodes for the model browser
+            Collection<MetadataNode> nodes = ModelBrowserHelper.makeSelectedNodes(path, prefix,
+                    model, isSuperUser, query, webConfig, im.getClassKeys(), im.getBagManager(),
+                    SessionMethods.getProfile(session), im.getObjectStoreSummary());
+
+            // set nodes
+            request.setAttribute("nodes", nodes);
 
             Map<String, String> prefixes = getViewPathLinkPaths(query);
             request.setAttribute("viewPathLinkPrefixes", prefixes);

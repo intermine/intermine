@@ -13,12 +13,13 @@ package org.intermine.web.struts;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -47,6 +48,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -140,6 +142,29 @@ public class BagBuildController extends TilesAction
                 bbf.setExtraFieldValue(defaultValue);
             }
         }
+
+        // get example bag values
+        String bagExampleIdentifiersPropertiesKey = "bag.example.identifiers";
+        ServletContext servletContext = session.getServletContext();
+        Properties properties = SessionMethods.getWebProperties(servletContext);
+        Properties bagExampleIdentifiers = PropertiesUtil.getPropertiesStartingWith(
+                bagExampleIdentifiersPropertiesKey, properties);
+        if (bagExampleIdentifiers.size() != 0) {
+            Map<String, String> bagExampleIdentifiersMap = new HashMap<String, String>();
+            Enumeration<?> e = bagExampleIdentifiers.propertyNames();
+            while (e.hasMoreElements()) {
+                String key = (String) e.nextElement();
+                String value = bagExampleIdentifiers.getProperty(key);
+                if (key.equals(bagExampleIdentifiersPropertiesKey)) {
+                    bagExampleIdentifiersMap.put("default", value);
+                } else {
+                    bagExampleIdentifiersMap.put(key.replace(bagExampleIdentifiersPropertiesKey
+                            + ".", ""), value);
+                }
+                bagExampleIdentifiers.getProperty(key);
+            }
+            request.setAttribute("bagExampleIdentifiers", bagExampleIdentifiersMap);
+        }
         return null;
     }
 
@@ -177,7 +202,10 @@ public class BagBuildController extends TilesAction
     }
 
     private String getDefaultValue(HttpServletRequest request, InterMineAPI im) {
-        FriendlyMineManager linkManager = im.getFriendlyMineManager();
+        HttpSession session = request.getSession();
+        ServletContext servletContext = session.getServletContext();
+        final Properties webProperties = SessionMethods.getWebProperties(servletContext);
+        final FriendlyMineManager linkManager = FriendlyMineManager.getInstance(im, webProperties);
         Mine mine = linkManager.getLocalMine();
         if (mine != null) {
             return mine.getDefaultValue();

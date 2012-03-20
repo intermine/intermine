@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 
 /**
  * Base class for formatters that process JSON data. The
@@ -44,6 +45,7 @@ public class JSONFormatter extends Formatter {
     public static final String KEY_INTRO = "intro";
     public static final String KEY_OUTRO = "outro";
     public static final String KEY_QUOTE = "should_quote";
+    public static final String KEY_HEADER_OBJS = "headerObjs";
     /**
      * A map of optional key value pairs that should go in the header of the object.
      * The map should be of type Map<String, String> - woe betide you if you violate
@@ -81,6 +83,16 @@ public class JSONFormatter extends Formatter {
                         + "\":"
                         + quoteValue(StringEscapeUtils.escapeJava(pair.getValue()))
                         + ",");
+            }
+        }
+        if (attributes != null && attributes.containsKey(KEY_HEADER_OBJS)) {
+            @SuppressWarnings("rawtypes")
+            Map<String, Map> headerObjs = (Map<String, Map>) attributes.get(KEY_HEADER_OBJS);
+            for (@SuppressWarnings("rawtypes") Entry<String, Map> pair: headerObjs.entrySet()) {
+                sb.append("\"" + StringEscapeUtils.escapeJava(pair.getKey()) + "\":");
+                JSONObject ho = new JSONObject(pair.getValue());
+                sb.append(ho.toString());
+                sb.append(",");
             }
         }
         if (attributes != null && attributes.get(KEY_INTRO) != null) {
@@ -125,14 +137,14 @@ public class JSONFormatter extends Formatter {
         Iterator<String> iter = resultRow.iterator();
         String first = iter.next();
         if (shouldQuote && !"".equals(first)) {
-            first = "\"" + first + "\"";
+            first = quoteValue(first);
         }
 
-        StringBuffer buffer = new StringBuffer(first);
+        StringBuffer buffer = new StringBuffer(first == null ? "null" : first);
         while (iter.hasNext()) {
             String next = iter.next();
             if (shouldQuote && !"".equals(next)) {
-                next = "\"" + next + "\"";
+                next = quoteValue(next);
             }
             buffer.append(",").append(next);
         }

@@ -64,11 +64,10 @@ public class ListsService extends AvailableListsService
 
     /**
      * Executes service specific logic.
-     * @param request request
      * @return The lists relevant to this request.
      */
     @Override
-    protected Collection<InterMineBag> getLists(final HttpServletRequest request) {
+    protected Collection<InterMineBag> getLists() {
 
         final ListsServiceInput input = getInput();
 
@@ -110,7 +109,8 @@ public class ListsService extends AvailableListsService
         }
 
         final PathQuery pathQuery = new PathQuery(model);
-        pathQuery.addConstraint(Constraints.lookup(input.getType(), input.getPublicId(), null));
+        pathQuery.addConstraint(Constraints.lookup(input.getType(),
+                input.getPublicId(), input.getExtraValue()));
         pathQuery.addViews(getViewAccordingClasskeys(request, input.getType()));
 
         final Profile profile = SessionMethods.getProfile(request.getSession());

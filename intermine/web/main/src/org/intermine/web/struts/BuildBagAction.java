@@ -172,8 +172,8 @@ public class BuildBagAction extends InterMineAction
                 }
             }
         }
-        BagQueryResult bagQueryResult =
-            bagRunner.searchForBag(type, list, buildBagForm.getExtraFieldValue(), false);
+        BagQueryResult bagQueryResult = bagRunner.search(type, list,
+                buildBagForm.getExtraFieldValue(), false, buildBagForm.getCaseSensitive());
         session.setAttribute("bagQueryResult", bagQueryResult);
         request.setAttribute("bagType", type);
         request.setAttribute("bagExtraFilter", buildBagForm.getExtraFieldValue());

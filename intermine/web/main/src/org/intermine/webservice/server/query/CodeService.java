@@ -10,8 +10,6 @@ package org.intermine.webservice.server.query;
  *
  */
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +23,6 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.util.URLGenerator;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.api.InterMineAPI;
@@ -45,9 +41,19 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
-public class CodeService extends AbstractQueryService {
+/**
+ * A service for generating code based on a query.
+ * @author Alex Kalderimis
+ *
+ */
+public class CodeService extends AbstractQueryService
+{
     protected static final Logger LOG = Logger.getLogger(CodeService.class);
 
+    /**
+     * Constructor.
+     * @param im The InterMine application object.
+     */
     public CodeService(InterMineAPI im) {
         super(im);
     }
@@ -63,24 +69,17 @@ public class CodeService extends AbstractQueryService {
             return new WebservicePythonCodeGenerator();
         } else if ("javascript".equals(lang) || "js".equals(lang)) {
             return new WebserviceJavaScriptCodeGenerator();
-        } else if ("ruby".equals(lang) || "js".equals(lang)) {
+        } else if ("ruby".equals(lang) || "rb".equals(lang)) {
             return new WebserviceRubyCodeGenerator();
         } else {
             throw new BadRequestException("Unknown code generation language: " + lang);
         }
     }
 
-    /**
-     * Executes service specific logic.
-     *
-     * @param request request
-     * @param response response
-     */
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) {
+    protected void execute() {
 
-    	HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         Profile profile = SessionMethods.getProfile(session);
         // Ref to OrthologueLinkController and OrthologueLinkManager
         Properties webProperties = SessionMethods.getWebProperties(session
@@ -147,7 +146,7 @@ public class CodeService extends AbstractQueryService {
 
     private PathQuery getPathQuery() {
         String xml = QueryRequestParser.getQueryXml(request);
-        PathQueryBuilder pqb = getQueryBuilder(xml, request);
+        PathQueryBuilder pqb = getQueryBuilder(xml);
         PathQuery query = pqb.getQuery();
         return query;
     }

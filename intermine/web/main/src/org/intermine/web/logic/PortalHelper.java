@@ -31,13 +31,13 @@ import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.util.URLGenerator;
 
-
 /**
  * Util methods for the portal
  * @author Julie Sullivan
  **/
 public final class PortalHelper
 {
+//    private static final Logger LOG = Logger.getLogger(PortalHelper.class);
     private static Map<String, BagConverter> bagConverters = new HashMap<String, BagConverter>();
     private static String portalBaseUrl = null;
 
@@ -48,25 +48,30 @@ public final class PortalHelper
     }
 
     /**
-     * If the given param is present in the comma-separated list in the first element of the given
-     * paramArray, then return the param, otherwise return null.
+     * Returns a BagConverter for the given parameters.
      *
-     * @param param a String
-     * @param paramArray an array of Strings, the first element of which is a comma-separated list
-     * @return param if it is present in the list
+     * @param im the InterMine API to use
+     * @param webConfig the WebConfig to take configuration from
+     * @param converterClassName the class name of the converter
+     * @return a new or recycled BagConverter object
      */
-    public static String getAdditionalParameter(String param, String[] paramArray) {
-        String[] urlFields = paramArray[0].split(",");
-        for (String urlField : urlFields) {
-            // if one of the request vars matches the variables listed in the bagquery
-            // config, add the variable to be passed to the custom converter
+    public static synchronized BagConverter getBagConverter(InterMineAPI im, WebConfig webConfig,
+            String converterClassName) {
+        BagConverter bagConverter = bagConverters.get(converterClassName);
 
-            if (urlField.equals(param)) {
-                // the spaces in organisms, eg. D.%20rerio, need to be handled
-                return param;
+        if (bagConverter == null) {
+            try {
+                Class<?> clazz = Class.forName(converterClassName);
+                Constructor<?> constructor
+                    = clazz.getConstructor(InterMineAPI.class, WebConfig.class);
+                bagConverter = (BagConverter) constructor.newInstance(im, webConfig);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to construct bagconverter for "
+                        + converterClassName, e);
             }
+            bagConverters.put(converterClassName, bagConverter);
         }
-        return null;
+        return bagConverter;
     }
 
     /**
@@ -77,12 +82,14 @@ public final class PortalHelper
      * the list will be returned, or null if none match.
      *
      * @param request a request to search in
-     * @param paramArray an array of Strings, the first element of which is a comma-separated list
-     * of parameter names to search for in the request
+     * @param params comma-separated list of parameter names to search for in the request
      * @return a parameter value from the request, or null if none is found
      */
-    public static String getAdditionalParameter(HttpServletRequest request, String[] paramArray) {
-        String[] urlFields = paramArray[0].split(",");
+    public static String getAdditionalParameter(HttpServletRequest request, String params) {
+        if (StringUtils.isEmpty(params)) {
+            return null;
+        }
+        String[] urlFields = params.split("[, ]+");
         String addparameter = null;
         for (String urlField : urlFields) {
             // if one of the request vars matches the variables listed in the bagquery
@@ -102,32 +109,6 @@ public final class PortalHelper
     }
 
     /**
-     * Returns a BagConverter for the given parameters.
-     *
-     * @param im the InterMine API to use
-     * @param webConfig the WebConfig to take configuration from
-     * @param converterClassName the class name of the converter
-     * @return a new or recycled BagConverter object
-     */
-    public static synchronized BagConverter getBagConverter(InterMineAPI im, WebConfig webConfig,
-            String converterClassName) {
-        BagConverter bagConverter = bagConverters.get(converterClassName);
-
-        if (bagConverter == null) {
-            try {
-                Class clazz = Class.forName(converterClassName);
-                Constructor constructor = clazz.getConstructor(InterMineAPI.class, WebConfig.class);
-                bagConverter = (BagConverter) constructor.newInstance(im, webConfig);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to construct bagconverter for "
-                        + converterClassName, e);
-            }
-            bagConverters.put(converterClassName, bagConverter);
-        }
-        return bagConverter;
-    }
-
-    /**
      * Generate a stable link to a report page for the given object, this will create a portal link
      * with the correct class and a value from a non-null class key field of the object.  Will
      * return null if there is no non-null value or class key available.
@@ -135,6 +116,7 @@ public final class PortalHelper
      * @param im the InterMineApi
      * @param request the request object
      * @return a portal URL to the object or null
+     * @see generatePermaLink
      */
     public static String generatePortalLink(FastPathObject obj, InterMineAPI im,
             HttpServletRequest request) {
@@ -143,6 +125,13 @@ public final class PortalHelper
         return generatePermaLink(obj, baseUrl, classKeys);
     }
 
+    /**
+     * Generate an external portal link (perma-link) for an InterMine object.
+     * @param obj The object to link to.
+     * @param im The InterMine API configuration bundle.
+     * @return A path, beginning with "/" suitable for appending to a base URL.
+     * @see generatePermaPath
+     */
     public static String generatePortalPath(FastPathObject obj, InterMineAPI im) {
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         return generatePermaPath(obj, classKeys);
@@ -157,10 +146,26 @@ public final class PortalHelper
      */
     public static String generatePermaLink(FastPathObject obj, String baseUrl,
             Map<String, List<FieldDescriptor>> classKeys) {
-        return  baseUrl + generatePermaPath(obj, classKeys);
+        String newBase = null;
+
+        if (baseUrl.contains("release")) {
+            newBase = baseUrl.replaceFirst("release-\\d*.\\d*", "query");
+        } else {
+            newBase = baseUrl;
+        }
+        return  newBase + generatePermaPath(obj, classKeys);
     }
 
-    public static String generatePermaPath(FastPathObject obj, Map<String, List<FieldDescriptor>> classKeys) {
+    /**
+     * Generate a link suitable for use as an external, permanent link, in that the link should work
+     * between rebuilds of the database.
+     * @param obj The object to link to.
+     * @param classKeys The class-key configuration for determining which fields to
+     * use for identification.
+     * @return A path, beginning with "/" suitable for appending to a base url.
+     */
+    public static String generatePermaPath(FastPathObject obj, Map<String,
+            List<FieldDescriptor>> classKeys) {
         String url = null;
         Object externalId = ClassKeyHelper.getKeyFieldValue(obj, classKeys);
         if (externalId != null) {
@@ -187,6 +192,13 @@ public final class PortalHelper
         return baseUrl + generateReportPath(elem);
     }
 
+    /**
+     * Get the path fragment (starting with "/") for the report page for an object in the mine.
+     * @param elem The element containing data related to this object.
+     * @return A path fragment suitable for appending to a base URL.
+     * The generated path is not suitable for permanent
+     * links, as it will include the internal id, which is liable to change between releases.
+     */
     public static String generateReportPath(ResultElement elem) {
         String url = null;
         StringBuilder sb = new StringBuilder();
@@ -196,6 +208,12 @@ public final class PortalHelper
         return url;
     }
 
+
+    /**
+     * Get the base url for this web-app. This includes the host and context path fragment.
+     * @param request An incoming request.
+     * @return The base URL.
+     */
     public static String getBaseUrl(HttpServletRequest request) {
         if (portalBaseUrl == null) {
             portalBaseUrl = new URLGenerator(request).getPermanentBaseURL();
@@ -203,6 +221,12 @@ public final class PortalHelper
         return portalBaseUrl;
     }
 
+    /**
+     * URL encode a string. This method wraps java.net.URLEncoder's method,
+     * returning the input string in the case of failure.
+     * @param s The string to encode.
+     * @return A legally encoded UTF-8 string, conforming to RFC3986.
+     */
     private static String encode(String s) {
         try {
             return URLEncoder.encode(s, "UTF-8");

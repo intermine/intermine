@@ -58,14 +58,16 @@ public abstract class ReportDisplayer
     public void execute(HttpServletRequest request, ReportObject reportObject) {
         request.setAttribute("reportObject", reportObject);
         request.setAttribute("jspPage", getJspPage());
-
         try {
             display(request, reportObject);
+        } catch (ReportDisplayerNoResultsException e) {
+            request.setAttribute("displayerName", getClass().getSimpleName());
+            request.setAttribute("jspPage", "reportDisplayerNoResults.jsp");
         } catch (Exception e) {
             // failed to display so put an error message in place instead
             LOG.error("Error rendering report displayer " + getClass() + " for "
                     + reportObject.getType() + "(" + reportObject.getId() + "): "
-                    + e.fillInStackTrace());
+                    + ExceptionUtils.getFullStackTrace(e));
             request.setAttribute("displayerName", getClass().getSimpleName());
             request.setAttribute("jspPage", "reportDisplayerError.jsp");
 
@@ -82,8 +84,18 @@ public abstract class ReportDisplayer
      * put on the request.
      * @param request request for displaying a report page
      * @param reportObject the object being displayed
+     * @throws ReportDisplayerNoResultsException if something goes wrong
      */
-    public abstract void display(HttpServletRequest request, ReportObject reportObject);
+    public abstract void display(HttpServletRequest request, ReportObject reportObject)
+        throws ReportDisplayerNoResultsException;
+
+    /**
+     *
+     * @return true if we should not wait for AJAX.
+     */
+    public Boolean getShowImmediately() {
+        return config.getShowImmediately();
+    }
 
     /**
      * The JSP page that will be called with the request to render output.
@@ -101,5 +113,25 @@ public abstract class ReportDisplayer
      */
     public Set<String> getReplacedFieldExprs() {
         return config.getReplacedFieldNames();
+    }
+
+    /**
+     * Gimme my name
+     * @return a name
+     */
+    public String getDisplayerName() {
+        return getClass().getSimpleName();
+    }
+
+    /**
+     * A JSP wants a nice name to display while the Displayer is loading
+     * @return camel case class simple name split
+     */
+    public String getNicerDisplayerName() {
+        String name = "";
+        for (String w : getDisplayerName().split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])")) {
+            name += w + " ";
+        }
+        return name.trim();
     }
 }

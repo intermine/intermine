@@ -13,10 +13,13 @@ package org.intermine.web.logic.export;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.api.results.ResultElement;
+import org.intermine.pathquery.Path;
 
 
 /**
@@ -68,7 +71,8 @@ public class ExporterImpl implements Exporter
     /**
      * {@inheritDoc}
      */
-    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         try {
             if (headers != null) {
                 out.println(rowFormatter.format(new ArrayList<Object>(headers)));
@@ -77,7 +81,8 @@ public class ExporterImpl implements Exporter
             ResultElementConverter converter = new ResultElementConverter();
             while (resultIt.hasNext()) {
                 List<ResultElement> result = resultIt.next();
-                out.println(rowFormatter.format(converter.convert(result)));
+                out.println(rowFormatter.format(converter.convert(result,
+                        unionPathCollection, newPathCollection)));
                 writtenResultsCount++;
                 if (writtenResultsCount % 10000 == 0) {
                     if (out.checkError()) {
@@ -89,6 +94,11 @@ public class ExporterImpl implements Exporter
         } catch (RuntimeException e) {
             throw new ExportException("Export failed.", e);
         }
+    }
+
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
     }
 
     /**
@@ -103,7 +113,7 @@ public class ExporterImpl implements Exporter
      * Universal exporter.
      * @return always true
      */
-    public boolean canExport(@SuppressWarnings("unused") List<Class<?>> clazzes) {
+    public boolean canExport(List<Class<?>> clazzes) {
         return true;
     }
 }

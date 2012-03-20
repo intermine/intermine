@@ -22,11 +22,12 @@ public class JSONListFormatter implements ListFormatter {
     private final InterMineAPI im;
     private final Profile profile;
 
-    public JSONListFormatter(InterMineAPI im, Profile profile) {
+    public JSONListFormatter(InterMineAPI im, Profile profile, boolean jsDates) {
         super();
         this.im = im;
         this.profile = profile;
     }
+
     private final boolean hasCallback = false;
     private int rowsLeft = 0;
     private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -42,6 +43,8 @@ public class JSONListFormatter implements ListFormatter {
         listMap.put("status", list.getState());
         if (list.getDateCreated() != null) {
             Date createdOn = list.getDateCreated();
+
+            listMap.put("timestamp", createdOn.getTime());
             listMap.put("dateCreated", iso8601.format(createdOn));
         }
         BagManager bm = im.getBagManager();

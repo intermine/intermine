@@ -13,7 +13,7 @@ package org.intermine.webservice.server;
 /**
  * @author Jakub Kulaviak
  **/
-public class WebServiceConstants
+public abstract class WebServiceConstants
 {
     /**
      * Error message returned in case of unexpected service failure.
