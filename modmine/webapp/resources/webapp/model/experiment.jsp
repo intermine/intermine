@@ -592,7 +592,7 @@ All GBrowse tracks generated for this experiment:
       </td>
 
       <td class="sorting">
-      <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${subCounts.key.id}">
+      <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${sub.id}">
       <c:out value="${fn:replace(sub.title, '_', ' ')}"></c:out></html:link>
       </td>
 
@@ -607,12 +607,11 @@ All GBrowse tracks generated for this experiment:
                    <c:when test="${factor.property != null}">
 
     <c:set var="thisTypeCount" value="${thisTypeCount + 1}"></c:set>
-
            <c:choose>
              <c:when test="${thisTypeCount <= 5}">
-              <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.id}" title="More information about this factor"><c:out value="${factor.name}"/></html:link>
+              <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${factor.property.id}" title="More information about this ${factor.type}"><c:out value="${factor.name}"/></html:link>
               <span class="tinylink">
-              <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this factor">
+              <im:querylink text="[ALL]" skipBuilder="true" title="View all submissions using this ${factorType}">
               <query name="" model="genomic"
               view="Submission.DCCid Submission.project.surnamePI Submission.title Submission.experimentType Submission.properties.type Submission.properties.name"
               sortOrder="Submission.experimentType asc">
@@ -636,6 +635,7 @@ All GBrowse tracks generated for this experiment:
               </span>
 
 <%--if antibody or strain add target gene --%>
+
 <c:if test="${(factor.type == ANTIBODY || factor.type == STRAIN) && !fn:contains(factor.name, 'oldid')}">
 <c:choose>
 <c:when test="${not empty factor.property.target.name}">
