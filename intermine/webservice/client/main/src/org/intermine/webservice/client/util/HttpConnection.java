@@ -40,6 +40,9 @@ import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.client.exceptions.ServiceUnavailableException;
 
+import org.json.JSONObject;
+import org.json.JSONException;
+
 /**
  * The HttpConnection is class wrapping implementation details of http connection and the
  * implementation can change easily.
@@ -54,6 +57,8 @@ public class HttpConnection
     HttpMethodBase executedMethod;
 
     private int timeout;
+
+    private int retryCount = 3;
 
     private boolean opened = false;
 
@@ -112,25 +117,26 @@ public class HttpConnection
     private void executeMethod() {
         HttpClient client = new HttpClient();
         client.getParams().setConnectionManagerTimeout(timeout);
-        String url = null;
+        String url = request.getEncodedUrl();
         if (request.getType() == RequestType.GET) {
-            executedMethod = new GetMethod(request.getEncodedUrl());
+            executedMethod = new GetMethod(url);
         } else if (request.getType() == RequestType.DELETE) {
-            executedMethod = new DeleteMethod(request.getEncodedUrl());
+            executedMethod = new DeleteMethod(url);
         } else {
             PostMethod postMethod;
             if (request.getContentType() == ContentType.MULTI_PART_FORM) {
-                postMethod = new PostMethod(request.getEncodedUrl());
+                postMethod = new PostMethod(url);
                 setMultiPartPostEntity(postMethod, ((MultiPartRequest) request));
             } else {
-                postMethod = new PostMethod(request.getServiceUrl());
+                url = request.getServiceUrl();
+                postMethod = new PostMethod(url);
                 setPostMethodParameters(postMethod, request.getParameterMap());
             }
             executedMethod = postMethod;
         }
         // Provide custom retry handler is necessary
         executedMethod.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                new DefaultHttpMethodRetryHandler(3, false));
+                new DefaultHttpMethodRetryHandler(retryCount, false));
         for (String name : request.getHeaders().keySet()) {
             executedMethod.setRequestHeader(name, request.getHeader(name));
         }
@@ -169,6 +175,14 @@ public class HttpConnection
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * Sets retry count.
+     * @param times The number of times to flog a dead horse. (3 by default).
+     */
+    public void setRetryCount(int times) {
+        this.retryCount = times;
     }
 
     /**
@@ -219,6 +233,13 @@ public class HttpConnection
     protected void handleErrorResponse() throws IOException {
 
         String message = executedMethod.getResponseBodyAsString();
+        try {
+            JSONObject jo = new JSONObject(message);
+            message = jo.getString("error");
+        } catch (JSONException e) {
+            // Pass
+        }
+
         switch (executedMethod.getStatusCode()) {
 
             case HttpURLConnection.HTTP_NOT_FOUND:

@@ -20,10 +20,12 @@ public class Version
 
     /**
      * Constructor.
-     * @param version version
+     * @param major major release version - increment for backwards incompatible changes.
+     * @param minor minor release version - increment for new features
+     * @param point point release version - increment for every change.
      */
-    public Version(String version) {
-        this.version = version;
+    public Version(int major, int minor, int point) {
+        this.version = String.format("%d.%02d.%02d", major, minor, point);
     }
 
     /**
@@ -31,13 +33,6 @@ public class Version
      */
     String getVersion() {
         return version;
-    }
-
-    /**
-     * @param version version
-     */
-    void setVersion(String version) {
-        this.version = version;
     }
 
     /**

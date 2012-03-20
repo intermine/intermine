@@ -11,6 +11,8 @@ package org.intermine.webservice.client.results;
  */
 
 import org.intermine.webservice.client.util.HttpConnection;
+
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
 import java.util.ArrayList;
@@ -34,15 +36,33 @@ public class RowResultSet extends ResultSet
 
     private List<String> views;
     private final StringBuffer containerBuffer = new StringBuffer();
+    private final boolean useNewAPI;
 
     /**
      * Construct a new result-set with an HttpConnection and a list of output columns.
      * @param connection The connection to receive results from.
      * @param views The columns selected for output.
+     * @param version The web service version of the service these results come from.
      */
-    public RowResultSet(HttpConnection connection, List<String> views) {
+    public RowResultSet(HttpConnection connection, List<String> views, int version) {
         super(connection);
         init(views);
+        useNewAPI = version >= 8;
+    }
+
+    /**
+     * Constructor with a reader.
+     *
+     * Use this constructor when you want to make the request yourself.
+     *
+     * @param reader A presupplied reader, presumably obtained by opening a URL or a file.
+     * @param views The columns selected for output.
+     * @param version The web service version of the service these results come from.
+     */
+    public RowResultSet(BufferedReader reader, List<String> views, int version) {
+        super(reader);
+        init(views);
+        useNewAPI = version >= 8;
     }
 
     /**
@@ -56,6 +76,7 @@ public class RowResultSet extends ResultSet
     public RowResultSet(String stringResults, List<String> views) {
         super(stringResults);
         init(views);
+        useNewAPI = false;
     }
 
     // At Package level for testing
@@ -67,6 +88,7 @@ public class RowResultSet extends ResultSet
     RowResultSet(InputStream is, List<String> views) {
         super(is);
         init(views);
+        useNewAPI = false;
     }
 
     private void init(List<String> views) {
@@ -101,7 +123,11 @@ public class RowResultSet extends ResultSet
         List<List<Object>> ret = new ArrayList<List<Object>>();
         String rowData = null;
         while ((rowData = getNextRow()) != null) {
-            ret.add(new ResultRowList(rowData));
+            if (useNewAPI) {
+                ret.add(new JsonRow(rowData));
+            } else {
+                ret.add(new ResultRowList(rowData));
+            }
         }
         return ret;
     }
@@ -119,7 +145,11 @@ public class RowResultSet extends ResultSet
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         String rowData = null;
         while ((rowData = getNextRow()) != null) {
-            ret.add(new ResultRowMap(rowData, views));
+            if (useNewAPI) {
+                ret.add(new JsonRowMap(rowData, views));
+            } else {
+                ret.add(new ResultRowMap(rowData, views));
+            }
         }
         return ret;
     }
@@ -165,7 +195,7 @@ public class RowResultSet extends ResultSet
             String line = getNextRow();
 
             if (line != null) {
-                return new ResultRowMap(line, views);
+                return useNewAPI ? new JsonRowMap(line, views) : new ResultRowMap(line, views);
             } else {
                 return null;
             }
@@ -204,7 +234,7 @@ public class RowResultSet extends ResultSet
             String line = getNextRow();
 
             if (line != null) {
-                return new ResultRowList(line);
+                return useNewAPI ? new JsonRow(line) : new ResultRowList(line);
             } else {
                 return null;
             }

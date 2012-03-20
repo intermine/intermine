@@ -23,6 +23,8 @@ import org.intermine.webservice.client.lists.ItemList;
 import org.intermine.webservice.client.results.Item;
 import org.intermine.webservice.client.services.ListService;
 import org.intermine.webservice.client.services.ListService.ListCreationInfo;
+import org.intermine.webservice.client.services.ListService.ListCreationInfo;
+import org.intermine.webservice.client.exceptions.ServiceException;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -30,7 +32,7 @@ public class LiveListTest {
 
     private static final Logger LOGGER = Logger.getLogger(LiveListTest.class);
     private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "Z1a3D3U16cicCdS0T6y4bdN1SQh";
+    private static final String authToken = "test-user-token";
     private static ListService testmine = new ServiceFactory(baseUrl, authToken).getListService();
     private static final List<ItemList> tempLists = new ArrayList<ItemList>();
     private static int initialSize = 0;
@@ -83,7 +85,7 @@ public class LiveListTest {
         ItemList favs = testmine.getList("My-Favourite-Employees");
         Item timo = favs.get(1);
         assertEquals("Timo Becker", timo.getString("name"));
-        assertEquals(Integer.valueOf(293149), timo.getInt("seniority"));
+        assertEquals(Integer.valueOf(56224), timo.getInt("seniority"));
         assertTrue(timo.isa("Manager"));
         assertTrue(timo.isa("Employee"));
         assertTrue(! timo.isa("Department"));
@@ -439,7 +441,7 @@ public class LiveListTest {
         assertNotNull(david);
         assertEquals("David Brent", david.getString("name"));
         assertFalse(david.getBoolean("fullTime"));
-        assertEquals(new Integer(339996), david.getInt("seniority"));
+        assertEquals(new Integer(81361), david.getInt("seniority"));
 
         List<Item> hasAnO = favs.find(new HashMap<String, Object>() {{ put("name", "*o*"); }});
         assertEquals(3, hasAnO.size());
@@ -484,6 +486,36 @@ public class LiveListTest {
         Item company = department.getReference("company");
         assertNotNull(company);
         assertEquals("Capitol Versicherung AG", company.getString("name"));
+    }
+
+    @Test
+    public void illegalTagNames() {
+        ItemList favs = testmine.getList("My-Favourite-Employees");
+        try {
+            testmine.addTags(favs, "!$%^&*(");
+            fail("Should not have been allowed to add that tag");
+        } catch (ServiceException e) {
+            String message = e.getMessage() != null ? e.getMessage() : "";
+            if (e.getCause() != null) {
+                message += e.getCause().getMessage();
+            }
+            assertTrue( "Message (" + message + ") should be informative", message.indexOf("Invalid name") >= 0);
+        }
+    }
+
+    @Test
+    public void forbiddenTagNames() {
+        ItemList favs = testmine.getList("My-Favourite-Employees");
+        try {
+            testmine.addTags(favs, "im:foo");
+            fail("Should not have been allowed to add that tag");
+        } catch (ServiceException e) {
+            String message = e.getMessage() != null ? e.getMessage() : "";
+            if (e.getCause() != null) {
+                message += e.getCause().getMessage();
+            }
+            assertTrue( "Message (" + message + ") should be informative", message.indexOf("starting with im") >= 0);
+        }
     }
 
     @Test

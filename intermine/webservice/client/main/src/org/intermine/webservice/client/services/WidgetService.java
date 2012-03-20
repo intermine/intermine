@@ -1,7 +1,16 @@
 package org.intermine.webservice.client.services;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,16 +27,6 @@ import org.intermine.webservice.client.widget.Widget;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-/*
- * Copyright (C) 2002-2011 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
 
 
 /**
@@ -62,26 +61,25 @@ public class WidgetService extends Service
     }
 
     /** A request implementation for use in this service **/
-    private static class WidgetRequest extends RequestImpl
+    private static final class WidgetRequest extends RequestImpl
     {
         private WidgetRequest(String url) {
             super(RequestType.GET, url, ContentType.APPLICATION_JSON);
         }
-
-        private void setWidget(String name) {
-            setParameter("widget", name);
-        }
-
-        private void setList(String name) {
-            setParameter("list", name);
-        }
     }
 
+    /**
+     * @return Get the available widgets.
+     */
     public List<Widget> getWidgets() {
         Request request = new WidgetRequest(getUrl());
         return processWidgetRequest(request);
     }
 
+    /**
+     * @param name The name of the widget you want.
+     * @return A widget by name, or null.
+     */
     public Widget getWidget(String name) {
         List<Widget> widgets = getWidgets();
         for (Widget w: widgets) {
@@ -92,6 +90,9 @@ public class WidgetService extends Service
         return null;
     }
 
+    /**
+     * @return All chart widgets.
+     */
     public List<Widget> getChartWidgets() {
         List<Widget> widgets = getWidgets();
         List<Widget> chartWidgets = new LinkedList<Widget>();
@@ -103,6 +104,9 @@ public class WidgetService extends Service
         return chartWidgets;
     }
 
+    /**
+     * @return All enrichment widgets.
+     */
     public List<Widget> getEnrichmentWidgets() {
         List<Widget> widgets = getWidgets();
         List<Widget> enrichmentWidgets = new LinkedList<Widget>();
@@ -113,8 +117,6 @@ public class WidgetService extends Service
         }
         return enrichmentWidgets;
     }
-
-
 
     private List<Widget> processWidgetRequest(Request request) {
         HttpConnection connection = executeRequest(request);
