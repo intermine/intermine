@@ -2231,11 +2231,10 @@ public class PathQuery implements Cloneable
     	// SORT ORDER
     	List<OrderElement> order = getOrderBy();
     	if (!order.isEmpty()) {
-    		sb.append(",\"orderBy\":");
+    		sb.append(",\"orderBy\":[");
     		for (Iterator<OrderElement> it = order.iterator(); it.hasNext();) {
     			OrderElement oe = it.next();
-    			sb.append(String.format("{\"path\":\"%s\",\"direction\":\"%s\"}",
-    					oe.getOrderPath(), oe.getDirection()));
+    			sb.append(String.format("{\"%s\":\"%s\"}", oe.getOrderPath(), oe.getDirection()));
     			if (it.hasNext()) sb.append(",");
     		}
     		sb.append("]");
@@ -2254,8 +2253,8 @@ public class PathQuery implements Cloneable
     		for (Iterator<Entry<String, OuterJoinStatus>> it = ojs.entrySet().iterator(); it.hasNext();) {
     			Entry<String, OuterJoinStatus> pair = it.next();
     			if (pair.getValue() == OuterJoinStatus.OUTER) {
+    				if (sb2.length() > 0) sb2.append(",");
     				sb2.append("\"" + pair.getKey() + "\"");
-    				if (it.hasNext()) sb2.append(",");
     			}
     		}
     		if (sb2.length() != 0) {
@@ -2287,7 +2286,9 @@ public class PathQuery implements Cloneable
     		return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
     	}
 
-    	String commonPrefix = "{\"path\":\"" + path + "\",\"code\":" + code + "\"";
+    	String op = constraint.getOp().toString();
+
+    	String commonPrefix = "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":" + code + "\"";
     	StringBuilder conb = new StringBuilder(commonPrefix);
 
     	Collection<String> values = PathConstraint.getValues(constraint);
@@ -2302,7 +2303,6 @@ public class PathQuery implements Cloneable
 
 	    	String value = PathConstraint.getValue(constraint);
 	    	String extraValue = PathConstraint.getExtraValue(constraint);
-	    	String op = constraint.getOp().toString();
 
 	    	if (value != null) {
 	    		conb.append(",\"value\":\"" + StringEscapeUtils.escapeJava(value) + "\"");
