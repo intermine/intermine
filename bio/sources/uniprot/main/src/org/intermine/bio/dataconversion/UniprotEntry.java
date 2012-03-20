@@ -262,6 +262,20 @@ public class UniprotEntry
     }
 
     /**
+     * @return list of ecNumbers for this protein
+     */
+    public List<String> getECNumbers() {
+        return collections.get("ecNumbers");
+    }
+
+    /**
+     * @param ecNumber for this protein
+     */
+    public void addECNumber(String ecNumber) {
+        addToCollection("ecNumbers", ecNumber);
+    }
+
+    /**
      * @return list of refIds representing the keyword objects
      */
     public List<String> getKeywords() {
@@ -888,7 +902,7 @@ public class UniprotEntry
      *  gene items, just identifiers  - for memory reasons
      *  sequence, length, molecular weight, md5checksum
      *  components - per rachel
-     *
+     *  isoforms - per mike
      *
      * @param accession for isoform
      * @return cloned uniprot entry, an isoform of original entry

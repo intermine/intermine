@@ -14,11 +14,17 @@
     <attribute name="uniprotAccession" type="java.lang.String"/>
     <attribute name="uniprotName" type="java.lang.String"/>
     <attribute name="ecNumber" type="java.lang.String"/>
+    <collection name="ecNumbers" referenced-type="ECNumber" reverse-reference="proteins" />
     <collection name="comments" referenced-type="Comment" />
     <collection name="components" referenced-type="Component" reverse-reference="protein" />
     <collection name="keywords" referenced-type="OntologyTerm" />
     <collection name="features" referenced-type="UniProtFeature" reverse-reference="protein" />
     <collection name="proteinDomains" referenced-type="ProteinDomain" reverse-reference="proteins" />
+  </class>
+  <class name="ECNumber" is-interface="true">
+    <attribute name="identifier" type="java.lang.String" />
+    <attribute name="description" type="java.lang.String" />
+    <collection name="proteins" referenced-type="Protein" reverse-reference="ecNumbers"/>
   </class>
   <class name="Component" is-interface="true">
     <attribute name="name" type="java.lang.String" />

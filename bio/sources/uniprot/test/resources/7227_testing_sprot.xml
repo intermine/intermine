@@ -6,10 +6,12 @@
     <recommendedName>
       <fullName>eve's name</fullName>
       <shortName>shortname</shortName>
+      <ecNumber>1.1.1.284</ecNumber>
     </recommendedName>
 <alternativeName>
 <fullName>alternativeName - full</fullName>
 <shortName>alternativeName - short</shortName>
+<ecNumber>1.1.1.1</ecNumber>
 </alternativeName>
 <component>
 <recommendedName>
@@ -19,6 +21,7 @@
 <alternativeName>
 <fullName>full component alternativeName</fullName>
 <shortName>short component alternativeName</shortName>
+<ecNumber>1.1.1.-</ecNumber>
 </alternativeName>
 </component>
 </protein>
