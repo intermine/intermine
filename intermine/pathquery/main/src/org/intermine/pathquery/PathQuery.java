@@ -2213,6 +2213,15 @@ public class PathQuery implements Cloneable
     }
 
     /**
+     * toJson synonym for JSPs.
+     *
+     * @return This query as json.
+     */
+    public synchronized String getJson() {
+    	return toJson();
+    }
+
+    /**
      * Convert this PathQuery to a JSON serialisation.
      *
      * @return This query as json.
