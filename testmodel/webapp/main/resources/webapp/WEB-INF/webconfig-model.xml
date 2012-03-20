@@ -2,7 +2,7 @@
   <class className="org.intermine.model.testmodel.Company">
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="vatNumber" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
+      <fieldconfig fieldExpr="vatNumber" hideInQueryBuilder="true" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="address.address" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
     </fields>
   </class>
@@ -10,17 +10,12 @@
   <class className="org.intermine.model.testmodel.Employee">
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
-      <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
-      <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false"/>
+      <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works In"/>
+      <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false" label="Works For"/>
       <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true" label="Years Alive"/>
-      <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Full Time"/>
-      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true"/>
+      <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Full Time?"/>
+      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Lives at"/>
     </fields>
-    <bagdisplayers>
-      <bagtabledisplayer title="Department information" type="Department" collectionName="department"
-      urlGen="org.intermine.model.testmodel.web.widget.EmployeeURLQuery"
-      description="Most popular Departments for this bag" />
-    </bagdisplayers>
   </class>
 
   <!-- exists to test that displayers for base classes (in this case
@@ -107,6 +102,22 @@
                  domainLabel="Age"
                  rangeLabel="Seniority"
                  graphType="ScatterPlot"/>
+         <graphdisplayer id="department_age"
+              dataSetLoader="org.intermine.model.testmodel.web.widget.DepartmentSalaryProfileLoader"
+              typeClass="org.intermine.model.testmodel.Department"
+              title="Age Profile"
+              description="The Age Profile of These Departments"
+              domainLabel="Age"
+              rangeLabel="P"
+              graphType="XYLineChart"/>
+         <graphdisplayer id="department_age_histogram"
+              dataSetLoader="org.intermine.model.testmodel.web.widget.DepartmentAgeHisto"
+              typeClass="org.intermine.model.testmodel.Department"
+              title="Age Profile"
+              description="The Age Profile of These Departments"
+              domainLabel="Age"
+              rangeLabel="Number of Employees"
+              graphType="Histogram"/>
          <enrichmentwidgetdisplayer id="contractor_enrichment"
                  typeClass="org.intermine.model.testmodel.Employee"
                  dataSetLoader="org.intermine.model.testmodel.web.widget.ContractorEnrichmentLdr"
