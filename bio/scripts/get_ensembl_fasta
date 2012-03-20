@@ -41,15 +41,19 @@ for chr in chrs:
     filename = base + version + '.dna.chromosome.' + str(chr) + '.fa.gz'
     path = ensembl_ftp + fasta_dir + filename
     print 'Fetching ' + path
-    urllib.urlretrieve(path, filename)
-    
-    # check the file wasn't empty
-    if os.path.getsize(filename) == 0:
-        os.remove(filename)
-        print "Removing empty file: %s" % filename
-    else:
-        command = 'gunzip ' + filename
-        print 'Unzipping ' + filename
-        subprocess.call(['gunzip', filename])
+    try:
+        urllib.urlretrieve(path, filename)    
+        # check the file wasn't empty
+        if os.path.getsize(filename) == 0:
+            os.remove(filename)
+            print "Removing empty file: %s" % filename
+        else:
+            command = 'gunzip ' + filename
+            print 'Unzipping ' + filename
+            subprocess.call(['gunzip', filename])
+    except IOError, e:
+        (errno, errdetails) = e
+        print "Problem with downloading file %s: %s" %(filename, errdetails)
+        print "File %s ignored" %filename
 
 
