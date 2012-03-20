@@ -243,7 +243,6 @@ public class BioGridConverter extends BioFileConverter
             attName = null;
 
             /********************************* EXPERIMENT **********************************/
-
             // <experimentList><experimentDescription>
             if ("experimentDescription".equals(qName)) {
                 experimentHolder = getExperimentHolder(attrs.getValue("id"));
@@ -541,6 +540,7 @@ public class BioGridConverter extends BioFileConverter
                 ih.valid = false;
                 return false;
             }
+
             ih.participant = storeGene(label, identifier, ih, taxonId);
 
             ih.valid = true;
@@ -557,6 +557,10 @@ public class BioGridConverter extends BioFileConverter
                 item.setAttribute(label, identifier);
                 try {
                     item.setReference("organism", getOrganism(taxonId));
+                    Item xref = processBioGridId(ih, item);
+                    if (xref != null) {
+                        item.addToCollection("crossReferences", xref);
+                    }
                     store(item);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
@@ -576,6 +580,18 @@ public class BioGridConverter extends BioFileConverter
                 interactors.put(interactorId, p.ih);
             }
             return p;
+        }
+
+        private Item processBioGridId(InteractorHolder ih, Item item)
+            throws ObjectStoreException {
+            String biogridID = ih.getBiogridId();
+            if (StringUtils.isNotEmpty(biogridID)) {
+                Item xref = createItem("CrossReference");
+                xref.setAttribute("identifier", biogridID);
+                store(xref);
+                return xref;
+            }
+            return null;
         }
 
         /**
@@ -768,6 +784,17 @@ public class BioGridConverter extends BioFileConverter
             public InteractorHolder(String id) {
                 this.biogridId = id;
             }
+
+            /**
+             * @return ID to use to link to biogrid
+             */
+            protected String getBiogridId() {
+                if (xrefs == null || xrefs.isEmpty()) {
+                    return null;
+                }
+                return xrefs.get("biogrid");
+            }
+
         }
 
 
