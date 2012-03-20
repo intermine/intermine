@@ -91,9 +91,10 @@ public final class ProfileBinding
                 writer.writeAttribute("password", profile.getPassword());
                 writer.writeAttribute("username", profile.getUsername());
                 if (profile.getApiKey() != null) {
-                	writer.writeAttribute("apikey", profile.getApiKey());
-            	}
+                    writer.writeAttribute("apikey", profile.getApiKey());
+                }
                 writer.writeAttribute("localAccount", String.valueOf(profile.isLocal()));
+                writer.writeAttribute("superUser", String.valueOf(profile.isSuperuser()));
             }
 
             if (writeBags) {

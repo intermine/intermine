@@ -15,15 +15,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.intermine.api.profile.BagSet;
+import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.InvalidBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
-import org.intermine.api.profile.InterMineBag.BagValue;
-import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.profile.TagHandler;
 import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
-import org.intermine.api.xml.TagHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.template.TemplateQuery;
@@ -45,6 +46,7 @@ class ProfileHandler extends DefaultHandler
     private String password;
     private Map<String, SavedQuery> savedQueries;
     private Map<String, InterMineBag> savedBags;
+    private Map<String, InvalidBag> invalidBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
     private Map<String, Set<BagValue>> bagsValues;
@@ -52,6 +54,7 @@ class ProfileHandler extends DefaultHandler
     private int version;
     private String apiKey = null;
     private boolean isLocal = true;
+    private boolean isSuperUser;
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -105,7 +108,9 @@ class ProfileHandler extends DefaultHandler
      */
     public Profile getProfile() {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
-                                     savedBags, TemplateHelper.upcast(savedTemplates), apiKey, isLocal);
+                                     new BagSet(savedBags, invalidBags),
+                                     TemplateHelper.upcast(savedTemplates), apiKey,
+                                     isLocal, isSuperUser);
         return retval;
     }
 
@@ -143,12 +148,17 @@ class ProfileHandler extends DefaultHandler
             if (attrs.getValue("localAccount") != null) {
                 isLocal = Boolean.parseBoolean(attrs.getValue("localAccount"));
             }
+            if (attrs.getValue("superUser") != null) {
+                isSuperUser = Boolean.parseBoolean(attrs.getValue("superUser"));
+            }
         }
         if ("bags".equals(qName)) {
             savedBags = new LinkedHashMap();
+            invalidBags = new LinkedHashMap();
             bagsValues = new LinkedHashMap();
-            subHandler = new InterMineBagHandler(profileManager.getProfileObjectStoreWriter(),
-                    osw, savedBags, bagsValues, null);
+            subHandler = new InterMineBagHandler(
+                    profileManager.getProfileObjectStoreWriter(), osw,
+                    savedBags, invalidBags, bagsValues);
         }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();

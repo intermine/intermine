@@ -131,7 +131,7 @@ public class LoadDefaultTemplatesTask extends Task
                 LOG.info("Creating profile for " + username);
                 profileDest = new Profile(pm, username, null, password,
                         new HashMap<String, SavedQuery>(), new HashMap<String, InterMineBag>(),
-                        new HashMap<String, ApiTemplate>(), null, true);
+                        new HashMap<String, ApiTemplate>(), null, true, true);
                 profileDest.disableSaving();
                 pm.createProfile(profileDest);
             } else {
@@ -168,7 +168,10 @@ public class LoadDefaultTemplatesTask extends Task
                             tag.getType(), profileDest.getUsername()).isEmpty()) {
                     try {
                         tagManager.addTag(tag.getTagName(), tag.getObjectIdentifier(),
-                                tag.getType(), profileDest.getUsername());
+                                tag.getType(), profileDest);
+                    } catch (TagManager.TagException e) {
+                        LOG.error("Error happened during adding tag. Ignored. Tag: "
+                                + tag.toString(), e);
                     } catch (RuntimeException ex) {
                         LOG.error("Error happened during adding tag. Ignored. Tag: "
                                 + tag.toString(), ex);
