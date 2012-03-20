@@ -4,4 +4,13 @@
 
 <%@ attribute name="path" required="true" %>
 
-<c:out value="${imf:formatPathStr(path, INTERMINE_API, WEBCONFIG)}"/>
+<c:choose>
+  <c:when test="${empty QUERY}">
+    <c:set var="formattedPath" value="${imf:formatPathStr(path, INTERMINE_API, WEBCONFIG)}"/>
+  </c:when>
+  <c:otherwise>
+    <c:set var="formattedPath" value="${imf:formatQueryPath(path, QUERY, WEBCONFIG)}"/>
+  </c:otherwise>
+</c:choose>
+
+<c:out value="${formattedPath}"/>

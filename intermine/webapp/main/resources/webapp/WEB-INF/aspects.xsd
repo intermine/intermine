@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.intermine.org/aspectsXMLSchema" xmlns:tns="http://www.intermine.org/aspectsXMLSchema" elementFormDefault="qualified"> -->
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+<xsd:element name="aspects" type="aspectsType"></xsd:element>
+
+<xsd:complexType name="aspectsType">
+    <xsd:sequence>
+        <xsd:element name="aspect" type="aspectType" maxOccurs="unbounded"></xsd:element>
+    </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="aspectType">
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="subtitle" type="xsd:string"></xsd:element>
+        <xsd:element name="icon-image" type="xsd:string"></xsd:element>
+        <xsd:element name="large-image" type="xsd:string"></xsd:element>
+        <xsd:element name="tile-name" type="xsd:string" ></xsd:element>
+        <xsd:element name="intro-text" type="xsd:string"></xsd:element>
+        <xsd:element name="starting-points" type="xsd:string"></xsd:element>
+        <xsd:element name="aspect-source" type="sourceType"></xsd:element>
+    </xsd:choice>
+    <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+</xsd:complexType>
+
+<xsd:complexType name="sourceType">
+    <xsd:attribute name="name" type="xsd:string"></xsd:attribute>
+    <xsd:attribute name="url" type="xsd:string"></xsd:attribute>
+</xsd:complexType>
+</xsd:schema>

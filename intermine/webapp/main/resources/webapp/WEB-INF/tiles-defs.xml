@@ -170,6 +170,13 @@
     <put name="queryBuilderView" value="queryBuilderView.tile"/>
   </definition>
   <definition name="templateList.tile" path="/templateList.jsp" controllerUrl="/initTemplateList.do"/>
+
+  <definition name="templateProblems.page" extends="layout.template">
+      <put name="body" value="templateProblems.tile" />
+      <put name="pageName" value="templateProblems" />
+  </definition>
+  <definition name="templateProblems.tile" path="/templateProblems.jsp" controllerUrl="/initTemplateProblems.do"/>
+
   <definition name="reportTemplateTable.tile" path="/reportTemplateTable.jsp"
               controllerUrl="/initReportTemplateTable.do"/>
   <definition name="queryBuilder.tile" path="/queryBuilder.jsp" controllerUrl="/initQueryBuilder.do"/>
