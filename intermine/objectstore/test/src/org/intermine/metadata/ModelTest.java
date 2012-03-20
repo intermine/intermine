@@ -10,6 +10,7 @@ package org.intermine.metadata;
  *
  */
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +22,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.model.testmodel.SimpleObject;
 
 public class ModelTest extends TestCase
@@ -264,28 +266,10 @@ public class ModelTest extends TestCase
 
     public void testToString3() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        String modelString ="<model name=\"testmodel\" package=\"org.intermine.model.testmodel\">" + ENDL +
-        "<class name=\"Broke\" is-interface=\"true\">" + INDENT + "<attribute name=\"debt\" type=\"int\"/>" + INDENT + "<reference name=\"bank\" referenced-type=\"Bank\" reverse-reference=\"debtors\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Thing\" is-interface=\"true\"></class>" + ENDL +
-        "<class name=\"Employable\" extends=\"Thing\" is-interface=\"true\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"HasAddress\" is-interface=\"true\">" + INDENT + "<reference name=\"address\" referenced-type=\"Address\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"HasSecretarys\" is-interface=\"true\">" + INDENT + "<collection name=\"secretarys\" referenced-type=\"Secretary\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Contractor\" extends=\"Employable ImportantPerson\" is-interface=\"false\">" + INDENT + "<reference name=\"personalAddress\" referenced-type=\"Address\"/>" + INDENT + "<reference name=\"businessAddress\" referenced-type=\"Address\"/>" + INDENT + "<collection name=\"companys\" referenced-type=\"Company\" reverse-reference=\"contractors\"/>" + INDENT + "<collection name=\"oldComs\" referenced-type=\"Company\" reverse-reference=\"oldContracts\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Manager\" extends=\"Employee ImportantPerson\" is-interface=\"false\">" + INDENT + "<attribute name=\"title\" type=\"java.lang.String\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Employee\" extends=\"Employable HasAddress\" is-interface=\"false\">" + INDENT + "<attribute name=\"fullTime\" type=\"boolean\"/>" + INDENT + "<attribute name=\"age\" type=\"int\"/>" + INDENT + "<attribute name=\"end\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"department\" referenced-type=\"Department\" reverse-reference=\"employees\"/>" + INDENT + "<reference name=\"departmentThatRejectedMe\" referenced-type=\"Department\" reverse-reference=\"rejectedEmployee\"/>" + INDENT + "<collection name=\"simpleObjects\" referenced-type=\"SimpleObject\" reverse-reference=\"employee\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Department\" extends=\"RandomInterface\" is-interface=\"false\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"company\" referenced-type=\"Company\" reverse-reference=\"departments\"/>" + INDENT + "<reference name=\"manager\" referenced-type=\"Manager\"/>" + INDENT + "<collection name=\"employees\" referenced-type=\"Employee\" reverse-reference=\"department\"/>" + INDENT + "<collection name=\"rejectedEmployee\" referenced-type=\"Employee\" reverse-reference=\"departmentThatRejectedMe\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Company\" extends=\"RandomInterface HasAddress HasSecretarys\" is-interface=\"true\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<attribute name=\"vatNumber\" type=\"int\"/>" + INDENT + "<reference name=\"CEO\" referenced-type=\"CEO\" reverse-reference=\"company\"/>" + INDENT + "<collection name=\"departments\" referenced-type=\"Department\" reverse-reference=\"company\"/>" + INDENT + "<collection name=\"contractors\" referenced-type=\"Contractor\" reverse-reference=\"companys\"/>" + INDENT + "<collection name=\"oldContracts\" referenced-type=\"Contractor\" reverse-reference=\"oldComs\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Address\" extends=\"Thing\" is-interface=\"false\">" + INDENT + "<attribute name=\"address\" type=\"java.lang.String\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"RandomInterface\" is-interface=\"true\"></class>" + ENDL +
-        "<class name=\"CEO\" extends=\"Manager HasSecretarys\" is-interface=\"false\">" + INDENT + "<attribute name=\"salary\" type=\"int\"/>" + INDENT + "<reference name=\"company\" referenced-type=\"Company\" reverse-reference=\"CEO\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"ImportantPerson\" is-interface=\"true\">" + INDENT + "<attribute name=\"seniority\" type=\"java.lang.Integer\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Secretary\" is-interface=\"false\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Types\" is-interface=\"false\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<attribute name=\"booleanType\" type=\"boolean\"/>" + INDENT + "<attribute name=\"floatType\" type=\"float\"/>" + INDENT + "<attribute name=\"doubleType\" type=\"double\"/>" + INDENT + "<attribute name=\"shortType\" type=\"short\"/>" + INDENT + "<attribute name=\"intType\" type=\"int\"/>" + INDENT + "<attribute name=\"longType\" type=\"long\"/>" + INDENT + "<attribute name=\"booleanObjType\" type=\"java.lang.Boolean\"/>" + INDENT + "<attribute name=\"floatObjType\" type=\"java.lang.Float\"/>" + INDENT + "<attribute name=\"doubleObjType\" type=\"java.lang.Double\"/>" + INDENT + "<attribute name=\"shortObjType\" type=\"java.lang.Short\"/>" + INDENT + "<attribute name=\"intObjType\" type=\"java.lang.Integer\"/>" + INDENT + "<attribute name=\"longObjType\" type=\"java.lang.Long\"/>" + INDENT + "<attribute name=\"bigDecimalObjType\" type=\"java.math.BigDecimal\"/>" + INDENT + "<attribute name=\"dateObjType\" type=\"java.util.Date\"/>" + INDENT + "<attribute name=\"stringObjType\" type=\"java.lang.String\"/>" + INDENT + "<attribute name=\"clobObjType\" type=\"org.intermine.objectstore.query.ClobAccess\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Bank\" is-interface=\"false\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<collection name=\"debtors\" referenced-type=\"Broke\" reverse-reference=\"bank\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"SimpleObject\" extends=\"java.lang.Object\" is-interface=\"false\">" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"employee\" referenced-type=\"Employee\" reverse-reference=\"simpleObjects\"/>" + ENDL + "</class>" + ENDL +
-        "<class name=\"Range\" is-interface=\"false\">" + INDENT + "<attribute name=\"rangeStart\" type=\"int\"/>" + INDENT + "<attribute name=\"rangeEnd\" type=\"int\"/>" + INDENT + "<attribute name=\"name\" type=\"java.lang.String\"/>" + INDENT + "<reference name=\"parent\" referenced-type=\"Company\"/>" + ENDL + "</class>" + ENDL
-        + "</model>";
-        assertEquals(modelString, model.toString());
+        InputStream is = getClass().getResourceAsStream("expected_model.xml");
+
+        String modelString = IOUtils.toString(is).replaceAll("\n$", "");
+        assertEquals(modelString, model.toString().replaceAll("\t", "    "));
     }
 
     public void testGetSimpleObjectClassDescriptors() throws Exception {

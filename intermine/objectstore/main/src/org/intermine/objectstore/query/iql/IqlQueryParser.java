@@ -959,6 +959,12 @@ public final class IqlQueryParser
                 case IqlTokenTypes.LITERAL_stddev:
                     type = QueryFunction.STDDEV;
                     break;
+                case IqlTokenTypes.LITERAL_greatest:
+                    type = -6;
+                    break;
+                case IqlTokenTypes.LITERAL_least:
+                    type = -7;
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
@@ -985,6 +991,10 @@ public final class IqlQueryParser
             return new QueryExpression(QueryExpression.LOWER, firstObj);
         } else if (type == -5) {
             return new QueryExpression(QueryExpression.UPPER, firstObj);
+        } else if (type == -6) {
+            return new QueryExpression(firstObj, QueryExpression.GREATEST, secondObj);
+        } else if (type == -7) {
+            return new QueryExpression(firstObj, QueryExpression.LEAST, secondObj);
         } else if (type == QueryFunction.COUNT) {
             return new QueryFunction();
         } else {

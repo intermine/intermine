@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -94,10 +95,17 @@ public final class ResultsConverter
         try {
             List<ResultsRow<Object>> retval = new ArrayList<ResultsRow<Object>>();
             HashSet<Integer> idsToFetch = new HashSet<Integer>();
+
+            // populate aliases map once - ensure keys are Java object ids not the hashCode
+            Map<QuerySelectable, String> aliases = new IdentityHashMap<QuerySelectable, String>();
+            for (QuerySelectable node : q.getSelect()) {
+                aliases.put(node, DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(node)));
+            }
+
             while (sqlResults.next()) {
                 ResultsRow<Object> row = new ResultsRow<Object>();
                 for (QuerySelectable node : q.getSelect()) {
-                    String alias = DatabaseUtil.generateSqlCompatibleName(q.getAliases().get(node));
+                    String alias = aliases.get(node);
                     if (node instanceof QueryClass) {
                         Integer idField = null;
                         Object obj = null;
@@ -156,32 +164,35 @@ public final class ResultsConverter
                         needPathExpressions = true;
                     } else {
                         currentColumn = sqlResults.getObject(alias);
-                        if (Date.class.equals(node.getType())) {
-                            currentColumn = new Date(((Long) currentColumn).longValue());
-                        } else if (Class.class.equals(node.getType())) {
-                            Set<Class<?>> classes = new HashSet<Class<?>>();
-                            try {
-                                String[] b = ((String) currentColumn).split(" ");
-                                for (int i = 0; i < b.length; i++) {
-                                    classes.add(Class.forName(b[i]));
+                        if (currentColumn != null) {
+                            if (Date.class.equals(node.getType())) {
+                                currentColumn = new Date(((Long) currentColumn).longValue());
+                            } else if (Class.class.equals(node.getType())) {
+                                Set<Class<?>> classes = new HashSet<Class<?>>();
+                                try {
+                                    String[] b = ((String) currentColumn).split(" ");
+                                    for (int i = 0; i < b.length; i++) {
+                                        classes.add(Class.forName(b[i]));
+                                    }
+                                } catch (ClassNotFoundException e) {
+                                    SQLException e2
+                                        = new SQLException("Invalid entry in class column");
+                                    e2.initCause(e);
+                                    throw e2;
                                 }
-                            } catch (ClassNotFoundException e) {
-                                SQLException e2 = new SQLException("Invalid entry in class column");
-                                e2.initCause(e);
-                                throw e2;
+                                if (classes.size() == 1) {
+                                    currentColumn = classes.iterator().next();
+                                } else {
+                                    currentColumn = DynamicUtil.composeClass(classes);
+                                }
+                            } else if (Short.class.equals(node.getType())
+                                    && (currentColumn instanceof Integer)) {
+                                int i = ((Integer) currentColumn).intValue();
+                                currentColumn = new Short((short) i);
+                            } else if (ClobAccess.class.equals(node.getType())) {
+                                currentColumn = ClobAccess.decodeDbDescription(os,
+                                        (String) currentColumn);
                             }
-                            if (classes.size() == 1) {
-                                currentColumn = classes.iterator().next();
-                            } else {
-                                currentColumn = DynamicUtil.composeClass(classes);
-                            }
-                        } else if (Short.class.equals(node.getType())
-                                && (currentColumn instanceof Integer)) {
-                            int i = ((Integer) currentColumn).intValue();
-                            currentColumn = new Short((short) i);
-                        } else if (ClobAccess.class.equals(node.getType())) {
-                            currentColumn = ClobAccess.decodeDbDescription(os,
-                                    (String) currentColumn);
                         }
                         row.add(currentColumn);
                     }

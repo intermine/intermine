@@ -118,6 +118,7 @@ public class BuildDbTask extends Task
                 c = database.getConnection();
                 c.setAutoCommit(true);
                 DatabaseUtil.removeAllTables(c);
+                DatabaseUtil.removeSequence(c, SERIAL_SEQUENCE_NAME);
             } catch (SQLException e) {
                 LOG.warn("Failed to remove all tables from database: " + e);
             } finally {

@@ -554,6 +554,18 @@ public final class DatabaseUtil
     }
 
     /**
+     * Remove the sequence from the database given.
+     *
+     * @param con the Connection to the database
+     * @param sequence the sequence to remove
+     * @throws SQLException if an error occurs in the underlying database
+     */
+    public static void removeSequence(Connection con, String sequence) throws SQLException {
+        LOG.info("Dropping sequence " + sequence);
+        con.createStatement().execute("DROP SEQUENCE " + sequence);
+    }
+
+    /**
      * Creates a table name for a class descriptor
      *
      * @param cld ClassDescriptor

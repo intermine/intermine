@@ -12,6 +12,7 @@ package org.intermine.objectstore.intermine;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.sql.Connection;
 
 import junit.framework.Test;
 
@@ -35,10 +35,9 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.SetupDataTestCase;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
-import org.intermine.objectstore.query.ContainsConstraint;
-import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.Query;
@@ -49,16 +48,15 @@ import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
 import org.intermine.sql.precompute.BestQueryStorer;
 import org.intermine.sql.precompute.PrecomputedTable;
-import org.intermine.sql.precompute.PrecomputedTableManager;
 import org.intermine.sql.precompute.QueryOptimiser;
 import org.intermine.testing.MustBeDifferentMap;
 import org.intermine.testing.OneTimeTestCase;
 import org.intermine.util.DynamicUtil;
-import org.intermine.util.TypeUtil;
 
 public class SqlGeneratorTest extends SetupDataTestCase
 {
@@ -99,7 +97,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2 = new MustBeDifferentMap(new HashMap());
         results.put("SelectSimpleObject", "SELECT intermine_Alias.id AS \"intermine_Aliasid\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Company"})));
-        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
+        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.bankId AS intermine_ArraybankId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM Company AS intermine_Array) AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
         results2.put("SubQuery", Collections.singleton("Company"));
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM Company AS a1_ WHERE a1_.vatNumber = 1234 ORDER BY a1_.name");
         results2.put("WhereSimpleEquals", Collections.singleton("Company"));
@@ -151,7 +149,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "OldComsOldContracts", "InterMineObject"})));
         results.put("ContainsNotMN", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results2.put("ContainsNotMN", NO_RESULT);
-        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results2.put("SimpleGroupBy", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("MultiJoin", "SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id, a4_.id AS a4_id FROM Company AS a1_, Department AS a2_, Manager AS a3_, Address AS a4_ WHERE a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1' ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
         results2.put("MultiJoin", new HashSet(Arrays.asList(new String[] {"Department", "Manager", "Company", "Address", "InterMineObject"})));
@@ -280,6 +278,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
 
         results.put("Lower", "SELECT LOWER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY LOWER(a1_.name)");
         results2.put("Lower", Collections.singleton("Employee"));
+
+        results.put("Greatest", "SELECT GREATEST(2000,a1_.vatNumber) AS a2_ FROM Company AS a1_ ORDER BY GREATEST(2000,a1_.vatNumber)");
+        results2.put("Greatest", Collections.singleton("Company"));
+
+        results.put("Least", "SELECT LEAST(2000,a1_.vatNumber) AS a2_ FROM Company AS a1_ ORDER BY LEAST(2000,a1_.vatNumber)");
+        results2.put("Least", Collections.singleton("Company"));
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM Employee AS a1_ ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("Employee"));
@@ -504,12 +508,54 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryValue v2 = new QueryValue("Hello");
         QueryValue v3 = new QueryValue(new Date(1046275720000l));
         QueryValue v4 = new QueryValue(Boolean.TRUE);
+
         StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, v1, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, v2, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, v3, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, v4, null, null);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+
+        SqlGenerator.queryEvaluableToString(buffer, v1, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, v2, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, v3, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, v4, null, state);
         assertEquals("5'Hello'1046275720000'true'", buffer.toString());
+    }
+
+    /** Expect Underscores to not be escaped in LIKE queries **/
+    public void testQueryValueUnderscoreInMatch() throws Exception {
+        QueryValue right = new QueryValue("%Hello_World");
+        QueryValue left  = new QueryValue("Hello-World");
+        SimpleConstraint con = new SimpleConstraint(left, ConstraintOp.MATCHES, right);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        StringBuffer buffer = state.getWhereBuffer();
+        SqlGenerator.simpleConstraintToString(state, buffer, con, null);
+        assertEquals("'Hello-World' LIKE '%Hello_World'", buffer.toString());
+    }
+
+    /** Expect Underscores to not be escaped in LIKE queries **/
+    public void testQueryValueEscapedOpsInMatch() throws Exception {
+        QueryValue right = new QueryValue("\\%Hello_Under\\_Score%");
+        QueryValue left  = new QueryValue("%Hello-Under_Score!");
+        SimpleConstraint con = new SimpleConstraint(left, ConstraintOp.MATCHES, right);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        StringBuffer buffer = state.getWhereBuffer();
+        SqlGenerator.simpleConstraintToString(state, buffer, con, null);
+        String expected = "'%Hello-Under_Score!' LIKE E'\\\\%Hello_Under\\\\_Score%'";
+        assertEquals(expected, buffer.toString());
+    }
+
+    /** Expect underscores to be unescaped in other queries **/
+    public void testQueryValueUnderscoreInEquals() throws Exception {
+        QueryValue right = new QueryValue("Hello_World");
+        QueryValue left  = new QueryValue("HelloXWorld");
+        SimpleConstraint con = new SimpleConstraint(left, ConstraintOp.EQUALS, right);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+
+        StringBuffer buffer = state.getWhereBuffer();
+        SqlGenerator.simpleConstraintToString(state, buffer, con, null);
+        assertEquals("'HelloXWorld' = 'Hello_World'", buffer.toString());
     }
 
     public void testSelectQueryExpression() throws Exception {
@@ -520,10 +566,12 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryExpression e3 = new QueryExpression(v1, QueryExpression.MULTIPLY, v2);
         QueryExpression e4 = new QueryExpression(v1, QueryExpression.DIVIDE, v2);
         StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, e1, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, e2, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, e3, null, null);
-        SqlGenerator.queryEvaluableToString(buffer, e4, null, null);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, e2, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, e3, null, state);
+        SqlGenerator.queryEvaluableToString(buffer, e4, null, state);
         assertEquals("(5 + 7)(5 - 7)(5 * 7)(5 / 7)", buffer.toString());
     }
 
@@ -533,8 +581,24 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryValue v3 = new QueryValue(new Integer(5));
         QueryExpression e1 = new QueryExpression(v1, v2, v3);
         StringBuffer buffer = new StringBuffer();
-        SqlGenerator.queryEvaluableToString(buffer, e1, null, null);
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
         assertEquals("SUBSTR('Hello', 3, 5)", buffer.toString());
+    }
+
+    public void testSelectQueryExpressionGreatestLeast() throws Exception {
+        QueryValue v1 = new QueryValue(new Integer(5));
+        QueryValue v2 = new QueryValue(new Integer(7));
+        QueryExpression e1 = new QueryExpression(v1, QueryExpression.GREATEST, v2);
+        QueryExpression e2 = new QueryExpression(v1, QueryExpression.LEAST, v2);
+        StringBuffer buffer = new StringBuffer();
+
+        SqlGenerator.State state = new SqlGenerator.State();
+        SqlGenerator.queryEvaluableToString(buffer, e1, null, state);
+        buffer.append(", ");
+        SqlGenerator.queryEvaluableToString(buffer, e2, null, state);
+        assertEquals("GREATEST(5,7), LEAST(5,7)", buffer.toString());
     }
 
     /* TODO
@@ -677,7 +741,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         QueryClass c1 = new QueryClass(Company.class);
         q.addFrom(c1);
         q.addToSelect(c1);
-        assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
+        assertEquals("SQL incorrect.", getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
         SqlGenerator.registerOffset(q, 5, schema, db, new Integer(10), new HashMap());
         assertEquals(getRegisterOffset1(), SqlGenerator.generate(q, 0, Integer.MAX_VALUE, schema, db, new HashMap()));
         assertEquals(getRegisterOffset2() + "a1_.id > 10 ORDER BY a1_.id OFFSET 5", SqlGenerator.generate(q, 10, Integer.MAX_VALUE, schema, db, new HashMap()));
@@ -766,7 +830,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
     public void testForPrecomp() throws Exception {
         DatabaseSchema schema = getSchema();
         Query q = (Query) queries.get("SelectSimpleObject");
-        assertEquals(precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
+        assertEquals("SQL incorrect.", precompTableString(), SqlGenerator.generate(q, schema, db, null, SqlGenerator.QUERY_FOR_PRECOMP, Collections.EMPTY_MAP));
     }
 
     public void testInvalidSafenesses() throws Exception {
@@ -845,6 +909,6 @@ public class SqlGeneratorTest extends SetupDataTestCase
         return "WHERE";
     }
     public String precompTableString() {
-        return "SELECT intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id";
+        return "SELECT intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.bankId AS \"intermine_Aliasbankid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM Company AS intermine_Alias ORDER BY intermine_Alias.id";
     }
 }

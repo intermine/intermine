@@ -48,7 +48,7 @@ start_rule: sql ;
 
 sql: sql_statement ( sql_statement )*;
 
-sql_statement: #( SQL_STATEMENT 
+sql_statement: #( SQL_STATEMENT
             ( "explain" )?
             ( "distinct" )?
             select_list
@@ -108,6 +108,8 @@ safe_function: #( SAFE_FUNCTION (
                 | "avg" abstract_value
                 | "lower" abstract_value
                 | "upper" abstract_value
+                | "greatest" abstract_value
+                | "least" abstract_value
                 | "strpos" abstract_value abstract_value
                 | "substr" abstract_value abstract_value (abstract_value)?
                 | "coalesce" abstract_value abstract_value
@@ -123,22 +125,22 @@ abstract_constraint: constraint | not_constraint | and_constraint_set | or_const
 
 constraint:
         // (aleft != aleft) becomes NOT (aleft = aright)
-        ! ( #( CONSTRAINT abstract_value NOT_EQ ))=> 
+        ! ( #( CONSTRAINT abstract_value NOT_EQ ))=>
             #( CONSTRAINT aleft:abstract_value NOT_EQ aright:abstract_value )
             { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
                 #(#[CONSTRAINT], #aleft, #[EQ, "="], #aright) ); }
         // (bleft >= bright) becomes NOT (bleft < bright)
-        | ! ( #( CONSTRAINT abstract_value GE ))=> 
+        | ! ( #( CONSTRAINT abstract_value GE ))=>
             #( CONSTRAINT bleft:abstract_value GE bright:abstract_value )
             { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
                 #(#[CONSTRAINT], #bleft, #[LT, "<"], #bright) ); }
         // (cleft <= cright) becomes NOT (cright < cleft)
-        | ! ( #( CONSTRAINT abstract_value LE ))=> 
+        | ! ( #( CONSTRAINT abstract_value LE ))=>
             #( CONSTRAINT cleft:abstract_value LE cright:abstract_value )
             { #constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"],
                 #(#[CONSTRAINT], #cright, #[LT, "<"], #cleft) ); }
         // (dleft > dright) becomes (dright < dleft)
-        | ! ( #( CONSTRAINT abstract_value GT ))=> 
+        | ! ( #( CONSTRAINT abstract_value GT ))=>
             #( CONSTRAINT dleft:abstract_value GT dright:abstract_value )
             { #constraint = #(#[CONSTRAINT], #dright, #[LT, "<"], #dleft); }
         | ! ( #( CONSTRAINT abstract_value "not" "like" ))=>
@@ -149,15 +151,15 @@ constraint:
     ;
 
 null_constraint:
-        ! ( #(NULL_CONSTRAINT abstract_value "not" ))=> 
-            #( NULL_CONSTRAINT v:abstract_value "not" ) 
+        ! ( #(NULL_CONSTRAINT abstract_value "not" ))=>
+            #( NULL_CONSTRAINT v:abstract_value "not" )
             { #null_constraint = #(#[NOT_CONSTRAINT, "NOT_CONSTRAINT"], #(#[NULL_CONSTRAINT], #v) ); }
         | #( NULL_CONSTRAINT abstract_value )
     ;
 
 not_constraint:
         // NOT (NOT a) becomes a
-        ! ( #( NOT_CONSTRAINT NOT_CONSTRAINT ))=> 
+        ! ( #( NOT_CONSTRAINT NOT_CONSTRAINT ))=>
             #( NOT_CONSTRAINT #( NOT_CONSTRAINT a:n_abstract_constraint ) )
             { #not_constraint = #a; }
         // NOT (b OR c..OR..) becomes NOT b AND NOT (c..OR..)
@@ -434,7 +436,7 @@ typecast:
         (constant | field | safe_function | paren_value) ( COLONTYPE! ("boolean" | "real" | "double" "precision"! | "smallint" | "integer" | "bigint" | "numeric" | "text") )+
         {#typecast = #([TYPECAST, "TYPECAST"], #typecast); }
     ;
-    
+
 safe_function:
         (
             "count" OPEN_PAREN! ASTERISK! CLOSE_PAREN!
@@ -444,6 +446,8 @@ safe_function:
             | "avg" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "lower" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "upper" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "greatest" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "least" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
             | "strpos" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
             | "substr" OPEN_PAREN! abstract_value COMMA! abstract_value (COMMA! abstract_value)? CLOSE_PAREN!
             | "coalesce" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
@@ -503,7 +507,7 @@ paren_constraint: OPEN_PAREN! abstract_constraint CLOSE_PAREN! ;
 
 constraint_set: (safe_abstract_constraint "and")=> and_constraint_set | or_constraint_set;
 
-or_constraint_set: 
+or_constraint_set:
         safe_abstract_constraint ("or"! safe_abstract_constraint)+
         { #or_constraint_set = #([OR_CONSTRAINT_SET, "OR_CONSTRAINT_SET"], #or_constraint_set); }
     ;
@@ -588,7 +592,7 @@ NOT_EQ:
 GT: '>' ( '=' { _ttype = GE; } )? ;
 GORNULL: "n>";
 
-FLOAT: (( '0'..'9' )+ '.' '0'..'9' )=> ( '0'..'9' )+ '.' ( '0'..'9' )+ ( 'e' ( '-' | '+' )? ( '0'..'9' )+ )? ("::real")? 
+FLOAT: (( '0'..'9' )+ '.' '0'..'9' )=> ( '0'..'9' )+ '.' ( '0'..'9' )+ ( 'e' ( '-' | '+' )? ( '0'..'9' )+ )? ("::real")?
         | ( '0'..'9' )+ {_ttype = INTEGER; } ;
 
 WS: ( ' ' | '\t' | '\r' '\n' { newline(); } | '\n' { newline(); } | '\r' { newline(); } )

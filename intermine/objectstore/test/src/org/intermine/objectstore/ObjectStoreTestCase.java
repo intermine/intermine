@@ -388,6 +388,14 @@ public abstract class ObjectStoreTestCase extends StoreDataTestCase
                              { "EMPLOYEEB3" } };
         results.put("Upper", toList(r));
 
+        r = new Object[][] { { 2000 },
+                { 5678 } };
+        results.put("Greatest", toList(r));
+
+        r = new Object[][] { { 1234 },
+                { 2000 } };
+        results.put("Least", toList(r));
+
         r = new Object[][] { { data.get("EmployeeA1") },
                              { data.get("EmployeeA2") },
                              { data.get("EmployeeA3") } };

@@ -1,7 +1,9 @@
 <model name="testmodel" package="org.intermine.model.testmodel">
     <class name="Broke" is-interface="true">
         <attribute name="debt" type="int"/>
+        <attribute name="interestRate" type="double"/>
         <reference name="bank" referenced-type="Bank" reverse-reference="debtors"/>
+        <reference name="owedBy" referenced-type="Employable"/>
     </class>
     <class name="Thing" is-interface="true"></class>
     <class name="Employable" extends="Thing" is-interface="true">
@@ -41,6 +43,7 @@
         <attribute name="name" type="java.lang.String"/>
         <attribute name="vatNumber" type="int"/>
         <reference name="CEO" referenced-type="CEO" reverse-reference="company"/>
+        <reference name="bank" referenced-type="Bank" reverse-reference="corporateCustomers"/>
         <collection name="departments" referenced-type="Department" reverse-reference="company"/>
         <collection name="contractors" referenced-type="Contractor" reverse-reference="companys"/>
         <collection name="oldContracts" referenced-type="Contractor" reverse-reference="oldComs"/>
@@ -81,6 +84,7 @@
     <class name="Bank" is-interface="false">
         <attribute name="name" type="java.lang.String"/>
         <collection name="debtors" referenced-type="Broke" reverse-reference="bank"/>
+        <collection name="corporateCustomers" referenced-type="Company" reverse-reference="bank"/>
     </class>
     <class name="SimpleObject" is-interface="false" extends="java.lang.Object">
         <attribute name="name" type="java.lang.String"/>

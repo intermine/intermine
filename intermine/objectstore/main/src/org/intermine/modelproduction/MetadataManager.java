@@ -117,7 +117,7 @@ public final class MetadataManager
      * The name of the key used to store the modMine MetaData cache
      */
     public static final String MODMINE_METADATA_CACHE = "modMine_metadata_cache";
-    
+
     /**
      * The name of the key used to store the serial number identifying the production db
      */
@@ -138,9 +138,9 @@ public final class MetadataManager
             connection.createStatement().execute("DELETE FROM " + METADATA_TABLE + " where key = '"
                                                  + key + "'");
             if (value != null) {
-                connection.createStatement().execute("INSERT INTO " + METADATA_TABLE + " (key, value) "
-                                                 + "VALUES('" + key + "', '"
-                                                 + StringUtil.duplicateQuotes(value) + "')");
+                connection.createStatement().
+                    execute("INSERT INTO " + METADATA_TABLE + " (key, value) " + "VALUES('"
+                            + key + "', '" + StringUtil.duplicateQuotes(value) + "')");
             }
         } finally {
             connection.setAutoCommit(autoCommit);
