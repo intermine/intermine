@@ -100,10 +100,18 @@ public class Function extends AbstractValue
      * STDDEV operator - takes one operand
      */
     public static final int STDDEV = 18;
+    /**
+     * GREATEST(x, y) - takes two operands
+     */
+    public static final int GREATEST = 19;
+    /**
+     * LEAST(x, y) - takes two operands
+     */
+    public static final int LEAST = 20;
 
     private static final String[] REPRESENTATIONS = {"", "COUNT(*)", "MAX(", "MIN(",
         "SUM(", "AVG(", " + ", " - ", " * ", " / ", " ^ ", " % ", "::", "STRPOS(", "SUBSTR(",
-        "COALESCE(", "LOWER(", "UPPER(", "STDDEV("};
+        "COALESCE(", "LOWER(", "UPPER(", "STDDEV(", "GREATEST(", "LEAST("};
 
     /**
      * Constructor for this Function object.
@@ -112,7 +120,7 @@ public class Function extends AbstractValue
      * @throws IllegalArgumentException if operation is not valid
      */
     public Function(int operation) {
-        if ((operation < 1) || (operation > 18)) {
+        if ((operation < 1) || (operation > 20)) {
             throw (new IllegalArgumentException("operation is not valid"));
         }
         this.operation = operation;
@@ -147,6 +155,8 @@ public class Function extends AbstractValue
             case TYPECAST:
             case STRPOS:
             case COALESCE:
+            case GREATEST:
+            case LEAST:
                 if (operands.size() >= 2) {
                     throw (new IllegalArgumentException("This function may only take"
                                 + "two operands"));
@@ -197,6 +207,8 @@ public class Function extends AbstractValue
             case POWER:
             case MODULO:
             case TYPECAST:
+            case GREATEST:
+            case LEAST:
             {
                 if (operands.size() < 2) {
                     throw (new IllegalStateException("This function needs two operands"));

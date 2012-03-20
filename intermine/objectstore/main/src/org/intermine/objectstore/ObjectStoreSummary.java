@@ -12,6 +12,8 @@ package org.intermine.objectstore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,14 +60,19 @@ public class ObjectStoreSummary
     private final Map<String, Integer> classCountsMap = new HashMap<String, Integer>();
     private final Map<String, List<Object>> fieldValuesMap = new HashMap<String, List<Object>>();
     protected final Map<String, Set<String>> emptyFieldsMap = new HashMap<String, Set<String>>();
-    private final Map<String, Set<String>> emptyAttributesMap = new HashMap<String, Set<String>>();
+    protected final Map<String, Set<String>> emptyAttributesMap =
+        new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> nonEmptyFieldsMap = new HashMap<String, Set<String>>();
+    // This should be overwritten by MAX_FIELD_VALUES from properties
+    protected int maxValues = DEFAULT_MAX_VALUES;
 
     static final String NULL_FIELDS_SUFFIX = ".nullFields";
     static final String CLASS_COUNTS_SUFFIX = ".classCount";
     static final String FIELDS_SUFFIX = ".fieldValues";
+    static final String EMPTY_ATTRIBUTES_SUFFIX = ".emptyAttributes";
     static final String NULL_MARKER = "___NULL___";
     static final String FIELD_DELIM = "$_^";
+    static final String MAX_FIELD_VALUES = "max.field.values";
 
     /**
      * The default number of values to make available for UI dropdowns - attributes with more values
@@ -93,14 +100,14 @@ public class ObjectStoreSummary
 
         Model model = os.getModel();
 
-        //classCounts - number of objects of each type in the database
+        // classCounts - number of objects of each type in the database
         LOG.info("Collecting class counts...");
         for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
             nonEmptyFieldsMap.put(cld.getName(), new HashSet<String>());
-            emptyAttributesMap.put(cld.getName(), new HashSet<String>());
 
             if (!classCountsMap.containsKey(cld.getName())) {
                 int classCount = countClass(os, cld.getType());
+                LOG.info("Adding class count: " + cld.getUnqualifiedName() + " = " + classCount);
                 classCountsMap.put(cld.getName(), new Integer(classCount));
 
                 // if this class is empty all subclasses MUST be empty as well
@@ -117,9 +124,16 @@ public class ObjectStoreSummary
         // fieldValues - find all attributes with few unique values for populating dropdowns,
         // also look for any attributes that are empty.
         LOG.info("Summarising field values...");
-        String maxValuesString = (String) configuration.get("max.field.values");
-        int maxValues =
+        String maxValuesString = (String) configuration.get(MAX_FIELD_VALUES);
+        maxValues =
             (maxValuesString == null ? DEFAULT_MAX_VALUES : Integer.parseInt(maxValuesString));
+
+        // always empty references and collections
+        LOG.info("Looking for empty collections and references...");
+        Set<String> ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
+        if (ignoreFields.size() > 0) {
+            LOG.warn("Not counting ignored fields: " + ignoreFields);
+        }
 
         Set<String> doneFields = new HashSet<String>();
         for (ClassDescriptor cld : model.getBottomUpLevelTraversal()) {
@@ -136,7 +150,7 @@ public class ObjectStoreSummary
                 }
 
                 String clsFieldName = cld.getName() + "." + fieldName;
-                if (doneFields.contains(clsFieldName)) {
+                if (doneFields.contains(clsFieldName) || ignoreFields.contains(clsFieldName)) {
                     continue;
                 }
 
@@ -149,8 +163,24 @@ public class ObjectStoreSummary
                     }
                     if (fieldValues.size() == 1 && fieldValues.get(0) == null) {
                         Set<String> emptyAttributes = emptyAttributesMap.get(cld.getName());
+                        if (emptyAttributes == null) {
+                            emptyAttributes = new HashSet<String>();
+                            emptyAttributesMap.put(cld.getName(), emptyAttributes);
+                        }
                         emptyAttributes.add(fieldName);
                     }
+                    Collections.sort(fieldValues, new Comparator<Object>() {
+                        @Override
+                        public int compare(Object arg0, Object arg1) {
+                            if (arg0 == null) {
+                                return arg1 == null ? 0 : 1;
+                            }
+                            if (arg1 == null) {
+                                return arg0 == null ? 0 : -1;
+                            }
+                            return arg0.toString().compareTo(arg1.toString());
+                        }
+                    });
                     fieldValuesMap.put(clsFieldName, fieldValues);
                     LOG.info("Adding " + fieldValues.size() + " values for "
                             + cld.getUnqualifiedName() + "." + fieldName);
@@ -176,12 +206,7 @@ public class ObjectStoreSummary
             }
         }
 
-        // always empty references and collections
-        LOG.info("Looking for empty collections and references...");
-        Set<String> ignoreFields = getIgnoreFields((String) configuration.get("ignore.counts"));
-        if (ignoreFields.size() > 0) {
-            LOG.warn("Not counting ignored fields: " + ignoreFields);
-        }
+
 
         // This is faster as a bottom up traversal, though this may save fewer queres the saved
         // queries would take longer. If a ref/col is not empty it must not be empty in all parents.
@@ -225,8 +250,9 @@ public class ObjectStoreSummary
                             if ((superCld.getReferenceDescriptorByName(fieldName, true) != null)
                                     || (superCld.getCollectionDescriptorByName(fieldName,
                                             true) != null)) {
-                                LOG.info("Pushing empty ref/col from " + cld.getUnqualifiedName()
-                                        + "." + fieldName + " to " + superCld.getUnqualifiedName());
+                                LOG.info("Pushing not empty ref/col from "
+                                        + cld.getUnqualifiedName() + "." + fieldName + " to "
+                                        + superCld.getUnqualifiedName());
                                 notEmptyFields.add(superClsField);
                             }
                         }
@@ -263,8 +289,22 @@ public class ObjectStoreSummary
                 String className = key.substring(0, key.lastIndexOf("."));
                 List<String> fieldNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
                 emptyFieldsMap.put(className, new TreeSet<String>(fieldNames));
+            }  else if (key.endsWith(EMPTY_ATTRIBUTES_SUFFIX)) {
+                String className = key.substring(0, key.lastIndexOf("."));
+                List<String> attributeNames = Arrays.asList(StringUtil.split(value, FIELD_DELIM));
+                emptyAttributesMap.put(className, new TreeSet<String>(attributeNames));
+            } else if (key.equals(MAX_FIELD_VALUES)) {
+                this.maxValues = Integer.parseInt(value);
             }
         }
+    }
+
+    /**
+     * Return the configured maximum number of values to show in a dropdown.
+     * @return the maximum number of values to show in a dropdown
+     */
+    public int getMaxValues() {
+        return maxValues;
     }
 
     /**
@@ -301,7 +341,41 @@ public class ObjectStoreSummary
      * @return Set of null reference and empty collection names
      */
     public Set<String> getNullReferencesAndCollections(String className) {
-        return emptyFieldsMap.get(className);
+        if (emptyFieldsMap.containsKey(className)) {
+            return Collections.unmodifiableSet(emptyFieldsMap.get(className));
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Get a list of reference and collection names that are always null or empty.
+     *
+     * @return Set of null references and empty collection names mapped to class names
+     */
+    public Map<String, Set<String>> getAllNullReferencesAndCollections() {
+        return Collections.unmodifiableMap(emptyFieldsMap);
+    }
+
+    /**
+     * Get a list of the attributes that, for a given class, are always null or empty.
+     *
+     * @param className the class name to look up
+     * @return Set of null attribute names
+     */
+    public Set<String> getNullAttributes(String className) {
+        if (emptyAttributesMap.containsKey(className)) {
+            return Collections.unmodifiableSet(emptyAttributesMap.get(className));
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Get a list of the attributes that are always null or empty.
+     *
+     * @return Set of null attribute names mapped to class names
+     */
+    public Map<String, Set<String>> getAllNullAttributes() {
+        return Collections.unmodifiableMap(emptyAttributesMap);
     }
 
     /**
@@ -310,6 +384,7 @@ public class ObjectStoreSummary
      */
     public Properties toProperties() {
         Properties properties = new Properties();
+        properties.put(MAX_FIELD_VALUES, "" + maxValues);
         for (Map.Entry<String, Integer> entry: classCountsMap.entrySet()) {
             String key = entry.getKey();
             Integer value = entry.getValue();
@@ -332,15 +407,38 @@ public class ObjectStoreSummary
             }
             properties.put(key + FIELDS_SUFFIX, sb.toString());
         }
-        for (Map.Entry<String, Set<String>> entry: emptyFieldsMap.entrySet()) {
+        // emptyFieldsMap contains empty references and collections
+        writeEmptyMapToProperties(properties, NULL_FIELDS_SUFFIX, emptyFieldsMap);
+
+        // emptyAttributesMap contains empty attributes only
+        writeEmptyMapToProperties(properties, EMPTY_ATTRIBUTES_SUFFIX, emptyAttributesMap);
+
+        return properties;
+    }
+
+    private void writeEmptyMapToProperties(Properties properties, String keySuffix,
+            Map<String, Set<String>> emptyMap) {
+        for (Map.Entry<String, Set<String>> entry: emptyMap.entrySet()) {
             String key = entry.getKey();
-            Set<String> value = entry.getValue();
+            List<String> value = new  ArrayList<String>(entry.getValue());
+            Collections.sort(value, new Comparator<Object>() {
+                @Override
+                public int compare(Object arg0, Object arg1) {
+                    if (arg0 == null) {
+                        return arg1 == null ? 0 : 1;
+                    }
+                    if (arg1 == null) {
+                        return arg0 == null ? 0 : -1;
+                    }
+                    return arg0.toString().compareTo(arg1.toString());
+                }
+            });
+
             if (value.size() > 0) {
                 String fields = StringUtil.join(value, FIELD_DELIM);
-                properties.put(key + NULL_FIELDS_SUFFIX, fields);
+                properties.put(key + keySuffix, fields);
             }
         }
-        return properties;
     }
 
     private Results getFieldSummary(ClassDescriptor cld, String fieldName, ObjectStore os) {
@@ -368,6 +466,8 @@ public class ObjectStoreSummary
         // This is much faster using a sub query and SubQueryExistsConstraint than just selecting
         // one row from the joined tables.  Probably because all queries have to be ordered for
         // batching to work.
+
+        LOG.info("Querying for empty: " + cld.getUnqualifiedName() + "." + ref.getName());
         Query q = new Query();
         q.setDistinct(false);
 
@@ -402,7 +502,7 @@ public class ObjectStoreSummary
         Results results = os.execute(q2, 1, false, false, false);
         boolean empty = !results.iterator().hasNext();
 
-        LOG.debug("Query for empty " + cld.getUnqualifiedName() + "." + ref.getName() + " took "
+        LOG.info("Query for empty " + cld.getUnqualifiedName() + "." + ref.getName() + " took "
                 + (System.currentTimeMillis() - startTime) + "ms.");
         return empty;
     }

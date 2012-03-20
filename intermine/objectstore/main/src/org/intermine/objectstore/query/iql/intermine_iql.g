@@ -229,6 +229,8 @@ safe_function:
             | "lower" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "upper" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "stddev" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "greatest" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "least" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;
@@ -281,7 +283,7 @@ paren_constraint: OPEN_PAREN! abstract_constraint CLOSE_PAREN! ;
 
 constraint_set: (or_constraint_set)=> or_constraint_set | and_constraint_set;
 
-or_constraint_set: 
+or_constraint_set:
         safe_abstract_constraint ("or"! safe_abstract_constraint)+
         { #or_constraint_set = #([OR_CONSTRAINT_SET, "OR_CONSTRAINT_SET"], #or_constraint_set); }
     ;

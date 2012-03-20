@@ -47,7 +47,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
     public static void setUpResults() throws Exception {
         results.put("SelectSimpleObject", "SELECT intermine_Alias.OBJECT AS \"intermine_Alias\", intermine_Alias.id AS \"intermine_Aliasid\" FROM InterMineObject AS intermine_Alias WHERE intermine_Alias.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY intermine_Alias.id");
         results2.put("SelectSimpleObject", Collections.singleton("InterMineObject"));
-        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM InterMineObject AS intermine_Array WHERE intermine_Array.tableclass = 'org.intermine.model.testmodel.Company') AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
+        results.put("SubQuery", "SELECT DISTINCT intermine_All.intermine_Arrayname AS a1_, intermine_All.intermine_Alias AS \"intermine_Alias\" FROM (SELECT intermine_Array.CEOId AS intermine_ArrayCEOId, intermine_Array.addressId AS intermine_ArrayaddressId, intermine_Array.bankId AS intermine_ArraybankId, intermine_Array.id AS intermine_Arrayid, intermine_Array.name AS intermine_Arrayname, intermine_Array.vatNumber AS intermine_ArrayvatNumber, 5 AS intermine_Alias FROM InterMineObject AS intermine_Array WHERE intermine_Array.tableclass = 'org.intermine.model.testmodel.Company') AS intermine_All ORDER BY intermine_All.intermine_Arrayname, intermine_All.intermine_Alias");
         results2.put("SubQuery", Collections.singleton("InterMineObject"));
         results.put("WhereSimpleEquals", "SELECT DISTINCT a1_.name AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a1_.vatNumber = 1234 ORDER BY a1_.name");
         results2.put("WhereSimpleEquals", Collections.singleton("InterMineObject"));
@@ -97,7 +97,7 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         results2.put("ContainsMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "CompanysContractors"})));
         results.put("ContainsDuplicatesMN", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id FROM InterMineObject AS a1_, InterMineObject AS a2_, OldComsOldContracts AS indirect0 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Contractor' AND a2_.tableclass = 'org.intermine.model.testmodel.Company' AND a1_.id = indirect0.OldContracts AND indirect0.OldComs = a2_.id ORDER BY a1_.id, a2_.id");
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"InterMineObject", "OldComsOldContracts"})));
-        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM InterMineObject AS a1_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Department' AND a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.OBJECT AS a1_, a1_.id AS a1_id, COUNT(*) AS a2_ FROM InterMineObject AS a1_, InterMineObject AS a3_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a3_.tableclass = 'org.intermine.model.testmodel.Department' AND a1_.id = a3_.companyId GROUP BY a1_.OBJECT, a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
         results2.put("SimpleGroupBy", Collections.singleton("InterMineObject"));
         results.put("MultiJoin", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id, a2_.OBJECT AS a2_, a2_.id AS a2_id, a3_.OBJECT AS a3_, a3_.id AS a3_id, a4_.OBJECT AS a4_, a4_.id AS a4_id FROM InterMineObject AS a1_, InterMineObject AS a2_, InterMineObject AS a3_, InterMineObject AS a4_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' AND a2_.tableclass = 'org.intermine.model.testmodel.Department' AND a3_.tableclass = 'org.intermine.model.testmodel.Manager' AND a4_.tableclass = 'org.intermine.model.testmodel.Address' AND a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1' ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
         results2.put("MultiJoin", Collections.singleton("InterMineObject"));
@@ -217,6 +217,11 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
 
         results.put("Upper", "SELECT UPPER(a1_.name) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' ORDER BY UPPER(a1_.name)");
         results2.put("Upper", Collections.singleton("InterMineObject"));
+        results.put("Greatest", "SELECT GREATEST(2000,a1_.vatNumber) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY GREATEST(2000,a1_.vatNumber)");
+        results2.put("Greatest", Collections.singleton("InterMineObject"));
+        results.put("Least", "SELECT LEAST(2000,a1_.vatNumber) AS a2_ FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY LEAST(2000,a1_.vatNumber)");
+        results2.put("Least", Collections.singleton("InterMineObject"));
+
         results.put("CollectionQueryOneMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_ WHERE a1_.tableclass = 'org.intermine.model.testmodel.Employee' AND " + departmentA1Id + " = a1_.departmentId ORDER BY a1_.id");
         results2.put("CollectionQueryOneMany", Collections.singleton("InterMineObject"));
         results.put("CollectionQueryManyMany", "SELECT a1_.OBJECT AS a1_, a1_.id AS a1_id FROM InterMineObject AS a1_, HasSecretarysSecretarys AS indirect0 WHERE a1_.tableclass = 'org.intermine.model.testmodel.Secretary' AND " + companyBId + " = indirect0.HasSecretarys AND indirect0.Secretarys = a1_.id ORDER BY a1_.id");
@@ -345,6 +350,6 @@ public class TruncatedSqlGeneratorTest extends SqlGeneratorTest
         return "AND";
     }
     public String precompTableString() {
-        return "SELECT intermine_Alias.OBJECT AS \"intermine_Alias\", intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM InterMineObject AS intermine_Alias WHERE intermine_Alias.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY intermine_Alias.id";
+        return "SELECT intermine_Alias.OBJECT AS \"intermine_Alias\", intermine_Alias.CEOId AS \"intermine_Aliasceoid\", intermine_Alias.addressId AS \"intermine_Aliasaddressid\", intermine_Alias.bankId AS \"intermine_Aliasbankid\", intermine_Alias.id AS \"intermine_Aliasid\", intermine_Alias.name AS \"intermine_Aliasname\", intermine_Alias.vatNumber AS \"intermine_Aliasvatnumber\" FROM InterMineObject AS intermine_Alias WHERE intermine_Alias.tableclass = 'org.intermine.model.testmodel.Company' ORDER BY intermine_Alias.id";
     }
 }

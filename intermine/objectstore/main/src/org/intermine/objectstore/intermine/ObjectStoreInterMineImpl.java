@@ -1211,7 +1211,8 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             long conTime = postConvert - postExecute - extra.getQueryTime();
             statsConTime += conTime;
             if (getVerboseQueryLog()) {
-                SQLLOGGER.info("(VERBOSE) iql: " + q + "\n"
+                SQLLOGGER.info("(VERBOSE) iql: " + q.getIqlQuery().toStringTruncateParameters(20)
+                        + "\n"
                         + "generated sql: " + generatedSql + "\n"
                         + "optimised sql: " + sql + "\n"
                         + "bag tables: " + bagTableTime + " ms, generate: " + genTime

@@ -471,6 +471,7 @@ public class Model
 
             // start from InterMineObject which is the root
             LinkedList<ClassDescriptor> queue = new LinkedList<ClassDescriptor>();
+            // Simple objects don't have any inheritance so can go at the front
             queue.addAll(getSimpleObjectClassDescriptors());
             queue.add(rootCld);
             while (!queue.isEmpty()) {
@@ -499,6 +500,7 @@ public class Model
 
             List<ClassDescriptor> topDown = getTopDownLevelTraversal();
 
+            // Just reverse the top down traversal
             for (int i = topDown.size() - 1; i >= 0; i--) {
                 bottomUpOrderClasses.add(topDown.get(i));
             }

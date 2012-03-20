@@ -1094,6 +1094,18 @@ public class Query implements SQLStringable
                         gotType = true;
                     }
                     break;
+                case SqlTokenTypes.LITERAL_greatest:
+                    if (!gotType) {
+                        retval = new Function(Function.GREATEST);
+                        gotType = true;
+                    }
+                    break;
+                case SqlTokenTypes.LITERAL_least:
+                    if (!gotType) {
+                        retval = new Function(Function.LEAST);
+                        gotType = true;
+                    }
+                    break;
                 default:
                     throw (new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                                 + ast.getType() + "]"));

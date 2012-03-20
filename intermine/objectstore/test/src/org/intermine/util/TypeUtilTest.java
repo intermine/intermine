@@ -72,7 +72,7 @@ public class TypeUtilTest extends TestCase
         Class c = Company.class;
 
         Map got = TypeUtil.getFieldInfos(c);
-        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "address", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "address", "bank", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());
 
         TypeUtil.FieldInfo idInfo = (TypeUtil.FieldInfo) got.get("id");
         assertEquals("id", idInfo.getName());
@@ -102,7 +102,7 @@ public class TypeUtilTest extends TestCase
         Class<?> c = DynamicUtil.createObject(Collections.singleton(Company.class)).getClass();
 
         Map got = TypeUtil.getFieldInfos(c);
-        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "address", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"id", "name", "vatNumber", "bank", "address", "oldContracts", "contractors", "CEO", "departments", "secretarys"})), got.keySet());
 
         TypeUtil.FieldInfo idInfo = (TypeUtil.FieldInfo) got.get("id");
         assertEquals("id", idInfo.getName());

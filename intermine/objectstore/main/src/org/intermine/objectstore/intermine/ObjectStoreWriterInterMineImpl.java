@@ -521,8 +521,12 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             } catch (Exception e) {
                 // ignore
             }
+
             conn = null;
             connInUse = true;
+            // remove reference to this writer from the parent ObjectStore
+            this.os.writers.remove(this);
+
             notifyAll();
         }
     }
@@ -1186,7 +1190,7 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
             createTempBagTables(c, query);
             flushOldTempBagTables(c);
         }
-        
+
         // Queries may be on classes (where the select is a class) or a normal field query
         int kind;
         if (query.getSelect().get(0) instanceof QueryClass) {
@@ -1194,9 +1198,9 @@ public class ObjectStoreWriterInterMineImpl extends ObjectStoreInterMineImpl
         } else {
             kind = SqlGenerator.QUERY_NORMAL;
         }
-        
+
         String sql = SqlGenerator.generate(query, schema, db, null, kind, bagConstraintTables);
-        
+
         try {
             if (everOptimise()) {
                 PrecomputedTable pt = (PrecomputedTable) goFasterMap.get(query);
