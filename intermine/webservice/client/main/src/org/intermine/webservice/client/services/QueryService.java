@@ -163,17 +163,7 @@ public class QueryService extends AbstractQueryService<PathQuery>
     public int getCount(String queryXml) {
         QueryRequest request = new QueryRequest(RequestType.POST, getUrl(), ContentType.TEXT_COUNT);
         request.setQueryXml(queryXml);
-        String body = getStringResponse(request);
-        if (body.length() == 0) {
-            throw new ServiceException("The server didn't return any results");
-        }
-        try {
-            return Integer.parseInt(body);
-        }  catch (NumberFormatException e) {
-            throw new ServiceException(
-                    "The server returned an invalid result. It is not a number: "
-                    + body, e);
-        }
+        return getIntResponse(request);
     }
 
     /**
@@ -226,7 +216,7 @@ public class QueryService extends AbstractQueryService<PathQuery>
      * we would recommend that you use the getResultIterator() method instead, as that will
      * read through the lines one by one without storing them all in memory at once.
      *
-     * @param queryXml PathQuery represented as a XML string
+     * @param queryXml PathQuery represented as a XML string""
      * @param page The subsection of the result set to retrieve.
      * @return results of specified PathQuery
      */
@@ -401,8 +391,10 @@ public class QueryService extends AbstractQueryService<PathQuery>
     protected RowResultSet getRows(PathQuery query, Page page) {
         List<String> views = query.getView();
         String queryXml = query.toXml(PathQuery.USERPROFILE_VERSION);
+        ContentType ct = (this.getAPIVersion() < 8)
+                ? ContentType.APPLICATION_JSON_ROW : ContentType.APPLICATION_JSON;
         QueryRequest request =
-                new QueryRequest(RequestType.POST, getUrl(), ContentType.APPLICATION_JSON_ROW);
+                new QueryRequest(RequestType.POST, getUrl(), ct);
         request.setPage(page);
         request.setQueryXml(queryXml);
         return getRows(request, views);

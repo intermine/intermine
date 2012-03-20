@@ -15,7 +15,7 @@ import org.junit.Test;
 public class LiveWidgetsTest {
 
     private static final String baseUrl = "http://localhost/intermine-test/service";
-    private static final String authToken = "Z1a3D3U16cicCdS0T6y4bdN1SQh";
+    private static final String authToken = "test-user-token";
     private static final WidgetService authorised = new ServiceFactory(baseUrl, authToken).getWidgetService();
     private static final WidgetService unauthorised = new ServiceFactory(baseUrl).getWidgetService();
 

@@ -87,10 +87,10 @@ public class LiveExamplesTest {
 
         // Specify the values for this particular request
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
-        parameters.add(new TemplateParameter("Chromosome.organism.name", "eq", "*melanogaster"));
-        parameters.add(new TemplateParameter("Chromosome.primaryIdentifier", "eq", "2L"));
-        parameters.add(new TemplateParameter("Chromosome.locatedFeatures.start", "ge", "1"));
-        parameters.add(new TemplateParameter("Chromosome.locatedFeatures.end", "lt", "10000"));
+        parameters.add(new TemplateParameter("Chromosome.organism.name", "=", "*melanogaster", null));
+        parameters.add(new TemplateParameter("Chromosome.primaryIdentifier", "=", "2L", null));
+        parameters.add(new TemplateParameter("Chromosome.locatedFeatures.start", ">=", "1", null));
+        parameters.add(new TemplateParameter("Chromosome.locatedFeatures.end", "<", "10000", null));
 
         Iterator<List<Object>> resultSet = templateService.getRowListIterator(templateName, parameters,
                                               new Page(0, 10));

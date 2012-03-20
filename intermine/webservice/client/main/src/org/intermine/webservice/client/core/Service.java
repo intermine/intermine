@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 import org.intermine.webservice.client.exceptions.ServiceException;
 import org.intermine.webservice.client.util.HttpConnection;
 
@@ -30,13 +29,14 @@ import org.intermine.webservice.client.util.HttpConnection;
 public class Service
 {
 
+    /** The version of this client library. **/
+    public static final Version VERSION = new Version(3, 0, 0);
+
     private static final String VERSION_HEADER = "InterMine-Version";
 
     private static final String USER_AGENT_HEADER = "User-Agent";
 
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
-
-    private static Logger logger = Logger.getLogger(Service.class);
 
     protected URL resourceUrl;
 
@@ -144,7 +144,6 @@ public class Service
         applyAuthentication(request);
         HttpConnection connection = new HttpConnection(request);
         connection.setTimeout(timeout);
-        logger.debug("Executing request: " + request);
         connection.connect();
         return connection;
     }
@@ -212,7 +211,7 @@ public class Service
 
     /**
      * Returns service's root URL.
-     * Example: http://www.flymine.org/service
+     * Example: http://www.flymine.org/query/service
      * @return URL
      */
     public String getRootUrl() {
@@ -240,10 +239,10 @@ public class Service
     }
 
     /**
-     * @return service version
+     * @return The client version
      */
     public Version getVersion() {
-        return new Version("1.1");
+        return VERSION;
     }
 
     /**
@@ -251,5 +250,71 @@ public class Service
      */
     public String getApplicationName() {
         return applicationName;
+    }
+
+    /**
+     * Performs the request and returns the result as a string.
+     * @param request The Request object
+     * @param retryCount The number of times to retry. If null, the default value of HttpConnection
+     *        will be used.
+     * @return a string containing the body of the response
+     */
+    protected String getStringResponse(Request request, Integer retryCount) {
+        HttpConnection connection = executeRequest(request);
+        if (retryCount != null) {
+            connection.setRetryCount(retryCount.intValue());
+        }
+        String res = null;
+        try {
+            res = connection.getResponseBodyAsString().trim();
+        } finally {
+            connection.close();
+        }
+        return res;
+    }
+
+    /**
+     * Performs the request and returns the result as a string.
+     * @param request The Request object
+     * @return a string containing the body of the response
+     */
+    protected String getStringResponse(Request request) {
+        return getStringResponse(request, null);
+    }
+
+    /**
+     * Performs the request and returns the result as an integer.
+     * Suitable when the service returns a single integer number.
+     * @param request The Request object
+     * @return an integer.
+     */
+    protected int getIntResponse(Request request) {
+        String body = getStringResponse(request);
+        if (body.length() == 0) {
+            throw new ServiceException("The server didn't return any results");
+        }
+        try {
+            return Integer.parseInt(body);
+        }  catch (NumberFormatException e) {
+            throw new ServiceException(
+                    "The server returned an invalid result. It is not a number: "
+                    + body, e);
+        }
+    }
+
+    /**
+     * @return the server's API version.
+     */
+    public int getAPIVersion() {
+        Request r = createGetRequest(getRootUrl() + "/version", ContentType.TEXT_PLAIN);
+        return getIntResponse(r);
+    }
+
+    /**
+     * @return the server's release.
+     */
+    public String getRelease() {
+        Request r = createGetRequest(getRootUrl() + "/version/release", ContentType.TEXT_PLAIN);
+        return getStringResponse(r, 0);
     }
 }
