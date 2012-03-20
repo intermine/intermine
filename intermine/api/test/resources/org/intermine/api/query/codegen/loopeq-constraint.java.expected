@@ -8,7 +8,6 @@ import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.ModelService;
 import org.intermine.webservice.client.services.QueryService;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Constraints;
 
 /**
@@ -33,17 +32,11 @@ public class QueryClient
         PathQuery query = new PathQuery(model);
 
         // Add views
-        query.addViews("Gene.primaryIdentifier",
-                "Gene.secondaryIdentifier",
-                "Gene.symbol",
-                "Gene.name",
-                "Gene.organism.shortName");
-
-        // Add orderby
-        query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        query.addViews("Employee.name",
+                "Employee.department.name");
 
         // Add constraints and you can edit the constraint values below
-        query.addConstraint(Constraints.equalToLoop("Gene.proteins.genes", "InterMineObject"));
+        query.addConstraint(Constraints.equalToLoop("Employee.department.manager", "Employee.department.company.CEO"));
 
         List<List<String>> result = service.getAllResults(query);
         List<String> view = query.getView();

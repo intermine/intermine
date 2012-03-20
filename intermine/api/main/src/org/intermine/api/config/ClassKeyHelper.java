@@ -70,8 +70,7 @@ public final class ClassKeyHelper
                     }
                 }
             } else {
-                LOG.warn("key defined for class '" + clsName
-                        + "' but class not found in model");
+                LOG.warn("No key defined for " + clsName);
             }
         }
         return classKeys;

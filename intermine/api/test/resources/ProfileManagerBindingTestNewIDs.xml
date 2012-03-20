@@ -1,22 +1,15 @@
 <userprofiles>
-  <userprofile username="bob" password="bob_pass">
-    <items>
-      <item id="1" class="Department" implements="RandomInterface">
-        <attribute name="name" value="DepartmentA1"/>
-      </item>
-      <item id="2" class="Department" implements="RandomInterface">
-        <attribute name="name" value="DepartmentB1"/>
-      </item>
-    </items>
+  <userprofile username="Unmarshall-1" password="1234"
+    apikey="unmarshall-1">
     <bags>
       <bag name="bag1" type="Department">
-        <bagValue value="DepartmentA1"/>
-        <bagValue value="DepartmentB1"/>
+        <bagValue value="DepartmentA1" />
+        <bagValue value="DepartmentB1" />
       </bag>
     </bags>
     <queries>
-      <!-- this is intentionally not a save-query element in order to test the backwards
-           compatibility of the unmarshalling of saved queries -->
+      <!-- this is intentionally not a save-query element in order to test the
+        backwards compatibility of the unmarshalling of saved queries -->
       <query name="query1" model="testmodel" view="">
       </query>
     </queries>
@@ -27,59 +20,24 @@
       </template>
     </template-queries>
     <tags>
-      <tag name="test-tag" objectIdentifier="Department.company" type="reference"/>
-      <tag name="test-tag2" objectIdentifier="Department.name" type="attribute"/>
-      <tag name="test-tag2" objectIdentifier="Department.company" type="reference"/>
-      <tag name="test-tag2" objectIdentifier="Department.employees" type="collection"/>
+      <tag name="test-tag" objectIdentifier="Department.company" type="reference" />
+      <tag name="test-tag2" objectIdentifier="Department.name" type="attribute" />
+      <tag name="test-tag2" objectIdentifier="Department.company" type="reference" />
+      <tag name="test-tag2" objectIdentifier="Department.employees"
+        type="collection" />
     </tags>
   </userprofile>
-  <userprofile username="sally" password="sally_pass">
-    <items>
-      <item id="2" class="" implements="Company">
-        <attribute name="name" value="CompanyB"/>
-        <attribute name="vatNumber" value="5678"/>
-      </item>
-      <item id="1006" class="Department" implements="RandomInterface">
-        <attribute name="name" value="DepartmentB1"/>
-        <reference name="company" ref_id="2"/>
-      </item>
-      <item id="1010" class="Employee" implements="Employable HasAddress">
-        <attribute name="age" value="30"/>
-        <attribute name="end" value="3"/>
-        <attribute name="fullTime" value="false"/>
-        <attribute name="name" value="EmployeeA3"/>
-        <reference name="department" ref_id="5"/>
-      </item>
-      <item id="1011" class="CEO" implements="Broke">
-        <attribute name="age" value="40"/>
-        <attribute name="debt" value="340"/>
-        <attribute name="end" value="4"/>
-        <attribute name="fullTime" value="true"/>
-        <attribute name="name" value="EmployeeB1"/>
-        <attribute name="salary" value="45000"/>
-        <attribute name="seniority" value="76321"/>
-        <attribute name="title" value="Mr."/>
-        <reference name="company" ref_id="2"/>
-        <reference name="department" ref_id="1006"/>
-      </item>
-      <item id="1012" class="Employee" implements="Employable HasAddress">
-        <attribute name="age" value="50"/>
-        <attribute name="end" value="5"/>
-        <attribute name="fullTime" value="true"/>
-        <attribute name="name" value="EmployeeB2"/>
-        <reference name="department" ref_id="1006"/>
-      </item>
-    </items>
+  <userprofile username="Unmarshall-2" password="qwerty" apikey="token2">
     <bags>
-      <bag name="sally_bag1" type="Department">
-      <bagValue value="DepartmentA1"/>
+      <bag name="stored_2_1" type="Department">
+        <bagValue value="DepartmentA1" />
       </bag>
-      <bag name="sally_bag2" type="Company">
-      <bagValue value="CompanyA"/>
+      <bag name="stored_2_2" type="Company">
+        <bagValue value="CompanyA" />
       </bag>
-      <bag name="sally_bag3" type="Employee">
-      <bagValue value="EmployeeA3"/>
-      <bagValue value="EmployeeB2"/>
+      <bag name="stored_2_3" type="Employee">
+        <bagValue value="EmployeeA3" />
+        <bagValue value="EmployeeB2" />
       </bag>
     </bags>
     <queries>
@@ -95,7 +53,7 @@
       </template>
     </template-queries>
     <tags>
-      <tag name="test-tag" objectIdentifier="Department.company" type="reference"/>
+      <tag name="test-tag" objectIdentifier="Department.company" type="reference" />
     </tags>
   </userprofile>
 </userprofiles>

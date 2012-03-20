@@ -24,6 +24,7 @@ import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 
@@ -89,23 +90,12 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             return INVALID_QUERY;
         }
 
-        String queryClassName = TypeUtil.unqualifiedName(query.getClass().toString());
-
         StringBuffer sb = new StringBuffer().append(PRELUDE)
                                             .append(SCRIPT_IMPORTS)
                                             .append(PLACEHOLDER)
                                             .append(BOILERPLATE);
 
-        if ("PathQuery".equals(queryClassName)) {
-
-            sb.append("/* Your query can be defined as XML */" + ENDL);
-            sb.append("var query = '" + query.toXml() + "';" + ENDL + ENDL);
-            sb.append("/* It can now be loaded into a table with the following command */" + ENDL);
-            sb.append(QUERY_METHOD);
-            sb.append("{baseUrl: '" + serviceBaseURL + "'}, '#queryplaceholder');" + ENDL);
-
-
-        } else if ("TemplateQuery".equals(queryClassName)) {
+        if (query instanceof TemplateQuery) {
 
             TemplateQuery template = (TemplateQuery) query;
 
@@ -125,6 +115,9 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             int constraintNo = 1;
             while (conIter.hasNext()) {
                 PathConstraint pc = conIter.next();
+                if (template.getSwitchOffAbility(pc) == SwitchOffAbility.OFF) {
+                    continue;
+                }
                 // Add comments for constraints
                 String constraintDes = template.getConstraintDescription(pc);
                 sb.append(ENDL);
@@ -161,6 +154,15 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
             sb.append(INDENT + "\'#queryplaceholder'," + ENDL);
             sb.append(INDENT + "{baseUrl: '" + serviceBaseURL + "'}" + ENDL);
             sb.append(");" + ENDL);
+
+        } else {
+
+            sb.append("/* Your query can be defined as XML */" + ENDL);
+            sb.append("var query = '" + query.toXml() + "';" + ENDL + ENDL);
+            sb.append("/* It can now be loaded into a table with the following command */" + ENDL);
+            sb.append(QUERY_METHOD);
+            sb.append("{baseUrl: '" + serviceBaseURL + "'}, '#queryplaceholder');" + ENDL);
+
         }
 
         sb.append("</script>" + ENDL);

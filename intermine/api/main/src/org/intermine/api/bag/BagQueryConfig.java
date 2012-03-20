@@ -13,6 +13,7 @@ package org.intermine.api.bag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Configuration for BagQuery objects.
@@ -25,7 +26,7 @@ public class BagQueryConfig
     private String constrainField;
     private final Map<String, List<BagQuery>> bagQueries;
     private final Map<String, List<BagQuery>> preDefaultBagQueries;
-    private Map<String, Map<String, String[]>> additionalConverters;
+    private Map<String, Set<AdditionalConverter>> additionalConverters;
     private Boolean matchOnFirst = Boolean.TRUE;
 
     /**
@@ -36,7 +37,7 @@ public class BagQueryConfig
      */
     public BagQueryConfig(Map<String, List<BagQuery>> bagQueries,
                           Map<String, List<BagQuery>> preDefaultBagQueries,
-                          Map<String, Map<String, String[]>> additionalConverters) {
+                          Map<String, Set<AdditionalConverter>> additionalConverters) {
         this.bagQueries = bagQueries;
         this.preDefaultBagQueries = preDefaultBagQueries;
         this.additionalConverters = additionalConverters;
@@ -121,14 +122,14 @@ public class BagQueryConfig
 
     /**
      * Return a Map from a converter Class name (such as
-     * org.intermine.bio.web.logic.OrthologueConverter) to an array containing three Strings. The
-     * first is a comma-separated list of names for the converter that may be referred to in a URL
-     * (like orthologue). The second is the class constraint, and the third is the target type.
+     * org.intermine.bio.web.logic.OrthologueConverter) to set of additional converters.
+     *
+     * Used on the list analysis page to convert to different type, eg. orthologues
      *
      * @param type get converters for this type or a subtype of it
      * @return the additionalConverters
      */
-    public Map<String, String[]> getAdditionalConverters(String type) {
+    public Set<AdditionalConverter> getAdditionalConverters(String type) {
         return additionalConverters.get(type);
     }
 

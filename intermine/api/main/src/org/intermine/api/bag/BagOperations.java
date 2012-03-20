@@ -103,7 +103,13 @@ public final class BagOperations
         if (type == null) {
             throw new IncompatibleTypesException("Given bags were of incompatible types.");
         }
-        InterMineBag combined = profile.createBag(newBagName, type, "", classKeys);
+        InterMineBag combined = null;
+        try {
+            combined = profile.createBag(newBagName, type, "", classKeys);
+        } catch (UnknownBagTypeException e) {
+            throw new RuntimeException(
+                    "The type returned by getCommonBagType is not in the model", e);
+        }
         ObjectStoreBagCombination osbc =
             new ObjectStoreBagCombination(op);
         for (InterMineBag bag : bags) {

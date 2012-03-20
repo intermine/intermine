@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.intermine.api.InterMineAPITestCase;
+import org.intermine.api.profile.TagManager.TagNameException;
+import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
@@ -42,7 +44,8 @@ public class TagManagerTest extends InterMineAPITestCase
     public void setUp() throws Exception {
         super.setUp();
         pm = im.getProfileManager();
-        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(), new HashMap(), true);
+        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(),
+                                 new HashMap(), true, false);
         pm.createProfile(bobProfile);
         manager = im.getTagManager();
     }
@@ -60,12 +63,15 @@ public class TagManagerTest extends InterMineAPITestCase
         manager.addTag("list1Tag", "list1", "bag", "bob");
         manager.addTag("list2Tag", "list2", "bag", "bob");
         manager.addTag("list3Tag", "list3", "bag", "bob");
+        manager.addTag("list4Tag", "list_", "bag", "bob");
 
         List<Tag> tags = manager.getTags(null, null, null, "bob");
-        assertEquals(3, tags.size());
+        assertEquals(4, tags.size());
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list1Tag", "list1", "bag", "bob"));
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list2Tag", "list2", "bag", "bob"));
         assertTrue("Tag added to database but not retrieved.", tagExists(tags, "list3Tag", "list3", "bag", "bob"));
+
+        assertEquals(1, manager.getTags(null, "list_", "bag", "bob").size());
     }
 
     public void testAddTag() {
@@ -78,6 +84,34 @@ public class TagManagerTest extends InterMineAPITestCase
         assertEquals(createdTag.getUserProfile().getUsername(), "bob");
     }
 
+    public void testAddWithProfile() throws Exception {
+        Tag createdTag = manager.addTag("wowTag", "list1", "bag", bobProfile);
+        Tag retrievedTag = manager.getTags("wowTag", "list1", "bag", "bob").get(0);
+        assertEquals(createdTag, retrievedTag);
+        assertEquals(createdTag.getTagName(), "wowTag");
+        assertEquals(createdTag.getObjectIdentifier(), "list1");
+        assertEquals(createdTag.getType(), "bag");
+        assertEquals(createdTag.getUserProfile().getUsername(), "bob");
+    }
+
+    public void testAddPermissionProblems() throws Exception {
+        try {
+            manager.addTag("im:wowTag", "list1", "bag", bobProfile);
+            fail("Expected exception");
+        } catch (TagManager.TagNamePermissionException e) {
+            //Bob is not allowed to add im tags, because he is not the superuser
+        }
+    }
+
+    public void testAddNameProblems() throws Exception {
+        try {
+            manager.addTag("An illegal tag name!", "list1", "bag", bobProfile);
+            fail("Expected exception");
+        } catch (TagManager.TagNameException e) {
+            //That name is illegal!
+        }
+    }
+
     public void testGetTagById() {
         Tag tag = manager.addTag("list1Tag", "list1", "bag", "bob");
         Tag retrievedTag = manager.getTagById(tag.getId());
@@ -87,6 +121,8 @@ public class TagManagerTest extends InterMineAPITestCase
     // Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':', '.'
     public void testIsValidTagName() {
         assertTrue(TagManager.isValidTagName("validTagName_.- :1"));
+        assertFalse(TagManager.isValidTagName("'; drop table userprofile;"));
+        assertFalse(TagManager.isValidTagName(null));
         assertFalse(TagManager.isValidTagName("invalidTagName@"));
     }
 

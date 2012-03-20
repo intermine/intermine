@@ -9,6 +9,7 @@ package org.intermine.api.profile;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
@@ -35,7 +37,6 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
 
 /**
  * Update savedquery, savedtemplatequery and savedbag when the model has been changed
@@ -236,8 +237,8 @@ public class ModelUpdate
         q.setConstraint(constraint);
         Results bagsToDelete = uosw.execute(q, 1000, false, false, true);
 
-        for (Iterator i = bagsToDelete.iterator(); i.hasNext();) {
-            ResultsRow row = (ResultsRow) i.next();
+        for (Iterator<?> i = bagsToDelete.iterator(); i.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             Profile profile = pm.getProfile(savedBag.getUserProfile().getUsername());
             try {
@@ -264,8 +265,8 @@ public class ModelUpdate
         q.setConstraint(constraint);
         Results bagsToUpdate = uosw.execute(q, 1000, false, false, true);
 
-        for (Iterator i = bagsToUpdate.iterator(); i.hasNext();) {
-            ResultsRow row = (ResultsRow) i.next();
+        for (Iterator<?> i = bagsToUpdate.iterator(); i.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) i.next();
             SavedBag savedBag = (SavedBag) row.get(0);
             String type = savedBag.getType();
             String newType = renamedClasses.get(type);
@@ -278,6 +279,8 @@ public class ModelUpdate
             } catch (ObjectStoreException ose) {
                 System.out.println("Problems updating savedBag " + savedBag.getName()
                                    + ose.getMessage());
+            } catch (UnknownBagTypeException e) {
+                throw new RuntimeException("When trying to correct a bag's type", e);
             }
         }
     }
@@ -294,20 +297,23 @@ public class ModelUpdate
         QueryClass qc = new QueryClass(UserProfile.class);
         q.addToSelect(qc);
         q.addFrom(qc);
+        PrintStream stdout = System.out;
         Results userprofiles = uosw.execute(q, 1000, false, false, true);
-        for (Iterator i = userprofiles.iterator(); i.hasNext();) {
-            ResultsRow row = (ResultsRow) i.next();
+        for (Iterator<?> i = userprofiles.iterator(); i.hasNext();) {
+            ResultsRow<?> row = (ResultsRow<?>) i.next();
             UserProfile user = (UserProfile) row.get(0);
             Profile profile = pm.getProfile(user.getUsername());
             savedQueries = new HashMap<String, SavedQuery>(profile.getSavedQueries());
             for (SavedQuery savedQuery : savedQueries.values()) {
                 PathQuery pathQuery = savedQuery.getPathQuery();
+                pathQuery.deVerify();
                 if (!savedQuery.getName().contains(OLD) && !pathQuery.isValid()) {
                     PathQueryUpdate pathQueryUpdate = new PathQueryUpdate(pathQuery, oldModel);
                     try {
+                        stdout.println("Start updating the query: " + savedQuery.getName());
                         problems = pathQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
-                            System.out.println("Problems updating pathQuery in savedQuery "
+                            stdout.println("Problems updating pathQuery in savedQuery "
                                      + savedQuery.getName() + ". " + problems);
                             continue;
                         }
@@ -320,10 +326,10 @@ public class ModelUpdate
                                 savedQuery.getDateCreated(), savedQuery.getPathQuery());
                             profile.saveQuery(backupSavedQueryName, backupSavedQuery);
                             profile.saveQuery(savedQuery.getName(), updatedSavedQuery);
-                            System.out.println("Updated the saved query: " + savedQuery.getName());
+                            stdout.println("Updated the query: " + savedQuery.getName());
                         }
                     } catch (PathException pe) {
-                        System.out.println("Problems updating pathQuery in savedQuery "
+                        stdout.println("Problems updating pathQuery in savedQuery "
                             + savedQuery.getName() + " caused by the wrong path "
                             + pe.getPathString());
                         continue;
@@ -332,14 +338,15 @@ public class ModelUpdate
             }
             templateQueries = new HashMap<String, ApiTemplate>(profile.getSavedTemplates());
             for (ApiTemplate templateQuery : templateQueries.values()) {
-                PathQuery pathQuery = templateQuery.getPathQuery();
-                if (!templateQuery.getName().contains(OLD) && !pathQuery.isValid()) {
+                templateQuery.deVerify();
+                if (!templateQuery.getName().contains(OLD) && !templateQuery.isValid()) {
                     TemplateQueryUpdate templateQueryUpdate = new TemplateQueryUpdate(
                         templateQuery, oldModel);
                     try {
+                        stdout.println("Start updating the template: " + templateQuery.getName());
                         problems = templateQueryUpdate.update(renamedClasses, renamedFields);
                         if (!problems.isEmpty()) {
-                            System.out.println("Problems updating pathQuery in templateQuery "
+                            stdout.println("Problems updating pathQuery in template "
                                                + templateQuery.getName() + ". " + problems);
                             continue;
                         }
@@ -351,10 +358,10 @@ public class ModelUpdate
                             backupTemplateQuery.setName(backupTemplateName);
                             profile.saveTemplate(backupTemplateName, backupTemplateQuery);
                             profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
-                            System.out.println("Updated the template query: " + templateQuery.getName());
+                            stdout.println("Updated the template: " + templateQuery.getName());
                         }
                     } catch (PathException pe) {
-                        System.out.println("Problems updating pathQuery in templateQuery "
+                        stdout.println("Problems updating pathQuery in templateQuery "
                             + templateQuery.getName() + " caused by the wrong path "
                             + pe.getPathString());
                         continue;

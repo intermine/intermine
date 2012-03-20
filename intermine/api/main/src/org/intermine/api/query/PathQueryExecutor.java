@@ -29,6 +29,7 @@ import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -157,6 +158,7 @@ public class PathQueryExecutor extends QueryExecutor
      * PathQuery one.
      * @param pq the PathQuery to translate.
      * @return The Query to run.
+     * @throws ObjectStoreException if there is a problem making the query.
      */
     public Query makeQuery(PathQuery pq) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
@@ -167,7 +169,19 @@ public class PathQueryExecutor extends QueryExecutor
 
         return makeQuery(pq, returnBagQueryResults, pathToQueryNode);
     }
-    
+
+    /**
+     * Get the SQl that will be run on the database.
+     * @param pathQuery The path-query to run.
+     * @return An SQL command.
+     * @throws ObjectStoreException If something goes wrong.
+     */
+    public String makeSql(PathQuery pathQuery) throws ObjectStoreException {
+        Query query = makeQuery(pathQuery);
+        ObjectStoreInterMineImpl osimi = (ObjectStoreInterMineImpl) os;
+        return osimi.generateSql(query);
+    }
+
     /**
      * Check that the lists in the query are all current. Wait up to 20 seconds
      * (or the value of MAX_WAIT_TIME) for them to become current.
@@ -176,14 +190,15 @@ public class PathQueryExecutor extends QueryExecutor
     private void checkListStatus(PathQuery pq) {
         Set<String> listNames = pq.getBagNames();
         Set<InterMineBag> lists = new HashSet<InterMineBag>();
+        Map<String, InterMineBag> availableBags = bagManager.getUserAndGlobalBags(profile);
         for (String listName : listNames) {
-            lists.add(bagManager.getUserOrGlobalBag(profile, listName));
+            lists.add(availableBags.get(listName));
         }
 
         Date maximumWaitUntil = new Date(System.currentTimeMillis() + MAX_WAIT_TIME);
         boolean canContinue = false;
-        
-        LISTCHECKS:
+
+    LISTCHECKS:
         while (new Date().before(maximumWaitUntil) && !canContinue) {
             canContinue = true;
             for (InterMineBag list : lists) {
@@ -206,7 +221,7 @@ public class PathQueryExecutor extends QueryExecutor
             }
         }
         if (!listsWithIssues.isEmpty()) {
-            throw new RuntimeException("Cannot run this query, " 
+            throw new RuntimeException("Cannot run this query, "
                     + "as the following lists are not current: "
                     + StringUtils.join(listsWithIssues, ", "));
         }

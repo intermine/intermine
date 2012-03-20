@@ -22,4 +22,4 @@ rows = template.rows(
     A = {"op": "NOT LIKE", "value": "Emp*"}
 )
 for row in rows:
-    print row
+    print row["name"]

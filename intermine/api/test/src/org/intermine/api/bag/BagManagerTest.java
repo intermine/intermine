@@ -9,16 +9,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPITestCase;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManager.TagNameException;
+import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Address;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 
 public class BagManagerTest extends InterMineAPITestCase
@@ -56,10 +60,10 @@ public class BagManagerTest extends InterMineAPITestCase
             throw new NullPointerException("oops");
         }
 
-        tagManager.addTag(TagNames.IM_PUBLIC, "companyBag", TagTypes.BAG, "superUser");
-        tagManager.addTag(TagNames.IM_PUBLIC, "globalAddressBag", TagTypes.BAG, "superUser");
-        tagManager.addTag(TagNames.IM_FAVOURITE, "companyBag", TagTypes.BAG, "superUser");
-        tagManager.addTag(TagNames.IM_FAVOURITE, "superPrivateBag", TagTypes.BAG, "superUser");
+        tagManager.addTag(TagNames.IM_PUBLIC, "companyBag", TagTypes.BAG, superUser);
+        tagManager.addTag(TagNames.IM_PUBLIC, "globalAddressBag", TagTypes.BAG, superUser);
+        tagManager.addTag(TagNames.IM_FAVOURITE, "companyBag", TagTypes.BAG, superUser);
+        tagManager.addTag(TagNames.IM_FAVOURITE, "superPrivateBag", TagTypes.BAG, superUser);
 
         userCompanyBag = testUser.createBag("companyBag", "Company", "", classKeys);
         userAddressBag = testUser.createBag("userAddressBag", "Address", "", classKeys);
@@ -75,6 +79,40 @@ public class BagManagerTest extends InterMineAPITestCase
 
         expected = Collections.EMPTY_MAP;
         assertEquals(expected, bagManager.getBagsWithTag(superUser, TagNames.IM_HIDDEN));
+    }
+
+    public void testGetBagsWithTagsDashCollisions() throws Exception {
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+        InterMineBag listA = superUser.createBag("list-a", "Employee", "", classKeys);
+        InterMineBag list_A = superUser.createBag("list_a", "Employee", "", classKeys);
+
+        tagManager.addTag("FOO", listA, superUser);
+
+        Map<String, InterMineBag> expected = createExpected(listA);
+        assertEquals(expected, bagManager.getBagsWithTag(superUser, "FOO"));
+
+    }
+
+    public void testGetBagsWithTagsUnderscoreCollisions() throws Exception {
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+        InterMineBag listA = superUser.createBag("listX", "Employee", "", classKeys);
+        InterMineBag list_A = superUser.createBag("list_", "Employee", "", classKeys);
+
+        tagManager.addTag("FOO", listA, superUser);
+
+        Map<String, InterMineBag> expected = createExpected(listA);
+        assertEquals(expected, bagManager.getBagsWithTag(superUser, "FOO"));
+    }
+
+    public void testGetBagsWithTagsCaseCollisions() throws Exception {
+        Map<String, List<FieldDescriptor>>  classKeys = im.getClassKeys();
+        InterMineBag listb = superUser.createBag("list-b", "Employee", "", classKeys);
+        InterMineBag listB = superUser.createBag("list-B", "Employee", "", classKeys);
+
+        tagManager.addTag("BAR", listb, superUser);
+
+        Map<String, InterMineBag> expectedB = createExpected(listb);
+        assertEquals(expectedB, bagManager.getBagsWithTag(superUser, "BAR"));
     }
 
 
@@ -179,9 +217,9 @@ public class BagManagerTest extends InterMineAPITestCase
 
         Set<InterMineBag> expected = new HashSet<InterMineBag>(Arrays.asList(globalAddressBag));
         try {
-        	for (int i = 0; i < 1000; i++) { // try and provoke the intermittent exception
-        		assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
-        	}
+            for (int i = 0; i < 1000; i++) { // try and provoke the intermittent exception
+                assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
+            }
         } finally {
             deleteAddress();
         }

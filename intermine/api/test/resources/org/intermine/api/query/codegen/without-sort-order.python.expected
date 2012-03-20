@@ -13,14 +13,14 @@
 from intermine.webservice import Service
 service = Service("TEST_SERVICE_ROOT/service")
 
-# Get a new query from the service you will be querying:
-query = service.new_query()
+# Get a new query on the class (table) you will be querying:
+query = service.new_query("Gene")
 
 # The view specifies the output columns
 query.add_view(
-    "Gene.primaryIdentifier", "Gene.secondaryIdentifier", "Gene.symbol",
-    "Gene.name", "Gene.organism.shortName"
+    "primaryIdentifier", "secondaryIdentifier", "symbol", "name",
+    "organism.shortName"
 )
 
 for row in query.rows():
-    print row
+    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], row["organism.shortName"]

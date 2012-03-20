@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,7 +12,6 @@ package org.intermine.api.profile;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +23,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
+import org.intermine.api.search.TaggingEvent;
+import org.intermine.api.search.TaggingEvent.TagChange;
+import org.intermine.api.search.WebSearchable;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.CollectionDescriptor;
+import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
@@ -39,18 +46,25 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.util.CacheMap;
 import org.intermine.util.DynamicUtil;
 
 /**
  * Manager class for tags. Implements retrieving, adding and deleting tags in user profile
  * database.
  * @author Jakub Kulaviak <jakub@flymine.org>
+ * @author Alex Kalderimis
  */
 public class TagManager
 {
     private static final Logger LOG = Logger.getLogger(TagManager.class);
     protected ObjectStoreWriter osWriter;
-    private HashMap<MultiKey, List<Tag>> tagCache = null;
+    private CacheMap<MultiKey, List<Tag>> tagCache = null;
+
+    /** What we tell users when they give us an invalid tag name **/
+    public static final String INVALID_NAME_MSG = "Invalid name. "
+            + "Names may only contain letters, "
+            + "numbers, spaces, full stops, hyphens and colons.";
 
     /**
      * Constructor. Use TagManagerFactory for creating tag manager.
@@ -81,6 +95,24 @@ public class TagManager
         }
     }
 
+    public void deleteTag(String tagName, WebSearchable ws, Profile profile) {
+        deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
+        ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
+    }
+
+    public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
+        deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
+    }
+
+    public void deleteTag(String tagName, ReferenceDescriptor rd, Profile profile) {
+        String objIdentifier = rd.getClassDescriptor().getSimpleName() + "." + rd.getName();
+        if (rd instanceof CollectionDescriptor) {
+            deleteTag(tagName, objIdentifier, TagTypes.COLLECTION, profile.getUsername());
+        } else {
+            deleteTag(tagName, objIdentifier, TagTypes.REFERENCE, profile.getUsername());
+        }
+    }
+
     /**
      * Deletes tag object from the database.
      * @param tagName tag name
@@ -88,7 +120,7 @@ public class TagManager
      * @param type tag type
      * @param userName user name
      */
-    public void deleteTag(String tagName, String taggedObject, String type, String userName) {
+    protected void deleteTag(String tagName, String taggedObject, String type, String userName) {
         List<Tag> tags = getTags(tagName, taggedObject, type, userName);
         if (tags.size() > 0 && tags.get(0) != null) {
             deleteTag(tags.get(0));
@@ -155,6 +187,16 @@ public class TagManager
     }
 
     /**
+     * Returns names of tagged tags for specified object. For anonymous user returns empty set.
+     * @param taggable A taggable object.
+     * @param profile The profile of the user with access to these tags.
+     * @return tag names
+     */
+    public Set<String> getObjectTagNames(Taggable taggable, Profile profile) {
+        return getObjectTagNames(taggable.getName(), taggable.getTagType(), profile.getUsername());
+    }
+
+    /**
      * Get Tag by object id.
      * @param id intermine object id
      * @return Tag
@@ -168,6 +210,22 @@ public class TagManager
     }
 
     /**
+     * Helper method for getTags.
+     * @param cs The constraint set being built up.
+     * @param qc The class the constrain on.
+     * @param fieldName The field to constrain.
+     * @param value The value to constrain to.
+     */
+    private static void constrain(ConstraintSet cs, QueryClass qc, String fieldName, String value) {
+        if (value != null) {
+            QueryValue qv = new QueryValue(value);
+            QueryField qf = new QueryField(qc, fieldName);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
+            cs.addConstraint(c);
+        }
+    }
+
+    /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
      * wildcards.
      * @param tagName the tag name - any String
@@ -177,6 +235,7 @@ public class TagManager
      * @param userName the use name this tag is associated with
      * @return the matching Tags
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public synchronized List<Tag> getTags(String tagName, String taggedObjectId, String type,
                         String userName) {
         if (type != null) {
@@ -208,33 +267,16 @@ public class TagManager
 
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
 
-        if (tagName != null) {
-            QueryValue qv = new QueryValue(tagName);
-            QueryField qf = new QueryField(qc, "tagName");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (taggedObjectId != null) {
-            QueryValue qv = new QueryValue(taggedObjectId);
-            QueryField qf = new QueryField(qc, "objectIdentifier");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
-
-        if (type != null) {
-            QueryValue qv = new QueryValue(type);
-            QueryField qf = new QueryField(qc, "type");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
-            cs.addConstraint(c);
-        }
+        constrain(cs, qc, "tagName", tagName);
+        constrain(cs, qc, "objectIdentifier", taggedObjectId);
+        constrain(cs, qc, "type", type);
 
         if (userName != null) {
             QueryClass userProfileQC = new QueryClass(UserProfile.class);
             q.addFrom(userProfileQC);
             QueryValue qv = new QueryValue(userName);
             QueryField qf = new QueryField(userProfileQC, "username");
-            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.MATCHES, qv);
+            SimpleConstraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, qv);
             cs.addConstraint(c);
 
             QueryObjectReference qr = new QueryObjectReference(qc, "userProfile");
@@ -260,15 +302,7 @@ public class TagManager
 
         cache.put(key, new ArrayList<Tag>(results));
 
-        int keyNullPartCount = 0;
-
-        for (int i = 0; i < 4; i++) {
-            if (key.getKey(i) == null) {
-                keyNullPartCount++;
-            }
-        }
-
-        Iterator resIter = results.iterator();
+        Iterator<?> resIter = results.iterator();
 
         while (resIter.hasNext()) {
             Tag tag = (Tag) resIter.next();
@@ -284,7 +318,7 @@ public class TagManager
 
     private Map<MultiKey, List<Tag>> getTagCache() {
         if (tagCache == null) {
-            tagCache  = new HashMap<MultiKey, List<Tag>>();
+            tagCache  = new CacheMap<MultiKey, List<Tag>>();
         }
         return tagCache;
     }
@@ -293,16 +327,107 @@ public class TagManager
      * Add a new tag.  The format of objectIdentifier depends on the tag type.
      * For types "attribute", "reference" and "collection" the objectIdentifier should have the form
      * "ClassName.fieldName".
+     *
+     * Don't use this method.... It makes kittens cry,
+     *
      * @param tagName the tag name - any String
      * @param objectIdentifier an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
      * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
-     * @param userName the name of the UserProfile to associate this tag with
+     * @param profile The Profile of the user to associate this tag with.
      * @return the new Tag
+     * @throws TagNameException If the tag name is invalid.
+     * @throws TagNamePermissionException If the user does not have the required
+     *         permissions to add this tag.
      */
     public synchronized Tag addTag(String tagName, String objectIdentifier, String type,
-                                   String userName) {
-        checkUserExists(userName);
+            Profile profile)
+        throws TagNameException, TagNamePermissionException {
+
+        if (profile == null) {
+            throw new IllegalArgumentException("profile cannot be null");
+        }
+        if (tagName == null) {
+            throw new IllegalArgumentException("tagName cannot be null");
+        }
+        if (tagName.startsWith(TagNames.IM_PREFIX)
+                && !profile.isSuperuser() && !TagNames.IM_FAVOURITE.equals(tagName)) {
+            throw new TagNamePermissionException();
+        }
+        if (!isValidTagName(tagName)) {
+            throw new TagNameException();
+        }
+
+        return addTag(tagName, objectIdentifier, type, profile.getUsername());
+    }
+
+
+    /**
+     * Associate a template with a certain tag.
+     * @param tagName The tag we want to give this template.
+     * @param template The template to tag.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
+    public synchronized Tag addTag(String tagName, WebSearchable ws, Profile profile)
+        throws TagNameException, TagNamePermissionException {
+        Tag ret = addTag(tagName, ws.getName(), ws.getTagType(), profile);
+        ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.ADDED));
+        return ret;
+    }
+
+    /**
+     * Associate a class with a certain tag.
+     * @param tagName The tag we want to give this class.
+     * @param cld The descriptor for this class.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
+    public synchronized Tag addTag(String tagName, ClassDescriptor cld, Profile profile)
+        throws TagNameException, TagNamePermissionException {
+        return addTag(tagName, cld.getName(), TagTypes.CLASS, profile);
+    }
+
+    /**
+     * Associate a reference with a certain tag.
+     * @param tagName The tag we want to give this reference.
+     * @param ref the reference.
+     * @param profile The profile to associate this tag with.
+     * @return A tag object.
+     * @throws TagNameException If the name is invalid (contains illegal characters)
+     * @throws TagNamePermissionException If this tag name is restricted.
+     */
+    public synchronized Tag addTag(String tagName, ReferenceDescriptor ref, Profile profile)
+        throws TagNameException, TagNamePermissionException {
+        String objIdentifier = ref.getClassDescriptor().getSimpleName() + "." + ref.getName();
+        if (ref instanceof CollectionDescriptor) {
+            return addTag(tagName, objIdentifier, TagTypes.COLLECTION, profile);
+        } else {
+            return addTag(tagName, objIdentifier, TagTypes.REFERENCE, profile);
+        }
+    }
+
+    /**
+     * Add a new tag. This method is meant to only be used from
+     * XML unmarshalling. Unlike the publicly visible addTag, it performs its operation,
+     * even if the name is invalid.
+     *
+     *
+     * @param tagName the tag name - any String
+     * @param objectIdentifier an object identifier that is appropriate for the given tag type
+     * (eg. "Department.name" for the "collection" type)
+     * @param type the tag type (eg. "collection", "reference", "attribute", "bag")
+     * @param username The username of the user to associate this tag with.
+     * @return the new Tag
+     */
+    synchronized Tag addTag(String tagName, String objectIdentifier,
+            String type, String username) {
+
+        checkUserExists(username);
         checkTagType(type);
         tagCache = null;
         if (tagName == null) {
@@ -314,12 +439,8 @@ public class TagManager
         if (type == null) {
             throw new IllegalArgumentException("type cannot be null");
         }
-        if (userName == null) {
-            throw new IllegalArgumentException("userName cannot be null");
-        }
 
-        UserProfile userProfile = getUserProfile(userName);
-
+        UserProfile userProfile = getUserProfile(username);
         Tag tag = (Tag) DynamicUtil.createObject(Collections.singleton(Tag.class));
         tag.setTagName(tagName);
         tag.setObjectIdentifier(objectIdentifier);
@@ -336,7 +457,7 @@ public class TagManager
 
     private void checkTagType(String type) {
         if (!isKnownTagType(type)) {
-            throw new IllegalArgumentException("unknown tag type: " + type);
+            throw new IllegalArgumentException("unknown tag type: '" + type + "'");
         }
     }
 
@@ -388,6 +509,62 @@ public class TagManager
         List<Tag> tags = getTags(null, taggedObject, type, userName);
         for (Tag tag : tags) {
             deleteTag(tag);
+        }
+    }
+
+    /**
+     * Class for reporting exceptions from tag manipulation actions.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class TagException extends Exception
+    {
+        private static final long serialVersionUID = 8400582347265920471L;
+
+        /**
+         * Constructor.
+         * @param message The message to report to the user.
+         */
+        public TagException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Class for representing errors due to the use of illegal tag names.
+     * @author Alex Kalderimis
+     *
+     */
+    public static class TagNameException extends TagException
+    {
+
+        private static final long serialVersionUID = 120037828345744006L;
+
+        /**
+         * Constructor.
+         */
+        public TagNameException() {
+            super(INVALID_NAME_MSG);
+        }
+    }
+
+    /**
+     * Class for representing errors due to the restricted nature of some tags.
+     * @author Alex Kalderimis.
+     *
+     */
+    public static class TagNamePermissionException extends TagException
+    {
+        private static final long serialVersionUID = -7843016338063884403L;
+        private static final String PERMISSION_MESSAGE = "You cannot add a tag starting with "
+                + TagNames.IM_PREFIX + ", "
+                + "that is a reserved word.";
+
+        /**
+         * Constructor.
+         */
+        public TagNamePermissionException() {
+            super(PERMISSION_MESSAGE);
         }
     }
 }

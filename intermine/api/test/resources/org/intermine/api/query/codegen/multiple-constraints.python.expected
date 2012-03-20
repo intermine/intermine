@@ -13,25 +13,19 @@
 from intermine.webservice import Service
 service = Service("TEST_SERVICE_ROOT/service")
 
-# Get a new query from the service you will be querying:
-query = service.new_query()
+# Get a new query on the class (table) you will be querying:
+query = service.new_query("Employee")
 
 # The view specifies the output columns
-query.add_view(
-    "Gene.primaryIdentifier", "Gene.secondaryIdentifier", "Gene.symbol",
-    "Gene.name", "Gene.organism.shortName"
-)
-
-# Uncomment and edit the line below (the default) to select a custom sort order:
-# query.add_sort_order("Gene.primaryIdentifier", "ASC")
+query.add_view("name", "department.name")
 
 # You can edit the constraint values below
-query.add_constraint("Gene.proteins.genes", "IS NOT", "InterMineObject", "A")
-query.add_constraint("Gene", "LOOKUP", "zen", "", "B")
-query.add_constraint("Gene.organism.commonName", "ONE OF", ["fruit fly", "honey bee"], "C")
+query.add_constraint("department.manager", "IS NOT", "department.company.CEO", "A")
+query.add_constraint("Employee", "LOOKUP", "M*", "", "B")
+query.add_constraint("department.name", "ONE OF", ["Sales", "Warehouse"], "C")
 
 # Your custom constraint logic is specified with the code below:
-query.set_logic("(A or B) and C")
+query.set_logic("(A or C) and B")
 
 for row in query.rows():
-    print row
+    print row["name"], row["department.name"]

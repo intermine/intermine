@@ -1,0 +1,4 @@
+# Invalid query.
+# =============
+# This query cannot be run because of the following problems:
+#  * This template has no editable constraints.

@@ -30,6 +30,7 @@ public class TrackerLoggerTest extends TestCase {
     Connection con;
     Queue<Track> trackQueue;
     TrackerLogger trackerLogger = null;
+    private int count = 100;
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -49,18 +50,22 @@ public class TrackerLoggerTest extends TestCase {
     }
 
     public void testRun() throws SQLException, InterruptedException {
-        for (int index = 0; index < 100; index++) {
+        for (int index = 0; index < count; index++) {
             trackQueue.add(new LoginTrack("user" + index,
                           new Timestamp(System.currentTimeMillis())));
         }
         trackerLogger = new TrackerLogger(con, trackQueue);
         new Thread(trackerLogger).start();
-        Thread.sleep(2000);
+        synchronized (trackQueue) {
+            while (!trackQueue.isEmpty()) {
+                Thread.sleep(100);
+            }
+        }
         String sql = "SELECT COUNT(*) FROM logintrack";
         Statement stm = con.createStatement();
         ResultSet rs = stm.executeQuery(sql);
         rs.next();
-        assertEquals(100, rs.getInt(1));
+        assertEquals(count, rs.getInt(1));
         rs.close();
         stm.close();
     }

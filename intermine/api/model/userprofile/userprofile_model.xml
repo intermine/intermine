@@ -3,7 +3,8 @@
     <attribute name="username" type="java.lang.String"/>
     <attribute name="password" type="java.lang.String"/>
     <attribute name="apiKey" type="java.lang.String"/>
-	<attribute name="localAccount" type="boolean"/>
+    <attribute name="localAccount" type="boolean"/>
+    <attribute name="superuser" type="boolean"/>
     <collection name="savedBags" referenced-type="SavedBag" reverse-reference="userProfile"/>
     <collection name="savedQuerys" referenced-type="SavedQuery" reverse-reference="userProfile"/>
     <collection name="savedTemplateQuerys" referenced-type="SavedTemplateQuery" reverse-reference="userProfile"/>
