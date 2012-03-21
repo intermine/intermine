@@ -54,7 +54,7 @@ $.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/serv
             <div id="welcome-content" class="span-42 last current">
               <div style="padding:0 20px;">
               <h2>Welcome to modMine</h2>
-<p>The <strong>modENCODE</strong> project aims to identify all sequence-based functional elements
+<p>The <strong><a href="http://www.modencode.org/">modENCODE</a></strong> project aims to identify all sequence-based functional elements
 in the <i><strong>C. elegans</strong></i> and <i><strong>D. melanogaster</strong></i> genomes.
 modENCODE labs submit data to the Data Coordination Center (DCC) where we organize and present the results.</p>
 <p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong>
@@ -70,17 +70,14 @@ check out our <b><a href="http://www.modencode.org/quickstart/">quick start guid
 
 </div>
 
-
+<div style="padding:0 20px;">
 <h3><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Browse all modENCODE data</a></h3>
         <div class="span-42 last">
 
-<%--
-        <a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do"><img src="model/images/data_preview.png" alt="experiments View"/></a>
---%>
-        <div id="catnavigation" style="padding: 10px 20px;">
+        <div id="catnavigation" style="padding: 0px 15px;">
 
         </div>
-
+</div>
 
               <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
             </div>
