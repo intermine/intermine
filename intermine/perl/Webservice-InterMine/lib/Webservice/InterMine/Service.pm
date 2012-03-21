@@ -55,6 +55,7 @@ use Moose::Meta::Role;
 use Perl6::Junction qw(any);
 use Time::HiRes qw/gettimeofday/;
 require Webservice::InterMine::Path;
+require Webservice::InterMine::Model;
 
 my @JSON_FORMATS = (qw/jsonobjects jsonrows jsondatatable json/);
 my @SIMPLE_FORMATS = (qw/tsv tab csv count xml/);
@@ -181,7 +182,10 @@ database schema. See L<InterMine::Model>
 
 sub _build_model {
     my $self = shift;
-    $self->fetch( $self->root . MODEL_PATH );
+    my $src = $self->fetch( $self->root . MODEL_PATH );
+    my $model = Webservice::InterMine::Model->new(string => $src);
+    $model->set_service($self);
+    $model;
 }
 
 =head2 version

@@ -49,7 +49,7 @@ use MooseX::Types::Moose         qw/ArrayRef Undef Bool Str/;
 use InterMine::Model::Types      qw/PathString/;
 use Webservice::InterMine::Types qw/
     Date ListFactory ResultIterator Query File
-    List ListableQuery ListOfLists ListOfListableQueries
+    List Listable ListOfLists ListOfListables
     ListOperable ListOfListOperables SetObject TruthValue
 /;
 require Set::Object;
@@ -57,8 +57,9 @@ require Set::Object;
 use constant {
     LIST_APPEND_PATH => '/lists/append/json',
     RENAME_PATH => '/lists/rename/json',
-    LISTABLE => 'Webservice::InterMine::Query::Roles::Listable',
+    LISTABLE => 'Webservice::InterMine::Role::Listable',
     LIST => 'Webservice::InterMine::List',
+    ENRICHMENT_PATH => '/list/enrichment',
 };
 
 =head1 OVERLOADED OPERATIONS
@@ -508,6 +509,23 @@ sub overload_appending {
     $self->append($other);
 }
 
+=head2 enrichment(widget => $name, [maxp => $val, correction => $algorithm, filter => $filter])
+
+Receive results from an enrichment widget.
+
+=cut
+
+sub enrichment {
+    my ($self, %options) = @_;
+    my %form = %options;
+    $form{correction} ||= "Holm-Bonferroni";
+    $form{maxp} ||= 0.1;
+    $form{list} = $self->name;
+    my $uri = $self->service->build_uri($self->service_root . ENRICHMENT_PATH);
+    my $iterator = $self->service->get_results_iterator($uri, \%form, [], "json", "perl", []);
+    return $iterator;
+}
+
 =head2 to_query
 
 Return a L<Webservice::InterMine::Query> representing the elements of this
@@ -611,9 +629,9 @@ sub append {
         sub {}
     );
     match_on_type $ids => (
-        ListableQuery, sub {
+        Listable, sub {
             my $uri = $self->service->build_uri($_->get_list_append_uri,
-                listName => $name, path => $path, $_->get_request_parameters,
+                listName => $name, path => $path, $_->get_list_request_parameters,
             );
             $resp = $self->service->get($uri);
         },

@@ -15,6 +15,7 @@ with(
     'Webservice::InterMine::Query::Roles::WriteOutAble',
     'Webservice::InterMine::Query::Roles::ExtendedQuery',
     'Webservice::InterMine::Query::Roles::Listable',
+    'Webservice::InterMine::Role::Listable',
 );
 
 sub _build_handler {
