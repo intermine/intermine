@@ -69,7 +69,7 @@ public class GoConverter extends BioFileConverter
     protected String termClassName = "GOTerm";
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
-
+    private String gaff = "2.0";
     protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
@@ -90,6 +90,16 @@ public class GoConverter extends BioFileConverter
 
         readConfig();
     }
+
+    /**
+     * Sets the file format for the GAF.  2.0 is the default.
+     *
+     * @param gaff GO annotation file format
+     */
+    public void setGaff(String gaff) {
+        this.gaff = gaff;
+    }
+
 
     static {
         WITH_TYPES.put("FB", "Gene");
@@ -149,6 +159,7 @@ public class GoConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws ObjectStoreException, IOException {
 
         initialiseMapsForFile();
@@ -189,9 +200,11 @@ public class GoConverter extends BioFileConverter
                         + "found for goterm " + goId + " and productId " + productId);
             }
 
-            // type of gene product, we're not interested in at the moment
-            // String type = array[11];
             String type = configs.get(taxonId).annotationType;
+            if ("1.0".equals(gaff)) {
+                // type of gene product
+                type = array[11];
+            }
 
             // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
             // hack here to get just the UniProt ones.
@@ -686,6 +699,7 @@ public class GoConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public boolean equals(Object o) {
             if (o instanceof GoTermToGene) {
                 GoTermToGene go = (GoTermToGene) o;
@@ -699,6 +713,7 @@ public class GoConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public int hashCode() {
             return ((3 * productId.hashCode())
                     + (5 * goId.hashCode())
@@ -708,6 +723,7 @@ public class GoConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public String toString() {
             StringBuffer toStringBuff = new StringBuffer();
 

@@ -1,43 +1,5 @@
 <items>
-<item id="6_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="4_1" class="InteractionTerm">
-<attribute name="identifier" value="MI:0018"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="2_1" class="DataSet">
-<attribute name="name" value="BioGRID interaction data set"/>
-<reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="4_2" class="InteractionTerm">
-<attribute name="identifier" value="MI:0407"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="7_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn001"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_1" class="Interaction">
-<attribute name="interactionType" value="physical"/>
-<attribute name="name" value="BioGRID:FBgn003_FBgn001"/>
-<attribute name="role" value="prey"/>
-<attribute name="shortName" value="BioGRID:FBgn003_FBgn001"/>
-<reference name="experiment" ref_id="5_1"/>
-<reference name="gene" ref_id="7_2"/>
-<reference name="type" ref_id="4_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="7_1"/></collection>
-</item>
-<item id="7_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn003"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_2" class="Interaction">
+<item id="10_2" class="Interaction">
 <attribute name="interactionType" value="physical"/>
 <attribute name="name" value="BioGRID:FBgn001_FBgn003"/>
 <attribute name="role" value="bait"/>
@@ -48,15 +10,51 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="interactingGenes"><reference ref_id="7_2"/></collection>
 </item>
-<item id="4_3" class="InteractionTerm">
-<attribute name="identifier" value="MI:0796"/>
+<item id="9_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="0_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
+<item id="6_1" class="Organism">
+<attribute name="taxonId" value="7227"/>
 </item>
-<item id="9_3" class="Interaction">
+<item id="4_1" class="InteractionTerm">
+<attribute name="identifier" value="MI:0018"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn001"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="9_1"/>
+<collection name="crossReferences"><reference ref_id="8_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="CrossReference">
+<attribute name="identifier" value="11111"/>
+<reference name="source" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="BioGRID interaction data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="4_2" class="InteractionTerm">
+<attribute name="identifier" value="MI:0407"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn003"/>
+<reference name="organism" ref_id="6_1"/>
+<reference name="sequenceOntologyTerm" ref_id="9_1"/>
+<collection name="crossReferences"><reference ref_id="8_2"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_2" class="CrossReference">
+<attribute name="identifier" value="12345"/>
+<reference name="source" ref_id="1_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_3" class="Interaction">
 <attribute name="interactionType" value="genetic"/>
 <attribute name="name" value="BioGRID:FBgn001"/>
 <attribute name="role" value="prey"/>
@@ -67,10 +65,24 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="interactingGenes"><reference ref_id="7_1"/></collection>
 </item>
-<item id="8_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
+<item id="10_1" class="Interaction">
+<attribute name="interactionType" value="physical"/>
+<attribute name="name" value="BioGRID:FBgn003_FBgn001"/>
+<attribute name="role" value="prey"/>
+<attribute name="shortName" value="BioGRID:FBgn003_FBgn001"/>
+<reference name="experiment" ref_id="5_1"/>
+<reference name="gene" ref_id="7_2"/>
+<reference name="type" ref_id="4_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="interactingGenes"><reference ref_id="7_1"/></collection>
+</item>
+<item id="4_3" class="InteractionTerm">
+<attribute name="identifier" value="MI:0796"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="14605208"/>

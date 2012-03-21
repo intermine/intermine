@@ -9,6 +9,20 @@
 
 <div id="sequence-feature-displayer" class="collection-table column-border-by-2">
 
+<style>
+<%-- this bad boy sometimes shows in the top of the page --%>
+#object_header #sequencefeaturedisplayer-wrapper.wrapper { margin-bottom:10px; }
+#object_header #sequence-feature-displayer { margin:0 0 0 3px; }
+#object_header #sequence-feature-displayer h3 { display:none; }
+#object_header #sequence-feature-displayer table { width:0%; }
+#object_header #sequence-feature-displayer table td { padding:0; }
+#object_header #sequence-feature-displayer table,
+#object_header #sequence-feature-displayer table tr,
+#object_header #sequence-feature-displayer table td,
+#object_header #sequence-feature-displayer table th { border:0; background:transparent; }
+#object_header #sequence-feature-displayer table tr td:not(:first-child) { padding-right:20px; }
+</style>
+
 <c:set var="feature" value="${reportObject.object}"/>
 
 <c:choose>
@@ -27,12 +41,12 @@
       <tr>
         <c:choose>
           <c:when test="${!empty feature.length}">
-            <td>Region:</td>
+            <td class="label">Region:</td>
             <td>
               <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
               <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
             </td>
-            <td>Length:</td>
+            <td class="label">Length:</td>
             <td>
               <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
               <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
@@ -41,7 +55,8 @@
             </td>
           </c:when>
           <c:otherwise>
-            <td colspan="4">
+            <td class="label">Region:</td>
+            <td colspan="3">
               <strong><c:out value="${feature.sequenceOntologyTerm.name}"/></strong>
               <im:helplink text="${feature.sequenceOntologyTerm.description}"/>
             </td>
@@ -53,7 +68,7 @@
       <c:choose>
         <c:when test="${!empty feature.length}">
           <tr>
-            <td>Length:</td>
+            <td class="label">Length:</td>
             <td colspan="3">
               <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
               <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
@@ -67,7 +82,7 @@
   </c:choose>
 
   <tr>
-    <td>Location:</td>
+    <td class="label">Location:</td>
       <c:choose>
         <c:when test="${!empty feature.chromosomeLocation}">
           <td>
@@ -137,13 +152,13 @@
     </td>
     <c:choose>
       <c:when test="${!empty cytoLocation}">
-        <td>Cyto location:</td>
+        <td class="label">Cyto location:</td>
         <td>
           <strong><c:out value="${cytoLocation}"/></strong>
         </td>
       </c:when>
       <c:when test="${!empty mapLocation}">
-        <td>Map location:</td>
+        <td class="label">Map location:</td>
         <td>
           <strong><c:out value="${mapLocation}"/></strong>
         </td>
@@ -164,12 +179,12 @@
         jQuery("#sequence-feature-displayer div.toggle a.more").remove();
     }
   });
-  
+
   <%-- fixup number of columns --%>
   var l = jQuery('#sequence-feature-displayer table tr:first td').length,
-  	   m = jQuery('#sequence-feature-displayer table tr:last td').length;
+       m = jQuery('#sequence-feature-displayer table tr:last td').length;
   if (l != m) {
-	  jQuery('#sequence-feature-displayer table tr:last td:last').attr('colspan', l - m + 1);
+    jQuery('#sequence-feature-displayer table tr:last td:last').attr('colspan', l - m + 1);
   }
 })();
 </script>

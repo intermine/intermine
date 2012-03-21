@@ -41,7 +41,7 @@
     </div>
 
   <div class="show-in-table" style="display:none;">
-    <html:link action="/collectionDetails?id=${object.id}&amp;field=pathways&amp;trail=${param.trail}">
+    <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=pathways&amp;trail=${param.trail}">
         Show all in a table &raquo;
       </html:link>
   </div>

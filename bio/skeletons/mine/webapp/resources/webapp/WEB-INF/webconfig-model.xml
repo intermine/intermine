@@ -82,7 +82,7 @@
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
   </class>
-  
+
   <class className="org.intermine.model.bio.Ontology">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -91,7 +91,9 @@
 
   <class className="org.intermine.model.bio.OntologyTerm">
     <headerconfig>
-      <titles mainTitles="identifier|name" subTitles="ontology.name" />
+      <titles>
+      <title mainTitles="identifier|name" subTitles="ontology.name" />
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -117,7 +119,9 @@
 
   <class className="org.intermine.model.bio.Organism">
     <headerconfig>
-      <titles mainTitles="name"/>
+      <titles>
+      <title mainTitles="name"/>
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -139,7 +143,9 @@
 
   <class className="org.intermine.model.bio.Publication">
     <headerconfig>
-      <titles mainTitles="firstAuthor|year" />
+  <titles>
+    <title mainTitles="title" />
+ </titles>
     </headerconfig>
     <inlinelist>
       <table path="authors.name" showLinksToObjects="true" />
@@ -224,7 +230,7 @@
         link="org.intermine.bio.web.widget.ChromosomeDistributionGraphURLGenerator"
         description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
         graphType="BarChart"
-        extraAttributeClass="org.intermine.bio.web.logic.BioUtil"
+        extraAttributeClass="org.intermine.bio.util.BioUtil"
         typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.SequenceFeature"
        />
 

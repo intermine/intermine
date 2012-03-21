@@ -4,9 +4,6 @@
 <action path="/sequenceExporter"
   type="org.intermine.bio.web.struts.SequenceExportAction" />
 
-<action path="/initAttributeLinkDisplayer"
-        type="org.intermine.bio.web.AttributeLinkDisplayerController"/>
-
 <action path="/initSequenceExportOptions"
         type="org.intermine.bio.web.struts.SequenceExportOptionsController"/>
 
@@ -45,3 +42,5 @@
 <action path="/genomicRegionSearchAjax" type="org.intermine.bio.web.struts.GenomicRegionSearchAjaxAction"/>
 
 <!-- End of Genomic Region Search configuration -->
+
+<action path="/initFriendlyMineLinkDisplayer" type="org.intermine.bio.web.FriendlyMineLinkController"/>

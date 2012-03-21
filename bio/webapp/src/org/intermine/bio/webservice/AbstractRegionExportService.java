@@ -1,84 +1,124 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2012 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.results.ExportResultsIterator;
-import org.intermine.bio.web.export.GFF3Exporter;
+import org.intermine.api.results.ResultElement;
+import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.webservice.server.WebServiceRequestParser;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
 
-public abstract class AbstractRegionExportService extends GenomicRegionSearchService {
-
+/**
+ * Base class for Biological region export services.
+ * @author Alex Kalderimis
+ *
+ */
+public abstract class AbstractRegionExportService extends GenomicRegionSearchService
+{
+    /**
+     * Constructor.
+     * @param im The InterMine API settings object.
+     */
     public AbstractRegionExportService(InterMineAPI im) {
         super(im);
     }
 
     @Override
     public boolean isAuthenticated() {
-        // Allow anyone to use this service, even though it 
-        // uses a list to do its dirty work.
+        // Allow anyone to use this service, as it doesn't use a list, but 
+        // an id-list query.
         return true;
     }
-    
+
     @Override
     protected void makeList(ListInput input, String type, Profile profile,
             Set<String> temporaryBagNamesAccumulator) throws Exception {
-        // Delete the list on end.
-        temporaryBagNamesAccumulator.add(input.getListName());
-        GenomicRegionSearchListInput searchInput = (GenomicRegionSearchListInput) input;
-        InterMineBag tempBag = doListCreation(searchInput, profile, type);
         
-        PathQuery pq = makePathQuery(tempBag);
+        GenomicRegionSearchListInput searchInput = (GenomicRegionSearchListInput) input;
+
+        Set<Integer> objectIds = new HashSet<Integer>();
+        Map<GenomicRegion, Query> queries = createQueries(searchInput.getSearchInfo());
+        for (Entry<GenomicRegion, Query> e: queries.entrySet()) {
+            Query q = e.getValue();
+            ObjectStore os = im.getObjectStore();
+            Results rs = os.execute(q);
+            Iterator<Object> it = rs.iterator();
+            while (it.hasNext()) {
+                ResultsRow rr = (ResultsRow) it.next();
+                Integer id = (Integer) rr.get(0);
+                objectIds.add(id);
+            }
+        }
+
+        PathQuery pq = makePathQuery(type, objectIds);
         export(pq, profile);
     }
-    
-    protected PathQuery makePathQuery(InterMineBag tempBag) {
+
+    /**
+     * Make a path-query from a bag.
+     * @param tempBag The bag to constrain this query on.
+     * @return A path-query.
+     */
+    protected PathQuery makePathQuery(String type, Collection<Integer> ids) {
         PathQuery pq = new PathQuery(im.getModel());
-        pq.addView(tempBag.getType() + ".primaryIdentifier");
-        pq.addConstraint(Constraints.in(tempBag.getType(), tempBag.getName()));
+        pq.addView(type + ".primaryIdentifier");
+        pq.addConstraint(Constraints.inIds(type, ids));
         return pq;
     }
-    
+
+    /**
+     * Method that carries out the logic for this exporter.
+     * @param pq The pathquery.
+     * @param profile A profile to lookup saved bags in.
+     */
     protected abstract void export(PathQuery pq, Profile profile);
-    
-    protected static String SUFFIX;
-    
+
+    /**
+     * The suffix for the file name.
+     */
+    protected static String suffix;
+
     @Override
     protected String getDefaultFileName() {
-        return "results" + StringUtil.uniqueString() + SUFFIX;
+        return "results" + StringUtil.uniqueString() + suffix;
     }
 
-    
     protected PrintWriter pw;
     protected OutputStream os;
-    
+
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
         this.pw = out;
         this.os = os;
-        output = new StreamedOutput(out, new TabFormatter());
+        output = new StreamedOutput(out, new TabFormatter(), separator);
         if (isUncompressed()) {
             ResponseUtil.setPlainTextHeader(response,
                     getDefaultFileName());

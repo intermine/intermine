@@ -13,12 +13,14 @@ package org.intermine.bio.web.export;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.Column;
 import org.intermine.api.results.ExportResultsIterator;
@@ -47,6 +49,8 @@ import org.intermine.web.struts.TableExportForm;
  */
 public class SequenceHttpExporter extends HttpExporterBase implements TableHttpExporter
 {
+    protected static final Logger LOG = Logger.getLogger(SequenceHttpExporter.class);
+
     /**
      * Set response proper header.
      * @param response response
@@ -65,8 +69,9 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
      * Method called to export a PagedTable object using the BioJava sequence and feature writers.
      * {@inheritDoc}
      */
-    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-                       TableExportForm form) {
+    public void export(PagedTable pt, HttpServletRequest request,
+            HttpServletResponse response, TableExportForm form,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         boolean doGzip = (form != null) && form.getDoGzip();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         ObjectStore os = im.getObjectStore();
@@ -120,7 +125,7 @@ public class SequenceHttpExporter extends HttpExporterBase implements TableHttpE
         try {
             iter = getResultRows(pt, request);
             iter.goFaster();
-            exporter.export(iter);
+            exporter.export(iter, unionPathCollection, newPathCollection);
             if (outputStream instanceof GZIPOutputStream) {
                 try {
                     ((GZIPOutputStream) outputStream).finish();

@@ -59,7 +59,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     private static final Logger LOG = Logger.getLogger(SequenceProcessor.class);
 
-    // a map from chado feature id to FeatureData objects, prpulated by processFeatureTable()
+    // a map from chado feature id to FeatureData objects, populated by processFeatureTable()
     // and used to get object types, Item IDs etc. (see FeatureData)
     protected Map<Integer, FeatureData> featureMap = new HashMap<Integer, FeatureData>();
 
@@ -68,7 +68,7 @@ public class SequenceProcessor extends ChadoProcessor
 
     // A map from chromosome uniqueName to chado feature_ids, populated by processFeatureTable()
     private Map<Integer, Map<String, Integer>> chromosomeMaps =
-        new HashMap<Integer, Map<String, Integer>>();
+            new HashMap<Integer, Map<String, Integer>>();
 
     // a map from chado pubmed id to item identifier for the publication
     private Map<Integer, String> publications = new HashMap<Integer, String>();
@@ -89,7 +89,7 @@ public class SequenceProcessor extends ChadoProcessor
     // default chromosome-like feature types - ie those types of features that occur in the
     // srcfeature column of the featureloc table
     private static final List<String> DEFAULT_CHROMOSOME_FEATURES =
-        Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
+            Arrays.asList("chromosome", "chromosome_arm", "ultra_scaffold", "golden_path_region");
 
     // Avoid explosion of log messages by only logging missing collections once
     private Set<String> loggedMissingCols = new HashSet<String>();
@@ -216,7 +216,7 @@ public class SequenceProcessor extends ChadoProcessor
                 seqlen = res.getInt("seqlen");
             }
             if (processAndStoreFeature(featureId, uniqueName, name, seqlen, residues,
-                                       checksum, type, organismId)) {
+                    checksum, type, organismId)) {
                 count++;
             }
         }
@@ -253,9 +253,9 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      */
     private boolean processAndStoreFeature(Integer featureId, String uniqueName,
-                                           String name, int seqlen, String residues,
-                                           String md5checksum, String chadoType,
-                                           Integer organismId)
+            String name, int seqlen, String residues,
+            String md5checksum, String chadoType,
+            Integer organismId)
         throws ObjectStoreException {
 
         if (featureMap.containsKey(featureId)) {
@@ -263,8 +263,8 @@ public class SequenceProcessor extends ChadoProcessor
         }
 
         FeatureData fdat =
-            makeFeatureData(featureId.intValue(), chadoType, uniqueName, name, md5checksum, seqlen,
-                            organismId.intValue());
+                makeFeatureData(featureId.intValue(), chadoType, uniqueName, name, md5checksum,
+                        seqlen, organismId.intValue());
 
         if (fdat == null) {
             return false;
@@ -284,19 +284,16 @@ public class SequenceProcessor extends ChadoProcessor
 
         // check interMineType not chadoType - FlyBase subclass converts some Genes to Alleles
         if (fdat.getInterMineType().endsWith("Gene")) {
-//          setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
+            //          setGeneSource(fdat.getIntermineObjectId(), dataSourceName);
             setGeneSource(fdat, dataSourceName);
-            
-            if (dataSourceName.equalsIgnoreCase("modENCODE")) {
-//                fixedUniqueName = fdat.getUniqueName();                    
-                fixedUniqueName = fixIdentifier(fdat,fdat.getUniqueName());                    
-                LOG.debug("AAAsp2: " + fixedUniqueName);
-            }        
+            // special case for modENCODE
+            if ("modENCODE".equalsIgnoreCase(dataSourceName)) {
+                fixedUniqueName = fixIdentifier(fdat, fdat.getUniqueName());
+            }
         }
 
 
         Set<String> fieldValuesSet = new HashSet<String>();
-
         String fixedName = fixIdentifier(fdat, name);
 
         // using the configuration, set a field to be the feature name
@@ -308,7 +305,7 @@ public class SequenceProcessor extends ChadoProcessor
                 for (ConfigAction action: nameActionList) {
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction attrAction =
-                            (SetFieldConfigAction) action;
+                                (SetFieldConfigAction) action;
                         if (attrAction.isValidValue(fixedName)) {
                             String newFieldValue = attrAction.processValue(fixedName);
                             setAttributeIfNotSet(fdat, attrAction.getFieldName(), newFieldValue);
@@ -320,10 +317,10 @@ public class SequenceProcessor extends ChadoProcessor
         }
 
         MultiKey uniqueNameKey =
-            new MultiKey("feature", fdat.getInterMineType(), dataSourceName,
-                         "uniquename");
+                new MultiKey("feature", fdat.getInterMineType(), dataSourceName,
+                        "uniquename");
         List<ConfigAction> uniqueNameActionList =
-            getConfig(fdat.getOrganismData().getTaxonId()).get(uniqueNameKey);
+                getConfig(fdat.getOrganismData().getTaxonId()).get(uniqueNameKey);
         if (uniqueNameActionList == null || uniqueNameActionList.size() == 0) {
             // default: set primaryIdentifier to be the uniquename
             setAttributeIfNotSet(fdat, "primaryIdentifier", fixedUniqueName);
@@ -335,7 +332,7 @@ public class SequenceProcessor extends ChadoProcessor
                     SetFieldConfigAction attrAction = (SetFieldConfigAction) action;
                     if (attrAction.isValidValue(fixedUniqueName)) {
                         String newFieldValue =
-                            attrAction.processValue(fixedUniqueName);
+                                attrAction.processValue(fixedUniqueName);
                         setAttributeIfNotSet(fdat, attrAction.getFieldName(), newFieldValue);
                         fieldValuesSet.add(newFieldValue);
                     }
@@ -345,7 +342,7 @@ public class SequenceProcessor extends ChadoProcessor
 
         // set the BioEntity sequence if there is one
         if (fdat.checkField(SEQUENCE_STRING)
-            && residues != null && residues.length() > 0) {
+                && residues != null && residues.length() > 0) {
             if (!fdat.getFlag(SEQUENCE_STRING)) {
                 Item sequence = getChadoDBConverter().createItem("Sequence");
                 sequence.setAttribute("residues", residues);
@@ -399,20 +396,25 @@ public class SequenceProcessor extends ChadoProcessor
         if (cd.getFieldDescriptorByName("source") != null) {
             // if it is there (e.g. modmine) let's set it
             setAttribute(imObjectId, "source", dataSourceName);
-            
         }
     }
 
+    /**
+     * set the source field for modENCODE gene
+     * @param fdat the featueData
+     * @param dataSourceName the name of the data source
+     * @throws ObjectStoreException os exception
+     */
     protected void setGeneSource(FeatureData fdat, String dataSourceName)
-    throws ObjectStoreException {
-    // for gene in modENCODE
-    ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
-    if (cd.getFieldDescriptorByName("source") != null) {
-        Integer imObjectId = fdat.getIntermineObjectId();
-        // if it is there (e.g. modmine) let's set it
-        setAttribute(imObjectId, "source", dataSourceName);        
+        throws ObjectStoreException {
+        // for gene in modENCODE
+        ClassDescriptor cd = getModel().getClassDescriptorByName("Gene");
+        if (cd.getFieldDescriptorByName("source") != null) {
+            Integer imObjectId = fdat.getIntermineObjectId();
+            // if it is there (e.g. modmine) let's set it
+            setAttribute(imObjectId, "source", dataSourceName);
+        }
     }
-}
     /**
      * Add feature data to FeatureMap, can be overidden by subclasses that need to store some
      * features in additional maps.
@@ -428,7 +430,7 @@ public class SequenceProcessor extends ChadoProcessor
      * FeatureData to say it's set.
      */
     private void setAttributeIfNotSet(FeatureData fdat, final String attributeName,
-                                      final String value) throws ObjectStoreException {
+            final String value) throws ObjectStoreException {
         if (!fdat.getFlag(attributeName)) {
             setAttribute(fdat.getIntermineObjectId(), attributeName, value);
             fdat.setFlag(attributeName, true);
@@ -449,15 +451,15 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      */
     protected FeatureData makeFeatureData(int featureId, String chadoType,
-                                          String uniqueName, String name,
-                                          String md5checksum, int seqlen,
-                                          int organismId) throws ObjectStoreException {
+            String uniqueName, String name,
+            String md5checksum, int seqlen,
+            int organismId) throws ObjectStoreException {
         String interMineType = TypeUtil.javaiseClassName(fixFeatureType(chadoType));
         OrganismData organismData =
-            getChadoDBConverter().getChadoIdToOrgDataMap().get(new Integer(organismId));
+                getChadoDBConverter().getChadoIdToOrgDataMap().get(new Integer(organismId));
 
         Item feature = makeFeature(new Integer(featureId), chadoType, interMineType, name,
-                                   uniqueName, seqlen, organismData.getTaxonId());
+                uniqueName, seqlen, organismData.getTaxonId());
         if (feature == null) {
             return null;
         }
@@ -505,8 +507,8 @@ public class SequenceProcessor extends ChadoProcessor
      * @return the new feature
      */
     protected Item makeFeature(Integer featureId, String chadoFeatureType, String interMineType,
-                               String name, String uniqueName,
-                               int seqlen, int taxonId) {
+            String name, String uniqueName,
+            int seqlen, int taxonId) {
         return getChadoDBConverter().createItem(interMineType);
     }
 
@@ -577,8 +579,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws ObjectStoreException if there is a problem while storing
      * @throws SQLException if there is a problem
      */
-    protected void extraProcessing(Connection connection,
-                                   Map<Integer, FeatureData> featureDataMap)
+    protected void extraProcessing(Connection connection, Map<Integer, FeatureData> featureDataMap)
         throws ObjectStoreException, SQLException {
         // override in subclasses as necessary
     }
@@ -590,7 +591,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException if there is a problem
      */
     protected void finishedProcessing(Connection connection,
-                                    Map<Integer, FeatureData> featureDataMap)
+            Map<Integer, FeatureData> featureDataMap)
         throws SQLException {
         // connection will be null for tests
         if (connection != null) {
@@ -630,17 +631,20 @@ public class SequenceProcessor extends ChadoProcessor
                     FeatureData featureData = featureMap.get(featureId);
                     int taxonId = featureData.organismData.getTaxonId();
                     Item location =
-                        makeLocation(start, end, strand, srcFeatureData, featureData, taxonId);
-                    getChadoDBConverter().store(location);
-
+                            makeLocation(start, end, strand, srcFeatureData, featureData, taxonId,
+                                    featureId);
+                    // location could be null for common features (modmine)
+                    if (location != null) {
+                        getChadoDBConverter().store(location);
+                    }
                     final String featureClassName =
-                        getModel().getPackageName() + "." + featureData.getInterMineType();
+                            getModel().getPackageName() + "." + featureData.getInterMineType();
                     Class<?> featureClass;
                     try {
                         featureClass = Class.forName(featureClassName);
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException("unable to find class object for setting "
-                                                   + "a chromosome reference", e);
+                                + "a chromosome reference", e);
                     }
                     if (SequenceFeature.class.isAssignableFrom(featureClass)) {
                         Integer featureIntermineObjectId = featureData.getIntermineObjectId();
@@ -650,14 +654,15 @@ public class SequenceProcessor extends ChadoProcessor
                             chrReference.setRefId(srcFeatureData.getItemIdentifier());
                             getChadoDBConverter().store(chrReference, featureIntermineObjectId);
                         }
-                        Reference locReference = new Reference();
-                        locReference.setName("chromosomeLocation");
-                        locReference.setRefId(location.getIdentifier());
-                        getChadoDBConverter().store(locReference, featureIntermineObjectId);
-
+                        if (location != null) {
+                            Reference locReference = new Reference();
+                            locReference.setName("chromosomeLocation");
+                            locReference.setRefId(location.getIdentifier());
+                            getChadoDBConverter().store(locReference, featureIntermineObjectId);
+                        }
                         if (!featureData.getFlag(FeatureData.LENGTH_SET)) {
                             setAttribute(featureData.getIntermineObjectId(), "length",
-                                         String.valueOf(end - start + 1));
+                                    String.valueOf(end - start + 1));
                         }
                     } else {
                         LOG.warn("featureId (" + featureId + ") from location " + featureLocId
@@ -668,7 +673,7 @@ public class SequenceProcessor extends ChadoProcessor
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
                             LOG.warn("featureId (" + featureId + ") from location " + featureLocId
-                                     + " was not found in the feature table");
+                                    + " was not found in the feature table");
                         } else {
                             LOG.warn("further location warnings ignored");
                         }
@@ -680,9 +685,9 @@ public class SequenceProcessor extends ChadoProcessor
                 // exception to be thrown, so I am temporarily disabling until the next release
                 // FB2011_02
                 String msg = "srcfeature_id (" + srcFeatureId + ") from location "
-                            + featureLocId + " was not found in the feature table";
+                        + featureLocId + " was not found in the feature table";
                 LOG.error(msg);
-//                throw new RuntimeException(msg);
+                //                throw new RuntimeException(msg);
             }
         }
         LOG.info("created " + count + " locations");
@@ -700,12 +705,13 @@ public class SequenceProcessor extends ChadoProcessor
      * @return the new Location object
      * @throws ObjectStoreException if there is a problem while storing
      */
+    // modMine overrides in subclass
     protected Item makeLocation(int start, int end, int strand, FeatureData srcFeatureData,
-                                FeatureData featureData, int taxonId)
+            FeatureData featureData, int taxonId, int featureId)
         throws ObjectStoreException {
         Item location = getChadoDBConverter().makeLocation(srcFeatureData.getItemIdentifier(),
-                                                           featureData.getItemIdentifier(),
-                                                           start, end, strand, taxonId);
+                featureData.getItemIdentifier(),
+                start, end, strand, taxonId);
         return location;
     }
 
@@ -721,7 +727,7 @@ public class SequenceProcessor extends ChadoProcessor
         // Map from relation type to Map from object type to FeatureData - used to collect up all
         // the collection/reference information for one subject feature
         Map<String, Map<String, List<FeatureData>>> relTypeMap =
-            new HashMap<String, Map<String, List<FeatureData>>>();
+                new HashMap<String, Map<String, List<FeatureData>>>();
         int featureWarnings = 0;
         int collectionWarnings = 0;
         int count = 0;
@@ -734,11 +740,11 @@ public class SequenceProcessor extends ChadoProcessor
 
             if (lastSubjectId != null && !firstFeature1Id.equals(lastSubjectId)) {
                 if (!processCollectionData(lastSubjectId, relTypeMap, collectionWarnings,
-                                           subjectFirst)) {
+                        subjectFirst)) {
                     collectionWarnings++;
                     if (collectionWarnings == 20) {
                         LOG.warn("ignoring further unknown feature warnings from "
-                                 + "processCollectionData()");
+                                + "processCollectionData()");
                     }
                 }
                 collectionTotal += relTypeMap.size();
@@ -765,18 +771,18 @@ public class SequenceProcessor extends ChadoProcessor
                     String objectFeatureType = objectFeatureData.getInterMineType();
                     if (objectClassFeatureDataMap.containsKey(objectFeatureType)) {
                         featureDataList =
-                            objectClassFeatureDataMap.get(objectFeatureType);
+                                objectClassFeatureDataMap.get(objectFeatureType);
                     } else {
                         featureDataList = new ArrayList<FeatureData>();
                         objectClassFeatureDataMap.put(objectFeatureType,
-                                                      featureDataList);
+                                featureDataList);
                     }
                     featureDataList.add(objectFeatureData);
                 } else {
                     if (featureWarnings <= 20) {
                         if (featureWarnings < 20) {
                             LOG.warn("object_id " + secondFeatureId + " from feature_relationship "
-                                     + featRelationshipId + " was not found in the feature table");
+                                    + featRelationshipId + " was not found in the feature table");
                         } else {
                             LOG.warn("further feature_relationship warnings ignored");
                         }
@@ -787,8 +793,8 @@ public class SequenceProcessor extends ChadoProcessor
                 if (featureWarnings <= 20) {
                     if (featureWarnings < 20) {
                         LOG.warn("subject_id " + firstFeature1Id + " from feature_relationship "
-                                 + featRelationshipId
-                                 + " was not found in the feature table");
+                                + featRelationshipId
+                                + " was not found in the feature table");
                     } else {
                         LOG.warn("further feature_relationship warnings ignored");
                     }
@@ -812,14 +818,14 @@ public class SequenceProcessor extends ChadoProcessor
      * @param collectionWarnings
      */
     private boolean processCollectionData(Integer chadoSubjectId,
-                                       Map<String, Map<String, List<FeatureData>>> relTypeMap,
-                                       int collectionWarnings, boolean subjectIsFirst)
+            Map<String, Map<String, List<FeatureData>>> relTypeMap,
+            int collectionWarnings, boolean subjectIsFirst)
         throws ObjectStoreException {
         FeatureData subjectData = featureMap.get(chadoSubjectId);
         if (subjectData == null) {
             if (collectionWarnings < 20) {
                 LOG.warn("unknown feature " + chadoSubjectId + " passed to processCollectionData - "
-                         + "ignoring");
+                        + "ignoring");
             }
             return false;
         }
@@ -849,13 +855,14 @@ public class SequenceProcessor extends ChadoProcessor
                     relType = "rev_relationship";
                 }
                 MultiKey key = new MultiKey(relType, subjectFeatureData.getInterMineType(),
-                                            relationType, objectClass);
+                        relationType, objectClass);
                 List<ConfigAction> actionList =
-                    getConfig(subjectData.organismData.getTaxonId()).get(key);
+                        getConfig(subjectData.organismData.getTaxonId()).get(key);
 
                 if (actionList != null) {
                     if (actionList.size() == 0
-                        || actionList.size() == 1 && actionList.get(0) instanceof DoNothingAction) {
+                            || actionList.size() == 1
+                            && actionList.get(0) instanceof DoNothingAction) {
                         // do nothing
                         continue;
                     }
@@ -867,8 +874,8 @@ public class SequenceProcessor extends ChadoProcessor
                             FieldDescriptor fd = cd.getFieldDescriptorByName(fieldName);
                             if (fd == null) {
                                 throw new RuntimeException("can't find field " + fieldName
-                                                           + " in class " + cd + " configured for "
-                                                           + key);
+                                        + " in class " + cd + " configured for "
+                                        + key);
                             }
                             fds.add(fd);
 
@@ -905,10 +912,10 @@ public class SequenceProcessor extends ChadoProcessor
                     if (fd.isReference()) {
                         if (objectClassFeatureDataMap.size() > 1) {
                             throw new RuntimeException("found more than one object for reference "
-                                                       + fd + " in class "
-                                                       + subjectInterMineType
-                                                       + " current subject identifier: "
-                                                       + subjectData.getUniqueName());
+                                    + fd + " in class "
+                                    + subjectInterMineType
+                                    + " current subject identifier: "
+                                    + subjectData.getUniqueName());
                         }
                         if (objectClassFeatureDataMap.size() == 1) {
                             Reference reference = new Reference();
@@ -976,7 +983,7 @@ public class SequenceProcessor extends ChadoProcessor
      * eg. find CDSs collection for objectType = CDS and find gene reference for objectType = Gene.
      */
     private List<FieldDescriptor> getReferenceForRelationship(String objectType,
-                                                              ClassDescriptor cd) {
+            ClassDescriptor cd) {
         List<FieldDescriptor> fds = new ArrayList<FieldDescriptor>();
         LinkedHashSet<String> allClasses = new LinkedHashSet<String>();
         allClasses.add(objectType);
@@ -1035,7 +1042,7 @@ public class SequenceProcessor extends ChadoProcessor
 
                 int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig =
-                    getConfig(taxonId);
+                        getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
 
                 if (actionList == null) {
@@ -1056,7 +1063,7 @@ public class SequenceProcessor extends ChadoProcessor
                             if (setAction.isValidValue(accession)) {
                                 String newFieldValue = setAction.processValue(accession);
                                 setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
-                                             newFieldValue);
+                                        newFieldValue);
                                 existingAttributes.add(setAction.getFieldName());
                                 fieldsSet.add(newFieldValue);
                                 if ("primaryIdentifier".equals(setAction.getFieldName())) {
@@ -1126,7 +1133,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (setAction.isValidValue(identifier)) {
                             String newFieldValue = setAction.processValue(identifier);
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
-                                         newFieldValue);
+                                    newFieldValue);
                             fieldsSet.add(newFieldValue);
 
                             if ("primaryIdentifier".equals(setAction.getFieldName())) {
@@ -1196,7 +1203,7 @@ public class SequenceProcessor extends ChadoProcessor
                         if (setAction.isValidValue(identifier)) {
                             String newFieldValue = setAction.processValue(identifier);
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
-                                         newFieldValue);
+                                    newFieldValue);
                             fieldsSet.add(newFieldValue);
                             if ("primaryIdentifier".equals(setAction.getFieldName())) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
@@ -1317,7 +1324,7 @@ public class SequenceProcessor extends ChadoProcessor
                     if (setAction.isValidValue(cvtermName)) {
                         String newFieldValue = setAction.processValue(cvtermName);
                         setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
-                                     newFieldValue);
+                                newFieldValue);
 
                         fieldsSet.add(newFieldValue);
                         if ("primaryIdentifier".equals(setAction.getFieldName())) {
@@ -1350,7 +1357,7 @@ public class SequenceProcessor extends ChadoProcessor
 //                            String className = cca.getClassName();
 //                            if (cca.createSingletons()) {
 //                                MultiKey singletonKey =
-//                                    new MultiKey(className, fieldName, cvtermName);
+//                                        new MultiKey(className, fieldName, cvtermName);
 //                                item = (Item) singletonMap.get(singletonKey);
 //                            }
 //                            if (item == null) {
@@ -1367,7 +1374,7 @@ public class SequenceProcessor extends ChadoProcessor
 //                            // creating collection, already seen this ref
 //                            if (dataMap.containsKey(referenceName)) {
 //                                itemList = dataMap.get(referenceName);
-//                            // new collection
+//                                // new collection
 //                            } else {
 //                                itemList = new ArrayList<Item>();
 //                                dataMap.put(referenceName, itemList);
@@ -1404,15 +1411,15 @@ public class SequenceProcessor extends ChadoProcessor
             FieldDescriptor fd = cd.getFieldDescriptorByName(referenceName);
             if (fd == null) {
                 throw new RuntimeException("failed to find " + referenceName + " in "
-                                           + interMineType);
+                        + interMineType);
             }
             List<Item> itemList = dataMap.get(referenceName);
             Integer intermineObjectId = fdat.getIntermineObjectId();
             if (fd.isReference()) {
                 if (itemList.size() > 1) {
                     throw new RuntimeException("found more than one object for reference "
-                                               + fd + " in class "
-                                               + interMineType + " items: " + itemList);
+                            + fd + " in class "
+                            + interMineType + " items: " + itemList);
                 }
                 Item item = itemList.iterator().next();
                 Reference reference = new Reference();
@@ -1470,7 +1477,8 @@ public class SequenceProcessor extends ChadoProcessor
                 FeatureData fdat = featureMap.get(featureId);
                 identifier = fixIdentifier(fdat, identifier);
                 MultiKey key =
-                    new MultiKey("synonym", fdat.getInterMineType(), synonymTypeName, isCurrent);
+                        new MultiKey("synonym", fdat.getInterMineType(),
+                                synonymTypeName, isCurrent);
                 int taxonId = fdat.organismData.getTaxonId();
                 Map<MultiKey, List<ConfigAction>> orgConfig = getConfig(taxonId);
                 List<ConfigAction> actionList = orgConfig.get(key);
@@ -1478,7 +1486,7 @@ public class SequenceProcessor extends ChadoProcessor
                 if (actionList == null) {
                     // try ignoring isCurrent
                     MultiKey key2 =
-                        new MultiKey("synonym", fdat.getInterMineType(), synonymTypeName, null);
+                            new MultiKey("synonym", fdat.getInterMineType(), synonymTypeName, null);
                     actionList = orgConfig.get(key2);
                 }
                 if (actionList == null) {
@@ -1489,10 +1497,10 @@ public class SequenceProcessor extends ChadoProcessor
                     if (action instanceof SetFieldConfigAction) {
                         SetFieldConfigAction setAction = (SetFieldConfigAction) action;
                         if (!existingAttributes.contains(setAction.getFieldName())
-                                        && setAction.isValidValue(identifier)) {
+                                && setAction.isValidValue(identifier)) {
                             String newFieldValue = setAction.processValue(identifier);
                             setAttribute(fdat.getIntermineObjectId(), setAction.getFieldName(),
-                                         newFieldValue);
+                                    newFieldValue);
                             existingAttributes.add(setAction.getFieldName());
                             if ("primaryIdentifier".equals(setAction.getFieldName())) {
                                 fdat.setFlag(FeatureData.IDENTIFIER_SET, true);
@@ -1512,7 +1520,7 @@ public class SequenceProcessor extends ChadoProcessor
                             continue;
                         }
                         Item synonym =
-                            createSynonym(fdat, newFieldValue);
+                                createSynonym(fdat, newFieldValue);
                         if (synonym != null) {
                             getChadoDBConverter().store(synonym);
                             count++;
@@ -1520,7 +1528,6 @@ public class SequenceProcessor extends ChadoProcessor
                     }
                 }
             }
-
             currentFeatureId = featureId;
         }
 
@@ -1566,7 +1573,7 @@ public class SequenceProcessor extends ChadoProcessor
                 if (featureWarnings <= 20) {
                     if (featureWarnings < 20) {
                         LOG.warn("feature " + featureId + " not found in features Map while "
-                                 + "processing publications");
+                                + "processing publications");
                     } else {
                         LOG.warn("further feature id warnings ignored in processPubTable()");
                     }
@@ -1700,26 +1707,26 @@ public class SequenceProcessor extends ChadoProcessor
         }
 
         String query =
-            "CREATE TEMPORARY TABLE " + tempFeatureTableName + " AS"
-            + " SELECT feature_id, feature.name, uniquename, cvterm.name as type, seqlen,"
-            + "        is_analysis, residues, md5checksum, organism_id"
-            + "    FROM feature, cvterm"
-            + "    WHERE cvterm.name IN (" + featureTypesString  + ")"
-            + orgConstraintForQuery
-            + "        AND NOT feature.is_obsolete"
-            + "        AND feature.type_id = cvterm.cvterm_id "
-            + (getExtraFeatureConstraint() != null
-               ? " AND (" + getExtraFeatureConstraint() + ")"
-               : "");
+                "CREATE TEMPORARY TABLE " + tempFeatureTableName + " AS"
+                        + " SELECT feature_id, feature.name, uniquename, cvterm.name as type,"
+                        + " seqlen, is_analysis, residues, md5checksum, organism_id"
+                        + " FROM feature, cvterm"
+                        + " WHERE cvterm.name IN (" + featureTypesString  + ")"
+                        + orgConstraintForQuery
+                        + " AND NOT feature.is_obsolete"
+                        + " AND feature.type_id = cvterm.cvterm_id "
+                        + (getExtraFeatureConstraint() != null
+                        ? " AND (" + getExtraFeatureConstraint() + ")"
+                                : "");
         Statement stmt = connection.createStatement();
         LOG.info("executing createFeatureTempTable(): " + query);
         stmt.execute(query);
         String idIndexQuery = "CREATE INDEX " + tempFeatureTableName + "_feature_index ON "
-            + tempFeatureTableName + "(feature_id)";
+                + tempFeatureTableName + "(feature_id)";
         LOG.info("executing: " + idIndexQuery);
         stmt.execute(idIndexQuery);
         String typeIndexQuery = "CREATE INDEX " + tempFeatureTableName + "_type_index ON "
-            + tempFeatureTableName + "(type)";
+                + tempFeatureTableName + "(type)";
         LOG.info("executing: " + typeIndexQuery);
         stmt.execute(typeIndexQuery);
         String analyze = "ANALYZE " + tempFeatureTableName;
@@ -1764,13 +1771,13 @@ public class SequenceProcessor extends ChadoProcessor
 
     private String getChromosomeFeatureIdQuery() {
         return
-            "SELECT feature_id FROM feature, cvterm"
-            + "  WHERE type_id = cvterm.cvterm_id"
-            + "    AND feature.is_obsolete = 'f' "
-            + "    AND cvterm.name IN (" + getFeaturesString(getChromosomeFeatureTypes()) + ")"
-            + (getExtraFeatureConstraint() != null
-               ? " AND (" + getExtraFeatureConstraint() + ")"
-               : "");
+                "SELECT feature_id FROM feature, cvterm"
+                + "  WHERE type_id = cvterm.cvterm_id"
+                + "    AND feature.is_obsolete = 'f' "
+                + "    AND cvterm.name IN (" + getFeaturesString(getChromosomeFeatureTypes()) + ")"
+                + (getExtraFeatureConstraint() != null
+                ? " AND (" + getExtraFeatureConstraint() + ")"
+                        : "");
     }
 
     /**
@@ -1787,7 +1794,7 @@ public class SequenceProcessor extends ChadoProcessor
      * @throws SQLException if a database problem occurs
      */
     protected ResultSet getFeatureRelationshipResultSet(Connection connection,
-                                                        boolean subjectFirst) throws SQLException {
+            boolean subjectFirst) throws SQLException {
         String subObjString;
         if (subjectFirst) {
             subObjString = "subject_id as feature1_id, object_id as feature2_id";
@@ -1799,13 +1806,13 @@ public class SequenceProcessor extends ChadoProcessor
             extraQueryBits = getGenesProteinsQuery();
         }
         String query = "SELECT feature_relationship_id, " + subObjString
-                        + ", cvterm.name AS type_name"
-                        + "  FROM feature_relationship, cvterm"
-                        + "  WHERE cvterm.cvterm_id = type_id"
-                        + "      AND subject_id IN (" + getFeatureIdQuery() + ")"
-                        + "      AND object_id IN (" + getFeatureIdQuery() + ")"
-                        + extraQueryBits
-                        + " ORDER BY feature1_id";
+                + ", cvterm.name AS type_name"
+                + "  FROM feature_relationship, cvterm"
+                + "  WHERE cvterm.cvterm_id = type_id"
+                + "      AND subject_id IN (" + getFeatureIdQuery() + ")"
+                + "      AND object_id IN (" + getFeatureIdQuery() + ")"
+                + extraQueryBits
+                + " ORDER BY feature1_id";
         LOG.info("executing getFeatureRelationshipResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1820,24 +1827,24 @@ public class SequenceProcessor extends ChadoProcessor
     private String getGenesProteinsQuery() {
         String partOfConstraints = makePartOfConstraints("fr1type.name");
         return " UNION ALL SELECT 0, f1.feature_id AS feature1_id, f3.feature_id AS  feature2_id, "
-            + "               'producedby' "
-            + "   FROM feature f1, cvterm f1type, feature_relationship fr1, cvterm fr1type, "
-            + "        feature f2, cvterm f2type, feature_relationship fr2, cvterm fr2type, "
-            + "        feature f3, cvterm f3type "
-            + "  WHERE fr1.subject_id = fr2.object_id "
-            + "    AND fr1.type_id = fr1type.cvterm_id "
-            + "    AND (" + partOfConstraints  + ") "
-            + "    AND fr2.type_id = fr2type.cvterm_id "
-            + "    AND fr2type.name = 'producedby' "
-            + "    AND f1.feature_id = fr1.object_id "
-            + "    AND f2.feature_id = fr1.subject_id "
-            + "    AND f3.feature_id = fr2.subject_id "
-            + "    AND f1.type_id = f1type.cvterm_id "
-            + "    AND f2.type_id = f2type.cvterm_id "
-            + "    AND f3.type_id = f3type.cvterm_id "
-            + "    AND f1type.name = 'gene' "
-            + "    AND f2type.name = 'mRNA' "
-            + "    AND f3type.name = 'protein'";
+            + " 'producedby' "
+            + " FROM feature f1, cvterm f1type, feature_relationship fr1, cvterm fr1type, "
+            + " feature f2, cvterm f2type, feature_relationship fr2, cvterm fr2type, "
+            + " feature f3, cvterm f3type "
+            + " WHERE fr1.subject_id = fr2.object_id "
+            + " AND fr1.type_id = fr1type.cvterm_id "
+            + " AND (" + partOfConstraints  + ") "
+            + " AND fr2.type_id = fr2type.cvterm_id "
+            + " AND fr2type.name = 'producedby' "
+            + " AND f1.feature_id = fr1.object_id "
+            + " AND f2.feature_id = fr1.subject_id "
+            + " AND f3.feature_id = fr2.subject_id "
+            + " AND f1.type_id = f1type.cvterm_id "
+            + " AND f2.type_id = f2type.cvterm_id "
+            + " AND f3.type_id = f3type.cvterm_id "
+            + " AND f1type.name = 'gene' "
+            + " AND f2type.name = 'mRNA' "
+            + " AND f3type.name = 'protein'";
     }
 
     /**
@@ -1861,16 +1868,16 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getFeatureLocResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT featureloc_id, feature_id, srcfeature_id, fmin, is_fmin_partial,"
-            + "     fmax, is_fmax_partial, strand"
-            + "   FROM featureloc"
-            + "   WHERE feature_id IN"
-            + "         (" + getFeatureIdQuery() + ")"
-            + "     AND feature_id NOT IN"
-            + "         (" + getChromosomeFeatureIdQuery() + ")"
-            + "     AND srcfeature_id IN"
-            + "         (" + getChromosomeFeatureIdQuery() + ")"
-            + "     AND locgroup = 0";
+                "SELECT featureloc_id, feature_id, srcfeature_id, fmin, is_fmin_partial,"
+                        + " fmax, is_fmax_partial, strand"
+                        + " FROM featureloc"
+                        + " WHERE feature_id IN"
+                        + " (" + getFeatureIdQuery() + ")"
+                        + " AND feature_id NOT IN"
+                        + " (" + getChromosomeFeatureIdQuery() + ")"
+                        + " AND srcfeature_id IN"
+                        + " (" + getChromosomeFeatureIdQuery() + ")"
+                        + " AND locgroup = 0";
         LOG.info("executing getFeatureLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1888,28 +1895,29 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getMatchLocResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT f1loc.featureloc_id, f1loc.srcfeature_id as feature_id, f2loc.srcfeature_id AS "
-            + "     srcfeature_id, f2loc.fmin,"
-            + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
-            + "   FROM feature match, featureloc f1loc, featureloc f2loc,"
-            + "        cvterm mt"
-            + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
-            + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
-            + "    AND f1loc.srcfeature_id <> f2loc.srcfeature_id"
-            + "    AND f1loc.srcfeature_id IN (" + getFeatureIdQuery() + ")"
-            + "    AND f2loc.srcfeature_id IN (" + getChromosomeFeatureIdQuery() + ")";
+                "SELECT f1loc.featureloc_id, f1loc.srcfeature_id as feature_id,"
+                        + " f2loc.srcfeature_id AS srcfeature_id, f2loc.fmin,"
+                        + " false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial,"
+                        + " f2loc.strand"
+                        + " FROM feature match, featureloc f1loc, featureloc f2loc, cvterm mt"
+                        + " WHERE match.feature_id = f1loc.feature_id"
+                        + " AND match.feature_id = f2loc.feature_id"
+                        + " AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
+                        + " AND f1loc.srcfeature_id <> f2loc.srcfeature_id"
+                        + " AND f1loc.srcfeature_id IN (" + getFeatureIdQuery() + ")"
+                        + " AND f2loc.srcfeature_id IN (" + getChromosomeFeatureIdQuery() + ")";
 
-// Previous query included feature table three times
-//        "SELECT f1loc.featureloc_id, f1.feature_id, f2.feature_id AS srcfeature_id, f2loc.fmin,"
-//        + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
-//        + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc,"
-//        + "        cvterm mt"
-//        + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
-//        + "    AND f1loc.srcfeature_id = f1.feature_id AND f2loc.srcfeature_id = f2.feature_id"
-//        + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
-//        + "    AND f1.feature_id <> f2.feature_id"
-//        + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
-//        + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
+        // Previous query included feature table three times
+        // "SELECT f1loc.featureloc_id, f1.feature_id, f2.feature_id AS srcfeature_id, f2loc.fmin,"
+        //  + "     false AS is_fmin_partial, f2loc.fmax, false AS is_fmax_partial, f2loc.strand"
+        //  + "   FROM feature match, feature f1, featureloc f1loc, feature f2, featureloc f2loc,"
+        //  + "        cvterm mt"
+        //  + "  WHERE match.feature_id = f1loc.feature_id AND match.feature_id = f2loc.feature_id"
+        //  + "    AND f1loc.srcfeature_id = f1.feature_id AND f2loc.srcfeature_id = f2.feature_id"
+        //  + "    AND match.type_id = mt.cvterm_id AND mt.name IN ('match', 'cDNA_match')"
+        //  + "    AND f1.feature_id <> f2.feature_id"
+        //  + "    AND f1.feature_id IN (" + getFeatureIdQuery() + ")"
+        //  + "    AND f2.feature_id IN (" + getChromosomeFeatureIdQuery() + ")";
         LOG.info("executing getMatchLocResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1925,13 +1933,13 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getDbxrefResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT feature.feature_id, accession, db.name AS db_name, is_current"
-            + "  FROM dbxref, feature_dbxref, feature, db"
-            + "  WHERE feature_dbxref.dbxref_id = dbxref.dbxref_id "
-            + "    AND feature_dbxref.feature_id = feature.feature_id "
-            + "    AND feature.feature_id IN"
-            + "        (" + getFeatureIdQuery() + ")"
-            + "    AND dbxref.db_id = db.db_id";
+                "SELECT feature.feature_id, accession, db.name AS db_name, is_current"
+                        + "  FROM dbxref, feature_dbxref, feature, db"
+                        + "  WHERE feature_dbxref.dbxref_id = dbxref.dbxref_id "
+                        + "    AND feature_dbxref.feature_id = feature.feature_id "
+                        + "    AND feature.feature_id IN"
+                        + "        (" + getFeatureIdQuery() + ")"
+                        + "    AND dbxref.db_id = db.db_id";
         LOG.info("executing getDbxrefResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1947,19 +1955,19 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getFeaturePropResultSet(Connection connection) throws SQLException {
         String query =
-            "select feature_id, value, cvterm.name AS type_name FROM featureprop, cvterm"
-            + "   WHERE featureprop.type_id = cvterm.cvterm_id"
-            + "       AND feature_id IN (" + getFeatureIdQuery() + ")";
+                "select feature_id, value, cvterm.name AS type_name FROM featureprop, cvterm"
+                        + "   WHERE featureprop.type_id = cvterm.cvterm_id"
+                        + "       AND feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing getFeaturePropResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
         return res;
     }
 
-//    SELECT fp.value
-//    FROM feature f, featureprop fp, cvterm cvt
-//    WHERE f.feature_id = fp.feature_id AND fp.type_id = cvt.cvterm_id AND
-//      cvt.name = 'promoted_gene_type' AND f.uniquename = 'FBgn0000011';
+    //    SELECT fp.value
+    //    FROM feature f, featureprop fp, cvterm cvt
+    //    WHERE f.feature_id = fp.feature_id AND fp.type_id = cvt.cvterm_id AND
+    //      cvt.name = 'promoted_gene_type' AND f.uniquename = 'FBgn0000011';
 
     /**
      * Return the interesting rows from the libraryprop table.
@@ -1970,13 +1978,14 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getLibraryFeatureResultSet(Connection connection) throws SQLException {
         String query =
-            "select f.feature_id, lp.value, lp_type.name AS type_name "
-            + "FROM feature f, library_feature lf, library l, libraryprop lp, cvterm lp_type "
-            + "WHERE  f.feature_id=lf.feature_id "
-            + "     AND lf.library_id=l.library_id "
-            + "     AND l.library_id=lp.library_id "
-            + "     AND lp.type_id=lp_type.cvterm_id "
-            + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+                "select f.feature_id, lp.value, lp_type.name AS type_name "
+                        + "FROM feature f, library_feature lf, library l, libraryprop lp,"
+                        + " cvterm lp_type "
+                        + " WHERE  f.feature_id=lf.feature_id "
+                        + " AND lf.library_id=l.library_id "
+                        + " AND l.library_id=lp.library_id "
+                        + " AND lp.type_id=lp_type.cvterm_id "
+                        + " AND f.feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing getLibraryFeatureResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -1993,14 +2002,14 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getLibraryCVTermResultSet(Connection connection) throws SQLException {
         String query =
-            "select f.feature_id, d.accession AS term_identifier "
-            + "FROM feature f, library_feature lf, library l, library_cvterm lcvt, cvterm cvt, cv, "
-            + "     dbxref d "
-            + "WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "
-            + "     AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id "
-            + "     AND lcvt.cvterm_id=cvt.cvterm_id "
-            + "     AND cvt.dbxref_id = d.dbxref_id "
-            + "     AND f.feature_id IN (" + getFeatureIdQuery() + ")";
+                "select f.feature_id, d.accession AS term_identifier "
+                        + " FROM feature f, library_feature lf, library l, library_cvterm lcvt,"
+                        + " cvterm cvt, cv, dbxref d "
+                        + " WHERE cv.name IN ('FlyBase anatomy CV','cellular_component') "
+                        + " AND lf.library_id=l.library_id AND l.library_id=lcvt.library_id "
+                        + " AND lcvt.cvterm_id=cvt.cvterm_id "
+                        + " AND cvt.dbxref_id = d.dbxref_id "
+                        + " AND f.feature_id IN (" + getFeatureIdQuery() + ")";
         LOG.info("executing getLibraryFeatureResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2018,13 +2027,13 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getFeatureCVTermResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT DISTINCT feature_id, cvterm.cvterm_id, cvterm.name AS cvterm_name,"
-            + "              cv.name AS cv_name "
-            + "  FROM feature_cvterm, cvterm, cv "
-            + " WHERE feature_id IN (" + getFeatureIdQuery() + ")"
-            + "   AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
-            + "   AND cvterm.cv_id = cv.cv_id "
-            + " ORDER BY feature_id";
+                "SELECT DISTINCT feature_id, cvterm.cvterm_id, cvterm.name AS cvterm_name,"
+                        + " cv.name AS cv_name "
+                        + " FROM feature_cvterm, cvterm, cv "
+                        + " WHERE feature_id IN (" + getFeatureIdQuery() + ")"
+                        + " AND cvterm.cvterm_id = feature_cvterm.cvterm_id "
+                        + " AND cvterm.cv_id = cv.cv_id "
+                        + " ORDER BY feature_id";
         LOG.info("executing getFeatureCVTermResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2040,13 +2049,13 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getSynonymResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT DISTINCT feature_id, synonym.name AS synonym_name,"
-            + "              cvterm.name AS type_name, is_current"
-            + "  FROM feature_synonym, synonym, cvterm"
-            + "  WHERE feature_synonym.synonym_id = synonym.synonym_id"
-            + "     AND synonym.type_id = cvterm.cvterm_id"
-            + "     AND feature_id IN (" + getFeatureIdQuery() + ")"
-            + "  ORDER BY is_current DESC";
+                "SELECT DISTINCT feature_id, synonym.name AS synonym_name,"
+                        + " cvterm.name AS type_name, is_current"
+                        + " FROM feature_synonym, synonym, cvterm"
+                        + " WHERE feature_synonym.synonym_id = synonym.synonym_id"
+                        + " AND synonym.type_id = cvterm.cvterm_id"
+                        + " AND feature_id IN (" + getFeatureIdQuery() + ")"
+                        + " ORDER BY is_current DESC";
         LOG.info("executing getSynonymResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2062,15 +2071,15 @@ public class SequenceProcessor extends ChadoProcessor
      */
     protected ResultSet getPubResultSet(Connection connection) throws SQLException {
         String query =
-            "SELECT DISTINCT feature_pub.feature_id, dbxref.accession as pub_db_identifier"
-            + "  FROM feature_pub, dbxref, db, pub, pub_dbxref"
-            + "  WHERE feature_pub.pub_id = pub.pub_id"
-            + "    AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
-            + "    AND dbxref.db_id = db.db_id"
-            + "    AND pub.pub_id = pub_dbxref.pub_id"
-            + "    AND db.name = 'pubmed'"
-            + "    AND feature_id IN (" + getFeatureIdQuery() + ")"
-            + "  ORDER BY feature_pub.feature_id";
+                "SELECT DISTINCT feature_pub.feature_id, dbxref.accession as pub_db_identifier"
+                        + " FROM feature_pub, dbxref, db, pub, pub_dbxref"
+                        + " WHERE feature_pub.pub_id = pub.pub_id"
+                        + " AND pub_dbxref.dbxref_id = dbxref.dbxref_id"
+                        + " AND dbxref.db_id = db.db_id"
+                        + " AND pub.pub_id = pub_dbxref.pub_id"
+                        + " AND db.name = 'pubmed'"
+                        + " AND feature_id IN (" + getFeatureIdQuery() + ")"
+                        + " ORDER BY feature_pub.feature_id";
         LOG.info("executing getPubResultSet(): " + query);
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -2089,10 +2098,10 @@ public class SequenceProcessor extends ChadoProcessor
         throws ObjectStoreException {
         if (fdat.getExistingSynonyms().contains(identifier)) {
             String msg = "feature identifier " + identifier + " is already a synonym for: "
-                + fdat.getExistingSynonyms();
+                    + fdat.getExistingSynonyms();
             LOG.info(msg);
-//          TODO:  why would a duplicate synonym require an exception to be thrown?
-//          throw new IllegalArgumentException(msg);
+            //          TODO:  why would a duplicate synonym require an exception to be thrown?
+            //          throw new IllegalArgumentException(msg);
             return null;
         }
         Item returnItem = null;

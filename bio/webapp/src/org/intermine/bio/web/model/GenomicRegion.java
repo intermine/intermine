@@ -187,12 +187,18 @@ public class GenomicRegion implements Comparable<GenomicRegion>
             GenomicRegion gr = (GenomicRegion) obj;
 
             // To uniquely identify a region
-            return (chr.equals(gr.getChr())
-                    && start.equals(gr.getStart())
-                    && end.equals(gr.getEnd())
-                    && organism.equals(gr.getOrganism())
-                    && extendedRegionSize.equals(gr.getExtendedRegionSize())
-                    && tag == gr.getTag());
+            if (gr.getOrganism() == null || gr.getTag() == null) { // for simpler version
+                return (chr.equals(gr.getChr())
+                        && start.equals(gr.getStart())
+                        && end.equals(gr.getEnd()));
+            } else {                                               // for full version
+                return (chr.equals(gr.getChr())
+                        && start.equals(gr.getStart())
+                        && end.equals(gr.getEnd())
+                        && organism.equals(gr.getOrganism())
+                        && extendedRegionSize.equals(gr.getExtendedRegionSize())
+                        && tag == gr.getTag());
+            }
         }
         return false;
     }
@@ -209,11 +215,17 @@ public class GenomicRegion implements Comparable<GenomicRegion>
      */
     @Override
     public int hashCode() {
-        return chr.hashCode()
-            + start.hashCode()
-            + end.hashCode()
-            + organism.hashCode()
-            + extendedRegionSize.hashCode();
+        if (organism == null) {  // for simpler version
+            return chr.hashCode()
+                + start.hashCode()
+                + end.hashCode();
+        } else {                 // for full version
+            return chr.hashCode()
+                + start.hashCode()
+                + end.hashCode()
+                + organism.hashCode()
+                + extendedRegionSize.hashCode();
+        }
     }
 
     @Override

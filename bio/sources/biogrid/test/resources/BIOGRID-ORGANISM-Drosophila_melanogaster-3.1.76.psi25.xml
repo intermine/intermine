@@ -55,6 +55,7 @@
                                 </names>
                                 <xref>
                                         <primaryRef db="FLYBASE" id="FBgn001" />
+                                        <secondaryRef db="biogrid" id="11111" dbAc="MI:0463" />
                                         <secondaryRef db="PROTEIN GI" id="120228" />
                                         <secondaryRef db="PROTEIN Accession" id="AAA28535" />
                                         <secondaryRef db="PROTEIN GI" id="157434" />
@@ -66,6 +67,7 @@
                                         <secondaryRef db="PROTEIN GI" id="17738265" />
                                         <secondaryRef db="GRID_LEGACY" id="3010992" />
                                         <secondaryRef db="SWISSPROT" id="P14734" />
+
                                 </xref>
                                 <interactorType>
                                         <names>
@@ -100,6 +102,7 @@
                                         <secondaryRef db="PROTEIN GI" id="17738265" />
                                         <secondaryRef db="GRID_LEGACY" id="3010992" />
                                         <secondaryRef db="SWISSPROT" id="P14734" />
+                                        <secondaryRef db="biogrid" id="12345" dbAc="MI:0463" />
                                 </xref>
                                 <interactorType>
                                         <names>

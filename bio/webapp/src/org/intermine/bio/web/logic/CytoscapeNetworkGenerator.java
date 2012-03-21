@@ -117,10 +117,10 @@ public class CytoscapeNetworkGenerator
             Map<String, CytoscapeNetworkNodeData> interactionNodeMap) {
         for (CytoscapeNetworkNodeData node : interactionNodeMap.values()) {
             if (node.getSourceLabel() == null || "".equals(node.getSourceLabel())) {
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
-                        + node.getSoureceId() + "\">");
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
+                        + node.getSourceId() + "\">");
             } else {
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel() + "\">");
             }
             sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
@@ -255,10 +255,10 @@ public class CytoscapeNetworkGenerator
         for (CytoscapeNetworkNodeData n : interactionNodeMap.values()) {
             Map<String, Object> node = new HashMap<String, Object>();
             if (n.getSourceLabel() == null || "".equals(n.getSourceLabel())) {
-                node.put("id", n.getSoureceId());
-                node.put("label", n.getSoureceId());
+                node.put("id", n.getSourceId());
+                node.put("label", n.getSourceId());
             } else {
-                node.put("id", n.getSoureceId());
+                node.put("id", n.getSourceId());
                 node.put("label", n.getSourceLabel());
             }
             nodesData.add(node);

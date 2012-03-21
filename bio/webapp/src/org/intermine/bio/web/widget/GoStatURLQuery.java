@@ -48,12 +48,12 @@ public class GoStatURLQuery implements WidgetURLQuery
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
 
-        String prefix = ("Protein".equals(bagType) ? "Protein.genes" : "Gene");
+        String prefix = ("Protein".equals(bagType) ? "Protein.genes" : bagType);
 
         if ("Protein".equals(bagType)) {
             q.addViews("Protein.primaryAccession");
         } else {
-            q.addViews("Gene.secondaryIdentifier", "Gene.symbol");
+            q.addViews(prefix + ".secondaryIdentifier", prefix + ".symbol");
         }
 
         q.addViews(prefix + ".primaryIdentifier",
@@ -62,8 +62,6 @@ public class GoStatURLQuery implements WidgetURLQuery
                 prefix + ".goAnnotation.ontologyTerm.name",
                 prefix + ".goAnnotation.ontologyTerm.parents.identifier",
                 prefix + ".goAnnotation.ontologyTerm.parents.name");
-
-        // ORDER: default is to order by all paths in view
 
         q.addConstraint(Constraints.in(bagType, bag.getName()));
         // can't be a NOT relationship!

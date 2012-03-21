@@ -10,11 +10,10 @@ package org.intermine.bio.web.struts;
  *
  */
 
-import org.intermine.web.struts.TableExportForm;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionMapping;
+import org.intermine.web.struts.TableExportForm;
 
 /**
  * Form for sequence export (FASTA etc.)
@@ -22,6 +21,7 @@ import org.apache.struts.action.ActionMapping;
  */
 public class SequenceExportForm extends TableExportForm
 {
+    private static final long serialVersionUID = 1L;
     private String sequencePath;
 
     /**
@@ -65,8 +65,7 @@ public class SequenceExportForm extends TableExportForm
      * @param request the request
      */
     @Override
-    public void reset(@SuppressWarnings("unused") ActionMapping mapping,
-                      @SuppressWarnings("unused") HttpServletRequest request) {
+    public void reset(ActionMapping mapping, HttpServletRequest request) {
         initialise();
     }
 }

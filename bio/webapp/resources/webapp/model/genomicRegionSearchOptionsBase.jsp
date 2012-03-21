@@ -13,7 +13,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil" %>
-
+<%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 
 <!--  genomicRegionSearchOptionsBase.jsp -->
 
@@ -34,7 +34,6 @@
         <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
         <script type="text/javascript" src="model/jquery_ui/jquery-ui-1.8.13.custom.min.js"></script>
         <script type="text/javascript">
-
             // webData must be defined in base jsp first, and customized page can make use of it.
             var webDataJSON = jQuery.parseJSON('${webData}');
 
@@ -56,26 +55,6 @@
                     }
                 }
             });
-
-            jQuery(function() {
-                jQuery( "#extendSlider" ).slider({
-                    range: "min",
-                    value: 0,
-                    min: 0,
-                    max: 10000,
-                    slide: function( event, ui ) {
-                        var valToDisplay = ui.value + " bp";
-                        if (ui.value >= 1000) {
-                            valToDisplay = ui.value/1000 + " kbp";
-                        }
-
-                        jQuery( "#extendLength" ).html( valToDisplay );
-                        jQuery( "#extendedRegionSize" ).val( ui.value );
-                    }
-                });
-                jQuery( "#extendLength" ).html( jQuery( "#extendSlider" ).slider( "value" ) + " bp");
-            });
-
         </script>
 
         <div id="grs-options-body" align="center" style="padding-top: 20px;">
@@ -126,9 +105,12 @@
 
                     <li id="genomicRegionFlanking">
                        <span>Extend your regions at both sides: <i><b id="extendLength"></b></i></span>
-                       <div id="extendSlider" style="width:70%;margin-top:5px">
-                       </div>
                        <html:hidden styleId="extendedRegionSize" property="extendedRegionSize" value="0" />
+
+                       <tiles:insert name="genomicRegionSearchOptionsExtentionNonLinearSlider.jsp">
+                          <tiles:put name="sliderIdentifier" value="regionExtention" />
+                          <tiles:put name="defaultValue" value="0" />
+                       </tiles:insert>
                     </li>
 
                   </ol>
@@ -136,7 +118,8 @@
                   <div align="right">
                      <%-- reset button --%>
                      <input type="button" onclick="resetInputs()" value="Reset" />
-                     <html:submit onclick="javascript: return validateBeforeSubmit();">Search</html:submit>
+                     <%-- <html:submit onclick="javascript: return validateBeforeSubmit();">Search</html:submit> --%>
+                     <input type="button" onclick="javascript: if(validateBeforeSubmit()) jQuery('form#genomicRegionSearchForm').submit();" value="Search" />
                   </div>
 
                 </html:form>

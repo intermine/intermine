@@ -58,6 +58,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
      * Build an IdResolver for WormBase by accessing a WormBase chado database.
      * @return an IdResolver for WormBase
      */
+    @Override
     protected IdResolver createIdResolver() {
         IdResolver resolver = new IdResolver(soTerm);
 

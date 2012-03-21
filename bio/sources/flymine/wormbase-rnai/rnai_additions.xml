@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<classes>
+<class name="RNAiResult" is-interface="true">
+  <reference name="gene" referenced-type="Gene" reverse-reference="rnaiResults"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
+</class>
+<class name="RNAiPhenotype" extends="RNAiResult" is-interface="true">
+  <attribute name="code" type="java.lang.String"/>
+  <attribute name="name" type="java.lang.String"/>
+  <attribute name="comment" type="java.lang.String"/>
+  <attribute name="observed" type="java.lang.String"/>
+  <attribute name="penetranceFrom" type="java.lang.String"/>
+  <attribute name="penetranceTo" type="java.lang.String"/>
+  <reference name="phenotype" referenced-type="Phenotype"/>
+  <reference name="screen" referenced-type="RNAiScreen"/>
+  <collection name="publications" referenced-type="Publication"/>
+</class>
+<class name="RNAiScreen" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <reference name="organism" referenced-type="Organism"/>
+    <reference name="publication" referenced-type="Publication"/>
+</class>
+<class name="Gene" is-interface="true">
+  <collection name="rnaiResults" referenced-type="RNAiResult" reverse-reference="gene"/>
+</class>
+<class name="Phenotype" extends="OntologyTerm" is-interface="true">
+  <attribute name="code" type="java.lang.String"/>
+</class>
+</classes>

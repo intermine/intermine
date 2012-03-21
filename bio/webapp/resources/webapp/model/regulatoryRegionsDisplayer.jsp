@@ -20,36 +20,42 @@
       <a href="#" id="${fn:toLowerCase(entry.key)}" class="switcher"><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/><c:if test="${entry.value != 1}">s</c:if></a>: ${entry.value}</c:forEach>
     </div>
   </div>
-  <c:if test="${!empty regionTables}">
-    <c:forEach items="${regionTables}" var="entry">
-      <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
-        <h3 class=""><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
-        <div class="clear"></div>
 
-        <c:set var="inlineResultsTable" value="${entry.value}" />
-        <tiles:insert page="/reportCollectionTable.jsp">
-           <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
-           <tiles:put name="object" beanName="reportObject.object" />
-           <tiles:put name="fieldName" value="${entry.key}" />
-        </tiles:insert>
-        <div class="toggle">
-          <a style="float:right;" class="less"><span>Hide</span></a>
+  <c:choose>
+    <c:when test="${!empty regionTables}">
+      <c:forEach items="${regionTables}" var="entry">
+        <div class="collection-table" id="${fn:toLowerCase(entry.key)}" style="display:none;">
+          <h3 class=""><c:out value="${imf:formatPathStr(entry.key, INTERMINE_API, WEBCONFIG)}"/>s</h3>
+          <div class="clear"></div>
+
+          <c:set var="inlineResultsTable" value="${entry.value}" />
+          <tiles:insert page="/reportCollectionTable.jsp">
+             <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
+             <tiles:put name="object" beanName="reportObject.object" />
+             <tiles:put name="fieldName" value="${entry.key}" />
+          </tiles:insert>
+          <div class="toggle">
+            <a style="float:right;" class="less"><span>Hide</span></a>
+          </div>
+          <div class="show-in-table">
+            <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
+              Show all in a table &raquo;
+            </html:link>
+          </div>
+        <br/>
         </div>
-        <div class="show-in-table">
-          <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
-            Show all in a table &raquo;
-          </html:link>
-        </div>
-      <br/>
+        <div class="clear"></div>
+      </c:forEach>
+      <div class="show-in-table outer">
+        <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
+          Show all in a table &raquo;
+        </html:link>
       </div>
-      <div class="clear"></div>
-    </c:forEach>
-    <div class="show-in-table outer">
-      <html:link action="/collectionDetails?id=${object.id}&amp;field=regulatoryRegions&amp;trail=${param.trail}">
-        Show all in a table &raquo;
-      </html:link>
-    </div>
-  </c:if>
+    </c:when>
+    <c:otherwise>
+    <p>No results found.</p>    
+    </c:otherwise>
+  </c:choose>
 
   <script type="text/javascript">
     // switcher between tables this displayer haz

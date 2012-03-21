@@ -42,10 +42,9 @@ import org.obo.datamodel.OBOSession;
 public class OboParser
 {
     private static final Logger LOG = Logger.getLogger(OboParser.class);
-
+//    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");
-
 
     /**
      * All terms.
@@ -61,7 +60,6 @@ public class OboParser
      * All relation types
      */
     protected Map<String, OboTypeDefinition> types = new HashMap<String, OboTypeDefinition>();
-
 
     /**
      * Default namespace.
@@ -83,14 +81,16 @@ public class OboParser
      * @param dagFileName the name of the obo file to read from
      * @throws Exception if something goes wrong
      */
+    @SuppressWarnings("unchecked")
     public void processRelations(String dagFileName) throws Exception {
+        File temp = null;
         File f = new File("build");
-        // this directory isn't present when parsing from the command line
         if (!f.exists()) {
-            f.mkdir();
+            temp = File.createTempFile("obo", ".tmp");
+        } else {
+            temp = File.createTempFile("obo", ".tmp", f);
         }
-        File temp = File.createTempFile("obo", ".tmp", f);
-        // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
+    // Copied from OBO2Linkfile.convertFiles(OBOAdapterConfiguration, OBOAdapterConfiguration,
         // List); OBOEDIT code
         // TODO OBO will soon release the file containing all transitive closures calculated
         // by obo2linkfile so we can get rid of the code below and just use the downloaded file.
@@ -164,6 +164,7 @@ public class OboParser
      * @param in text in DAG format
      * @throws IOException if anything goes wrong
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void readTerms(BufferedReader in) throws IOException {
         String line;
         Map<String, String> tagValues = new MultiValueMap();

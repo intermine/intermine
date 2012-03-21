@@ -50,7 +50,7 @@ public class PathwayURLQuery implements WidgetURLQuery
         q.addViews("Gene.secondaryIdentifier", "Gene.symbol", "Gene.organism.name",
                 "Gene.pathways.identifier", "Gene.pathways.name",
                 "Gene.pathways.dataSets.name");
-        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
+        q.addConstraint(Constraints.in("Gene", bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
             q.addConstraint(Constraints.oneOfValues("Gene.pathways.identifier",

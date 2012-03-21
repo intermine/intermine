@@ -32,6 +32,7 @@ public class MockIdResolverFactory extends IdResolverFactory
      * Create a MockIdResolver
      * @return a MockIdResolver
      */
+    @Override
     protected IdResolver createIdResolver() {
         return resolver;
     }

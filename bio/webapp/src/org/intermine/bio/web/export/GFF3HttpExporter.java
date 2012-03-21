@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,11 +30,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.intermine.api.results.Column;
+import org.apache.log4j.Logger;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.struts.GFF3ExportForm;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.export.ExportException;
@@ -55,6 +57,9 @@ import org.intermine.web.struts.TableExportForm;
 
 public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExporter
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(GFF3HttpExporter.class);
+
     /**
      * The batch size to use when we need to iterate through the whole result set.
      */
@@ -66,8 +71,10 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
      * attributes (rather than objects).
      * {@inheritDoc}
      */
-    public void export(PagedTable pt, HttpServletRequest request, HttpServletResponse response,
-                       TableExportForm form) {
+    public void export(PagedTable pt, HttpServletRequest request,
+            HttpServletResponse response, TableExportForm form,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection) {
         boolean doGzip = (form != null) && form.getDoGzip();
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
@@ -102,17 +109,24 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             }
             PrintWriter writer = HttpExportUtil.getPrintWriterForClient(request, out);
             List<String> paths = new LinkedList<String>();
-            if (form != null && form.getPathsString() != null) {
-                for (String path : StringUtil.serializedSortOrderToMap(form.getPathsString())
-                        .keySet()) {
-                    paths.add(path.replace(':', '.'));
+
+            if (newPathCollection != null) {
+                for (Path path : newPathCollection) {
+                    paths.add(path.toStringNoConstraints());
                 }
             } else {
-                // if no form provided take the paths from the PagedTable columns
-                for (Column col : pt.getColumns()) {
-                    paths.add(col.getPath().toStringNoConstraints());
+                // Views might be rubbish, should do PathQuery.makePath(view) (this should validate
+                // the view), and convert back to string, throws PathException
+                PathQuery pq = pt.getPathQuery();
+                List<String> views = pq.getView();
+                for (String view : views) {
+                    paths.add(pq.makePath(view).toStringNoConstraints());
                 }
+
+                // An unsafe way would be:
+                //paths.addAll(pt.getPathQuery().getView());
             }
+
             removeFirstItemInPaths(paths);
             exporter = new GFF3Exporter(writer, indexes, getSoClassNames(servletContext), paths,
                     sourceName, organisms, makeUcscCompatible);
@@ -120,7 +134,7 @@ public class GFF3HttpExporter extends HttpExporterBase implements TableHttpExpor
             try {
                 iter = getResultRows(pt, request);
                 iter.goFaster();
-                exporter.export(iter);
+                exporter.export(iter, unionPathCollection, newPathCollection);
                 if (out instanceof GZIPOutputStream) {
                     try {
                         ((GZIPOutputStream) out).finish();

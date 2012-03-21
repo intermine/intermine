@@ -64,6 +64,7 @@ public class SOClassNameMapMakerTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         Reader reader;
         try {

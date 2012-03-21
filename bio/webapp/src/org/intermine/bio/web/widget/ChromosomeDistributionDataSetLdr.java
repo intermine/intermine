@@ -84,6 +84,7 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
                                                 false);
 
         if (chromosomeList.isEmpty()) {
+            LOG.warn("Can't render chromosome widget, features have no chromosomes.");
             return;
         }
 
@@ -130,7 +131,6 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         }*/
     }
 
-    @SuppressWarnings("unchecked")
     private int addExpected(HashMap<String, int[]> resultsTable, String organismName)
         throws ClassNotFoundException {
 
@@ -158,12 +158,14 @@ public class ChromosomeDistributionDataSetLdr implements DataSetLdr
         return grandTotal;
     }
 
-    @SuppressWarnings("unchecked")
     private int addActual(HashMap<String, int[]> resultsTable, String organismName,
                           InterMineBag bag)
         throws ClassNotFoundException {
         // query for chromosome, gene.count for genes in list
         Query q = getQuery(organismName, "actual", bag);
+        if (q == null) {
+            return 0;
+        }
         results = os.execute(q, 50000, true, true, true);
 
         // find out how many genes in the bag have a chromosome location, use this

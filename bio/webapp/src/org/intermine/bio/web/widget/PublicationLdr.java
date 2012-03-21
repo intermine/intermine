@@ -103,7 +103,8 @@ public class PublicationLdr extends EnrichmentWidgetLdr
         QueryCollectionReference qcr = new QueryCollectionReference(qcGene, "publications");
         cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qcPub));
 
-
+        // can't be null, we need a way to determine if a gene is unique
+        cs.addConstraint(new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.IS_NOT_NULL));
 
         Query q = new Query();
         q.setDistinct(true);

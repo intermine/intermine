@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,8 +23,6 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -77,9 +75,9 @@ public class GFFQueryService extends AbstractQueryService
     protected PrintWriter pw;
 
     @Override
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String sep) {
         this.pw = out;
-        output = new StreamedOutput(out, new TabFormatter());
+        output = new StreamedOutput(out, new TabFormatter(), sep);
         if (isUncompressed()) {
             ResponseUtil.setPlainTextHeader(response,
                     getDefaultFileName());
@@ -93,8 +91,7 @@ public class GFFQueryService extends AbstractQueryService
     }
 
     @Override
-    protected void execute(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void execute() throws Exception {
         HttpSession session = request.getSession();
         ServletContext servletContext = session.getServletContext();
         // get the project title to be written in GFF3 records
@@ -191,7 +188,7 @@ public class GFFQueryService extends AbstractQueryService
             throw new BadRequestException("query is blank");
         }
 
-        PathQueryBuilder builder = getQueryBuilder(xml, request);
+        PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
 
         List<String> newView = new ArrayList<String>();

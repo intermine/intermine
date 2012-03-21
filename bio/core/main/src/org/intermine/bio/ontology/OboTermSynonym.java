@@ -50,6 +50,7 @@ public class OboTermSynonym
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean equals(Object o) {
         return (o instanceof OboTermSynonym
                 && ((OboTermSynonym) o).type.equals(type)
@@ -59,6 +60,7 @@ public class OboTermSynonym
     /**
      * {@inheritDoc}
      */
+    @Override
     public int hashCode() {
         return name.hashCode() + 3 * type.hashCode();
     }
@@ -66,6 +68,7 @@ public class OboTermSynonym
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return new ToStringBuilder(this).append("name", getName()).append("type", type).toString();
     }

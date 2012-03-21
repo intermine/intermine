@@ -13,6 +13,8 @@ package org.intermine.bio.web.export;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +32,12 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.BioEntity;
+import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Protein;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ExportException;
@@ -85,11 +89,18 @@ public class SequenceExporter implements Exporter
         return writtenResultsCount;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    }
+
     /**
      * {@inheritDoc} Lines are always separated with \n because third party tool
      * writeFasta is used for writing sequence.
      */
-    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         // IDs of the features we have successfully output - used to avoid
         // duplicates
         IntPresentSet exportedIDs = new IntPresentSet();
@@ -116,9 +127,10 @@ public class SequenceExporter implements Exporter
 
                 if (object instanceof SequenceFeature) {
                     bioSequence = createSequenceFeature(header, object,
-                            row);
+                            row, unionPathCollection, newPathCollection);
                 } else if (object instanceof Protein) {
-                    bioSequence = createProtein(header, object, row);
+                    bioSequence = createProtein(header, object, row,
+                            unionPathCollection, newPathCollection);
                 } else {
                     // ignore other objects
                     continue;
@@ -161,31 +173,37 @@ public class SequenceExporter implements Exporter
     }
 
     private BioSequence createProtein(StringBuffer header, Object object,
-            List<ResultElement> row) throws IllegalSymbolException {
+            List<ResultElement> row, Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection)
+        throws IllegalSymbolException {
         BioSequence bioSequence;
         Protein protein = (Protein) object;
         bioSequence = BioSequenceFactory.make(protein);
 
-        makeHeader(header, object, row);
+        makeHeader(header, object, row, unionPathCollection, newPathCollection);
 
         return bioSequence;
     }
 
     private BioSequence createSequenceFeature(StringBuffer header,
-            Object object, List<ResultElement> row)
+            Object object, List<ResultElement> row,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection)
         throws IllegalSymbolException {
         BioSequence bioSequence;
         SequenceFeature feature = (SequenceFeature) object;
         bioSequence = BioSequenceFactory.make(feature);
 
-        makeHeader(header, object, row);
+        makeHeader(header, object, row, unionPathCollection, newPathCollection);
         return bioSequence;
     }
 
     /**
      * Set the header to be the contents of row, separated by spaces.
      */
-    private void makeHeader(StringBuffer header, Object object, List<ResultElement> row) {
+    private void makeHeader(StringBuffer header, Object object,
+            List<ResultElement> row, Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection) {
 
         List<String> headerBits = new ArrayList<String>();
 
@@ -198,6 +216,16 @@ public class SequenceExporter implements Exporter
             headerBits.add(keyFieldValue.toString());
         } else {
             headerBits.add("-");
+        }
+
+        List<ResultElement> subRow = new ArrayList<ResultElement>();
+        if (newPathCollection != null && unionPathCollection != null
+                && unionPathCollection.containsAll(newPathCollection)) {
+            for (Path p : newPathCollection) {
+                subRow.add(row.get(((List<Path>) unionPathCollection).indexOf(p)));
+            }
+        } else {
+            subRow = row;
         }
 
         // two instances
@@ -217,43 +245,41 @@ public class SequenceExporter implements Exporter
                 String locString = chr + ':' + start + '-' + end;
                 headerBits.add(locString);
             }
-            for (ResultElement re : row) {
+
+            for (ResultElement re : subRow) {
                 // to avoid failure in modmine when no experimental factors (sub 2745)
                 if (re == null) {
                     continue;
                 }
 
-                if (object.equals(re.getObject())) {
-                    Object fieldValue = re.getField();
-                    if (fieldValue == null) {
-                        headerBits.add("-");
-                    } else {
-                        // ignore the primaryIdentifier and Location in
-                        // ResultElement
-                        if (fieldValue.toString().equals(keyFieldValue)
-                                || (fieldValue instanceof Location)) {
-                            continue;
-                        } else {
-                            headerBits.add(fieldValue.toString());
-                        }
-                    }
+                Object fieldValue = re.getField();
+                if (fieldValue == null) {
+                    headerBits.add("-");
+                } else if (fieldValue.toString().equals(keyFieldValue)
+                        || (re.getObject() instanceof Location)
+                        || (re.getObject() instanceof Chromosome)) {
+                    // ignore the primaryIdentifier and Location in
+                    // ResultElement
+                    continue;
+                } else {
+                    headerBits.add(fieldValue.toString());
                 }
             }
 
         } else if (object instanceof Protein) {
 
-            for (ResultElement re : row) {
-                if (object.equals(re.getObject())) {
-                    Object fieldValue = re.getField();
-                    if (fieldValue == null) {
-                        headerBits.add("-");
-                    } else {
-                        if (fieldValue.toString().equals(keyFieldValue)) {
-                            continue;
-                        } else {
-                            headerBits.add(fieldValue.toString());
-                        }
-                    }
+            for (ResultElement re : subRow) {
+                if (re == null) {
+                    continue;
+                }
+
+                Object fieldValue = re.getField();
+                if (fieldValue == null) {
+                    headerBits.add("-");
+                } else if (fieldValue.toString().equals(keyFieldValue)) {
+                    continue;
+                } else {
+                    headerBits.add(fieldValue.toString());
                 }
             }
         }

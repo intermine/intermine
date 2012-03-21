@@ -76,6 +76,7 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
 
     // private, converts #FFF or FFFFFF or rgb(255,0,0) etc. formats to 'rgb(0,255,0)' or '#00FF00'
     convertFormat: function(color, toHex) {
+      if(!color) return;
       if(color.match(/^#?(\w)(\w)(\w)$/))
       {
         var a = RegExp.$1, b = RegExp.$2, c = RegExp.$3;

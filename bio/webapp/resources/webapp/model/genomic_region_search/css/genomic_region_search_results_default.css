@@ -77,3 +77,35 @@ table.regions td.internal {
     border-bottom-style: solid;
     border-bottom-width: 1px;
 }
+
+#selectionInfo.information {
+  background-color:#E6F7FE;
+  border:1px solid #BEDCE4;
+}
+
+#selectionInfo {
+  background-position:10px 6px;
+  background-repeat:no-repeat;
+  font-size:13px;
+  margin:10px 10px 0;
+  padding:6px 6px 6px 0;
+}
+
+#selectionInfo table td {font-size:13px;}
+
+#spanWithNoFt a {float:none;}
+
+img.tinyQuestionMark {
+  padding-bottom:4px;
+  padding-left:3px;
+}
+
+#export-all-div { display: inline; padding: 0px 0px 0px 23px; line-height: 22px; }
+.export-region { margin-right: 5px; }
+.galaxy a { background-image:url('../../../images/formats/galaxy.gif'); width:59px; height:17px; }
+.csv a { background-image:url('../../../images/formats/csv.gif'); width:35px; height:17px; }
+.tab a { background-image:url('../../../images/formats/tab.gif'); width:35px; height:17px; }
+.fasta a { background-image:url('../../../images/formats/fasta.gif'); width:52px; height:17px; }
+.bed a { background-image:url('../../../images/formats/bed.gif'); width:35px; height:17px; }
+.gff3 a { background-image:url('../../../images/formats/gff3.gif'); width:40px; height:17px; }
+.export-region a { display: inline-block; background-position: top left; vertical-align: middle; background-repeat: no-repeat; }

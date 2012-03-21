@@ -17,7 +17,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.WidgetURLQuery;
 
@@ -45,19 +44,13 @@ public class OMIMDiseaseURLQuery implements WidgetURLQuery
 
     /**
      * {@inheritDoc}
-     * @throws PathException
      */
-    public PathQuery generatePathQuery(boolean showAll) throws PathException {
-
+    public PathQuery generatePathQuery(boolean showAll) {
         Model model = os.getModel();
         PathQuery q = new PathQuery(model);
-
         q.addViews("Gene.primaryIdentifier", "Gene.symbol", "Gene.omimDiseases.omimId",
                 "Gene.omimDiseases.title", "Gene.omimDiseases.description");
-
-        String bagType = bag.getType();
-
-        q.addConstraint(Constraints.in(bagType, bag.getName()));
+        q.addConstraint(Constraints.in("Gene", bag.getName()));
         if (!showAll) {
             q.addConstraint(Constraints.oneOfValues("Gene.ominDiseases.omimId",
                     Arrays.asList(key)));

@@ -39,10 +39,11 @@ public class UniprotEntry
     private String primaryAccession, uniprotAccession, primaryIdentifier;
     private String sequence, md5checksum;
     private Map<String, List<String>> collections = new HashMap<String, List<String>>();
-    private Map<String, String> evidenceCodeToRef = new HashMap<String, String>();
+    private Map<String, String> pubEvidenceCodeToRef = new HashMap<String, String>();
     private boolean isDuplicate = false;
     private Map<String, Set<String>> dbrefs = new HashMap<String, Set<String>>();
     private Map<String, Set<String>> geneNames = new HashMap<String, Set<String>>();
+    private Map<String, String> goTermToEvidenceCode = new HashMap<String, String>();
 
     // map of gene designation (normally the primary name) to dbref (eg. FlyBase, FBgn001)
     // this map is used when there is more than one gene but the dbref is needed to set an
@@ -258,6 +259,20 @@ public class UniprotEntry
      */
     public void addPub(String pubmedId) {
         addToCollection("pubs", pubmedId);
+    }
+
+    /**
+     * @return list of ecNumbers for this protein
+     */
+    public List<String> getECNumbers() {
+        return collections.get("ecNumbers");
+    }
+
+    /**
+     * @param ecNumber for this protein
+     */
+    public void addECNumber(String ecNumber) {
+        addToCollection("ecNumbers", ecNumber);
     }
 
     /**
@@ -650,11 +665,27 @@ public class UniprotEntry
     }
 
     /**
+     * @param goTerm go term
+     * @return evidence code for this go term
+     */
+    public String getGOEvidence(String goTerm) {
+        return goTermToEvidenceCode.get(goTerm);
+    }
+
+    /**
+     * @param goTerm go term
+     * @param code evidence code, eg. NAS
+     */
+    public void addGOEvidence(String goTerm, String code) {
+        goTermToEvidenceCode.put(goTerm, code);
+    }
+
+    /**
      * @param code the evidence code
      * @param pubRefId id representing publication object
      */
-    public void addEvidence(String code, String pubRefId) {
-        evidenceCodeToRef.put(code, pubRefId);
+    public void addPubEvidence(String code, String pubRefId) {
+        pubEvidenceCodeToRef.put(code, pubRefId);
     }
 
     /**
@@ -662,7 +693,7 @@ public class UniprotEntry
      * @return the refId for publication associated with this evidence code
      */
     public String getPubRefId(String code) {
-        return evidenceCodeToRef.get(code);
+        return pubEvidenceCodeToRef.get(code);
     }
 
     /**
@@ -716,6 +747,13 @@ public class UniprotEntry
      */
     public Map<String, Set<String>> getDbrefs() {
         return dbrefs;
+    }
+
+    /**
+     * @return value of db reference currently being processed, eg. GO:001
+     */
+    public String getDbref() {
+        return dbref.value;
     }
 
     /**
@@ -864,7 +902,7 @@ public class UniprotEntry
      *  gene items, just identifiers  - for memory reasons
      *  sequence, length, molecular weight, md5checksum
      *  components - per rachel
-     *
+     *  isoforms - per mike
      *
      * @param accession for isoform
      * @return cloned uniprot entry, an isoform of original entry
@@ -891,6 +929,4 @@ public class UniprotEntry
         entry.setGOTerms(collections.get("goTerms"));
         return entry;
     }
-
-
 }

@@ -10,10 +10,13 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
@@ -27,11 +30,10 @@ import org.intermine.xml.full.Item;
  */
 public class NcbiSummariesConverter extends BioFileConverter
 {
-    //
     private static final String DATASET_TITLE = "NCBI Gene summaries";
     private static final String DATA_SOURCE_NAME = "NCBI Gene";
-
     private static final String HUMAN_TAXON_ID = "9606";
+    protected static final Logger LOG = Logger.getLogger(NcbiSummariesConverter.class);
 
     /**
      * Constructor
@@ -43,25 +45,29 @@ public class NcbiSummariesConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         // Data has format:
         // id | summary
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        int count = 0;
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
-            String entrez = line[0];
-            String summary = line[1];
-
-            if (!StringUtils.isBlank(summary)) {
-                Item gene = createItem("Gene");
-                gene.setAttribute("ncbiGeneNumber", entrez);
-                gene.setAttribute("summary", summary);
-                gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
-                store(gene);
+            try {
+                String entrez = line[0];
+                String summary = line[1];
+                LOG.error("summary " + count++ + " " + summary);
+                if (!StringUtils.isBlank(summary)) {
+                    Item gene = createItem("Gene");
+                    gene.setAttribute("ncbiGeneNumber", entrez);
+                    gene.setAttribute("summary", summary);
+                    gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
+                    store(gene);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                LOG.info("Failed to read line: " + Arrays.asList(line));
             }
         }
     }

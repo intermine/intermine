@@ -55,11 +55,16 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> domains = new HashMap<String, String>();
     // taxonId -> [md5Checksum -> stored protein identifier]
     private Map<String, Map<String, String>> sequences = new HashMap<String, Map<String, String>>();
+    // md5Checksum -> sequence item identifier  (ensure all sequences are unique across organisms)
+    private Map<String, String> allSequences = new HashMap<String, String>();
     private Map<String, String> ontologies = new HashMap<String, String>();
     private Map<String, String> keywords = new HashMap<String, String>();
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> goterms = new HashMap<String, String>();
+    private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
+    private Map<String, String> ecNumbers = new HashMap<String, String>();
     private static final String GENUS_LOOKUP = "Drosophila";
+    private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
     private Set<String> identifiers = null;
@@ -294,6 +299,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 attName = "component";
             } else if ("name".equals(qName) && "entry".equals(previousQName)) {
                 attName = "primaryIdentifier";
+            } else if ("ecNumber".equals(qName)) {
+                attName = "ecNumber";
             } else if ("accession".equals(qName)) {
                 attName = "value";
             } else if ("dbReference".equals(qName) && "organism".equals(previousQName)) {
@@ -365,6 +372,8 @@ public class UniprotConverter extends BioDirectoryConverter
                 String type = getAttrValue(attrs, "type");
                 if (type.equals(CONFIG.getGeneDesignation())) {
                     entry.addGeneDesignation(getAttrValue(attrs, "value"));
+                } else if ("evidence".equals(type)) {
+                    entry.addGOEvidence(entry.getDbref(), getAttrValue(attrs, "value"));
                 }
             } else if ("name".equals(qName) && "gene".equals(previousQName)) {
                 attName = getAttrValue(attrs, "type");
@@ -373,7 +382,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 String pubmedString = getAttrValue(attrs, "attribute");
                 if (StringUtils.isNotEmpty(evidenceCode) && StringUtils.isNotEmpty(pubmedString)) {
                     String pubRefId = getEvidence(pubmedString);
-                    entry.addEvidence(evidenceCode, pubRefId);
+                    entry.addPubEvidence(evidenceCode, pubRefId);
                 }
             } else if ("dbreference".equals(qName) || "comment".equals(qName)
                     || "isoform".equals(qName)
@@ -417,12 +426,22 @@ public class UniprotConverter extends BioDirectoryConverter
                 entry.setName(attValue.toString());
             } else if (StringUtils.isNotEmpty(attName) && "synonym".equals(attName)) {
                 entry.addProteinName(attValue.toString());
+            } else if (StringUtils.isNotEmpty(attName) && "ecNumber".equals(attName)) {
+                entry.addECNumber(attValue.toString());
             } else if ("text".equals(qName) && "comment".equals(previousQName)) {
                 String commentText = attValue.toString();
                 if (StringUtils.isNotEmpty(commentText)) {
                     Item item = createItem("Comment");
                     item.setAttribute("type", entry.getCommentType());
-                    item.setAttribute("text", commentText);
+                    if (commentText.length() > POSTGRES_INDEX_SIZE) {
+                        // comment text is a string
+                        String ellipses = "...";
+                        String choppedComment = commentText.substring(
+                                0, POSTGRES_INDEX_SIZE - ellipses.length());
+                        item.setAttribute("text", choppedComment + ellipses);
+                    } else {
+                        item.setAttribute("text", commentText);
+                    }
                     String refId = item.getIdentifier();
                     try {
                         Integer objectId = store(item);
@@ -472,9 +491,10 @@ public class UniprotConverter extends BioDirectoryConverter
                 try {
                     processCommentEvidence(entry);
                     Set<UniprotEntry> isoforms = processEntry(entry);
-
-                    for (UniprotEntry isoform : isoforms) {
-                        processEntry(isoform);
+                    if (isoforms != null) {
+                        for (UniprotEntry isoform : isoforms) {
+                            processEntry(isoform);
+                        }
                     }
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
@@ -559,6 +579,8 @@ public class UniprotConverter extends BioDirectoryConverter
 
                 /* primaryAccession, primaryIdentifier, name, etc */
                 processIdentifiers(protein, uniprotEntry);
+
+                processECNumbers(protein, uniprotEntry);
 
                 String isCanonical = (uniprotEntry.isIsoform() ? "false" : "true");
                 protein.setAttribute("isUniprotCanonical", isCanonical);
@@ -649,18 +671,28 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private void processSequence(Item protein, UniprotEntry uniprotEntry) {
-            Item item = createItem("Sequence");
-            item.setAttribute("residues", uniprotEntry.getSequence());
-            item.setAttribute("length", uniprotEntry.getLength());
-            try {
-                store(item);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
-            }
+            String seqIdentifier = getSequenceIdentfier(uniprotEntry.getMd5checksum(),
+                    uniprotEntry.getSequence(), uniprotEntry.getLength());
             protein.setAttribute("length", uniprotEntry.getLength());
-            protein.setReference("sequence", item.getIdentifier());
+            protein.setReference("sequence", seqIdentifier);
             protein.setAttribute("molecularWeight", uniprotEntry.getMolecularWeight());
             protein.setAttribute("md5checksum", uniprotEntry.getMd5checksum());
+        }
+
+        private String getSequenceIdentfier(String md5Checksum, String residues, String length) {
+            if (!allSequences.containsKey(md5Checksum)) {
+                Item item = createItem("Sequence");
+                item.setAttribute("residues", residues);
+                item.setAttribute("length", length);
+                item.setAttribute("md5checksum", md5Checksum);
+                try {
+                    store(item);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
+                allSequences.put(md5Checksum, item.getIdentifier());
+            }
+            return allSequences.get(md5Checksum);
         }
 
         private void processIdentifiers(Item protein, UniprotEntry uniprotEntry) {
@@ -678,6 +710,30 @@ public class UniprotConverter extends BioDirectoryConverter
                 primaryIdentifier = getIsoformIdentifier(primaryAccession, primaryIdentifier);
             }
             protein.setAttribute("primaryIdentifier", primaryIdentifier);
+        }
+
+        private void processECNumbers(Item protein, UniprotEntry uniprotEntry)
+            throws SAXException {
+            List<String> ecs = uniprotEntry.getECNumbers();
+            if (ecs == null || ecs.isEmpty()) {
+                return;
+            }
+            for (String identifier : ecs) {
+                String refId = ecNumbers.get(identifier);
+
+                if (refId == null) {
+                    Item item = createItem("ECNumber");
+                    item.setAttribute("identifier", identifier);
+                    ecNumbers.put(identifier, item.getIdentifier());
+                    try {
+                        store(item);
+                    } catch (ObjectStoreException e) {
+                        throw new SAXException(e);
+                    }
+                    refId = item.getIdentifier();
+                }
+                protein.addToCollection("ecNumbers", refId);
+            }
         }
 
         private String getIsoformIdentifier(String primaryAccession, String primaryIdentifier) {
@@ -760,14 +816,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 String key = dbref.getKey();
                 Set<String> values = dbref.getValue();
                 for (String identifier : values) {
-                    if ("EC".equals(key)) {
-                        protein.setAttribute("ecNumber", identifier);
-                        return;
-                    }
                     setCrossReference(protein.getIdentifier(), identifier, key, false);
-                    if (creatego && "GO".equals(key)) {
-                        uniprotEntry.addGOTerm(getGoTerm(identifier));
-                    }
                 }
             }
         }
@@ -786,15 +835,28 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private void processGoAnnotation(UniprotEntry uniprotEntry, Item gene)
             throws SAXException {
-            for (String goTermRefId : uniprotEntry.getGOTerms()) {
-                Item goAnnotation = createItem("GOAnnotation");
-                goAnnotation.setReference("subject", gene);
-                goAnnotation.setReference("ontologyTerm", goTermRefId);
-                gene.addToCollection("goAnnotation", goAnnotation);
-                try {
-                    store(goAnnotation);
-                } catch (ObjectStoreException e) {
-                    throw new SAXException(e);
+            Map<String, Set<String>> dbrefs = uniprotEntry.getDbrefs();
+            for (Map.Entry<String, Set<String>> dbref : dbrefs.entrySet()) {
+                String key = dbref.getKey();
+                Set<String> values = dbref.getValue();
+                if ("GO".equals(key)) {
+                    for (String goTerm : values) {
+                        String code = getGOEvidenceCode(entry.getGOEvidence(goTerm));
+                        Item goEvidence = createItem("GOEvidence");
+                        goEvidence.setReference("code", code);
+
+                        Item goAnnotation = createItem("GOAnnotation");
+                        goAnnotation.setReference("subject", gene);
+                        goAnnotation.setReference("ontologyTerm", getGoTerm(goTerm));
+                        goAnnotation.addToCollection("evidence", goEvidence);
+                        gene.addToCollection("goAnnotation", goAnnotation);
+                        try {
+                            store(goEvidence);
+                            store(goAnnotation);
+                        } catch (ObjectStoreException e) {
+                            throw new SAXException(e);
+                        }
+                    }
                 }
             }
         }
@@ -817,7 +879,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (StringUtils.isEmpty(identifier)) {
                     continue;
                 }
-                gene = createGene(protein, uniprotEntry, identifier, taxId,
+                gene = getGene(protein, uniprotEntry, identifier, taxId,
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
                 if (gene != null && hasMultipleGenes) {
@@ -843,7 +905,7 @@ public class UniprotConverter extends BioDirectoryConverter
             }
         }
 
-        private Item createGene(Item protein, UniprotEntry uniprotEntry, String geneIdentifier,
+        private Item getGene(Item protein, UniprotEntry uniprotEntry, String geneIdentifier,
                 String taxId, String uniqueIdentifierField) {
             String identifier = resolveGene(taxId, geneIdentifier);
             if (identifier == null) {
@@ -973,7 +1035,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
         private String resolveGene(String taxId, String identifier) {
             OrganismData od = or.getOrganismDataByTaxon(new Integer(taxId));
-            if (od != null && od.getGenus().equals(GENUS_LOOKUP)) {
+            if (od != null && od.getGenus().equals(GENUS_LOOKUP) && flyResolverFactory != null) {
                 return resolveFlyGene(taxId, identifier);
             }
             return identifier;
@@ -1084,6 +1146,32 @@ public class UniprotConverter extends BioDirectoryConverter
             refId = item.getIdentifier();
         }
 
+        return refId;
+    }
+
+    // value is NAS:FlyBase
+    private String getGOEvidenceCode(String value)
+        throws SAXException {
+        String[] bits = value.split(":");
+        String code = "";
+        if (bits == null) {
+            code = value;
+        } else {
+            code = bits[0];
+        }
+        String refId = goEvidenceCodes.get(code);
+        if (refId == null) {
+            Item item = createItem("GOEvidenceCode");
+            item.setAttribute("code", code);
+            refId = item.getIdentifier();
+            goEvidenceCodes.put(code, refId);
+            try {
+                store(item);
+            } catch (ObjectStoreException e) {
+                throw new SAXException(e);
+            }
+
+        }
         return refId;
     }
 

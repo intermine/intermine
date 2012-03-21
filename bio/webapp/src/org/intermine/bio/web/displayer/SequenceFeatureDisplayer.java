@@ -14,15 +14,26 @@ import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
 
-public class SequenceFeatureDisplayer extends ReportDisplayer {
-
+/**
+ * Displayer for gene sequence feature
+ * @author rns, radek
+ *
+ */
+public class SequenceFeatureDisplayer extends ReportDisplayer
+{
     /** @var sets the max number of locations to show in a table, TODO: match with DisplayObj*/
     private Integer maximumNumberOfLocations = 27;
 
+    /**
+     * Construct with config and the InterMineAPI.
+     * @param config to describe the report displayer
+     * @param im the InterMine API
+     */
     public SequenceFeatureDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
         super(config, im);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void display(HttpServletRequest request, ReportObject reportObject) {
         InterMineObject imObj = reportObject.getObject();

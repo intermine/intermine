@@ -1,12 +1,12 @@
 log_dir: "/micklem/data/download_logs"
-data_dir: "/micklem/data/test"
+data_dir: "/micklem/data"
 
 default_sources:
   - "BioGRID"
   - "EnsemblCompara"
   - "GOAnnotation"
-  - "Intact"
-  - "IntactVocabulary"
+  - "IntAct"
+  - "IntActVocabulary"
   - "InterPro"
   - "MGIIdentifiers"
   - "NCBIGene"
