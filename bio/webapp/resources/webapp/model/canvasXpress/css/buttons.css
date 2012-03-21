@@ -1,0 +1,45 @@
+a.squarebutton{
+background: transparent url('../images/square-gray-left.gif') no-repeat top left;
+display: block;
+float: left;
+font: normal 12px Arial; /* Change 12px as desired */
+line-height: 15px; /* This value + 4px + 4px (top and bottom padding of SPAN) must equal height of button background (default is 23px) */
+height: 23px; /* Height of button background height */
+padding-left: 9px; /* Width of left menu image */
+text-decoration: none;
+}
+
+a:link.squarebutton, a:visited.squarebutton, a:active.squarebutton{
+color: #494949; /*button text color*/
+}
+
+a.squarebutton span{
+background: transparent url('../images/square-gray-right.gif') no-repeat top right;
+display: block;
+padding: 4px 9px 4px 0; /*Set 9px below to match value of 'padding-left' value above*/
+}
+
+a.squarebutton:hover{ /* Hover state CSS */
+background-position: bottom left;
+}
+
+a.squarebutton:hover span{ /* Hover state CSS */
+background-position: bottom right;
+color: black;
+}
+
+.buttonwrapper{ /* Container you can use to surround a CSS button to clear float */
+overflow: hidden; /*See: http://www.quirksmode.org/css/clearing.html */
+width: 100%;
+}
+
+/* above thanks to example code from http://www.dynamicdrive.com/style/csslibrary/item/css_square_buttons/*/
+
+div.shapename {
+  margin-bottom:3px;
+  margin-left:-20px;
+}
+div.shapenamefound {
+  background-color: #FF0;
+  font-weight: bold;
+}

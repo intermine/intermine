@@ -54,11 +54,12 @@ public final class GFF3Parser
 
         return new Iterator<Object>() {
             String currentLine = firstGFFLine;
-
+            @Override
             public boolean hasNext() {
                 return currentLine != null && !currentLine.startsWith(">");
             }
 
+            @Override
             public Object next() {
                 if (currentLine == null) {
                     throw new NoSuchElementException();
@@ -80,6 +81,7 @@ public final class GFF3Parser
                 }
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("remove not supported");
             }

@@ -8,7 +8,7 @@
   <attribute name="condition" type="java.lang.String"/>
   <attribute name="expression" type="java.lang.String"/>
   <attribute name="pValue" type="java.lang.Double"/>
-  <attribute name="tStatistic" type="java.lang.String"/>
+  <attribute name="tStatistic" type="java.lang.Double"/>
   <reference name="gene" referenced-type="Gene" reverse-reference="atlasExpression"/>
   <reference name="probe" referenced-type="ProbeSet" reverse-reference="atlasExpression"/>
 </class>

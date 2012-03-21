@@ -21,7 +21,7 @@ public class ChromosomeInfo
     private String orgName;
     private String chrPID;
     private String chrPIDLowerCase;
-    private Integer chrLength;
+    private Integer chrLength = null;
 
     /**
      * @return the orgName

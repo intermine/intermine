@@ -11,6 +11,7 @@ package org.intermine.bio.web.struts;
  */
 
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -52,6 +54,9 @@ import org.intermine.web.struts.InterMineAction;
  */
 public class SequenceExportAction extends InterMineAction
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(SequenceExportAction.class);
+
     /**
      * This action is invoked directly to export SequenceFeatures.
      * @param mapping The ActionMapping used to select this instance
@@ -80,9 +85,15 @@ public class SequenceExportAction extends InterMineAction
 
         if (obj instanceof SequenceFeature || obj instanceof Protein) {
             bioSequence = createBioSequence(obj);
+
+            response.setContentType("text/plain");
             if (bioSequence != null) {
                 OutputStream out = response.getOutputStream();
                 SeqIOTools.writeFasta(out, bioSequence);
+            } else {
+                PrintWriter out = response.getWriter();
+                out.write("Sequence information not availble for this sequence feature...");
+                out.flush();
             }
         }
 

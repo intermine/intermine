@@ -13,24 +13,24 @@ package org.intermine.bio.web.logic;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.api.results.WebResults;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.bag.BagConverter;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 
 /**
  * @author "Xavier Watkins"
@@ -52,9 +52,10 @@ public class OrthologueConverter extends BagConverter
     private PathQuery constructPathQuery(String organismName) {
         PathQuery q = new PathQuery(model);
 
-        // organism
-        q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
+        if (StringUtils.isNotEmpty(organismName)) {
+            q.addConstraint(Constraints.eq("Gene.homologues.homologue.organism.shortName",
                 organismName));
+        }
 
         // homologue.type = "orthologue"
         q.addConstraint(Constraints.neq("Gene.homologues.type", "paralogue"));
@@ -83,6 +84,31 @@ public class OrthologueConverter extends BagConverter
             ids.add((Integer) row.get(0).getField());
         }
         return ids;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String> getCounts(Profile profile, InterMineBag bag) {
+        PathQuery pathQuery = constructPathQuery(null);
+        pathQuery.addConstraint(Constraints.inIds("Gene", bag.getContentsAsIds()));
+        pathQuery.addView("Gene.homologues.homologue.organism.shortName");
+        pathQuery.addView("Gene.homologues.homologue.id");
+        pathQuery.addOrderBy("Gene.homologues.homologue.organism.shortName", OrderDirection.ASC);
+        PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+        ExportResultsIterator it = executor.execute(pathQuery);
+        Map<String, String> results = new LinkedHashMap<String, String>();
+        while (it.hasNext()) {
+            List<ResultElement> row = it.next();
+            String homologue = (String) row.get(0).getField();
+            String count = results.get(homologue);
+            if (count == null) {
+                count = "0";
+            }
+            int plusOne = Integer.parseInt(count);
+            results.put(homologue, String.valueOf(++plusOne));
+        }
+        return results;
     }
 
     /**
@@ -126,28 +152,5 @@ public class OrthologueConverter extends BagConverter
             encodedurl };
         ActionMessage am = new ActionMessage("portal.orthologues", values);
         return am;
-    }
-
-    @Override
-    public WebResults getConvertedObjects(Profile profile, List<Integer> fromList, String type,
-            String parameters) throws ObjectStoreException {
-
-        PathQuery q = new PathQuery(model);
-        List<String> view = PathQueryResultHelper.getDefaultViewForClass(type, model, webConfig,
-                "Gene.homologues.homologue");
-        q.addViews(view);
-
-        // gene
-        q.addConstraint(Constraints.inIds("Gene", fromList));
-
-        // organism
-        q.addConstraint(Constraints.lookup("Gene.homologues.homologue.organism", parameters, ""));
-
-        // homologue.type = "orthologue"
-        q.addConstraint(Constraints.eq("Gene.homologues.type", "orthologue"));
-
-        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-
-        return executor.execute(q);
     }
 }

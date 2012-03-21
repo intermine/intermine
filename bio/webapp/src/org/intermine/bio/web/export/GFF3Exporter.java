@@ -13,11 +13,14 @@ package org.intermine.bio.web.export;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -26,8 +29,12 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
+import org.intermine.bio.ontology.SequenceOntology;
+import org.intermine.bio.ontology.SequenceOntologyFactory;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.Path;
 import org.intermine.util.IntPresentSet;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.web.logic.export.ExportException;
@@ -42,14 +49,6 @@ import org.intermine.web.logic.export.Exporter;
 public class GFF3Exporter implements Exporter
 {
     private static final Logger LOG = Logger.getLogger(GFF3Exporter.class);
-
-
-    //    public static final Set<String> GFF_FIELDS = Collections
-    //    .unmodifiableSet(new HashSet<String>(Arrays.asList("chromosome.primaryIdentifier",
-    //            "chromosomeLocation.start", "chromosomeLocation.end",
-    //            "chromosomeLocation.strand", "primaryIdentifier", "score",
-    //            "start", "end", "strand")));
-
     /**
      * the fields we don't want to display as attributes
      */
@@ -109,12 +108,10 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-
     /**
      * to read genome and project versions
      * @return header further info about versions
      */
-
     private String getHeaderParts() {
         StringBuffer header = new StringBuffer();
         Properties props = PropertiesUtil.getProperties();
@@ -155,13 +152,11 @@ public class GFF3Exporter implements Exporter
         return "##gff-version 3" + getHeaderParts();
     }
 
-
     /**
      * {@inheritDoc}
      */
-
-
-    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+    public void export(Iterator<? extends List<ResultElement>> resultIt,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
         if (featureIndexes.size() == 0) {
             throw new ExportException("No columns with sequence");
         }
@@ -169,9 +164,8 @@ public class GFF3Exporter implements Exporter
             // LOG.info("SOO:" + cNames.toString());
             while (resultIt.hasNext()) {
                 List<ResultElement> row = resultIt.next();
-                exportRow(row);
+                exportRow(row, unionPathCollection, newPathCollection);
             }
-            finishLastRow();
 
             if (writtenResultsCount == 0) {
                 out.println("Nothing was found for export");
@@ -183,6 +177,12 @@ public class GFF3Exporter implements Exporter
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public void export(Iterator<? extends List<ResultElement>> resultIt) {
+        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+    }
+
     /* State for the exportRow method, to allow several rows to be merged. */
     private Map<String, Integer> attributeVersions = new HashMap<String, Integer>();
     private Integer lastLsfId = null;
@@ -190,28 +190,68 @@ public class GFF3Exporter implements Exporter
     private Map<String, List<String>> attributes = null;
     private Map<String, Set<Integer>> seenAttributes = new HashMap<String, Set<Integer>>();
 
-
-    private void exportRow(List<ResultElement> row)
-        throws ObjectStoreException,
-    IllegalAccessException {
+    private void exportRow(List<ResultElement> row,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection)
+        throws ObjectStoreException, IllegalAccessException {
 
         List<ResultElement> elWithObject = getResultElements(row);
         if (elWithObject == null) {
             return;
         }
 
-        // loop through all the objects in a row
+        // In order to find the parents of a feature, e.g.
+        // Gene.interactions.interactingGenes.exons.transcripts, we assuse each
+        // feature's parents have unique path, e.g. transcript's parents paths
+        // are interactingGene.exons and interactingGene, but exon is not a
+        // parent of transcript, correct this by using SO.
+        Map<String, Integer> pathToIdMap = new HashMap<String, Integer>();
+        Map<Integer, List<String>> idToParentPathMap = new HashMap<Integer, List<String>>();
+        Map<Integer, ResultElement> idToResultElementMap = new HashMap<Integer, ResultElement>();
+        for (ResultElement el : elWithObject) {
+            if (el == null) {
+                continue;
+            }
+
+            List<Path> pathList = el.getPath().decomposePath();
+            // remove the last element in the list, it is a field
+            pathList.remove(pathList.size() - 1);
+            String lastClassPath = pathList.get(pathList.size() - 1).toStringNoConstraints();
+            Integer id = ((SequenceFeature) el.getObject()).getId();
+
+            idToResultElementMap.put(id, el);
+
+            // from last sequence feature path to intermine id
+            pathToIdMap.put(lastClassPath, id);
+
+            // clsdList should have the same size as pathList
+            List<ClassDescriptor> clsdList = el.getPath()
+                    .getElementClassDescriptors();
+            List<String> parentPaths = new LinkedList<String>();
+            for (int i = clsdList.size() - 2; i >= 0; i--) {
+                if (SequenceFeature.class.isAssignableFrom(clsdList.get(i)
+                        .getType())) {
+                    parentPaths.add(pathList.get(i).toStringNoConstraints());
+                } else {
+                    break;
+                }
+            }
+            idToParentPathMap.put(id, parentPaths);
+        }
+
+        SequenceOntology so = SequenceOntologyFactory.getSequenceOntology();
+        Path lastLsfPath = null;
         for (ResultElement re : elWithObject) {
             try {
                 SequenceFeature lsf = (SequenceFeature) re.getObject();
-                //             LOG.info("GFFrePath: " + re.getPath());
-                boolean isCollection = re.getPath().containsCollections();
 
                 if (exportedIds.contains(lsf.getId()) && !(lsf.getId().equals(lastLsfId))) {
                     continue;
                 }
 
+                // processing parent for last cell
                 if ((lastLsfId != null) && !(lsf.getId().equals(lastLsfId))) {
+                    processAttributes(row, unionPathCollection, newPathCollection, re.getPath());
+                    processParent(pathToIdMap, idToParentPathMap, idToResultElementMap, so);
                     makeRecord();
                 }
 
@@ -219,86 +259,115 @@ public class GFF3Exporter implements Exporter
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
 
-                String parent = null;
-                String parentClass = null;
-
-                for (int i = 0; i < row.size(); i++) {
-                    ResultElement el = row.get(i);
-
-                    if (el == null) {
-                        continue;
-                    }
-
-                    if (i == 0) { // this is the beginning of the path
-                        parentClass = el.getPath().getStartClassDescriptor().getUnqualifiedName();
-//                        LOG.info("PAR: " + parentClass);
-                        if (cNames.contains(parentClass.toLowerCase())) {
-                            parent = el.getField().toString();
-//                            LOG.info("PARent: " + parent);
-                        }
-                    }
-
-                    // checks for attributes:
-                    if (isCollection && !el.getPath().containsCollections()) {
-                        // one is collection, the other is not: do not show
-                        continue;
-                    }
-                    if (!isCollection && el.getPath().containsCollections()
-                            && soClassNames.containsKey(el.getType())) {
-                        // show attributes only if they are not linked to features
-                        // (they will be displayed with the relevant one, see below)
-                        continue;
-                    }
-
-                    if (isCollection && el.getPath().containsCollections()) {
-                        // show only if of the same class
-                        Class<?> reType = re.getPath().getLastClassDescriptor().getType();
-                        Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                        if (!reType.isAssignableFrom(elType)) {
-                            continue;
-                        }
-                    }
-
-                    if (el.getPath().getLastClassDescriptor().getUnqualifiedName().
-                            equalsIgnoreCase("location")) {
-                        // don't show locations (they are already displayed parts of the element)
-                        continue;
-                    }
-
-                    if (el.getField() != null) {
-                        String unqualName = el.getPath()
-                                .getLastClassDescriptor().getUnqualifiedName();
-                        String attributeName = trimAttribute(attributesNames.get(i), unqualName);
-                        //                    LOG.info("IN: " + attributeName+"|"+ unqualName);
-                        checkAttribute(el, attributeName);
-                    }
-
-                    // TEMP out (fm release)
-                    // add the parent
-                    if (i >= 1 && parent != null) {
-                        if (!parentClass.equalsIgnoreCase(
-                                re.getPath().getLastClassDescriptor().getUnqualifiedName())) {
-//                    LOG.info("PAR: " + parentClass + " -> "
-//                    + re.getPath().getLastClassDescriptor().getUnqualifiedName()
-//                    + re.getPath().getLastClassDescriptor().getType()
-//                    + re.getPath().getLastClassDescriptor().getName()
-//                    + "|." + re.getPath().getLastClassDescriptor().getSubDescriptors()
-//                    + "|.." + re.getPath().getLastClassDescriptor().getAllCollectionDescriptors()
-//                    + "|..." + re.getPath().getLastClassDescriptor().getAllReferenceDescriptors()
-//                        );
-                            List<String> addPar = new ArrayList<String>();
-                            addPar.add(parent);
-                            attributes.put("Parent", addPar);
-                        }
-                    }
-                }
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
+                lastLsfPath = re.getPath();
             } catch (Exception ex) {
-                LOG.error("Exception: " + ex);
+                LOG.error("Failed to write GFF3 file: " + ex);
                 continue;
             }
         }
+
+        // Export the last feature in the row
+        if (lastLsfId != null && !exportedIds.contains(lastLsfId)) {
+            processAttributes(row, unionPathCollection, newPathCollection, lastLsfPath);
+            processParent(pathToIdMap, idToParentPathMap, idToResultElementMap, so);
+            makeRecord();
+        }
+    }
+
+    private void processAttributes(List<ResultElement> row,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection, Path p) {
+        List<ResultElement> newRow = filterResultRow(row, unionPathCollection,
+                newPathCollection);
+
+        boolean isCollection = p.containsCollections();
+
+        for (int i = 0; i < newRow.size(); i++) {
+            ResultElement el = newRow.get(i);
+
+            if (el == null) {
+                continue;
+            }
+
+            // checks for attributes:
+            if (isCollection && !el.getPath().containsCollections()) {
+                // one is collection, the other is not: do not show
+                continue;
+            }
+            if (!isCollection && el.getPath().containsCollections()
+                    && soClassNames.containsKey(el.getType())) {
+                // show attributes only if they are not linked to features
+                // (they will be displayed with the relevant one, see below)
+                continue;
+            }
+
+            if (isCollection && el.getPath().containsCollections()) {
+                // show only if of the same class
+                Class<?> reType = p.getLastClassDescriptor().getType();
+                Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+                if (!reType.isAssignableFrom(elType)) {
+                    continue;
+                }
+            }
+
+            if ("location".equalsIgnoreCase(el.getPath()
+                    .getLastClassDescriptor().getUnqualifiedName())) {
+                // don't show locations (they are already displayed
+                // parts of the element)
+                continue;
+            }
+
+            if (el.getField() != null) {
+                String unqualName = el.getPath()
+                        .getLastClassDescriptor().getUnqualifiedName();
+                String attributeName = trimAttribute(
+                        attributesNames.get(i), unqualName);
+                checkAttribute(el, attributeName);
+            }
+        }
+    }
+
+    private void processParent(Map<String, Integer> pathToIdMap,
+            Map<Integer, List<String>> idToParentPathMap,
+            Map<Integer, ResultElement> idToResultElementMap, SequenceOntology so) {
+
+        Set<String> addPar = new LinkedHashSet<String>();
+        List<String> parentPaths = idToParentPathMap.get(lastLsfId);
+        if (!parentPaths.isEmpty()) {
+            for (String parentPath : parentPaths) {
+                Integer parentId = pathToIdMap.get(parentPath);
+                // parents not in view, e.g. Gene.transcripts.exons, gene or/and
+                // transcripts not display, thus Gene or/and Gene.transcripts
+                // will not be in pathToIdMap
+                if (parentId == null) {
+                    continue;
+                }
+                SequenceFeature parent = (SequenceFeature) idToResultElementMap
+                        .get(parentId).getObject();
+                String parentClassName = idToResultElementMap.get(parentId)
+                        .getPath().getLastClassDescriptor()
+                        .getUnqualifiedName().toLowerCase();
+                String featureClassName = idToResultElementMap.get(lastLsfId)
+                        .getPath().getLastClassDescriptor()
+                        .getUnqualifiedName().toLowerCase();
+                // reverse relationship, e.g. Gene.exons.transcripts, exon
+                // is not parent of transcript, use SO to validate the correct
+                // parents
+                // TODO Limitation - exon doesn't know transcript is a parent
+                // since the parents are found reversely from path string, but
+                // transcript is behind it
+                Set<String> parentsSOTerms = so.getAllPartOfs(featureClassName);
+                if (parentsSOTerms.contains(parentClassName)) {
+                    addPar.add(parent.getPrimaryIdentifier());
+                }
+            }
+        }
+        if (addPar.size() > 0) {
+            attributes.put("Parent", new ArrayList<String>(addPar));
+        }
+
     }
 
     private String trimAttribute(String attribute, String unqualName) {
@@ -315,12 +384,10 @@ public class GFF3Exporter implements Exporter
         return attribute;
     }
 
-
     /**
      *
      */
     private void makeRecord() {
-
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
                 attributes, makeUcscCompatible);
 
@@ -366,8 +433,6 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-
-
     private List<String> formatElementValue(ResultElement el) {
         List<String> ret = new ArrayList<String>();
         String s;
@@ -385,7 +450,6 @@ public class GFF3Exporter implements Exporter
         return ret;
     }
 
-
     private List<ResultElement> getResultElements(List<ResultElement> row) {
         List<ResultElement> els = new ArrayList<ResultElement>();
         for (Integer index : featureIndexes) {
@@ -395,7 +459,6 @@ public class GFF3Exporter implements Exporter
         }
         return els;
     }
-
 
     /**
      * {@inheritDoc}
@@ -421,20 +484,35 @@ public class GFF3Exporter implements Exporter
         return writtenResultsCount;
     }
 
-    private void finishLastRow() {
-        GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
-                attributes, makeUcscCompatible);
+    /**
+     * Remove the elements from row which are not in pathCollection
+     * @param row
+     * @param pathCollection
+     * @return
+     */
+    private List<ResultElement> filterResultRow(List<ResultElement> row,
+            Collection<Path> unionPathCollection, Collection<Path> newPathCollection) {
 
-        if (gff3Record != null) {
-            // have a chromsome ref and chromosomeLocation ref
-            if (!headerPrinted) {
-                out.println(getHeader());
-                headerPrinted = true;
-            }
+        List<ResultElement> newRow = new ArrayList<ResultElement>();
 
-            out.println(gff3Record.toGFF3());
-            writtenResultsCount++;
+        if (unionPathCollection == null && newPathCollection == null) {
+            return row;
         }
-        lastLsfId = null;
+
+        if (unionPathCollection.containsAll(newPathCollection)) {
+            for (Path p : newPathCollection) {
+                ResultElement el = row.get(((List<Path>) unionPathCollection).indexOf(p));
+                if (el != null) {
+                    newRow.add(el);
+                } else {
+                    newRow.add(null);
+                }
+            }
+            return newRow;
+        } else {
+            throw new RuntimeException("pathCollection: " + newPathCollection
+                    + ", elPathList contains pathCollection: "
+                    + unionPathCollection.containsAll(newPathCollection));
+        }
     }
 }

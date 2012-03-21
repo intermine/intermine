@@ -42,6 +42,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
      * @return an IdResolver for FlyBase
      */
+    @Override
     protected IdResolver createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);

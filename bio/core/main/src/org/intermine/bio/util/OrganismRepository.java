@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.log4j.Logger;
 
 /**
  * A class to hold information about organisms.
@@ -27,9 +28,12 @@ import org.apache.commons.collections.keyvalue.MultiKey;
  */
 public final class OrganismRepository
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(OrganismRepository.class);
     private static OrganismRepository or = null;
     private Map<Integer, OrganismData> taxonMap = new HashMap<Integer, OrganismData>();
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
+    private Map<String, OrganismData> shortNameMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
     private Map<Integer, OrganismData> strainMap = new HashMap<Integer, OrganismData>();
 
@@ -54,6 +58,7 @@ public final class OrganismRepository
      * Return an OrganismRepository created from a properties file in the class path.
      * @return the OrganismRepository
      */
+    @SuppressWarnings("unchecked")
     public static OrganismRepository getOrganismRepository() {
         if (or == null) {
             Properties props = new Properties();
@@ -123,6 +128,7 @@ public final class OrganismRepository
 
             for (OrganismData od: or.taxonMap.values()) {
                 or.genusSpeciesMap.put(new MultiKey(od.getGenus(), od.getSpecies()), od);
+                or.shortNameMap.put(od.getShortName(), od);
             }
         }
 
@@ -171,6 +177,19 @@ public final class OrganismRepository
             return null;
         }
         return abbreviationMap.get(abbreviation.toLowerCase());
+    }
+
+    /**
+     * Look up OrganismData objects by shortName, short names are case sensitive.
+     * Return null if there is no such organism.
+     * @param shortName the short name. e.g. "H. sapiens"
+     * @return the OrganismData
+     */
+    public OrganismData getOrganismDataByShortName(String shortName) {
+        if (shortName == null) {
+            return null;
+        }
+        return shortNameMap.get(shortName);
     }
 
     /**

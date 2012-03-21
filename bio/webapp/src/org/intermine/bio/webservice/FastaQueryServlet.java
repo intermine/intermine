@@ -1,5 +1,15 @@
 package org.intermine.bio.webservice;
 
+/*
+ * Copyright (C) 2002-2012 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -7,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -19,8 +28,6 @@ import org.intermine.web.logic.session.SessionMethods;
 public class FastaQueryServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
-
-    private static final Logger LOG = Logger.getLogger(FastaQueryServlet.class);
 
     /**
      * {@inheritDoc}}

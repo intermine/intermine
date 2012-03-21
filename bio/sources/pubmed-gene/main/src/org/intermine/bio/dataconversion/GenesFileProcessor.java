@@ -294,6 +294,8 @@ public class GenesFileProcessor
             dbId = dbId.substring(8);
         } else if (dbId.toUpperCase().startsWith("VECTORBASE:")) {
             dbId = dbId.substring(11);
+        } else if (dbId.toUpperCase().startsWith("TAIR:")) {
+            dbId = dbId.substring(5);
         } else if (dbId.toUpperCase().startsWith("MGI:")) {
             String[] bits = dbId.split(":");
             if (bits.length == 0) {

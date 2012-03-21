@@ -7,24 +7,92 @@
 
 <!-- geneStructureDisplayer.jsp -->
 
-<div class="collection-table">
+<div class="collection-of-collections" id="gene-structure-displayer">
 
-<c:choose>
-<c:when test="${gene.id == actualId}">
- <h3>Gene models - <c:out value="${gene.symbol} ${gene.primaryIdentifier}"/></h3>
-</c:when>
-<c:otherwise>
-  <h3>Gene models - <c:out value="${gene.symbol} ${gene.primaryIdentifier}"/></h3>
-</c:otherwise>
-</c:choose>
+<style>
+#gene-structure-displayer div.switchers a.switcher:not(:last-child):after { content:",", display:inline-block; width:2px;height:10px; }
+</style>
 
+<div class="header">
+  <c:choose>
+  <c:when test="${gene.id == actualId}">
+   <h3>Gene models - <c:out value="${gene.symbol} ${gene.primaryIdentifier}"/></h3>
+  </c:when>
+  <c:otherwise>
+    <h3>Gene models - <c:out value="${gene.symbol} ${gene.primaryIdentifier}"/></h3>
+  </c:otherwise>
+  </c:choose>
+
+  <p>
+    <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
+    Gene models
+  </p>
+
+  <c:if test="${!empty gene.transcripts}">
+    <div class="switchers">
+      <a href="#" id="transcripts" class="switcher">Transcripts</a>: ${fn:length(gene.transcripts)}&nbsp;
+      <c:if test="${settings.hasExons}">
+        <c:set var="count" value="0" />
+        <c:forEach items="${geneModels}" var="geneModel">
+          <c:set var="count" value="${fn:length(geneModel.exons) + count}" />
+        </c:forEach>
+        <c:if test="${count > 0}">
+          <a href="#" id="exons" class="switcher">Exons</a>: ${count}&nbsp;
+        </c:if>
+      </c:if>
+      <c:if test="${settings.hasIntrons}">
+        <c:set var="count" value="0" />
+        <c:forEach items="${geneModels}" var="geneModel">
+          <c:set var="count" value="${fn:length(geneModel.introns) + count}" />
+        </c:forEach>
+        <c:if test="${count > 0}">
+          <a href="#" id="introns" class="switcher">Introns</a>: ${count}&nbsp;
+        </c:if>
+      </c:if>
+      <c:if test="${settings.hasFivePrimeUTRs}">
+        <c:set var="count" value="0" />
+        <c:forEach items="${geneModels}" var="geneModel">
+          <c:set var="count" value="${fn:length(geneModel.fivePrimeUTR) + count}" />
+        </c:forEach>
+        <c:if test="${count > 0}">
+          <a href="#" id="fiveprimeutrs" class="switcher">5' UTR</a>: ${count}&nbsp;
+        </c:if>
+      </c:if>
+      <c:if test="${settings.hasThreePrimeUTRs}">
+        <c:set var="count" value="0" />
+        <c:forEach items="${geneModels}" var="geneModel">
+          <c:set var="count" value="${fn:length(geneModel.threePrimeUTR) + count}" />
+        </c:forEach>
+        <c:if test="${count > 0}">
+          <a href="#" id="threeprimeutrs" class="switcher">3' UTR</a>: ${count}&nbsp;
+        </c:if>
+      </c:if>
+      <c:if test="${settings.hasCDSs}">
+        <c:set var="count" value="0" />
+        <c:forEach items="${geneModels}" var="geneModel">
+          <c:set var="count" value="${fn:length(geneModel.CDSs) + count}" />
+        </c:forEach>
+        <c:if test="${count > 0}">
+          <a href="#" id="cdss" class="switcher">CDSs</a>: ${count}&nbsp;
+        </c:if>
+      </c:if>
+    </div>
+  </c:if>
+  <script type="text/javascript">
+    jQuery("#gene-structure-displayer div.switchers a").click(function(e) {
+      jQuery("#gene-structure-displayer div.collection-table").toggle();
+      e.preventDefault();
+    });
+  </script>
+</div>
 
 <c:if test="${!settings.hasTranscripts}">
   <em>No gene models loaded for ${settings.organism}</em>
 </c:if>
 
-<c:if test="${!empty gene.transcripts}">
 
+<c:if test="${!empty gene.transcripts}">
+<div class="collection-table" style="display:none;">
   <table class="tiny-font">
     <thead>
       <tr>
@@ -209,7 +277,6 @@
     </tbody>
 
   </table>
-
 <p style="display:none;" class="toggle"><a class="toggler"><span>Show all rows</span></a></p>
 
 <script type="text/javascript">
@@ -233,6 +300,7 @@ if (geneStructureDisplayerSize > 1) {
 }
 </script>
 
+</div>
 </c:if>
 
 </div>

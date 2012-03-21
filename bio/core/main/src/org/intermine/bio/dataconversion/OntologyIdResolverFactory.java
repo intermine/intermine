@@ -46,6 +46,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
      * @return an IdResolver for FlyBase
      */
+    @Override
     protected IdResolver createIdResolver() {
         IdResolver resolver = new IdResolver(ontology);
 

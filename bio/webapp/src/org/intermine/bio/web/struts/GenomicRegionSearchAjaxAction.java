@@ -38,6 +38,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.util.NameUtil;
+import org.intermine.bio.web.export.GenomicRegionSequenceExporter;
 import org.intermine.bio.web.logic.GenomicRegionSearchService;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
@@ -71,6 +72,7 @@ public class GenomicRegionSearchAjaxAction extends Action
     private String spanUUIDString;
     private GenomicRegionSearchService grsService;
     private Map<String, Map<GenomicRegion, List<List<String>>>> spanOverlapFullResultMap;
+    private Map<String, Map<GenomicRegion, Map<String, Integer>>> spanOverlapFullStatMap;
     private Map<GenomicRegionSearchConstraint, String> spanConstraintMap;
     private HttpSession session;
     private WebConfig webConfig;
@@ -87,6 +89,8 @@ public class GenomicRegionSearchAjaxAction extends Action
         // key - UUID
         this.spanOverlapFullResultMap = (Map<String, Map<GenomicRegion, List<List<String>>>>)
             session.getAttribute("spanOverlapFullResultMap");
+        this.spanOverlapFullStatMap = (Map<String, Map<GenomicRegion, Map<String, Integer>>>)
+            session.getAttribute("spanOverlapFullStatMap");
         this.spanConstraintMap = (HashMap<GenomicRegionSearchConstraint, String>) session
                 .getAttribute("spanConstraintMap");
         this.webConfig = SessionMethods.getWebConfig(request);
@@ -227,6 +231,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
+                spanOverlapFullStatMap.get(spanUUIDString),
                 genomicRegionList, fromIdx, toIdx, session);
 
         out.println(htmlStr);
@@ -240,10 +245,11 @@ public class GenomicRegionSearchAjaxAction extends Action
         PrintWriter out = response.getWriter();
 
         // Parse region string to a list of genomic region objects
-        List<GenomicRegion> grList = GenomicRegionSearchUtil.generateGenomicRegion(regionSet);
+        List<GenomicRegion> grList = GenomicRegionSearchUtil.generateGenomicRegions(regionSet);
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
+                spanOverlapFullStatMap.get(spanUUIDString),
                 grList, 0, grList.size() - 1, session);
 
         out.println(htmlStr);
@@ -334,106 +340,132 @@ public class GenomicRegionSearchAjaxAction extends Action
 
             stringExporter.export(exportResults);
         } else {
-            boolean doGzip = false;
-            Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
+            if ("chrSeg".equals(format)) {
+                // download genomic region DNA sequence
+                List<GenomicRegion> grList;
+                String exportFileName;
+                if ("all".equals(criteria)) {
+                    grList = new ArrayList<GenomicRegion>(
+                            spanOverlapFullResultMap.get(spanUUIDString).keySet());
 
-            if ("all".equals(criteria)) {
-                for (List<List<String>> l : featureMap.values()) {
-                    if (l != null) {
-                        for (List<String> r : l) {
-                            featureIdSet.add(Integer.valueOf(r.get(0)));
+                    exportFileName = "genomic_region_all.fasta";
+
+                } else {
+                    grList = GenomicRegionSearchUtil
+                    .generateGenomicRegions(Arrays.asList(new String[] {criteria}));
+
+                    exportFileName = "genomic_region.fasta";
+                }
+
+                response.setHeader("Content-Disposition",
+                        "attachment; filename=\"" + exportFileName + "\"");
+
+                GenomicRegionSequenceExporter grse = new GenomicRegionSequenceExporter(
+                        api.getObjectStore(), response);
+                grse.export(grList);
+            } else {
+                boolean doGzip = false;
+                Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
+
+                if ("all".equals(criteria)) {
+                    for (List<List<String>> l : featureMap.values()) {
+                        if (l != null) {
+                            for (List<String> r : l) {
+                                featureIdSet.add(Integer.valueOf(r.get(0)));
+                            }
+                        }
+                    }
+
+                } else {
+                    featureIdSet = grsService.getGenomicRegionOverlapFeaturesAsSet(
+                            criteria, featureMap);
+                }
+
+                // Can read from web.properties to get pre-defined views
+                Set<String> exportFeaturesViews = null;
+                List<String> exportFeaturesSortOrder = null;
+
+                // == Experimental code ==
+                String exportFeaturesViewsStr = SessionMethods.getWebProperties(
+                        session.getServletContext()).getProperty(
+                        "genomicRegionSearch.query." + facet + ".views");
+
+                String exportFeaturesSortOrderStr = SessionMethods.getWebProperties(
+                        session.getServletContext()).getProperty(
+                        "genomicRegionSearch.query." + facet + ".sortOrder");
+
+                if (exportFeaturesViewsStr != null) {
+                    if (!exportFeaturesViewsStr.isEmpty()) {
+                        try {
+                            exportFeaturesViews = new LinkedHashSet<String>(
+                                    Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
+                                            ",")));
+                            exportFeaturesSortOrder = Arrays.asList(StringUtil
+                                    .split(exportFeaturesSortOrderStr, " "));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }
+                // == End of experimental code ==
 
-            } else {
-                featureIdSet = grsService.getGenomicRegionOverlapFeaturesAsSet(
-                        criteria, featureMap);
-            }
+                PathQuery q = grsService.getExportFeaturesQuery(featureIdSet, facet,
+                        exportFeaturesViews, exportFeaturesSortOrder);
 
-            // Can read from web.properties to get pre-defined views
-            Set<String> exportFeaturesViews = null;
-            List<String> exportFeaturesSortOrder = null;
-
-            // == Experimental code ==
-            String exportFeaturesViewsStr = SessionMethods.getWebProperties(
-                    session.getServletContext()).getProperty(
-                    "genomicRegionSearch.query." + facet + ".views");
-
-            String exportFeaturesSortOrderStr = SessionMethods.getWebProperties(
-                    session.getServletContext()).getProperty(
-                    "genomicRegionSearch.query." + facet + ".sortOrder");
-
-            if (exportFeaturesViewsStr != null) {
-                try {
-                    exportFeaturesViews = new LinkedHashSet<String>(
-                            Arrays.asList(StringUtil.split(exportFeaturesViewsStr,
-                                    ",")));
-
-                    exportFeaturesSortOrder =
-                            Arrays.asList(StringUtil.split(exportFeaturesSortOrderStr, " "));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                String organism = new String();
+                for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
+                        .entrySet()) {
+                    if (e.getValue().equals(spanUUIDString)) {
+                        organism = e.getKey().getOrgName();
+                    }
                 }
-            }
-            // == End of experimental code ==
 
-            PathQuery q = grsService.getExportFeaturesQuery(featureIdSet, facet,
-                    exportFeaturesViews, exportFeaturesSortOrder);
+                Set<String> organisms = new HashSet<String>();
+                organisms.add(organism);
+                Set<Integer> taxIds = grsService.getTaxonIds(organisms);
 
-            String organism = new String();
-            for (Entry<GenomicRegionSearchConstraint, String> e : spanConstraintMap
-                    .entrySet()) {
-                if (e.getValue().equals(spanUUIDString)) {
-                    organism = e.getKey().getOrgName();
+                WebResultsExecutor executor = api.getWebResultsExecutor(profile);
+                PagedTable pt = new PagedTable(executor.execute(q));
+
+                if (pt.getWebTable() instanceof WebResults) {
+                    ((WebResults) pt.getWebTable()).goFaster();
                 }
+
+                TableExporterFactory factory = new TableExporterFactory(webConfig);
+
+                TableHttpExporter exporter = factory.getExporter(format);
+
+                if (exporter == null) {
+                    throw new RuntimeException("unknown export format: " + format);
+                }
+
+                TableExportForm exportForm = new TableExportForm();
+                // Ref to StandardHttpExporter
+                exportForm.setIncludeHeaders(true);
+
+                if ("gff3".equals(format)) {
+                    exportForm = new GFF3ExportForm();
+                    exportForm.setDoGzip(doGzip);
+                    ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
+                }
+
+                if ("sequence".equals(format)) {
+                    exportForm = new SequenceExportForm();
+                    exportForm.setDoGzip(doGzip);
+                }
+
+                if ("bed".equals(format)) {
+                    // TODO parameter passed from webpage?
+                    String ucscCompatibleCheck = "yes";
+                    exportForm = new BEDExportForm();
+                    exportForm.setDoGzip(doGzip);
+                    ((BEDExportForm) exportForm).setOrgansimString(organism);
+                    ((BEDExportForm) exportForm)
+                            .setUcscCompatibleCheck(ucscCompatibleCheck);
+                }
+
+                exporter.export(pt, request, response, exportForm, null, null);
             }
-
-            Set<String> organisms = new HashSet<String>();
-            organisms.add(organism);
-            Set<Integer> taxIds = grsService.getTaxonIds(organisms);
-
-            WebResultsExecutor executor = api.getWebResultsExecutor(profile);
-            PagedTable pt = new PagedTable(executor.execute(q));
-
-            if (pt.getWebTable() instanceof WebResults) {
-                ((WebResults) pt.getWebTable()).goFaster();
-            }
-
-            TableExporterFactory factory = new TableExporterFactory(webConfig);
-
-            TableHttpExporter exporter = factory.getExporter(format);
-
-            if (exporter == null) {
-                throw new RuntimeException("unknown export format: " + format);
-            }
-
-            TableExportForm exportForm = new TableExportForm();
-            // Ref to StandardHttpExporter
-            exportForm.setIncludeHeaders(true);
-
-            if ("gff3".equals(format)) {
-                exportForm = new GFF3ExportForm();
-                exportForm.setDoGzip(doGzip);
-                ((GFF3ExportForm) exportForm).setOrganisms(taxIds);
-            }
-
-            if ("sequence".equals(format)) {
-                exportForm = new SequenceExportForm();
-                exportForm.setDoGzip(doGzip);
-            }
-
-            if ("bed".equals(format)) {
-                String ucscCompatibleCheck = "yes"; // TODO parameter pass from
-                                                    // webpage
-                exportForm = new BEDExportForm();
-                exportForm.setDoGzip(doGzip);
-                ((BEDExportForm) exportForm).setOrgansimString(organism);
-                ((BEDExportForm) exportForm)
-                        .setUcscCompatibleCheck(ucscCompatibleCheck);
-            }
-
-            exporter.export(pt, request, response, exportForm);
         }
     }
 
@@ -503,7 +535,6 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         out.flush();
         out.close();
-
     }
 
     /**
@@ -518,6 +549,7 @@ public class GenomicRegionSearchAjaxAction extends Action
 
         String htmlStr = grsService.convertResultMapToHTML(
                 spanOverlapFullResultMap.get(spanUUIDString),
+                spanOverlapFullStatMap.get(spanUUIDString),
                 grList, 0, grList.size() - 1, session);
 
         PrintWriter out = response.getWriter();

@@ -17,6 +17,7 @@ use constant ORGANISMS => (
     "Caenorhabditis_elegans", 
     "Mus_musculus",
     "Homo_sapiens",
+    "Saccharomyces_cerevisiae",
 );
 
 sub BUILD {
@@ -52,7 +53,7 @@ sub generate_version {
     my $ua = LWP::UserAgent->new(agent => 'Mozilla/5.0');
     my $response = $ua->post(METADATA_URL, {directory => '/Current Release'});
     confess $response->status_line unless $response->is_success;
-    my $scraps = $scraper->scrape($response);
+    my $scraps = $scraper->scrape($response->content);
     my ($version) = $scraps->{heading} =~ /Release\s+(.*)/g;
     die "Could not determine Biogrid version" unless $version;
     return $version;

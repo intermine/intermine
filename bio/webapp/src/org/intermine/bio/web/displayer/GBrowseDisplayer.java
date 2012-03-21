@@ -34,8 +34,8 @@ public class GBrowseDisplayer extends ReportDisplayer
     }
 
     @Override
-    public void display(@SuppressWarnings("unused") HttpServletRequest request,
-            @SuppressWarnings("unused") ReportObject reportObject) {
-        // dummy, all the action happens on the JSP
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        String className = reportObject.getClassDescriptor().getUnqualifiedName();
+        request.setAttribute("className", className);
     }
 }

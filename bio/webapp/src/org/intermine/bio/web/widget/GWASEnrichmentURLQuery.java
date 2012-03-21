@@ -44,25 +44,18 @@ public class GWASEnrichmentURLQuery implements WidgetURLQuery
      * {@inheritDoc}
      */
     public PathQuery generatePathQuery(boolean showAll) {
-
         PathQuery q = new PathQuery(os.getModel());
-        String bagType = bag.getType();
+        q.addViews("SNP.primaryIdentifier", "SNP.symbol", "SNP.organism.name",
+                  "SNP.GWASResults.study.firstAuthor",
+                  "SNP.GWASResults.phenotype",
+                  "SNP.GWASResults.pValue",
+                  "SNP.GWASResults.associatedVariantRiskAllele",
+                  "SNP.GWASResults.riskAlleleFreqInControls");
 
-        String prefix = "SNP";
-
-        q.addViews(prefix + ".primaryIdentifier",
-                prefix + ".symbol",
-                prefix + ".organism.name",
-                prefix + ".GWASResults.study.firstAuthor",
-                prefix + ".GWASResults.phenotype",
-                prefix + ".GWASResults.pValue",
-                prefix + ".GWASResults.associatedVariantRiskAllele",
-                prefix + ".GWASResults.riskAlleleFreqInControls");
-
-        q.addConstraint(Constraints.in(bagType, bag.getName()));
+        q.addConstraint(Constraints.in("SNP", bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues(prefix + ".GWASResults.phenotype",
+            q.addConstraint(Constraints.oneOfValues("SNP.GWASResults.phenotype",
                     Arrays.asList(keys)));
         }
         return q;

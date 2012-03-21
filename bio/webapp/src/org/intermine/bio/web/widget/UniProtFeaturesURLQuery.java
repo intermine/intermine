@@ -50,7 +50,7 @@ public class UniProtFeaturesURLQuery implements WidgetURLQuery
                 "Protein.features.feature.name", "Protein.features.type",
                 "Protein.features.description",
                 "Protein.features.begin", "Protein.features.end");
-        q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
+        q.addConstraint(Constraints.in("Protein", bag.getName()));
         if (!showAll) {
             String[] keys = key.split(",");
             q.addConstraint(Constraints.oneOfValues("Protein.features.feature.name",

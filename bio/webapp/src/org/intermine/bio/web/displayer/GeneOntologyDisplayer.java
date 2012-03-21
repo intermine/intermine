@@ -43,8 +43,10 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class GeneOntologyDisplayer extends ReportDisplayer
 {
-
-    private static final Set<String> ONTOLOGIES = new HashSet<String>();
+    /**
+     * The names of ontology root terms.
+     */
+    public static final Set<String> ONTOLOGIES = new HashSet<String>();
     private static final Map<String, String> EVIDENCE_CODES = new HashMap<String, String>();
     private Map<String, Boolean> organismCache = new HashMap<String, Boolean>();
 
@@ -105,7 +107,7 @@ public class GeneOntologyDisplayer extends ReportDisplayer
             Model model = im.getModel();
             PathQueryExecutor executor = im.getPathQueryExecutor(profile);
 
-            InterMineObject object = (InterMineObject) request.getAttribute("object");
+            InterMineObject object = (InterMineObject) reportObject.getObject();
             String primaryIdentifier = null;
             try {
                 primaryIdentifier = (String) object.getFieldValue("primaryIdentifier");

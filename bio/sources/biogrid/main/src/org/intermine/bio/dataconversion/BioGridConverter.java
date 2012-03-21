@@ -104,16 +104,19 @@ public class BioGridConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         File file = getCurrentFile();
         if (file == null) {
             throw new FileNotFoundException("No valid data files found.");
         }
+
         if (taxonIds != null || !taxonIds.isEmpty()) {
             if (!isValidOrganism(file.getName())) {
                 return;
             }
         }
+
         BioGridHandler handler = new BioGridHandler();
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -124,6 +127,11 @@ public class BioGridConverter extends BioFileConverter
     }
 
     private boolean isValidOrganism(String filename) {
+
+        // TODO BIOGRID-ORGANISM-Escherichia_coli_K12_MG1655-3.1.82.psi25.xml
+        // OrganismRepository doesn't contain E. coli substrains (only taxon id 562)
+        // in ecolimine project.xml, 562 must be included in biogrid source
+
         //BIOGRID-ORGANISM-Mus_musculus-3.1.76.psi25.xml:
         String organism = filename.substring(17);
         organism = organism.substring(0, organism.indexOf('-'));
@@ -135,6 +143,7 @@ public class BioGridConverter extends BioFileConverter
             return false;
         }
         OrganismData od = OR.getOrganismDataByGenusSpecies(bits[0], bits[1]);
+
         if (taxonIds.contains(String.valueOf(od.getTaxonId()))) {
             return true;
         }
@@ -151,9 +160,6 @@ public class BioGridConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
-            //10116.xref.ncbiGeneNumber = entrez gene/locuslink
-            //9606.secondaryIdentifier = shortLabel
-
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
 
@@ -193,12 +199,15 @@ public class BioGridConverter extends BioFileConverter
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close()  {
-        for (Item experiment : idsToExperiments.values()) {
-            try {
-                store(experiment);
-            } catch (ObjectStoreException e) {
-                throw new RuntimeException(e);
+        if (idsToExperiments != null) {
+            for (Item experiment : idsToExperiments.values()) {
+                try {
+                    store(experiment);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
@@ -228,12 +237,12 @@ public class BioGridConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attrs)
             throws SAXException {
             attName = null;
 
             /********************************* EXPERIMENT **********************************/
-
             // <experimentList><experimentDescription>
             if ("experimentDescription".equals(qName)) {
                 experimentHolder = getExperimentHolder(attrs.getValue("id"));
@@ -360,6 +369,7 @@ public class BioGridConverter extends BioFileConverter
         /**
          * {@inheritDoc}
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException {
             super.endElement(uri, localName, qName);
@@ -472,6 +482,7 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setAttribute("name", interactionName);
                 interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
+                LOG.info("interaction >>> " + interaction);
                 key = interactionName + " " + h.eh.experimentRefId + " " + ih.role;
                 if (interactions.contains(key)) {
                     // TODO BioGRID now contains protein and genetic interactions thus creating
@@ -529,6 +540,7 @@ public class BioGridConverter extends BioFileConverter
                 ih.valid = false;
                 return false;
             }
+
             ih.participant = storeGene(label, identifier, ih, taxonId);
 
             ih.valid = true;
@@ -545,6 +557,10 @@ public class BioGridConverter extends BioFileConverter
                 item.setAttribute(label, identifier);
                 try {
                     item.setReference("organism", getOrganism(taxonId));
+                    Item xref = processBioGridId(ih, item);
+                    if (xref != null) {
+                        item.addToCollection("crossReferences", xref);
+                    }
                     store(item);
                 } catch (ObjectStoreException e) {
                     throw new SAXException(e);
@@ -564,6 +580,18 @@ public class BioGridConverter extends BioFileConverter
                 interactors.put(interactorId, p.ih);
             }
             return p;
+        }
+
+        private Item processBioGridId(InteractorHolder ih, Item item)
+            throws ObjectStoreException {
+            String biogridID = ih.getBiogridId();
+            if (StringUtils.isNotEmpty(biogridID)) {
+                Item xref = createItem("CrossReference");
+                xref.setAttribute("identifier", biogridID);
+                store(xref);
+                return xref;
+            }
+            return null;
         }
 
         /**
@@ -756,6 +784,17 @@ public class BioGridConverter extends BioFileConverter
             public InteractorHolder(String id) {
                 this.biogridId = id;
             }
+
+            /**
+             * @return ID to use to link to biogrid
+             */
+            protected String getBiogridId() {
+                if (xrefs == null || xrefs.isEmpty()) {
+                    return null;
+                }
+                return xrefs.get("biogrid");
+            }
+
         }
 
 

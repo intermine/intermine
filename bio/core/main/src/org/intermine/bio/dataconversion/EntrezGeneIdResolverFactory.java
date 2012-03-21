@@ -41,6 +41,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * Build an IdResolver from Entrez Gene gene_info file
      * @return an IdResolver for Entrez Gene
      */
+    @Override
     protected IdResolver createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);

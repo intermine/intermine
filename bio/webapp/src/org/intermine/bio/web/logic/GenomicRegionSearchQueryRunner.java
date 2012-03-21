@@ -12,6 +12,7 @@ package org.intermine.bio.web.logic;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -60,6 +62,8 @@ public class GenomicRegionSearchQueryRunner implements Runnable
     private String spanUUIDString = null;
     private GenomicRegionSearchConstraint grsc = null;
     private Map<GenomicRegion, Query> queryMap = null;
+
+    private static Map<String, Map<String, ChromosomeInfo>> chrInfoMap = null;
 
     /**
      * Constructor
@@ -134,12 +138,31 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                 new HashMap<String, Map<GenomicRegion, List<List<String>>>>();
         }
 
+        @SuppressWarnings("unchecked")
+        // map of sequence feature statistics: key - class name. value - count of feature
+        Map<String, Map<GenomicRegion, Map<String, Integer>>> spanOverlapFullStatMap =
+             (Map<String, Map<GenomicRegion, Map<String, Integer>>>) request
+                            .getSession().getAttribute("spanOverlapFullStatMap");
+
+        if (spanOverlapFullStatMap == null) {
+            spanOverlapFullStatMap =
+                new HashMap<String, Map<GenomicRegion, Map<String, Integer>>>();
+        }
+
         Map<GenomicRegion, List<List<String>>> spanOverlapResultDisplayMap = Collections
                 .synchronizedMap(new LinkedHashMap<GenomicRegion, List<List<String>>>());
 
-        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)) {
+        Map<GenomicRegion, Map<String, Integer>> spanOverlapResultStatMap = Collections
+        .synchronizedMap(new LinkedHashMap<GenomicRegion, Map<String, Integer>>());
+
+        if (!spanOverlapFullResultMap.containsKey(spanUUIDString)
+                && !spanOverlapFullStatMap.containsKey(spanUUIDString)) {
+
             spanOverlapFullResultMap.put(spanUUIDString, spanOverlapResultDisplayMap);
             request.getSession().setAttribute("spanOverlapFullResultMap", spanOverlapFullResultMap);
+
+            spanOverlapFullStatMap.put(spanUUIDString, spanOverlapResultStatMap);
+            request.getSession().setAttribute("spanOverlapFullStatMap", spanOverlapFullStatMap);
 
             try {
                 ObjectStore os = SessionMethods.getInterMineAPI(
@@ -149,6 +172,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                     Results results = os.execute(e.getValue());
 
                     List<List<String>> spanResults = new ArrayList<List<String>>();
+
+                    Map<String, Integer> spanStatMap = new HashMap<String, Integer>();
+                    ValueComparator bvc =  new ValueComparator(spanStatMap);
+                    @SuppressWarnings("unchecked")
+                    TreeMap<String, Integer> sortedStatMap = new TreeMap<String, Integer>(bvc);
+
                     if (results == null || results.isEmpty()) {
                         spanOverlapResultDisplayMap.put(e.getKey(), null);
                     }
@@ -166,6 +195,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
                                 if (o instanceof Class) {
                                     item = ((Class) o).getSimpleName();
+                                    // add class stat to spanStatMap
+                                    if (spanStatMap.containsKey(item)) {
+                                        spanStatMap.put(item, spanStatMap.get(item) + 1);
+                                    } else {
+                                        spanStatMap.put(item, 1);
+                                    }
                                 } else {
                                     item = o.toString();
                                 }
@@ -175,9 +210,11 @@ public class GenomicRegionSearchQueryRunner implements Runnable
                             spanResults.add(resultRow);
                         }
                         spanOverlapResultDisplayMap.put(e.getKey(), spanResults);
+
+                        sortedStatMap.putAll(spanStatMap);
+                        spanOverlapResultStatMap.put(e.getKey(), sortedStatMap);
                     }
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -195,71 +232,73 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      */
     public static Map<String, Map<String, ChromosomeInfo>> getChromosomeInfo(
             InterMineAPI im, Profile profile) {
+        if (chrInfoMap != null) {
+            return chrInfoMap;
+        } else {
+            // a Map contains orgName and its chrInfo accordingly
+            // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
+            chrInfoMap = new HashMap<String, Map<String, ChromosomeInfo>>();
 
-        // a Map contains orgName and its chrInfo accordingly
-        // e.g. <D.Melanogaster, <X, (D.Melanogaster, X, x, 5000)>>
-        Map<String, Map<String, ChromosomeInfo>> chrInfoMap =
-            new HashMap<String, Map<String, ChromosomeInfo>>();
+            try {
+                PathQuery query = new PathQuery(im.getModel());
 
-        try {
-            PathQuery query = new PathQuery(im.getModel());
+                // Add views
+                query.addViews("Chromosome.organism.shortName",
+                        "Chromosome.primaryIdentifier",
+                        "Chromosome.length");
 
-            // Add views
-            query.addViews("Chromosome.organism.shortName",
-                    "Chromosome.primaryIdentifier",
-                    "Chromosome.length");
+                // Add orderby
+                query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
 
-            // Add orderby
-            query.addOrderBy("Chromosome.organism.shortName", OrderDirection.ASC);
+                ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
 
-            ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
+                // a List contains all the chrInfo (organism, chrPID, length)
+                List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
+                // a Set contains all the orgName
+                Set<String> orgSet = new HashSet<String>();
 
-            // a List contains all the chrInfo (organism, chrPID, length)
-            List<ChromosomeInfo> chrInfoList = new ArrayList<ChromosomeInfo>();
-            // a Set contains all the orgName
-            Set<String> orgSet = new HashSet<String>();
+                while (results.hasNext()) {
+                    List<ResultElement> row = results.next();
 
-            while (results.hasNext()) {
-                List<ResultElement> row = results.next();
+                    String org = (String) row.get(0).getField();
+                    String chrPID = (String) row.get(1).getField();
+                    Integer chrLength = (Integer) row.get(2).getField();
 
-                String org = (String) row.get(0).getField();
-                String chrPID = (String) row.get(1).getField();
-                Integer chrLength = (Integer) row.get(2).getField();
+                    // Add orgName to HashSet to filter out duplication
+                    orgSet.add(org);
 
-                // Add orgName to HashSet to filter out duplication
-                orgSet.add(org);
-
-                if (chrLength != null) {
                     ChromosomeInfo chrInfo = new ChromosomeInfo();
                     chrInfo.setOrgName(org);
                     chrInfo.setChrPID(chrPID);
-                    chrInfo.setChrLength(chrLength);
-
+                    if (chrLength != null) {
+                        chrInfo.setChrLength(chrLength);
+                    }
                     // Add ChromosomeInfo to Arraylist
                     chrInfoList.add(chrInfo);
                 }
-            }
 
-            // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
-            // orgName and value as a ArrayList containing a list of chrInfo which has the same
-            // orgName
-            for (String o : orgSet) {
-                // a map to store chrInfo for the same organism
-                Map<String, ChromosomeInfo> chrInfoSubMap = new HashMap<String, ChromosomeInfo>();
+                // Iterate orgSet and chrInfoList to put data in chrInfoMap which has the key as the
+                // orgName and value as a ArrayList containing a list of chrInfo which has the same
+                // orgName
+                for (String o : orgSet) {
+                    // a map to store chrInfo for the same organism
+                    Map<String, ChromosomeInfo> chrInfoSubMap =
+                        new HashMap<String, ChromosomeInfo>();
 
-                for (ChromosomeInfo chrInfo : chrInfoList) {
-                    if (o.equals(chrInfo.getOrgName())) {
-                        chrInfoSubMap.put(chrInfo.getChrPIDLowerCase(), chrInfo);
-                        chrInfoMap.put(o, chrInfoSubMap);
+                    for (ChromosomeInfo chrInfo : chrInfoList) {
+                        if (o.equals(chrInfo.getOrgName())) {
+                            chrInfoSubMap.put(chrInfo.getChrPIDLowerCase(), chrInfo);
+                            chrInfoMap.put(o, chrInfoSubMap);
+                        }
                     }
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            return chrInfoMap;
         }
-
-        return chrInfoMap;
     }
 
     /**
@@ -356,8 +395,35 @@ public class GenomicRegionSearchQueryRunner implements Runnable
 
             orgTaxonIdMap.put(orgName, orgTaxonId);
         }
-
         return orgTaxonIdMap;
+    }
+}
 
+/**
+ * Comparator to sort a map on values (integer)
+ * http://stackoverflow.com/questions/109383/how-to-sort-a-mapkey-value-on-the-values-in-java
+ * @author Fengyuan Hu
+ *
+ */
+class ValueComparator implements Comparator
+{
+    Map<String, Integer> base;
+
+    /**
+     * @param base the map itself
+     */
+    public ValueComparator(Map<String, Integer> base) {
+        this.base = base;
+    }
+
+    @Override
+    public int compare(Object a, Object b) {
+        if (base.get(a) < base.get(b)) {
+            return 1;
+        } else if (base.get(a) == base.get(b)) {
+            return -1;
+        } else {
+            return -1;
+        }
     }
 }

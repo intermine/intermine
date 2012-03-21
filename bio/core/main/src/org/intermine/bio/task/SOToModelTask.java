@@ -10,11 +10,17 @@ package org.intermine.bio.task;
  *
  */
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.intermine.bio.ontology.OboToModel;
+import org.intermine.bio.ontology.SequenceOntology;
+import org.intermine.bio.ontology.SequenceOntologyFactory;
+import org.intermine.metadata.Model;
 
 /**
  * A Task that reads a SO OBO files and writes so_additions.xml
@@ -54,6 +60,7 @@ public class SOToModelTask extends Task
     /**
      * {@inheritDoc}
      */
+    @Override
     public void execute() {
         if (soTermListFile == null || !soTermListFile.exists()) {
             throw new BuildException("Could not find file containing SO terms to add to the model,"
@@ -65,8 +72,20 @@ public class SOToModelTask extends Task
         }
 
         try {
-            OboToModel.createAndWriteModel("so", soFile.getCanonicalPath(),
-                    "org.intermine.model.bio", soTermListFile, outputFile);
+            SequenceOntology so = SequenceOntologyFactory.getSequenceOntology(soFile,
+                    soTermListFile);
+            Model model = null;
+            PrintWriter out = null;
+            try {
+                model = so.getModel();
+                out = new PrintWriter(new BufferedWriter(new FileWriter(outputFile)));
+            } catch (IOException e) {
+                throw new RuntimeException("Couldn't create new model file", e);
+            }
+            out.println(model.toAdditionsXML());
+            out.flush();
+            out.close();
+            System.out .println("Wrote " + outputFile.getPath());
         } catch (Exception e) {
             throw new BuildException(e);
         }

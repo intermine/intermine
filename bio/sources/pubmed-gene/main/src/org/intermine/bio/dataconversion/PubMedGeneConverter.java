@@ -91,6 +91,7 @@ public class PubMedGeneConverter extends BioFileConverter
      */
     public void process(Reader reader)
         throws Exception {
+
         if (getInfoFile() == null) {
             throw new RuntimeException("PubMedGeneConverter: Property infoFile is not set.");
         }

@@ -66,14 +66,27 @@ public class PathwayLdr extends EnrichmentWidgetLdr
         this.bag = bag;
         taxonIds = BioUtil.getOrganisms(os, bag, false, "taxonId");
         model = os.getModel();
+        dataset = null;
         if (extraAttribute == null) {
             dataset = KEGG;
         } else {
-            if (!FILTERS.contains(extraAttribute)) {
-                throw new RuntimeException("filter must be one of " + FILTERS
-                        + ", not \"" + extraAttribute + "\"");
+            if (FILTERS.contains(extraAttribute)) {
+                dataset = extraAttribute;
+            } else {
+                // Accept any initial substring of the data-set names
+                // so "reactome", "kegg", and "all" are valid
+                for (String ds : FILTERS) {
+                    if (ds.toLowerCase().startsWith(extraAttribute.toLowerCase())) {
+                        dataset = ds;
+                        break;
+                    }
+                }
             }
-            dataset = extraAttribute;
+        }
+
+        if (dataset == null) {
+            throw new RuntimeException("filter must be one of " + FILTERS
+                    + ", not \"" + extraAttribute + "\"");
         }
     }
 
@@ -139,11 +152,12 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             cs.addConstraint(new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb()));
         }
 
+        // can't be null, we need a way to determine if a gene is unique
+        cs.addConstraint(new SimpleConstraint(qfPrimaryIdentifier, ConstraintOp.IS_NOT_NULL));
+
         Query q = new Query();
 
-        if ("KEGG".equals(dataset) || "Reactome".equals(dataset)) {
-
-            String datasetTitle = ("KEGG".equals(dataset) ? KEGG : REACTOME);
+        if (KEGG.equals(dataset) || REACTOME.equals(dataset)) {
 
             QueryClass qcDataset = new QueryClass(DataSet.class);
             QueryField qfDataset = new QueryField(qcDataset, "name");
@@ -154,7 +168,7 @@ public class PathwayLdr extends EnrichmentWidgetLdr
             // dataset (if user selects)
             QueryExpression c10 = new QueryExpression(QueryExpression.LOWER, qfDataset);
             cs.addConstraint(new SimpleConstraint(c10, ConstraintOp.EQUALS,
-                                                  new QueryValue(datasetTitle.toLowerCase())));
+                                                  new QueryValue(dataset.toLowerCase())));
 
             q.addFrom(qcDataset);
         }

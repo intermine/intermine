@@ -120,6 +120,7 @@ public class OrganismData
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toString() {
         return genus + " " + species + ", " + abbreviation + ", " + taxonId + ", " + ensemblPrefix;
     }

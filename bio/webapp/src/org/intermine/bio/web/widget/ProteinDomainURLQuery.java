@@ -46,9 +46,10 @@ public class ProteinDomainURLQuery implements WidgetURLQuery
     public PathQuery generatePathQuery(boolean showAll) {
         PathQuery q = new PathQuery(os.getModel());
         String bagType = bag.getType();
-        String prefix = ("Protein".equals(bagType) ? "Protein" : "Gene.proteins");
+        String prefix = ("Protein".equals(bagType) ? "Protein" : bagType + ".proteins");
         if ("Gene".equals(bagType)) {
-            q.addViews("Gene.secondaryIdentifier", "Gene.symbol");
+            q.addViews(bagType + ".secondaryIdentifier", bagType + ".symbol");
+
         }
         q.addViews(prefix + ".primaryIdentifier",
                 prefix + ".organism.name",

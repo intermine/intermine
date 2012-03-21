@@ -99,6 +99,7 @@ public final class GeneModelCache
      * @param model the data model
      * @return a list of gene models or an empty list
      */
+    @SuppressWarnings("unchecked")
     protected static synchronized List<GeneModel> fetchGeneModels(Gene gene, Model model) {
         if (gene == null) {
             return Collections.EMPTY_LIST;
@@ -122,6 +123,12 @@ public final class GeneModelCache
         return geneModels;
     }
 
+    /**
+     *
+     * @param organismName org name
+     * @param os ObjectStore
+     * @return GeneModelSettings
+     */
     public static GeneModelSettings getGeneModelOrganismSettings(String organismName,
             ObjectStore os) {
         if (!organismSettings.containsKey(organismName)) {
@@ -212,7 +219,7 @@ public final class GeneModelCache
     }
 
     private static boolean returnsResults(Query q, ObjectStore os) {
-        Results res = os.execute(q,1, true, false, false);
+        Results res = os.execute(q, 1, true, false, false);
         return res.iterator().hasNext();
     }
 

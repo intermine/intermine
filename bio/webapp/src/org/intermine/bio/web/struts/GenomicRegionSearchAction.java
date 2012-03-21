@@ -100,8 +100,8 @@ public class GenomicRegionSearchAction extends InterMineAction
 
                 LiftOverService los = new LiftOverService();
                 Map<String, List<GenomicRegion>> liftedGenomicRegionMap = los.doLiftOver(
-                        grsService.getConstraint().getGenomicRegionList(),
-                        organism, genomeVersionSource, genomeVersionTarget, liftOverServiceUrl);
+                        grsService.getConstraint(), organism, genomeVersionSource,
+                        genomeVersionTarget, liftOverServiceUrl);
 
                 // TODO verbose
                 if (liftedGenomicRegionMap == null) {
@@ -118,7 +118,7 @@ public class GenomicRegionSearchAction extends InterMineAction
             }
         }
 
-        // Span validation
+        // Genomic region validation
         Map<String, Map<String, ChromosomeInfo>> chrInfoMap = grsService
                 .getChromosomeInfomationMap();
         Map<String, List<GenomicRegion>> resultMap = grsService.validateGenomicRegions();
@@ -141,7 +141,7 @@ public class GenomicRegionSearchAction extends InterMineAction
 
             if (resultMap.get("error").size() == grsService.getConstraint()
                     .getGenomicRegionList().size()) { // all genomic regions are invalid
-                request.setAttribute("noneValidGenomicRegions", "true");
+                request.setAttribute("invalidGenomicRegions", "true");
                 return mapping.findForward("genomicRegionSearchResults");
             } else {
                 grsService.getConstraint().setGenomicRegionList(resultMap.get("pass"));
@@ -163,6 +163,8 @@ public class GenomicRegionSearchAction extends InterMineAction
 
         // Results Page css
         request.setAttribute("resultsCss", grsService.getResultsCss());
+        // Results Page javascript
+        request.setAttribute("resultsJavascript", grsService.getResultsJavascript());
 
         return mapping.findForward("genomicRegionSearchResults");
     }

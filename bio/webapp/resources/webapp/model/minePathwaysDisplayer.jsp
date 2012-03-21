@@ -72,7 +72,18 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 
 </script>
 
-<h3>Pathways</h3>
+<div class="header">
+<h3>Pathways from Other Mines</h3>
+
+<c:choose>
+  <c:when test="${minesForPathways != null && !empty(minesForPathways) && gene != null && !empty(gene)}">
+
+      <p>
+        <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
+        Pathway data from other Mines for homologues of this gene.
+      </p>
+      </div>
+
     <!-- one column for each mine -->
     <table>
       <thead>
@@ -83,7 +94,8 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <!-- other mines -->
             <c:forEach items="${minesForPathways}" var="entry">
                 <c:set var="mine" value="${entry.key}" />
-                <th class="loading"><span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span></th>
+                <c:set var="homologues" value="${entry.value}" />
+                <th class="loading"><div class="mine"><span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span></div></th>
             </c:forEach>
       </tr>
     </thead>
@@ -120,7 +132,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
             <c:if test="${fn:length(style) > 0}">
               <script type="text/javascript">
                  var target = '#intermine_pathways_thisMine ul',
-                      i	= jQuery(target).find('li').length - 10;
+                      i = jQuery(target).find('li').length - 10;
               jQuery('<div/>', {
                'class': 'toggle',
                'style': 'margin-top:5px'
@@ -154,5 +166,13 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
       </tr>
       </tbody>
     </table>
+
+  </c:when>
+  <c:otherwise>
+  </div>
+    <p>No pathways found.</p>
+  </c:otherwise>
+
+</c:choose>
 </div>
 <!-- /publicationCountsDisplayer.jsp -->

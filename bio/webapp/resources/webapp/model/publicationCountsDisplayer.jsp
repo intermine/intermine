@@ -9,13 +9,20 @@
 
 <!-- publicationCountsDisplayer.jsp -->
 <div id="publication-counts-displayer" class="collection-table">
+
+
+<div class="header">
 <h3>Publications</h3>
 
 <c:choose>
   <c:when test="${!empty noResults }">
     <p>${noResults}</p>
+    </div>
   </c:when>
   <c:otherwise>
+    <p>Total number of publications:  ${totalNumberOfPubs}</p>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -47,7 +54,7 @@
     </div>
 
   <div class="show-in-table" style="display:none;">
-    <html:link action="/collectionDetails?id=${object.id}&amp;field=publications&amp;trail=${param.trail}">
+    <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=publications&amp;trail=${param.trail}">
         Show all in a table &raquo;
       </html:link>
   </div>

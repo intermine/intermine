@@ -172,52 +172,52 @@
    }
 
    function validateBeforeSubmit() {
+       var checkedFeatureTypes = [];
+       jQuery(".featureType").each(function() {
+           if (this.checked) { checkedFeatureTypes.push(this.value); }
+       });
+       var checkedFeatureTypesToString = checkedFeatureTypes.join(",");
 
-         var checkedFeatureTypes = [];
-         jQuery(".featureType").each(function() {
-             if (this.checked) { checkedFeatureTypes.push(this.value); }
-         });
-         var checkedFeatureTypesToString = checkedFeatureTypes.join(",");
+       if (jQuery(".featureType").val() == null || checkedFeatureTypesToString == "") {
+           alert("Please select some feature types...");
+           return false;
+       }
 
-         if (jQuery(".featureType").val() == null || checkedFeatureTypesToString == "") {
-             alert("Please select some feature types...");
-             return false;
+       if (jQuery("#pasteInput").val() == "" && jQuery("#fileInput").val() == "") {
+           alert("Please type/paste/upload some genome regions...");
+           return false;
+       }
+
+       if (jQuery("#pasteInput").val() != "") {
+             // Regex validation
+             var ddotsRegex = /^[^:\t\s]+: ?\d+\.\.\d+$/;
+             var tabRegex = /^[^\t\s]+(\t\d+){2}/; // this will match the line start with
+             var dashRegex = /^[^:\t\s]+: ?\d+\-\d+$/;
+             var snpRegex = /^[^:\t\s]+: ?\d+$/;
+             var emptyLine = /^\s*$/;
+             var ddotstagRegex = /^[^:]+: ?\d+\.\.\d+: ?\d+$/;
+
+             var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
+             var lineNum;
+             for (i=0;i<spanArray.length;i++) {
+               lineNum = i + 1;
+               if (spanArray[i] == "") {
+                   alert("Line " + lineNum + " is empty...");
+                   return false;
+               }
+               if (!spanArray[i].match(ddotsRegex) &&
+                   !spanArray[i].match(ddotstagRegex) &&
+                   !spanArray[i].match(tabRegex) &&
+                   !spanArray[i].match(dashRegex) &&
+                   !spanArray[i].match(snpRegex) &&
+                   !spanArray[i].match(emptyLine)
+                   ) {
+                      alert(spanArray[i] + " doesn't match any supported format...");
+                      return false;
+               }
          }
-
-         if (jQuery("#pasteInput").val() == "" && jQuery("#fileInput").val() == "") {
-             alert("Please type/paste/upload some genome regions...");
-             return false;
-         }
-
-         if (jQuery("#pasteInput").val() != "") {
-               // Regex validation
-               var ddotsRegex = /^[^:\t\s]+: ?\d+\.\.\d+$/;
-               var tabRegex = /^[^\t\s]+(\t\d+){2}/; // this will match the line start with
-               var dashRegex = /^[^:\t\s]+: ?\d+\-\d+$/;
-               var snpRegex = /^[^:\t\s]+: ?\d+$/;
-               var emptyLine = /^\s*$/;
-               var ddotstagRegex = /^[^:]+: ?\d+\.\.\d+: ?\d+$/;
-
-               var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
-               var lineNum;
-               for (i=0;i<spanArray.length;i++) {
-                 lineNum = i + 1;
-                 if (spanArray[i] == "") {
-                     alert("Line " + lineNum + " is empty...");
-                     return false;
-                 }
-                 if (!spanArray[i].match(ddotsRegex) &&
-                     !spanArray[i].match(ddotstagRegex) &&
-                     !spanArray[i].match(tabRegex) &&
-                     !spanArray[i].match(dashRegex) &&
-                     !spanArray[i].match(snpRegex) &&
-                     !spanArray[i].match(emptyLine)
-                     ) {
-                        alert(spanArray[i] + " doesn't match any supported format...");
-                        return false;
-                 }
-           }
-         }
+       }
+       return true;
    }
 
    function loadExample(exampleSpans) {

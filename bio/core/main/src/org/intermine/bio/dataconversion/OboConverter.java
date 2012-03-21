@@ -79,7 +79,7 @@ public class OboConverter extends DataConverter
      * @param createrelations property to parse
      */
     public void setCreaterelations(String createrelations) {
-        if (createrelations.equalsIgnoreCase("true")) {
+        if ("true".equals(createrelations)) {
             this.createRelations = true;
         } else {
             this.createRelations = false;
@@ -148,6 +148,10 @@ public class OboConverter extends DataConverter
      * @throws ObjectStoreException if an error occurs while writing to the itemWriter
      */
     protected Item process(OboTerm term) throws ObjectStoreException {
+        if (term.isObsolete()) {
+            LOG.info("Not processing obsolete OBO term: " + term.getId() + " " + term.getName());
+            return null;
+        }
         String termId = (term.getId() == null ? term.getName() : term.getId());
         Item item = nameToTerm.get(termId);
         if (item == null) {
