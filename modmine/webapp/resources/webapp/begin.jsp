@@ -59,11 +59,15 @@ in the <i><strong>C. elegans</strong></i> and <i><strong>D. melanogaster</strong
 modENCODE labs submit data to the Data Coordination Center (DCC) where we organize and present the results.</p>
 <p><strong>modMine</strong> is an integrated web resource of data &amp; tools to <strong>browse</strong>
 and <strong>search</strong> modENCODE data and experimental details, <strong>download</strong>
-results and access the GBrowse <strong>genome browser</strong>. Explore some of the tools provided below and
+results and access the GBrowse <strong>genome browser</strong>. Explore some of the
+<a href="#" onclick="switchBochs(2);return false;">tools</a> provided below and
 check out our <b><a href="http://www.modencode.org/quickstart/">quick start guide</a></b>!
+
 </p>
 <br />
-<p><strong>modMine</strong> release <strong>${WEB_PROPERTIES['project.releaseVersion']}</strong> uses genome annotations <strong>${WEB_PROPERTIES['genomeVersion.fly']}</strong> for fly and <strong>${WEB_PROPERTIES['genomeVersion.worm']}</strong> for worm.</p>
+<p><strong>modMine</strong> release <strong>${WEB_PROPERTIES['project.releaseVersion']}</strong>
+uses genome annotations <strong>${WEB_PROPERTIES['genomeVersion.fly']}</strong> for fly and
+<strong>${WEB_PROPERTIES['genomeVersion.worm']}</strong> for worm.</p>
 <br />
 
 
@@ -79,120 +83,114 @@ check out our <b><a href="http://www.modencode.org/quickstart/">quick start guid
         </div>
 </div>
 
-              <!-- <p>If you are short of time, just navigate through our set of <a href="#" onclick="switchBochs(2);return false;">Feature Hints</a>.-->
             </div>
           </div>
         </div>
 
         <div class="bochs" id="bochs-2" style="display: none;">
-          <div id="thumb" class="span-4">
+          <div id="thumb">
           <img
             src="themes/metabolic/thumbs/feature-search.jpg"
             alt="modMine Search" /></div>
-          <div id="welcome-content" class="span-7 last">
+          <div id="welcome-content" class="span-27 last">
             <h2>Search</h2>
-            <p>Our search engine operates across many data fields giving you the
-            highest chance of getting a result. Just type your search words in the
-            box.</p>
+            <p>Our search engine operates across many data fields and understands logical operations
+            (AND, OR, NOT) and approximate searches (use *).</p>
+            <p>Just type your search words in the box!</p>
           </div>
         </div>
 
         <div class="bochs" id="bochs-3" style="display: none;">
-          <div id="thumb" class="span-4">
+          <div id="thumb">
           <img
             src="themes/metabolic/thumbs/feature-facets.jpg"
             alt="modMine Facets" /></div>
-          <div id="welcome-content" class="span-7 last">
+          <div id="welcome-content" class="span-27 last">
             <h2>Facets</h2>
-            <p><strong>Facets</strong> show you the different places where your search words were found (eg. within Gene, Protein, Go Term, Template, Publication etc).
-            You can use the facets to filter for the type of results that are most important to you. When you've filtered by facets, you can even save the results
-            straight to a List.</p>
+            <p><strong>Facets</strong> show you the different places where your search words were
+            found (eg. within Gene, Protein, Go Term, Publication etc).</p><p>
+            You can use the facets to filter for the type of results that are most important to you.
+            </p><p>When you've filtered by facets, you can save the results straight to a List.</p>
           </div>
         </div>
 
             <div class="bochs" id="bochs-4" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb" >
               <a title="Try Lists" href="/${WEB_PROPERTIES['webapp.path']}/bag.do?subtab=view"><img
                 src="themes/metabolic/thumbs/feature-lists.jpg"
                 alt="modMine Lists" /></a></div>
-              <div id="welcome-content" class="span-7 last">
+              <div id="welcome-content" class="span-27 last">
                 <h2>Lists</h2>
                 <p>The <strong>Lists</strong> area lets you operate on whole sets of data at once. You can
-                upload your own Lists (favourite Genes, SNPs etc) or save them from results tables.
-                We also create useful <strong>Public Lists</strong> for everyone to use. Explore
-                your data on the List Analysis Page</p>
+                upload your own Lists (favourite Genes, Submissions etc) or save them from results tables.
+                Various analysis tools for a first data exploration are provided when you are vieving the list.
+                There are also useful pre-defined Public Lists for everyone to use.
                 <p>Here are just some of the things you can do:</p>
                 <ul>
-                  <li>Ask questions about the data using our predefined Templates</li>
+                  <li>Ask questions about the data using our pre-defined Templates</li>
                   <li>Combine or subtract the content of other Lists</li>
                   <li>Uncover hidden relationships with our analysis <strong>Widgets</strong></li>
                 </ul>
-                <p>You can work with Lists from the Home page or select Lists from the Tab bar, located at the top of every page.</p>
+                <p>Select Lists from the Tab bar, located at the top of every page.</p>
             </div>
            </div>
 
             <div class="bochs" id="bochs-5" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb" >
               <a title="Try Templates" href="/${WEB_PROPERTIES['webapp.path']}/templates.do"><img
                 src="themes/metabolic/thumbs/feature-templates.jpg"
                 alt="modMine Templates" /></a></div>
-              <div id="welcome-content" class="span-7 last">
+              <div id="welcome-content" class="span-27 last">
                 <h2>Templates</h2>
-                <p><strong>Template queries</strong> are 'predefined' queries designed around the common tasks performed by our Biologist Community. Templates
-                provide you with a simple form that lets you define your starting point and optional filters to help focus your search.</p>
-                <p>Templates cover common questions like:</p>
-                <ul>
-                    <li>I have a List of SNPs - do any of them affect Genes?</li>
-                    <li>This Gene came up in my results - what can I find out about it?</li>
-                    <li>I'm interested in this chromosome region - what's in there that could be linked with this disease?</li>
-                </ul>
-                <p>You can work with Templates from the Home page or select Templates from the Tab bar, located at the top of every page.</p>
+                <p><strong>Template queries</strong> are 'pre-defined' queries designed around the
+                common tasks performed by our community of biologists.
+                Templates provide you with a simple form that lets you set your starting point and
+                optional filters to help focus your search.</p>
+                <p>There are plenty of templates available, a search tools is available in the template page.
+                If you don't find what are you looking for please contact us.</p>
+                <p>Select Templates from the Tab bar, located at the top of every page.</p>
             </div>
            </div>
 
             <div class="bochs" id="bochs-6" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb" >
               <a title="Try MyMine" href="/${WEB_PROPERTIES['webapp.path']}/mymine.do"><img
                 src="themes/metabolic/thumbs/feature-mymine.jpg"
                 alt="modMine MyMine" /></a></div>
-              <div id="welcome-content" class="span-7 last">
+              <div id="welcome-content" class="span-27 last">
                 <h2>MyMine</h2>
                 <p><strong>MyMine</strong> is your <u>personal space</u> on modMine. Creating an account is easy. Just provide an e-mail and a password. You're ready to go.</p>
                 <p>Your account allows you to:</p>
                 <ul>
                   <li>Save Queries and Lists</li>
-                  <li> Modify and save Templates for later use</li>
-                  <li>Mark Public Templates as favourites so they're easier to find</li>
+                  <li>Modify or create Templates, and save them for later use</li>
+                  <li>Mark as favourites Public Templates, so they're easier for you to find</li>
                 </ul>
                 <p>You can access mMyMine from the Tab bar, located at the top of every page.</p>
-                <p>Note: Your data and e-mail address are confidential and we wont send you unsolicited mail.</p>
+                <p>Your data and e-mail address are confidential.</p>
             </div>
            </div>
 
             <div class="bochs" id="bochs-7" style="display: none;">
-              <div id="thumb" class="span-4">
+              <div id="thumb" >
               <a title="Try QueryBuilder" href="/${WEB_PROPERTIES['webapp.path']}/customQuery.do"><img
                 src="themes/metabolic/thumbs/feature-querybuilder.jpg"
                 alt="modMine QueryBuilder" /></a></div>
-              <div id="welcome-content" class="span-7 last">
+              <div id="welcome-content" class="span-27 last">
                 <h2>QueryBuilder</h2>
-                <p><strong>QueryBuilder (QB)</strong> is the Powerhouse of modMine.</p>
-                <p>Its advanced interface lets you:</p>
-                <ul>
-                  <li>Construct your own custom queries
-                  <li>Modify your previous queries
-                  <li>You can even edit our predefined Templates.
-                </ul>
-                <p>The easiest way to get started with QB is by editing one of our pre-existing Template queries.
-                Follow the simple tutorial in the QueryBuilder section of the <strong>Tour</strong> to see how to change a Template output or add a filter.</p>
+                <p><strong>QueryBuilder</strong> allows you to construct your own queries and
+                is the most powerful and flexible method to mine data in modMine.</p>
+                <p>The easiest way to get started is by editing one of our pre-existing Template queries.
+                Follow the simple tutorial in the QueryBuilder section of the <strong>Tour</strong>
+                to see how to change a Template output or add a filter.</p>
 
                 <p>You can access QueryBuilder from the Tab bar, located at the top of every page.</p>
             </div>
            </div>
 
-      <div class="span-11 last">
+      <div class="span-27 last">
             <ul id="switcher">
-                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">Start</a></li>
+                <li id="switcher-1" class="switcher current"><a onclick="switchBochs(1);return false;" href="#">Exit hints</a></li>
                 <li id="switcher-2" class="switcher"><a onclick="switchBochs(2);return false;" href="#">1</a></li>
                 <li id="switcher-3" class="switcher"><a onclick="switchBochs(3);return false;" href="#">2</a></li>
                 <li id="switcher-4" class="switcher"><a onclick="switchBochs(4);return false;" href="#">3</a></li>
@@ -202,7 +200,7 @@ check out our <b><a href="http://www.modencode.org/quickstart/">quick start guid
             </ul>
           </div>
       </div>
-      <div class="bottom span-11 last"></div>
+      <div class="bottom span-27 last"></div>
   </div>
 
    <div class="span-21">
