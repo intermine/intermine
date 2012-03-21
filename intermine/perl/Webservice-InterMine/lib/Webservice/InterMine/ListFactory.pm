@@ -40,7 +40,7 @@ with 'Webservice::InterMine::Role::Serviced';
 with 'Webservice::InterMine::Role::KnowsJSON';
 
 use Webservice::InterMine::List;
-use Webservice::InterMine::Types qw(List ListOperable File);
+use Webservice::InterMine::Types qw(List ListOperable File Listable);
 use Moose::Util::TypeConstraints qw(match_on_type);
 use MooseX::Types::Moose qw(HashRef Str ArrayRef);
 use URI;
@@ -51,7 +51,7 @@ require Set::Object;
 use Carp qw(croak confess);
 
 use constant {
-    LISTABLE => 'Webservice::InterMine::Query::Roles::Listable',
+    LISTABLE => 'Webservice::InterMine::Role::Listable',
     DEFAULT_LIST_NAME => "my_list_",
     DEFAULT_DESCRIPTION => 'Created with Perl API client',
 
@@ -325,11 +325,12 @@ sub symmetric_difference {
 sub make_list_names {
     my $self = shift;
     my $lists = shift;
-    my @names= eval {map {(blessed($_)) ? $_->name : $_}
-            map {(blessed($_) and $_->does(LISTABLE)) 
-                ? $self->new_list(content => $_) : $_} @$lists};
-    confess $@ if $@;
-    return @names;
+
+    return map { match_on_type $_ => (
+        Listable, sub {$self->new_list(content => $_)->name}, 
+        List,     sub {$_->name}, 
+        sub {$_}
+    )} @$lists;
 }
 
 sub _do_commutative_list_operation {

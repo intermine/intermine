@@ -36,6 +36,7 @@ lib/Webservice/InterMine/ListFactory.pm
 lib/Webservice/InterMine/LogicalOperator.pm
 lib/Webservice/InterMine/LogicalSet.pm
 lib/Webservice/InterMine/LogicParser.pm
+lib/Webservice/InterMine/Model.pm
 lib/Webservice/InterMine/Parser.pm
 lib/Webservice/InterMine/Parser/FlatFile.pm
 lib/Webservice/InterMine/Parser/JSON.pm
@@ -77,6 +78,7 @@ lib/Webservice/InterMine/ResultRow.pm
 lib/Webservice/InterMine/Role/Described.pm
 lib/Webservice/InterMine/Role/HasQuery.pm
 lib/Webservice/InterMine/Role/KnowsJSON.pm
+lib/Webservice/InterMine/Role/Listable.pm
 lib/Webservice/InterMine/Role/Logical.pm
 lib/Webservice/InterMine/Role/ModelOwner.pm
 lib/Webservice/InterMine/Role/Named.pm
@@ -122,6 +124,8 @@ t/10_acceptance/03_service_resolution.t
 t/10_acceptance/04_paths.t
 t/10_acceptance/05_summaries.t
 t/10_acceptance/06_redirection.t
+t/10_acceptance/07_lazy_references.t
+t/10_acceptance/08_enrichment.t
 t/data/bad_templates.xml
 t/data/bad_xml.txt
 t/data/default-template-queries.xml

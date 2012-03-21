@@ -29,6 +29,10 @@ sub valid_operators {
         '=', '!=',
         '<', '>',
         '>=','<=',
+        'CONTAINS',
+        'LIKE',
+        'NOT LIKE',
+        'DOES NOT CONTAIN',
     );
 }
 sub invalid_operators {
@@ -50,7 +54,7 @@ sub methods : Test(5) {
     $test->SUPER::methods;
 }
 
-sub strict_construction : Test(19) {
+sub strict_construction : Test(27) {
     my $test = shift;
     $test->SUPER::strict_construction;
 }

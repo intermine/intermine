@@ -201,7 +201,7 @@ sub release : Test(2) {
 
 sub templates : Test(2) {
     my $test = shift;
-    my @args = ( root => $test->fake_queryurl );
+    my @args = ( root => $test->fake_queryurl, _templates => $test->{TF} );
     my $service = $test->class->new(@args);
     is($service->template('Foo'), "Mock Template Result - Foo", 
         "Can delegate template fetching");

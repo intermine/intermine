@@ -15,7 +15,7 @@ my $do_live_tests = $ENV{RELEASE_TESTING};
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 190 );
+    plan( tests => 191 );
 }
 
 my $module = 'Webservice::InterMine';
@@ -195,6 +195,8 @@ is($res->[1]{age}, 20, "with the right fields - Int");
 is($res->[1]{address}{address}, "Employee Street, AVille", "with the right fields - Str");
 ok($res->[1]{fullTime}, "with the right fields - Bool");
 
+is(3, $q->count, "Can get a count");
+
 lives_ok(
     sub {$res = $q->results(as => 'jsonobjects', json => 'raw')},
     "Queries for results as a raw text",
@@ -234,10 +236,10 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $q->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > Name\tEmployee > Years Alive\tEmployee > Works Full Time?\tEmployee > Lives At\tEmployee > Works In\tEmployee > Works For\tEmployee > Works Under
-EmployeeA1\t10\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
-EmployeeA2\t20\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
-EmployeeA3\t30\tfalse\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
+    my $expected = qq|"Employee > Name"\t"Employee > Years Alive"\t"Employee > Works Full Time?"\t"Employee > Lives At"\t"Employee > Works In"\t"Employee > Works For"\t"Employee > Works Under"
+"EmployeeA1"\t"10"\t"true"\t"Employee Street, AVille"\t"DepartmentA1"\t"CompanyA"\t"EmployeeA1"
+"EmployeeA2"\t"20"\t"true"\t"Employee Street, AVille"\t"DepartmentA1"\t"CompanyA"\t"EmployeeA1"
+"EmployeeA3"\t"30"\t"false"\t"Employee Street, AVille"\t"DepartmentA1"\t"CompanyA"\t"EmployeeA1"
 |;
     for ($buffer, $expected) {
         s/\t/[TAB]/g;
@@ -374,10 +376,10 @@ PRINTING_TEMPLATES: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $t->print_results_with(valueA => 'companyB', to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee.>.Name\tEmployee.>.Years Alive
-EmployeeB1\t40
-EmployeeB2\t50
-EmployeeB3\t60
+    my $expected = qq|"Employee.>.Name"\t"Employee.>.Years Alive"
+"EmployeeB1"\t"40"
+"EmployeeB2"\t"50"
+"EmployeeB3"\t"60"
 |;
     $buffer =~ s/ /./g;
     $expected =~ s/ /./g;
@@ -484,7 +486,7 @@ TEST_IMPORTED_FNS: {
 TEST_LIST_STATUS: {
     my @lists = get_service("www.flymine.org/query")->get_lists();
     ok($lists[0]->has_status, "Status is provided");
-    my %possible_statuses = (CURRENT => 1, TO_UPGRADE => 1);
+    my %possible_statuses = (CURRENT => 1, TO_UPGRADE => 1, NOT_CURRENT => 1);
     ok($possible_statuses{$lists[0]->status}, "And list is one of the possible statuses");
 }
 
