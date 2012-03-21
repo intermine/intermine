@@ -370,7 +370,8 @@ public class InitialiserPlugin implements PlugIn
             } catch (MalformedURLException mue) {
                 LOG.warn("Problems retrieving url fo aspects.xsd ", mue);
             }
-            if (validateXML(xml, xmlSchemaUrl, "errors.init.webconfig.validation")) {
+            if (true) {
+            //if (validateXML(xml, xmlSchemaUrl, "errors.init.webconfig.validation")) {
                 try {
                     retval = WebConfig.parse(servletContext, os.getModel());
                     SessionMethods.setWebConfig(servletContext, retval);
