@@ -750,7 +750,7 @@
                       dataSetPath="dataSet"
                       dataSetValue="fly-Fish data set"
                       views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
- 
+
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
                       description="Expression patterns of Drosophila mRNAs during embryogenesis - data from  &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BGDP&lt;/a&gt;. "
@@ -780,7 +780,7 @@
                                  extraAttributePossibleValues=""
                                  typeClass="org.intermine.model.bio.Gene"/>
 -->
-      <enrichmentwidgetdisplayer id="protein_features" 
+      <enrichmentwidgetdisplayer id="protein_features"
                                  title="UniProt Features"
                                  description="UniProt features enriched for proteins in this list."
                                  label="Feature"
@@ -793,7 +793,7 @@
                                        features.feature.name, features.type,features.description,
                                        features.begin, features.end"/>
 
-      <enrichmentwidgetdisplayer id="uniprot_keywords" 
+      <enrichmentwidgetdisplayer id="uniprot_keywords"
                                  title="UniProt Keywords"
                                  description="UniProt keywords enriched for proteins in this list."
                                  label="Keyword"
@@ -825,8 +825,8 @@
                                  enrich="proteins.proteinDomains.name"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Gene"/>
--->
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein" 
+
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
                                  label="Protein Domain"
@@ -838,7 +838,7 @@
                                  views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier
                                        proteinDomains.name"/>
 
-      <enrichmentwidgetdisplayer id="publication_enrichment" 
+      <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
                                  description="Publications enriched for genes in this list."
                                  label="Publication"
@@ -869,7 +869,7 @@
                                  enrich="pathways.name"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list]"
                                  typeClass="org.intermine.model.bio.Gene" />
-<!--
+
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
