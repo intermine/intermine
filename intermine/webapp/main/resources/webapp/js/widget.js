@@ -1,4 +1,7 @@
 (function() {
+var root;
+root = this;
+
 var JST = {};
 JST["error.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-block">\n    <h4 class="alert-heading">'),b.push(d(this.title)),b.push("</h4>\n    <p>"),b.push(this.text),b.push("</p>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.matches.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="popover" style="position:absolute;top:22px;right:0;z-index:1;display:block">\n    <div class="popover-inner" style="width:300px;margin-left:-300px">\n        <a style="cursor:pointer;margin:2px 5px 0 0" class="close">×</a>\n        <h3 class="popover-title"></h3>\n        <div class="popover-content">\n            '),f=this.matches;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <a href="#">'),b.push(d(a.displayed)),b.push("</a>\n            ");b.push("\n        </div>\n    </div>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
@@ -10,14 +13,9 @@ JST["enrichment.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=
 JST["chart.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push('\n        <p>Number of Genes in this list not analysed in this widget: <span class="label label-info">'),b.push(d(this.notAnalysed)),b.push("</span></p>\n    ")),b.push('\n</header>\n<div class="content"></div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.extra.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="group" style="display:inline-block;margin-right:5px">\n    <label>'),b.push(d(this.label)),b.push('</label>\n    <select name="dataSet" class="span2">\n        '),f=this.possible;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n            <option value="'),b.push(d(a)),b.push('" '),this.selected===a&&b.push(d('selected="selected"')),b.push(">\n                "),b.push(d(a)),b.push("\n            </option>\n        ");b.push("\n    </select>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["invalidjsonkey.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<li style="vertical-align:bottom">\n    <span style="display:inline-block" class="label label-inverse">'),b.push(d(this.key)),b.push("</span> is "),b.push(d(this.actual)),b.push("; was expecting "),b.push(d(this.expected)),b.push("\n</li>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-var CSSLoader, Exporter, JSLoader, Loader, factory, root, type,
+var type,
   __hasProp = Object.prototype.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __slice = Array.prototype.slice,
-  __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-root = this;
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
 type = {};
 
@@ -137,28 +135,127 @@ type.isUndefined = (function(_super) {
 
 })(type.Root);
 
+var Exporter,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+Exporter = (function() {
+
+  Exporter.prototype.mime = 'text/plain';
+
+  Exporter.prototype.charset = 'UTF-8';
+
+  Exporter.prototype.url = window.webkitURL || window.URL;
+
+  function Exporter(a, data, filename) {
+    var builder;
+    if (filename == null) filename = 'widget.tsv';
+    this.destroy = __bind(this.destroy, this);
+    builder = new (window.WebKitBlobBuilder || window.MozBlobBuilder || window.BlobBuilder)();
+    builder.append(data(s));
+    a.attr('download', filename);
+    (this.href = this.url.createObjectURL(builder.getBlob("" + this.mime + ";charset=" + this.charset))) && (a.attr('href', this.href));
+    a.attr('data-downloadurl', [this.mime, filename, this.href].join(':'));
+  }
+
+  Exporter.prototype.destroy = function() {
+    return this.url.revokeObjectURL(this.href);
+  };
+
+  return Exporter;
+
+})();
+
+var CSSLoader, JSLoader, Loader,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+Loader = (function() {
+
+  function Loader() {}
+
+  Loader.prototype.getHead = function() {
+    return document.getElementsByTagName('head')[0];
+  };
+
+  Loader.prototype.setCallback = function(tag, callback) {
+    tag.onload = callback;
+    return tag.onreadystatechange = function() {
+      var state;
+      state = tag.readyState;
+      if (state === "complete" || state === "loaded") {
+        tag.onreadystatechange = null;
+        return window.setTimeout(callback, 0);
+      }
+    };
+  };
+
+  return Loader;
+
+})();
+
+JSLoader = (function(_super) {
+
+  __extends(JSLoader, _super);
+
+  function JSLoader(path, callback) {
+    var script;
+    script = document.createElement("script");
+    script.src = path;
+    script.type = "text/javascript";
+    if (callback) this.setCallback(script, callback);
+    this.getHead().appendChild(script);
+  }
+
+  return JSLoader;
+
+})(Loader);
+
+CSSLoader = (function(_super) {
+
+  __extends(CSSLoader, _super);
+
+  function CSSLoader(path, callback) {
+    var sheet;
+    sheet = document.createElement("link");
+    sheet.rel = "stylesheet";
+    sheet.type = "text/css";
+    sheet.href = path;
+    if (callback) this.setCallback(sheet, callback);
+    this.getHead().appendChild(sheet);
+  }
+
+  return CSSLoader;
+
+})(Loader);
+
+var factory;
 factory = function(Backbone) {
-  var ChartWidget, EnrichmentWidget, InterMineWidget;
+
+  var InterMineWidget,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
   InterMineWidget = (function(_super) {
-
+  
     __extends(InterMineWidget, _super);
-
+  
     function InterMineWidget() {
       this.error = __bind(this.error, this);
-      this.validateType = __bind(this.validateType, this);      $(this.el).html($('<div/>', {
+      this.validateType = __bind(this.validateType, this);    $(this.el).html($('<div/>', {
         "class": "inner",
         style: "height:572px;overflow:hidden",
         html: "Loading &hellip;"
       }));
       this.el = "" + this.el + " div.inner";
     }
-
+  
     InterMineWidget.prototype.template = function(name, context) {
       var _name;
       if (context == null) context = {};
       return typeof JST[_name = "" + name + ".eco"] === "function" ? JST[_name](context) : void 0;
     };
-
+  
     InterMineWidget.prototype.validateType = function(object, spec) {
       var fails, key, r, value;
       fails = [];
@@ -174,7 +271,7 @@ factory = function(Backbone) {
       }
       if (fails.length) return this.error("JSONObjectType", fails);
     };
-
+  
     InterMineWidget.prototype.error = function(type, data) {
       var opts;
       opts = {
@@ -192,14 +289,21 @@ factory = function(Backbone) {
       }
       return $(this.el).html(this.template("error", opts));
     };
-
+  
     return InterMineWidget;
-
+  
   })(Backbone.View);
+  
+
+  var ChartWidget,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
   ChartWidget = (function(_super) {
-
+  
     __extends(ChartWidget, _super);
-
+  
     ChartWidget.prototype.chartOptions = {
       fontName: "Sans-Serif",
       fontSize: 11,
@@ -221,7 +325,7 @@ factory = function(Backbone) {
         }
       }
     };
-
+  
     ChartWidget.prototype.spec = {
       response: {
         "chartType": type.isString,
@@ -240,7 +344,7 @@ factory = function(Backbone) {
         "wasSuccessful": type.isBoolean
       }
     };
-
+  
     function ChartWidget(service, token, id, bagName, el, widgetOptions) {
       var _this = this;
       this.service = service;
@@ -259,7 +363,7 @@ factory = function(Backbone) {
       ChartWidget.__super__.constructor.call(this);
       this.render();
     }
-
+  
     ChartWidget.prototype.render = function() {
       var _this = this;
       return $.ajax({
@@ -318,27 +422,34 @@ factory = function(Backbone) {
         }
       });
     };
-
+  
     ChartWidget.prototype._translateSeries = function(response, series) {
       return response.seriesValues.split(',')[response.seriesLabels.split(',').indexOf(series)];
     };
-
+  
     return ChartWidget;
-
+  
   })(InterMineWidget);
+  
+
+  var EnrichmentWidget,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
   EnrichmentWidget = (function(_super) {
-
+  
     __extends(EnrichmentWidget, _super);
-
+  
     EnrichmentWidget.prototype.formOptions = {
       errorCorrection: "Holm-Bonferroni",
       pValue: 0.05
     };
-
+  
     EnrichmentWidget.prototype.errorCorrections = ["Holm-Bonferroni", "Benjamini Hochberg", "Bonferroni", "None"];
-
+  
     EnrichmentWidget.prototype.pValues = [0.05, 0.10, 1.00];
-
+  
     EnrichmentWidget.prototype.spec = {
       response: {
         "title": type.isString,
@@ -361,7 +472,7 @@ factory = function(Backbone) {
         "p-value": type.isInteger
       }
     };
-
+  
     function EnrichmentWidget(service, token, id, bagName, el, widgetOptions) {
       var _this = this;
       this.service = service;
@@ -385,10 +496,10 @@ factory = function(Backbone) {
       EnrichmentWidget.__super__.constructor.call(this);
       this.render();
     }
-
+  
     EnrichmentWidget.prototype.render = function() {
       var _this = this;
-      return $.ajax({
+      $.ajax({
         url: "" + this.service + "list/enrichment",
         dataType: "json",
         data: {
@@ -461,13 +572,14 @@ factory = function(Backbone) {
           return _this.error("AJAXTransport", err);
         }
       });
+      return this;
     };
-
+  
     EnrichmentWidget.prototype.formClick = function(e) {
       this.formOptions[$(e.target).attr("name")] = $(e.target[e.target.selectedIndex]).attr("value");
       return this.render();
     };
-
+  
     EnrichmentWidget.prototype.checkboxClick = function(key, row) {
       var value, _ref;
       if (!(this.selected != null)) this.selected = {};
@@ -484,7 +596,7 @@ factory = function(Backbone) {
       }
       return $(this.el).find('div.actions a.btn').addClass('disabled');
     };
-
+  
     EnrichmentWidget.prototype.selectAllClick = function(e) {
       var _this = this;
       if (!(this.selected != null)) this.selected = {};
@@ -502,7 +614,7 @@ factory = function(Backbone) {
         return $(this.el).find('div.actions a.btn').addClass('disabled');
       }
     };
-
+  
     EnrichmentWidget.prototype.matchesClick = function(target, matches, matchCb) {
       var modal;
       target.after(modal = $(this.template("enrichment.matches", {
@@ -516,11 +628,11 @@ factory = function(Backbone) {
         return e.preventDefault();
       });
     };
-
+  
     EnrichmentWidget.prototype.viewAction = function() {
       return console.log('viewAction triggered thanks to Backbone');
     };
-
+  
     EnrichmentWidget.prototype.exportClick = function(e) {
       var ex, key, match, result, value, _ref;
       result = [];
@@ -547,102 +659,25 @@ factory = function(Backbone) {
         }), 5000);
       }
     };
-
+  
     return EnrichmentWidget;
-
+  
   })(InterMineWidget);
+  
+
   return {
+
     "InterMineWidget": InterMineWidget,
     "ChartWidget": ChartWidget,
-    "EnrichmentWidget": EnrichmentWidget
+    "EnrichmentWidget": EnrichmentWidget,
+
   };
 };
-
-Exporter = (function() {
-
-  Exporter.prototype.mime = 'text/plain';
-
-  Exporter.prototype.charset = 'UTF-8';
-
-  Exporter.prototype.url = window.webkitURL || window.URL;
-
-  function Exporter(a, data, filename) {
-    var builder;
-    if (filename == null) filename = 'widget.tsv';
-    this.destroy = __bind(this.destroy, this);
-    builder = new (window.WebKitBlobBuilder || window.MozBlobBuilder || window.BlobBuilder)();
-    builder.append(data(s));
-    a.attr('download', filename);
-    (this.href = this.url.createObjectURL(builder.getBlob("" + this.mime + ";charset=" + this.charset))) && (a.attr('href', this.href));
-    a.attr('data-downloadurl', [this.mime, filename, this.href].join(':'));
-  }
-
-  Exporter.prototype.destroy = function() {
-    return this.url.revokeObjectURL(this.href);
-  };
-
-  return Exporter;
-
-})();
-
-Loader = (function() {
-
-  function Loader() {}
-
-  Loader.prototype.getHead = function() {
-    return document.getElementsByTagName('head')[0];
-  };
-
-  Loader.prototype.setCallback = function(tag, callback) {
-    tag.onload = callback;
-    return tag.onreadystatechange = function() {
-      var state;
-      state = tag.readyState;
-      if (state === "complete" || state === "loaded") {
-        tag.onreadystatechange = null;
-        return window.setTimeout(callback, 0);
-      }
-    };
-  };
-
-  return Loader;
-
-})();
-
-JSLoader = (function(_super) {
-
-  __extends(JSLoader, _super);
-
-  function JSLoader(path, callback) {
-    var script;
-    script = document.createElement("script");
-    script.src = path;
-    script.type = "text/javascript";
-    if (callback) this.setCallback(script, callback);
-    this.getHead().appendChild(script);
-  }
-
-  return JSLoader;
-
-})(Loader);
-
-CSSLoader = (function(_super) {
-
-  __extends(CSSLoader, _super);
-
-  function CSSLoader(path, callback) {
-    var sheet;
-    sheet = document.createElement("link");
-    sheet.rel = "stylesheet";
-    sheet.type = "text/css";
-    sheet.href = path;
-    if (callback) this.setCallback(sheet, callback);
-    this.getHead().appendChild(sheet);
-  }
-
-  return CSSLoader;
-
-})(Loader);
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+  __slice = Array.prototype.slice,
+  __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 root.Widgets = (function() {
 
