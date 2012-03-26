@@ -11,12 +11,16 @@ package org.intermine.web.logic.widget.config;
  */
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.web.logic.widget.Widget;
 
 
@@ -30,6 +34,8 @@ public abstract class WidgetConfig
     private String description;
     private String title;
     private String startClass;
+    private String constraints;
+    private List<PathConstraint> pathConstraints = new ArrayList<PathConstraint>();
     private String dataSetLoader;
     private String link;
     private String typeClass;
@@ -190,6 +196,45 @@ public abstract class WidgetConfig
 
     public void setViews(String views) {
         this.views = views;
+    }
+
+    public String getConstraints() {
+        return constraints;
+    }
+
+    public void setConstraints(String constraints) {
+        this.constraints = constraints;
+        setPathConstraints();
+    }
+
+    public void setPathConstraints() {
+        String[] constraintsList = constraints.split("\\s*,\\s*");
+        String path = null;
+        String value = null;
+        ConstraintOp op = null;
+        String[] splitConstraint;
+        for (String constraint : constraintsList) {
+            int opIndex = constraint.indexOf("!=");
+            if (opIndex != -1) {
+                op = ConstraintOp.NOT_EQUALS;
+                splitConstraint = constraint.split("\\s*!=\\s*");
+                path = splitConstraint[0];
+                value = splitConstraint[1];
+            } else {
+                opIndex = constraint.indexOf("=");
+                if (opIndex != -1) {
+                    op = ConstraintOp.EQUALS;
+                    splitConstraint = constraint.split("\\s*=\\s*");
+                    path = splitConstraint[0];
+                    value = splitConstraint[1];
+                }
+            }
+            this.pathConstraints.add(new PathConstraintAttribute(path, op, value));
+        }
+    }
+
+    public List<PathConstraint> getPathConstraints() {
+        return pathConstraints;
     }
 
     /**
