@@ -730,8 +730,6 @@
                       seriesPath="affyCall"
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
-                      dataSetPath=""
-                      dataSetValue=""
                       views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
 
       <graphdisplayer id="flyfish"
@@ -747,8 +745,7 @@
                       seriesPath="expressed"
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
-                      dataSetPath="dataSet"
-                      dataSetValue="fly-Fish data set"
+                      constraints="dataSet.name=fly-Fish data set"
                       views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
 
       <graphdisplayer id="bdgp"
@@ -764,8 +761,7 @@
                       seriesPath="expressed"
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
-                      dataSetPath="dataSet"
-                      dataSetValue="BDGP in situ data set"
+                      constraints="dataSet.name=BDGP in situ data set"
                       views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
 <!--
       <enrichmentwidgetdisplayer id="miranda_enrichment"
@@ -846,7 +842,8 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="publications.title"
                                  constraints="organism.name=[list]"
-                                 typeClass="org.intermine.model.bio.Gene"/>
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views=""/>
 
       <enrichmentwidgetdisplayer id="bdgp_enrichment"
                                  title="BDGP Enrichment"
@@ -856,7 +853,8 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
                                  constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
-                                 typeClass="org.intermine.model.bio.Gene" />
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views=""/>
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"
                                  title="Pathway Enrichment"
@@ -868,8 +866,9 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="pathways.name"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list]"
-                                 typeClass="org.intermine.model.bio.Gene" />
-
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views=""/>
+<!--
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
