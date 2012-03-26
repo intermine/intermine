@@ -4,14 +4,15 @@ var o = {};
 var JST = {};
 JST["error.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-block">\n    <h4 class="alert-heading">'),b.push(d(this.title)),b.push("</h4>\n    <p>"),b.push(this.text),b.push("</p>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.matches.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="popover" style="position:absolute;top:22px;right:0;z-index:1;display:block">\n    <div class="popover-inner" style="width:300px;margin-left:-300px">\n        <a style="cursor:pointer;margin:2px 5px 0 0" class="close">×</a>\n        <h3 class="popover-title"></h3>\n        <div class="popover-content">\n            '),f=this.matches;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <a href="#">'),b.push(d(a.displayed)),b.push("</a>\n            ");b.push("\n        </div>\n    </div>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["enrichment.actions.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<a class="btn btn-mini '),this.disabled&&b.push("disabled"),b.push(' view">View</a>\n<a class="btn btn-mini '),this.disabled&&b.push("disabled"),b.push(' export">Export</a>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["enrichment.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<td class="check"><input type="checkbox" '),b.push(d(this.row.selected?b.push('checked="checked"'):void 0)),b.push(' /></td>\n<td class="description">'),b.push(d(this.row.description)),b.push('</td>\n<td class="pValue">'),b.push(d(this.row["p-value"].toFixed(7))),b.push('</td>\n<td class="matches" style="position:relative">\n    <span class="count label label-success" style="cursor:pointer">'),b.push(d(this.row.matches.length)),b.push("</span>\n</td>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["noresults.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-info">\n    <p>The Widget has no results.</p>\n</div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["enrichment.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<tr>\n    <td class="check"><input type="checkbox" /></td>\n    <td class="description">'),b.push(d(this.row.description)),b.push('</td>\n    <td class="pValue">'),b.push(d(this.row["p-value"].toFixed(7))),b.push('</td>\n    <td class="matches" style="position:relative">\n        <span class="count label label-success" style="cursor:pointer">'),b.push(d(this.row.matches.length)),b.push("</span>\n    </td>\n</tr>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["enrichment.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<!-- actual fixed head -->\n<div class="head">\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px"><input type="checkbox" class="check" /></div>\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px">'),b.push(d(this.label)),b.push('</div>\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px">p-Value</div>\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px">Matches</div>\n</div>\n<div style="clear:both"></div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped" style="margin-top:-34px">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                <th>'),b.push(d(this.label)),b.push("</th>\n                <th>p-Value</th>\n                <th>Matches</th>\n            </tr>\n        </thead>\n        <tbody></tbody>\n    </table>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["enrichment.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<!-- actual fixed head -->\n<div class="head">\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px"><input type="checkbox" class="check" /></div>\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px">'),b.push(d(this.label)),b.push('</div>\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px">p-Value</div>\n    <div style="font-weight:bold;display:block;float:left;padding:0 8px">Matches</div>\n</div>\n<div style="clear:both"></div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped" style="margin-top:-34px">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                <th>'),b.push(d(this.label)),b.push("</th>\n                <th>p-Value</th>\n                <th>Matches</th>\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop enrichment.row.eco -->\n        </tbody>\n    </table>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.form.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f,g,h,i,j;b.push('<form>\n    <div class="group" style="display:inline-block;margin-right:5px">\n        <label>Test Correction</label>\n        <select name="errorCorrection" class="span2">\n            '),i=this.errorCorrections;for(e=0,g=i.length;e<g;e++)a=i[e],b.push('\n                <option value="'),b.push(d(a)),b.push('" '),this.options.errorCorrection===a&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(a)),b.push("\n            </option>\n            ");b.push('\n        </select>\n    </div>\n\n    <div class="group" style="display:inline-block;margin-right:5px">\n        <label>Max p-value</label>\n        <select name="pValue" class="span2">\n            '),j=this.pValues;for(f=0,h=j.length;f<h;f++)c=j[f],b.push('\n                <option value="'),b.push(d(c)),b.push('" '),this.options.pValue===c&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(c)),b.push("\n                </option>\n            ");b.push("\n        </select>\n    </div>\n</form>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["enrichment.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push('\n        <p>Number of Genes in this list not analysed in this widget: <span class="label label-info">'),b.push(d(this.notAnalysed)),b.push("</span></p>\n    ")),b.push('\n\n    <div class="form"></div>\n\n    <div class="actions" style="margin-bottom:10px">\n        <!-- enrichment.actions.eco -->\n    </div>\n</header>\n<div class="content">\n    <!-- enrichment.table.eco -->\n</div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["chart.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push('\n        <p>Number of Genes in this list not analysed in this widget: <span class="label label-info">'),b.push(d(this.notAnalysed)),b.push("</span></p>\n    ")),b.push('\n</header>\n<div class="content"></div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["enrichment.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push('\n        <p>Number of Genes in this list not analysed in this widget: <span class="label label-info">'),b.push(d(this.notAnalysed)),b.push("</span></p>\n    ")),b.push('\n\n    <div class="form"></div>\n\n    <div class="actions" style="margin-bottom:10px">\n        <a class="btn btn-mini disabled view">View</a>\n        <a class="btn btn-mini disabled export">Export</a>\n    </div>\n</header>\n<div class="content"></div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["invalidjsonkey.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<li style="vertical-align:bottom">\n    <span style="display:inline-block" class="label label-inverse">'),b.push(d(this.key)),b.push("</span> is "),b.push(d(this.actual)),b.push("; was expecting "),b.push(d(this.expected)),b.push("\n</li>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.extra.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="group" style="display:inline-block;margin-right:5px">\n    <label>'),b.push(d(this.label)),b.push('</label>\n    <select name="dataSet" class="span2">\n        '),f=this.possible;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n            <option value="'),b.push(d(a)),b.push('" '),this.selected===a&&b.push(d('selected="selected"')),b.push(">\n                "),b.push(d(a)),b.push("\n            </option>\n        ");b.push("\n    </select>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["invalidjsonkey.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<li style="vertical-align:bottom">\n    <span style="display:inline-block" class="label label-inverse">'),b.push(d(this.key)),b.push("</span> is "),b.push(d(this.actual)),b.push("; was expecting "),b.push(d(this.expected)),b.push("\n</li>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 var type,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -290,6 +291,98 @@ factory = function(Backbone) {
   })();
   
 
+  var EnrichmentRowView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentRowView = (function(_super) {
+  
+    __extends(EnrichmentRowView, _super);
+  
+    function EnrichmentRowView() {
+      this.matchesAction = __bind(this.matchesAction, this);
+      this.selectAction = __bind(this.selectAction, this);
+      this.render = __bind(this.render, this);
+      EnrichmentRowView.__super__.constructor.apply(this, arguments);
+    }
+  
+    EnrichmentRowView.prototype.tagName = "tr";
+  
+    EnrichmentRowView.prototype.events = {
+      "click td.check input": "selectAction",
+      "click td.matches span": "matchesAction"
+    };
+  
+    EnrichmentRowView.prototype.initialize = function(o) {
+      var k, v;
+      for (k in o) {
+        v = o[k];
+        this[k] = v;
+      }
+      this.model.bind('change', this.render);
+      return this.render();
+    };
+  
+    EnrichmentRowView.prototype.render = function() {
+      $(this.el).html(this.template("enrichment.row", {
+        "row": this.model.toJSON()
+      }));
+      return this;
+    };
+  
+    EnrichmentRowView.prototype.selectAction = function() {
+      return this.model.toggleSelected();
+    };
+  
+    EnrichmentRowView.prototype.matchesAction = function() {
+      return $(this.el).find('td.matches span').after(new EnrichmentMatchesView({
+        "matches": this.model.get("matches"),
+        "template": this.template
+      }).el);
+    };
+  
+    return EnrichmentRowView;
+  
+  })(Backbone.View);
+  
+
+  var EnrichmentMatchesView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentMatchesView = (function(_super) {
+  
+    __extends(EnrichmentMatchesView, _super);
+  
+    function EnrichmentMatchesView() {
+      this.render = __bind(this.render, this);
+      EnrichmentMatchesView.__super__.constructor.apply(this, arguments);
+    }
+  
+    EnrichmentMatchesView.prototype.initialize = function(o) {
+      var k, v;
+      for (k in o) {
+        v = o[k];
+        this[k] = v;
+      }
+      return this.render();
+    };
+  
+    EnrichmentMatchesView.prototype.render = function() {
+      console.log(this.matches);
+      $(this.el).html(this.template("enrichment.matches", {
+        "matches": this.matches
+      }));
+      return this;
+    };
+  
+    return EnrichmentMatchesView;
+  
+  })(Backbone.View);
+  
+
   var ChartView,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -466,6 +559,98 @@ factory = function(Backbone) {
   })(InterMineWidget);
   
 
+  var EnrichmentResults, EnrichmentRow,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentRow = (function(_super) {
+  
+    __extends(EnrichmentRow, _super);
+  
+    function EnrichmentRow() {
+      this.toggleSelected = __bind(this.toggleSelected, this);
+      this.validate = __bind(this.validate, this);
+      EnrichmentRow.__super__.constructor.apply(this, arguments);
+    }
+  
+    EnrichmentRow.prototype.defaults = {
+      "selected": false
+    };
+  
+    EnrichmentRow.prototype.spec = {
+      "description": type.isString,
+      "item": type.isString,
+      "matches": type.isArray,
+      "p-value": type.isInteger,
+      "selected": type.isBoolean
+    };
+  
+    EnrichmentRow.prototype.initialize = function(row, widget) {
+      this.widget = widget;
+      return this.validate(row);
+    };
+  
+    EnrichmentRow.prototype.validate = function(row) {
+      return this.widget.validateType(row, this.spec);
+    };
+  
+    EnrichmentRow.prototype.toggleSelected = function() {
+      return this.set({
+        selected: !this.get("selected")
+      });
+    };
+  
+    return EnrichmentRow;
+  
+  })(Backbone.Model);
+  
+  EnrichmentResults = (function(_super) {
+  
+    __extends(EnrichmentResults, _super);
+  
+    function EnrichmentResults() {
+      EnrichmentResults.__super__.constructor.apply(this, arguments);
+    }
+  
+    EnrichmentResults.prototype.model = EnrichmentRow;
+  
+    EnrichmentResults.prototype.selected = function() {
+      return this.filter(function(row) {
+        return row.get("selected");
+      });
+    };
+  
+    EnrichmentResults.prototype.toggleSelected = function() {
+      var model, _i, _j, _len, _len2, _ref, _ref2, _results, _results2;
+      if (this.models.length - this.selected().length) {
+        _ref = this.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
+          _results.push(model.set({
+            "selected": true
+          }));
+        }
+        return _results;
+      } else {
+        _ref2 = this.models;
+        _results2 = [];
+        for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+          model = _ref2[_j];
+          _results2.push(model.set({
+            "selected": false
+          }));
+        }
+        return _results2;
+      }
+    };
+  
+    return EnrichmentResults;
+  
+  })(Backbone.Collection);
+  
+
   var EnrichmentView,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
@@ -476,16 +661,18 @@ factory = function(Backbone) {
     __extends(EnrichmentView, _super);
   
     function EnrichmentView() {
-      this.matchesClick = __bind(this.matchesClick, this);
-      this.selectAllClick = __bind(this.selectAllClick, this);
-      this.checkboxClick = __bind(this.checkboxClick, this);
-      this.formClick = __bind(this.formClick, this);
+      this.exportAction = __bind(this.exportAction, this);
+      this.selectAllAction = __bind(this.selectAllAction, this);
+      this.formAction = __bind(this.formAction, this);
+      this.renderToolbar = __bind(this.renderToolbar, this);
       EnrichmentView.__super__.constructor.apply(this, arguments);
     }
   
     EnrichmentView.prototype.events = {
       "click div.actions a.view": "viewAction",
-      "click div.actions a.export": "exportAction"
+      "click div.actions a.export": "exportAction",
+      "change div.form select": "formAction",
+      "click div.content input.check": "selectAllAction"
     };
   
     EnrichmentView.prototype.initialize = function(o) {
@@ -494,6 +681,8 @@ factory = function(Backbone) {
         v = o[k];
         this[k] = v;
       }
+      this.collection = new EnrichmentResults;
+      this.collection.bind('change', this.renderToolbar);
       return this.render();
     };
   
@@ -519,17 +708,19 @@ factory = function(Backbone) {
       }
       if (this.response.results.length > 0) {
         height = $(this.el).height() - $(this.el).find('header').height() - 30 - 18;
+        this.renderToolbar();
         $(this.el).find("div.content").html($(this.template("enrichment.table", {
           "label": this.response.label
         }))).find('div.wrapper').css('height', "" + height + "px");
         table = $(this.el).find("div.content table");
         _fn = function(i) {
-          var row, tr;
-          row = _this.response.results[i];
-          _this.widget.validateType(row, _this.widget.spec.resultRow);
-          return table.append(tr = $(_this.template("enrichment.row", {
-            "row": row
-          })));
+          var row;
+          row = new EnrichmentRow(_this.response.results[i], _this.widget);
+          _this.collection.add(row);
+          return table.append($(new EnrichmentRowView({
+            "model": row,
+            "template": _this.template
+          }).el));
         };
         for (i = 0, _ref = this.response.results.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
           _fn(i);
@@ -543,88 +734,48 @@ factory = function(Backbone) {
       return this;
     };
   
-    EnrichmentView.prototype.viewAction = function() {
-      return console.log("viewAction!");
+    EnrichmentView.prototype.renderToolbar = function() {
+      return $(this.el).find("div.actions").html($(this.template("enrichment.actions", {
+        "disabled": this.collection.selected().length === 0
+      })));
     };
   
-    EnrichmentView.prototype.exportAction = function() {
-      var ex, key, match, result, value, _ref;
-      console.log("exportAction!");
+    EnrichmentView.prototype.formAction = function(e) {
+      this.widget.formOptions[$(e.target).attr("name")] = $(e.target[e.target.selectedIndex]).attr("value");
+      return this.widget.render();
+    };
+  
+    EnrichmentView.prototype.selectAllAction = function() {
+      return this.collection.toggleSelected();
+    };
+  
+    EnrichmentView.prototype.exportAction = function(e) {
+      var ex, match, model, result, _i, _len, _ref;
       result = [];
-      _ref = this.selected;
-      for (key in _ref) {
-        value = _ref[key];
-        result.push([value.item, value['p-value']].join("\t") + "\t" + ((function() {
-          var _i, _len, _ref2, _results;
-          _ref2 = value.matches;
+      _ref = this.collection.selected();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        model = _ref[_i];
+        result.push([model.get('item'), model.get('p-value')].join("\t") + "\t" + ((function() {
+          var _j, _len2, _ref2, _results;
+          _ref2 = model.get('matches');
           _results = [];
-          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-            match = _ref2[_i];
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            match = _ref2[_j];
             _results.push(match.displayed);
           }
           return _results;
         })()).join());
       }
       if (result.length) {
-        ex = new Exporter($(e.target), result.join("\n"), "" + this.bagName + " " + this.id + ".tsv");
+        ex = new Exporter($(e.target), result.join("\n"), "" + this.widget.bagName + " " + this.widget.id + ".tsv");
         return window.setTimeout((function() {
           return ex.destroy();
         }), 5000);
       }
     };
   
-    EnrichmentView.prototype.formClick = function(e) {
-      this.formOptions[$(e.target).attr("name")] = $(e.target[e.target.selectedIndex]).attr("value");
-      return this.render();
-    };
-  
-    EnrichmentView.prototype.checkboxClick = function(key, row) {
-      var value, _ref;
-      if (!(this.selected != null)) this.selected = {};
-      if (this.selected[key] != null) {
-        delete this.selected[key];
-      } else {
-        this.selected[key] = row;
-      }
-      _ref = this.selected;
-      for (key in _ref) {
-        value = _ref[key];
-        $(this.el).find('div.actions a.btn.disabled').removeClass('disabled');
-        return;
-      }
-      return $(this.el).find('div.actions a.btn').addClass('disabled');
-    };
-  
-    EnrichmentView.prototype.selectAllClick = function(e) {
-      var _this = this;
-      if (!(this.selected != null)) this.selected = {};
-      if ($(e.target).is(':checked')) {
-        $(this.el).find('div.content table tbody tr').each(function(i, row) {
-          $(row).find('td.check input:not(:checked)').attr('checked', true);
-          return _this.selected[i] = row;
-        });
-        return $(this.el).find('div.actions a.btn').removeClass('disabled');
-      } else {
-        this.selected = {};
-        $(this.el).find('div.content table tbody tr td.check input:checked').each(function(i, input) {
-          return $(input).attr('checked', false);
-        });
-        return $(this.el).find('div.actions a.btn').addClass('disabled');
-      }
-    };
-  
-    EnrichmentView.prototype.matchesClick = function(target, matches, matchCb) {
-      var modal;
-      target.after(modal = $(this.template("enrichment.matches", {
-        "matches": matches
-      })));
-      modal.find("a.close").click(function() {
-        return modal.remove();
-      });
-      return modal.find("div.popover-content a").click(function(e) {
-        matchCb($(this).text());
-        return e.preventDefault();
-      });
+    EnrichmentView.prototype.viewAction = function() {
+      return console.log("viewAction!");
     };
   
     return EnrichmentView;
@@ -664,12 +815,6 @@ factory = function(Backbone) {
         "title": type.isString,
         "type": type.isString,
         "wasSuccessful": type.isBoolean
-      },
-      resultRow: {
-        "description": type.isString,
-        "item": type.isString,
-        "matches": type.isArray,
-        "p-value": type.isInteger
       }
     };
   
@@ -735,8 +880,11 @@ factory = function(Backbone) {
   return {
 
     "InterMineWidget": InterMineWidget,
+    "EnrichmentRowView": EnrichmentRowView,
+    "EnrichmentMatchesView": EnrichmentMatchesView,
     "ChartView": ChartView,
     "ChartWidget": ChartWidget,
+    "EnrichmentResults": EnrichmentResults,
     "EnrichmentView": EnrichmentView,
     "EnrichmentWidget": EnrichmentWidget,
 
