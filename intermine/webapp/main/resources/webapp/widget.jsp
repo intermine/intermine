@@ -9,14 +9,18 @@
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
 <style>
-.widget { width:460px; height:auto; max-height:none !important; display:block; float:left; margin:0 10px 20px 10px; }
+.widget { width:460px; height:auto; max-height:none !important; display:block; float:left; margin:0 10px 20px 10px;
+text-align:left; }
 .widget header { text-align:left; }
 .widget header h3 { margin:0 0 10px 0; }
 .widget header p { margin:5px 0; line-height:14px; }
 .widget header form div.group { margin-bottom:5px; }
 .widget div.content { margin-top:10px; }
 .widget div.content table { text-align:left; }
-.widget div.content table td { padding-right:5px; }
+.widget div.content table td,
+.widget table thead th { padding:8px; }
+.widget div.head div { text-align:left; }
+.widget table { border-collapse:collapse; border-spacing:0; }
 
 /* potentially theme specific */
 .widget div.popover div.popover-inner { padding:3px; width:280px; overflow:hidden; background:black; background:rgba(0, 0, 0, 0.8);
