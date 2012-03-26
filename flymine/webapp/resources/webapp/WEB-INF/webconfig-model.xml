@@ -821,7 +821,7 @@
                                  enrich="proteins.proteinDomains.name"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Gene"/>
-
+-->
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
