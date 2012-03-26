@@ -34,6 +34,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -145,7 +146,11 @@ public class GraphWidgetLoader implements DataSetLdr
             }
 
             //add dataset constraint
-            if (config.getDataSetPath() != "") {
+            for (PathConstraint pathConstraint : config.getPathConstraints()) {
+                addConstraint(pathConstraint, query, startClassQueryClass);
+            }
+
+/*            if (config.getDataSetPath() != "") {
                 QueryClass dataSetQueryClass = new QueryClass(Class.forName(model.getPackageName()
                                                                             + ".DataSet"));
                 query.addFrom(dataSetQueryClass);
@@ -157,7 +162,7 @@ public class GraphWidgetLoader implements DataSetLdr
                         new QueryField(dataSetQueryClass, "name"));
                 cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
                     new QueryValue(config.getDataSetValue().toLowerCase())));
-            }
+            }*/
 
             QueryFunction qfCount = new QueryFunction();
             if (!calcTotal) {
@@ -226,6 +231,65 @@ public class GraphWidgetLoader implements DataSetLdr
             }
         }
         return qf;
+    }
+
+    private QueryValue buildQueryValue(PathConstraint pc) {
+        String value = PathConstraint.getValue(pc);
+        QueryValue queryValue = null;
+        if ("true".equals(value)) {
+            queryValue = new QueryValue(true);
+        } else if ("false".equals(value)) {
+            queryValue = new QueryValue(false);
+        } else {
+            queryValue = new QueryValue(value);
+        }
+        return queryValue;
+    }
+
+    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
+        QueryValue queryValue = null;
+        queryValue = buildQueryValue(pc);
+
+        QueryField qfConstraint = null;
+        QueryClass qcConstraint = null;
+        ConstraintSet cs = (ConstraintSet) query.getConstraint();
+        String[] pathsConstraint = pc.getPath().split("\\.");
+
+        for (int index = 0; index < pathsConstraint.length; index++) {
+            if (index == pathsConstraint.length - 1) {
+                if (index == 0) {
+                    qfConstraint = new QueryField(qc,
+                        pathsConstraint[index]);
+                } else {
+                    qfConstraint = new QueryField(qcConstraint,
+                        pathsConstraint[index]);
+                }
+
+                if (queryValue != null) {
+                    cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
+                                                          queryValue));
+                }
+            } else {
+                try {
+                    QueryObjectReference qor = new QueryObjectReference(qc,
+                                               pathsConstraint[index]);
+                    qcConstraint = new QueryClass(qor.getType());
+                    query.addFrom(qcConstraint);
+                    cs.addConstraint(new ContainsConstraint(qor,
+                                     ConstraintOp.CONTAINS, qcConstraint));
+                } catch (IllegalArgumentException e) {
+                    // Not a reference - try collection instead
+                    QueryCollectionReference qcr =
+                        new QueryCollectionReference(qc,
+                            pathsConstraint[index + 1]);
+                    qcConstraint = new QueryClass(TypeUtil.getElementType(
+                        qc.getType(), pathsConstraint[index]));
+                    query.addFrom(qcConstraint);
+                    cs.addConstraint(new ContainsConstraint(qcr,
+                        ConstraintOp.CONTAINS, qcConstraint));
+                }
+            }
+        }
     }
 
     private LinkedHashMap<String, long[]> buildCategorySeriesMap() {
@@ -327,10 +391,7 @@ public class GraphWidgetLoader implements DataSetLdr
 
         // bag constraint
         q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
-        //dataset constraint
-        if (config.getDataSetPath() != "") {
-        q.addConstraint(Constraints.eq(prefix + config.getDataSetPath() + ".name", config.getDataSetValue()));
-        }
+
         //category constraint
         q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
         //series constraint
