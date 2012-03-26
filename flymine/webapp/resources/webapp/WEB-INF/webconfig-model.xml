@@ -711,7 +711,7 @@
 
      <reportdisplayer javaClass="org.intermine.bio.web.displayer.FlyBaseExpressionDisplayer"
                      jspName="model/flybaseExpressionDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="rnaSeqResults"
                      placement="summary"
                      types="Gene"/>
 
