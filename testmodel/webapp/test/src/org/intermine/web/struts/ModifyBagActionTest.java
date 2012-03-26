@@ -62,7 +62,7 @@ public class ModifyBagActionTest extends MockStrutsTestCase
             profileManager = new ProfileManager(os, userProfileOSW);
 
             Profile profile = new Profile(profileManager, "modifyBagActionTest", userId, "pass",
-                                          new HashMap(), new HashMap(), new HashMap(), true);
+                                          new HashMap(), new HashMap(), new HashMap(), true, false);
             profileManager.createProfile(profile);
 
             //Get the realUserId

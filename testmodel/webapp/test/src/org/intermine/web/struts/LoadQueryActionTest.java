@@ -40,7 +40,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
 
         getSession().setAttribute(Constants.PROFILE,
                                   new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
+                                              new HashMap(), new HashMap(), new HashMap(), true, false));
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "false");
@@ -58,7 +58,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
                 "</query>";
         getSession().setAttribute(Constants.PROFILE,
                                   new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
+                                              new HashMap(), new HashMap(), new HashMap(), true, false));
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "true");
