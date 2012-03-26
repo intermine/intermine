@@ -295,7 +295,7 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
 <script type="text/javascript">
-	window.widgets = new window.Widgets(window.service);
+	window.widgets = new window.Widgets(window.service, "${token}");
 </script>
 
 <c:forEach items="${widgets}" var="widget">

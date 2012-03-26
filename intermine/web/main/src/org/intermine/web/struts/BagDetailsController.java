@@ -33,6 +33,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebTable;
 import org.intermine.api.results.flatouterjoins.MultiRow;
@@ -226,6 +227,10 @@ public class BagDetailsController extends TilesAction
         // disable using pathquery saved in session in following jsp page
         // because it caused displaying invalid column names
         request.setAttribute("notUseQuery", Boolean.TRUE);
+
+        // Get us token so we can show non-public widgets.
+        request.setAttribute("token", (im.getProfileManager()).generate24hrKey(profile));
+
         return null;
     }
 }
