@@ -35,8 +35,6 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     private String append;
     private String enrich;
     private String startClassDisplay;
-    private List<PathConstraint> pathConstraints = new ArrayList<PathConstraint>();
-    private String constraints;
 
     /**
      * @return the label
@@ -163,45 +161,6 @@ public class EnrichmentWidgetConfig extends WidgetConfig
 
     public void setStartClassDisplay(String startClassDisplay) {
         this.startClassDisplay = startClassDisplay;
-    }
-
-    public String getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(String constraints) {
-        this.constraints = constraints;
-        setPathConstraints();
-    }
-
-    public void setPathConstraints() {
-        String[] constraintsList = constraints.split("\\s*,\\s*");
-        String path = null;
-        String value = null;
-        ConstraintOp op = null;
-        String[] splitConstraint;
-        for (String constraint : constraintsList) {
-            int opIndex = constraint.indexOf("!=");
-            if (opIndex != -1) {
-                op = ConstraintOp.NOT_EQUALS;
-                splitConstraint = constraint.split("\\s*!=\\s*");
-                path = splitConstraint[0];
-                value = splitConstraint[1];
-            } else {
-                opIndex = constraint.indexOf("=");
-                if (opIndex != -1) {
-                    op = ConstraintOp.EQUALS;
-                    splitConstraint = constraint.split("\\s*=\\s*");
-                    path = splitConstraint[0];
-                    value = splitConstraint[1];
-                }
-            }
-            this.pathConstraints.add(new PathConstraintAttribute(path, op, value));
-        }
-    }
-
-    public List<PathConstraint> getPathConstraints() {
-        return pathConstraints;
     }
 
     /**
