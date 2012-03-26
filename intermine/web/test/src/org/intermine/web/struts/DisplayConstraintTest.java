@@ -17,10 +17,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagQuery;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.config.ClassKeyHelper;
@@ -520,7 +522,7 @@ public class DisplayConstraintTest extends TestCase
 
         public MokaBagQueryConfig() {
             super(new HashMap<String, List<BagQuery>>(), new HashMap<String, List<BagQuery>>(),
-                  new HashMap<String, Map<String, String[]>>());
+                  new HashMap<String, Set<AdditionalConverter>>());
             this.setConnectField("department");
             this.setConstrainField("name");
             this.setExtraConstraintClassName("org.intermine.model.testmodel.Department");
