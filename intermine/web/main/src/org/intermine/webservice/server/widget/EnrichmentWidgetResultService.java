@@ -111,9 +111,11 @@ public class EnrichmentWidgetResultService extends JSONService
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
-        String pathQuery = PathQueryBinding.marshal(widget.getPathQuery(),
+        if(!"".equals(widgetConfig.getViews())) {
+            String pathQuery = PathQueryBinding.marshal(widget.getPathQuery(),
                 "pathQuery" + widgetConfig.getId(), model.getName(), PathQuery.USERPROFILE_VERSION);
-        addOutputInfo("pathQuery", pathQuery);
+            addOutputInfo("pathQuery", pathQuery);
+        }
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
