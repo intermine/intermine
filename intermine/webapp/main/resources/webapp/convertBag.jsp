@@ -27,43 +27,65 @@
 
 </c:if>
 
-<!-- organism Orthologues -->
+<!-- custom converters -->
 <c:if test="${orientation=='h'}">
 
   <div class="orthologues">
-  <c:forEach items="${customConverters}" var="converterInfo">
-	  <h3 class="goog">Orthologues</h3>
-	  <p>
-	  <c:forEach items="${converterInfo.value}" var="value">
-	  	<a href="#">${value}</a>
-	  </c:forEach>
-	  <html:select property="extraFieldValue" styleId="extraConstraintSelect" style="display:none;">
-	      <c:forEach items="${converterInfo.value}" var="value">
-	       <html:option value="${value}">${value}</html:option>
-	     </c:forEach>
-	  </html:select>
-		&nbsp;
-	  <html:submit property="convertToThing" style="display:none;">Convert</html:submit>
-	  </p>
+  <c:forEach items="${customConverters}" var="converter">
+    <h3 class="goog">${converter.title}</h3>
+
+    <input type="text" name="extraFieldValue" style="display:none;" />
+    <input type="text" name="convertToThing" value="Convert" style="display:none;" />
+
+    <script type="text/javascript" charset="utf-8">
+        Object.prototype.hasOwnProperty = function(property) {
+            return typeof(this[property]) !== 'undefined'
+        };
+
+        function convertBagCallBag(datei) {
+          var _i, _len, _ref, _target, _ref1, _ref2;
+          _json = jQuery.parseJSON(datei);
+          _target = jQuery("ul#customConverter");
+          _ref1 = "name";
+          _ref2 = "count";
+          for (_i = 0, _len = _json.length; _i < _len; _i++) {
+            _entry = _json[_i];
+            if (_entry.hasOwnProperty(_ref1) && _entry.hasOwnProperty(_ref2)) {
+              var _text, _count;
+              _name = _entry[_ref1];
+              _count = _entry[_ref2];
+              _target.append(
+                jQuery("<li/>", {
+                  style: 'display:inline-block',
+                  html: function() {
+                    return jQuery("<a/>", {
+                      href: "#",
+                      "data-value": _name,
+                      text: function() {
+                        return "" + _name + " (" + _count + ")";
+                      },
+                      click: function() {
+                        var _value;
+                        _value = jQuery(this).attr("data-value");
+                        jQuery("input[name='extraFieldValue']").attr("value", _value);
+                        jQuery("form#modifyBagDetailsForm").submit();
+                      }
+                    });
+                  }
+                })
+              );
+            }
+          }
+        }
+
+        getCustomConverterCounts('${bag.name}', '${converter.className}', convertBagCallBag);
+    </script>
+    <ul id="customConverter"></ul>
   </c:forEach>
   </div>
-  
-</c:if>
 
-<script type="text/javascript">
-(function() {
-    jQuery('#convert-and-orthologues div.orthologues a').click(function() {
-    	var t 	  = jQuery(this).text(),
-    		ortho = jQuery(this).closest('div.orthologues');
-    	ortho.find('select option').each(function() {
-    		if (jQuery(this).text() == t) {
-    			jQuery(this).attr('selected', 'selected');
-    			ortho.find('input[name="convertToThing"]').click();
-    		}
-    	});
-    });
-})();
-</script>
+</c:if>
+<!-- /custom converters -->
 
 </div>
 
