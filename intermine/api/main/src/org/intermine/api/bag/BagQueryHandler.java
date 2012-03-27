@@ -47,7 +47,7 @@ public class BagQueryHandler extends DefaultHandler
     private String type, message, queryString;
     private Boolean matchesAreIssues;
     private Boolean runBeforeDefault;
-    private Boolean matchOnFirst = Boolean.TRUE;
+    private boolean matchOnFirst = true;
     private Model model;
     private StringBuffer sb;
     private String pkg = null;
@@ -93,10 +93,9 @@ public class BagQueryHandler extends DefaultHandler
             }
             String matchOnFirstStr = attrs.getValue("matchOnFirst");
             if (StringUtils.isNotEmpty(matchOnFirstStr)) {
-                matchOnFirst = ("false".equalsIgnoreCase(matchOnFirstStr)
-                        ? Boolean.FALSE : Boolean.TRUE);
-                bagQueryConfig.setMatchOnFirst(matchOnFirst);
+                matchOnFirst = ("false".equalsIgnoreCase(matchOnFirstStr) ? false : true);
             }
+            bagQueryConfig.setMatchOnFirst(matchOnFirst);
         }
         if ("query".equals(qName)) {
             message = attrs.getValue("message");
