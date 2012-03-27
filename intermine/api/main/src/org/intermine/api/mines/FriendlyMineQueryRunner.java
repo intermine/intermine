@@ -122,7 +122,7 @@ public final class FriendlyMineQueryRunner
             String newReleaseVersion;
             try {
                 newReleaseVersion = IOUtils.toString(reader);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.warn(msg, e);
                 continue;
             }
