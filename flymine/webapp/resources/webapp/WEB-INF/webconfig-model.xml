@@ -468,9 +468,11 @@
 
 
   <class className="org.intermine.model.bio.RNAiScreen">
+      <headerconfig>
     <titles>
-        <title mainTitles="title" />
+        <title mainTitles="name" />
     </titles>
+        </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="publication.title"/>
