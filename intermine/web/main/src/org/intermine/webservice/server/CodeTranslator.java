@@ -33,6 +33,9 @@ public abstract class CodeTranslator
         operations.add(new Operation(">=", "ge", "greaterthanequals"));
     }
 
+    private CodeTranslator() {
+    }
+
     /**
      * Returns corresponding code of translated operation.
      * @param translated code, abbreviation or fullName of operation

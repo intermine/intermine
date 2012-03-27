@@ -11,18 +11,16 @@ package org.intermine.webservice.server;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Stack;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -109,7 +106,7 @@ public class ServicesListingsServlet extends HttpServlet
     private DefaultHandler getHandler() {
         DefaultHandler handler = new DefaultHandler() {
             private final Map<String, Object> result = new HashMap<String, Object>();
-            private final List<Map<String, Object>> resources 
+            private final List<Map<String, Object>> resources
                 = new ArrayList<Map<String, Object>>();
             private Map<String, Object> currentService = null;
             private Map<String, Object> methods = null;
@@ -118,7 +115,6 @@ public class ServicesListingsServlet extends HttpServlet
             private Map<String, Object> param = null;
             private Map<String, Object> returns = null;
             private Map<String, Object> format = null;
-            private String currentServletName = null;
             private Stack<String> path = new Stack<String>();
             private StringBuffer sb = null;
 
@@ -157,7 +153,7 @@ public class ServicesListingsServlet extends HttpServlet
                     }
                 } else if ("param".equals(qName)) {
                     param = new HashMap<String, Object>();
-                    param.put("required", 
+                    param.put("required",
                             Boolean.valueOf(attrs.getValue("required")));
                     param.put("type", attrs.getValue("type"));
                     param.put("description", attrs.getValue("description"));
@@ -206,7 +202,7 @@ public class ServicesListingsServlet extends HttpServlet
 
                 path.pop();
             }
-            public void characters(char[] ch, int start, int length) 
+            public void characters(char[] ch, int start, int length)
                 throws SAXException {
                 sb.append(ch, start, length);
             }
