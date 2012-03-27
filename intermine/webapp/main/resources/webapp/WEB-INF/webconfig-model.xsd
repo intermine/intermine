@@ -109,7 +109,10 @@
         <xsd:attribute name="description" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="link" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="typeClass" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="style" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="constraints" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="views" type="xsd:string"></xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="graphWidgetType">
         <xsd:complexContent>
@@ -119,6 +122,12 @@
                 <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="graphType" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="extraAttributeClass" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="bagPath" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="categoryPath" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="seriesPath" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="seriesValues" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="seriesLabels" type="xsd:string"></xsd:attribute>
+
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -131,6 +140,8 @@
                 <xsd:attribute name="filters" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="externalLink" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="externalLinkLabel" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="startClassDisplay" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="enrich" type="xsd:string"></xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
