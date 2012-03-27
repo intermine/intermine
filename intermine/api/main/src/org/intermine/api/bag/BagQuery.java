@@ -290,6 +290,16 @@ public class BagQuery
     }
 
     /**
+     * If flag is true, bagqueryrunner queries for identifier until match is found, returning
+     * only that first matching record.  If flag is false, bagqueryrunner queries for identifier
+     * using ALL queries, returning ALL matches.  Defaults to TRUE.
+     * @return the matchesAreIssues flag
+     */
+    public boolean matchOnFirst() {
+        return bagQueryConfig.getMatchOnFirst();
+    }
+
+    /**
      * Return the message that was passed to the constructor.
      * @return the message
      */
