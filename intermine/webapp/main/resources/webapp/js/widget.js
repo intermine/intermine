@@ -198,6 +198,20 @@ CSSLoader = (function(_super) {
 
 })(Loader);
 
+var merge;
+
+merge = function(child, parent) {
+  var key;
+  for (key in parent) {
+    if (!(child[key] != null)) {
+      if (Object.prototype.hasOwnProperty.call(parent, key)) {
+        child[key] = parent[key];
+      }
+    }
+  }
+  return child;
+};
+
 var Exporter,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -453,16 +467,19 @@ factory = function(Backbone) {
           chart.draw(google.visualization.arrayToDataTable(this.response.results, false), this.chartOptions);
           if (this.response.pathQuery != null) {
             return google.visualization.events.addListener(chart, "select", function() {
-              var item, pq, _i, _len, _ref, _results;
+              var item, pq, translate, _i, _len, _ref, _results;
+              translate = function(response, series) {
+                return response.seriesValues.split(',')[response.seriesLabels.split(',').indexOf(series)];
+              };
               pq = _this.response.pathQuery;
               _ref = chart.getSelection();
               _results = [];
               for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 item = _ref[_i];
                 if (item.row != null) {
-                  pq = pq.replace("%category", response.results[item.row + 1][0]);
+                  pq = pq.replace("%category", _this.response.results[item.row + 1][0]);
                   if (item.column != null) {
-                    pq = pq.replace("%series", _this._translateSeries(_this.response, _this.response.results[0][item.column]));
+                    pq = pq.replace("%series", translate(_this.response, _this.response.results[0][item.column]));
                   }
                   _results.push(_this.options.selectCb(pq));
                 } else {
@@ -483,10 +500,6 @@ factory = function(Backbone) {
       }
     };
   
-    ChartView.prototype._translateSeries = function(response, series) {
-      return response.seriesValues.split(',')[response.seriesLabels.split(',').indexOf(series)];
-    };
-  
     return ChartView;
   
   })(Backbone.View);
@@ -500,6 +513,14 @@ factory = function(Backbone) {
   ChartWidget = (function(_super) {
   
     __extends(ChartWidget, _super);
+  
+    ChartWidget.prototype.widgetOptions = {
+      "title": true,
+      "description": true,
+      selectCb: function(pq) {
+        return typeof console !== "undefined" && console !== null ? console.log(pq) : void 0;
+      }
+    };
   
     ChartWidget.prototype.spec = {
       response: {
@@ -521,20 +542,13 @@ factory = function(Backbone) {
     };
   
     function ChartWidget(service, token, id, bagName, el, widgetOptions) {
-      var _this = this;
       this.service = service;
       this.token = token;
       this.id = id;
       this.bagName = bagName;
       this.el = el;
-      this.widgetOptions = widgetOptions != null ? widgetOptions : {
-        "title": true,
-        "description": true,
-        selectCb: function(pq) {
-          return window.open("" + _this.service + "query/results?query=" + (encodeURIComponent(pq)) + "&format=html");
-        }
-      };
       this.render = __bind(this.render, this);
+      this.widgetOptions = merge(widgetOptions, this.widgetOptions);
       ChartWidget.__super__.constructor.call(this);
       this.render();
     }
@@ -690,6 +704,104 @@ factory = function(Backbone) {
   })(Backbone.Collection);
   
 
+  var EnrichmentWidget,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentWidget = (function(_super) {
+  
+    __extends(EnrichmentWidget, _super);
+  
+    EnrichmentWidget.prototype.widgetOptions = {
+      "title": true,
+      "description": true,
+      matchCb: function(id, type) {
+        return typeof console !== "undefined" && console !== null ? console.log(id, type) : void 0;
+      },
+      viewCb: function(ids, pq) {
+        return typeof console !== "undefined" && console !== null ? console.log(ids, pq) : void 0;
+      }
+    };
+  
+    EnrichmentWidget.prototype.formOptions = {
+      errorCorrection: "Holm-Bonferroni",
+      pValue: 0.05
+    };
+  
+    EnrichmentWidget.prototype.errorCorrections = ["Holm-Bonferroni", "Benjamini Hochberg", "Bonferroni", "None"];
+  
+    EnrichmentWidget.prototype.pValues = [0.05, 0.10, 1.00];
+  
+    EnrichmentWidget.prototype.spec = {
+      response: {
+        "title": type.isString,
+        "description": type.isString,
+        "error": type.isNull,
+        "list": type.isString,
+        "notAnalysed": type.isInteger,
+        "requestedAt": type.isString,
+        "results": type.isArray,
+        "label": type.isString,
+        "statusCode": type.isHTTPSuccess,
+        "title": type.isString,
+        "type": type.isString,
+        "wasSuccessful": type.isBoolean
+      }
+    };
+  
+    function EnrichmentWidget(service, token, id, bagName, el, widgetOptions) {
+      this.service = service;
+      this.token = token;
+      this.id = id;
+      this.bagName = bagName;
+      this.el = el;
+      this.render = __bind(this.render, this);
+      this.widgetOptions = merge(widgetOptions, this.widgetOptions);
+      EnrichmentWidget.__super__.constructor.call(this);
+      this.render();
+    }
+  
+    EnrichmentWidget.prototype.render = function() {
+      var _this = this;
+      return $.ajax({
+        url: "" + this.service + "list/enrichment",
+        dataType: "json",
+        data: {
+          widget: this.id,
+          list: this.bagName,
+          correction: this.formOptions.errorCorrection,
+          maxp: this.formOptions.pValue,
+          token: this.token
+        },
+        success: function(response) {
+          _this.validateType(response, _this.spec.response);
+          if (response.wasSuccessful) {
+            return new EnrichmentView({
+              "widget": _this,
+              "el": _this.el,
+              "template": _this.template,
+              "response": response,
+              "form": {
+                "options": _this.formOptions,
+                "pValues": _this.pValues,
+                "errorCorrections": _this.errorCorrections
+              },
+              "options": _this.widgetOptions
+            });
+          }
+        },
+        error: function(err) {
+          return _this.error("AJAXTransport", err);
+        }
+      });
+    };
+  
+    return EnrichmentWidget;
+  
+  })(InterMineWidget);
+  
+
   var EnrichmentView,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
@@ -838,109 +950,14 @@ factory = function(Backbone) {
           return _results;
         })());
       }
-      return this.options.viewCb(result, "this is where real PathQuery goes");
+      if (result.length) {
+        return this.options.viewCb(result, "this is where real PathQuery goes");
+      }
     };
   
     return EnrichmentView;
   
   })(Backbone.View);
-  
-
-  var EnrichmentWidget,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  EnrichmentWidget = (function(_super) {
-  
-    __extends(EnrichmentWidget, _super);
-  
-    EnrichmentWidget.prototype.formOptions = {
-      errorCorrection: "Holm-Bonferroni",
-      pValue: 0.05
-    };
-  
-    EnrichmentWidget.prototype.errorCorrections = ["Holm-Bonferroni", "Benjamini Hochberg", "Bonferroni", "None"];
-  
-    EnrichmentWidget.prototype.pValues = [0.05, 0.10, 1.00];
-  
-    EnrichmentWidget.prototype.spec = {
-      response: {
-        "title": type.isString,
-        "description": type.isString,
-        "error": type.isNull,
-        "list": type.isString,
-        "notAnalysed": type.isInteger,
-        "requestedAt": type.isString,
-        "results": type.isArray,
-        "label": type.isString,
-        "statusCode": type.isHTTPSuccess,
-        "title": type.isString,
-        "type": type.isString,
-        "wasSuccessful": type.isBoolean
-      }
-    };
-  
-    function EnrichmentWidget(service, token, id, bagName, el, widgetOptions) {
-      var _this = this;
-      this.service = service;
-      this.token = token;
-      this.id = id;
-      this.bagName = bagName;
-      this.el = el;
-      this.widgetOptions = widgetOptions != null ? widgetOptions : {
-        "title": true,
-        "description": true,
-        matchCb: function(id, type) {
-          return typeof console !== "undefined" && console !== null ? console.log(id, type) : void 0;
-        },
-        viewCb: function(ids, pq) {
-          return typeof console !== "undefined" && console !== null ? console.log(ids, pq) : void 0;
-        }
-      };
-      this.render = __bind(this.render, this);
-      EnrichmentWidget.__super__.constructor.call(this);
-      this.render();
-    }
-  
-    EnrichmentWidget.prototype.render = function() {
-      var _this = this;
-      return $.ajax({
-        url: "" + this.service + "list/enrichment",
-        dataType: "json",
-        data: {
-          widget: this.id,
-          list: this.bagName,
-          correction: this.formOptions.errorCorrection,
-          maxp: this.formOptions.pValue,
-          token: this.token
-        },
-        success: function(response) {
-          _this.validateType(response, _this.spec.response);
-          if (response.wasSuccessful) {
-            return new EnrichmentView({
-              "widget": _this,
-              "el": _this.el,
-              "template": _this.template,
-              "response": response,
-              "form": {
-                "options": _this.formOptions,
-                "pValues": _this.pValues,
-                "errorCorrections": _this.errorCorrections
-              },
-              "options": _this.widgetOptions
-            });
-          }
-        },
-        error: function(err) {
-          return _this.error("AJAXTransport", err);
-        }
-      });
-    };
-  
-    return EnrichmentWidget;
-  
-  })(InterMineWidget);
   
 
   return {
@@ -951,8 +968,8 @@ factory = function(Backbone) {
     "ChartView": ChartView,
     "ChartWidget": ChartWidget,
     "EnrichmentResults": EnrichmentResults,
-    "EnrichmentView": EnrichmentView,
     "EnrichmentWidget": EnrichmentWidget,
+    "EnrichmentView": EnrichmentView,
 
   };
 };
