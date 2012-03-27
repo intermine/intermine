@@ -789,6 +789,7 @@
                                  startClass="Protein"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="features.type"
+                                 enrichIdentifier="features.type"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Protein"
                                  views="primaryIdentifier, primaryAccession, organism.name,
@@ -825,6 +826,7 @@
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="proteins.proteinDomains.name"
+                                 enrichIdentifier="proteins.proteinDomains.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
@@ -837,6 +839,7 @@
                                  startClass="Protein"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="proteinDomains.name"
+                                 enrichIdentifier="proteinDomains.primaryIdentifier"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Protein"
                                  views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
@@ -849,9 +852,12 @@
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="publications.title"
+                                 enrichIdentifier="publications.pubMedId"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views=""/>
+                                 views="secondaryIdentifier, symbol, Gene.organism.name,
+                                       publications.title, publications.firstAuthor,
+                                       publications.journal, publications.year, publications.pubMedId"/>
 
       <enrichmentwidgetdisplayer id="bdgp_enrichment"
                                  title="BDGP Enrichment"
@@ -862,7 +868,8 @@
                                  enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
                                  constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views=""/>
+                                 views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
+                                        mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"/>
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"
                                  title="Pathway Enrichment"
@@ -873,9 +880,11 @@
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="pathways.name"
+                                 enrichIdentifier="pathways.identifier"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list]"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views=""/>
+                                 views="secondaryIdentifier, symbol, organism.name,
+                                        pathways.identifier, pathways.name, pathways.dataSets.name"/>
 <!--
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
