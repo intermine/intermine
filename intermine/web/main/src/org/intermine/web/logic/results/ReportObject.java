@@ -77,7 +77,6 @@ public class ReportObject
     private List<InlineList> inlineListsHeader = null;
     /** @var List of 'unplaced' normal InlineLists */
     private List<InlineList> inlineListsNormal = null;
-    private Integer pisvejc = null;
 
     private Map<String, Object> attributes = null;
     private Map<String, FieldDescriptor> attributeDescriptors = null;
