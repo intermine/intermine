@@ -238,7 +238,7 @@ public class BagQueryRunner
             resMap.put(field, ids);
         }
         ids.add(id);
-        if (bagQueryConfig.getMatchOnFirst().booleanValue()) {
+        if (bagQueryConfig.getMatchOnFirst()) {
             unresolved.remove(field);
         }
     }
@@ -325,7 +325,7 @@ public class BagQueryRunner
                     objsOfWrongType.put(input, localObjsOfWrongType);
                 }
             }
-            if (resolved && bagQueryConfig.getMatchOnFirst().booleanValue()) {
+            if (resolved && bagQueryConfig.getMatchOnFirst()) {
                 unresolved.remove(input);
             }
         }
