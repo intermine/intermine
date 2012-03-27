@@ -98,11 +98,8 @@ public class EnrichmentWidgetResultService extends JSONService
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
         EnrichmentWidgetConfig enrichmentWidgetConfig = (EnrichmentWidgetConfig) widgetConfig;
-        addOutputInfo("label", enrichmentWidgetConfig.getLabel());
-        addOutputInfo("title", enrichmentWidgetConfig.getTitle());
-        addOutputInfo("description", enrichmentWidgetConfig.getDescription());
-        String filterSelectedValue = input.getExtraAttributes().get(0);
-        addOutputFilter(enrichmentWidgetConfig, filterSelectedValue);
+        addOutputConfig(enrichmentWidgetConfig);
+        addOutputFilter(enrichmentWidgetConfig, input.getExtraAttributes().get(0));
 
         EnrichmentWidget widget = null;
         try {
@@ -111,11 +108,7 @@ public class EnrichmentWidgetResultService extends JSONService
             throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
-        if(!"".equals(widgetConfig.getViews())) {
-            String pathQuery = PathQueryBinding.marshal(widget.getPathQuery(),
-                "pathQuery" + widgetConfig.getId(), model.getName(), PathQuery.USERPROFILE_VERSION);
-            addOutputInfo("pathQuery", pathQuery);
-        }
+        addOutputPathQuery(widget, enrichmentWidgetConfig);
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
@@ -126,6 +119,12 @@ public class EnrichmentWidgetResultService extends JSONService
             }
             output.addResultItem(processed);
         }
+    }
+
+    private void addOutputConfig(EnrichmentWidgetConfig config) {
+        addOutputInfo("label", config.getLabel());
+        addOutputInfo("title", config.getTitle());
+        addOutputInfo("description", config.getDescription());
     }
 
     private void addOutputFilter(EnrichmentWidgetConfig widgetConfig, String filterSelectedValue) {
@@ -144,6 +143,19 @@ public class EnrichmentWidgetResultService extends JSONService
             addOutputInfo("filterSelectedValue", defaultFilterValue);
         }
     }
+
+    private void addOutputPathQuery(EnrichmentWidget widget, EnrichmentWidgetConfig config) {
+        addOutputInfo("pathQuery", widget.getPathQuery().toJson());
+        String enrichIdentifier = config.getEnrichIdentifier();
+        String pathConstraint = "";
+        if (enrichIdentifier != null && !"".equals(enrichIdentifier)) {
+            pathConstraint = enrichIdentifier;
+        } else {
+            pathConstraint = config.getEnrich();
+        }
+        addOutputInfo("pathConstraint", config.getStartClass()+ "." + pathConstraint);
+    }
+
 
     @Override
     protected Map<String, Object> getHeaderAttributes() {
