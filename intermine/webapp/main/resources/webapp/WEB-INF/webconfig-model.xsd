@@ -142,6 +142,7 @@
                 <xsd:attribute name="externalLinkLabel" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="startClassDisplay" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="enrich" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="enrichIdentifier" type="xsd:string"></xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
