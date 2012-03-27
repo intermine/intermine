@@ -91,11 +91,17 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             qfEnrichId = enrichmentQueryFields[1];
         } else {
             qfEnrich = new QueryField(startClass, config.getEnrich());
-            qfEnrichId = new QueryField(startClass, "id");
+            String enrichIdentifier = config.getEnrichIdentifier();
+            if (enrichIdentifier != null && !"".equals(enrichIdentifier)
+                && !enrichIdentifier.equals(config.getEnrich())) {
+                qfEnrichId = new QueryField(startClass, enrichIdentifier);
+            } else {
+                qfEnrichId = qfEnrich;
+            }
         }
 
         if (keys != null) {
-            cs.addConstraint(new BagConstraint(qfEnrich, ConstraintOp.IN, keys));
+            cs.addConstraint(new BagConstraint(qfEnrichId, ConstraintOp.IN, keys));
         }
 
         QueryField qfStartClassId = new QueryField(startClass, "id");
@@ -118,10 +124,10 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         QueryFunction qfCount = new QueryFunction();
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {
-            subQ.addToSelect(qfEnrich);
+            subQ.addToSelect(qfEnrichId);
             subQ.addToSelect(new QueryField(startClass, config.getStartClassDisplay()));
             subQ.addToSelect(qfStartClassId);
-            subQ.addToOrderBy(qfEnrich);
+            subQ.addToOrderBy(qfEnrichId);
             return subQ;
         // analysed query:  return the gene only
         } else if ("analysed".equals(action)) {
@@ -134,17 +140,25 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             mainQuery.addToSelect(qfCount);
         // enrichment queries
         } else {
-            //subQ.addToSelect(qfEnrichId);
             subQ.addToSelect(qfStartClassId);
-            subQ.addToSelect(qfEnrich);
+            subQ.addToSelect(qfEnrichId);
+            if (qfEnrichId != qfEnrich) {
+                subQ.addToSelect(qfEnrich);
+            }
 
-            QueryField outerQfTerm = new QueryField(subQ, qfEnrich);
+            QueryField outerQfEnrichId = new QueryField(subQ, qfEnrichId);
             mainQuery.addFrom(subQ);
-            mainQuery.addToSelect(outerQfTerm);
-            mainQuery.addToGroupBy(outerQfTerm);
+            mainQuery.addToSelect(outerQfEnrichId);
+            mainQuery.addToGroupBy(outerQfEnrichId);
             mainQuery.addToSelect(qfCount);
             if ("sample".equals(action)) {
-                mainQuery.addToSelect(outerQfTerm);
+                if (qfEnrichId != qfEnrich) {
+                    QueryField outerQfEnrich = new QueryField(subQ, qfEnrich);
+                    mainQuery.addToSelect(outerQfEnrich);
+                    mainQuery.addToGroupBy(outerQfEnrich);
+                } else {
+                    mainQuery.addToSelect(outerQfEnrichId);
+                }
             }
         }
         return mainQuery;
@@ -153,6 +167,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
     private QueryField[] createEnrichmentQueryFields(Query query) {
         QueryField[] enrichmentQueryFields = new QueryField[2];
         String enrichPath = config.getEnrich();
+        String enrichIdentifierPath = config.getEnrichIdentifier();
         String[] paths = enrichPath.split("\\.");
         QueryClass qc = startClass;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
@@ -161,7 +176,13 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
             if (i == paths.length - 1) {
                 qf = new QueryField(qc, paths[i]);
                 enrichmentQueryFields[0] = qf;
-                enrichmentQueryFields[1] = new QueryField(qc, "id");
+                if (enrichIdentifierPath != null && !"".equals(enrichIdentifierPath)
+                    && !enrichIdentifierPath.equals(enrichPath)) {
+                    String[] pathArray = enrichIdentifierPath.split("\\.");
+                    enrichmentQueryFields[1] = new QueryField(qc, pathArray[pathArray.length - 1]);
+                } else {
+                    enrichmentQueryFields[1] = qf;
+                }
             } else {
                 try {
                     QueryObjectReference qor = new QueryObjectReference(qc, paths[i]);
@@ -322,10 +343,6 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
 
         // bag constraint
         q.addConstraint(Constraints.in(startClass + ".id", bag.getName()));
-        //constraint on id
-        String[] keys = {"%id"};
-        q.addConstraint(Constraints.oneOfValues(startClass + "." + config.getEnrich().split("\\.")[0],
-                Arrays.asList(keys)));
         return q;
     }
 }
