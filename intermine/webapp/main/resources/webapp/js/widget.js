@@ -339,6 +339,7 @@ factory = function(Backbone) {
       return $(this.el).find('td.matches span').after(new EnrichmentMatchesView({
         "matches": this.model.get("matches"),
         "template": this.template,
+        "type": this.type,
         "callback": this.matchCb
       }).el);
     };
@@ -386,7 +387,7 @@ factory = function(Backbone) {
     };
   
     EnrichmentMatchesView.prototype.matchAction = function(e) {
-      this.callback($(e.target).text());
+      this.callback($(e.target).text(), this.type);
       return e.preventDefault();
     };
   
@@ -699,6 +700,7 @@ factory = function(Backbone) {
     __extends(EnrichmentView, _super);
   
     function EnrichmentView() {
+      this.viewAction = __bind(this.viewAction, this);
       this.exportAction = __bind(this.exportAction, this);
       this.selectAllAction = __bind(this.selectAllAction, this);
       this.formAction = __bind(this.formAction, this);
@@ -757,6 +759,7 @@ factory = function(Backbone) {
           return table.append($(new EnrichmentRowView({
             "model": row,
             "template": _this.template,
+            "type": _this.response.type,
             "matchCb": _this.options.matchCb
           }).el));
         };
@@ -819,7 +822,23 @@ factory = function(Backbone) {
     };
   
     EnrichmentView.prototype.viewAction = function() {
-      return console.log("viewAction!");
+      var match, model, result, _i, _len, _ref;
+      result = [];
+      _ref = this.collection.selected();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        model = _ref[_i];
+        Array.prototype.push.apply(result, (function() {
+          var _j, _len2, _ref2, _results;
+          _ref2 = model.get('matches');
+          _results = [];
+          for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+            match = _ref2[_j];
+            _results.push(match.id);
+          }
+          return _results;
+        })());
+      }
+      return this.options.viewCb(result, "this is where real PathQuery goes");
     };
   
     return EnrichmentView;
@@ -872,8 +891,11 @@ factory = function(Backbone) {
       this.widgetOptions = widgetOptions != null ? widgetOptions : {
         "title": true,
         "description": true,
-        matchCb: function(id) {
-          return typeof console !== "undefined" && console !== null ? console.log(id) : void 0;
+        matchCb: function(id, type) {
+          return typeof console !== "undefined" && console !== null ? console.log(id, type) : void 0;
+        },
+        viewCb: function(ids, pq) {
+          return typeof console !== "undefined" && console !== null ? console.log(ids, pq) : void 0;
         }
       };
       this.render = __bind(this.render, this);
