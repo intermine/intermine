@@ -817,8 +817,8 @@
                                  filterLabel="Ontology"
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
-
-      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene" TO TEST
+-->
+      <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
                                  label="Protein Domain"
@@ -826,8 +826,10 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="proteins.proteinDomains.name"
                                  constraints="organism.name=[list]"
-                                 typeClass="org.intermine.model.bio.Gene"/>
--->
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+                                       proteinDomains.primaryIdentifier,proteinDomains.name"/>
+
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
@@ -837,7 +839,7 @@
                                  enrich="proteinDomains.name"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Protein"
-                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier
+                                 views="primaryIdentifier,organism.name,proteinDomains.primaryIdentifier,
                                        proteinDomains.name"/>
 
       <enrichmentwidgetdisplayer id="publication_enrichment"
