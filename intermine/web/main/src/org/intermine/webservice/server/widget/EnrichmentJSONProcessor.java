@@ -23,7 +23,7 @@ public class EnrichmentJSONProcessor implements WidgetResultProcessor {
     @Override
     public List<String> formatRow(List<Object> row) {
         Map<String, Object> backingMap = new HashMap<String, Object>();
-        backingMap.put("item", row.get(0));
+        backingMap.put("identifier", row.get(0));
         backingMap.put("description", row.get(1));
         backingMap.put("p-value", row.get(2));
         // Counts (index 3) are not necessary here, as it it trivial to
