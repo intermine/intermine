@@ -547,6 +547,7 @@ factory = function(Backbone) {
       this.id = id;
       this.bagName = bagName;
       this.el = el;
+      if (widgetOptions == null) widgetOptions = {};
       this.render = __bind(this.render, this);
       this.widgetOptions = merge(widgetOptions, this.widgetOptions);
       ChartWidget.__super__.constructor.call(this);
@@ -914,6 +915,7 @@ factory = function(Backbone) {
       this.id = id;
       this.bagName = bagName;
       this.el = el;
+      if (widgetOptions == null) widgetOptions = {};
       this.render = __bind(this.render, this);
       this.widgetOptions = merge(widgetOptions, this.widgetOptions);
       EnrichmentWidget.__super__.constructor.call(this);
