@@ -18,6 +18,10 @@ import org.intermine.webservice.server.output.Output;
  **/
 public abstract class StatusDictionary
 {
+
+    private StatusDictionary() {
+    }
+
     /**
      * @param statusCode status code
      * @return short description of specified status code

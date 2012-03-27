@@ -1,9 +1,5 @@
 package org.intermine.webservice.server.core;
 
-import java.util.Arrays;
-
-import org.intermine.webservice.server.output.Output;
-
 /*
  * Copyright (C) 2002-2011 FlyMine
  *
@@ -13,6 +9,9 @@ import org.intermine.webservice.server.output.Output;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.Arrays;
+
+import org.intermine.webservice.server.output.Output;
 
 public class CountProcessor
 {

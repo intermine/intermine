@@ -27,5 +27,5 @@ public interface ResultRowParser
      * @param resultsRow result row
      * @return list of strings
      */
-    List<String> parse(ResultsRow resultsRow);
+    List<String> parse(ResultsRow<?> resultsRow);
 }

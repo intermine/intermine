@@ -20,6 +20,11 @@ import java.net.URLEncoder;
  */
 public abstract class LinkGeneratorBase
 {
+    /**
+     * Empty constructor.
+     */
+    protected LinkGeneratorBase() {
+    }
 
     /**
      *  Encodes object string value to be able to be part of url.

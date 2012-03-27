@@ -1,5 +1,14 @@
 package org.intermine.webservice.server;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,8 +22,18 @@ import org.intermine.metadata.Model;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.json.JSONObject;
 
-public class ClassKeysService extends SummaryService {
+/**
+ * A service to fetch a JSON representation of class keys for all classes in the model.
+ *
+ * @author Alexis Kalderimis
+ */
+public class ClassKeysService extends SummaryService
+{
 
+    /**
+     * Construct with the InterMineAPI.
+     * @param im the InterMineAPI
+     */
     public ClassKeysService(InterMineAPI im) {
         super(im);
     }

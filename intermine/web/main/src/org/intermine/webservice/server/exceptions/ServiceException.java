@@ -21,7 +21,7 @@ import org.intermine.webservice.server.output.Output;
 public class ServiceException extends RuntimeException
 {
 
-    private int httpErrorCode  = Output.SC_INTERNAL_SERVER_ERROR;
+    private int httpErrorCode = Output.SC_INTERNAL_SERVER_ERROR;
 
     private static final long serialVersionUID = 1L;
 

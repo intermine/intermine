@@ -73,7 +73,11 @@ public class ListManager
         }
         return bagManager.getUserAndGlobalBags(profile).values();
     }
-    
+
+    /**
+     * Return true if there is at least one bag  in the 'to_upgrade' state.
+     * @return true if there are any bags to upgrade
+     */
     public boolean isAnyBagUnresolvable() {
         return bagManager.isAnyBagToUpgrade(profile);
     }
@@ -81,6 +85,7 @@ public class ListManager
     /**
      * Returns the current lists available to the current user which contain the
      * specified object.
+     * @param objectId the id of an InterMineObject to look up
      * @return A collection of lists.
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {

@@ -11,21 +11,21 @@ package org.intermine.webservice.server;
  */
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.output.JSONFormatter;
-import org.json.JSONObject;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.output.JSONFormatter;
+import org.json.JSONObject;
 
 /**
  * Serve up the paths used to summarise each class.
@@ -43,9 +43,10 @@ public class SummaryService extends WebService
         super(im);
     }
 
-    /*
+    /**
      * @see org.intermine.webservice.server.WebService#execute(
      * javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @throws Exception if anything goes wrong
      */
     @Override
     protected void execute() throws Exception {
@@ -73,6 +74,10 @@ public class SummaryService extends WebService
         output.addResultItem(Collections.singletonList(jo.toString()));
     }
 
+    /**
+     * Get attributes for header.
+     * @return a map from attribute name to value
+     */
     protected Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
         if (formatIsJSON()) {
