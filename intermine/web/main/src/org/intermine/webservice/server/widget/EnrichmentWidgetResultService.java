@@ -17,15 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -57,7 +52,8 @@ import org.intermine.webservice.server.output.XMLFormatter;
  */
 public class EnrichmentWidgetResultService extends JSONService
 {
-    private class EnrichmentXMLFormatter extends XMLFormatter {
+    private class EnrichmentXMLFormatter extends XMLFormatter
+    {
 
         @Override
         public String formatResult(List<String> resultRow) {
@@ -73,8 +69,6 @@ public class EnrichmentWidgetResultService extends JSONService
     /**
      * Executes service specific logic.
      *
-     * @param request request
-     * @param response response
      * @throws Exception an error has occurred
      */
     @SuppressWarnings("deprecation")
@@ -85,7 +79,8 @@ public class EnrichmentWidgetResultService extends JSONService
 
         InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, input.getBagName());
         if (imBag == null) {
-            throw new BadRequestException("You do not have access to a bag named" + input.getBagName());
+            throw new BadRequestException("You do not have access to a bag named"
+                                          + input.getBagName());
         }
         addOutputInfo("type", imBag.getType());
         addOutputInfo("list", imBag.getName());
@@ -95,7 +90,8 @@ public class EnrichmentWidgetResultService extends JSONService
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
 
         if (widgetConfig == null || !(widgetConfig instanceof EnrichmentWidgetConfig)) {
-            throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
+            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
+                                                + input.getWidgetId() + "\"");
         }
         EnrichmentWidgetConfig enrichmentWidgetConfig = (EnrichmentWidgetConfig) widgetConfig;
         addOutputConfig(enrichmentWidgetConfig);
@@ -103,9 +99,11 @@ public class EnrichmentWidgetResultService extends JSONService
 
         EnrichmentWidget widget = null;
         try {
-            widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(), input.getExtraAttributes());
+            widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(),
+                input.getExtraAttributes());
         } catch (ClassCastException e) {
-            throw new ResourceNotFoundException("Could not find an enrichment widget called \"" + input.getWidgetId() + "\"");
+            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
+                                               + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputPathQuery(widget, enrichmentWidgetConfig);
@@ -153,7 +151,7 @@ public class EnrichmentWidgetResultService extends JSONService
         } else {
             pathConstraint = config.getEnrich();
         }
-        addOutputInfo("pathConstraint", config.getStartClass()+ "." + pathConstraint);
+        addOutputInfo("pathConstraint", config.getStartClass() + "." + pathConstraint);
     }
 
 
