@@ -20,6 +20,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 
 
@@ -50,6 +51,11 @@ public class GraphWidget extends Widget
         this.bag = interMineBag;
         this.os = os;
         this.selectedExtraAttribute = selectedExtraAttribute;
+        String typeClass = config.getTypeClass();
+        if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
+            throw new ResourceNotFoundException("Could not find a graph widget called \""
+                    + config.getId() + "\" with type " + bag.getType());
+        }
         process();
     }
 

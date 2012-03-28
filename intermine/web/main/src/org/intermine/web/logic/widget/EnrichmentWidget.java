@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
  * @author "Xavier Watkins"
@@ -65,6 +66,11 @@ public class EnrichmentWidget extends Widget
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
+        String typeClass = config.getTypeClass();
+        if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
+            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
+                    + config.getId() + "\" with type " + bag.getType());
+        }
         process();
     }
 
