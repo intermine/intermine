@@ -66,12 +66,16 @@ public class EnrichmentWidget extends Widget
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
+        validateBagType();
+        process();
+    }
+
+    public void validateBagType() {
         String typeClass = config.getTypeClass();
         if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \""
                     + config.getId() + "\" with type " + bag.getType());
         }
-        process();
     }
 
     /**
