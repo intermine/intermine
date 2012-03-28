@@ -2227,101 +2227,114 @@ public class PathQuery implements Cloneable
      * @return This query as json.
      */
     public synchronized String toJson() {
-    	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-    	// VIEW
-    	sb.append("{\"select\":[");
-    	for(Iterator<String> it = getView().iterator(); it.hasNext();) {
-    		sb.append("\"" + it.next() + "\"");
-    		if (it.hasNext()) sb.append(",");
-    	}
-    	sb.append("]");
+        // VIEW
+        sb.append("{\"select\":[");
+        for(Iterator<String> it = getView().iterator(); it.hasNext();) {
+            sb.append("\"" + it.next() + "\"");
+            if (it.hasNext()){
+                sb.append(",");
+            }
+        }
+        sb.append("]");
 
-    	// SORT ORDER
-    	List<OrderElement> order = getOrderBy();
-    	if (!order.isEmpty()) {
-    		sb.append(",\"orderBy\":[");
-    		for (Iterator<OrderElement> it = order.iterator(); it.hasNext();) {
-    			OrderElement oe = it.next();
-    			sb.append(String.format("{\"%s\":\"%s\"}", oe.getOrderPath(), oe.getDirection()));
-    			if (it.hasNext()) sb.append(",");
-    		}
-    		sb.append("]");
-    	}
+        // SORT ORDER
+        List<OrderElement> order = getOrderBy();
+        if (!order.isEmpty()) {
+            sb.append(",\"orderBy\":[");
+            for (Iterator<OrderElement> it = order.iterator(); it.hasNext();) {
+                OrderElement oe = it.next();
+                sb.append(String.format("{\"%s\":\"%s\"}", oe.getOrderPath(), oe.getDirection()));
+                if (it.hasNext()) {
+                    sb.append(",");
+                }
+            }
+            sb.append("]");
+        }
 
-    	// LOGIC
-    	String constraintLogic = getConstraintLogic();
-    	if (constraintLogic != null && constraintLogic.length() > 1) { // "A" is pretty pointless
-    		sb.append(",\"constraintLogic\":\"" + constraintLogic + "\"");
-    	}
+        // LOGIC
+        String constraintLogic = getConstraintLogic();
+        if (constraintLogic != null && constraintLogic.length() > 1) { // "A" is pretty pointless
+            sb.append(",\"constraintLogic\":\"" + constraintLogic + "\"");
+        }
 
-    	// JOINS
-    	Map<String, OuterJoinStatus> ojs = getOuterJoinStatus();
-    	if (!ojs.isEmpty()) {
-    		StringBuilder sb2 = new StringBuilder();
-    		for (Iterator<Entry<String, OuterJoinStatus>> it = ojs.entrySet().iterator(); it.hasNext();) {
-    			Entry<String, OuterJoinStatus> pair = it.next();
-    			if (pair.getValue() == OuterJoinStatus.OUTER) {
-    				if (sb2.length() > 0) sb2.append(",");
-    				sb2.append("\"" + pair.getKey() + "\"");
-    			}
-    		}
-    		if (sb2.length() != 0) {
-    			sb.append(",\"joins\":[" + sb2.toString() + "]");
-    		}
-    	}
+        // JOINS
+        Map<String, OuterJoinStatus> ojs = getOuterJoinStatus();
+        if (!ojs.isEmpty()) {
+            StringBuilder sb2 = new StringBuilder();
+            for (Iterator<Entry<String, OuterJoinStatus>> it = ojs.entrySet().iterator();
+                it.hasNext();) {
+                Entry<String, OuterJoinStatus> pair = it.next();
+                if (pair.getValue() == OuterJoinStatus.OUTER) {
+                    if (sb2.length() > 0) {
+                        sb2.append(",");
+                    }
+                    sb2.append("\"" + pair.getKey() + "\"");
+                }
+            }
+            if (sb2.length() != 0) {
+                sb.append(",\"joins\":[" + sb2.toString() + "]");
+            }
+        }
 
-    	// CONSTRAINTS
-    	Map<PathConstraint, String> constraints = getConstraints();
-    	if (!constraints.isEmpty()) {
-    		sb.append(",\"where\":[");
-    		for (Iterator<Entry<PathConstraint, String>> it = constraints.entrySet().iterator(); it.hasNext();) {
-    			Entry<PathConstraint, String> pair = it.next();
-    			sb.append(constraintToJson(pair.getKey(), pair.getValue()));
-    			if (it.hasNext()) sb.append(",");
-    		}
-    		sb.append("]");
-    	}
-    	sb.append("}");
+        // CONSTRAINTS
+        Map<PathConstraint, String> constraints = getConstraints();
+        if (!constraints.isEmpty()) {
+            sb.append(",\"where\":[");
+            for (Iterator<Entry<PathConstraint, String>> it = constraints.entrySet().iterator();
+                it.hasNext();) {
+                Entry<PathConstraint, String> pair = it.next();
+                sb.append(constraintToJson(pair.getKey(), pair.getValue()));
+                if (it.hasNext()) {
+                    sb.append(",");
+                }
+            }
+            sb.append("]");
+        }
+        sb.append("}");
 
-    	return sb.toString();
+        return sb.toString();
     }
 
     private String constraintToJson(PathConstraint constraint, String code) {
-    	String type = PathConstraint.getType(constraint);
-    	String path = constraint.getPath();
+        String type = PathConstraint.getType(constraint);
+        String path = constraint.getPath();
 
-    	if (type != null) {
-    		return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
-    	}
+        if (type != null) {
+            return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
+        }
 
-    	String op = constraint.getOp().toString();
+        String op = constraint.getOp().toString();
 
-    	String commonPrefix = "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":" + code + "\"";
-    	StringBuilder conb = new StringBuilder(commonPrefix);
+        String commonPrefix = "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":\""
+                              + code + "\"";
+        StringBuilder conb = new StringBuilder(commonPrefix);
 
-    	Collection<String> values = PathConstraint.getValues(constraint);
-    	if (values != null) {
-    		conb.append(",\"values\":[");
-    		for (Iterator<String> it = values.iterator(); it.hasNext();) {
-    			conb.append("\"" + StringEscapeUtils.escapeJava(it.next()) + "\"");
-    			if (it.hasNext()) conb.append(",");
-    		}
-    		conb.append("]");
-    	} else {
+        Collection<String> values = PathConstraint.getValues(constraint);
+        if (values != null) {
+            conb.append(",\"values\":[");
+            for (Iterator<String> it = values.iterator(); it.hasNext();) {
+                conb.append("\"" + StringEscapeUtils.escapeJava(it.next()) + "\"");
+                if (it.hasNext()) {
+                    conb.append(",");
+                }
+            }
+            conb.append("]");
+        } else {
 
-	    	String value = PathConstraint.getValue(constraint);
-	    	String extraValue = PathConstraint.getExtraValue(constraint);
+            String value = PathConstraint.getValue(constraint);
+            String extraValue = PathConstraint.getExtraValue(constraint);
 
-	    	if (value != null) {
-	    		conb.append(",\"value\":\"" + StringEscapeUtils.escapeJava(value) + "\"");
-	    	}
-	    	if (extraValue != null) {
-	    		conb.append(",\"extraValue\":\"" + StringEscapeUtils.escapeJava(extraValue) + "\"");
-	    	}
-    	}
-    	conb.append("}");
-		return conb.toString();
+            if (value != null) {
+                conb.append(",\"value\":\"" + StringEscapeUtils.escapeJava(value) + "\"");
+            }
+            if (extraValue != null) {
+                conb.append(",\"extraValue\":\"" + StringEscapeUtils.escapeJava(extraValue) + "\"");
+            }
+        }
+        conb.append("}");
+        return conb.toString();
     }
 
     /**
