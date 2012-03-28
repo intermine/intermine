@@ -432,9 +432,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             dropDataIdsTempTable(connection, dataIdsTempTable);
 
-            // read any genes that have been created so we can re-use the same item identifiers
-            // when creating antibody/strain target genes later
-            extractGenesFromSubFeatureMap(processor, subFeatureMap);
+            // 1- generate a map of gene-identifiers so we can re-use the same item identifiers
+            // when creating antibody/strain target genes late
+            // 2- fill the 'ChromatinState' state with the secondaryId
+            additionalProcessing(processor, subFeatureMap);
         }
 
         storeSubmissionsCollections(subCollections);
@@ -452,15 +453,24 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
-    private void extractGenesFromSubFeatureMap(ModEncodeFeatureProcessor processor,
-            Map<Integer, FeatureData> subFeatureMap) {
+    private void additionalProcessing(ModEncodeFeatureProcessor processor,
+            Map<Integer, FeatureData> subFeatureMap) throws ObjectStoreException{
         for (FeatureData fData : subFeatureMap.values()) {
+            // 1- generate a map of gene-identifiers so we can re-use the same item identifiers
+            // when creating antibody/strain target genes late
             if ("Gene".equals(fData.getInterMineType())) {
                 String geneIdentifier = processor.fixIdentifier(fData, fData.getUniqueName());
                 geneToItemIdentifier.put(geneIdentifier, fData.getItemIdentifier());
             }
+            // 2- fill the 'ChromatinState' state with the secondaryId
+            if ("ChromatinState".equals(fData.getInterMineType())) {
+                String state = fData.getChadoFeatureName();
+                Integer imObjectId = fData.getIntermineObjectId();
+                setAttribute(imObjectId, "state", state);
+            }
         }
     }
+
 
     private void processDataFeatureTable(Connection connection, Map<Integer, List<String>> subCols,
             Map<Integer, FeatureData> featureMap, Integer chadoExperimentId, String dataIdTable)

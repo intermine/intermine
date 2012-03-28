@@ -70,6 +70,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "SL1_acceptor_site", "SL2_acceptor_site"
             , "transcription_end_site", "TSS", "under-replicated-region"
             , "full_transcript", "polypeptide_region", "peptide_collection"
+            , "chromatin_state"
     );
     // the FB name for the mitochondrial genome
     private static final String MITOCHONDRION = "dmel_mitochondrion_genome";
@@ -697,6 +698,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
         LOG.info("QUERY TIME feature scores: " + (System.currentTimeMillis() - bT));
         return res;
     }
+
     private void processExpressionLevels(Connection connection) throws SQLException,
     ObjectStoreException {
         ResultSet res = getExpressionLevels(connection);
