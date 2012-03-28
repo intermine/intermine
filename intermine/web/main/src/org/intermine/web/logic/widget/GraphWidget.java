@@ -51,11 +51,7 @@ public class GraphWidget extends Widget
         this.bag = interMineBag;
         this.os = os;
         this.selectedExtraAttribute = selectedExtraAttribute;
-        String typeClass = config.getTypeClass();
-        if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
-            throw new ResourceNotFoundException("Could not find a graph widget called \""
-                    + config.getId() + "\" with type " + bag.getType());
-        }
+        validateBagType();
         process();
     }
 
@@ -66,6 +62,14 @@ public class GraphWidget extends Widget
     @Override
     public List getElementInList() {
         return new Vector();
+    }
+
+    public void validateBagType() {
+        String typeClass = config.getTypeClass();
+        if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
+            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
+                    + config.getId() + "\" with type " + bag.getType());
+        }
     }
 
     /**
