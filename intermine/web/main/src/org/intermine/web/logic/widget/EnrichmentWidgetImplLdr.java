@@ -9,7 +9,6 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
