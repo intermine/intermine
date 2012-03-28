@@ -121,6 +121,26 @@ type.isHTTPSuccess = (function(_super) {
 
 })(type.Root);
 
+type.isJSON = (function(_super) {
+
+  __extends(isJSON, _super);
+
+  isJSON.prototype.expected = "JSON Object";
+
+  function isJSON(key) {
+    this.result = true;
+    try {
+      if (typeof JSON !== "undefined" && JSON !== null) JSON.parse(key);
+    } catch (e) {
+      if (typeof console !== "undefined" && console !== null) console.log(key);
+      this.result = false;
+    }
+  }
+
+  return isJSON;
+
+})(type.Root);
+
 type.isUndefined = (function(_super) {
 
   __extends(isUndefined, _super);
@@ -134,20 +154,6 @@ type.isUndefined = (function(_super) {
   return isUndefined;
 
 })(type.Root);
-
-var merge;
-
-merge = function(child, parent) {
-  var key;
-  for (key in parent) {
-    if (!(child[key] != null)) {
-      if (Object.prototype.hasOwnProperty.call(parent, key)) {
-        child[key] = parent[key];
-      }
-    }
-  }
-  return child;
-};
 
 var CSSLoader, JSLoader, Loader,
   __hasProp = Object.prototype.hasOwnProperty,
@@ -211,6 +217,20 @@ CSSLoader = (function(_super) {
   return CSSLoader;
 
 })(Loader);
+
+var merge;
+
+merge = function(child, parent) {
+  var key;
+  for (key in parent) {
+    if (!(child[key] != null)) {
+      if (Object.prototype.hasOwnProperty.call(parent, key)) {
+        child[key] = parent[key];
+      }
+    }
+  }
+  return child;
+};
 
 var Exporter,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -279,7 +299,7 @@ factory = function(Backbone) {
           }));
         }
       }
-      if (fails.length) return this.error("JSONObjectType", fails);
+      if (fails.length) return this.error("JSONResponse", fails);
     };
   
     InterMineWidget.prototype.error = function(type, data) {
@@ -293,11 +313,12 @@ factory = function(Backbone) {
           opts.title = data.statusText;
           opts.text = data.responseText;
           break;
-        case "JSONObjectType":
+        case "JSONResponse":
           opts.title = "Invalid JSON";
           opts.text = "<ol>" + (data.join('')) + "</ol>";
       }
-      return $(this.el).html(this.template("error", opts));
+      $(this.el).html(this.template("error", opts));
+      throw new Error(type);
     };
   
     return InterMineWidget;
@@ -634,7 +655,7 @@ factory = function(Backbone) {
   
     EnrichmentRow.prototype.spec = {
       "description": type.isString,
-      "item": type.isString,
+      "identifier": type.isString,
       "matches": type.isArray,
       "p-value": type.isInteger,
       "selected": type.isBoolean
@@ -896,6 +917,8 @@ factory = function(Backbone) {
       response: {
         "title": type.isString,
         "description": type.isString,
+        "pathQuery": type.isJSON,
+        "pathConstraint": type.isString,
         "error": type.isNull,
         "list": type.isString,
         "notAnalysed": type.isInteger,
