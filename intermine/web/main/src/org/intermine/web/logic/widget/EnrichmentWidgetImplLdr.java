@@ -58,18 +58,6 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         } catch (ClassNotFoundException e) {
             return;
         }
-        String[] typeClasses = config.getTypeClass().split("\\,");
-        boolean bagTypeMatch = false;
-        String packageName = os.getModel().getPackageName();
-        for (String typeClass : typeClasses) {
-            if (typeClass.equals(packageName + "." + bag.getType())) {
-                bagTypeMatch = true;
-                break;
-            }
-        }
-        if (!bagTypeMatch) {
-            return;
-        }
     }
 
     public Query getQuery(String action, List<String> keys) {

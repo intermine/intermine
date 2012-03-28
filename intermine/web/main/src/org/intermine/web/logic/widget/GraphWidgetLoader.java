@@ -25,7 +25,6 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
-import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -54,18 +53,6 @@ public class GraphWidgetLoader implements DataSetLdr
         this.os = os;
         this.config = config;
 
-        String[] typeClasses = config.getTypeClass().split("\\,");
-        boolean typeMatch = false;
-        String packageName = os.getModel().getPackageName();
-        for (String typeClass : typeClasses) {
-            if (typeClass.equals(packageName + "." + bag.getType())) {
-                typeMatch = true;
-                break;
-            }
-        }
-        if (!typeMatch) {
-            return;
-        }
         Query q = createQuery(false);
         results = os.execute(q);
 
