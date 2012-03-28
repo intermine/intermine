@@ -723,21 +723,36 @@
                       </urlGenerator>
       </graphdisplayer>
 -->
-      <graphdisplayer id="flyatlas"
+      <graphdisplayer id="flyatlas_for_gene"
                       title="Gene Expression in the Adult Fly (FlyAtlas)"
                       description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
                       graphType="BarChart"
                       domainLabel="Tissue"
                       rangeLabel="Up (+) or Down (-) gene count"
                       startClass="FlyAtlasResult"
-                      typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.ProbeSet"
+                      typeClass="org.intermine.model.bio.Gene"
                       bagPath="FlyAtlasResult.genes"
                       categoryPath="tissue.name"
                       seriesPath="affyCall"
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
                       views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
-
+<!-- 
+      <graphdisplayer id="flyatlas_for_probeset"
+                      title="Gene Expression in the Adult Fly (FlyAtlas)"
+                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      graphType="BarChart"
+                      domainLabel="Tissue"
+                      rangeLabel="Up (+) or Down (-) gene count"
+                      startClass="FlyAtlasResult"
+                      typeClass="org.intermine.model.bio.ProbeSet"
+                      bagPath="FlyAtlasResult.genes"
+                      categoryPath="tissue.name"
+                      seriesPath="affyCall"
+                      seriesValues="Up,Down"
+                      seriesLabels="Up,Down"
+                      views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
+ -->
       <graphdisplayer id="flyfish"
                       title="mRNA subcellular localisation (fly-FISH)"
                       description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
@@ -830,7 +845,7 @@
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
-                                       proteinDomains.primaryIdentifier,proteinDomains.name"/>
+                                       proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
@@ -855,7 +870,7 @@
                                  enrichIdentifier="publications.pubMedId"
                                  constraints="organism.name=[list]"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views="secondaryIdentifier, symbol, Gene.organism.name,
+                                 views="secondaryIdentifier, symbol, organism.name,
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"/>
 
