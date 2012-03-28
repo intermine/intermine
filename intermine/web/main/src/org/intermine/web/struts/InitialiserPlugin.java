@@ -373,7 +373,12 @@ public class InitialiserPlugin implements PlugIn
             if (validateXML(xml, xmlSchemaUrl, "errors.init.webconfig.validation")) {
                 try {
                     retval = WebConfig.parse(servletContext, os.getModel());
-                    SessionMethods.setWebConfig(servletContext, retval);
+                    String validationMessage = retval.validateWidgetsConfig(os.getModel());
+                    if ( validationMessage.isEmpty()) {
+                        SessionMethods.setWebConfig(servletContext, retval);
+                    } else {
+                        blockingErrorKeys.put("errors.init.webconfig.validation", validationMessage);
+                    }
                 } catch (FileNotFoundException fnf) {
                     LOG.error("Problem to find the webconfig-model.xml file.", fnf);
                     blockingErrorKeys.put("errors.init.webconfig.notfound", null);
