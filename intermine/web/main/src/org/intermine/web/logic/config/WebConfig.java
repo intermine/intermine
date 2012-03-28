@@ -35,6 +35,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
@@ -415,6 +416,77 @@ public class WebConfig
                                     ? "Path specified in a fieldExpr does note exist in model: "
                                             + badFieldExpressions + ". " : "");
             LOG.error(msg);
+        }
+    }
+
+    public String validateWidgetsConfig(final Model model) {
+        WidgetConfig widget = null;
+        StringBuffer validationMessage = new StringBuffer();
+        for (String widgetId : widgets.keySet()) {
+            widget = widgets.get(widgetId);
+            //verify startClass
+            String startClass = model.getPackageName() + "." + widget.getStartClass();
+            if (!model.getClassNames().contains(startClass)) {
+                validationMessage = validationMessage.append("The attribute startClass for the"
+                                    + "widget " + widgetId + " is not in the model.");
+            }
+            //verify typeClass
+            if (!model.getClassNames().contains(widget.getTypeClass())) {
+                validationMessage = validationMessage.append("The attribute typeClass for the "
+                                    + "widget " + widgetId + " is not in the model.");
+            }
+            //verify constraints (only path)
+            List<PathConstraint> pathConstraints = widget.getPathConstraints();
+            for (PathConstraint pathConstraint : pathConstraints) {
+                try {
+                    new Path(model, widget.getStartClass() + "." + pathConstraint.getPath());
+                } catch (final PathException e) {
+                    validationMessage.append("The path " + pathConstraint.getPath() + " set in the"
+                        + " constraints for the widget " + widgetId + " is not in the model.");
+                }
+            }
+            //verify views
+            String[] views = widget.getViews().split("\\s*,\\s*");
+            for (String viewPath : views) {
+                viewPath = widget.getStartClass() + "." + viewPath;
+                try {
+                    new Path(model, viewPath);
+                } catch (final PathException e) {
+                    validationMessage.append("The path " + viewPath + " set in the views for the "
+                        + "widget " + widgetId + " is not in the model.");
+                }
+            }
+            //verify enrich and enrichId for enrichement widgets
+            if (widget instanceof EnrichmentWidgetConfig) {
+                String enrich = ((EnrichmentWidgetConfig) widget).getEnrich();
+                validatePath(model, widget.getStartClass(), enrich, "enrich", widgetId,
+                             validationMessage);
+                String enrichId = ((EnrichmentWidgetConfig) widget).getEnrichIdentifier();
+                if (enrichId != null) {
+                    validatePath(model, widget.getStartClass(), enrichId, "enrichIdentifier",
+                                 widgetId, validationMessage);
+                }
+            }
+            //verify categoryPath and seriesPath for graph widgets
+            if (widget instanceof GraphWidgetConfig) {
+                String categoryPath = ((GraphWidgetConfig) widget).getCategoryPath();
+                validatePath(model, widget.getStartClass(), categoryPath, "categoryPath", widgetId,
+                            validationMessage);
+                String seriesPath = ((GraphWidgetConfig) widget).getSeriesPath();
+                validatePath(model, widget.getStartClass(), seriesPath, "seriesPath", widgetId,
+                            validationMessage);
+            }
+        }
+        return validationMessage.toString();
+    }
+
+    private void validatePath(Model model, String startClass, String pathToValidate, String label,
+                              String widgetId, StringBuffer validationMessage) {
+        try {
+            new Path(model, startClass + "." + pathToValidate);
+        } catch (final PathException e) {
+            validationMessage.append("The attribute " + label + " " + pathToValidate
+                + " set for the widget " + widgetId + " is not in the model.");
         }
     }
 
