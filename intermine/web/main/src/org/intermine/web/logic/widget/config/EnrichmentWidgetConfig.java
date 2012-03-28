@@ -10,7 +10,6 @@ package org.intermine.web.logic.widget.config;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,9 +18,6 @@ import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
-import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
