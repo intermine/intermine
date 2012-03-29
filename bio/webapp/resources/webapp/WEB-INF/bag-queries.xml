@@ -1,5 +1,5 @@
 <bag-queries>
-  <bag-type type="BioEntity">
+  <bag-type type="BioEntity" matchOnFirst="true">
     <query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
         SELECT DISTINCT a1_.id as a2_, a1_.primaryIdentifier as a3_, a1_.secondaryIdentifier as a4_, a1_.symbol as a5_, a1_.name as a6_ FROM BioEntity AS a1_ WHERE ((lower(a1_.primaryIdentifier) in ?) OR (lower(a1_.secondaryIdentifier) in ?) OR (lower(a1_.symbol) in ?) OR (lower(a1_.name) in ?))
     </query>
