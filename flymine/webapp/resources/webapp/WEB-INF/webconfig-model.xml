@@ -736,8 +736,9 @@
                       seriesPath="affyCall"
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
-                      views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
-<!--
+                      views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,
+                            tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
+
       <graphdisplayer id="flyatlas_for_probeset"
                       title="Gene Expression in the Adult Fly (FlyAtlas)"
                       description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
@@ -746,13 +747,14 @@
                       rangeLabel="Up (+) or Down (-) gene count"
                       startClass="FlyAtlasResult"
                       typeClass="org.intermine.model.bio.ProbeSet"
-                      bagPath="FlyAtlasResult.genes"
+                      bagPath="FlyAtlasResult.material"
                       categoryPath="tissue.name"
                       seriesPath="affyCall"
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
-                      views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
--->
+                      views="material.secondaryIdentifier,material.symbol,material.name,material.organism.name,
+                            tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
+
       <graphdisplayer id="flyfish"
                       title="mRNA subcellular localisation (fly-FISH)"
                       description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
@@ -767,7 +769,8 @@
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
                       constraints="mRNAExpressionResults.dataSet.name=fly-Fish data set"
-                      views="primaryIdentifier,secondaryIdentifier,name,organism.name,mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name,
+                             mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
 
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
@@ -783,7 +786,8 @@
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
                       constraints="mRNAExpressionResults.dataSet.name=BDGP in situ data set"
-                      views="primaryIdentifier,secondaryIdentifier,name,organism.name,mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name,
+                             mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
 
 <!--
       <enrichmentwidgetdisplayer id="miranda_enrichment"
@@ -902,7 +906,7 @@
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier, symbol, organism.name,
                                         pathways.identifier, pathways.name, pathways.dataSets.name"/>
-
+<!-- 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
@@ -921,6 +925,6 @@
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Interactions"
                          style="height:431px;"/>
-
+ -->
     </widgets>
 </webconfig>
