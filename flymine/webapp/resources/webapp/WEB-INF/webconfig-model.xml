@@ -737,7 +737,7 @@
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
                       views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
-<!-- 
+<!--
       <graphdisplayer id="flyatlas_for_probeset"
                       title="Gene Expression in the Adult Fly (FlyAtlas)"
                       description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
@@ -752,22 +752,22 @@
                       seriesValues="Up,Down"
                       seriesLabels="Up,Down"
                       views="genes.secondaryIdentifier,genes.symbol,genes.name,genes.organism.name,tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
- -->
+-->
       <graphdisplayer id="flyfish"
                       title="mRNA subcellular localisation (fly-FISH)"
                       description="Expression patterns of Drosophila mRNAs at the subcellular level during early embryogenesis - data from  &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;.  Note that not all genes have been assayed by &lt;a href=&quot;http://fly-fish.ccbr.utoronto.ca/&quot; target=&quot;_new&quot;&gt;Fly-FISH&lt;/a&gt;."
                       graphType="ColumnChart"
                       domainLabel="Stage"
                       rangeLabel="Gene count"
-                      startClass="MRNAExpressionResult"
+                      startClass="Gene"
                       typeClass="org.intermine.model.bio.Gene"
-                      bagPath="MRNAExpressionResult.gene"
-                      categoryPath="stageRange"
-                      seriesPath="expressed"
+                      bagPath=""
+                      categoryPath="mRNAExpressionResults.stageRange"
+                      seriesPath="mRNAExpressionResults.expressed"
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
-                      constraints="dataSet.name=fly-Fish data set"
-                      views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
+                      constraints="mRNAExpressionResults.dataSet.name=fly-Fish data set"
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name,mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
 
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
@@ -775,15 +775,16 @@
                       graphType="ColumnChart"
                       domainLabel="Stage"
                       rangeLabel="Gene count"
-                      startClass="MRNAExpressionResult"
+                      startClass="Gene"
                       typeClass="org.intermine.model.bio.Gene"
-                      bagPath="MRNAExpressionResult.gene"
-                      categoryPath="stageRange"
-                      seriesPath="expressed"
+                      bagPath=""
+                      categoryPath="mRNAExpressionResults.stageRange"
+                      seriesPath="mRNAExpressionResults.expressed"
                       seriesValues="true,false"
                       seriesLabels="Expressed,Not Expressed"
-                      constraints="dataSet.name=BDGP in situ data set"
-                      views="gene.primaryIdentifier,gene.secondaryIdentifier,gene.name,gene.organism.name,stageRange,expressed"/>
+                      constraints="mRNAExpressionResults.dataSet.name=BDGP in situ data set"
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name,mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
+
 <!--
       <enrichmentwidgetdisplayer id="miranda_enrichment"
                                  title="MiRNA Enrichment"
@@ -834,6 +835,7 @@
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
 -->
+
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
@@ -900,7 +902,7 @@
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier, symbol, organism.name,
                                         pathways.identifier, pathways.name, pathways.dataSets.name"/>
-<!--
+
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
                          description="Counts of orthologues in other organisms for the genes in this list."
@@ -920,5 +922,5 @@
                          columnTitle="Interactions"
                          style="height:431px;"/>
 
-    --></widgets>
+    </widgets>
 </webconfig>
