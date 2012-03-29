@@ -10,10 +10,12 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
@@ -43,9 +45,12 @@ public class GraphWidgetLoader implements DataSetLdr
     private ObjectStore os;
     private InterMineBag bag;
     private GraphWidgetConfig config;
+    private QueryClass startClassQueryClass;
     private Results results;
     private int items;
     private List<List<Object>> resultTable = new LinkedList<List<Object>>();
+    private Map<PathConstraint, Boolean> pathConstraintsProcessed =
+        new HashMap<PathConstraint, Boolean>();
 
     // TODO the parameters need to be updated
     public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config) {
@@ -69,87 +74,70 @@ public class GraphWidgetLoader implements DataSetLdr
         Query query = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         query.setConstraint(cs);
-
+        for (PathConstraint pathConstraint : config.getPathConstraints()) {
+            pathConstraintsProcessed.put(pathConstraint, false);
+        }
         try {
-            QueryClass startClassQueryClass = new QueryClass(Class.forName(model.getPackageName()
+            startClassQueryClass = new QueryClass(Class.forName(model.getPackageName()
                     + "." + config.getStartClass()));
             query.addFrom(startClassQueryClass);
 
             QueryField qfCategoryPath = null;
             QueryField qfSeriesPath = null;
             if (!calcTotal) {
-                String categoryPath = config.getCategoryPath();
-                String seriesPath = config.getSeriesPath();
-                if (categoryPath.contains(".")) {
-                    qfCategoryPath = updateQuery(model, query, startClassQueryClass, categoryPath);
-                } else {
-                    qfCategoryPath = new QueryField(startClassQueryClass, categoryPath);
-                    query.addToSelect(qfCategoryPath);
-                    query.addToGroupBy(qfCategoryPath);
-                    query.addToOrderBy(qfCategoryPath);
-                }
-                if (seriesPath.contains(".")) {
-                    qfSeriesPath = updateQuery(model, query, startClassQueryClass, seriesPath);
-                } else {
-                    qfSeriesPath = new QueryField(startClassQueryClass, seriesPath);
-                    query.addToSelect(qfSeriesPath);
-                    query.addToGroupBy(qfSeriesPath);
+                QueryField[] categoryAndSeriesQueryFields =
+                    createCategoryAndSeriesQueryFields(model, query, startClassQueryClass);
+                qfCategoryPath = categoryAndSeriesQueryFields[0];
+                qfSeriesPath = categoryAndSeriesQueryFields[1];
+            }
+
+            QueryField idQueryField = null;
+            if (config.getTypeClass().equals(model.getPackageName() + "."
+                                            + config.getStartClass())) {
+                idQueryField = new QueryField(startClassQueryClass, "id");
+                cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN, bag.getOsb()));
+            } else {
+                //update query adding the bag
+                QueryClass bagTypeQueryClass = new QueryClass(Class.forName(model.getPackageName()
+                                                              + "." + bag.getType()));
+                query.addFrom(bagTypeQueryClass);
+                idQueryField = new QueryField(bagTypeQueryClass, "id");
+                cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN, bag.getOsb()));
+
+                QueryClass qc = null;
+                //we use bag path only if we don't start from Gene...
+                String bagPath = config.getBagPath();
+                String path = bagPath.split("\\.")[1];
+                try {
+                    QueryObjectReference qor = null;
+                    if (bagPath.startsWith(config.getStartClass())) {
+                        qor = new QueryObjectReference(startClassQueryClass, path);
+                        qc = bagTypeQueryClass;
+                    } else {
+                        qor = new QueryObjectReference(bagTypeQueryClass, path);
+                        qc = startClassQueryClass;
+                    }
+                    cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qc));
+                } catch (IllegalArgumentException e) {
+                    // Not a reference - try collection instead
+                    QueryCollectionReference qcr = null;
+                    if (bagPath.startsWith(config.getStartClass())) {
+                        qcr = new QueryCollectionReference(startClassQueryClass, path);
+                        qc = bagTypeQueryClass;
+                    } else {
+                        qcr = new QueryCollectionReference(bagTypeQueryClass, path);
+                        qc = startClassQueryClass;
+                    }
+                    cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qc));
                 }
             }
 
-            //update query adding the bag
-            //TODO if bagtype != Gene
-            QueryClass bagTypeQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                                                          + "." + bag.getType()));
-
-            query.addFrom(bagTypeQueryClass);
-            QueryField idQueryField = new QueryField(bagTypeQueryClass, "id");
-            cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN, bag.getOsb()));
-
-            QueryClass qc = null;
-            String bagPath = config.getBagPath();
-            String path = bagPath.split("\\.")[1];
-            try {
-                QueryObjectReference qor = null;
-                if (bagPath.startsWith(config.getStartClass())) {
-                    qor = new QueryObjectReference(startClassQueryClass, path);
-                    qc = bagTypeQueryClass;
-                } else {
-                    qor = new QueryObjectReference(bagTypeQueryClass, path);
-                    qc = startClassQueryClass;
+            //add constraints not processed before
+            for (PathConstraint pc : pathConstraintsProcessed.keySet()) {
+                if (!pathConstraintsProcessed.get(pc)) {
+                    addConstraint(pc, query, startClassQueryClass);
                 }
-                cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qc));
-            } catch (IllegalArgumentException e) {
-                // Not a reference - try collection instead
-                QueryCollectionReference qcr = null;
-                if (bagPath.startsWith(config.getStartClass())) {
-                    qcr = new QueryCollectionReference(startClassQueryClass, path);
-                    qc = bagTypeQueryClass;
-                } else {
-                    qcr = new QueryCollectionReference(bagTypeQueryClass, path);
-                    qc = startClassQueryClass;
-                }
-                cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qc));
             }
-
-            //add dataset constraint
-            for (PathConstraint pathConstraint : config.getPathConstraints()) {
-                addConstraint(pathConstraint, query, startClassQueryClass);
-            }
-
-/*            if (config.getDataSetPath() != "") {
-                QueryClass dataSetQueryClass = new QueryClass(Class.forName(model.getPackageName()
-                                                                            + ".DataSet"));
-                query.addFrom(dataSetQueryClass);
-                QueryObjectReference qor = new QueryObjectReference(startClassQueryClass,
-                                                                    config.getDataSetPath());
-                cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS,
-                                                        dataSetQueryClass));
-                QueryExpression qf2 = new QueryExpression(QueryExpression.LOWER,
-                        new QueryField(dataSetQueryClass, "name"));
-                cs.addConstraint(new SimpleConstraint(qf2, ConstraintOp.EQUALS,
-                    new QueryValue(config.getDataSetValue().toLowerCase())));
-            }*/
 
             QueryFunction qfCount = new QueryFunction();
             if (!calcTotal) {
@@ -185,10 +173,45 @@ public class GraphWidgetLoader implements DataSetLdr
         }
     }
 
+    private QueryField[] createCategoryAndSeriesQueryFields(Model model, Query query,
+        QueryClass startQueryClass) {
+        QueryField qfCategoryPath = null;
+        QueryField qfSeriesPath = null;
+        QueryField[] categoryAndSeriesQueryFields = new QueryField[2];
+        String categoryPath = config.getCategoryPath();
+        String seriesPath = config.getSeriesPath();
+        if (categoryPath.contains(".")) {
+            QueryField[] queryFields = updateQuery(model, query, startQueryClass, categoryPath);
+            qfCategoryPath = queryFields[0];
+            if (queryFields[1] != null) {
+                qfSeriesPath = queryFields[1];
+            }
+        } else {
+            qfCategoryPath = new QueryField(startQueryClass, categoryPath);
+            query.addToSelect(qfCategoryPath);
+            query.addToGroupBy(qfCategoryPath);
+            query.addToOrderBy(qfCategoryPath);
+        }
+        if (qfSeriesPath == null) {
+            if (seriesPath.contains(".")) {
+                qfSeriesPath = updateQuery(model, query, startQueryClass, seriesPath)[0];
+            } else {
+                qfSeriesPath = new QueryField(startQueryClass, seriesPath);
+                query.addToSelect(qfSeriesPath);
+                query.addToGroupBy(qfSeriesPath);
+            }
+        }
+        categoryAndSeriesQueryFields[0] = qfCategoryPath;
+        categoryAndSeriesQueryFields[1] = qfSeriesPath;
+        return categoryAndSeriesQueryFields;
+    }
+
     /*
      *
      */
-    private QueryField updateQuery(Model model, Query query, QueryClass startQueryClass, String path) {
+    private QueryField[] updateQuery(Model model, Query query, QueryClass startQueryClass,
+                                     String path) {
+        QueryField[] queryFields = new QueryField[2];
         String[] paths = path.split("\\.");
         QueryClass qc = startQueryClass;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
@@ -199,6 +222,7 @@ public class GraphWidgetLoader implements DataSetLdr
                 query.addToSelect(qf);
                 query.addToGroupBy(qf);
                 query.addToOrderBy(qf);
+                queryFields[0] = qf;
             } else {
                 try {
                     QueryObjectReference qor = new QueryObjectReference(qc, paths[i]);
@@ -216,8 +240,72 @@ public class GraphWidgetLoader implements DataSetLdr
                                 qc));
                 }
             }
+            if (i == 0) {
+                //check if there is series path
+                //starting with the same queryClass qc
+                if (!config.getSeriesPath().contains(path)) {
+                    String[] pathsConstraint = config.getSeriesPath().split("\\.");
+                    if (pathsConstraint.length > 1) {
+                        if (pathsConstraint[0].equals(paths[0])) {
+                            String seriesPath = config.getSeriesPath()
+                                .replace(pathsConstraint[0] + ".", "");
+                            queryFields[1] = updateQuery(model, query, qc, seriesPath)[0];
+                        }
+                    }
+                }
+                //check if there are any constraints, not yet processed,
+                //starting with the same queryClass qc
+                for (PathConstraint pc : config.getPathConstraints()) {
+                    if (!pathConstraintsProcessed.get(pc)) {
+                        String[] pathsConstraint = pc.getPath().split("\\.");
+                        if (pathsConstraint[0].equals(paths[0])) {
+                            addConstraint(pc, query, qc);
+                        }
+                    }
+                }
+            }
         }
-        return qf;
+        return queryFields;
+    }
+
+    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
+        QueryField qfConstraint = null;
+        //QueryClass qcConstraint = null;
+        ConstraintSet cs = (ConstraintSet) query.getConstraint();
+        String[] pathsConstraint = pc.getPath().split("\\.");
+        int limit = (qc == startClassQueryClass) ? 0 : 1;
+        QueryValue queryValue = buildQueryValue(pc);
+        for (int index = 0; index < pathsConstraint.length - limit; index++) {
+            if (index == pathsConstraint.length - 1 - limit) {
+                qfConstraint = new QueryField(qc, pathsConstraint[index + limit]);
+                if (queryValue != null) {
+                    cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
+                                                          queryValue));
+                }
+                pathConstraintsProcessed.put(pc, true);
+            } else {
+                try {
+                    QueryObjectReference qor = new QueryObjectReference(qc,
+                                               pathsConstraint[index + limit]);
+                    qc = new QueryClass(qor.getType());
+                    query.addFrom(qc);
+                    cs.addConstraint(new ContainsConstraint(qor,
+                                     ConstraintOp.CONTAINS, qc));
+                    pathConstraintsProcessed.put(pc, true);
+                } catch (IllegalArgumentException e) {
+                    // Not a reference - try collection instead
+                    QueryCollectionReference qcr =
+                        new QueryCollectionReference(qc,
+                            pathsConstraint[index + limit]);
+                    qc = new QueryClass(TypeUtil.getElementType(
+                        qc.getType(), pathsConstraint[index + limit]));
+                    query.addFrom(qc);
+                    cs.addConstraint(new ContainsConstraint(qcr,
+                        ConstraintOp.CONTAINS, qc));
+                    pathConstraintsProcessed.put(pc, true);
+                }
+            }
+        }
     }
 
     private QueryValue buildQueryValue(PathConstraint pc) {
@@ -232,13 +320,11 @@ public class GraphWidgetLoader implements DataSetLdr
         }
         return queryValue;
     }
-
-    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
+/*    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
         QueryValue queryValue = null;
         queryValue = buildQueryValue(pc);
 
         QueryField qfConstraint = null;
-        QueryClass qcConstraint = null;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
         String[] pathsConstraint = pc.getPath().split("\\.");
 
@@ -247,37 +333,33 @@ public class GraphWidgetLoader implements DataSetLdr
                 if (index == 0) {
                     qfConstraint = new QueryField(qc,
                         pathsConstraint[index]);
-                } else {
-                    qfConstraint = new QueryField(qcConstraint,
-                        pathsConstraint[index]);
-                }
-
-                if (queryValue != null) {
-                    cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
+                    if (queryValue != null) {
+                       cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
                                                           queryValue));
+                    }
                 }
             } else {
                 try {
                     QueryObjectReference qor = new QueryObjectReference(qc,
                                                pathsConstraint[index]);
-                    qcConstraint = new QueryClass(qor.getType());
-                    query.addFrom(qcConstraint);
+                    qc = new QueryClass(qor.getType());
+                    query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qor,
-                                     ConstraintOp.CONTAINS, qcConstraint));
+                                     ConstraintOp.CONTAINS, qc));
                 } catch (IllegalArgumentException e) {
                     // Not a reference - try collection instead
                     QueryCollectionReference qcr =
                         new QueryCollectionReference(qc,
-                            pathsConstraint[index + 1]);
-                    qcConstraint = new QueryClass(TypeUtil.getElementType(
+                            pathsConstraint[index]);
+                    qc = new QueryClass(TypeUtil.getElementType(
                         qc.getType(), pathsConstraint[index]));
-                    query.addFrom(qcConstraint);
+                    query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qcr,
-                        ConstraintOp.CONTAINS, qcConstraint));
+                        ConstraintOp.CONTAINS, qc));
                 }
             }
         }
-    }
+    }*/
 
     private LinkedHashMap<String, long[]> buildCategorySeriesMap() {
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
@@ -377,7 +459,11 @@ public class GraphWidgetLoader implements DataSetLdr
         }
 
         // bag constraint
-        q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
+        if (config.isBagPathSet()) {
+            q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
+        } else {
+            q.addConstraint(Constraints.in(startClassQueryClass + ".id", bag.getName()));
+        }
 
         //category constraint
         q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
