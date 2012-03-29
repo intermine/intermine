@@ -127,17 +127,18 @@ public class Mine
      * @return the defaultValue
      */
     public String getDefaultValue() {
-        for (String value : defaultValues) {
-            return value;
+        if (defaultValues.isEmpty()) {
+            return null;
         }
-        return null;
+        Object[] values = defaultValues.toArray();
+        return values[0].toString();
     }
 
     /**
      * @param defaultValue the defaultValues to set, comma delim
      */
     public void setDefaultValues(String defaultValue) {
-        String[] bits = defaultValue.split("[, ]+");
+        String[] bits = defaultValue.split(",");
         for (String bit : bits) {
             defaultValues.add(bit);
         }

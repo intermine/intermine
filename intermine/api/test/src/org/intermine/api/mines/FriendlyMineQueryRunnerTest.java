@@ -35,7 +35,7 @@ import org.json.JSONObject;
  *
  * @author Julie Sullivan
  */
-public final class FriendlyMineQueryRunner
+public final class FriendlyMineQueryRunnerTest
 {
     private static final Logger LOG = Logger.getLogger(FriendlyMineQueryRunner.class);
     private static final String WEBSERVICE_URL = "/service";
@@ -45,7 +45,7 @@ public final class FriendlyMineQueryRunner
     private static final String RELEASE_VERSION_URL = "/version/release";
     private static final boolean DEBUG = true;
 
-    private FriendlyMineQueryRunner() {
+    private FriendlyMineQueryRunnerTest() {
         // don't
     }
 
@@ -112,7 +112,6 @@ public final class FriendlyMineQueryRunner
      * @param mines list of mines to update
      */
     public static void updateReleaseVersion(Map<String, Mine> mines) {
-        boolean clearCache = false;
         for (Mine mine : mines.values()) {
             String currentReleaseVersion = mine.getReleaseVersion();
             String url = mine.getUrl() + WEBSERVICE_URL + RELEASE_VERSION_URL;
@@ -141,11 +140,8 @@ public final class FriendlyMineQueryRunner
                 // update release version
                 mine.setReleaseVersion(newReleaseVersion);
 
-                clearCache = true;
+                queryResultsCache = new HashMap<MultiKey, JSONObject>();
             }
-        }
-        if (clearCache) {
-            queryResultsCache = new HashMap<MultiKey, JSONObject>();
         }
     }
 
