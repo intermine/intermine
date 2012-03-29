@@ -138,6 +138,13 @@ public class GraphWidgetConfig extends WidgetConfig
         this.bagPath = bagPath;
     }
 
+    public boolean isBagPathSet() {
+        if (bagPath != null && !"".equals(bagPath)) {
+            return true;
+        }
+        return false;
+    }
+
     public String getCategoryPath() {
         return categoryPath;
     }
