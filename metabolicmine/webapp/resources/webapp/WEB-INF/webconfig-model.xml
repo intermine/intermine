@@ -19,7 +19,7 @@
   </class>
   <class className="org.intermine.model.bio.Consequence">
     <fields>
-      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="types"/>
     </fields>
   </class>
   <class className="org.intermine.model.bio.ValidationState">
