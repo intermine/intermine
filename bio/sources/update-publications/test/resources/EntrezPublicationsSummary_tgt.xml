@@ -1,0 +1,47 @@
+<items>
+  <item id="-1_1" class="Publication">
+    <attribute name="issue" value="6"/>
+    <attribute name="journal" value="Development"/>
+    <attribute name="pages" value="1129-38"/>
+    <attribute name="pubMedId" value="10021333"/>
+    <attribute name="title" value="Apontic binds the translational repressor Bruno and is implicated in regulation of oskar mRNA translation."/>
+    <attribute name="volume" value="126"/>
+    <attribute name="year" value="1999"/>
+    <attribute name="firstAuthor" value="Lie YS"/>
+    <collection name="authors">
+      <reference ref_id="-1_2"/>
+      <reference ref_id="-1_3"/>
+      <reference ref_id="-1_4"/>
+    </collection>
+  </item>
+  <item id="-1_2" class="Author">
+    <attribute name="name" value="Lie YS"/>
+  </item>
+  <item id="-1_3" class="Author">
+    <attribute name="name" value="Macdonald PM"/>
+  </item>
+  <item id="-1_5" class="Publication">
+    <attribute name="issue" value="6"/>
+    <attribute name="journal" value="Development"/>
+    <attribute name="pages" value="1337-47"/>
+    <attribute name="pubMedId" value="10021351"/>
+    <attribute name="title" value="Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family."/>
+    <attribute name="volume" value="126"/>
+    <attribute name="year" value="1999"/>
+    <attribute name="firstAuthor" value="Morita K"/>
+    <collection name="authors">
+      <reference ref_id="-1_6"/>
+      <reference ref_id="-1_4"/>
+      <reference ref_id="-1_7"/>
+    </collection>
+  </item>
+  <item id="-1_6" class="Author">
+    <attribute name="name" value="Morita K"/>
+  </item>
+  <item id="-1_4" class="Author">
+    <attribute name="name" value="Chow KL"/>
+  </item>
+  <item id="-1_7" class="Author">
+    <attribute name="name" value="Ueno N"/>
+  </item>
+</items>

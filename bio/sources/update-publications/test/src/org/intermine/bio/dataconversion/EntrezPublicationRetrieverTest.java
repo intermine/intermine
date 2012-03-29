@@ -29,30 +29,38 @@ import org.intermine.xml.full.FullParser;
  */
 public class EntrezPublicationRetrieverTest extends ItemsTestCase
 {
-
-
+	boolean loadFullRecord = true;
+	
     public EntrezPublicationRetrieverTest(String arg) {
         super(arg);
     }
 
     public void testEntrezPublicationRetriever() throws Exception {
         EntrezPublicationsRetriever eor = new TestEntrezPublicationsRetriever();
-        eor.setOsAlias("os.bio-test");
+
 
         // Create temp file.
         File temp = File.createTempFile("EntrezPublicationsRetriever", ".tmp");
         // Delete temp file when program exits.
         temp.deleteOnExit();
 
+        if (loadFullRecord) {
+        	eor.setPubmedFormat("fullRecord"); // use eFetch URL instead of summary
+        }
+
+        eor.setOsAlias("os.bio-test");
         eor.setOutputFile(temp.getPath());
-
         eor.setCacheDirName("build/");
-
         eor.execute();
-
-        Set expected = readItemSet("EntrezPublicationsRetrieverTest_tgt.xml");
         Collection actual = FullParser.parse(new FileInputStream(temp));
 
+        Set expected;
+        if (!loadFullRecord) {
+        	expected = readItemSet("EntrezPublicationsSummary_tgt.xml");
+        } else {
+            expected = readItemSet("EntrezPublicationsFullRecord_tgt.xml");     
+        }
+        
         assertEquals(expected, new HashSet(actual));
     }
 
@@ -61,12 +69,13 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         public TestEntrezPublicationsRetriever() {
             super();
             setOsAlias("os.bio-test");
-//            setOutputFile("/tmp/TestEntrezPublicationsRetriever_dummy");
+            //setOutputFile("entrez-pub-tgt-items.xml");
         }
 
         protected List getPublications(ObjectStore os) {
             try {
                 List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_src.xml"));
+
                 return FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -74,7 +83,10 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         }
 
         protected Reader getReader(Set ids) {
-            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));
+            if (!loadFullRecord) {
+            	return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));                			
+            } 
+            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_efetch.xml"));
         }
     }
 }

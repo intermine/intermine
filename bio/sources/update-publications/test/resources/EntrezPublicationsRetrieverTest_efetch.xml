@@ -1,0 +1,550 @@
+<?xml version="1.0"?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 2011//EN" "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/pubmed_110101.dtd">
+<PubmedArticleSet>
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">10021333</PMID>
+        <DateCreated>
+            <Year>1999</Year>
+            <Month>04</Month>
+
+            <Day>27</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>1999</Year>
+            <Month>04</Month>
+            <Day>27</Day>
+        </DateCompleted>
+
+        <DateRevised>
+            <Year>2007</Year>
+            <Month>11</Month>
+            <Day>14</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+
+                <ISSN IssnType="Print">0950-1991</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>126</Volume>
+                    <Issue>6</Issue>
+                    <PubDate>
+                        <Year>1999</Year>
+                        <Month>Mar</Month>
+
+                    </PubDate>
+                </JournalIssue>
+                <Title>Development (Cambridge, England)</Title>
+                <ISOAbbreviation>Development</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Apontic binds the translational repressor Bruno and is implicated in regulation of oskar mRNA translation.</ArticleTitle>
+            <Pagination>
+
+                <MedlinePgn>1129-38</MedlinePgn>
+            </Pagination>
+         <Abstract>
+             <AbstractText Label="BACKGROUND" NlmCategory="BACKGROUND">P426L and I179S are the two most frequent mutations in juvenile and adult metachromatic leukodystrophy (late-onset MLD), which, in contrast to infantile MLD, show marked phenotypic heterogeneity.</AbstractText>
+             <AbstractText Label="OBJECTIVE" NlmCategory="OBJECTIVE">To search for genotype-phenotype correlations in late-onset MLD.</AbstractText>
+             <AbstractText Label="METHODS" NlmCategory="METHODS">The authors reviewed the clinical course of 22 patients homozygous for mutation P426L vs 20 patients heterozygous for mutation I179S, in which the second arylsulfatase A (ASA) mutation had also been determined.</AbstractText>
+             <AbstractText Label="RESULTS" NlmCategory="RESULTS">P426L homozygotes principally presented with progressive gait disturbance caused by spastic paraparesis or cerebellar ataxia; mental disturbance was absent or insignificant at the onset of disease but became more apparent as the disease evolved. In contrast, compound heterozygotes for I179S presented with schizophrenia-like behavioral abnormalities, social dysfunction, and mental decline, but motor deficits were scarce. Reduced peripheral nerve conduction velocities and less residual ASA activity were present in P426L homozygotes vs I179S heterozygotes.</AbstractText>
+             <AbstractText Label="CONCLUSION" NlmCategory="CONCLUSIONS">The characteristic clinical differences between homozygous P426L and compound heterozygous I179S patients establish a distinct genotype-phenotype correlation in late-onset metachromatic leukodystrophy.</AbstractText>
+         </Abstract>
+            <Affiliation>Department of Biological Sciences, Stanford University, Stanford, CA 94305-5020, USA.</Affiliation>
+            <AuthorList CompleteYN="Y">
+
+                <Author ValidYN="Y">
+                    <LastName>Lie</LastName>
+                    <ForeName>Y S</ForeName>
+                    <Initials>YS</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Macdonald</LastName>
+
+                    <ForeName>P M</ForeName>
+                    <Initials>PM</Initials>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <DataBankList CompleteYN="Y">
+                <DataBank>
+
+                    <DataBankName>GENBANK</DataBankName>
+                    <AccessionNumberList>
+                        <AccessionNumber>AF027123</AccessionNumber>
+                    </AccessionNumberList>
+                </DataBank>
+            </DataBankList>
+            <GrantList CompleteYN="Y">
+                <Grant>
+
+                    <GrantID>GM54409</GrantID>
+                    <Acronym>GM</Acronym>
+                    <Agency>NIGMS NIH HHS</Agency>
+                    <Country>United States</Country>
+                </Grant>
+            </GrantList>
+            <PublicationTypeList>
+
+                <PublicationType>Journal Article</PublicationType>
+                <PublicationType>Research Support, U.S. Gov't, P.H.S.</PublicationType>
+            </PublicationTypeList>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>ENGLAND</Country>
+            <MedlineTA>Development</MedlineTA>
+
+            <NlmUniqueID>8701744</NlmUniqueID>
+            <ISSNLinking>0950-1991</ISSNLinking>
+        </MedlineJournalInfo>
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>3' Untranslated Regions</NameOfSubstance>
+
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>DNA-Binding Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+
+                <NameOfSubstance>Drosophila Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Insect Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>RNA, Messenger</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>RNA-Binding Proteins</NameOfSubstance>
+            </Chemical>
+
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Recombinant Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Repressor Proteins</NameOfSubstance>
+
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Transcription Factors</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+
+                <NameOfSubstance>apontic protein, Drosophila</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>aret protein, Drosophila</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>oskar protein, Drosophila</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>142661-95-8</RegistryNumber>
+                <NameOfSubstance>nanos protein, Drosophila</NameOfSubstance>
+            </Chemical>
+
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">3' Untranslated Regions</DescriptorName>
+                <QualifierName MajorTopicYN="N">metabolism</QualifierName>
+            </MeshHeading>
+
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Animals</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Cell Compartmentation</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y">DNA-Binding Proteins</DescriptorName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Drosophila</DescriptorName>
+                <QualifierName MajorTopicYN="Y">genetics</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y">Drosophila Proteins</DescriptorName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Female</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Gene Dosage</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Gene Expression Regulation</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Genes, Insect</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Insect Proteins</DescriptorName>
+
+                <QualifierName MajorTopicYN="Y">biosynthesis</QualifierName>
+                <QualifierName MajorTopicYN="N">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Mutation</DescriptorName>
+            </MeshHeading>
+
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Ovary</DescriptorName>
+                <QualifierName MajorTopicYN="N">physiology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Protein Binding</DescriptorName>
+            </MeshHeading>
+
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y">Protein Biosynthesis</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">RNA, Messenger</DescriptorName>
+                <QualifierName MajorTopicYN="N">metabolism</QualifierName>
+            </MeshHeading>
+
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">RNA-Binding Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Recombinant Proteins</DescriptorName>
+
+                <QualifierName MajorTopicYN="N">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Repressor Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="Y">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Saccharomyces cerevisiae</DescriptorName>
+                <QualifierName MajorTopicYN="N">genetics</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y">Transcription Factors</DescriptorName>
+            </MeshHeading>
+        </MeshHeadingList>
+
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>1999</Year>
+                <Month>2</Month>
+                <Day>18</Day>
+
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>1999</Year>
+                <Month>2</Month>
+                <Day>18</Day>
+                <Hour>0</Hour>
+                <Minute>1</Minute>
+
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>1999</Year>
+                <Month>2</Month>
+                <Day>18</Day>
+                <Hour>0</Hour>
+                <Minute>0</Minute>
+
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">10021333</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="MEDLINE">
+        <PMID Version="1">10021351</PMID>
+        <DateCreated>
+            <Year>1999</Year>
+            <Month>04</Month>
+            <Day>27</Day>
+
+        </DateCreated>
+        <DateCompleted>
+            <Year>1999</Year>
+            <Month>04</Month>
+            <Day>27</Day>
+        </DateCompleted>
+        <DateRevised>
+
+            <Year>2006</Year>
+            <Month>11</Month>
+            <Day>15</Day>
+        </DateRevised>
+        <Article PubModel="Print">
+            <Journal>
+                <ISSN IssnType="Print">0950-1991</ISSN>
+
+                <JournalIssue CitedMedium="Print">
+                    <Volume>126</Volume>
+                    <Issue>6</Issue>
+                    <PubDate>
+                        <Year>1999</Year>
+                        <Month>Mar</Month>
+                    </PubDate>
+
+                </JournalIssue>
+                <Title>Development (Cambridge, England)</Title>
+                <ISOAbbreviation>Development</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>1337-47</MedlinePgn>
+
+            </Pagination>
+            <Abstract>
+                <AbstractText>We have identified a new member of the TGF-beta superfamily, CET-1, from Caenorhabditis elegans, which is expressed in the ventral nerve cord and other neurons. cet-1 null mutants have shortened bodies and male tail abnormal phenotype resembling sma mutants, suggesting cet-1, sma-2, sma-3 and sma-4 share a common pathway. Overexpression experiments demonstrated that cet-1 function requires wild-type sma genes. Interestingly, CET-1 appears to affect body length in a dose-dependent manner. Heterozygotes for cet-1 displayed body lengths ranging between null mutant and wild type, and overexpression of CET-1 in wild-type worms elongated body length close to lon mutants. In male sensory ray patterning, lack of cet-1 function results in ray fusions. Epistasis analysis revealed that mab-21 lies downstream and is negatively regulated by the cet-1/sma pathway in the male tail. Our results show that cet-1 controls diverse biological processes during C. elegans development probably through different target genes.</AbstractText>
+            </Abstract>
+            <Affiliation>Department of Developmental Biology, National Institute for Basic Biology, Okazaki 444-8585, Japan.</Affiliation>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Morita</LastName>
+
+                    <ForeName>K</ForeName>
+                    <Initials>K</Initials>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Chow</LastName>
+                    <ForeName>K L</ForeName>
+                    <Initials>KL</Initials>
+
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Ueno</LastName>
+                    <ForeName>N</ForeName>
+                    <Initials>N</Initials>
+                </Author>
+            </AuthorList>
+
+            <Language>eng</Language>
+            <DataBankList CompleteYN="Y">
+                <DataBank>
+                    <DataBankName>GENBANK</DataBankName>
+                    <AccessionNumberList>
+                        <AccessionNumber>AF074395</AccessionNumber>
+                    </AccessionNumberList>
+
+                </DataBank>
+            </DataBankList>
+            <PublicationTypeList>
+                <PublicationType>Comparative Study</PublicationType>
+                <PublicationType>Journal Article</PublicationType>
+                <PublicationType>Research Support, Non-U.S. Gov't</PublicationType>
+            </PublicationTypeList>
+
+        </Article>
+        <MedlineJournalInfo>
+            <Country>ENGLAND</Country>
+            <MedlineTA>Development</MedlineTA>
+            <NlmUniqueID>8701744</NlmUniqueID>
+            <ISSNLinking>0950-1991</ISSNLinking>
+        </MedlineJournalInfo>
+
+        <ChemicalList>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Caenorhabditis elegans Proteins</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+
+                <NameOfSubstance>DAF-7 protein, C elegans</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>DNA, Complementary</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Dbl-1 protein, C elegans</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Helminth Proteins</NameOfSubstance>
+            </Chemical>
+
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Ligands</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Mab-21 protein, C elegans</NameOfSubstance>
+
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+                <NameOfSubstance>Neuropeptides</NameOfSubstance>
+            </Chemical>
+            <Chemical>
+                <RegistryNumber>0</RegistryNumber>
+
+                <NameOfSubstance>Transforming Growth Factor beta</NameOfSubstance>
+            </Chemical>
+        </ChemicalList>
+        <CitationSubset>IM</CitationSubset>
+        <MeshHeadingList>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Amino Acid Sequence</DescriptorName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Animals</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Base Sequence</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Body Constitution</DescriptorName>
+                <QualifierName MajorTopicYN="Y">physiology</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Caenorhabditis elegans</DescriptorName>
+                <QualifierName MajorTopicYN="N">genetics</QualifierName>
+                <QualifierName MajorTopicYN="Y">growth &amp; development</QualifierName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y">Caenorhabditis elegans Proteins</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">DNA, Complementary</DescriptorName>
+                <QualifierName MajorTopicYN="N">genetics</QualifierName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Epistasis, Genetic</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Genes, Helminth</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Helminth Proteins</DescriptorName>
+                <QualifierName MajorTopicYN="N">genetics</QualifierName>
+                <QualifierName MajorTopicYN="N">metabolism</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Ligands</DescriptorName>
+            </MeshHeading>
+
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Male</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Models, Biological</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Molecular Sequence Data</DescriptorName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Mutagenesis, Insertional</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Nerve Tissue</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Neurons</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="Y">Neuropeptides</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Phenotype</DescriptorName>
+
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Sequence Analysis, DNA</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Sequence Homology, Amino Acid</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Signal Transduction</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Tail</DescriptorName>
+                <QualifierName MajorTopicYN="Y">abnormalities</QualifierName>
+            </MeshHeading>
+            <MeshHeading>
+
+                <DescriptorName MajorTopicYN="N">Tissue Distribution</DescriptorName>
+            </MeshHeading>
+            <MeshHeading>
+                <DescriptorName MajorTopicYN="N">Transforming Growth Factor beta</DescriptorName>
+                <QualifierName MajorTopicYN="Y">genetics</QualifierName>
+                <QualifierName MajorTopicYN="N">metabolism</QualifierName>
+            </MeshHeading>
+
+        </MeshHeadingList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>1999</Year>
+                <Month>2</Month>
+                <Day>18</Day>
+
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>1999</Year>
+                <Month>2</Month>
+                <Day>18</Day>
+                <Hour>0</Hour>
+                <Minute>1</Minute>
+
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>1999</Year>
+                <Month>2</Month>
+                <Day>18</Day>
+                <Hour>0</Hour>
+                <Minute>0</Minute>
+
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="doi">Digital Object Identifier 123</ArticleId>
+            <ArticleId IdType="pubmed">10021351</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+
+</PubmedArticleSet>

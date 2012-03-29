@@ -2,7 +2,10 @@
 <model name="genomic" package="org.intermine.model.bio">
 
   <class name="Author" is-interface="true">
+    <attribute name="firstName" type="java.lang.String"/>
+    <attribute name="lastName" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
+    <attribute name="initials" type="java.lang.String"/>
     <collection name="publications" referenced-type="Publication" reverse-reference="authors"/>
   </class>
 
@@ -17,7 +20,7 @@
     <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="subject"/>
     <collection name="synonyms" referenced-type="Synonym" reverse-reference="subject"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="bioEntities"/>
-    <collection name="publications" referenced-type="Publication"/>
+    <collection name="publications" referenced-type="Publication" reverse-reference="bioEntities"/>
     <collection name="crossReferences" referenced-type="CrossReference" reverse-reference="subject"/>
   </class>
 
@@ -26,14 +29,14 @@
   <class name="Comment" is-interface="true">
     <attribute name="text" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
-  </class> 
+  </class>
 
   <class name="CrossReference" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <reference name="source" referenced-type="DataSource"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="crossReferences" />
     <collection name="dataSets" referenced-type="DataSet"/>
-  </class> 
+  </class>
 
   <class name="DataSource" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
@@ -66,11 +69,16 @@
     <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
+  <class name="MeshTerm" is-interface="true">
+    <attribute name="name" type="java.lang.String"/>
+    <collection name="publications" referenced-type="Publication" reverse-reference="meshTerms"/>
+  </class>
+
   <class name="Ontology" is-interface="true">
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
   </class>
-  
+
   <class name="OntologyTerm" is-interface="true">
     <attribute name="identifier" type="java.lang.String"/>
     <attribute name="name" type="java.lang.String"/>
@@ -80,9 +88,9 @@
     <reference name="ontology" referenced-type="Ontology"/>
     <collection name="relations" referenced-type="OntologyRelation" />
     <collection name="synonyms" referenced-type="OntologyTermSynonym" />
-    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="ontologyTerm" /> 
-    <collection name="parents" referenced-type="OntologyTerm" /> 
-    <collection name="dataSets" referenced-type="DataSet" /> 
+    <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="ontologyTerm" />
+    <collection name="parents" referenced-type="OntologyTerm" />
+    <collection name="dataSets" referenced-type="DataSet" />
   </class>
 
   <class name="OntologyRelation" is-interface="true">
@@ -105,7 +113,7 @@
     <attribute name="name" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
   </class>
-  
+
   <class name="Organism" is-interface="true">
     <attribute name="genus" type="java.lang.String"/>
     <attribute name="taxonId" type="java.lang.Integer"/>
@@ -126,14 +134,19 @@
 
   <class name="Publication" is-interface="true">
     <attribute name="title" type="java.lang.String"/>
+    <attribute name="doi" type="java.lang.String"/>
     <attribute name="issue" type="java.lang.String"/>
     <attribute name="pubMedId" type="java.lang.String"/>
     <attribute name="pages" type="java.lang.String"/>
+    <attribute name="month" type="java.lang.String"/>
     <attribute name="year" type="java.lang.Integer"/>
     <attribute name="volume" type="java.lang.String"/>
     <attribute name="journal" type="java.lang.String"/>
     <attribute name="firstAuthor" type="java.lang.String"/>
+    <attribute name="abstractText" type="java.lang.String"/>
     <collection name="authors" referenced-type="Author" reverse-reference="publications" />
+    <collection name="bioEntities" referenced-type="BioEntity" reverse-reference="publications" />
+    <collection name="meshTerms" referenced-type="MeshTerm" reverse-reference="publications" />
   </class>
 
   <class name="SOTerm" extends="OntologyTerm" is-interface="true"/>
@@ -145,7 +158,7 @@
   </class>
 
   <class name="SequenceCollection" extends="BioEntity" is-interface="true">
-    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
+    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
   </class>
 
   <class name="SequenceFeature" extends="BioEntity" is-interface="true">
@@ -153,9 +166,9 @@
     <attribute name="scoreType" type="java.lang.String"/>
     <attribute name="length" type="java.lang.Integer"/>
     <reference name="sequence" referenced-type="Sequence"/>
-    <reference name="chromosome" referenced-type="Chromosome" /> 
-    <reference name="chromosomeLocation" referenced-type="Location" />   
-    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>    
+    <reference name="chromosome" referenced-type="Chromosome" />
+    <reference name="chromosomeLocation" referenced-type="Location" />
+    <reference name="sequenceOntologyTerm" referenced-type="SOTerm"/>
     <collection name="overlappingFeatures" referenced-type="SequenceFeature" />
   </class>
 
