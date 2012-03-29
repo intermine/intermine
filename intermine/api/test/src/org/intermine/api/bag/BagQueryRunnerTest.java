@@ -41,33 +41,41 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
 
     private ObjectStore os;
     private Map<String, Employee> eIds;
-    private TestingBagQueryRunner runner;
-    BagQueryConfig bagQueryConfig = null;
+    private TestingBagQueryRunner runner, runnerMatchAll;
+    Map<String, List<FieldDescriptor>> classKeys;
+
     public BagQueryRunnerTest(String arg0) {
         super(arg0);
     }
 
     public void setUp() throws Exception {
         super.setUp();
+        runner = getRunner(true);
+        runnerMatchAll = getRunner(false);
+    }
+
+    private TestingBagQueryRunner getRunner(boolean matchOnFirst) throws Exception {
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         Properties props = new Properties();
         props.load(getClass().getClassLoader().getResourceAsStream("class_keys.properties"));
-        Map<String, List<FieldDescriptor>> classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
+        classKeys = ClassKeyHelper.readKeys(os.getModel(), props);
         eIds = getEmployeeIds();
 
         InputStream is = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
-        bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
-
+        BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), is);
+        bagQueryConfig.setMatchOnFirst(matchOnFirst);
         TemplateQueryBinding tqb = new TemplateQueryBinding();
         Map<String, TemplateQuery> tqs = tqb.unmarshalTemplates(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("BagQueryRunnerTest_templates.xml")), PathQuery.USERPROFILE_VERSION);
 
         // construct with a null TemplateManager and set conversion templates to specific list
-        runner = new TestingBagQueryRunner(os, classKeys, bagQueryConfig, null);
+        TestingBagQueryRunner r = new TestingBagQueryRunner(os, classKeys, bagQueryConfig, null);
+
         List<ApiTemplate> templates = new ArrayList<ApiTemplate>();
         for (TemplateQuery t: tqs.values()) {
             templates.add(new ApiTemplate(t));
         }
-        runner.setConversionTemplates(templates);
+        r.setConversionTemplates(templates);
+        return r;
     }
 
     public void executeTest(String type) {
@@ -103,19 +111,10 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
     }
 
 
-    // match all
-    public void testSearchForBagMatchesMatchAll() throws Exception {
-        bagQueryConfig.setMatchOnFirst(false);
-        List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
-        BagQueryResult res = runner.searchForBag("Employee", input, null, true);
-        assertEquals(2, res.getMatches().values().size());
-        assertFalse(res.getIssues().isEmpty());
-        assertFalse(res.getUnresolved().isEmpty());
-    }
+
 
     // test for the case when an identifier appears twice in the input - ignore duplicates
     public void testSearchForBagDuplicates1() throws Exception {
-
         List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2", "EmployeeA1"});
         BagQueryResult res = runner.searchForBag("Employee", input, null, true);
         assertEquals(2, res.getMatches().values().size());
@@ -313,5 +312,14 @@ public class BagQueryRunnerTest extends StoreDataTestCase {
             employees.put(e.getName(), e);
         }
         return employees;
+    }
+
+    // match all
+    public void testSearchForBagMatchesMatchAll() throws Exception {
+        List input = Arrays.asList(new Object[] {"EmployeeA1", "EmployeeA2"});
+        BagQueryResult res = runnerMatchAll.searchForBag("Employee", input, null, true);
+        assertEquals(2, res.getMatches().values().size());
+        assertTrue("Should have issues", !res.getIssues().isEmpty());
+        assertTrue("Should have no unresolved identifiers", res.getUnresolved().isEmpty());
     }
 }

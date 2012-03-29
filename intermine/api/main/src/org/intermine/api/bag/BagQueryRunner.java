@@ -50,18 +50,16 @@ public class BagQueryRunner
     private Map<String, List<FieldDescriptor>> classKeys;
     private BagQueryConfig bagQueryConfig;
     private TemplateManager templateManager;
+    private static final boolean MATCHES_ARE_ISSUES_DEFAULT = true;
 
     /**
      * Construct with configured bag queries and a map of type -&gt; key fields.
      *
-     * @param os
-     *            the ObjectStore to run queries on
-     * @param classKeys
-     *            the class keys Map
-     * @param bagQueryConfig
-     *            the configuration for running queries
-     * @param templateManager the InterMine template manager to access conversion templates
-     *            a list of template queries to be used when type converting results
+     * @param os the ObjectStore to run queries on
+     * @param classKeys the class keys Map
+     * @param bagQueryConfig the configuration for running queries
+     * @param templateManager the InterMine template manager to access conversion templates a list
+     * of template queries to be used when type converting results
      */
     public BagQueryRunner(ObjectStore os, Map<String, List<FieldDescriptor>> classKeys,
             BagQueryConfig bagQueryConfig, TemplateManager templateManager) {
@@ -141,14 +139,27 @@ public class BagQueryRunner
         List<BagQuery> queries = getBagQueriesForType(bagQueryConfig, typeCls.getName());
         Set<String> unresolved = new LinkedHashSet<String>(cleanInput);
         Set<String> wildcardUnresolved = new LinkedHashSet<String>(wildcardInput);
+
+        // unmodified list of identifiers uploaded
+        Set<String> unresolvedOriginal = new LinkedHashSet<String>(cleanInput);
+        Set<String> wildcardUnresolvedOriginal = new LinkedHashSet<String>(wildcardInput);
+
         BagQueryResult bqr = new BagQueryResult();
+        // return first record ONLY for identifier.  otherwise, run all queries and return all
+        boolean matchOnFirst = bagQueryConfig.getMatchOnFirst();
+
         for (BagQuery bq : queries) {
             // run the next query on identifiers not yet resolved
-            if (!unresolved.isEmpty()) {
+            // OR all identifiers if matchOnFirst = FALSE
+            if (!unresolved.isEmpty() || !matchOnFirst) {
                 Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 Query q = null;
                 try {
-                    q = bq.getQuery(unresolved, extraFieldValue);
+                    if (matchOnFirst) {
+                        q = bq.getQuery(unresolved, extraFieldValue);
+                    } else {
+                        q = bq.getQuery(unresolvedOriginal, extraFieldValue);
+                    }
                     Results res = os.execute(q, 10000, true, true, false);
                     for (Object rowObj : res) {
                         ResultsRow<?> row = (ResultsRow<?>) rowObj;
@@ -178,11 +189,12 @@ public class BagQueryRunner
                 } catch (IllegalArgumentException e) {
                     // Query couldn't handle extra value
                 }
-                addResults(resMap, unresolved, bqr, bq, typeCls, false);
+                addResults(resMap, unresolved, bqr, bq.getMessage(), typeCls, false,
+                            matchOnFirst, bq.matchesAreIssues());
             }
             if (!wildcardInput.isEmpty()) {
+                Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                 try {
-                    Map<String, Set<Integer>> resMap = new HashMap<String, Set<Integer>>();
                     Query q = bq.getQueryForWildcards(wildcardInput, extraFieldValue);
                     Results res = os.execute(q, ResultsBatches.DEFAULT_BATCH_SIZE, true, true,
                             false);
@@ -211,7 +223,14 @@ public class BagQueryRunner
                         // This is a dummy issue just to give a message when running queries
                         bqr.addIssue(BagQueryResult.WILDCARD, bq.getMessage(),
                                 entry.getKey(), new ArrayList<Object>(entry.getValue()));
-                        addResults(resMap, wildcardUnresolved, bqr, bq, typeCls, true);
+                        if (matchOnFirst) {
+                            addResults(resMap, wildcardUnresolved, bqr, bq.getMessage(),
+                                    typeCls, true, matchOnFirst, bq.matchesAreIssues());
+                        } else {
+                            addResults(resMap, wildcardUnresolvedOriginal, bqr, bq.getMessage(),
+                                    typeCls, true, matchOnFirst, bq.matchesAreIssues());
+                        }
+
                     }
                 } catch (IllegalArgumentException e) {
                     LOG.error("Error running bag query lookup: ", e);
@@ -238,9 +257,7 @@ public class BagQueryRunner
             resMap.put(field, ids);
         }
         ids.add(id);
-        if (bagQueryConfig.getMatchOnFirst()) {
-            unresolved.remove(field);
-        }
+        unresolved.remove(field);
     }
 
     /**
@@ -249,8 +266,8 @@ public class BagQueryRunner
      * @throws InterMineException
      */
     private void addResults(Map<String, Set<Integer>> resMap, Set<String> unresolved,
-            BagQueryResult bqr, BagQuery bq, Class<?> type,
-            boolean areWildcards) throws InterMineException {
+            BagQueryResult bqr, String msg, Class<?> type, boolean areWildcards,
+            boolean matchOnFirst, boolean matchesAreIssues) throws InterMineException {
         Map<String, Set<Object>> objsOfWrongType = new HashMap<String, Set<Object>>();
 
         // Gather together all the id lookups and perform them in one.
@@ -258,7 +275,7 @@ public class BagQueryRunner
         Set<Integer> idsToFetch = new HashSet<Integer>();
         try {
             for (Map.Entry<String, Set<Integer>> resEntry : resMap.entrySet()) {
-                if (bq.matchesAreIssues() || (resEntry.getValue().size() > 1)) {
+                if (matchesAreIssues || (resEntry.getValue().size() > 1)) {
                     idsToFetch.addAll(resEntry.getValue());
                 }
             }
@@ -275,7 +292,7 @@ public class BagQueryRunner
             Set<Integer> ids = entry.getValue();
             boolean resolved = true;
 
-            if (!bq.matchesAreIssues()) {
+            if (!matchesAreIssues) {
 
                 // if matches are not issues then each entry will be a match or a duplicate
                 if (ids.size() == 1) {
@@ -290,7 +307,7 @@ public class BagQueryRunner
                         }
                         objs.add(obj);
                     }
-                    bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), entry.getKey(), objs);
+                    bqr.addIssue(BagQueryResult.DUPLICATE, msg, entry.getKey(), objs);
                 }
             } else {
                 List<Object> objs = new ArrayList<Object>();
@@ -315,9 +332,9 @@ public class BagQueryRunner
                     // we have a list of objects, if any match the type then add to bqr as an issue
                     // discard objects that matched a different type
                     if (objs.size() == 1) {
-                        bqr.addIssue(BagQueryResult.OTHER, bq.getMessage(), input, objs);
+                        bqr.addIssue(BagQueryResult.OTHER, msg, input, objs);
                     } else if (!areWildcards) {
-                        bqr.addIssue(BagQueryResult.DUPLICATE, bq.getMessage(), input, objs);
+                        bqr.addIssue(BagQueryResult.DUPLICATE, msg, input, objs);
                     }
                 } else {
                     // all wrong, allow conversion attempts
@@ -325,13 +342,13 @@ public class BagQueryRunner
                     objsOfWrongType.put(input, localObjsOfWrongType);
                 }
             }
-            if (resolved && bagQueryConfig.getMatchOnFirst()) {
+            if (resolved && matchOnFirst) {
                 unresolved.remove(input);
             }
         }
 
         // now objsOfWrongType contains all wrong types found for this query, try converting
-        convertObjects(bqr, bq, type, objsOfWrongType);
+        convertObjects(bqr, msg, type, objsOfWrongType);
 
         bqr.getUnresolved().putAll(objsOfWrongType);
     }
@@ -340,7 +357,7 @@ public class BagQueryRunner
      * Find any objects in the objsOfWrongType Map that can be converted to the destination type,
      * add them to bqr as TYPE_CONVERTED issues and remove them from objsOfWrongType.
      */
-    private void convertObjects(BagQueryResult bqr, BagQuery bq, Class<?> type,
+    private void convertObjects(BagQueryResult bqr, String msg, Class<?> type,
             Map<String, Set<Object>> objsOfWrongType)
         throws InterMineException {
         if (!objsOfWrongType.isEmpty()) {
@@ -403,7 +420,7 @@ public class BagQueryRunner
                         // this old/new pair
                         for (String origInputString : objectToInput.get(origObj)) {
                             bqr.addIssue(BagQueryResult.TYPE_CONVERTED,
-                                         bq.getMessage() + " found by converting from x",
+                                         msg + " found by converting from x",
                                          origInputString, objPairList);
                             objsOfWrongType.remove(origInputString);
                         }
