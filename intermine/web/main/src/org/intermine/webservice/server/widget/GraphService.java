@@ -109,9 +109,7 @@ public class GraphService extends JSONService
             throw new InternalErrorException("Problem loading widget");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
-        String pathQuery = PathQueryBinding.marshal(widget.getPathQuery(),
-            "pathQuery" + widgetConfig.getId(), model.getName(), PathQuery.USERPROFILE_VERSION);
-        addOutputInfo("pathQuery", pathQuery);
+        addOutputInfo("pathQuery", widget.getPathQuery().toJson());
         WidgetResultProcessor processor = getProcessor();
         Iterator<List<Object>> it = widget.getResults().iterator();
         while (it.hasNext()) {
