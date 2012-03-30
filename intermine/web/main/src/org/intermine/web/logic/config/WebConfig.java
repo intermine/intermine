@@ -137,7 +137,7 @@ public class WebConfig
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
 
         /* display inline tables as inline lists instead */
-        digester.addObjectCreate("webconfig/class/inlinelist/table", InlineList.class);
+        digester.addObjectCreate("webconfig/class/inlinelist/table", InlineListConfig.class);
         digester.addSetProperties("webconfig/class/inlinelist/table");
         digester.addSetNext("webconfig/class/inlinelist/table", "addInlineList");
         digester.addSetProperties("webconfig/class/inlinelist/table", "path", "path");
