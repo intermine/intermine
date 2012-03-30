@@ -5,9 +5,9 @@
 PATH=/usr/local/bin:/software/arch/postgresql/bin:$PATH
 export PATH
 
-dumps_dir=/shared/dumps/userprofile/flymine
+dumps_dir=/micklem/dumps/userprofile/flymine
 
-/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
+$HOME/svn/trunk/bio/scripts/userprofile_backup $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
 
 if cmp -s $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
 then
