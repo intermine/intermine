@@ -37,7 +37,7 @@ my $userprofile_db_username = 'flymine';
 my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U");
 my @psql_command = qw[psql -q -U];
 my @createdb_command = qw[createdb -U];
-my $db_prefix = "userprofile-release-";
+my $db_prefix = "userprofile";
 my $prod_db_prefix = "flymine-release-";
 
 sub get_max_version {
@@ -47,7 +47,7 @@ sub get_max_version {
   or die "can't open pipe to read list of databases";
 
   while (my $line = <REMOTE>) {
-    if ($line =~ /$db_prefix([\d\.]+)/) {
+    if ($line =~ /$prod_db_prefix([\d\.]+)/) {
       my $this_version = $1;
       if ($this_version > $max_version) {
         $max_version = $this_version;
@@ -58,7 +58,7 @@ sub get_max_version {
   close REMOTE;
 
   if ($max_version == -1) {
-    die "can't find latest version of userprofile database\n";
+    die "can't find latest version of database\n";
   }
 
   return $max_version;
