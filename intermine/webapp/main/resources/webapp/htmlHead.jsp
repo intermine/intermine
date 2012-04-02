@@ -33,14 +33,7 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.7.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/underscore.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/intermine.js'/>"></script>
-
-<%-- imjs --%>
-<script type="text/javascript" src="<html:rewrite page='/js/imjs.model.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/imjs.lists.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/imjs.service.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/imjs.query.js'/>"></script>
 
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
