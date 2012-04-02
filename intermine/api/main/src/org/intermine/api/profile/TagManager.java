@@ -95,15 +95,71 @@ public class TagManager
         }
     }
 
+    /**
+     * Test whether a particular taggable thing has been tagged with a particular tag.
+     *
+     * This method returns true if ANY user has tagged this object.
+     *
+     * @param tagName The tag name to check.
+     * @param taggable The particular taggable thing.
+     * @return True if the object is associated with the tag.
+     */
+    public boolean hasTag(String tagName, Taggable taggable) {
+        return hasTag(tagName, taggable, null);
+    }
+
+    /**
+     * Test whether a particular taggable thing has been tagged with a particular tag,
+     * by a particular user.
+     *
+     * If the profile argument is null, then that argument is treated as a wild-card.
+     *
+     * @param tagName The tag name to check.
+     * @param taggable The particular taggable thing.
+     * @param profile The user who is meant to have tagged the item, or null for a wildcard.
+     * @return True if the object is associated with the tag.
+     */
+    public boolean hasTag(String tagName, Taggable taggable, Profile profile) {
+        String userName = null;
+        if (profile != null) {
+            userName = profile.getUsername();
+        }
+        List<Tag> found = getTags(tagName, taggable.getName(), taggable.getTagType(), userName);
+        return found != null && !found.isEmpty();
+    }
+
+    /**
+     * Delete a tag by name from a web-searchable object.
+     *
+     * This action fires a TagChange.REMOVED event.
+     *
+     * @param tagName The tag to remove.
+     * @param ws The object to remove it from.
+     * @param profile The user who is meant to own the tag.
+     */
     public void deleteTag(String tagName, WebSearchable ws, Profile profile) {
         deleteTag(tagName, ws.getName(), ws.getTagType(), profile.getUsername());
         ws.fireEvent(new TaggingEvent(ws, tagName, TagChange.REMOVED));
     }
 
+    /**
+     * Delete a tag by name from a class-descriptor.
+     *
+     * @param tagName The tag to remove.
+     * @param cd The class descriptor to remove it from.
+     * @param profile The profile the tag should be removed from.
+     */
     public void deleteTag(String tagName, ClassDescriptor cd, Profile profile) {
         deleteTag(tagName, cd.getName(), TagTypes.CLASS, profile.getUsername());
     }
 
+    /**
+     * Delete a tag by name from a reference-descriptor.
+     *
+     * @param tagName The tag to remove.
+     * @param rd The reference descriptor to remove it from.
+     * @param profile The profile the tag should be removed from.
+     */
     public void deleteTag(String tagName, ReferenceDescriptor rd, Profile profile) {
         String objIdentifier = rd.getClassDescriptor().getSimpleName() + "." + rd.getName();
         if (rd instanceof CollectionDescriptor) {
@@ -114,11 +170,14 @@ public class TagManager
     }
 
     /**
-     * Deletes tag object from the database.
-     * @param tagName tag name
-     * @param taggedObject object id of tagged object
-     * @param type tag type
-     * @param userName user name
+     * Deletes a tag object from the database.
+     *
+     * If there is no such tag, an Exception will be thrown to that effect.
+     *
+     * @param tagName the tag name
+     * @param taggedObject the object identifier of the tagged object
+     * @param type the tag type
+     * @param userName the user name associated with the tag.
      */
     protected void deleteTag(String tagName, String taggedObject, String type, String userName) {
         List<Tag> tags = getTags(tagName, taggedObject, type, userName);
@@ -194,6 +253,16 @@ public class TagManager
      */
     public Set<String> getObjectTagNames(Taggable taggable, Profile profile) {
         return getObjectTagNames(taggable.getName(), taggable.getTagType(), profile.getUsername());
+    }
+
+    /**
+     * Get the tags for a specific object.
+     * @param taggable The object with the tags.
+     * @param profile The user these tags should belong to.
+     * @return tags.
+     */
+    public List<Tag> getObjectTags(Taggable taggable, Profile profile) {
+        return getTags(null, taggable.getName(), taggable.getTagType(), profile.getUsername());
     }
 
     /**
