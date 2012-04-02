@@ -362,7 +362,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         }
 
         // bag constraint
-        q.addConstraint(Constraints.in(startClass + ".id", bag.getName()));
+        q.addConstraint(Constraints.in(prefix + "id", bag.getName()));
         return q;
     }
 }
