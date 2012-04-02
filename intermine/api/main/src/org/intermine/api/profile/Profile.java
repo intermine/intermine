@@ -662,6 +662,19 @@ public class Profile
         return token;
     }
 
+    private String dayToken = null;
+
+    /**
+     * Get a token with at least an hour of validity, and up to 24 hours.
+     * @return A token for web-service use.
+     */
+    public String getDayToken() {
+        if (!manager.tokenHasMoreUses(dayToken)) {
+            dayToken = getProfileManager().generate24hrKey(this);
+        }
+        return dayToken;
+    }
+
     /**
      * Set the API token for this user, and save it in
      * the backing db.
