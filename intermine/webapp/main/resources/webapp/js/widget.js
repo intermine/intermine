@@ -980,7 +980,6 @@ factory = function(Backbone) {
       _ref = this.collection.selected();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         model = _ref[_i];
-        console.log(model);
         result.push([model.get('description'), model.get('p-value')].join("\t") + "\t" + ((function() {
           var _j, _len2, _ref2, _results;
           _ref2 = model.get('matches');
@@ -1016,7 +1015,7 @@ factory = function(Backbone) {
           _results = [];
           for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
             match = _ref2[_j];
-            _results.push(match.id);
+            _results.push(match.displayed);
           }
           return _results;
         })());
