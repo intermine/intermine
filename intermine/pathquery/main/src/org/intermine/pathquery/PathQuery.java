@@ -2218,7 +2218,7 @@ public class PathQuery implements Cloneable
      * @return This query as json.
      */
     public synchronized String getJson() {
-    	return toJson();
+        return toJson();
     }
 
     /**
