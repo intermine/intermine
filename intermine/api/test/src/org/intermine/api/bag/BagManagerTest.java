@@ -12,17 +12,15 @@ import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.profile.TagManager.TagNameException;
-import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.util.DynamicUtil;
 
 public class BagManagerTest extends InterMineAPITestCase
@@ -35,6 +33,7 @@ public class BagManagerTest extends InterMineAPITestCase
     private InterMineBag globalCompanyBag, globalAddressBag, superPrivateBag, userCompanyBag, userAddressBag;
     private Integer ADDRESS_ID = 1;
     private Integer DUMMY_ID = 2;
+    private Profile bobProfile;
 
     public BagManagerTest(String arg) {
         super(arg);
@@ -46,6 +45,11 @@ public class BagManagerTest extends InterMineAPITestCase
         emptyUser = im.getProfileManager().getProfile("emptyUser");
         tagManager = im.getProfileManager().getTagManager();
         bagManager = im.getBagManager();
+
+        ProfileManager pm = im.getProfileManager();
+        bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(),
+                new HashMap(), true, false);
+        pm.createProfile(bobProfile);
         setUpBagsAndTags();
     }
 
@@ -69,6 +73,30 @@ public class BagManagerTest extends InterMineAPITestCase
         userAddressBag = testUser.createBag("userAddressBag", "Address", "", classKeys);
     }
 
+    public void testIsPublic() throws Exception {
+        assertFalse(bagManager.isPublic(superPrivateBag));
+        assertTrue(bagManager.isPublic(globalCompanyBag));
+    }
+    
+    public void testGetTagsForBag() throws Exception {
+        String notToBeFound = "NOT-FOR-PUBLIC-CONSUMPTION";
+        String toBeFound = "BUT-THIS-ONE-IS-MINE";
+        tagManager.addTag(notToBeFound, globalCompanyBag, bobProfile);
+        tagManager.addTag(toBeFound, globalCompanyBag, superUser);
+        
+        List<Tag> tags = bagManager.getTagsForBag(globalCompanyBag, superUser);
+        boolean hasTagItShouldHave = false;
+        boolean hasTagItShouldNotHave = false;
+        for (Tag t: tags) {
+            if (notToBeFound.equals(t.getTagName())) {
+                hasTagItShouldNotHave = true;
+            }
+            if (toBeFound.equals(t.getTagName())) {
+                hasTagItShouldHave = true;
+            }
+        }
+        assertTrue(hasTagItShouldHave && !hasTagItShouldNotHave);
+    }
 
     public void testGetBagsWithTag() throws Exception {
         Map<String, InterMineBag> expected = createExpected(globalCompanyBag, globalAddressBag);
