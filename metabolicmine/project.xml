@@ -144,7 +144,7 @@
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
-      <property name="loadFullRecord" value="true"/>
+      <property name="pubmed.format" value="fullRecord"/>
     </source>
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
