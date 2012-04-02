@@ -164,6 +164,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         boolean storeSnp = false;
         String currentSnpIdentifier = null;
         Integer currentVariationId = null;
+        Map<String, Integer> nonTranscriptConsequences = new HashMap<String, Integer>();
 
         // This code is complicated because not all SNPs map to a unique location and often have
         // locations on multiple chromosomes - we're processing one chromosome at a time for faster
@@ -342,6 +343,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 }
                 consequenceIdentifiers.add(consequenceItem.getIdentifier());
                 store(consequenceItem);
+            } else {
+                String variationConsequences = res.getString("vf.consequence_type");
+                Integer consequenceCount = nonTranscriptConsequences.get(variationConsequences);
+
+                if (consequenceCount == null) {
+                    consequenceCount = new Integer(0);
+                }
+
+                nonTranscriptConsequences.put(variationConsequences,
+                        new Integer(consequenceCount + 1));
             }
 
             if (counter % 100000 == 0) {
@@ -360,6 +371,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
         LOG.info("variationIdToItemIdentifier.size() = " + variationIdToItemIdentifier.size());
+        LOG.info("Consequence types without transcript: " + nonTranscriptConsequences);
     }
 
     private void setAttIfValue(Item item, String attName, String attValue) {
@@ -737,7 +749,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " FROM seq_region sr, source s, variation_feature vf "
             + " LEFT JOIN (transcript_variation tv)"
             + " ON (vf.variation_feature_id = tv.variation_feature_id"
-            + "    AND tv.cdna_start is not null)"
+            + "    AND tv.consequence_types NOT IN ('5KB_downstream_variant',"
+            + "    '5KB_upstream_variant','500B_downstream_variant','2KB_upstream_variant'))"
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
