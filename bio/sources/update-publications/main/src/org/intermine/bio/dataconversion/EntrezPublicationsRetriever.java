@@ -90,18 +90,18 @@ public class EntrezPublicationsRetriever
     private ItemFactory itemFactory;
     private boolean loadFullRecord = false;
     private Map<String, Item> meshTerms = new HashMap<String, Item>();
-    
+
     /**
      * load full record or summary?
      *
      * @param pubmedFormat summary or full
      */
     public void setPubmedFormat(String pubmedFormat) {
-        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("full")) {
-        	loadFullRecord = true;
+        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("loadFullRecord")) {
+            loadFullRecord = true;
         }
     }
-    
+
     /**
      * Set the ObjectStore alias.
      * @param osAlias The ObjectStore alias
@@ -166,7 +166,7 @@ public class EntrezPublicationsRetriever
 
             Writer writer = new FileWriter(outputFile);
             ObjectStore os = ObjectStoreFactory.getObjectStore(osAlias);
-            
+
             Set<Integer> idsToFetch = new HashSet<Integer>();
             itemFactory = new ItemFactory(os.getModel(), "-1_");
             writer.write(FullRenderer.getHeader() + ENDL);
@@ -181,7 +181,6 @@ public class EntrezPublicationsRetriever
                 }
 
                 if (seenPubMeds.contains(pubMedIdInteger)) {
-            		System.out.println("seen it");
                     continue;
                 }
                 DatabaseEntry key = new DatabaseEntry(pubMedId.getBytes());
@@ -224,15 +223,15 @@ public class EntrezPublicationsRetriever
                             fromServerMap = new HashMap<String, Map<String, Object>>();
                             Throwable throwable = null;
                             try {
-                            	if (loadFullRecord) {
-                            		SAXParser.parse(new InputSource(
-                            				new StringReader(buf.toString())),
+                                if (loadFullRecord) {
+                                    SAXParser.parse(new InputSource(
+                                            new StringReader(buf.toString())),
                                                 new FullRecordHandler(fromServerMap), false);
-                            	} else {
-                            		SAXParser.parse(new InputSource(
-                            				new StringReader(buf.toString())),
+                                } else {
+                                    SAXParser.parse(new InputSource(
+                                            new StringReader(buf.toString())),
                                             new SummaryRecordHandler(fromServerMap), false);
-                            	}
+                                }
                             } catch (Throwable e) {
                                 LOG.error("Couldn't parse PubMed XML", e);
                                 // try again or re-throw the Throwable
@@ -389,9 +388,9 @@ public class EntrezPublicationsRetriever
         if (!StringUtils.isEmpty(doi)) {
             publication.setAttribute("doi", doi);
         }
-        final List<String> meshTerms = (List<String>) map.get("meshTerms");
-        if (meshTerms != null && !meshTerms.isEmpty()) {
-            processMeshTerms(publication, meshTerms);
+        final List<String> termsToStore = (List<String>) map.get("meshTerms");
+        if (termsToStore != null && !termsToStore.isEmpty()) {
+            processMeshTerms(publication, termsToStore);
         }
         List<String> authors = (List<String>) map.get("authors");
         if (authors != null) {
@@ -415,20 +414,20 @@ public class EntrezPublicationsRetriever
         for (String name : newTerms) {
             Item item = meshTerms.get(name);
             if (item == null) {
-            	item = itemFactory.makeItemForClass("MeshTerm");
-            	item.setAttribute("name", name);
-            	meshTerms.put(name, item);
+                item = itemFactory.makeItemForClass("MeshTerm");
+                item.setAttribute("name", name);
+                meshTerms.put(name, item);
             }
             publication.addToCollection("meshTerms", item);
-        }	
+        }
     }
-    
+
     /**
      * Extension of DefaultHandler to handle an  for a publication
      */
     class FullRecordHandler extends DefaultHandler
     {
-    	private Map<String, Object> pubMap;
+        private Map<String, Object> pubMap;
         private StringBuffer characters;
         private boolean duplicateEntry = false;
         private Map<String, Map<String, Object>> cache;
@@ -451,9 +450,9 @@ public class EntrezPublicationsRetriever
         public void startElement(String uri, String localName, String qName, Attributes attrs) {
             name = null;
             if ("ArticleId".equals(qName) && "doi".equals(attrs.getValue("IdType"))) {
-            	name = "doi";
+                name = "doi";
             } else if ("DescriptorName".equals(qName)) {
-            	name = "meshTerm";
+                name = "meshTerm";
             }
             stack.push(qName);
             characters = new StringBuffer();
@@ -523,7 +522,7 @@ public class EntrezPublicationsRetriever
                     throw new RuntimeException("got non-integer pubmed id from NCBI: " + pubMedId);
                 }
             } else if ("Year".equalsIgnoreCase(qName) && !stack.isEmpty()
-            		&& "PubDate".equals(stack.peek())) {
+                    && "PubDate".equals(stack.peek())) {
                 String year = characters.toString();
                 try {
                     Integer.parseInt(year);
@@ -542,16 +541,15 @@ public class EntrezPublicationsRetriever
             } else if ("MedlinePgn".equals(qName)) {
                 pubMap.put("pages", characters.toString());
             } else if ("AbstractText".equals(qName)) {
-            	String abstractText = (String) pubMap.get("abstractText");
-            	if (StringUtils.isEmpty(abstractText)) {
-            		abstractText = characters.toString();
-            	} else {
-            		abstractText += " " + characters.toString();
-            	}
+                String abstractText = (String) pubMap.get("abstractText");
+                if (StringUtils.isEmpty(abstractText)) {
+                    abstractText = characters.toString();
+                } else {
+                    abstractText += " " + characters.toString();
+                }
                 pubMap.put("abstractText", abstractText);
-                System.out.println(abstractText);
             } else if ("Month".equalsIgnoreCase(qName) && !stack.isEmpty()
-            		&& "PubDate".equals(stack.peek())) {
+                    && "PubDate".equals(stack.peek())) {
                 pubMap.put("month", characters.toString());
             } else if ("doi".equals(name) && "ArticleId".equals(qName)) {
                 pubMap.put("doi", characters.toString());
@@ -559,22 +557,22 @@ public class EntrezPublicationsRetriever
                 String termName = characters.toString();
                 List<String> termList = (List<String>) pubMap.get("meshTerms");
                 if (termList == null) {
-                	termList = new ArrayList<String>();
+                    termList = new ArrayList<String>();
                     pubMap.put("meshTerms", termList);
                 }
                 termList.add(termName);
             } else if (!stack.isEmpty() && "Author".equals(stack.peek())) {
 
-            	if (authorHolder == null) {
-            		authorHolder = new AuthorHolder();
-            	}
-            	if ("ForeName".equals(qName)) {
-            		authorHolder.firstName = characters.toString();
-            	} else if ("LastName".equals(qName)) {
-            		authorHolder.lastName = characters.toString();
-            	} else if ("CollectiveName".equals(qName)) {
-            		authorHolder.collectiveName = characters.toString();
-            	}
+                if (authorHolder == null) {
+                    authorHolder = new AuthorHolder();
+                }
+                if ("ForeName".equals(qName)) {
+                    authorHolder.firstName = characters.toString();
+                } else if ("LastName".equals(qName)) {
+                    authorHolder.lastName = characters.toString();
+                } else if ("CollectiveName".equals(qName)) {
+                    authorHolder.collectiveName = characters.toString();
+                }
             }  else if ("Author".equals(qName)) {
                 String authorString = authorHolder.getName();
                 List<String> authorList = (List<String>) pubMap.get("authors");
@@ -588,20 +586,20 @@ public class EntrezPublicationsRetriever
             name = null;
         }
 
-        public class AuthorHolder
+        private class AuthorHolder
         {
-        	protected String firstName;
-        	protected String lastName;
-        	protected String collectiveName;
-        	protected String getName() {
-        		if (StringUtils.isNotEmpty(collectiveName)) {
-        			return collectiveName;
-        		}
-        		return lastName +  " " + firstName;
-        	}
+            protected String firstName;
+            protected String lastName;
+            protected String collectiveName;
+            protected String getName() {
+                if (StringUtils.isNotEmpty(collectiveName)) {
+                    return collectiveName;
+                }
+                return lastName +  " " + firstName;
+            }
         }
     }
-    
+
     /**
      * Extension of DefaultHandler to handle an esummary for a publication
      */
@@ -706,15 +704,5 @@ public class EntrezPublicationsRetriever
             }
             name = null;
         }
-    }
-    
-    private Item getMeshTerm(String name) {
-    	Item item = meshTerms.get(name);
-    	if (item == null) {
-    		item = itemFactory.makeItemForClass("MeshTerm");
-    		item.setAttribute("name", name);
-    		meshTerms.put(name, item);
-    	}
-    	return item;
     }
 }
