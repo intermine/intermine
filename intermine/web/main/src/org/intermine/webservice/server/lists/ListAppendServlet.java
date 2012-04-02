@@ -26,7 +26,7 @@ public class ListAppendServlet extends HttpServlet {
     }
 
     private void appendToList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListAppendService(im).service(request, response);
     }
 

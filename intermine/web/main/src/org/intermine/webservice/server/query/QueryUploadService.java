@@ -14,14 +14,13 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.List;
-import java.util.HashSet;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
@@ -30,10 +29,9 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 /**
  * A service to enable queries to be uploaded programmatically.
@@ -76,8 +74,7 @@ public class QueryUploadService extends WebService
         if (queriesXML == null || "".equals(queriesXML)) {
             throw new BadRequestException("No XML data." + USAGE);
         }
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
+        Profile profile = permission.getProfile();
         BagManager bagManager = this.im.getBagManager();
 
         Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);

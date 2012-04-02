@@ -25,9 +25,7 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
@@ -57,7 +55,7 @@ public class ListTagRemovalService extends ListTagService
         Set<String> tagset = new HashSet<String>(Arrays.asList(tags));
 
         BagManager bagManager = im.getBagManager();
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
         Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {
@@ -66,12 +64,12 @@ public class ListTagRemovalService extends ListTagService
         }
         TagManager tm = im.getTagManager();
 
-        for (Tag tag: bagManager.getTagsForBag(list)) {
+        for (Tag tag: bagManager.getTagsForBag(list, profile)) {
             if (tagset.contains(tag.getTagName())) {
                 tm.deleteTag(tag.getTagName(), list, profile);
             }
         }
-        List<Tag> allTags = bagManager.getTagsForBag(list);
+        List<Tag> allTags = bagManager.getTagsForBag(list, profile);
         List<String> tagNames = (List<String>) collect(allTags, invokerTransformer("getTagName"));
         output.addResultItem(tagNames);
     }

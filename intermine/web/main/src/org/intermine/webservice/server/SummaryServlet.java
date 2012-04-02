@@ -40,7 +40,7 @@ public class SummaryServlet extends HttpServlet
     }
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        InterMineAPI im = SessionMethods.getInterMineAPI(request);
+        InterMineAPI im = SessionMethods.getInterMineAPI();
         SummaryService sum = new SummaryService(im);
         sum.service(request, response);
     }

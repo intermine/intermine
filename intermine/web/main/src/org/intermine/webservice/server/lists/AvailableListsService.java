@@ -17,7 +17,6 @@ import java.util.Map;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.exceptions.BadRequestException;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
@@ -59,7 +58,7 @@ public class AvailableListsService extends WebService
      * @return The lists that are available.
      */
     protected Collection<InterMineBag> getLists() {
-        ListManager listManager = new ListManager(request);
+        ListManager listManager = new ListManager(im, permission.getProfile());
         return listManager.getLists();
     }
 
@@ -92,11 +91,11 @@ public class AvailableListsService extends WebService
                 return new FlatListFormatter();
             }
             case (WebService.JSON_FORMAT): {
-                Profile profile = SessionMethods.getProfile(request.getSession());
+                Profile profile = permission.getProfile();
                 return new JSONListFormatter(im, profile, jsDates);
             }
             case (WebService.JSONP_FORMAT): {
-                Profile profile = SessionMethods.getProfile(request.getSession());
+                Profile profile = permission.getProfile();
                 return new JSONListFormatter(im, profile, jsDates);
             }
             default: {

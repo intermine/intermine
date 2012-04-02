@@ -35,7 +35,7 @@ public class ListRenameServlet extends HttpServlet {
 
     private void renameList(HttpServletRequest request, 
         HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListRenameService(im).service(request, response);
     }
 

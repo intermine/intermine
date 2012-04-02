@@ -10,6 +10,9 @@ package org.intermine.webservice.server.query.result;
  *
  */
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -18,25 +21,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.io.PrintWriter;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
-import static org.apache.commons.lang.StringUtils.isBlank;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
+import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Results;
-import org.intermine.metadata.AttributeDescriptor;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.Path;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.WebUtil;
-import org.intermine.web.struts.InterMineAction;
 import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
@@ -44,7 +43,6 @@ import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
@@ -53,10 +51,9 @@ import org.intermine.webservice.server.output.JSONRowResultProcessor;
 import org.intermine.webservice.server.output.JSONSummaryProcessor;
 import org.intermine.webservice.server.output.JSONTableFormatter;
 import org.intermine.webservice.server.output.JSONTableResultProcessor;
-import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
-import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.ResultsIterator;
+import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
 
 /**
@@ -198,7 +195,7 @@ public class QueryResultService extends AbstractQueryService
             attributes.put(JSONTableFormatter.KEY_DESCRIPTION, description);
             attributes.put(JSONTableFormatter.KEY_COUNT, countUrl);
         }
-        if (f == JSON_DATA_TABLE_FORMAT) {
+        if (f == JSON_DATA_TABLE_FORMAT || f == JSONP_DATA_TABLE_FORMAT) {
             attributes.put("sEcho", request.getParameter("sEcho"));
             attributes.put("sColumns", StringUtils.join(pq.getView(), ","));
             //attributes.put("sColumns", StringUtils.join(
@@ -263,38 +260,6 @@ public class QueryResultService extends AbstractQueryService
         }
 
         output.setHeaderAttributes(attributes);
-    }
-
-
-    private void forward(PathQuery pathQuery, String title, String description,
-            WebServiceInput input, String mineLink, String layout) {
-        if (getFormat() == WebService.HTML_FORMAT) {
-            List<String> columnNames = new ArrayList<String>();
-            for (String viewString : pathQuery.getView()) {
-                columnNames.add(pathQuery.getGeneratedPathDescription(viewString));
-            }
-            MemoryOutput mout = (MemoryOutput) output;
-            request.setAttribute("columnNames", columnNames);
-            request.setAttribute("rows", mout.getResults());
-            request.setAttribute("title", title);
-            request.setAttribute("description", description);
-            request.setAttribute("currentPage",
-                    (input.getStart()) / input.getMaxCount());
-            request.setAttribute("baseLink", createBaseLink());
-            request.setAttribute("pageSize", input.getMaxCount());
-            request.setAttribute("layout", layout);
-            if (mineLink != null) {
-                request.setAttribute("mineLinkText", "Results in "
-                        + InterMineAction.getWebProperties(request)
-                                .getProperty("project.title"));
-                request.setAttribute("mineLinkUrl", mineLink);
-            }
-            try {
-                getHtmlForward().forward(request, response);
-            } catch (Exception e) {
-                throw new InternalErrorException(e);
-            }
-        }
     }
 
     private String createBaseLink() {
@@ -414,7 +379,6 @@ public class QueryResultService extends AbstractQueryService
                 }
             }
         }
-        forward(pathQuery, title, description, input, mineLink, layout);
     }
 
     private ResultProcessor makeResultProcessor() {
@@ -468,8 +432,8 @@ public class QueryResultService extends AbstractQueryService
     }
 
     private PathQueryExecutor getPathQueryExecutor() {
-        Profile profile = SessionMethods.getProfile(request.getSession());
-        PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
+        final Profile profile = permission.getProfile();
+        final PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         return executor;
     }
 

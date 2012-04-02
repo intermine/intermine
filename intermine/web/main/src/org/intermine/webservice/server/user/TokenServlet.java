@@ -24,7 +24,7 @@ public class TokenServlet extends HttpServlet
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        final InterMineAPI api = SessionMethods.getInterMineAPI(req);
+        final InterMineAPI api = SessionMethods.getInterMineAPI();
         new TokenService(api).service(req, resp);
     }
 }

@@ -47,7 +47,7 @@ public class AvailableWidgetsService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        WebConfig webConfig = SessionMethods.getWebConfig(request);
+        WebConfig webConfig = SessionMethods.getWebConfig();
         Map<String, WidgetConfig> widgetDetails = webConfig.getWidgets();
 
         WidgetProcessor processor = getProcessor();

@@ -48,7 +48,7 @@ public class JSONListFormatter implements ListFormatter {
             listMap.put("dateCreated", iso8601.format(createdOn));
         }
         BagManager bm = im.getBagManager();
-        List<Tag> tags = bm.getTagsForBag(list);
+        List<Tag> tags = bm.getTagsForBag(list, profile);
         List<String> tagNames = new ArrayList<String>();
         for (Tag t: tags) {
             tagNames.add(t.getTagName());

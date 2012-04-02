@@ -27,7 +27,6 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
@@ -58,7 +57,7 @@ public class ListTagService extends AbstractListService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
         String listName = request.getParameter("name");
 
         Set<String> tags;
@@ -80,7 +79,7 @@ public class ListTagService extends AbstractListService
             throw new ResourceNotFoundException(
                     "You do not have access to a list called " + name);
         }
-        List<Tag> tags = bagManager.getTagsForBag(list);
+        List<Tag> tags = bagManager.getTagsForBag(list, profile);
         List<String> tagNames = (List<String>) collect(tags, invokerTransformer("getTagName"));
         return new HashSet<String>(tagNames);
     }

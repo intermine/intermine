@@ -29,7 +29,7 @@ public class ListDifferenceServlet extends HttpServlet {
     }
 
     private void diffLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListDifferenceService(im).service(request, response);
     }
 

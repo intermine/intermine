@@ -34,7 +34,6 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
@@ -78,7 +77,7 @@ public class QueryToListService extends AbstractQueryService
     @Override
     protected void execute() throws Exception {
 
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
 
         String name = request.getParameter(NAME_PARAM);
         String description = request.getParameter(DESC_PARAM);

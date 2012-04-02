@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
@@ -67,7 +66,7 @@ public abstract class ListMakerService extends AuthenticatedListService
 
     @Override
     protected void execute() throws Exception {
-        final Profile profile = SessionMethods.getProfile(request.getSession());
+        final Profile profile = permission.getProfile();
         final ListInput input = getInput(request);
 
         addOutputInfo(LIST_NAME_KEY, input.getListName());

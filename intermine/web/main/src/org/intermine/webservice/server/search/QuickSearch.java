@@ -14,7 +14,9 @@ import java.util.Vector;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.config.WebConfig;
@@ -80,7 +82,7 @@ public class QuickSearch extends JSONService {
             objectIds = KeywordSearch.getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = KeywordSearch.getObjects(im, objectIds);
             Vector<KeywordSearchHit> searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
-            WebConfig wc = SessionMethods.getWebConfig(request);
+            WebConfig wc = SessionMethods.getWebConfig();
             searchResultsParsed = KeywordSearch.parseResults(im, wc, searchHits);
             searchResultsFacets = KeywordSearch.parseFacets(result, facets, facetValues);
         }
@@ -206,8 +208,9 @@ public class QuickSearch extends JSONService {
             List<Integer> ids = new ArrayList<Integer>();
             if (!StringUtils.isBlank(searchBag)) {
                 LOG.debug("SEARCH BAG: '" + searchBag + "'");
-                InterMineBag bag = im.getBagManager().getUserOrGlobalBag(
-                        SessionMethods.getProfile(request.getSession()), searchBag);
+                final BagManager bm = im.getBagManager();
+                final Profile p = permission.getProfile();
+                final InterMineBag bag = bm.getUserOrGlobalBag(p, searchBag);
                 if (bag != null) {
                     ids.addAll(bag.getContentsAsIds());
                 }

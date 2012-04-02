@@ -39,7 +39,7 @@ public class ClassKeyServlet extends HttpServlet
     }
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        InterMineAPI im = SessionMethods.getInterMineAPI(request);
+        InterMineAPI im = SessionMethods.getInterMineAPI();
         WebService s = new ClassKeysService(im);
         s.service(request, response);
     }

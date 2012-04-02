@@ -29,7 +29,7 @@ public class ListIntersectionServlet extends HttpServlet {
     }
 
     private void intersectLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListIntersectionService(im).service(request, response);
     }
 

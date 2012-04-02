@@ -19,15 +19,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateResultInput;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -65,7 +64,7 @@ public class TemplateToListService extends QueryToListService
             throw new BadRequestException("new view string is blank");
         }
 
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
 
         TemplateResultInput input = new TemplateResultRequestParser(request).getInput();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, input.getName());

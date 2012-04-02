@@ -23,10 +23,8 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -183,10 +181,11 @@ public abstract class WebService
     protected Output output;
     protected InterMineAPI im;
 
-    private ApiPermission permission = null;
+    protected ApiPermission permission = ProfileManager
+            .getDefaultPermission(ANON_PROFILE);
 
     /** The properties this mine was configured with **/
-    protected Properties webProperties;
+    protected final Properties webProperties = SessionMethods.getWebProperties();
 
     /**
      * Construct the web service with the InterMine API object that gives access
@@ -197,6 +196,11 @@ public abstract class WebService
     public WebService(InterMineAPI im) {
         this.im = im;
     }
+
+    // TODO:
+    // Change the API to:
+    // new WebService(Req, Resp)
+    // Get rid of servlets - move to single dispatcher.
 
     /**
      * Starting method of web service. The web service should be run like
@@ -215,7 +219,6 @@ public abstract class WebService
     public void service(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        this.webProperties = SessionMethods.getWebProperties(request);
 
         if (!agentIsRobot()) {
             try {
@@ -246,8 +249,6 @@ public abstract class WebService
         } catch (Throwable t) {
             LOG.error("Error cleaning up", t);
         }
-        // Do not persist sessions. All requests should be state-less.
-        request.getSession().invalidate();
 
     }
 
@@ -280,8 +281,6 @@ public abstract class WebService
     }
 
     private void checkEnabled() {
-        Properties webProperties = SessionMethods.getWebProperties(request
-                .getSession().getServletContext());
         if ("true".equalsIgnoreCase(webProperties
                 .getProperty(WEB_SERVICE_DISABLED_PROPERTY))) {
             throw new ServiceForbiddenException("Web service is disabled.");
@@ -321,9 +320,6 @@ public abstract class WebService
 
         final String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
         final ProfileManager pm = im.getProfileManager();
-        final HttpSession session = request.getSession();
-        // Anonymous requests get the anonymous profile.
-        SessionMethods.setProfile(session, ANON_PROFILE);
 
         try {
             if (StringUtils.isEmpty(authToken)) {
@@ -353,23 +349,26 @@ public abstract class WebService
             throw new ServiceForbiddenException(e.getMessage(), e);
         }
 
-        LoginHandler.setUpProfile(session, permission.getProfile());
+        LoginHandler.setUpPermission(im, permission);
     }
 
     private void sendError(Throwable t, HttpServletResponse response) {
+
         String msg = WebServiceConstants.SERVICE_FAILED_MSG;
-        if (t.getMessage() != null && t.getMessage().length() >= 0) {
-            msg = t.getMessage();
-        }
+        boolean showAllMsgs = webProperties.containsKey("i.am.a.dev");
+
         int code;
         if (t instanceof ServiceException) {
-
             ServiceException ex = (ServiceException) t;
             code = ex.getHttpErrorCode();
         } else {
             code = Output.SC_INTERNAL_SERVER_ERROR;
         }
-        logError(t, msg, code);
+        String realMsg = t.getMessage();
+        if ((showAllMsgs || code < 500) && !StringUtils.isBlank(realMsg)) {
+            msg = realMsg;
+        }
+        logError(t, realMsg, code);
         if (!formatIsJSONP()) {
             // Don't set errors statuses on jsonp requests, to enable
             // better error checking in the browser.
@@ -898,17 +897,6 @@ public abstract class WebService
      * @throws Exception if some error occurs
      */
     protected abstract void execute() throws Exception;
-
-    /**
-     * Returns dispatcher that forwards to the page that displays results as a
-     * html page.
-     *
-     * @return dispatcher
-     */
-    public RequestDispatcher getHtmlForward() {
-        return request.getSession().getServletContext()
-                .getRequestDispatcher(FORWARD_PATH);
-    }
 
     /**
      * @return true if request specified user name and password

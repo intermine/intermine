@@ -23,8 +23,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.BagState;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
@@ -57,10 +57,16 @@ public class UpgradeBagList implements Runnable
         this.session = session;
     }
 
+    protected Map<String, Map<String, Object>> getStatus() {
+        return SessionMethods.getNotCurrentSavedBagsStatus(session);
+    }
+
     @Override
     public void run() {
-        Map<String, Map<String, Object>> savedBagsStatus = SessionMethods
-            .getNotCurrentSavedBagsStatus(session);
+        doUpgrade(getStatus());
+    }
+
+    private void doUpgrade(Map<String, Map<String, Object>> status) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
 
@@ -68,7 +74,7 @@ public class UpgradeBagList implements Runnable
                 Map<String, Object> bagAttributes = new HashMap<String, Object>();
 
                 bagAttributes.put("status", Constants.UPGRADING_BAG);
-                savedBagsStatus.put(bag.getName(), bagAttributes);
+                status.put(bag.getName(), bagAttributes);
 
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
                 BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
@@ -86,18 +92,22 @@ public class UpgradeBagList implements Runnable
                         } catch (ObjectStoreException e) {
                             // nothing serious happens here...
                         }
-                        savedBagsStatus.put(bag.getName(), bagAttributes);
+                        status.put(bag.getName(), bagAttributes);
                     } else {
-                        session.setAttribute("bagQueryResult_" + bag.getName(), result);
+                        reportResult(bag.getName(), result);
                         bag.setState(BagState.TO_UPGRADE);
                         bagAttributes.put("status", BagState.TO_UPGRADE.toString());
-                        savedBagsStatus.put(bag.getName(), bagAttributes);
+                        status.put(bag.getName(), bagAttributes);
                     }
                 } catch (ObjectStoreException ose) {
-                    LOG.warn("Impossible upgrade the bags list", ose);
+                    LOG.warn("Could not upgrade the bags list", ose);
                 }
             }
         }
+    }
+
+    protected void reportResult(String name, BagQueryResult result) {
+        session.setAttribute("bagQueryResult_" + name, result);
     }
 
     /**

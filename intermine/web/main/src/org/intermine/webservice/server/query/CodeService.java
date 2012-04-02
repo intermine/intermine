@@ -13,19 +13,14 @@ package org.intermine.webservice.server.query;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.util.URLGenerator;
-
-import javax.servlet.http.HttpSession;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
 import org.intermine.api.query.codegen.WebserviceCodeGenInfo;
 import org.intermine.api.query.codegen.WebserviceCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceJavaCodeGenerator;
@@ -33,10 +28,11 @@ import org.intermine.api.query.codegen.WebserviceJavaScriptCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePerlCodeGenerator;
 import org.intermine.api.query.codegen.WebservicePythonCodeGenerator;
 import org.intermine.api.query.codegen.WebserviceRubyCodeGenerator;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.util.URLGenerator;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
@@ -79,11 +75,8 @@ public class CodeService extends AbstractQueryService
     @Override
     protected void execute() {
 
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
+        Profile profile = permission.getProfile();
         // Ref to OrthologueLinkController and OrthologueLinkManager
-        Properties webProperties = SessionMethods.getWebProperties(session
-                .getServletContext());
 
         String serviceBaseURL = new URLGenerator(request).getPermanentBaseURL();
         // set in project properties

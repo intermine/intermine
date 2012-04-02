@@ -30,7 +30,7 @@ public class AvailableWidgetsServlet extends HttpServlet {
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new AvailableWidgetsService(im).service(request, response);
     }
 

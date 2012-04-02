@@ -9,14 +9,20 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 public class AsymmetricOperationInput extends ListInput {
 
-
+    /**
+     * Constructor.
+     * @param request The web service request.
+     * @param bagManager A bag manager.
+     * @param profile The current user's profile.
+     */
     public AsymmetricOperationInput(HttpServletRequest request,
-            BagManager bagManager) {
-        super(request, bagManager);
+            BagManager bagManager, Profile profile) {
+        super(request, bagManager, profile);
     }
 
     @Override

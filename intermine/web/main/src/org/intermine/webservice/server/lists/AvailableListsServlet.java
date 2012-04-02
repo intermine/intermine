@@ -24,7 +24,7 @@ public class AvailableListsServlet extends HttpServlet
     }
 
     private void getAvailableLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new AvailableListsService(im).service(request, response);
     }
 
@@ -35,7 +35,7 @@ public class AvailableListsServlet extends HttpServlet
     }
 
     private void saveUploadedList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListUploadService(im).service(request, response);
     }
 
@@ -46,7 +46,7 @@ public class AvailableListsServlet extends HttpServlet
     }
 
     private void deleteList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListDeletionService(im).service(request, response);
     }
 

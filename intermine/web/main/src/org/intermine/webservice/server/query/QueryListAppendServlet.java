@@ -63,8 +63,7 @@ public class QueryListAppendServlet extends HttpServlet
 
     private void runService(HttpServletRequest request,
         HttpServletResponse response) {
-        final InterMineAPI im
-            = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new QueryListAppendService(im).service(request, response);
     }
 

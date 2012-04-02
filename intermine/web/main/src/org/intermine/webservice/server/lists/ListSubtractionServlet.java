@@ -29,7 +29,7 @@ public class ListSubtractionServlet extends HttpServlet {
     }
 
     private void subtractLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListSubtractionService(im).service(request, response);
     }
 
