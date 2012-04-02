@@ -15,12 +15,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Manager of public lists used by web service.
@@ -36,9 +34,9 @@ public class ListManager
      * ListManager constructor.
      * @param request request
      */
-    public ListManager(HttpServletRequest request) {
-        this.bagManager = SessionMethods.getInterMineAPI(request.getSession()).getBagManager();
-        this.profile = SessionMethods.getProfile(request.getSession());
+    public ListManager(InterMineAPI im, Profile profile) {
+        this.bagManager = im.getBagManager();
+        this.profile = profile;
     }
 
 

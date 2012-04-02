@@ -63,8 +63,7 @@ public class SchemaServlet extends HttpServlet
 
     private void serveSpecificSchema(HttpServletRequest req, HttpServletResponse resp) {
         String fileName = StringUtil.trimSlashes(req.getPathInfo());
-        Properties webProperties =
-            SessionMethods.getWebProperties(req.getSession().getServletContext());
+        Properties webProperties = SessionMethods.getWebProperties();
         Set<String> schemata = new HashSet<String>(
             Arrays.asList(webProperties.getProperty("schema.filenames", "").split(",")));
         if (!schemata.contains(fileName)) {
@@ -89,7 +88,7 @@ public class SchemaServlet extends HttpServlet
     }
 
     private void serveSchemaList(HttpServletRequest req, HttpServletResponse resp) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(req.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new SchemaListService(im).service(req, resp);
     }
 

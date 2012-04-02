@@ -19,34 +19,23 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.intermine.api.InterMineAPI;
-
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.web.logic.config.WebConfig;
-
 import org.intermine.web.logic.export.ResponseUtil;
-
 import org.intermine.web.logic.session.SessionMethods;
-
 import org.intermine.web.logic.widget.GraphWidget;
-
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-
 import org.intermine.webservice.server.core.JSONService;
-
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
@@ -73,7 +62,7 @@ public class GraphService extends JSONService
     @Override
     protected void execute() {
         GraphInput input = new GraphInput(request);
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
 
         InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, input.list);
         if (imBag == null) {
@@ -83,7 +72,7 @@ public class GraphService extends JSONService
         addOutputInfo("list", imBag.getName());
         addOutputInfo("requestedAt", new Date().toGMTString());
 
-        WebConfig webConfig = SessionMethods.getWebConfig(request);
+        WebConfig webConfig = SessionMethods.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.widget);
 
         if (widgetConfig == null || !(widgetConfig instanceof GraphWidgetConfig)) {

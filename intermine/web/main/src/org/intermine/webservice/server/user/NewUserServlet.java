@@ -29,7 +29,7 @@ public class NewUserServlet extends HttpServlet
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        final InterMineAPI api = SessionMethods.getInterMineAPI(req);
+        final InterMineAPI api = SessionMethods.getInterMineAPI();
         new NewUserService(api).service(req, resp);
     }
 }

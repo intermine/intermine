@@ -13,22 +13,20 @@ package org.intermine.webservice.server.template;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
-import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 /**
  * A service to enable templates to be uploaded programmatically.
@@ -69,8 +67,7 @@ public class TemplateUploadService extends WebService
         if (templatesXML == null || "".equals(templatesXML)) {
             throw new ServiceException("No template XML data." + USAGE);
         }
-        HttpSession session = request.getSession();
-        Profile profile = SessionMethods.getProfile(session);
+        Profile profile = permission.getProfile();
 
         int version = getVersion(request);
         Reader r = new StringReader(templatesXML);

@@ -29,7 +29,7 @@ public class ListUnionServlet extends HttpServlet {
     }
 
     private void joinLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new ListUnionService(im).service(request, response);
     }
 

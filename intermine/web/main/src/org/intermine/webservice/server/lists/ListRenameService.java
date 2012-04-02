@@ -13,7 +13,6 @@ package org.intermine.webservice.server.lists;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * A service for renaming lists.
@@ -45,9 +44,9 @@ public class ListRenameService extends AuthenticatedListService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
 
-        ListRenameInput input = new ListRenameInput(request, bagManager);
+        ListRenameInput input = new ListRenameInput(request, bagManager, permission.getProfile());
 
         output.setHeaderAttributes(getHeaderAttributes());
 

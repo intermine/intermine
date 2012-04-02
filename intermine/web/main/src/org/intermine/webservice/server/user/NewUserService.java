@@ -14,16 +14,12 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpSession;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -53,14 +49,12 @@ public class NewUserService extends JSONService
     protected void execute() throws Exception {
         ProfileManager pm = im.getProfileManager();
         NewUserInput input = new NewUserInput();
-        HttpSession session = request.getSession();
 
         pm.createNewProfile(input.getUsername(), input.getPassword());
 
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
 
-        Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
         try {
             MailUtils.email(input.getUsername(), webProperties);
             String mailingList = webProperties.getProperty("mail.mailing-list");

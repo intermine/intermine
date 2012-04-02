@@ -75,7 +75,7 @@ public class EnrichmentWidgetResultService extends JSONService
     @Override
     protected void execute() throws Exception {
         WidgetsServiceInput input = getInput();
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
 
         InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, input.getBagName());
         if (imBag == null) {
@@ -86,7 +86,7 @@ public class EnrichmentWidgetResultService extends JSONService
         addOutputInfo("list", imBag.getName());
         addOutputInfo("requestedAt", new Date().toGMTString());
 
-        WebConfig webConfig = SessionMethods.getWebConfig(request);
+        WebConfig webConfig = SessionMethods.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
 
         if (widgetConfig == null || !(widgetConfig instanceof EnrichmentWidgetConfig)) {

@@ -53,7 +53,7 @@ public class SummaryService extends WebService
 
         Boolean refsAllowed = !Boolean.valueOf(request.getParameter("norefs"));
         Map<String, List<String>> summaryFieldsForCd = new HashMap<String, List<String>>();
-        WebConfig webConfig = SessionMethods.getWebConfig(request);
+        WebConfig webConfig = SessionMethods.getWebConfig();
         Model m = im.getModel();
         output.setHeaderAttributes(getHeaderAttributes());
         for (ClassDescriptor cd: m.getClassDescriptors()) {

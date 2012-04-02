@@ -61,7 +61,7 @@ public class TemplateToListServlet extends HttpServlet
     }
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new TemplateToListService(im).service(request, response);
     }
 }

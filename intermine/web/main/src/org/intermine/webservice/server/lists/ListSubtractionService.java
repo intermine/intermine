@@ -52,7 +52,7 @@ public class ListSubtractionService extends ListOperationService
 
     @Override
     protected ListInput getInput(HttpServletRequest request) {
-        return new AsymmetricOperationInput(request, bagManager);
+        return new AsymmetricOperationInput(request, bagManager, permission.getProfile());
     }
 
     @Override

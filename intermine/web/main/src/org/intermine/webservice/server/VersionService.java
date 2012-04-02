@@ -12,12 +12,10 @@ package org.intermine.webservice.server;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.Constants;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.output.JSONFormatter;
 
@@ -68,7 +66,6 @@ public class VersionService extends JSONService
             versionType = StringUtil.trimSlashes(versionType).toLowerCase();
 
             if (versionType.startsWith("release")) {
-                Properties webProperties = SessionMethods.getWebProperties(request);
                 return webProperties.getProperty("project.releaseVersion");
             } else if (versionType.startsWith("ws")) {
                 return "" + Constants.WEB_SERVICE_VERSION;

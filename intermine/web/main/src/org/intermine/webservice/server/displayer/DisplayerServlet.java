@@ -12,7 +12,7 @@ public class DisplayerServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request);
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new DisplayerService(im).service(request, response);
     }
 }

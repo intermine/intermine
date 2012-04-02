@@ -62,7 +62,7 @@ public abstract class AbstractQueryService extends WebService
      * @return A builder for this query.
      */
     protected PathQueryBuilder getQueryBuilder(String xml) {
-        ListManager listManager = new ListManager(request);
+        ListManager listManager = new ListManager(im, permission.getProfile());
 
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
         for (InterMineBag bag: listManager.getLists()) {

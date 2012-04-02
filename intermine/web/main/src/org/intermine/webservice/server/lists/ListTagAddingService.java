@@ -10,21 +10,20 @@ package org.intermine.webservice.server.lists;
  *
  */
 
-import java.util.Arrays;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.apache.commons.collections.CollectionUtils.collect;
 import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
 import static org.apache.commons.lang.StringUtils.split;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
 import org.intermine.model.userprofile.Tag;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
@@ -53,7 +52,7 @@ public class ListTagAddingService extends ListTagService
             throw new BadRequestException("No tags supplied");
         }
         BagManager bagManager = im.getBagManager();
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
         Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {
@@ -70,7 +69,7 @@ public class ListTagAddingService extends ListTagService
         }
 
 
-        List<Tag> allTags = bagManager.getTagsForBag(list);
+        List<Tag> allTags = bagManager.getTagsForBag(list, permission.getProfile());
         List<String> tagNames = (List<String>) collect(allTags, invokerTransformer("getTagName"));
         output.addResultItem(tagNames);
     }

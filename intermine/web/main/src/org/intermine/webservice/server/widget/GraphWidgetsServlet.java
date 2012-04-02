@@ -52,7 +52,7 @@ public class GraphWidgetsServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        final InterMineAPI im = SessionMethods.getInterMineAPI();
         new GraphService(im).service(request, response);
     }
 

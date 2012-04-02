@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -62,7 +61,7 @@ public class WhoAmIService extends JSONService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
         JSONObject user = new JSONObject();
         user.put("username", profile.getUsername());
 

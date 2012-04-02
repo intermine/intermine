@@ -6,7 +6,6 @@ import java.util.Map;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -23,7 +22,7 @@ public class TokenService extends JSONService {
     @Override
     protected void execute() throws Exception {
         final ProfileManager pm = im.getProfileManager();
-        Profile profile = SessionMethods.getProfile(request.getSession());
+        Profile profile = permission.getProfile();
 
         String token = pm.generate24hrKey(profile);
         output.addResultItem(Arrays.asList("\"" + token + "\""));

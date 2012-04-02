@@ -15,11 +15,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
 
@@ -46,8 +44,6 @@ public class SchemaListService extends WebService
     @Override
     protected void execute() throws Exception {
 
-        Properties webProperties =
-            SessionMethods.getWebProperties(request.getSession().getServletContext());
         Set<String> schemata = new HashSet<String>(
             Arrays.asList(webProperties.getProperty("schema.filenames", "").split(",")));
         output.setHeaderAttributes(getHeaderAttributes());

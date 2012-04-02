@@ -40,8 +40,8 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
-import org.intermine.api.util.NameUtil;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
@@ -67,7 +67,6 @@ import org.intermine.web.logic.results.ReportObjectFactory;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.struts.LoadQueryAction;
 import org.intermine.web.struts.TemplateAction;
-import org.json.JSONException;
 
 /**
  * Business logic that interacts with session data. These methods are generally
@@ -112,6 +111,11 @@ public final class SessionMethods
             return error;
         }
     }
+    
+    /**
+     * Data we want to store for general access throughout the web-application.
+     */
+    private static final Map<String, Object> sessionData = new HashMap<String, Object>();
 
     /**
      * Executes an action and call a callback when it completes successfully. If the
@@ -262,8 +266,6 @@ public final class SessionMethods
         session.removeAttribute("prefix");
 
     }
-
-
 
     /**
      * Get the view list that the user is currently editing.
@@ -856,6 +858,14 @@ public final class SessionMethods
     }
 
     /**
+     * Get the web configuration from the static session data map.
+     * @return Web configuration.
+     */
+    public static WebConfig getWebConfig() {
+        return (WebConfig) sessionData.get(Constants.WEBCONFIG);
+    }
+
+    /**
      * @param context a ServletContext
      * @return WebConfig
      */
@@ -875,6 +885,7 @@ public final class SessionMethods
      */
     public static void setWebConfig(ServletContext context, WebConfig webConfig) {
         context.setAttribute(Constants.WEBCONFIG, webConfig);
+        sessionData.put(Constants.WEBCONFIG, webConfig);
     }
 
     /**
@@ -941,6 +952,15 @@ public final class SessionMethods
     }
 
     /**
+     * Return the web properties.
+     * 
+     * @return A properties object.
+     */
+    public static Properties getWebProperties() {
+        return (Properties) sessionData.get(Constants.WEB_PROPERTIES);
+    }
+
+    /**
      * Returns the web properties.
      *
      * @param request The current HTTP request.
@@ -958,6 +978,7 @@ public final class SessionMethods
      */
     public static void setWebProperties(ServletContext servletContext, Properties props) {
         servletContext.setAttribute(Constants.WEB_PROPERTIES, props);
+        sessionData.put(Constants.WEB_PROPERTIES, props);
     }
 
     /**
@@ -1038,6 +1059,15 @@ public final class SessionMethods
     }
 
     /**
+     * Get the InterMineAPI from the static application context.
+     * 
+     * @return the InterMine API.
+     */
+    public static InterMineAPI getInterMineAPI() {
+        return (InterMineAPI) sessionData.get(Constants.INTERMINE_API);
+    }
+
+    /**
      * Get the InterMineAPI which provides access to core features of an InterMine application.
      * @param servletContext the webapp servletContext
      * @return the InterMine core object
@@ -1054,6 +1084,7 @@ public final class SessionMethods
      */
     public static void setInterMineAPI(ServletContext servletContext, InterMineAPI im) {
         servletContext.setAttribute(Constants.INTERMINE_API, im);
+        sessionData.put(Constants.INTERMINE_API, im);
     }
 
     /**

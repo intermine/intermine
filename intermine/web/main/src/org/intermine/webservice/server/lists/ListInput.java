@@ -14,11 +14,16 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
-public class ListInput {
+/**
+ * Class representing input to a list service request.
+ * @author Alex Kalderimis
+ *
+ */
+public class ListInput
+{
 
     protected final HttpServletRequest request;
     protected final BagManager bagManager;
@@ -51,10 +56,10 @@ public class ListInput {
      * @param request
      * @param bagManager
      */
-    public ListInput(HttpServletRequest request, BagManager bagManager) {
+    public ListInput(HttpServletRequest request, BagManager bagManager, Profile profile) {
         this.request = request;
         this.bagManager = bagManager;
-        profile = SessionMethods.getProfile(request.getSession());
+        this.profile = profile;
 
         this.listName = produceName();
         this.description = request.getParameter(DESCRIPTION_PARAMETER);

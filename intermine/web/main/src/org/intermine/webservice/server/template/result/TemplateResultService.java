@@ -17,14 +17,13 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.search.Scope;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplatePopulator;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.ConstraintInput;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.web.logic.template.TemplateResultInput;
@@ -67,7 +66,7 @@ public class TemplateResultService extends QueryResultService
         TemplateResultInput input = getInput();
         TemplateQuery template;
         if (isAuthenticated()) {
-            Profile profile = SessionMethods.getProfile(request.getSession());
+            Profile profile = permission.getProfile();
             template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         } else {
             template = templateManager.getGlobalTemplate(input.getName());

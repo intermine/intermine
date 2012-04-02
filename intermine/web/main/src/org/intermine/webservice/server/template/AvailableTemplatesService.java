@@ -19,11 +19,10 @@ import java.util.TreeSet;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -66,7 +65,7 @@ public class AvailableTemplatesService extends WebService
         Map<String, ApiTemplate> templates;
         boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
-            Profile profile = SessionMethods.getProfile(request.getSession());
+            Profile profile = permission.getProfile();
             templates = (includeBroken)
                             ? templateManager.getUserAndGlobalTemplates(profile)
                             : templateManager.getWorkingTemplates(profile);

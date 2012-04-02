@@ -33,7 +33,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.results.ResultElement;
 import org.intermine.api.results.WebTable;
 import org.intermine.api.results.flatouterjoins.MultiRow;
@@ -42,7 +41,6 @@ import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.search.Scope;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.web.logic.config.FieldConfig;
@@ -209,13 +207,7 @@ public class BagDetailsController extends TilesAction
         pagedResults.setPageAndPageSize(page, PAGE_SIZE);
 
         // is this list public?
-        Boolean isPublic = false;
-        for (Tag tag : bagManager.getTagsForBag(imBag)) {
-            if ("im:public".equals(tag.getTagName())) {
-                isPublic = true;
-                break;
-            }
-        }
+        Boolean isPublic = bagManager.isPublic(imBag);
         request.setAttribute("isBagPublic", isPublic);
 
         request.setAttribute("addparameter", request.getParameter("addparameter"));
