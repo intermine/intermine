@@ -97,7 +97,7 @@ public class EntrezPublicationsRetriever
      * @param pubmedFormat summary or full
      */
     public void setPubmedFormat(String pubmedFormat) {
-        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("loadFullRecord")) {
+        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("fullRecord")) {
             loadFullRecord = true;
         }
     }
