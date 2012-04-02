@@ -10,6 +10,7 @@ package org.intermine.api.bag;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -126,7 +127,7 @@ public class BagManager
             // gimme the bag
             InterMineBag bag = entry.getValue();
             // bag's tags
-            List<Tag> bagTags = getTagsForBag(bag);
+            List<Tag> bagTags = getTagsForBag(bag, profile);
             // do we have a winner?
         inner:
             for (String requiredTag : tags) {
@@ -156,14 +157,25 @@ public class BagManager
             tagManager.addTag(tag, bag, profile);
         }
     }
+    
+    /**
+     * Return true if the bag is public.
+     * @param bag The bag in question.
+     * @return True if tagged with "im:public"
+     */
+    public boolean isPublic(InterMineBag bag) {
+        return tagManager.hasTag(TagNames.IM_PUBLIC, bag);
+    }
 
     /**
      * Get a list of tags for a given bag.
      * @param bag The bag to get tags for.
+     * @param profile The profile whose tags we are looking for.
      * @return A list of Tag objects
      */
-    public List<Tag> getTagsForBag(InterMineBag bag) {
-        List<Tag> tags = tagManager.getTags(null, bag.getName(), TagTypes.BAG, null);
+    public List<Tag> getTagsForBag(InterMineBag bag, Profile profile) {
+        List<Tag> tags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(), TagTypes.BAG, null));
+        tags.addAll(tagManager.getObjectTags(bag, profile));
         return tags;
     }
 
@@ -450,10 +462,8 @@ public class BagManager
         @Override
         public int compare(String aK, String bK) {
             // get the order from the tags for the bags for the superduper profile
-            Integer aO = resolveOrderFromTagsList(getTagsForBag(superProfile.
-                    getSavedBags().get(aK)));
-            Integer bO = resolveOrderFromTagsList(getTagsForBag(superProfile.
-                    getSavedBags().get(bK)));
+            Integer aO = resolveOrderFromTagsList(tagManager.getTags(null, aK, TagTypes.BAG, null));
+            Integer bO = resolveOrderFromTagsList(tagManager.getTags(null, bK, TagTypes.BAG, null));
 
             if (aO < bO) {
                 return -1;
