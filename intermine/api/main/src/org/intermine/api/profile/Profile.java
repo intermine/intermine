@@ -676,9 +676,8 @@ public class Profile
     }
 
     /**
-     * Set the API token for this user, and save it in
-     * the backing db.
-     * @param token
+     * Set the API token for this user, and save it in the backing DB.
+     * @param token The API token.
      */
     public void setApiKey(String token) {
         this.token = token;
