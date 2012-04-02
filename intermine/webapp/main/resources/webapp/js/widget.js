@@ -6,9 +6,9 @@ JST["error.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b
 JST["enrichment.matches.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="popover" style="position:absolute;top:5px;right:0;z-index:1;display:block">\n    <div class="popover-inner" style="width:300px;margin-left:-300px">\n        <a style="cursor:pointer;margin:2px 5px 0 0" class="close">×</a>\n        <h3 class="popover-title"></h3>\n        <div class="popover-content">\n            '),f=this.matches;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <a href="#" class="match">'),b.push(d(a.displayed)),b.push("</a>\n            ");b.push("\n        </div>\n    </div>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.actions.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<a class="btn btn-mini '),this.disabled&&b.push("disabled"),b.push(' view">View</a>\n<a class="btn btn-mini '),this.disabled&&b.push("disabled"),b.push(' export">Export</a>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<td class="check"><input type="checkbox" '),b.push(d(this.row.selected?b.push('checked="checked"'):void 0)),b.push(' /></td>\n<td class="description">'),b.push(d(this.row.description)),b.push('</td>\n<td class="pValue">'),b.push(d(this.row["p-value"].toFixed(7))),b.push('</td>\n<td class="matches">\n    <span class="count label label-success" style="cursor:pointer">'),b.push(d(this.row.matches.length)),b.push("</span>\n</td>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["noresults.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-info">\n    <p>The Widget has no results.</p>\n</div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<!-- actual fixed head -->\n<div class="head" style="display:table">\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;"><input type="checkbox" class="check" /></div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">'),b.push(d(this.label)),b.push('</div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">p-Value</div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">Matches</div>\n    <div style="clear:both"></div>\n</div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                <th>'),b.push(d(this.label)),b.push("</th>\n                <th>p-Value</th>\n                <th>Matches</th>\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop enrichment.row.eco -->\n        </tbody>\n    </table>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.form.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f,g,h,i,j;b.push('<form style="margin:0">\n    <div class="group" style="display:inline-block;margin-right:5px">\n        <label>Test Correction</label>\n        <select name="errorCorrection" class="span2">\n            '),i=this.errorCorrections;for(e=0,g=i.length;e<g;e++)a=i[e],b.push('\n                <option value="'),b.push(d(a)),b.push('" '),this.options.errorCorrection===a&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(a)),b.push("\n            </option>\n            ");b.push('\n        </select>\n    </div>\n\n    <div class="group" style="display:inline-block;margin-right:5px">\n        <label>Max p-value</label>\n        <select name="pValue" class="span2">\n            '),j=this.pValues;for(f=0,h=j.length;f<h;f++)c=j[f],b.push('\n                <option value="'),b.push(d(c)),b.push('" '),this.options.pValue===c&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(c)),b.push("\n                </option>\n            ");b.push("\n        </select>\n    </div>\n</form>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["noresults.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-info">\n    <p>The Widget has no results.</p>\n</div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push('\n        <p>Number of Genes in this list not analysed in this widget: <span class="label label-info">'),b.push(d(this.notAnalysed)),b.push("</span></p>\n    ")),b.push('\n\n    <div class="form"></div>\n\n    <div class="actions" style="padding:10px 0">\n        <!-- enrichment.actions.eco -->\n    </div>\n</header>\n<div class="content">\n    <!-- enrichment.table.eco -->\n</div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["chart.normal.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push('\n        <p>Number of Genes in this list not analysed in this widget: <span class="label label-info">'),b.push(d(this.notAnalysed)),b.push("</span></p>\n    ")),b.push('\n</header>\n<div class="content"></div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.extra.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="group" style="display:inline-block;margin-right:5px">\n    <label>'),b.push(d(this.label)),b.push('</label>\n    <select name="dataSet" class="span2">\n        '),f=this.possible;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n            <option value="'),b.push(d(a)),b.push('" '),this.selected===a&&b.push(d('selected="selected"')),b.push(">\n                "),b.push(d(a)),b.push("\n            </option>\n        ");b.push("\n    </select>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
@@ -32,7 +32,7 @@ type.Root = (function() {
   };
 
   Root.prototype.toString = function() {
-    return this.expected;
+    return "" + this.expected + " but got " + this.actual;
   };
 
   return Root;
@@ -45,8 +45,9 @@ type.isString = (function(_super) {
 
   isString.prototype.expected = "String";
 
-  function isString(key) {
-    this.result = typeof key === 'string';
+  function isString(actual) {
+    this.actual = actual;
+    this.result = typeof actual === 'string';
   }
 
   return isString;
@@ -59,8 +60,9 @@ type.isInteger = (function(_super) {
 
   isInteger.prototype.expected = "Integer";
 
-  function isInteger(key) {
-    this.result = typeof key === 'number';
+  function isInteger(actual) {
+    this.actual = actual;
+    this.result = typeof actual === 'number';
   }
 
   return isInteger;
@@ -73,8 +75,9 @@ type.isBoolean = (function(_super) {
 
   isBoolean.prototype.expected = "Boolean true";
 
-  function isBoolean(key) {
-    this.result = typeof key === 'boolean';
+  function isBoolean(actual) {
+    this.actual = actual;
+    this.result = typeof actual === 'boolean';
   }
 
   return isBoolean;
@@ -87,8 +90,9 @@ type.isNull = (function(_super) {
 
   isNull.prototype.expected = "Null";
 
-  function isNull(key) {
-    this.result = key === null;
+  function isNull(actual) {
+    this.actual = actual;
+    this.result = actual === null;
   }
 
   return isNull;
@@ -101,8 +105,9 @@ type.isArray = (function(_super) {
 
   isArray.prototype.expected = "Array";
 
-  function isArray(key) {
-    this.result = key instanceof Array;
+  function isArray(actual) {
+    this.actual = actual;
+    this.result = actual instanceof Array;
   }
 
   return isArray;
@@ -115,8 +120,9 @@ type.isHTTPSuccess = (function(_super) {
 
   isHTTPSuccess.prototype.expected = "HTTP code 200";
 
-  function isHTTPSuccess(key) {
-    this.result = key === 200;
+  function isHTTPSuccess(actual) {
+    this.actual = actual;
+    this.result = actual === 200;
   }
 
   return isHTTPSuccess;
@@ -129,12 +135,12 @@ type.isJSON = (function(_super) {
 
   isJSON.prototype.expected = "JSON Object";
 
-  function isJSON(key) {
+  function isJSON(actual) {
+    this.actual = actual;
     this.result = true;
     try {
-      if (typeof JSON !== "undefined" && JSON !== null) JSON.parse(key);
+      if (typeof JSON !== "undefined" && JSON !== null) JSON.parse(actual);
     } catch (e) {
-      if (typeof console !== "undefined" && console !== null) console.log(key);
       this.result = false;
     }
   }
@@ -265,7 +271,7 @@ Load = (function() {
         switch (resource.type) {
           case "js":
             if (resource.name != null) {
-              if ((window[resource.name] != null) && typeof window[resource.name] === "function") {
+              if ((window[resource.name] != null) && (typeof window[resource.name] === "function" || "object")) {
                 this.done(resource);
               } else {
                 new JSLoader(resource.path, function() {
@@ -401,7 +407,7 @@ factory = function(Backbone) {
           opts.text = opts.responseText;
           break;
         case "JSONResponse":
-          opts.title = "Invalid JSON";
+          opts.title = "Invalid JSON Response";
           opts.text = "<ol>" + (opts.join('')) + "</ol>";
       }
       $(this.el).html(this.template("error", opts));
@@ -688,7 +694,7 @@ factory = function(Backbone) {
       var _this = this;
       return $.ajax({
         url: "" + this.service + "list/chart",
-        dataType: "json",
+        dataType: "jsonp",
         data: {
           widget: this.id,
           list: this.bagName,
@@ -1101,7 +1107,7 @@ factory = function(Backbone) {
       if ((_ref = this.view) != null) _ref.undelegateEvents();
       return $.ajax({
         url: "" + this.service + "list/enrichment",
-        dataType: "json",
+        dataType: "jsonp",
         data: {
           widget: this.id,
           list: this.bagName,
@@ -1196,6 +1202,7 @@ window.Widgets = (function() {
     this.chart = __bind(this.chart, this);
     new Load(this.resources, function() {
       $ = window.jQuery;
+      $.support.cors = true;
       __extends(o, factory(window.Backbone));
       return _this.wait = false;
     });
@@ -1250,7 +1257,7 @@ window.Widgets = (function() {
     } else {
       return $.ajax({
         url: "" + this.service + "widgets",
-        dataType: "json",
+        dataType: "jsonp",
         success: function(response) {
           var widget, widgetEl, _i, _len, _ref, _results;
           if (response.widgets) {
@@ -1278,10 +1285,10 @@ window.Widgets = (function() {
             return _results;
           }
         },
-        error: function(err) {
+        error: function(xhr, opts, err) {
           return $(el).html($('<div/>', {
             "class": "alert alert-error",
-            text: "An unspecified error has happened, server timeout?"
+            html: "" + xhr.statusText + " for <a href='" + _this.service + "widgets'>" + _this.service + "widgets</a>"
           }));
         }
       });
