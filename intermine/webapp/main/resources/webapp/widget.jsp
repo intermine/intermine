@@ -57,9 +57,8 @@ text-align:left; }
         (function() {
             var callbacks = {
                 selectCb: function(pq) {
-                    /*window.open(window.service + "query/results?query=" +
-                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");*/
-                    console.log(pq);
+                    window.open(window.service + "query/results?query=" +
+                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
                     console.log(new intermine.Query(pq).toXML());
                 }
             };
@@ -76,9 +75,8 @@ text-align:left; }
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
                 },
                 viewCb: function(pq) {
-                    /*window.open(window.service + "query/results?query=" +
-                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");*/
-                    console.log(pq);
+                    window.open(window.service + "query/results?query=" +
+                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
                     console.log(new intermine.Query(pq).toXML());
                 }
             };

@@ -2229,7 +2229,7 @@ public class PathQuery implements Cloneable
     public synchronized String toJson() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("{\"model\":{\"name\":\"" + model + "\"},");
+        sb.append("{\"model\":{\"name\":\"" + model.getName() + "\"},");
 
         // VIEW
         sb.append("\"select\":[");
