@@ -462,7 +462,7 @@ public class GraphWidgetLoader implements DataSetLdr
         if (config.isBagPathSet()) {
             q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
         } else {
-            q.addConstraint(Constraints.in(prefix + "id", bag.getName()));
+            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         }
 
         //category constraint
