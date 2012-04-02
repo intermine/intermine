@@ -171,17 +171,43 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                     enrichmentQueryFields[1] = qf;
                 }
             } else {
+                String path = paths[i];
+                String type = "";
+                boolean useSubClass = false;
+                if (isSubClass(path)) {
+                    useSubClass = true;
+                    type = path.substring(path.indexOf("[") + 1, path.indexOf("]"));
+                    path = path.substring(0, path.indexOf("["));
+                }
                 try {
-                    QueryObjectReference qor = new QueryObjectReference(qc, paths[i]);
-                    qc = new QueryClass(qor.getType());
+                    QueryObjectReference qor = new QueryObjectReference(qc, path);
+                    if (useSubClass) {
+                        try {
+                            qc = new QueryClass(Class.forName(os.getModel().getPackageName()
+                                                              + "." + type));
+                        } catch (ClassNotFoundException cnfe) {
+                            qc = new QueryClass(qor.getType());
+                        }
+                    } else {
+                        qc = new QueryClass(qor.getType());
+                    }
                     query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS,
                                 qc));
                 } catch (IllegalArgumentException e) {
                     // Not a reference - try collection instead
                     QueryCollectionReference qcr = new QueryCollectionReference(qc,
-                            paths[i]);
-                    qc = new QueryClass(TypeUtil.getElementType(qc.getType(), paths[i]));
+                            path);
+                    if (useSubClass) {
+                        try {
+                            qc = new QueryClass(Class.forName(os.getModel().getPackageName()
+                                                              + "." + type));
+                        } catch (ClassNotFoundException cnfe) {
+                            qc = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
+                        }
+                    } else {
+                        qc = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
+                    }
                     query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
                                 qc));
@@ -283,6 +309,13 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                 }
             }
         }
+    }
+
+    private boolean isSubClass(String path) {
+        if (path.contains("[")) {
+            return true;
+        }
+        return false;
     }
 
     private boolean isListConstraint(PathConstraint pc) {
