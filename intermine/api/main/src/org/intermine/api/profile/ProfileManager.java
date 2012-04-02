@@ -11,6 +11,7 @@ package org.intermine.api.profile;
  */
 
 import java.io.StringReader;
+import java.security.Principal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -512,16 +513,28 @@ public class ProfileManager
      */
     public synchronized String generateSingleUseKey(Profile profile) {
         String key = generateApiKey();
-        LimitedAccessToken token = new SingleAccessToken(profile.getUsername());
+        LimitedAccessToken token = new SingleAccessToken(profile);
         limitedAccessTokens.put(key, token);
         return key;
     }
 
     public synchronized String generate24hrKey(Profile profile) {
         String key = generateApiKey();
-        LimitedAccessToken token = new DayToken(profile.getUsername());
+        LimitedAccessToken token = new DayToken(profile);
         limitedAccessTokens.put(key, token);
         return key;
+    }
+
+    public synchronized boolean tokenHasMoreUses(String token) {
+        if (token != null && limitedAccessTokens.containsKey(token)) {
+            LimitedAccessToken lat = limitedAccessTokens.get(token);
+            if (lat.isValid()) {
+                return lat.hasMoreUses();
+            } else {
+                limitedAccessTokens.remove(token);
+            }
+        }
+        return false;
     }
 
     private static String generateApiKey() {
@@ -741,18 +754,26 @@ public class ProfileManager
 
     private static abstract class LimitedAccessToken
     {
-        private final String username;
+        private final Profile profile;
 
-        public LimitedAccessToken(String username) {
-            this.username = username;
+        public LimitedAccessToken(Profile profile) {
+            this.profile = profile;
         }
 
-        public String getUserName() {
-            return username;
+        public Profile getProfile() {
+            return profile;
         }
 
         public abstract ApiPermission.Level getAuthenticationLevel();
         public abstract boolean isValid();
+
+        /**
+         * The default implementation makes this equivalent to isValid.
+         * @return Whether this token is suitable for using in the future.
+         */
+        public boolean hasMoreUses() {
+            return isValid();
+        };
 
         public void use() {
             // No op stub.
@@ -771,8 +792,8 @@ public class ProfileManager
         private final int maxUses = 1;
         private int uses = 0;
 
-        public SingleAccessToken(String username) {
-            super(username);
+        public SingleAccessToken(Profile profile) {
+            super(profile);
         }
 
         @Override
@@ -795,8 +816,8 @@ public class ProfileManager
     {
         private final Date createdAt;
 
-        public DayToken(String username) {
-            super(username);
+        public DayToken(Profile profile) {
+            super(profile);
             createdAt = new Date();
         }
 
@@ -805,31 +826,46 @@ public class ProfileManager
             return ApiPermission.Level.RW;
         }
 
-        @Override
-        public boolean isValid() {
-            Calendar a = new GregorianCalendar();
-            a.setTime(createdAt);
-
+        private Calendar getExpiry() {
             Calendar b = new GregorianCalendar();
             b.setTime(createdAt);
             b.add(Calendar.HOUR, 24);
+            return b;
+        }
 
-            return a.before(b);
+        @Override
+        public boolean isValid() {
+            Calendar a = new GregorianCalendar();
+            a.setTime(new Date()); // NOW
+
+            return a.before(getExpiry());
+        }
+
+        @Override
+        public boolean hasMoreUses() {
+            // Say that a token is only valid for further use if it has at least another
+            // hour of juice.
+            Calendar a = new GregorianCalendar();
+            a.setTime(new Date());
+            a.add(Calendar.HOUR, 1); // AN HOUR FROM NOW
+
+            return a.before(getExpiry());
         }
     }
 
     /**
      * A representation of the level of permissions granted to a user.
      */
-    public static class ApiPermission
+    public static final class ApiPermission implements Principal
     {
         /**
          * The possible permission levels.
          */
-        public enum Level {RO, RW};
+        public enum Level { RO, RW };
 
         private final Level level;
         private final Profile profile;
+        private final Set<String> roles = new HashSet<String>();
 
         /*
          * Only the ProfileManager has permission to grant API permissions.
@@ -844,6 +880,11 @@ public class ProfileManager
          */
         public Profile getProfile() {
             return profile;
+        }
+
+        @Override
+        public String getName() {
+            return getProfile().getUsername();
         }
 
         /**
@@ -866,6 +907,38 @@ public class ProfileManager
         public boolean isRO() {
             return level == Level.RO;
         }
+
+        /**
+         * Add a role to this permission.
+         * 
+         * @param role
+         *            The role to add.
+         */
+        public void addRole(String role) {
+            roles.add(role);
+        }
+
+        /**
+         * True if the permission granted includes access to this role.
+         * 
+         * @param role
+         *            The role in question.
+         * @return Whether or not this user has access to the given role.
+         */
+        public boolean isInRole(String role) {
+            return roles.contains(role);
+        }
+    }
+
+    /**
+     * Wrap a profile in the default permission level.
+     * 
+     * @param profile
+     *            The profile to wrap.
+     * @return The default permission for a particular profile.
+     */
+    public static ApiPermission getDefaultPermission(Profile profile) {
+        return new ApiPermission(profile, ApiPermission.Level.RO);
     }
 
     /**
@@ -882,7 +955,7 @@ public class ProfileManager
             if (!t.isValid()) {
                 throw new AuthenticationException("This token (" + token + ")is invalid.");
             }
-            Profile p = getProfile(t.getUserName(), classKeys);
+            Profile p = t.getProfile();
             t.use();
             if (!t.isValid()) {
                 limitedAccessTokens.remove(token);
@@ -909,7 +982,7 @@ public class ProfileManager
      * @param classKeys Class Keys for this mine's model.
      * @return A representation of this user's permissions.
      */
-    public ApiPermission getPermission(String username, String password, 
+    public ApiPermission getPermission(String username, String password,
             Map<String, List<FieldDescriptor>> classKeys) {
         if (StringUtils.isEmpty(username)) {
             throw new AuthenticationException("Empty user name.");
@@ -930,7 +1003,7 @@ public class ProfileManager
         }
     }
 
-    private Profile getProfileByApiKey(String token, Map<String, 
+    private Profile getProfileByApiKey(String token, Map<String,
             List<FieldDescriptor>> classKeys) {
         UserProfile profile = new UserProfile();
         profile.setApiKey(token);
