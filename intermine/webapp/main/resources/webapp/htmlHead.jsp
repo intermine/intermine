@@ -32,7 +32,7 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
-<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.5.1.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.7.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/intermine.js'/>"></script>
 
 <c:if test="${pageName != 'begin'}">
@@ -112,7 +112,6 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 
   <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
   <script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/table.js'/>"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <!--[if lt IE 7.]>
     <script defer type="text/javascript" src="pngfix.js"></script>
