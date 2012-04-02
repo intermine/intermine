@@ -151,6 +151,11 @@ public class EnrichmentWidgetResultService extends JSONService
         } else {
             pathConstraint = config.getEnrich();
         }
+        if (pathConstraint.contains("[")) {
+            String part1 = pathConstraint.substring(0, pathConstraint.indexOf("["));
+            String part2 = pathConstraint.substring(pathConstraint.indexOf("]") + 1);
+            pathConstraint = part1 + part2;
+        }
         addOutputInfo("pathConstraint", config.getStartClass() + "." + pathConstraint);
     }
 
