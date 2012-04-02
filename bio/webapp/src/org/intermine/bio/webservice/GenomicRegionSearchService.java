@@ -10,15 +10,14 @@ package org.intermine.bio.webservice;
  *
  */
 
-import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.webservice.server.lists.ListServiceUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
+
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
@@ -29,9 +28,11 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.bio.webservice.GenomicRegionSearchListInput.GenomicRegionSearchInfo;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.lists.ListInput;
 import org.intermine.webservice.server.lists.ListMakerService;
+import org.intermine.webservice.server.lists.ListServiceUtils;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONException;
 
@@ -125,7 +126,7 @@ public class GenomicRegionSearchService extends ListMakerService
     @Override
     protected ListInput getInput(final HttpServletRequest req) {
         try {
-            return new GenomicRegionSearchListInput(req, bagManager, im);
+            return new GenomicRegionSearchListInput(req, bagManager, permission.getProfile(), im);
         } catch (JSONException e) {
             String msg = e.getMessage();
             if (msg == null) {
