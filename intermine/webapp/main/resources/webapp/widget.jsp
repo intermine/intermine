@@ -20,7 +20,8 @@ text-align:left; }
 .widget div.content table td,
 .widget table thead th { padding:8px; }
 .widget div.head div { text-align:left; }
-.widget table { border-collapse:collapse; border-spacing:0; }
+.widget table { border-collapse:collapse; border-spacing:0; width:100%; }
+.widget ol { padding:0; }
 
 /* potentially theme specific */
 .widget div.popover div.popover-inner { padding:3px; width:280px; overflow:hidden; background:black; background:rgba(0, 0, 0, 0.8);
@@ -29,6 +30,10 @@ text-align:left; }
 .widget div.popover div.popover-content { background:#FFF; padding:10px; }
 .widget div.popover a.close { float:right; color:#CCC; font-size:16px; line-height:13px; font-weight:bold; }
 .widget div.popover a.close:hover { color:#AAA; }
+.widget .btn { background:#ECECEC; border:1px solid #CCC; border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    text-shadow:0 1px 1px rgba(255, 255, 255, 0.75); border-radius:4px; cursor:pointer; }
+.widget .btn.disabled { cursor:default; opacity:0.65; }
+.widget .btn-mini { padding:2px 6px; font-size:11px; line-height:14px; }
 
 /* theme specific */
 .widget { border: 1px solid #D0B5D7; background:#FEFFFF url('../themes/purple/grad_box.png') repeat-x top; }
@@ -48,11 +53,38 @@ text-align:left; }
 <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
         <div id="${widgetId}-widget" class="widget"></div>
-        <script type="text/javascript">(function() { widgets.chart("${widgetId}", "${bagName}", "#${widgetId}-widget"); })();</script>
+        <script type="text/javascript">
+        (function() {
+            var callbacks = {
+                selectCb: function(pq) {
+                    /*window.open(window.service + "query/results?query=" +
+                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");*/
+                    console.log(pq);
+                    console.log(new intermine.Query(pq).toXML());
+                }
+            };
+            window.widgets.chart("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
+        })();
+        </script>
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
         <div id="${widgetId}-widget" class="widget"></div>
-        <script type="text/javascript">(function() { widgets.enrichment("${widgetId}", "${bagName}", "#${widgetId}-widget"); })();</script>
+        <script type="text/javascript">
+        (function() {
+            var callbacks = {
+                matchCb: function(id, type) {
+                    window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
+                },
+                viewCb: function(pq) {
+                    /*window.open(window.service + "query/results?query=" +
+                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");*/
+                    console.log(pq);
+                    console.log(new intermine.Query(pq).toXML());
+                }
+            };
+            window.widgets.enrichment("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
+        })();
+        </script>
     </c:when>
 </c:choose>
 <!-- /widget.jsp -->
