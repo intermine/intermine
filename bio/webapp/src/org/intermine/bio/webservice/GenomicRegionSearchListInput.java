@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.Profile;
 import org.intermine.bio.web.logic.GenomicRegionSearchQueryRunner;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.ChromosomeInfo;
@@ -36,16 +37,18 @@ public class GenomicRegionSearchListInput extends ListInput {
     private final GenomicRegionSearchInfo info;
 
     /**
-     * A representation of a request to a region based webservice. It knows how
+     * A representation of a request to a region based web service. It knows how
      * to parse and validate its own input.
-     * @param request
-     * @param bagManager
-     * @param im
-     * @throws JSONException
+     * @param request The incoming web service request.
+     * @param bagManager A bag manager.
+     * @param profile The current user.
+     * @param im The InterMine API
+     * @throws JSONException If the region request is malformed.
      */
     public GenomicRegionSearchListInput(HttpServletRequest request,
-            BagManager bagManager, InterMineAPI im) throws JSONException {
-        super(request, bagManager);
+            BagManager bagManager, Profile profile, InterMineAPI im)
+        throws JSONException {
+        super(request, bagManager, profile);
         api = im;
         info = parseRegionRequest();
     }
