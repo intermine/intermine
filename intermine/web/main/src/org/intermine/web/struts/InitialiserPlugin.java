@@ -31,9 +31,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -49,14 +49,12 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
 import org.intermine.api.config.ClassKeyHelper;
-import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.api.search.GlobalRepository;
-import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tracker.Tracker;
@@ -82,6 +80,7 @@ import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.aspects.Aspect;
 import org.intermine.web.logic.aspects.AspectBinding;
@@ -182,6 +181,8 @@ public class InitialiserPlugin implements PlugIn
                     return;
                 }
                 SessionMethods.setInterMineAPI(servletContext, im);
+
+                InterMineContext.initilise(im, webProperties, webConfig);
 
                 // need a global reference to ProfileManager so it can be closed cleanly on destroy
                 profileManager = im.getProfileManager();

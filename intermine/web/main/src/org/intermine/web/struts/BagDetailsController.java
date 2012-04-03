@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -57,6 +58,7 @@ public class BagDetailsController extends TilesAction
 {
 
     private static final int PAGE_SIZE = 10;
+    private static final Logger LOG = Logger.getLogger(BagDetailsController.class);
 
     /**
      * {@inheritDoc}
@@ -221,6 +223,8 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("notUseQuery", Boolean.TRUE);
 
         // Get us token so we can show non-public widgets.
+        request.setAttribute("token", profile.getApiKey());
+        LOG.info("API key: " + profile.getApiKey());
         //request.setAttribute("token", (im.getProfileManager()).generate24hrKey(profile));
 
         return null;

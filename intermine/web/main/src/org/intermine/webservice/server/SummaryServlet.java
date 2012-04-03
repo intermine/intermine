@@ -17,8 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * Returns a summary field information.
@@ -40,8 +39,7 @@ public class SummaryServlet extends HttpServlet
     }
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        InterMineAPI im = SessionMethods.getInterMineAPI();
-        SummaryService sum = new SummaryService(im);
+        SummaryService sum = new SummaryService(InterMineContext.getInterMineAPI());
         sum.service(request, response);
     }
 }

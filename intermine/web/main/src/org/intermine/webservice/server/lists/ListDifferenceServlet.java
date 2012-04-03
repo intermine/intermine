@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 public class ListDifferenceServlet extends HttpServlet {
 
@@ -29,7 +29,7 @@ public class ListDifferenceServlet extends HttpServlet {
     }
 
     private void diffLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new ListDifferenceService(im).service(request, response);
     }
 

@@ -24,11 +24,9 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -72,7 +70,7 @@ public class GraphService extends JSONService
         addOutputInfo("list", imBag.getName());
         addOutputInfo("requestedAt", new Date().toGMTString());
 
-        WebConfig webConfig = SessionMethods.getWebConfig();
+        WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.widget);
 
         if (widgetConfig == null || !(widgetConfig instanceof GraphWidgetConfig)) {

@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
-public class ListIntersectionServlet extends HttpServlet {
+public class ListIntersectionServlet extends HttpServlet
+{
 
     public ListIntersectionServlet() {
         // empty constructor
@@ -29,7 +30,7 @@ public class ListIntersectionServlet extends HttpServlet {
     }
 
     private void intersectLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new ListIntersectionService(im).service(request, response);
     }
 

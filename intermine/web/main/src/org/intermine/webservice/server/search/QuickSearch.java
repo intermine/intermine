@@ -18,11 +18,11 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.InterMineObject;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.search.KeywordSearch;
 import org.intermine.web.search.KeywordSearchFacetData;
 import org.intermine.web.search.KeywordSearchHit;
@@ -39,7 +39,8 @@ import com.browseengine.bobo.api.BrowseFacet;
 import com.browseengine.bobo.api.BrowseHit;
 import com.browseengine.bobo.api.BrowseResult;
 
-public class QuickSearch extends JSONService {
+public class QuickSearch extends JSONService
+{
 
     private static final Logger LOG = Logger.getLogger(QuickSearch.class);
 
@@ -82,7 +83,7 @@ public class QuickSearch extends JSONService {
             objectIds = KeywordSearch.getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = KeywordSearch.getObjects(im, objectIds);
             Vector<KeywordSearchHit> searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
-            WebConfig wc = SessionMethods.getWebConfig();
+            WebConfig wc = InterMineContext.getWebConfig();
             searchResultsParsed = KeywordSearch.parseResults(im, wc, searchHits);
             searchResultsFacets = KeywordSearch.parseFacets(result, facets, facetValues);
         }

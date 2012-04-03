@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.WebService;
 
 /**
@@ -57,20 +57,20 @@ public class ListTagServlet extends HttpServlet
 
     private void removeTags(HttpServletRequest request,
             HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         WebService tagService = new ListTagRemovalService(im);
         tagService.service(request, response);
     }
 
     private void addTags(HttpServletRequest request,
             HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         WebService tagService = new ListTagAddingService(im);
         tagService.service(request, response);
     }
 
     private void getTags(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         WebService tagService = new ListTagService(im);
         tagService.service(request, response);
     }

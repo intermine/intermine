@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.StringUtil;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
@@ -82,7 +82,7 @@ public class AvailableServicesServlet extends HttpServlet
     private String getResourcePath(String resource, HttpServletRequest request) {
         if (resource != null) {
             resource = StringUtil.trimSlashes(resource);
-            Properties webProperties = SessionMethods.getWebProperties();
+            Properties webProperties = InterMineContext.getWebProperties();
             String resourcePath = webProperties.getProperty("resource.path." + resource);
             if (!StringUtils.isEmpty(resourcePath)) {
                 return resourcePath;

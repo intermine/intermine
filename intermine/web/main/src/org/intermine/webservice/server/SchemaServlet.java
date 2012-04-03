@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.StringUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.Output;
@@ -63,7 +64,7 @@ public class SchemaServlet extends HttpServlet
 
     private void serveSpecificSchema(HttpServletRequest req, HttpServletResponse resp) {
         String fileName = StringUtil.trimSlashes(req.getPathInfo());
-        Properties webProperties = SessionMethods.getWebProperties();
+        Properties webProperties = InterMineContext.getWebProperties();
         Set<String> schemata = new HashSet<String>(
             Arrays.asList(webProperties.getProperty("schema.filenames", "").split(",")));
         if (!schemata.contains(fileName)) {
@@ -88,7 +89,7 @@ public class SchemaServlet extends HttpServlet
     }
 
     private void serveSchemaList(HttpServletRequest req, HttpServletResponse resp) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new SchemaListService(im).service(req, resp);
     }
 

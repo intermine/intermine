@@ -18,6 +18,7 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.util.CacheMap;
 
 /**
  * Executes queries and summarises data for a specific EnrichmentWidgetLdr ready for calculation.
@@ -32,6 +33,11 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     private Map<String, Integer> populationCounts = null;
     private Map<String, String> labels = null;
     private static final int BATCH_SIZE = 20000;
+
+    // population queries that don't involve bags can be cached between widget executions
+    private static CacheMap<String, Integer> populationSizeCache = new CacheMap<String, Integer>();
+    private static CacheMap<String, Map<String, Integer>> populationCountsCache =
+        new CacheMap<String, Map<String, Integer>>();
 
     // TODO population counts and sizes are no longer cached
 
@@ -54,24 +60,28 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     @Override
     public Map<String, Integer> getAnnotatedCountsInPopulation() {
         if (populationCounts == null) {
-            populationCounts = new HashMap<String, Integer>();
             Query query = ldr.getPopulationQuery(false);
 
-            Results results = os.execute(query, BATCH_SIZE, true, true, true);
-            Iterator iter = results.iterator();
-            while (iter.hasNext()) {
-                ResultsRow row =  (ResultsRow) iter.next();
+            populationCounts = populationCountsCache.get(query.toString());
+            if (populationCounts == null) {
+                populationCounts = new HashMap<String, Integer>();
 
-                // an identifier for an attribute value, e.g. a department name
-                String identifier = String.valueOf(row.get(0));
+                Results results = os.execute(query, BATCH_SIZE, true, true, true);
+                Iterator iter = results.iterator();
+                while (iter.hasNext()) {
+                    ResultsRow row =  (ResultsRow) iter.next();
 
-                // the number of times the item is applied in the population, e.g. the number of
-                // companies that contain a department with this name
-                // TODO should check that casting from a long gives correct result
-                Integer count = ((Long) row.get(1)).intValue();
+                    // an identifier for an attribute value, e.g. a department name
+                    String identifier = String.valueOf(row.get(0));
 
-                populationCounts.put(identifier, count);
+                    // the number of times the item is applied in the population, e.g. the number of
+                    // companies that contain a department with this name
+                    // TODO should check that casting from a long gives correct result
+                    Integer count = ((Long) row.get(1)).intValue();
 
+                    populationCounts.put(identifier, count);
+                }
+                populationCountsCache.put(query.toString(), populationCounts);
             }
         }
         return populationCounts;
@@ -118,7 +128,12 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     public int getPopulationSize() {
         // TODO this should use os.count() but needs to be backwards compatible with widgets
         Query q = ldr.getPopulationQuery(true);
-        return calcTotal(q);
+        Integer populationSize = populationSizeCache.get(q.toString());
+        if (populationSize == null) {
+            populationSize = new Integer(calcTotal(q));
+            populationSizeCache.put(q.toString(), populationSize);
+        }
+        return populationSize.intValue();
     }
 
     @Override
