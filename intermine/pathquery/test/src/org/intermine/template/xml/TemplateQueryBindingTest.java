@@ -10,8 +10,11 @@ package org.intermine.template.xml;
  *
  */
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -72,7 +75,7 @@ public class TemplateQueryBindingTest extends TestCase
         companyInBag.addView("Company");
         companyInBag.addConstraint(new PathConstraintBag("Company", ConstraintOp.IN, "bag1"));
 
-        t = new TemplateQuery("companyInBag", "List --> Company", "This template is medium exciting", companyInBag);
+        t = new TemplateQuery("companyInBag", "List --> Company", "Côte d'Ivoire", companyInBag);
         expected.put("companyInBag", t);
 
         // queryWithConstraint
@@ -80,6 +83,7 @@ public class TemplateQueryBindingTest extends TestCase
         queryWithConstraint.addViews("Company.name", "Company.departments.name", "Company.departments.employees.name", "Company.departments.employees.title");
         queryWithConstraint.addConstraint(new PathConstraintSubclass("Company.departments.employees", "CEO"));
         t = new TemplateQuery("queryWithConstraint", "Company --> CEO", "", queryWithConstraint);
+        t.setDescription("this is the queryWithConstraint description");
         expected.put("queryWithConstraint", t);
 
         // employeesInBag
@@ -116,23 +120,24 @@ public class TemplateQueryBindingTest extends TestCase
     }
 
     public void testMarshallings() throws Exception {
-//        // Test marshallings
-//        String xml = TemplateQueryBinding.marshal(expected.get("employeesWithOldManagers"), "employeesWithOldManagers", "testmodel", 1);
-//        Map<String, TemplateQuery> readFromXml = new LinkedHashMap<String, TemplateQuery>();
-//        readFromXml = TemplateQueryBinding.unmarshalTemplates(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
-//        // checking can be removed maybe
-//        Map<String, TemplateQuery> expectedQuery = new LinkedHashMap<String, TemplateQuery>();
-//        expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
-//
-//        assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
+        // Test marshallings
+        String xml = TemplateQueryBinding.marshal(expected.get("employeesWithOldManagers"), "employeesWithOldManagers", "testmodel", 1);
+        System.out.println(xml);
+        Map<String, TemplateQuery> readFromXml = new LinkedHashMap<String, TemplateQuery>();
+        readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), 1);
+        System.out.println(readFromXml.size());
+        // checking can be removed maybe
+        Map<String, TemplateQuery> expectedQuery = new LinkedHashMap<String, TemplateQuery>();
+        expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 
-//        xml = PathQueryBinding.marshal(expected.get("queryWithConstraint"),
-//                "queryWithConstraint", "testmodel", 1);
-//        readFromXml = new LinkedHashMap<String, TemplateQuery>();
-//        readFromXml = TemplateQueryBinding.unmarshalTemplates(new InputStreamReader(new ByteArrayInputStream(xml.getBytes())), 1);
-//        expectedQuery = new LinkedHashMap<String, TemplateQuery>();
-//        expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
-//
-//        assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
+        assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
+
+        xml = TemplateQueryBinding.marshal(expected.get("queryWithConstraint"), "queryWithConstraint", "testmodel", 1);
+        readFromXml = new LinkedHashMap<String, TemplateQuery>();
+        readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), 1);
+        expectedQuery = new LinkedHashMap<String, TemplateQuery>();
+        expectedQuery.put("queryWithConstraint", expected.get("queryWithConstraint"));
+
+        assertEquals(xml, expectedQuery.toString(), readFromXml.toString());
     }
 }
