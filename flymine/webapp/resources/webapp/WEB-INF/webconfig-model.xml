@@ -788,8 +788,7 @@
                       constraints="mRNAExpressionResults.dataSet.name=BDGP in situ data set"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name,
                              mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
-
-<!--
+<!-- 
       <enrichmentwidgetdisplayer id="miranda_enrichment"
                                  title="MiRNA Enrichment"
                                  description="MiRNAs enriched for items in this list."
@@ -797,11 +796,19 @@
                                  startClass="Gene"
                                  startClassDisplay="symbol"
                                  enrich="miRNAtargets.target.gene.symbol"
-                                 extraAttributeLabel=""
-                                 extraAttributeSelectedValue=""
-                                 extraAttributePossibleValues=""
-                                 typeClass="org.intermine.model.bio.Gene"/>
--->
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views="symbol,miRNAtargets.target.gene.symbol"/>
+ -->
+      <enrichmentwidgetdisplayer id="miranda_enrichment"
+                                 title="MiRNA Enrichment"
+                                 description="MiRNAs enriched for items in this list."
+                                 label="MiRNAs"
+                                 startClass="Gene"
+                                 startClassDisplay="symbol"
+                                 enrich="transcripts[MRNA].miRNAinteractions.mirnagene.symbol"
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views="symbol,miRNAtargets.target.gene.symbol"/>
+
       <enrichmentwidgetdisplayer id="protein_features"
                                  title="UniProt Features"
                                  description="UniProt features enriched for proteins in this list."
@@ -829,17 +836,36 @@
                                        keywords.name, keywords.description"/>
 
 <!--
-      <enrichmentwidgetdisplayer id="go_enrichment" title="Gene Ontology Enrichment"
-                                 link="org.intermine.bio.web.widget.GoStatURLQuery"
-                                 dataSetLoader="org.intermine.bio.web.widget.GoStatLdr"
+      <enrichmentwidgetdisplayer id="go_enrichment_for_gene" 
+                                 title="Gene Ontology Enrichment"
                                  description="GO terms enriched for items in this list."
                                  label="GO Term"
-                                 filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
-                                 typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
--->
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="goAnnotation."
+                                 enrichIdentifier=""
+                                 constraints="organism.name=[list]"
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
+                                       goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
+                                       goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"/>
 
+      <enrichmentwidgetdisplayer id="go_enrichment_for_protein" 
+                                 title="Gene Ontology Enrichment"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filterLabel="Ontology"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 startClass="Protein"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich=""
+                                 enrichIdentifier=""
+                                 constraints="organism.name=[list]"
+                                 typeClass="org.intermine.model.bio.Protein"
+                                 views=""/>
+-->
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
@@ -886,7 +912,7 @@
                                  label="Terms"
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
-                                 enrich="mRNAExpressionResults.mRNAExpressionTerms.name"
+                                 enrich="mRNAExpressionResults.mRNAExpressionTerms[MRNAExpressionTerm].name"
                                  constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
