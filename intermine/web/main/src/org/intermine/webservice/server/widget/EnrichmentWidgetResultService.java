@@ -95,7 +95,16 @@ public class EnrichmentWidgetResultService extends JSONService
         }
         EnrichmentWidgetConfig enrichmentWidgetConfig = (EnrichmentWidgetConfig) widgetConfig;
         addOutputConfig(enrichmentWidgetConfig);
-        addOutputFilter(enrichmentWidgetConfig, input.getExtraAttributes().get(0));
+        //filters
+        String filterSelectedValue = input.getExtraAttributes().get(0);
+        if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
+            String filters = enrichmentWidgetConfig.getFilters();
+            if (filters != null && !"".equals(filters)) {
+                filterSelectedValue = filters.split("\\,")[0];
+                input.getExtraAttributes().set(0, filterSelectedValue);
+            }
+        }
+        addOutputFilter(enrichmentWidgetConfig, filterSelectedValue);
 
         EnrichmentWidget widget = null;
         try {
@@ -133,12 +142,7 @@ public class EnrichmentWidgetResultService extends JSONService
         String filters = widgetConfig.getFilters();
         if (filters != null && !"".equals(filters)) {
             addOutputInfo("filters", filters);
-        }
-        if (filterSelectedValue != null && !"".equals(filterSelectedValue)) {
             addOutputInfo("filterSelectedValue", filterSelectedValue);
-        } else if (filters != null && !"".equals(filters)) {
-            String defaultFilterValue = widgetConfig.getFilters().split("\\,")[0];
-            addOutputInfo("filterSelectedValue", defaultFilterValue);
         }
     }
 
