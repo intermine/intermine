@@ -14,9 +14,8 @@
       </saved-query>
     </queries>
     <template-queries>
-      <template name="template" title="ttitle" longDescription=""
-        comment="tcomment">
-        <query name="template" model="testmodel" view=""></query>
+      <template name="template" title="ttitle" comment="tcomment">
+        <query name="template" model="testmodel" view="" longDescription=""></query>
       </template>
     </template-queries>
     <tags>
@@ -41,9 +40,8 @@
       </saved-query>
     </queries>
     <template-queries>
-      <template name="template" title="ttitle" longDescription=""
-        comment="tcomment">
-        <query name="template" model="testmodel" view=""></query>
+      <template name="template" title="ttitle" comment="tcomment">
+        <query name="template" model="testmodel" view="" longDescription=""></query>
       </template>
     </template-queries>
     <tags>
