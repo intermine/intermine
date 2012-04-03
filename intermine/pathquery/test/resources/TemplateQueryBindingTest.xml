@@ -8,12 +8,12 @@
             <constraint path="Employee.department.manager.age" op=">" value="10"/>
         </query>
     </template>
-    <template name="companyInBag" title="List --&gt; Company" longDescription="" comment="This template is medium exciting">
+    <template name="companyInBag" title="List --&gt; Company" longDescription="" comment="Côte d'Ivoire">
         <query name="companyInBag" model="testmodel" view="Company">
             <constraint path="Company" op="IN" value="bag1"/>
         </query>
     </template>
-    <template name="queryWithConstraint" title="Company --&gt; CEO" longDescription="" comment="">
+    <template name="queryWithConstraint" title="Company --&gt; CEO" longDescription="description" comment="">
         <query name="queryWithConstraint" model="testmodel" view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
             <constraint path="Company.departments.employees" type="CEO"/>
         </query>
