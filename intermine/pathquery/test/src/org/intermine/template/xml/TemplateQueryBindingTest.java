@@ -120,13 +120,12 @@ public class TemplateQueryBindingTest extends TestCase
     }
 
     public void testMarshallings() throws Exception {
-        // Test marshallings
         String xml = TemplateQueryBinding.marshal(expected.get("employeesWithOldManagers"), "employeesWithOldManagers", "testmodel", 1);
         System.out.println(xml);
         Map<String, TemplateQuery> readFromXml = new LinkedHashMap<String, TemplateQuery>();
         readFromXml = TemplateQueryBinding.unmarshalTemplates(new StringReader(xml), 1);
         System.out.println(readFromXml.size());
-        // checking can be removed maybe
+
         Map<String, TemplateQuery> expectedQuery = new LinkedHashMap<String, TemplateQuery>();
         expectedQuery.put("employeesWithOldManagers", expected.get("employeesWithOldManagers"));
 

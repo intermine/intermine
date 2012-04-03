@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
@@ -31,13 +32,13 @@ import org.xml.sax.SAXException;
  */
 public class TemplateQueryHandler extends PathQueryHandler
 {
-    Map<String, TemplateQuery> templates;
-    String templateName;
-    String templateTitle;
-    String templateComment;
-    Map<PathConstraint, String> constraintDescriptions = new HashMap<PathConstraint, String>();
-    List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
-    Map<PathConstraint, SwitchOffAbility> constraintSwitchables =
+    private Map<String, TemplateQuery> templates;
+    private String templateName, templateTitle, templateComment;
+    private String templateDescription = null;
+    private Map<PathConstraint, String> constraintDescriptions
+        = new HashMap<PathConstraint, String>();
+    private List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
+    private Map<PathConstraint, SwitchOffAbility> constraintSwitchables =
         new HashMap<PathConstraint, SwitchOffAbility>();
 
     /**
@@ -60,9 +61,8 @@ public class TemplateQueryHandler extends PathQueryHandler
         if ("template".equals(qName)) {
             templateName = attrs.getValue("name");
             templateTitle = attrs.getValue("title");
-            if (attrs.getValue("description") != null && templateTitle == null) {
-                // support old serialisation format: description -> title
-                templateTitle = attrs.getValue("description");
+            if (attrs.getValue("longDescription") != null) {
+                templateDescription = attrs.getValue("longDescription");
             }
             templateComment = attrs.getValue("comment");
         } else if ("constraint".equals(qName)) {
@@ -106,6 +106,9 @@ public class TemplateQueryHandler extends PathQueryHandler
             TemplateQuery t = new TemplateQuery(templateName, templateTitle, templateComment,
                     query);
             t.setEditableConstraints(editableConstraints);
+            if (StringUtils.isNotEmpty(templateDescription)) {
+                t.setDescription(templateDescription);
+            }
             for (Map.Entry<PathConstraint, String> entry : constraintDescriptions.entrySet()) {
                 t.setConstraintDescription(entry.getKey(), entry.getValue());
             }
@@ -147,6 +150,7 @@ public class TemplateQueryHandler extends PathQueryHandler
         templateName = "";
         templateTitle = "";
         templateComment = "";
+        templateDescription = "";
         editableConstraints.clear();
         constraintDescriptions.clear();
         constraintSwitchables.clear();
