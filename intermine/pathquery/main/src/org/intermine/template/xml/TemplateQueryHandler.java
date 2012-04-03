@@ -34,7 +34,6 @@ public class TemplateQueryHandler extends PathQueryHandler
 {
     private Map<String, TemplateQuery> templates;
     private String templateName, templateTitle, templateComment;
-    private String templateDescription = null;
     private Map<PathConstraint, String> constraintDescriptions
         = new HashMap<PathConstraint, String>();
     private List<PathConstraint> editableConstraints = new ArrayList<PathConstraint>();
@@ -61,9 +60,6 @@ public class TemplateQueryHandler extends PathQueryHandler
         if ("template".equals(qName)) {
             templateName = attrs.getValue("name");
             templateTitle = attrs.getValue("title");
-            if (attrs.getValue("longDescription") != null) {
-                templateDescription = attrs.getValue("longDescription");
-            }
             templateComment = attrs.getValue("comment");
         } else if ("constraint".equals(qName)) {
             String path = attrs.getValue("path");
@@ -106,9 +102,6 @@ public class TemplateQueryHandler extends PathQueryHandler
             TemplateQuery t = new TemplateQuery(templateName, templateTitle, templateComment,
                     query);
             t.setEditableConstraints(editableConstraints);
-            if (StringUtils.isNotEmpty(templateDescription)) {
-                t.setDescription(templateDescription);
-            }
             for (Map.Entry<PathConstraint, String> entry : constraintDescriptions.entrySet()) {
                 t.setConstraintDescription(entry.getKey(), entry.getValue());
             }
@@ -150,7 +143,6 @@ public class TemplateQueryHandler extends PathQueryHandler
         templateName = "";
         templateTitle = "";
         templateComment = "";
-        templateDescription = "";
         editableConstraints.clear();
         constraintDescriptions.clear();
         constraintSwitchables.clear();
