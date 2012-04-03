@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 public class ListAppendServlet extends HttpServlet {
 
@@ -26,7 +26,7 @@ public class ListAppendServlet extends HttpServlet {
     }
 
     private void appendToList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new ListAppendService(im).service(request, response);
     }
 

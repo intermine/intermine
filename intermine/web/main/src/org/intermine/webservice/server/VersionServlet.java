@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * Returns version of the deployed InterMine application.
@@ -46,7 +46,7 @@ public class VersionServlet extends HttpServlet
     }
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI api = SessionMethods.getInterMineAPI();
+        final InterMineAPI api = InterMineContext.getInterMineAPI();
         new VersionService(api).service(request, response);
     }
 }

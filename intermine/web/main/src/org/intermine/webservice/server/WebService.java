@@ -36,11 +36,11 @@ import org.intermine.api.profile.ProfileManager.ApiPermission;
 import org.intermine.api.profile.ProfileManager.AuthenticationException;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.RequestUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -185,7 +185,7 @@ public abstract class WebService
             .getDefaultPermission(ANON_PROFILE);
 
     /** The properties this mine was configured with **/
-    protected final Properties webProperties = SessionMethods.getWebProperties();
+    protected final Properties webProperties = InterMineContext.getWebProperties();
 
     /**
      * Construct the web service with the InterMine API object that gives access

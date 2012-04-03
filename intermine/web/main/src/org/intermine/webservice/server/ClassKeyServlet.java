@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * A Servlet for routing requests to the ClassKeyService.
@@ -39,8 +38,7 @@ public class ClassKeyServlet extends HttpServlet
     }
 
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        InterMineAPI im = SessionMethods.getInterMineAPI();
-        WebService s = new ClassKeysService(im);
+        WebService s = new ClassKeysService(InterMineContext.getInterMineAPI());
         s.service(request, response);
     }
 }

@@ -8,9 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
-public class ListSubtractionServlet extends HttpServlet {
+public class ListSubtractionServlet extends HttpServlet
+{
 
     public ListSubtractionServlet() {
         // empty constructor
@@ -29,7 +30,7 @@ public class ListSubtractionServlet extends HttpServlet {
     }
 
     private void subtractLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new ListSubtractionService(im).service(request, response);
     }
 

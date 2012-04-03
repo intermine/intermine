@@ -27,10 +27,10 @@ import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.util.StringUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -137,7 +137,7 @@ public class ModelService extends WebService
     }
 
     private String getNodeName(Path node) {
-        WebConfig webConfig = SessionMethods.getWebConfig();
+        WebConfig webConfig = InterMineContext.getWebConfig();
         if (node.isRootPath()) {
             return WebUtil.formatPath(node, webConfig);
         } else {

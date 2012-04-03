@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * Servlet for handing off requests to the a NewUserService.
@@ -29,7 +29,7 @@ public class NewUserServlet extends HttpServlet
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        final InterMineAPI api = SessionMethods.getInterMineAPI();
+        final InterMineAPI api = InterMineContext.getInterMineAPI();
         new NewUserService(api).service(req, resp);
     }
 }

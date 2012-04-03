@@ -20,10 +20,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
@@ -53,7 +53,7 @@ public class SummaryService extends WebService
 
         Boolean refsAllowed = !Boolean.valueOf(request.getParameter("norefs"));
         Map<String, List<String>> summaryFieldsForCd = new HashMap<String, List<String>>();
-        WebConfig webConfig = SessionMethods.getWebConfig();
+        WebConfig webConfig = InterMineContext.getWebConfig();
         Model m = im.getModel();
         output.setHeaderAttributes(getHeaderAttributes());
         for (ClassDescriptor cd: m.getClassDescriptors()) {

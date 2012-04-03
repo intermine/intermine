@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 public class AvailableWidgetsServlet extends HttpServlet {
 
@@ -30,7 +30,7 @@ public class AvailableWidgetsServlet extends HttpServlet {
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new AvailableWidgetsService(im).service(request, response);
     }
 

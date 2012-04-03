@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 /**
  * Runs the query-to-list service to run queries and save them as lists.
@@ -63,7 +63,7 @@ public class TemplateListAppendServlet extends HttpServlet
 
     private void runService(HttpServletRequest request,
         HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new TemplateListAppendService(im).service(request, response);
     }
 

@@ -111,11 +111,6 @@ public final class SessionMethods
             return error;
         }
     }
-    
-    /**
-     * Data we want to store for general access throughout the web-application.
-     */
-    private static final Map<String, Object> sessionData = new HashMap<String, Object>();
 
     /**
      * Executes an action and call a callback when it completes successfully. If the
@@ -858,14 +853,6 @@ public final class SessionMethods
     }
 
     /**
-     * Get the web configuration from the static session data map.
-     * @return Web configuration.
-     */
-    public static WebConfig getWebConfig() {
-        return (WebConfig) sessionData.get(Constants.WEBCONFIG);
-    }
-
-    /**
      * @param context a ServletContext
      * @return WebConfig
      */
@@ -885,7 +872,6 @@ public final class SessionMethods
      */
     public static void setWebConfig(ServletContext context, WebConfig webConfig) {
         context.setAttribute(Constants.WEBCONFIG, webConfig);
-        sessionData.put(Constants.WEBCONFIG, webConfig);
     }
 
     /**
@@ -952,15 +938,6 @@ public final class SessionMethods
     }
 
     /**
-     * Return the web properties.
-     * 
-     * @return A properties object.
-     */
-    public static Properties getWebProperties() {
-        return (Properties) sessionData.get(Constants.WEB_PROPERTIES);
-    }
-
-    /**
      * Returns the web properties.
      *
      * @param request The current HTTP request.
@@ -978,7 +955,6 @@ public final class SessionMethods
      */
     public static void setWebProperties(ServletContext servletContext, Properties props) {
         servletContext.setAttribute(Constants.WEB_PROPERTIES, props);
-        sessionData.put(Constants.WEB_PROPERTIES, props);
     }
 
     /**
@@ -1059,15 +1035,6 @@ public final class SessionMethods
     }
 
     /**
-     * Get the InterMineAPI from the static application context.
-     * 
-     * @return the InterMine API.
-     */
-    public static InterMineAPI getInterMineAPI() {
-        return (InterMineAPI) sessionData.get(Constants.INTERMINE_API);
-    }
-
-    /**
      * Get the InterMineAPI which provides access to core features of an InterMine application.
      * @param servletContext the webapp servletContext
      * @return the InterMine core object
@@ -1084,7 +1051,6 @@ public final class SessionMethods
      */
     public static void setInterMineAPI(ServletContext servletContext, InterMineAPI im) {
         servletContext.setAttribute(Constants.INTERMINE_API, im);
-        sessionData.put(Constants.INTERMINE_API, im);
     }
 
     /**
@@ -1190,16 +1156,16 @@ public final class SessionMethods
         synchronized (savedBags) {
             for (InterMineBag bag : savedBags.values()) {
                 if (!bag.isCurrent()) {
-                	Map<String, Object> bagAttributes = new HashMap<String, Object>();
-                	String bagState = bag.getState();
-                	bagAttributes.put("status", bagState);
-                	if (bagState.equals(BagState.CURRENT.toString())) {
-                		try {
-                			bagAttributes.put("size", bag.getSize());
-                		} catch (ObjectStoreException e) {
-                			// nothing serious happens here...
-                		}
-                	}
+                    Map<String, Object> bagAttributes = new HashMap<String, Object>();
+                    String bagState = bag.getState();
+                    bagAttributes.put("status", bagState);
+                    if (bagState.equals(BagState.CURRENT.toString())) {
+                        try {
+                            bagAttributes.put("size", bag.getSize());
+                        } catch (ObjectStoreException e) {
+                            // nothing serious happens here...
+                        }
+                    }
                     savedBagsStatus.put(bag.getName(), bagAttributes);
                 }
             }

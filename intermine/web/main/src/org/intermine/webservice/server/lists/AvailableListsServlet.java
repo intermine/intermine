@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.web.context.InterMineContext;
 
 public class AvailableListsServlet extends HttpServlet
 {
@@ -24,7 +24,7 @@ public class AvailableListsServlet extends HttpServlet
     }
 
     private void getAvailableLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new AvailableListsService(im).service(request, response);
     }
 
@@ -35,7 +35,7 @@ public class AvailableListsServlet extends HttpServlet
     }
 
     private void saveUploadedList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new ListUploadService(im).service(request, response);
     }
 
@@ -46,7 +46,7 @@ public class AvailableListsServlet extends HttpServlet
     }
 
     private void deleteList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = SessionMethods.getInterMineAPI();
+        final InterMineAPI im = InterMineContext.getInterMineAPI();
         new ListDeletionService(im).service(request, response);
     }
 
