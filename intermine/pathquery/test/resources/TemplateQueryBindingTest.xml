@@ -13,7 +13,7 @@
             <constraint path="Company" op="IN" value="bag1"/>
         </query>
     </template>
-    <template name="queryWithConstraint" title="Company --&gt; CEO" longDescription="description" comment="">
+    <template name="queryWithConstraint" title="Company --&gt; CEO" longDescription="this is the queryWithConstraint description" comment="">
         <query name="queryWithConstraint" model="testmodel" view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
             <constraint path="Company.departments.employees" type="CEO"/>
         </query>

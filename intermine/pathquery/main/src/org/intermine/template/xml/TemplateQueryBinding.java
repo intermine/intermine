@@ -114,7 +114,6 @@ public class TemplateQueryBinding extends PathQueryBinding
     public static String marshal(TemplateQuery template, int version) {
         StringWriter sw = new StringWriter();
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             marshal(template, writer, version);
@@ -126,14 +125,14 @@ public class TemplateQueryBinding extends PathQueryBinding
     }
 
     /**
-     * Parse TemplateQuerys from XML
+     * Parse TemplateQueries from XML.
+     *
      * @param reader the saved templates
      * @param version the version of the xml format, an attribute of the ProfileManager
      * @return a Map from template name to TemplateQuery
      */
     public static Map<String, TemplateQuery> unmarshalTemplates(Reader reader, int version) {
         Map<String, TemplateQuery> templates = new LinkedHashMap<String, TemplateQuery>();
-
         try {
             SAXParser.parse(new InputSource(reader), new TemplateQueryHandler(templates, version));
         } catch (Exception e) {
