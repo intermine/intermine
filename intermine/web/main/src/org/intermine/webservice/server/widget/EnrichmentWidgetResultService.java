@@ -157,7 +157,7 @@ public class EnrichmentWidgetResultService extends JSONService
             pathConstraint = part1 + part2;
         }
         addOutputInfo("pathConstraint", config.getStartClass() + "." + pathConstraint);
-        addOutputInfo("matchPathConstraint", config.getStartClass() + ".id");
+        //addOutputInfo("matchPathConstraint", config.getStartClass() + ".id");
     }
 
 
