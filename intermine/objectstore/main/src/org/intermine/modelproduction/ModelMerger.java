@@ -244,7 +244,8 @@ public final class ModelMerger
     public static ClassDescriptor mergeClass(ClassDescriptor original, ClassDescriptor merge,
             Model originalModel, Set<ClassDescriptor> mergeClasses) throws ModelMergerException {
         if (merge.isInterface() != original.isInterface()) {
-            throw new ModelMergerException(original.getName() + ".isInterface/"
+            throw new ModelMergerException("Same class definition found as a class and interface "
+                    + original.getName() + ".isInterface/"
                     + original.isInterface() + " != " + merge.getName() + ".isInterface/"
                     + merge.isInterface());
         }
