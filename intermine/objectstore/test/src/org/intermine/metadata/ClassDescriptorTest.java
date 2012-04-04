@@ -456,4 +456,12 @@ public class ClassDescriptorTest extends TestCase
         assertEquals(1, comp);
     }
 
+    // SimpleObjects should inherit from java.lang.Object, normal classes don't inherit
+    public void testSimpleObjectClassDescriptors() throws Exception {
+        ClassDescriptor simpleObjectCld = new ClassDescriptor("package.name.Simple", "java.lang.Object", false,  new HashSet(), new HashSet(), new HashSet());
+        Model model = new Model("test", "package.name", new HashSet(Arrays.asList(new Object[] {simpleObjectCld})));
+        Set<String> expected = new HashSet<String>(Arrays.asList(new String[] {"java.lang.Object"}));
+        assertEquals(expected, simpleObjectCld.getSuperclassNames());
+    }
+
 }
