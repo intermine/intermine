@@ -10,6 +10,7 @@ package org.intermine.metadata;
  *
  */
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.util.Util;
 
 /**
@@ -106,9 +107,8 @@ public class ReferenceDescriptor extends FieldDescriptor
         }
 
         // find ReferenceDescriptor for the reverse reference
-        if (reverseRefName != null && !"".equals(reverseRefName)) {
-            reverseRefDesc = referencedClassDesc
-                .getReferenceDescriptorByName(reverseRefName);
+        if (!StringUtils.isBlank(reverseRefName)) {
+            reverseRefDesc = referencedClassDesc.getReferenceDescriptorByName(reverseRefName);
             if (reverseRefDesc == null) {
                 reverseRefDesc = referencedClassDesc
                     .getCollectionDescriptorByName(reverseRefName);
@@ -117,6 +117,20 @@ public class ReferenceDescriptor extends FieldDescriptor
                 throw new MetaDataException("Unable to find named reverse reference '"
                         + reverseRefName + "' in class " + referencedClassDesc.getName()
                         + " while processing: " + getClassDescriptor().getName() + "." + getName());
+            }
+            // Reverse references need to point to one another and have correct types
+            if (reverseRefDesc.getReverseReferenceFieldName() != null) {
+                if (!reverseRefDesc.getReverseReferenceFieldName().equals(this.name)) {
+                    throw new MetaDataException("Reverse reference names do not match: "
+                            + reverseRefDesc.getReverseReferenceFieldName() + " and " + this.name
+                            + " (" + this.cld.getName() + ": " + this.toString() + ", "
+                            + referencedType + ": " + reverseRefDesc.toString() + ")");
+                }
+                if (!reverseRefDesc.referencedType.equals(this.cld.getName())) {
+                    throw new MetaDataException("Reverse reference types do not match: "
+                            + this.cld.getName() + ": " + this.toString() + ", "
+                            + referencedType + ": " + reverseRefDesc.toString());
+                }
             }
         }
         modelSet = true;

@@ -18,7 +18,7 @@
       <reference name="type" referenced-type="InteractionTerm"/>
       <reference name="gene" referenced-type="Gene" reverse-reference="interactions" />
       <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
-      <collection name="interactingGenes" referenced-type="Gene" reverse-reference="interactions"/>
+      <collection name="interactingGenes" referenced-type="Gene"/>
       <collection name="dataSets" referenced-type="DataSet"/>
     </class>
     <class name="Gene" is-interface="true">
