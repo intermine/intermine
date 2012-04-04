@@ -156,10 +156,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
         int counter = 0;
         int snpCounter = 0;
+        int consequenceCounter = 0;
         Item currentSnp = null;
         Set<String> seenLocsForSnp = new HashSet<String>();
         String previousRsNumber = null;
         Boolean previousUniqueLocation = true;
+        String previousTranscriptStableId = null;
         Set<String> consequenceIdentifiers = new HashSet<String>();
         boolean storeSnp = false;
         String currentSnpIdentifier = null;
@@ -317,32 +319,44 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             String transcriptStableId = res.getString("feature_stable_id");
 
             if (!StringUtils.isBlank(transcriptStableId)) {
-                String type = res.getString("tv.consequence_types");
-                // Seen one example so far where consequence type is an empty string
-                if (StringUtils.isBlank(type)) {
-                    type = "UNKNOWN";
-                }
+            // In Ensembl 66, there are records with same transcript different allel_string
+            // | variation_feature_id | feature_stable_id | allele_string | consequence_types     |
+            // |             53025155 | ENST00000465814   | A/T           | nc_transcript_variant |
+            // |             53025155 | ENST00000465814   | A/C           | nc_transcript_variant |
+            // |             53025155 | ENST00000465814   | A/G           | nc_transcript_variant |
+                boolean newConsequenceType =
+                    transcriptStableId.equals(previousTranscriptStableId) ? false : true;
+                if (newConsequenceType) {
+                    previousTranscriptStableId = transcriptStableId;
+                    String type = res.getString("tv.consequence_types");
+                    // Seen one example so far where consequence type is an empty string
+                    if (StringUtils.isBlank(type)) {
+                        type = "UNKNOWN";
+                    }
 
-                Item consequenceItem = createItem("Consequence");
-                consequenceItem.setAttribute("description", type);
-                for (String individualType : type.split(",")) {
-                    consequenceItem.addToCollection("types",
-                                getConsequenceType(individualType.trim()));
-                }
-                setAttIfValue(consequenceItem, "peptideAlleles",
-                        res.getString("pep_allele_string"));
-                setAttIfValue(consequenceItem, "siftPrediction", res.getString("sift_prediction"));
-                setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
-                setAttIfValue(consequenceItem, "polyphenPrediction",
-                        res.getString("polyphen_prediction"));
-                setAttIfValue(consequenceItem, "polyphenScore", res.getString("polyphen_score"));
+                    Item consequenceItem = createItem("Consequence");
+                    consequenceItem.setAttribute("description", type);
+                    for (String individualType : type.split(",")) {
+                        consequenceItem.addToCollection("types",
+                                    getConsequenceType(individualType.trim()));
+                    }
+                    setAttIfValue(consequenceItem, "peptideAlleles",
+                            res.getString("pep_allele_string"));
+                    setAttIfValue(consequenceItem, "siftPrediction",
+                            res.getString("sift_prediction"));
+                    setAttIfValue(consequenceItem, "siftScore", res.getString("sift_score"));
+                    setAttIfValue(consequenceItem, "polyphenPrediction",
+                            res.getString("polyphen_prediction"));
+                    setAttIfValue(consequenceItem, "polyphenScore",
+                            res.getString("polyphen_score"));
 
-                if (!StringUtils.isBlank(transcriptStableId)) {
                     consequenceItem.setReference("transcript",
                             getTranscriptIdentifier(transcriptStableId));
+
+                    consequenceIdentifiers.add(consequenceItem.getIdentifier());
+                    store(consequenceItem);
+                    consequenceCounter++;
                 }
-                consequenceIdentifiers.add(consequenceItem.getIdentifier());
-                store(consequenceItem);
             } else {
                 String variationConsequences = res.getString("vf.consequence_type");
                 Integer consequenceCount = nonTranscriptConsequences.get(variationConsequences);
@@ -371,7 +385,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
         LOG.info("variationIdToItemIdentifier.size() = " + variationIdToItemIdentifier.size());
-        LOG.info("Consequence types without transcript: " + nonTranscriptConsequences);
+        LOG.info("Consequence count: " + consequenceCounter);
+        LOG.info("Consequence types (consequence type to count) without transcript on Chromosome "
+                + chrName + " : " + nonTranscriptConsequences);
     }
 
     private void setAttIfValue(Item item, String attName, String attValue) {
@@ -629,8 +645,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     /**
      * Given an allele string read from the database determine the type of variation, e.g. snp,
      * in-del, etc.  This is a re-implementation of code from the Ensembl perl API, see:
-     * http://www.ensembl.org/info/docs/Pdoc/ensembl-variation/
-     *     modules/Bio/EnsEMBL/Variation/Utils/Sequence.html#CODE4
+     * http://www.ensembl.org/info/docs/Doxygen/variation-api/
+     *    classBio_1_1EnsEMBL_1_1Variation_1_1Utils_1_1Sequence.html
      * @param alleleStr the alleles to determine the type for
      * @return a variation class or null if none can be determined
      */
@@ -683,7 +699,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 }
             }
         }
-
 
         return type;
     }
@@ -754,6 +769,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
+            + " AND vf.variation_feature_id = 53025155"
             + " ORDER BY vf.variation_id";
 
         LOG.warn(query);
