@@ -700,29 +700,24 @@
   </reportdisplayers>
 
    <widgets>
-<!--
-      <graphdisplayer id="chromosome_distribution"
+
+      <graphdisplayer id="chromosome_distribution_for_gene"
                       title="Chromosome Distribution"
                       description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
                       graphType="ColumnChart"
                       rangeLabel="Count"
-                      extraAttributeClass="org.intermine.bio.util.BioUtil"
-                      bagType="Gene,SequenceFeature,TransposableElementInsertionSite"
-                      bagPath=""
-                      extraPath="{bagType}.organism.name">
-                      <category path="{bagType}.chromosome.primaryIdentifier" label="Chromosome"/>
-                      <series actualExpectedCriteria="true">
-                        <series1 label="Actual"/>
-                        <series2 label="Expected"/>
-                      </series>
-                      <urlGenerator
-                          view="{bagType}.primaryIdentifier, {bagType}.symbol, {bagType}.secondaryIdentifier, {bagType}.organism.name, {bagType}.chromosome.primaryIdentifier,
-                                {bagType}.chromosomeLocation.start, {bagType}.chromosomeLocation.end, {bagType}.chromosomeLocation.strand">
-                          <sortOrders/>
-                          <constraints/>
-                      </urlGenerator>
-      </graphdisplayer>
--->
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="Gene"
+                      typeClass="org.intermine.model.bio.Gene"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath=""
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
+                             chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
+
       <graphdisplayer id="flyatlas_for_gene"
                       title="Gene Expression in the Adult Fly (FlyAtlas)"
                       description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
@@ -788,7 +783,7 @@
                       constraints="mRNAExpressionResults.dataSet.name=BDGP in situ data set"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name,
                              mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
-<!-- 
+<!--
       <enrichmentwidgetdisplayer id="miranda_enrichment"
                                  title="MiRNA Enrichment"
                                  description="MiRNAs enriched for items in this list."

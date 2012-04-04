@@ -1118,8 +1118,8 @@ public class AjaxServices
                 if (widgetConfig.getId().equals(widgetId)) {
                     EnrichmentWidgetConfig enrichmentWidgetConfig =
                                                         (EnrichmentWidgetConfig) widgetConfig;
-                    enrichmentWidgetConfig.setExternalLink(externalLink);
-                    enrichmentWidgetConfig.setExternalLinkLabel(externalLinkLabel);
+                    //enrichmentWidgetConfig.setExternalLink(externalLink);
+                    //enrichmentWidgetConfig.setExternalLinkLabel(externalLinkLabel);
                     EnrichmentWidget enrichmentWidget = new EnrichmentWidget(
                                     enrichmentWidgetConfig, imBag, os, filters, max,
                                     errorCorrection);

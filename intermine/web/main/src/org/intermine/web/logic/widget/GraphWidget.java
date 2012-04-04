@@ -103,11 +103,11 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    @Override
+ /*   @Override
     public List<List<String[]>> getFlattenedResults() {
         // TODO Auto-generated method stub
         return null;
-    }
+    }*/
 
     /**
      * {@inheritDoc}
@@ -135,6 +135,7 @@ public class GraphWidget extends Widget
         return notAnalysed;
     }
 
+    @Override
     public List<List<Object>> getResults() {
         return grapgWidgetLdr.getResultTable();
     }

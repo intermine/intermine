@@ -473,8 +473,10 @@ public class WebConfig
                 validatePath(model, widget.getStartClass(), categoryPath, "categoryPath", widgetId,
                             validationMessage);
                 String seriesPath = ((GraphWidgetConfig) widget).getSeriesPath();
-                validatePath(model, widget.getStartClass(), seriesPath, "seriesPath", widgetId,
+                if (!"".equals(seriesPath)) {
+                    validatePath(model, widget.getStartClass(), seriesPath, "seriesPath", widgetId,
                             validationMessage);
+                }
             }
         }
         return validationMessage.toString();

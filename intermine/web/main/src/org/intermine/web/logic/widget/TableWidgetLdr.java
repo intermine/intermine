@@ -62,7 +62,7 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 public class TableWidgetLdr
 {
     private List<String> columns;
-    private List<ArrayList<String[]>> flattenedResults;
+    private List<List<String[]>> flattenedResults;
     private String title, description;
     private int widgetTotal = 0;
     private InterMineBag bag;
@@ -142,7 +142,7 @@ public class TableWidgetLdr
             }
         }
 
-        flattenedResults = new ArrayList<ArrayList<String[]>>();
+        flattenedResults = new ArrayList<List<String[]>>();
 
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
             ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
@@ -156,11 +156,11 @@ public class TableWidgetLdr
                 // this will be the last column
                 if (select instanceof QueryFunction) {
                     // if user hasn't configured a link, don't link the counts
-                    String link = (config.getLink() == null ? null : "widgetAction.do?bagName="
+/*                    String link = (config.getLink() == null ? null : "widgetAction.do?bagName="
                         + bag.getName()
                         + "&link=" + config.getLink()
                         + "&key=" + URLEncoder.encode(countLinkKey, "UTF-8"));
-                    flattenedRow.add(new String[] {String.valueOf(resRow.get(i)), link});
+                    flattenedRow.add(new String[] {String.valueOf(resRow.get(i)), link});*/
                 } else {
                     if (select instanceof QueryClass) {
                         InterMineObject o = (InterMineObject) resRow.get(i);
@@ -243,7 +243,7 @@ public class TableWidgetLdr
      * get the flattened results
      * @return the flattened results
      */
-    public List<ArrayList<String[]>> getFlattenedResults() {
+    public List<List<String[]>> getFlattenedResults() {
         return flattenedResults;
     }
 

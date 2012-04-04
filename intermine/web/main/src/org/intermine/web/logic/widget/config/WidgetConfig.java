@@ -33,13 +33,11 @@ public abstract class WidgetConfig
     private String id;
     private String description;
     private String title;
+    private String filterLabel, filters;
     private String startClass;
     private String constraints;
     private List<PathConstraint> pathConstraints = new ArrayList<PathConstraint>();
-    private String dataSetLoader;
-    private String link;
     private String typeClass;
-    private String style;
     private String views;
 
     /**
@@ -91,6 +89,34 @@ public abstract class WidgetConfig
         this.title = title;
     }
 
+    /**
+     * @return the filters
+     */
+    public String getFilters() {
+        return filters;
+    }
+
+    /**
+     * @param filters the filters to set
+     */
+    public void setFilters(String filters) {
+        this.filters = filters;
+    }
+
+    /**
+     * @return the label for the filters
+     */
+    public String getFilterLabel() {
+        return filterLabel;
+    }
+
+    /**
+     * @param filterLabel the label for the filters
+     */
+    public void setFilterLabel(String filterLabel) {
+        this.filterLabel = filterLabel;
+    }
+
     public String getStartClass() {
         return startClass;
     }
@@ -100,54 +126,6 @@ public abstract class WidgetConfig
     }
 
     /**
-     * @return the style of the widget chart/list/table
-     */
-    public String getStyle() {
-        return style;
-    }
-
-    /**
-     * @param style the style to set
-     */
-    public void setStyle(String style) {
-        this.style = style;
-    }
-
-    /**
-     * Get the value of dataSetLoader
-     * @return the value of dataSetLoader
-     */
-    public String getDataSetLoader() {
-        return dataSetLoader;
-    }
-
-
-    /**
-     * Set the value of dataSetLoader
-     * @param dataSetLoader a String
-     */
-    public void setDataSetLoader(String dataSetLoader) {
-        this.dataSetLoader = dataSetLoader;
-    }
-
-    /**
-     * Get the link
-     * @return the link
-     */
-    public String getLink() {
-        return link;
-    }
-
-    /**
-     * Set the link
-     * @param link the link
-     */
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-
-    /**
      * @param imBag the InterMineBag
      * @param os the ObjectStore
      * @return the getExtraAttributes
@@ -155,26 +133,6 @@ public abstract class WidgetConfig
      */
     public abstract Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag,
             ObjectStore os) throws Exception;
-
-    /**
-     * @return the externalLink
-     */
-    public abstract String getExternalLink();
-
-    /**
-     * @param externalLink the externalLink to set
-     */
-    public abstract void setExternalLink(String externalLink);
-
-    /**
-     * @return the externalLinkLabel
-     */
-    public abstract String getExternalLinkLabel();
-
-    /**
-     * @param externalLinkLabel the externalLinkLabel to set
-     */
-    public abstract void setExternalLinkLabel(String externalLinkLabel);
 
     /**
      * @return the typeClass

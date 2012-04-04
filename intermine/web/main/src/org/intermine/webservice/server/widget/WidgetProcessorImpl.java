@@ -1,15 +1,19 @@
 package org.intermine.webservice.server.widget;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.intermine.web.logic.widget.EnrichmentWidgetLdr;
 
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -20,35 +24,6 @@ public abstract class WidgetProcessorImpl implements WidgetProcessor
 {
 
     public abstract List<String> process(String name, WidgetConfig widgetConfig);
-    protected Collection<String> getAvailableFilters(WidgetConfig widgetConfig) {
-        Collection<String> availableFilters = Collections.EMPTY_LIST;
-        try {
-            Class<EnrichmentWidgetLdr> clazz =
-                    (Class<EnrichmentWidgetLdr>) Class.forName(widgetConfig.getDataSetLoader());
-            Method m = clazz.getDeclaredMethod("getAvailableFilters");
-            availableFilters = (Collection<String>) m.invoke(null);
-        } catch (NullPointerException e) {
-            // Ignore
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            // Ignore
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            // Ignore
-        } catch (NoSuchMethodException e) {
-            // Ignore
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            // Ignore
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            // Ignore
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            // Ignore
-        }
-        return availableFilters;
-    }
 
     protected String getWidgetType(WidgetConfig widgetConfig) {
         String widgetType = "unknown";

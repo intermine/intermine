@@ -28,16 +28,6 @@ public class HTMLWidgetConfig extends WidgetConfig
     private String content;
 
     @Override
-    public String getExternalLink() {
-        return null;
-    }
-
-    @Override
-    public String getExternalLinkLabel() {
-        return null;
-    }
-
-    @Override
     public Map<String, Collection<String>> getExtraAttributes(@SuppressWarnings("unused")
             InterMineBag imBag, @SuppressWarnings("unused") ObjectStore os)
         throws Exception {
@@ -51,7 +41,7 @@ public class HTMLWidgetConfig extends WidgetConfig
         return null;
     }
 
-    @Override
+/*    @Override
     public void setExternalLink(@SuppressWarnings("unused") String externalLink) {
         // dummy
     }
@@ -59,7 +49,7 @@ public class HTMLWidgetConfig extends WidgetConfig
     @Override
     public void setExternalLinkLabel(@SuppressWarnings("unused") String externalLinkLabel) {
         // dummy
-    }
+    }*/
 
     /**
      * Set the content of the widget.

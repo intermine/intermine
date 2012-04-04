@@ -40,8 +40,13 @@ public class HTMLWidget extends Widget
         return null;
     }
 
-    @Override
+/*    @Override
     public List<List<String[]>> getFlattenedResults() {
+        return null;
+    }*/
+
+    @Override
+    public List<List<Object>> getResults() {
         return null;
     }
 

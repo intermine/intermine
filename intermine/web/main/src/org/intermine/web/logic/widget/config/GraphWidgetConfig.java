@@ -10,7 +10,6 @@ package org.intermine.web.logic.widget.config;
  *
  */
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,7 +21,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.GraphWidget;
 
 /**
@@ -42,7 +40,6 @@ public class GraphWidgetConfig extends WidgetConfig
     private String seriesPath;
     private String seriesValues;
     private String seriesLabels;
-    private String extraAttributeClass, externalLink, externalLinkLabel;
     private HttpSession session;
     private String editable;
 
@@ -118,8 +115,7 @@ public class GraphWidgetConfig extends WidgetConfig
      */
     public String toString() {
         return "< title=\"" + getTitle() + " domainLabel=\"" + domainLabel + " rangeLabel=\""
-               + rangeLabel + " dataSetLoader=\"" + getDataSetLoader()
-               + " urlGen=\"" + getLink() + "\" />";
+               + rangeLabel + " />";
     }
 
     public String getBagType() {
@@ -178,20 +174,6 @@ public class GraphWidgetConfig extends WidgetConfig
     }
 
     /**
-     * @return the extraAttributeClass
-     */
-    public String getExtraAttributeClass() {
-        return extraAttributeClass;
-    }
-
-    /**
-     * @param extraAttributeClass the extraAttributeClass to set
-     */
-    public void setExtraAttributeClass(String extraAttributeClass) {
-        this.extraAttributeClass = extraAttributeClass;
-    }
-
-    /**
      * @return the editable attribute
      */
     public String geteditable() {
@@ -212,7 +194,7 @@ public class GraphWidgetConfig extends WidgetConfig
         throws Exception {
         Collection<String> extraAttributes = new ArrayList<String>();
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
-        if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
+/*        if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
             try {
                 Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
                 Method extraAttributeMethod = clazz.getMethod("getExtraAttributes",
@@ -229,36 +211,8 @@ public class GraphWidgetConfig extends WidgetConfig
         }
         if (editable != null && "true".equals(editable)) {
             returnMap.put("Editable", new ArrayList<String>());
-        }
+        }*/
         return returnMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setExternalLink(String externalLink) {
-        this.externalLink = externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLinkLabel() {
-        return externalLinkLabel;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setExternalLinkLabel(String externalLinkLabel) {
-        this.externalLinkLabel = externalLinkLabel;
     }
 
     /**

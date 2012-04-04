@@ -24,6 +24,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -50,7 +51,7 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * @author Alex Kalderimis
  * @author Xavier Watkins
  */
-public class EnrichmentWidgetResultService extends JSONService
+public class EnrichmentWidgetResultService extends WidgetService
 {
     private class EnrichmentXMLFormatter extends XMLFormatter
     {
@@ -75,16 +76,8 @@ public class EnrichmentWidgetResultService extends JSONService
     @Override
     protected void execute() throws Exception {
         WidgetsServiceInput input = getInput();
-        Profile profile = permission.getProfile();
-
-        InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, input.getBagName());
-        if (imBag == null) {
-            throw new BadRequestException("You do not have access to a bag named"
-                                          + input.getBagName());
-        }
-        addOutputInfo("type", imBag.getType());
-        addOutputInfo("list", imBag.getName());
-        addOutputInfo("requestedAt", new Date().toGMTString());
+        InterMineBag imBag = retrieveBag(input.getBagName());
+        addOutputListInfo(imBag);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.getWidgetId());
@@ -93,18 +86,18 @@ public class EnrichmentWidgetResultService extends JSONService
             throw new ResourceNotFoundException("Could not find an enrichment widget called \""
                                                 + input.getWidgetId() + "\"");
         }
-        EnrichmentWidgetConfig enrichmentWidgetConfig = (EnrichmentWidgetConfig) widgetConfig;
-        addOutputConfig(enrichmentWidgetConfig);
+        addOutputConfig(widgetConfig);
+
         //filters
         String filterSelectedValue = input.getExtraAttributes().get(0);
         if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
-            String filters = enrichmentWidgetConfig.getFilters();
+            String filters = widgetConfig.getFilters();
             if (filters != null && !"".equals(filters)) {
                 filterSelectedValue = filters.split("\\,")[0];
                 input.getExtraAttributes().set(0, filterSelectedValue);
             }
         }
-        addOutputFilter(enrichmentWidgetConfig, filterSelectedValue);
+        addOutputFilter(widgetConfig, filterSelectedValue);
 
         EnrichmentWidget widget = null;
         try {
@@ -115,45 +108,25 @@ public class EnrichmentWidgetResultService extends JSONService
                                                + input.getWidgetId() + "\"");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
-        addOutputPathQuery(widget, enrichmentWidgetConfig);
-        WidgetResultProcessor processor = getProcessor();
-        Iterator<List<Object>> it = widget.getResults().iterator();
-        while (it.hasNext()) {
-            List<Object> row = it.next();
-            List<String> processed = processor.formatRow(row);
-            if (!formatIsFlatFile() && it.hasNext()) {
-                processed.add("");
-            }
-            output.addResultItem(processed);
-        }
+        addOutputPathQuery(widget, widgetConfig);
+
+        addOutputResult(widget);
     }
 
-    private void addOutputConfig(EnrichmentWidgetConfig config) {
-        addOutputInfo("label", config.getLabel());
-        addOutputInfo("title", config.getTitle());
-        addOutputInfo("description", config.getDescription());
+    @Override
+    protected void addOutputConfig(WidgetConfig config) {
+        super.addOutputConfig(config);
+        addOutputInfo("label", ((EnrichmentWidgetConfig) config).getLabel());
     }
 
-    private void addOutputFilter(EnrichmentWidgetConfig widgetConfig, String filterSelectedValue) {
-        String filterLabel = widgetConfig.getFilterLabel();
-        if (filterLabel != null && !"".equals(filterLabel)) {
-            addOutputInfo("filterLabel", filterLabel);
-        }
-        String filters = widgetConfig.getFilters();
-        if (filters != null && !"".equals(filters)) {
-            addOutputInfo("filters", filters);
-            addOutputInfo("filterSelectedValue", filterSelectedValue);
-        }
-    }
-
-    private void addOutputPathQuery(EnrichmentWidget widget, EnrichmentWidgetConfig config) {
+    private void addOutputPathQuery(EnrichmentWidget widget, WidgetConfig config) {
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
-        String enrichIdentifier = config.getEnrichIdentifier();
+        String enrichIdentifier = ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
         String pathConstraint = "";
         if (enrichIdentifier != null && !"".equals(enrichIdentifier)) {
             pathConstraint = enrichIdentifier;
         } else {
-            pathConstraint = config.getEnrich();
+            pathConstraint = ((EnrichmentWidgetConfig) config).getEnrich();
         }
         if (pathConstraint.contains("[")) {
             String part1 = pathConstraint.substring(0, pathConstraint.indexOf("["));
@@ -164,19 +137,7 @@ public class EnrichmentWidgetResultService extends JSONService
         //addOutputInfo("matchPathConstraint", config.getStartClass() + ".id");
     }
 
-
-    @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        final Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.putAll(super.getHeaderAttributes());
-        if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_INTRO, "\"results\":[");
-            attributes.put(JSONFormatter.KEY_OUTRO, "]");
-        }
-        return attributes;
-    }
-
-    private WidgetResultProcessor getProcessor() {
+    protected WidgetResultProcessor getProcessor() {
         if (formatIsJSON()) {
             return EnrichmentJSONProcessor.instance();
         } else if (formatIsXML()) {
