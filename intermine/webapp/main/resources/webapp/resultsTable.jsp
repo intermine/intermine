@@ -49,5 +49,5 @@
 
 </script>
 
-<div id="table-container"></div>
+<div id="table-container" class="bootstrap"></div>
 
