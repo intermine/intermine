@@ -22,7 +22,6 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
