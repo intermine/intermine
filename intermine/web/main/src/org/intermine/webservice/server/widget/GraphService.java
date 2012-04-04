@@ -12,34 +12,28 @@ package org.intermine.webservice.server.widget;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.profile.Profile;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
-import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.XMLFormatter;
 
-public class GraphService extends JSONService
+public class GraphService extends WidgetService
 {
 
     private class GraphXMLFormatter extends XMLFormatter {
@@ -58,31 +52,31 @@ public class GraphService extends JSONService
 
     @SuppressWarnings("deprecation")
     @Override
-    protected void execute() {
+    protected void execute() throws Exception {
         GraphInput input = new GraphInput(request);
-        Profile profile = permission.getProfile();
 
-        InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, input.list);
-        if (imBag == null) {
-            throw new BadRequestException("You do not have access to a bag named" + input.list);
-        }
-        addOutputInfo("type", imBag.getType());
-        addOutputInfo("list", imBag.getName());
-        addOutputInfo("requestedAt", new Date().toGMTString());
+        InterMineBag imBag = retrieveBag(input.list);
+        addOutputListInfo(imBag);
 
         WebConfig webConfig = InterMineContext.getWebConfig();
         WidgetConfig widgetConfig = webConfig.getWidgets().get(input.widget);
-
         if (widgetConfig == null || !(widgetConfig instanceof GraphWidgetConfig)) {
             throw new ResourceNotFoundException("Could not find a graph widget called \""
                     + input.widget + "\"");
         }
 
-        addOutputInfo("title", widgetConfig.getTitle());
-        addOutputInfo("description", widgetConfig.getDescription());
-        addOutputInfo("chartType", ((GraphWidgetConfig) widgetConfig).getGraphType());
-        addOutputInfo("seriesValues", ((GraphWidgetConfig) widgetConfig).getSeriesValues());
-        addOutputInfo("seriesLabels", ((GraphWidgetConfig) widgetConfig).getSeriesLabels());
+        addOutputConfig(widgetConfig);
+
+        //filters
+        String filterSelectedValue = input.filter;
+        if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
+            String filters = widgetConfig.getFilters();
+            if (filters != null && !"".equals(filters)) {
+                filterSelectedValue = filters.split("\\,")[0];
+                input.filter = filterSelectedValue;
+            }
+        }
+        addOutputFilter(widgetConfig, filterSelectedValue);
 
         GraphWidget widget = null;
         try {
@@ -97,30 +91,19 @@ public class GraphService extends JSONService
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
-        WidgetResultProcessor processor = getProcessor();
-        Iterator<List<Object>> it = widget.getResults().iterator();
-        while (it.hasNext()) {
-            List<Object> row = it.next();
-            List<String> processed = processor.formatRow(row);
-            if (!formatIsFlatFile() && it.hasNext()) {
-                processed.add("");
-            }
-            output.addResultItem(processed);
-        }
+
+        addOutputResult(widget);
     }
 
     @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        final Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.putAll(super.getHeaderAttributes());
-        if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_INTRO, "\"results\":[");
-            attributes.put(JSONFormatter.KEY_OUTRO, "]");
-        }
-        return attributes;
+    protected void addOutputConfig(WidgetConfig config) {
+        super.addOutputConfig(config);
+        addOutputInfo("chartType", ((GraphWidgetConfig) config).getGraphType());
+        addOutputInfo("seriesValues", ((GraphWidgetConfig) config).getSeriesValues());
+        addOutputInfo("seriesLabels", ((GraphWidgetConfig) config).getSeriesLabels());
     }
 
-    private WidgetResultProcessor getProcessor() {
+    protected WidgetResultProcessor getProcessor() {
         if (formatIsJSON()) {
             return GraphJSONProcessor.instance();
         } else if (formatIsXML()) {
@@ -129,6 +112,7 @@ public class GraphService extends JSONService
             return FlatFileWidgetResultProcessor.instance();
         }
     }
+
     protected Output makeXMLOutput(PrintWriter out) {
         ResponseUtil.setXMLHeader(response, "result.xml");
         return new StreamedOutput(out, new GraphXMLFormatter());
@@ -136,7 +120,7 @@ public class GraphService extends JSONService
 
     private static class GraphInput
     {
-        final String filter;
+        String filter;
         final String widget;
         final String list;
 

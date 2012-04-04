@@ -27,7 +27,7 @@ public class FlatWidgetProcessor extends WidgetProcessorImpl
                 Arrays.asList(name, widgetConfig.getTitle(), 
                     widgetConfig.getDescription(), widgetType,
                     formatTypeClass(widgetConfig.getTypeClass()), 
-                    getAvailableFilters(widgetConfig).toString()));
+                    widgetConfig.getFilters()));
     }
 
     private static String formatTypeClass(String tc) {

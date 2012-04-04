@@ -56,7 +56,7 @@ public final class XMLWidgetProcessor extends WidgetProcessorImpl
             sb.append(formatCell("labels", getLabels((GraphWidgetConfig) widgetConfig)));
         }
         sb.append(formatCell("target", getClasses(widgetConfig.getTypeClass())));
-        sb.append(formatCell("filter", getAvailableFilters(widgetConfig)));
+        sb.append(formatCell("filter", widgetConfig.getFilters()));
         sb.append("</widget>");
         return new LinkedList<String>(Arrays.asList(sb.toString()));
     }

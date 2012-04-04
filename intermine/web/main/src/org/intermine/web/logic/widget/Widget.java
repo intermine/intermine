@@ -58,7 +58,7 @@ public abstract class Widget
     /**
      * @return results of widget
      */
-    public abstract List<List<String[]>> getFlattenedResults();
+    //public abstract List<List<String[]>> getFlattenedResults();
 
     /**
      * @return the hasResults
@@ -87,11 +87,5 @@ public abstract class Widget
         return config.getTitle();
     }
 
-    /**
-     * Get the widget style
-     * @return the style
-     */
-    public String getStyle() {
-        return config.getStyle();
-    }
+    public abstract List<List<Object>> getResults() throws Exception;
 }

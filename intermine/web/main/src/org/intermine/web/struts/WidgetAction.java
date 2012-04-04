@@ -116,8 +116,8 @@ public class WidgetAction extends InterMineAction
         List<WidgetConfig> widgets = type.getWidgets();
         for (WidgetConfig widgetConfig : widgets) {
             if (widgetConfig.getId() == widgetId) {
-                ldr = widgetConfig.getDataSetLoader();
-                urlQuery = widgetConfig.getLink();
+                //ldr = widgetConfig.getDataSetLoader();
+                //urlQuery = widgetConfig.getLink();
             }
         }
 

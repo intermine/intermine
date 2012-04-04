@@ -224,7 +224,7 @@ public class EnrichmentWidget extends Widget
     /**
      * {@inheritDoc}
      */
-    public List<List<String[]>> getFlattenedResults() {
+/*    public List<List<String[]>> getFlattenedResults() {
         if (results != null) {
             Map<String, BigDecimal> pValues = results.getPValues();
             Map<String, Integer> counts = results.getCounts();
@@ -265,7 +265,7 @@ public class EnrichmentWidget extends Widget
             return flattenedResults;
         }
         return null;
-    }
+    }*/
 
     public List<List<Object>> getResults() throws Exception {
         List<List<Object>> exportResults = new LinkedList<List<Object>>();

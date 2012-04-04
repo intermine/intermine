@@ -25,9 +25,7 @@ import org.intermine.web.logic.widget.EnrichmentWidget;
  */
 public class EnrichmentWidgetConfig extends WidgetConfig
 {
-    private String filterLabel, filters;
     private String label;
-    private String externalLink, externalLinkLabel;
     private String append;
     private String enrich;
     private String enrichIdentifier;
@@ -48,56 +46,11 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     }
 
     /**
-     * @return the filters
-     */
-    public String getFilters() {
-        return filters;
-    }
-
-    /**
-     * @param filters the filters to set
-     */
-    public void setFilters(String filters) {
-        this.filters = filters;
-    }
-
-    /**
-     * @return the label for the filters
-     */
-    public String getFilterLabel() {
-        return filterLabel;
-    }
-
-    /**
-     * @param filterLabel the label for the filters
-     */
-    public void setFilterLabel(String filterLabel) {
-        this.filterLabel = filterLabel;
-    }
-
-
-    /**
      * Return an XML String of this Type object
      * @return a String version of this WebConfig object
      */
     public String toString() {
-        return "< title=\"" + getTitle() + "\" link=\"" + getLink() + "\" ldr=\""
-               + getDataSetLoader() + "\"/>";
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getExternalLink() {
-        return externalLink;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setExternalLink(String externalLink) {
-        this.externalLink = externalLink;
+        return "< title=\"" + getTitle() + "/>";
     }
 
     /**
@@ -128,20 +81,6 @@ public class EnrichmentWidgetConfig extends WidgetConfig
      */
     public void setAppend(String append) {
         this.append = append;
-    }
-
-    /**
-     * @return the externalLinkLabel
-     */
-    public String getExternalLinkLabel() {
-        return externalLinkLabel;
-    }
-
-    /**
-     * @param externalLinkLabel the externalLinkLabel to set
-     */
-    public void setExternalLinkLabel(String externalLinkLabel) {
-        this.externalLinkLabel = externalLinkLabel;
     }
 
     public String getEnrich() {

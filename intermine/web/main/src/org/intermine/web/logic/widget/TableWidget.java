@@ -159,4 +159,9 @@ public class TableWidget extends Widget
     public List getColumns() {
         return bagWidgLdr.getColumns();
     }
+
+    @Override
+    public List<List<Object>> getResults() {
+        return null;
+    }
 }
