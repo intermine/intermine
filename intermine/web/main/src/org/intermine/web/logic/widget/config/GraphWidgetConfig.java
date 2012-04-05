@@ -42,6 +42,7 @@ public class GraphWidgetConfig extends WidgetConfig
     private String seriesLabels;
     private HttpSession session;
     private String editable;
+    public static final String ACTUAL_EXPECTED_CRITERIA = "ActualExpectedCriteria";
 
     /**
      * Get the session
@@ -155,6 +156,13 @@ public class GraphWidgetConfig extends WidgetConfig
 
     public void setSeriesPath(String seriesPath) {
         this.seriesPath = seriesPath;
+    }
+
+    public boolean isActualExpectedCriteria() {
+        if (this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA)) {
+            return true;
+        }
+        return false;
     }
 
     public String getSeriesValues() {
