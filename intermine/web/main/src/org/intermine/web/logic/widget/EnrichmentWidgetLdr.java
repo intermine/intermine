@@ -22,7 +22,7 @@ import org.intermine.objectstore.query.Query;
  * Prepares the data and queries for the enrichment widget controller to process.
  * @author Julie Sullivan
  */
-public class EnrichmentWidgetLdr
+public class EnrichmentWidgetLdr extends WidgetLdr
 {
     protected String externalLink, append;
     protected InterMineBag bag;
