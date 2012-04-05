@@ -1445,6 +1445,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 // except for the first record, this is a new EF object
                 if (!res.isFirst()) {
                     submissionEFMap.put(prevSub, ef);
+                    LOG.debug("EF MAP: " + dccIdMap.get(submissionId) + "|" + ef.efNames);
                 }
                 ef = new ExperimentalFactor();
             }
@@ -1471,6 +1472,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         res.close();
         LOG.info("created " + count + " experimental factors");
         LOG.info("PROCESS TIME experimental factors: " + (System.currentTimeMillis() - bT) + " ms");
+        LOG.info("EF Map 4141:" + submissionEFMap.get(363).efTypes + " experimental factors");
     }
 
     /**
@@ -2291,6 +2293,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
             for (String exFactor : extraPropNames) {
                 List<Item> extraPropItems = new ArrayList<Item>();
+                LOG.info("PP??: " + exFactor);
                 extraPropItems.addAll(lookForAttributesInOtherWikiPages(dccId, "SubmissionProperty",
                         typeToProp, new String[] {exFactor}));
                 allPropertyItems.addAll(extraPropItems);
@@ -2430,6 +2433,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     private void createEFItem(Integer current, String type,
             String efName, String propertyIdentifier) throws ObjectStoreException {
+        // don't create an EF if it is a primer
+        if (type.endsWith("primer")) {
+            LOG.debug("NOT EF PRIMER for sub " + current + ":" + efName + "|" + type);
+            return;
+        }
         // create the EF, if not there already
         if (!eFactorIdMap.containsKey(efName)) {
             Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
@@ -2439,13 +2447,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (propertyIdentifier != null) {
                 ef.setReference("property", propertyIdentifier);
             }
-            LOG.debug("ExFactor created for sub " + current + ":" + efName + "|" + type);
+            LOG.info("ExFactor created for sub " + current + ":" + efName + "|" + type);
 
             Integer intermineObjectId = getChadoDBConverter().store(ef);
             eFactorIdMap.put(efName, intermineObjectId);
             eFactorIdRefMap.put(efName, ef.getIdentifier());
         }
         // if pertinent to the current sub, add to the map for the references
+        LOG.info("PRIMER?? " + current + ":" + efName + "|" + type);
         Util.addToListMap(submissionEFactorMap, current, efName);
     }
 
@@ -2568,11 +2577,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 for (AppliedData aData : refAppliedData) {
                     String possibleWikiUrl = aData.actualValue;
                     if (possibleWikiUrl != null && props.containsKey(possibleWikiUrl)) {
-                        LOG.info("EEFF possible wikiurl: " + possibleWikiUrl);
+                        //LOG.debug("EEFF possible wikiurl: " + possibleWikiUrl);
                         SubmissionProperty propFromReferencedSub = props.get(possibleWikiUrl);
-                        if (propFromReferencedSub != null) { //??
+                        if (propFromReferencedSub != null) {
                             addToSubToTypes(subToTypes, submissionId, propFromReferencedSub);
-                            LOG.info("EEFF from referenced sub: " + propFromReferencedSub.details);
+                            LOG.debug("EEFF from referenced sub: " + propFromReferencedSub.type
+                                    + ": " + propFromReferencedSub.details);
                         }
                     }
                 }
@@ -2697,7 +2707,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                                     getDevStageTerm(devStageValue, dccId));
                         }
                     } else {
-                        LOG.error("METADATA FAIL: no 'developmental stage' values for wiki page: "
+                        LOG.error("METADATA FAIL on " + dccId
+                                + ": no 'developmental stage' values for wiki page: "
                                 + prop.wikiPageUrl);
                     }
                 } else if ("Antibody".equals(clsName)) {
@@ -2928,74 +2939,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             value = value + " " + unit + (unit.endsWith("s") ? "" : "s");
                         }
 
-                        items.add(createNonWikiSubmissionPropertyItem(dccId, clsName, subProp.type,
-                                correctAttrValue(value)));
-                    }
-                }
-            }
-        }
-        return items;
-    }
-
-
-    private List<Item> lookForAttributesInOtherWikiPagesNEW(String dccId, String clsName,
-            Map<String, List<SubmissionProperty>> typeToProp, String[] lookFor)
-        throws ObjectStoreException {
-
-        List<Item> items = new ArrayList<Item>();
-        for (String typeProp : lookFor) {
-            if (typeProp.indexOf(".") > 0) {
-                String[] bits = StringUtils.split(typeProp, '.');
-
-                String type = bits[0];
-                String propName = bits[1];
-                LOG.info("EEFFinotherW: " + type + "|" + propName);
-                if (typeToProp.containsKey(type)) {
-                    for (SubmissionProperty subProp : typeToProp.get(type)) {
-                        LOG.info("EEFFinotherWo: " + subProp + "|" + propName);
-
-                        if (subProp.details.containsKey(propName)) {
-                            int count = 0;
-                            int max = subProp.details.get(propName).size();
-                            StringBuffer compoundValue = new StringBuffer();
-                            for (String value : subProp.details.get(propName)) {
-                                count++;
-                                if (count > 1) {
-                                    compoundValue.append(", ");
-                                }
-                                if (count < max) {
-                                    compoundValue.append(value);
-                                } else {
-                                    LOG.info("EEFFinotherW " + max + ": " + count + "|" + value
-                                            + "||" + compoundValue.toString());
-                                    compoundValue.append(value);
-                                    items.add(createNonWikiSubmissionPropertyItem(dccId, clsName,
-                                            getPreferredSynonym(propName),
-                                            correctAttrValue(compoundValue.toString())));
-                                    compoundValue.setLength(0);
-                                }
-                            }
-                        }
-                    }
-                    if (!items.isEmpty()) {
-                        break;
-                    }
-                }
-            } else {
-                // no attribute type given so use the data.value (SubmissionProperty.wikiPageUrl)
-                // which probably won't be a wiki page
-                if (typeToProp.containsKey(typeProp)) {
-                    LOG.info("EEFFinotherWelse: " + typeProp);
-                    for (SubmissionProperty subProp : typeToProp.get(typeProp)) {
-
-                        String value = subProp.wikiPageUrl;
-                        LOG.info("EEFFinotherWelsefor: " + value);
-
-                        // This is an ugly special case to deal with 'exposure time/24 hours'
-                        if (subProp.details.containsKey("Unit")) {
-                            String unit = subProp.details.get("Unit").get(0);
-                            value = value + " " + unit + (unit.endsWith("s") ? "" : "s");
-                        }
+                        LOG.info("PP2 " + dccId + ": " + subProp.type
+                                + " - " + correctAttrValue(value));
 
                         items.add(createNonWikiSubmissionPropertyItem(dccId, clsName, subProp.type,
                                 correctAttrValue(value)));
@@ -3005,6 +2950,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
         return items;
     }
+
+
 
 
 
@@ -3821,7 +3768,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer thisSubmissionId = subs.next();
             List<String> eFactors = submissionEFactorMap.get(thisSubmissionId);
 
-            LOG.debug("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
+            LOG.info("EF REFS: " + thisSubmissionId + " (" + eFactors + ")");
             Iterator<String> ef = eFactors.iterator();
             ReferenceList collection = new ReferenceList();
             collection.setName("experimentalFactors");
@@ -3831,7 +3778,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                 LOG.debug("EF REFS: ->" + currentEF + " ref: " + eFactorIdRefMap.get(currentEF));
             }
             if (!collection.equals(null)) {
-                LOG.debug("EF REFS: ->" + thisSubmissionId + "|"
+                LOG.info("EF REFS: ->" + thisSubmissionId + "|"
                         + submissionMap.get(thisSubmissionId).interMineObjectId);
                 getChadoDBConverter().store(collection,
                         submissionMap.get(thisSubmissionId).interMineObjectId);
