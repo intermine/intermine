@@ -37,39 +37,41 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
-public class GraphWidgetLoader implements DataSetLdr
+public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
 {
-    private ObjectStore os;
-    private InterMineBag bag;
     private GraphWidgetConfig config;
-    private QueryClass startClassQueryClass;
     private Results results;
     private int items;
     private List<List<Object>> resultTable = new LinkedList<List<Object>>();
-    private Map<PathConstraint, Boolean> pathConstraintsProcessed =
-        new HashMap<PathConstraint, Boolean>();
 
     // TODO the parameters need to be updated
-    public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config) {
+    public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config, String filter) {
         this.bag = bag;
         this.os = os;
         this.config = config;
+        this.filter = filter;
 
-        Query q = createQuery(false);
-        results = os.execute(q);
+        LinkedHashMap<String, long[]> categorySeriesMap = null;
+        if (!config.isActualExpectedCriteria()) {
+            Query q = createQuery(GraphWidgetActionType.ACTUAL);
+            results = os.execute(q);
+            categorySeriesMap = buildCategorySeriesMap();
+        } else {
+            int totalInBagWithLocation = addActual(categorySeriesMap);
 
-        LinkedHashMap<String, long[]> categorySeriesMap = buildCategorySeriesMap();
-
+            // calculate chromsome, gene.count for genes in database
+            int totalInDBWithLocation = addExpected(categorySeriesMap);
+        }
         //populate resultTable
         populateResultTable(categorySeriesMap);
 
         calcTotal();
     }
 
-    public Query createQuery(boolean calcTotal) {
+    public Query createQuery(GraphWidgetActionType action) {
         Model model = os.getModel();
         Query query = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
@@ -78,15 +80,15 @@ public class GraphWidgetLoader implements DataSetLdr
             pathConstraintsProcessed.put(pathConstraint, false);
         }
         try {
-            startClassQueryClass = new QueryClass(Class.forName(model.getPackageName()
+            startClass = new QueryClass(Class.forName(model.getPackageName()
                     + "." + config.getStartClass()));
-            query.addFrom(startClassQueryClass);
+            query.addFrom(startClass);
 
             QueryField qfCategoryPath = null;
             QueryField qfSeriesPath = null;
-            if (!calcTotal) {
+            if (!GraphWidgetActionType.TOTAL.equals(action)) {
                 QueryField[] categoryAndSeriesQueryFields =
-                    createCategoryAndSeriesQueryFields(model, query, startClassQueryClass);
+                    createCategoryAndSeriesQueryFields(model, query, startClass);
                 qfCategoryPath = categoryAndSeriesQueryFields[0];
                 qfSeriesPath = categoryAndSeriesQueryFields[1];
             }
@@ -94,15 +96,21 @@ public class GraphWidgetLoader implements DataSetLdr
             QueryField idQueryField = null;
             if (config.getTypeClass().equals(model.getPackageName() + "."
                                             + config.getStartClass())) {
-                idQueryField = new QueryField(startClassQueryClass, "id");
-                cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN, bag.getOsb()));
+                idQueryField = new QueryField(startClass, "id");
+                if (!GraphWidgetActionType.EXPECTED.equals(action)) {
+                    cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN,
+                                                       bag.getOsb()));
+                }
             } else {
                 //update query adding the bag
                 QueryClass bagTypeQueryClass = new QueryClass(Class.forName(model.getPackageName()
                                                               + "." + bag.getType()));
                 query.addFrom(bagTypeQueryClass);
                 idQueryField = new QueryField(bagTypeQueryClass, "id");
-                cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN, bag.getOsb()));
+                if (!GraphWidgetActionType.EXPECTED.equals(action)) {
+                    cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN,
+                                                       bag.getOsb()));
+                }
 
                 QueryClass qc = null;
                 //we use bag path only if we don't start from Gene...
@@ -111,22 +119,22 @@ public class GraphWidgetLoader implements DataSetLdr
                 try {
                     QueryObjectReference qor = null;
                     if (bagPath.startsWith(config.getStartClass())) {
-                        qor = new QueryObjectReference(startClassQueryClass, path);
+                        qor = new QueryObjectReference(startClass, path);
                         qc = bagTypeQueryClass;
                     } else {
                         qor = new QueryObjectReference(bagTypeQueryClass, path);
-                        qc = startClassQueryClass;
+                        qc = startClass;
                     }
                     cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS, qc));
                 } catch (IllegalArgumentException e) {
                     // Not a reference - try collection instead
                     QueryCollectionReference qcr = null;
                     if (bagPath.startsWith(config.getStartClass())) {
-                        qcr = new QueryCollectionReference(startClassQueryClass, path);
+                        qcr = new QueryCollectionReference(startClass, path);
                         qc = bagTypeQueryClass;
                     } else {
                         qcr = new QueryCollectionReference(bagTypeQueryClass, path);
-                        qc = startClassQueryClass;
+                        qc = startClass;
                     }
                     cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, qc));
                 }
@@ -135,12 +143,12 @@ public class GraphWidgetLoader implements DataSetLdr
             //add constraints not processed before
             for (PathConstraint pc : pathConstraintsProcessed.keySet()) {
                 if (!pathConstraintsProcessed.get(pc)) {
-                    addConstraint(pc, query, startClassQueryClass);
+                    addConstraint(pc, query, startClass);
                 }
             }
 
             QueryFunction qfCount = new QueryFunction();
-            if (!calcTotal) {
+            if (!GraphWidgetActionType.TOTAL.equals(action)) {
                 query.setDistinct(false);
                 query.addToSelect(idQueryField);
                 query.addToGroupBy(idQueryField);
@@ -150,11 +158,16 @@ public class GraphWidgetLoader implements DataSetLdr
                 mainQuery.addFrom(subQ);
                 QueryField qfSubCategoryPath = new QueryField(subQ, qfCategoryPath);
                 mainQuery.addToSelect(qfSubCategoryPath);
-                QueryField qfSubSeriesPath = new QueryField(subQ, qfSeriesPath);
-                mainQuery.addToSelect(qfSubSeriesPath);
+                QueryField qfSubSeriesPath = null;
+                if (qfSeriesPath != null) {
+                    qfSubSeriesPath = new QueryField(subQ, qfSeriesPath);
+                    mainQuery.addToSelect(qfSubSeriesPath);
+                }
                 mainQuery.addToSelect(qfCount);
                 mainQuery.addToGroupBy(qfSubCategoryPath);
-                mainQuery.addToGroupBy(qfSubSeriesPath);
+                if (qfSeriesPath != null) {
+                    mainQuery.addToGroupBy(qfSubSeriesPath);
+                }
                 return mainQuery;
             } else {
                 Query subQ = query;
@@ -192,7 +205,8 @@ public class GraphWidgetLoader implements DataSetLdr
             query.addToGroupBy(qfCategoryPath);
             query.addToOrderBy(qfCategoryPath);
         }
-        if (qfSeriesPath == null) {
+
+        if (qfSeriesPath == null && !config.isActualExpectedCriteria()) {
             if (seriesPath.contains(".")) {
                 qfSeriesPath = updateQuery(model, query, startQueryClass, seriesPath)[0];
             } else {
@@ -224,21 +238,7 @@ public class GraphWidgetLoader implements DataSetLdr
                 query.addToOrderBy(qf);
                 queryFields[0] = qf;
             } else {
-                try {
-                    QueryObjectReference qor = new QueryObjectReference(qc, paths[i]);
-                    qc = new QueryClass(qor.getType());
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS,
-                                qc));
-                } catch (IllegalArgumentException e) {
-                    // Not a reference - try collection instead
-                    QueryCollectionReference qcr = new QueryCollectionReference(qc,
-                            paths[i]);
-                    qc = new QueryClass(TypeUtil.getElementType(qc.getType(), paths[i]));
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
-                                qc));
-                }
+                qc = addReference(query, qc, paths[i]);
             }
             if (i == 0) {
                 //check if there is series path
@@ -270,11 +270,18 @@ public class GraphWidgetLoader implements DataSetLdr
 
     private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
         QueryField qfConstraint = null;
-        //QueryClass qcConstraint = null;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
         String[] pathsConstraint = pc.getPath().split("\\.");
-        int limit = (qc == startClassQueryClass) ? 0 : 1;
-        QueryValue queryValue = buildQueryValue(pc);
+        int limit = (qc == startClass) ? 0 : 1;
+        boolean isFilterConstraint = WidgetConfigUtil.isFilterConstraint(config, pc);
+        QueryValue queryValue = null;
+        if (!isFilterConstraint) {
+            queryValue = buildQueryValue(pc);
+        }
+        if (isFilterConstraint && !"All".equalsIgnoreCase(filter)) {
+            queryValue = new QueryValue(filter);
+        }
+
         for (int index = 0; index < pathsConstraint.length - limit; index++) {
             if (index == pathsConstraint.length - 1 - limit) {
                 qfConstraint = new QueryField(qc, pathsConstraint[index + limit]);
@@ -284,82 +291,11 @@ public class GraphWidgetLoader implements DataSetLdr
                 }
                 pathConstraintsProcessed.put(pc, true);
             } else {
-                try {
-                    QueryObjectReference qor = new QueryObjectReference(qc,
-                                               pathsConstraint[index + limit]);
-                    qc = new QueryClass(qor.getType());
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qor,
-                                     ConstraintOp.CONTAINS, qc));
-                    pathConstraintsProcessed.put(pc, true);
-                } catch (IllegalArgumentException e) {
-                    // Not a reference - try collection instead
-                    QueryCollectionReference qcr =
-                        new QueryCollectionReference(qc,
-                            pathsConstraint[index + limit]);
-                    qc = new QueryClass(TypeUtil.getElementType(
-                        qc.getType(), pathsConstraint[index + limit]));
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qcr,
-                        ConstraintOp.CONTAINS, qc));
-                    pathConstraintsProcessed.put(pc, true);
-                }
+                qc = addReference(query, qc, pathsConstraint[index + limit]);
+                pathConstraintsProcessed.put(pc, true);
             }
         }
     }
-
-    private QueryValue buildQueryValue(PathConstraint pc) {
-        String value = PathConstraint.getValue(pc);
-        QueryValue queryValue = null;
-        if ("true".equals(value)) {
-            queryValue = new QueryValue(true);
-        } else if ("false".equals(value)) {
-            queryValue = new QueryValue(false);
-        } else {
-            queryValue = new QueryValue(value);
-        }
-        return queryValue;
-    }
-/*    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
-        QueryValue queryValue = null;
-        queryValue = buildQueryValue(pc);
-
-        QueryField qfConstraint = null;
-        ConstraintSet cs = (ConstraintSet) query.getConstraint();
-        String[] pathsConstraint = pc.getPath().split("\\.");
-
-        for (int index = 0; index < pathsConstraint.length; index++) {
-            if (index == pathsConstraint.length - 1) {
-                if (index == 0) {
-                    qfConstraint = new QueryField(qc,
-                        pathsConstraint[index]);
-                    if (queryValue != null) {
-                       cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
-                                                          queryValue));
-                    }
-                }
-            } else {
-                try {
-                    QueryObjectReference qor = new QueryObjectReference(qc,
-                                               pathsConstraint[index]);
-                    qc = new QueryClass(qor.getType());
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qor,
-                                     ConstraintOp.CONTAINS, qc));
-                } catch (IllegalArgumentException e) {
-                    // Not a reference - try collection instead
-                    QueryCollectionReference qcr =
-                        new QueryCollectionReference(qc,
-                            pathsConstraint[index]);
-                    qc = new QueryClass(TypeUtil.getElementType(
-                        qc.getType(), pathsConstraint[index]));
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qcr,
-                        ConstraintOp.CONTAINS, qc));
-                }
-            }
-        }
-    }*/
 
     private LinkedHashMap<String, long[]> buildCategorySeriesMap() {
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
@@ -423,7 +359,7 @@ public class GraphWidgetLoader implements DataSetLdr
     }
 
     private void calcTotal() {
-        Results res = os.execute(createQuery(true));
+        Results res = os.execute(createQuery(GraphWidgetActionType.TOTAL));
         Iterator<?> iter = res.iterator();
         while (iter.hasNext()) {
             ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
@@ -447,16 +383,7 @@ public class GraphWidgetLoader implements DataSetLdr
     }
 
     public PathQuery createPathQuery() {
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-        String[] views = config.getViews().split("\\s*,\\s*");
-        String prefix = config.getStartClass() + ".";
-        for (String view : views) {
-            if (!view.startsWith(prefix)) {
-                view = prefix + view;
-            }
-            q.addView(view);
-        }
+        PathQuery q = createPathQueryView(os, config);
 
         // bag constraint
         if (config.isBagPathSet()) {
@@ -465,6 +392,7 @@ public class GraphWidgetLoader implements DataSetLdr
             q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         }
 
+        String prefix = config.getStartClass() + ".";
         //category constraint
         q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
         //series constraint
@@ -473,4 +401,54 @@ public class GraphWidgetLoader implements DataSetLdr
         return q;
     }
 
+    private int addExpected(HashMap<String, long[]> resultsTable) {
+        // get counts of gene in database for gene
+        Query q = createQuery(GraphWidgetActionType.EXPECTED);
+        if (q == null) {
+            return 0;
+        }
+        Results res = os.execute(q);
+        Iterator iter = res.iterator();
+        int grandTotal = 0;
+
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+
+            String chromosome = (String) resRow.get(0);         // chromosome
+            Long geneCount = (java.lang.Long) resRow.get(1);    // genecount
+
+            // record total number of genes for this chromosome
+            (resultsTable.get(chromosome))[2] = geneCount.intValue();
+            // increase total amount of genes with chromosomes
+            grandTotal += geneCount.intValue();
+        }
+        return grandTotal;
+    }
+
+    private int addActual(HashMap<String, long[]> resultsTable) {
+        // query for chromosome, gene.count for genes in list
+        Query q = createQuery(GraphWidgetActionType.ACTUAL);
+        if (q == null) {
+            return 0;
+        }
+        results = os.execute(q, 50000, true, true, true);
+
+        // find out how many genes in the bag have a chromosome location, use this
+        // to work out the expected number for each chromosome. This is a hack to
+        // deal with the proportion of genes not assigned to a chromosome, it would
+        // be easier of they were located on an 'unknown' chromosome.
+        int totalInBagWithLocation = 0;
+
+        Iterator iter = results.iterator();
+        while (iter.hasNext()) {
+            ResultsRow resRow = (ResultsRow) iter.next();
+            String chromosome = (String) resRow.get(0);
+            Long geneCount = (java.lang.Long) resRow.get(1);
+            // set the gene.count for genes in this bag with this chromosome
+            (resultsTable.get(chromosome))[0] = geneCount.intValue();
+            // increase total
+            totalInBagWithLocation += geneCount.intValue();
+        }
+        return totalInBagWithLocation;
+    }
 }
