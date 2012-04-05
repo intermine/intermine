@@ -55,6 +55,7 @@ public class Model
     private final ClassDescriptor rootCld;
     private List<ClassDescriptor> topDownOrderClasses = null;
     private List<ClassDescriptor> bottomUpOrderClasses = null;
+    private List<String> problems = new ArrayList<String>();
 
     private boolean generatedClassesAvailable = true;
 
@@ -553,5 +554,30 @@ public class Model
         } catch (ClassNotFoundException ex) {
             return false;
         }
+    }
+
+    /**
+     * Add a problem to the model that doesn't prevent it from being created for backwards
+     * compatibility but should be checked when creating a new model.
+     * @param problem a description of the problem
+     */
+    protected void addProblem(String problem) {
+        problems.add(problem);
+    }
+
+    /**
+     * Return a list of problems with the model or an empty list.
+     * @return descriptions of problems in the model or an empty list.
+     */
+    public List<String> getProblems() {
+        return problems;
+    }
+
+    /**
+     * Return true if there are problems with the model despite it's successful creation.
+     * @return true if there are problems
+     */
+    public boolean hasProblems() {
+        return !problems.isEmpty();
     }
 }

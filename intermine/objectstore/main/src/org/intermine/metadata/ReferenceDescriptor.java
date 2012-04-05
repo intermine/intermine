@@ -119,15 +119,20 @@ public class ReferenceDescriptor extends FieldDescriptor
                         + " while processing: " + getClassDescriptor().getName() + "." + getName());
             }
             // Reverse references need to point to one another and have correct types
+            // NOTE these checks were added when models already exist that fail them, so we can't
+            // throw a MetaDataException, instead add problems to the model that are checked by
+            // the ModelMerger when creating new models.
             if (reverseRefDesc.getReverseReferenceFieldName() != null) {
                 if (!reverseRefDesc.getReverseReferenceFieldName().equals(this.name)) {
-                    throw new MetaDataException("Reverse reference names do not match: "
+                    modelSet = true;
+                    throw new NonFatalMetaDataException("Reverse reference names do not match: "
                             + reverseRefDesc.getReverseReferenceFieldName() + " and " + this.name
                             + " (" + this.cld.getName() + ": " + this.toString() + ", "
                             + referencedType + ": " + reverseRefDesc.toString() + ")");
                 }
                 if (!reverseRefDesc.referencedType.equals(this.cld.getName())) {
-                    throw new MetaDataException("Reverse reference types do not match: "
+                    modelSet = true;
+                    throw new NonFatalMetaDataException("Reverse reference types do not match: "
                             + this.cld.getName() + ": " + this.toString() + ", "
                             + referencedType + ": " + reverseRefDesc.toString());
                 }

@@ -92,6 +92,10 @@ public final class ModelMerger
         try {
             Model newModel = new Model(original.getName(), original.getPackageName(),
                     new HashSet<ClassDescriptor>(newClasses.values()));
+            if (newModel.hasProblems()) {
+                throw new ModelMergerException("There were problems merging the model: "
+                        + newModel.getProblems());
+            }
             return newModel;
 
         } catch (MetaDataException err) {
