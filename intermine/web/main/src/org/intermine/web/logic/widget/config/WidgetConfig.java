@@ -13,14 +13,27 @@ package org.intermine.web.logic.widget.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.ConstraintSet;
+import org.intermine.objectstore.query.ContainsConstraint;
+import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryClass;
+import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.Results;
+import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.Widget;
 
 
@@ -90,11 +103,81 @@ public abstract class WidgetConfig
     }
 
     /**
-     * @return the filters
+     * @return the filters as set in the config file
      */
     public String getFilters() {
         return filters;
     }
+
+    /**
+     * @return the filter values
+     */
+    public String getFiltersValues(ObjectStore os, InterMineBag bag) {
+        if (filters == null) {
+            return null;
+        }
+        if (!filters.contains("[list]")) {
+            return filters;
+        } else {
+            String filterPath = filters.substring(0, filters.indexOf("=")).trim();
+            Query q = new Query();
+            ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+            q.setConstraint(cs);
+
+            Model model = os.getModel();
+            QueryClass startClassQueryClass;
+            try {
+                startClassQueryClass = new QueryClass(Class.forName(model.getPackageName()
+                    + "." + startClass));
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("Class not found " + bag.getType(), e);
+            }
+            q.addFrom(startClassQueryClass);
+
+            QueryField qfFilter;
+            QueryClass qc = startClassQueryClass;
+            String[] paths = filterPath.split("\\.");
+            for (int i = 0; i < paths.length; i++) {
+                if (i == paths.length - 1) {
+                    qfFilter = new QueryField(qc, paths[i]);
+                    q.addToSelect(qfFilter);
+                    q.addToOrderBy(qfFilter);
+                } else {
+                    try {
+                        QueryObjectReference qor = new QueryObjectReference(qc, paths[i]);
+                        qc = new QueryClass(qor.getType());
+                        q.addFrom(qc);
+                        cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS,
+                                    qc));
+                    } catch (IllegalArgumentException e) {
+                        // Not a reference - try collection instead
+                        QueryCollectionReference qcr = new QueryCollectionReference(qc,
+                                paths[i]);
+                        qc = new QueryClass(TypeUtil.getElementType(qc.getType(), paths[i]));
+                        q.addFrom(qc);
+                        cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
+                                    qc));
+                    }
+                }
+            }
+            QueryField qfGeneId = new QueryField(startClassQueryClass, "id");
+            BagConstraint bc = new BagConstraint(qfGeneId, ConstraintOp.IN, bag.getOsb());
+            cs.addConstraint(bc);
+
+            Results r = os.execute(q);
+            Iterator<ResultsRow> it = (Iterator) r.iterator();
+            StringBuffer filterValuesFromDB = new StringBuffer();
+            while (it.hasNext()) {
+                ResultsRow rr = it.next();
+                Object org =  rr.get(0);
+                if (org != null) {
+                    filterValuesFromDB.append(org.toString() + ",");
+                }
+            }
+            return filterValuesFromDB.substring(0, filterValuesFromDB.length() - 1);
+        }
+    }
+
 
     /**
      * @param filters the filters to set

@@ -82,13 +82,13 @@ public class EnrichmentWidgetResultService extends WidgetService
         //filters
         String filterSelectedValue = input.getExtraAttributes().get(0);
         if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
-            String filters = widgetConfig.getFilters();
+            String filters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
             if (filters != null && !"".equals(filters)) {
                 filterSelectedValue = filters.split("\\,")[0];
                 input.getExtraAttributes().set(0, filterSelectedValue);
             }
         }
-        addOutputFilter(widgetConfig, filterSelectedValue);
+        addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
         EnrichmentWidget widget = null;
         try {
