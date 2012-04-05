@@ -140,11 +140,9 @@ public class ReferenceDescriptorTest extends TestCase
         Set refs2 = new HashSet(Arrays.asList(new ReferenceDescriptor[] {rfd2}));
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
-        try {
-            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
-            fail("Expected a MetaDataException to be thrown");
-        } catch (MetaDataException e) {
-        }
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        // this no longer throws an exception , instead creates the model but adds a problem
+        assertEquals(1, model.getProblems().size());
     }
 
     // test reverse reference points to an attribute
@@ -177,11 +175,9 @@ public class ReferenceDescriptorTest extends TestCase
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
         ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", null, false, new HashSet(), refs3, new HashSet());
-        try {
-            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
-            fail("Expected a MetaDataException to be thrown");
-        } catch (MetaDataException e) {
-        }
+
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        assertEquals(1, model.getProblems().size());
     }
 
     public void testRelationTypeOneToOne() throws Exception {
