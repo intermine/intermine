@@ -9,12 +9,9 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -33,16 +30,11 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
 {
-    private ObjectStore os;
-    private InterMineBag bag;
     private EnrichmentWidgetConfig config;
-    private String filter;
-    private QueryClass startClass;
-    private Map<PathConstraint, Boolean> pathConstraintsProcessed =
-        new HashMap<PathConstraint, Boolean>();
     private String action;
 
     public EnrichmentWidgetImplLdr(InterMineBag bag, ObjectStore os, EnrichmentWidgetConfig config,
@@ -171,10 +163,11 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                     enrichmentQueryFields[1] = qf;
                 }
             } else {
-                String path = paths[i];
+                qc = addReference(query, qc, paths[i]);
+/*                String path = paths[i];
                 String type = "";
                 boolean useSubClass = false;
-                if (isSubClass(path)) {
+                if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), path)) {
                     useSubClass = true;
                     type = path.substring(path.indexOf("[") + 1, path.indexOf("]"));
                     path = path.substring(0, path.indexOf("["));
@@ -211,7 +204,7 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                     query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
                                 qc));
-                }
+                }*/
                 if (i == 0) {
                 //check if there are any constraints, not yet processed,
                 //starting with the same queryClass qc
@@ -230,8 +223,8 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
     }
 
     private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
-        boolean isListConstraint = isListConstraint(pc);
-        boolean isFilterConstraint = isFilterConstraint(pc);
+        boolean isListConstraint = WidgetConfigUtil.isListConstraint(pc);
+        boolean isFilterConstraint = WidgetConfigUtil.isFilterConstraint(config, pc);
         QueryValue queryValue = null;
         if (!isFilterConstraint && !isListConstraint) {
             queryValue = buildQueryValue(pc);
@@ -311,56 +304,8 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         }
     }
 
-    private boolean isSubClass(String path) {
-        if (path.contains("[")) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isListConstraint(PathConstraint pc) {
-        String value = PathConstraint.getValue(pc);
-        value = value.replace(" ", "");
-        if ("[list]".equals(value)) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isFilterConstraint(PathConstraint pc) {
-        String value = PathConstraint.getValue(pc);
-        value = value.replace(" ", "");
-        if (value.equals("[" + config.getFilterLabel() + "]")) {
-            return true;
-        }
-        return false;
-    }
-
-    private QueryValue buildQueryValue(PathConstraint pc) {
-        String value = PathConstraint.getValue(pc);
-        QueryValue queryValue = null;
-        if ("true".equals(value)) {
-            queryValue = new QueryValue(true);
-        } else if ("false".equals(value)) {
-            queryValue = new QueryValue(false);
-        } else {
-            queryValue = new QueryValue(value);
-        }
-        return queryValue;
-    }
-
     public PathQuery createPathQuery() {
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-        String[] views = config.getViews().split("\\s*,\\s*");
-        String prefix = config.getStartClass() + ".";
-        for (String view : views) {
-            if (!view.startsWith(prefix)) {
-                view = prefix + view;
-            }
-            q.addView(view);
-        }
-
+        PathQuery q = createPathQueryView(os, config);
         // bag constraint
         q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         return q;

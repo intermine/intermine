@@ -36,21 +36,21 @@ public class GraphWidget extends Widget
     private GraphWidgetLoader grapgWidgetLdr;
     private InterMineBag bag;
     private ObjectStore os;
-    private String selectedExtraAttribute;
+    private String filter;
 
 
     /**
      * @param config config for widget
      * @param interMineBag bag for widget
      * @param os objectstore
-     * @param selectedExtraAttribute extra attribute
+     * @param filter filter
      */
     public GraphWidget(GraphWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-                       String selectedExtraAttribute) {
+                       String filter) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
-        this.selectedExtraAttribute = selectedExtraAttribute;
+        this.filter = filter;
         validateBagType();
         process();
     }
@@ -77,7 +77,7 @@ public class GraphWidget extends Widget
      */
     @Override
     public void process() {
-        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config);
+        grapgWidgetLdr = new GraphWidgetLoader(bag, os, (GraphWidgetConfig) config, filter);
         if (grapgWidgetLdr == null || grapgWidgetLdr.getResults() == null) {
             LOG.warn("No data found for graph widget");
             return;
