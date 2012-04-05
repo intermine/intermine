@@ -75,7 +75,6 @@ public class TemplateQueryBindingTest extends TestCase
         companyInBag.addView("Company");
         companyInBag.addConstraint(new PathConstraintBag("Company", ConstraintOp.IN, "bag1"));
         // FIXME see #2860
-//        t = new TemplateQuery("companyInBag", "List --> Company", "Côte d'Ivoire", companyInBag);
         t = new TemplateQuery("companyInBag", "List --> Company", "Cote d'Ivoire", companyInBag);
         expected.put("companyInBag", t);
 
