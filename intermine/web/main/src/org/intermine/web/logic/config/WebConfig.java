@@ -473,7 +473,7 @@ public class WebConfig
                 validatePath(model, widget.getStartClass(), categoryPath, "categoryPath", widgetId,
                             validationMessage);
                 String seriesPath = ((GraphWidgetConfig) widget).getSeriesPath();
-                if (!"".equals(seriesPath)) {
+                if (!"".equals(seriesPath) && !"ActualExpectedCriteria".equals(seriesPath)) {
                     validatePath(model, widget.getStartClass(), seriesPath, "seriesPath", widgetId,
                             validationMessage);
                 }
