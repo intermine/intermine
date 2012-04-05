@@ -769,7 +769,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " WHERE vf.seq_region_id = sr.seq_region_id"
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
-            + " AND vf.variation_feature_id = 53025155"
             + " ORDER BY vf.variation_id";
 
         LOG.warn(query);
