@@ -69,18 +69,17 @@ public class GraphService extends WidgetService
         //filters
         String filterSelectedValue = input.filter;
         if (filterSelectedValue == null || "".equals(filterSelectedValue)) {
-            String filters = widgetConfig.getFilters();
+            String filters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
             if (filters != null && !"".equals(filters)) {
                 filterSelectedValue = filters.split("\\,")[0];
-                input.filter = filterSelectedValue;
             }
         }
-        addOutputFilter(widgetConfig, filterSelectedValue);
+        addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
         GraphWidget widget = null;
         try {
             widget = (GraphWidget) widgetConfig.getWidget(imBag,
-                    im.getObjectStore(), Arrays.asList(input.filter));
+                    im.getObjectStore(), Arrays.asList(filterSelectedValue));
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find a graph widget called \""
                     + input.widget + "\"", e);
