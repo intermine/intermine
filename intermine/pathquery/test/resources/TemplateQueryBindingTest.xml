@@ -8,7 +8,7 @@
             <constraint path="Employee.department.manager.age" op=">" value="10"/>
         </query>
     </template>
-    <template name="companyInBag" title="List --&gt; Company" longDescription="" comment="Côte d'Ivoire">
+    <template name="companyInBag" title="List --&gt; Company" longDescription="" comment="Cote d'Ivoire">
         <query name="companyInBag" model="testmodel" view="Company">
             <constraint path="Company" op="IN" value="bag1"/>
         </query>
