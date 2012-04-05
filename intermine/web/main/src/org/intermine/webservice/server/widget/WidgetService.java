@@ -55,7 +55,8 @@ public abstract class WidgetService extends JSONService
         addOutputInfo("description", config.getDescription());
     }
 
-    protected void addOutputFilter(WidgetConfig widgetConfig, String filterSelectedValue, InterMineBag imBag) {
+    protected void addOutputFilter(WidgetConfig widgetConfig, String filterSelectedValue,
+        InterMineBag imBag) {
         String filterLabel = widgetConfig.getFilterLabel();
         if (filterLabel != null && !"".equals(filterLabel)) {
             addOutputInfo("filterLabel", filterLabel);
