@@ -15,6 +15,11 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/resultstables.css'/>" />
 
+<!-- TODO!!! - point at something that is not a squirrel!! -->
+<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/bootstrap.css"></link>
+<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/tables.css"></link>
+<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/flymine.css"></link>
+
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
 String pageName = (String) request.getAttribute("pageName");
@@ -94,7 +99,7 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
   </script>
 
   <%-- this has to live after jQuery.  do not move --%>
-  <c:if test="${pageName != 'report' && pageName != 'mymine' && pageName != 'bagDetails'}">
+  <c:if test="${pageName != 'report' && pageName != 'mymine' && pageName != 'bagDetails' && pageName != 'results'}">
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>
