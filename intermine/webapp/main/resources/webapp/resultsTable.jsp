@@ -9,43 +9,42 @@
 
 <html:xhtml/>
 
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/bootstrap.css"></link>
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/lib/css/cupertino/jquery-ui-1.8.18.custom.css"></link>
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/lib/google-code-prettify/prettify.css"></link>
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/tables.css"></link>
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/flymine.css"></link>
+<c:set var="jsLib" value="${WEB_PROPERTIES['ws.imtables.provider']}"/>
 
-<script src="http://squirrel/imtables/lib/underscore-min.js"></script>
-<script src="http://squirrel/imtables/lib/backbone.js"></script>
-<script src="http://squirrel/imtables/lib/jquery-ui-1.8.18.custom.min.js"></script>
-<script src="http://squirrel/imtables/lib/DataTables-1.9.0/media/js/jquery.dataTables.js"></script>
-<script src="http://squirrel/imtables/lib/paging.js"></script>
-<script src="http://squirrel/imtables/lib/google-code-prettify/prettify.js"></script>
-<script src="http://squirrel/imtables/lib/bootstrap-tab.js"></script>
-<script src="http://squirrel/imtables/lib/bootstrap-button.js"></script>
-<script src="http://squirrel/imtables/lib/bootstrap-typeahead.js"></script>
-<script src="http://squirrel/imtables/lib/bootstrap-tooltip.js"></script>
-<script src="http://squirrel/imtables/lib/bootstrap-dropdown.js"></script>
-<script src="http://squirrel/imtables/lib/bootstrap-modal.js"></script>
-<script src="http://squirrel/imtables/lib/imjs/src/model.js"></script>
-<script src="http://squirrel/imtables/lib/imjs/src/lists.js"></script>
-<script src="http://squirrel/imtables/lib/imjs/src/service.js"></script>
-<script src="http://squirrel/imtables/lib/imjs/src/query.js"></script>
-<script src="http://squirrel/imtables/js/imtables.js"></script>
+<link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/cupertino/jquery-ui-1.8.18.custom.css"></link>
+<link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
+
+<script src="${jsLib}/lib/underscore-min.js"></script>
+<script src="${jsLib}/lib/backbone.js"></script>
+<script src="${jsLib}/lib/jquery-ui-1.8.18.custom.min.js"></script>
+<script src="${jsLib}/lib/DataTables-1.9.0/media/js/jquery.dataTables.js"></script>
+<script src="${jsLib}/lib/paging.js"></script>
+<script src="${jsLib}/lib/google-code-prettify/prettify.js"></script>
+<script src="${jsLib}/lib/bootstrap-tab.js"></script>
+<script src="${jsLib}/lib/bootstrap-button.js"></script>
+<script src="${jsLib}/lib/bootstrap-typeahead.js"></script>
+<script src="${jsLib}/lib/bootstrap-tooltip.js"></script>
+<script src="${jsLib}/lib/bootstrap-dropdown.js"></script>
+<script src="${jsLib}/lib/bootstrap-modal.js"></script>
+<script src="${jsLib}/lib/imjs/src/model.js"></script>
+<script src="${jsLib}/lib/imjs/src/lists.js"></script>
+<script src="${jsLib}/lib/imjs/src/service.js"></script>
+<script src="${jsLib}/lib/imjs/src/query.js"></script>
+<script src="${jsLib}/js/imtables.js"></script>
 
 <script>
-	var query = ${QUERY.json};
-	console.log(query);
-	var service = new intermine.Service({
-		"root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
-		"token": "${PROFILE.dayToken}"
-	});
+    var query = ${QUERY.json};
+    console.log(query);
+    var service = new intermine.Service({
+        "root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
+        "token": "${PROFILE.dayToken}"
+    });
 
-	jQuery(function() {
-		var view = new intermine.query.results.CompactView(service, query);
-		view.$el.appendTo('#table-container');
-		view.render();
-	});
+    jQuery(function() {
+        var view = new intermine.query.results.CompactView(service, query);
+        view.$el.appendTo('#table-container');
+        view.render();
+    });
 
 </script>
 
