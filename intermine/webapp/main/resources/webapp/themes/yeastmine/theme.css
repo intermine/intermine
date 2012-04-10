@@ -80,13 +80,13 @@ body.stretched #headercontainer {
 --------------------------*/
 
 #menucontainer { background:#696599; height:31px; width:992px !important; border:1px solid #696599; border-bottom:0;
-  color:#FFF !important; }
+  color:#FFF !important; position:relative; }
 #menucontainer a { color:#FFF !important; }
-#header img { display:none; }
-#header { background:url("yeast-logo.png") no-repeat 0 18px; height:90px; }
-#header h1 { display:none; }
-#header p { color:#1F1F20 !important; margin:44px 0 0 10px; }
-#header p#version { margin-left:285px; }
+
+#yeast-logo { background:url("yeast-logo.png") no-repeat top left; width:175px; height:27px; }
+#header h1, #header h1 a:link, #header h1 a:visited { margin-top:9px; }
+
+#header p { color:#1F1F20 !important; margin:32px 0 0 10px; }
 
 #menucontainer ul#nav li#mymine a span {
   background-image: url("homepage/person-ico.png");
@@ -139,15 +139,21 @@ ul#submenulist li.mymineapikeytabtitle a { color:#000; }
 #quickSearchInput { border:1px solid #696599; padding:3px; }
 div#quicksearch { color:#696599; }
 
-ul#loginbar { float:left; }
-ul#loginbar li { border:0; margin-top:2px; padding:0 20px; }
-ul#loginbar a { color:#FFF !important; font-size:15px; text-decoration:none; }
+ul#loginbar { position:absolute; top:-25px; right:0; text-align:right; }
+ul#loginbar li { border:0; margin-top:2px; padding:0 0 0 20px; }
+ul#loginbar a { text-decoration:none; color:#000 !important; }
 
 #submenufixed {
   color:#11728B; text-shadow:1px 1px #FFF; width:1002px;
 }
 
-#welcome-bochs a.button.gray span { color:#636362 !important; }
+/* welcome button */
+#welcome-bochs a.button.gray div { background:none; padding:0; }
+#welcome-bochs a.button.gray span { color:white !important; padding:2px 36px; line-height:25px;
+  height:auto; background:url("homepage/blue-btn.png") no-repeat scroll center bottom transparent; }
+
+/* query builder */
+.currentTitle, .viewTitle { background:#696599; border-color:#696599; }
 
 /* =MEGATILE SEARCH
 --------------------------*/
@@ -206,7 +212,7 @@ span.widget_tool_bar_button:hover, span.widget_tool_bar_button:visited:hover { b
     text-align: center; background-color: #D2CEBF;}
 
 .widget p {
-  font-size:10px;	}
+  font-size:10px; }
 
 .widget_slide {
   margin-top:10px; max-height:350px;
