@@ -84,8 +84,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * Set the organism to load
      * @param taxonId the organism to load
      */
-    public void setOrganism(String taxonId) {
-        this.taxonId = Integer.parseInt(taxonId);
+    public void setOrganism(Integer taxonId) {
+        this.taxonId = taxonId;
     }
 
     /**
@@ -121,7 +121,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         chrNames.add("Pt");
 
         for (String chrName : chrNames) {
-            process(connection, chrName);
+            LOG.info("Starting to process chromosome " + chrName);
+            ResultSet res = queryVariation(connection, chrName);
+            process(res, chrName);
             createSynonyms(connection, chrName);
         }
         storeFinalSnps();
@@ -149,10 +151,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     /**
      * {@inheritDoc}
      */
-    public void process(Connection connection, String chrName) throws Exception {
-        LOG.info("Starting to process chromosome " + chrName);
-
-        ResultSet res = queryVariation(connection, chrName);
+    public void process(ResultSet res, String chrName) throws Exception {
 
         int counter = 0;
         int snpCounter = 0;

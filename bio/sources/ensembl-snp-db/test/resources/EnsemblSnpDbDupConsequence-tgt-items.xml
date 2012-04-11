@@ -1,0 +1,98 @@
+<items>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Ensembl"/>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Ensembl SNP data"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="9_3" class="ValidationState">
+<attribute name="name" value="submitter"/>
+</item>
+<item id="9_6" class="ValidationState">
+<attribute name="name" value="1000Genome"/>
+</item>
+<item id="9_1" class="ValidationState">
+<attribute name="name" value="cluster"/>
+</item>
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="ValidationState">
+<attribute name="name" value="freq"/>
+</item>
+<item id="11_1" class="ConsequenceType">
+<attribute name="type" value="nc_transcript_variant"/>
+</item>
+<item id="8_1" class="Source">
+<attribute name="name" value="dbSNP"/>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="6_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_1" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000465814"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_5" class="ValidationState">
+<attribute name="name" value="hapmap"/>
+</item>
+<item id="7_2" class="SOTerm">
+<attribute name="name" value="transcript"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="Location">
+<attribute name="end" value="72433098"/>
+<attribute name="start" value="72433098"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="SNP">
+<attribute name="alleles" value="A/G/T/C"/>
+<attribute name="primaryIdentifier" value="rs1552224"/>
+<attribute name="type" value="snp"/>
+<attribute name="uniqueLocation" value="true"/>
+<reference name="chromosome" ref_id="6_1"/>
+<reference name="chromosomeLocation" ref_id="5_1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<reference name="source" ref_id="8_1"/>
+<collection name="consequences"><reference ref_id="10_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="validations"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/><reference ref_id="9_4"/><reference ref_id="9_5"/><reference ref_id="9_6"/></collection>
+</item>
+<item id="9_4" class="ValidationState">
+<attribute name="name" value="doublehit"/>
+</item>
+<item id="10_1" class="Consequence">
+<attribute name="description" value="nc_transcript_variant"/>
+<attribute name="peptideAlleles" value="NULL"/>
+<attribute name="polyphenPrediction" value="NULL"/>
+<attribute name="polyphenScore" value="NULL"/>
+<attribute name="siftPrediction" value="NULL"/>
+<attribute name="siftScore" value="NULL"/>
+<reference name="transcript" ref_id="12_1"/>
+<collection name="types"><reference ref_id="11_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="7_3" class="SOTerm">
+<attribute name="name" value="SNP"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>
