@@ -135,7 +135,7 @@ public class EnrichmentWidget extends Widget
     }
 
     private Map<String, List<String>> getTermsToIdsForExport(List<String> selectedIds) throws Exception {
-        EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
+        EnrichmentWidgetImplLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
 
         Query q = ldr.getExportQuery(selectedIds);
@@ -157,7 +157,7 @@ public class EnrichmentWidget extends Widget
     }
 
     private Map<String, List<Map<String, Object>>> getTermsToIds(List<String> selectedIds) throws Exception {
-        EnrichmentWidgetLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
+        EnrichmentWidgetImplLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
 
         Query q = ldr.getExportQuery(selectedIds);

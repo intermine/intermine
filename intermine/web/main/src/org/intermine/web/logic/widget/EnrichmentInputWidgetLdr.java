@@ -27,7 +27,7 @@ import org.intermine.util.CacheMap;
  */
 public class EnrichmentInputWidgetLdr implements EnrichmentInput
 {
-    private final EnrichmentWidgetLdr ldr;
+    private final EnrichmentWidgetImplLdr ldr;
     private final ObjectStore os;
     private Map<String, Integer> sampleCounts = null;
     private Map<String, Integer> populationCounts = null;
@@ -52,7 +52,7 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
      * @param os the ObjectStore to execute queries in
      * @param ldr queries to fetch data for a specific widget
      */
-    public EnrichmentInputWidgetLdr(ObjectStore os, EnrichmentWidgetLdr ldr) {
+    public EnrichmentInputWidgetLdr(ObjectStore os, EnrichmentWidgetImplLdr ldr) {
         this.os = os;
         this.ldr = ldr;
     }
