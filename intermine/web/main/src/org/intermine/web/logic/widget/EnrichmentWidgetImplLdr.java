@@ -27,22 +27,21 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
-public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
+public class EnrichmentWidgetImplLdr extends WidgetLdr
 {
     private EnrichmentWidgetConfig config;
     private String action;
 
     public EnrichmentWidgetImplLdr(InterMineBag bag, ObjectStore os, EnrichmentWidgetConfig config,
         String filter) {
-        this.bag = bag;
-        this.os = os;
+        super(bag, os, filter);
         this.config = config;
-        this.filter = filter;
         try {
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
                                         + config.getStartClass()));
@@ -51,6 +50,40 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         }
     }
 
+    /**
+     * Returns the relevant query.  this method is used for 6 widget queries.
+     *
+     * export query:
+     *
+     *      select identifier and term where key = what the user selected on the widget
+     *
+     * analysed query:
+     *
+     *      select object.id where object is used in query
+     *
+     *  the results of this query are used as a NOT_IN constraint in a pathquery.  the pathquery
+     *  is run when the user clicks on the 'not analysed' number on the widget.
+     *
+     * population query:
+     *
+     *     M = total annotated with this term in reference population
+     *
+     * annotated population query:
+     *
+     *     N = total annotated with any term in reference population
+     *
+     * sample query:
+     *
+     *     k = total annotated with this term in bag
+     *
+     * annotated sample query:
+     *
+     *     n = total annotated with any term in bag (used to be bag.count)
+     *
+     * @param keys the keys of the records to be exported
+     * @param action which query to be built.
+     * @return query to return the correct result set for this widget
+     */
     public Query getQuery(String action, List<String> keys) {
         this.action = action;
         Query query = new Query();
@@ -164,47 +197,6 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
                 }
             } else {
                 qc = addReference(query, qc, paths[i]);
-/*                String path = paths[i];
-                String type = "";
-                boolean useSubClass = false;
-                if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), path)) {
-                    useSubClass = true;
-                    type = path.substring(path.indexOf("[") + 1, path.indexOf("]"));
-                    path = path.substring(0, path.indexOf("["));
-                }
-                try {
-                    QueryObjectReference qor = new QueryObjectReference(qc, path);
-                    if (useSubClass) {
-                        try {
-                            qc = new QueryClass(Class.forName(os.getModel().getPackageName()
-                                                              + "." + type));
-                        } catch (ClassNotFoundException cnfe) {
-                            qc = new QueryClass(qor.getType());
-                        }
-                    } else {
-                        qc = new QueryClass(qor.getType());
-                    }
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qor, ConstraintOp.CONTAINS,
-                                qc));
-                } catch (IllegalArgumentException e) {
-                    // Not a reference - try collection instead
-                    QueryCollectionReference qcr = new QueryCollectionReference(qc,
-                            path);
-                    if (useSubClass) {
-                        try {
-                            qc = new QueryClass(Class.forName(os.getModel().getPackageName()
-                                                              + "." + type));
-                        } catch (ClassNotFoundException cnfe) {
-                            qc = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
-                        }
-                    } else {
-                        qc = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
-                    }
-                    query.addFrom(qc);
-                    cs.addConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS,
-                                qc));
-                }*/
                 if (i == 0) {
                 //check if there are any constraints, not yet processed,
                 //starting with the same queryClass qc
@@ -304,6 +296,39 @@ public class EnrichmentWidgetImplLdr extends EnrichmentWidgetLdr
         }
     }
 
+    /**
+     * @param calcTotal whether or not to calculate the total number of annotated objects in the
+     * sample
+     * @return the query representing the sample population (the list)
+     */
+    public Query getSampleQuery(boolean calcTotal) {
+        String actionLocal = calcTotal ? "sampleTotal" : "sample";
+        return getQuery(actionLocal, null);
+    }
+
+    /**
+     * @param calcTotal whether or not to calculate the total number of annotated objects in the
+     * database
+     * @return the query representing the entire population (all the items in the database)
+     */
+    public Query getPopulationQuery(boolean calcTotal) {
+        String actionLocal = calcTotal ? "populationTotal" : "population";
+        return getQuery(actionLocal, null);
+    }
+
+    /**
+     * @param keys the keys to the records to be exported
+     * @return the query representing the records to be exported
+     */
+    public Query getExportQuery(List<String> keys) {
+        return getQuery("export", keys);
+    }
+
+    /**
+     * Returns the pathquery based on the views set in config file and the bag constraint
+     * Executed when the user selects any item in the matches column in the enrichment widget.
+     * @return the query generated
+     */
     public PathQuery createPathQuery() {
         PathQuery q = createPathQueryView(os, config);
         // bag constraint
