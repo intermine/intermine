@@ -96,9 +96,12 @@ public class GraphService extends WidgetService
     @Override
     protected void addOutputConfig(WidgetConfig config) {
         super.addOutputConfig(config);
-        addOutputInfo("chartType", ((GraphWidgetConfig) config).getGraphType());
-        addOutputInfo("seriesValues", ((GraphWidgetConfig) config).getSeriesValues());
-        addOutputInfo("seriesLabels", ((GraphWidgetConfig) config).getSeriesLabels());
+        GraphWidgetConfig graphConfig = (GraphWidgetConfig) config;
+        addOutputInfo("chartType", graphConfig.getGraphType());
+        if (graphConfig.getSeriesValues() != null) {
+            addOutputInfo("seriesValues", graphConfig.getSeriesValues());
+        }
+        addOutputInfo("seriesLabels", graphConfig.getSeriesLabels());
     }
 
     protected WidgetResultProcessor getProcessor() {
