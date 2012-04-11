@@ -21,6 +21,7 @@
   <target name="-merge-models" if="doing.build.db">
     <merge-additions file="bio/test-all/dbmodel/build/model/so_additions.xml"/>
     <merge-additions file="bio/core/genomic_additions.xml"/>
+    <merge-additions file="bio/sources/ensembl-snp-db/ensembl-snp-db_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/sources/flymine/rnai/rnai_additions.xml"/>
     <merge-additions file="bio/sources/go/go_additions.xml"/>
