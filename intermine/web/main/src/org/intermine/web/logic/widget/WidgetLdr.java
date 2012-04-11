@@ -28,6 +28,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -40,6 +41,14 @@ public class WidgetLdr {
     protected Map<PathConstraint, Boolean> pathConstraintsProcessed =
         new HashMap<PathConstraint, Boolean>();
 
+    public WidgetLdr() {
+    }
+
+    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter) {
+        this.bag = bag;
+        this.os = os;
+        this.filter = filter;
+    }
     protected QueryValue buildQueryValue(PathConstraint pc) {
         String value = PathConstraint.getValue(pc);
         QueryValue queryValue = null;

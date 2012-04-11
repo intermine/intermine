@@ -36,6 +36,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
@@ -49,21 +50,23 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
 
     // TODO the parameters need to be updated
     public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config, String filter) {
-        this.bag = bag;
-        this.os = os;
+        super(bag, os, filter);
         this.config = config;
-        this.filter = filter;
 
-        LinkedHashMap<String, long[]> categorySeriesMap = null;
+        LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
         if (!config.isActualExpectedCriteria()) {
             Query q = createQuery(GraphWidgetActionType.ACTUAL);
             results = os.execute(q);
-            categorySeriesMap = buildCategorySeriesMap();
+            buildCategorySeriesMap(categorySeriesMap);
         } else {
+            //calculate for the bag
             int totalInBagWithLocation = addActual(categorySeriesMap);
-
-            // calculate chromsome, gene.count for genes in database
-            int totalInDBWithLocation = addExpected(categorySeriesMap);
+            Map<String, Long> categoryMapInDB = new HashMap<String, Long>();
+            // calculate for genes in database
+            int totalInDBWithLocation = addExpected(categoryMapInDB);
+            buildCategorySeriesMapForActualExpectedCriteria(categorySeriesMap, categoryMapInDB,
+                                                           totalInBagWithLocation, totalInDBWithLocation);
+            
         }
         //populate resultTable
         populateResultTable(categorySeriesMap);
@@ -297,8 +300,8 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         }
     }
 
-    private LinkedHashMap<String, long[]> buildCategorySeriesMap() {
-        LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
+    private void buildCategorySeriesMap(
+        HashMap<String, long[]> categorySeriesMap) {
         String[] seriesValue = config.getSeriesValues().split("\\,");
         for (Iterator<?> it = results.iterator(); it.hasNext();) {
             ResultsRow<?> row = (ResultsRow<?>) it.next();
@@ -325,7 +328,6 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
                 }
             }
         }
-        return categorySeriesMap;
     }
 
     private boolean isSeriesValue(String seriesValue, Object series) {
@@ -382,6 +384,11 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         return resultTable;
     }
 
+    /**
+     * Returns the pathquery based on the views set in config file and the bag constraint.
+     * Executed when the user selects any columns in the in the graph widget.
+     * @return the query generated
+     */
     public PathQuery createPathQuery() {
         PathQuery q = createPathQueryView(os, config);
 
@@ -401,7 +408,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         return q;
     }
 
-    private int addExpected(HashMap<String, long[]> resultsTable) {
+    private int addExpected(Map<String, Long> resultsTable) {
         // get counts of gene in database for gene
         Query q = createQuery(GraphWidgetActionType.EXPECTED);
         if (q == null) {
@@ -415,12 +422,11 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
             ResultsRow resRow = (ResultsRow) iter.next();
 
             String chromosome = (String) resRow.get(0);         // chromosome
-            Long geneCount = (java.lang.Long) resRow.get(1);    // genecount
+            long geneCount = (java.lang.Long) resRow.get(1);    // genecount
+            resultsTable.put(chromosome, geneCount);
 
-            // record total number of genes for this chromosome
-            (resultsTable.get(chromosome))[2] = geneCount.intValue();
             // increase total amount of genes with chromosomes
-            grandTotal += geneCount.intValue();
+            grandTotal += geneCount;
         }
         return grandTotal;
     }
@@ -443,12 +449,43 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         while (iter.hasNext()) {
             ResultsRow resRow = (ResultsRow) iter.next();
             String chromosome = (String) resRow.get(0);
-            Long geneCount = (java.lang.Long) resRow.get(1);
+            int geneCount = ((java.lang.Long) resRow.get(1)).intValue();
             // set the gene.count for genes in this bag with this chromosome
-            (resultsTable.get(chromosome))[0] = geneCount.intValue();
+            if (resultsTable.get(chromosome) == null) {
+                long[] counts = new long[2];
+                counts[0] = geneCount;
+                resultsTable.put(chromosome, counts);
+            } else {
+                resultsTable.get(chromosome)[0] = geneCount;
+            }
+
             // increase total
-            totalInBagWithLocation += geneCount.intValue();
+            totalInBagWithLocation += geneCount;
         }
         return totalInBagWithLocation;
+    }
+
+    private void buildCategorySeriesMapForActualExpectedCriteria(
+        HashMap<String, long[]> categorySeriesMap, Map<String, Long> categoryMapInDB,
+        int totalInBagWithLocation, int totalInDBWithLocation) {
+
+        for (String category : categoryMapInDB.keySet()) {
+            double expectedValue = 0;
+            double proportion = 0.0000000000;
+            double totalInDBWithChromosome = (categoryMapInDB.get(category));
+
+            if (totalInDBWithChromosome > 0) {
+                proportion = totalInDBWithChromosome / totalInDBWithLocation;
+            }
+            expectedValue = totalInBagWithLocation * proportion;
+            if (categorySeriesMap.get(category) != null) {
+                (categorySeriesMap.get(category))[1] = (int) Math.round(expectedValue);
+            } else {
+                long[] counts = new long[2];
+                counts[0] = 0;
+                counts[1] = (int) Math.round(expectedValue);
+                categorySeriesMap.put(category, counts);
+            }
+        }
     }
 }
