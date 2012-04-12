@@ -4,7 +4,7 @@ var o = {};
 var JST = {};
 JST["chart.extra.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="group" style="display:inline-block;margin-right:5px">\n    <label>'),b.push(d(this.label)),b.push('</label>\n    <select name="'),b.push(d(this.label)),b.push('" class="span3">\n        '),f=this.possible;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n            <option value="'),b.push(d(a)),b.push('" '),this.selected===a&&b.push(d('selected="selected"')),b.push(">\n                "),b.push(d(a)),b.push("\n            </option>\n        ");b.push("\n    </select>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["error.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-block">\n    <h4 class="alert-heading">'),b.push(d(this.title)),b.push(" for "),b.push(d(this.name)),b.push("</h4>\n    <p>"),b.push(this.text),b.push("</p>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["enrichment.matches.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="popover" style="position:absolute;top:5px;right:0;z-index:1;display:block">\n    <div class="popover-inner" style="width:300px;margin-left:-300px">\n        <a style="cursor:pointer;margin:2px 5px 0 0" class="close">×</a>\n        <h3 class="popover-title"></h3>\n        <div class="popover-content">\n            '),f=this.matches;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <a href="#" class="match">'),b.push(d(a.displayed)),b.push("</a>\n            ");b.push("\n        </div>\n    </div>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["enrichment.matches.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){var a,c,e,f;b.push('<div class="popover" style="position:absolute;top:5px;right:0;z-index:1;display:block">\n    <div class="popover-inner" style="width:300px;margin-left:-300px">\n        <a style="cursor:pointer;margin:2px 5px 0 0" class="close">×</a>\n        <h3 class="popover-title">'),b.push(d(this.description)),b.push('</h3>\n        <div class="popover-content">\n            <h4>'),b.push(d(this.matches.length)),b.push(" "),b.push(d(this.type)),this.matches.length!==0&&b.push(d("s")),b.push(":</h4>\n            "),f=this.matches.slice(0,this.limit+1||9e9);for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <a href="#" class="match">'),b.push(d(a.displayed)),b.push("</a>\n            ");b.push("\n        </div>\n    </div>\n</div>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.actions.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<a class="btn btn-mini '),this.disabled&&b.push("disabled"),b.push(' view">View</a>\n<a class="btn btn-mini '),this.disabled&&b.push("disabled"),b.push(' export">Export</a>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<td class="check"><input type="checkbox" '),b.push(d(this.row.selected?b.push('checked="checked"'):void 0)),b.push(' /></td>\n<td class="description">'),b.push(d(this.row.description)),b.push('</td>\n<td class="pValue">'),b.push(d(this.row["p-value"])),b.push('</td>\n<td class="matches">\n    <a class="count" style="cursor:pointer">'),b.push(d(this.row.matches.length)),b.push("</a>\n</td>")})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["noresults.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="alert alert-info">\n    <p>The Widget has no results.</p>\n</div>')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
@@ -165,6 +165,22 @@ type.isUndefined = (function(_super) {
 
 })(type.Root);
 
+/* Merge properties of 2 dictionaries.
+*/
+var merge;
+
+merge = function(child, parent) {
+  var key;
+  for (key in parent) {
+    if (!(child[key] != null)) {
+      if (Object.prototype.hasOwnProperty.call(parent, key)) {
+        child[key] = parent[key];
+      }
+    }
+  }
+  return child;
+};
+
 /* Pure JS based JS script, CSS loader.
 */
 var CSSLoader, JSLoader, Load, Loader,
@@ -289,22 +305,6 @@ Load = (function() {
   return Load;
 
 })();
-
-/* Merge properties of 2 dictionaries.
-*/
-var merge;
-
-merge = function(child, parent) {
-  var key;
-  for (key in parent) {
-    if (!(child[key] != null)) {
-      if (Object.prototype.hasOwnProperty.call(parent, key)) {
-        child[key] = parent[key];
-      }
-    }
-  }
-  return child;
-};
 
 /* Create file download with custom content.
 */
@@ -471,6 +471,7 @@ factory = function(Backbone) {
       if (!(this.matchesView != null)) {
         return $(this.el).find('td.matches a.count').after((this.matchesView = new EnrichmentMatchesView({
           "matches": this.model.get("matches"),
+          "description": this.model.get("description"),
           "template": this.template,
           "type": this.type,
           "callback": this.matchCb
@@ -503,6 +504,8 @@ factory = function(Backbone) {
       EnrichmentMatchesView.__super__.constructor.apply(this, arguments);
     }
   
+    EnrichmentMatchesView.prototype.limit = 2;
+  
     EnrichmentMatchesView.prototype.events = {
       "click a.match": "matchAction",
       "click a.close": "toggle"
@@ -523,7 +526,10 @@ factory = function(Backbone) {
         'position': 'relative'
       });
       $(this.el).html(this.template("enrichment.matches", {
-        "matches": this.collection.toJSON()
+        "description": this.description,
+        "type": this.type,
+        "matches": this.collection.toJSON(),
+        "limit": this.limit
       }));
       return this;
     };
