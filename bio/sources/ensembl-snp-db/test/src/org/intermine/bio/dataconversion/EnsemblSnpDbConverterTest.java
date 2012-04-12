@@ -81,8 +81,10 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
 //            readItemSet("EnsemblComparaConverterTest_tgt.xml");
 
         // There should be ONLY ONE consequence
-        assertEquals(readItemSet("EnsemblSnpDbDupConsequence-tgt-items.xml"),
-                itemWriter.getItems());
+//        assertEquals(readItemSet("EnsemblSnpDbDupConsequence-tgt-items.xml"),
+//                itemWriter.getItems());
+        int expected = 1;
+        assertEquals(expected, countItemByClass(itemWriter.getItems(), "Consequence"));
     }
 
     public void testDetermineType() throws Exception {
