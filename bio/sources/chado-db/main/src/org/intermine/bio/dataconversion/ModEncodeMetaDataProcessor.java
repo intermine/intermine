@@ -1472,7 +1472,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         res.close();
         LOG.info("created " + count + " experimental factors");
         LOG.info("PROCESS TIME experimental factors: " + (System.currentTimeMillis() - bT) + " ms");
-        LOG.info("EF Map 4141:" + submissionEFMap.get(363).efTypes + " experimental factors");
     }
 
     /**
@@ -2293,7 +2292,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             ArrayList<String> extraPropNames = new ArrayList<String>(exFactorNames);
             for (String exFactor : extraPropNames) {
                 List<Item> extraPropItems = new ArrayList<Item>();
-                LOG.info("PP??: " + exFactor);
                 extraPropItems.addAll(lookForAttributesInOtherWikiPages(dccId, "SubmissionProperty",
                         typeToProp, new String[] {exFactor}));
                 allPropertyItems.addAll(extraPropItems);
@@ -2938,9 +2936,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                             String unit = subProp.details.get("Unit").get(0);
                             value = value + " " + unit + (unit.endsWith("s") ? "" : "s");
                         }
-
-                        LOG.info("PP2 " + dccId + ": " + subProp.type
-                                + " - " + correctAttrValue(value));
 
                         items.add(createNonWikiSubmissionPropertyItem(dccId, clsName, subProp.type,
                                 correctAttrValue(value)));
