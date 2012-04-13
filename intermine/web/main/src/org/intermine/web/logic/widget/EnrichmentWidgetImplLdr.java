@@ -9,6 +9,7 @@ package org.intermine.web.logic.widget;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+import java.util.HashMap;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
@@ -23,11 +24,11 @@ import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
@@ -46,7 +47,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
                                         + config.getStartClass()));
         } catch (ClassNotFoundException e) {
-            return;
+            throw new IllegalArgumentException("Not found the class set in startClass for the"
+                    + " widget " + config.getId(), e);
         }
     }
 
@@ -86,30 +88,22 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      */
     public Query getQuery(String action, List<String> keys) {
         this.action = action;
+        queryClassInQuery = new HashMap<String, QueryClass>();
+        String key = generateKeyForQueryClassInQuery(startClass, null);
+        queryClassInQuery.put(key, startClass);
+
         Query query = new Query();
         ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
         query.setConstraint(cs);
         query.addFrom(startClass);
-        for (PathConstraint pathConstraint : config.getPathConstraints()) {
-            pathConstraintsProcessed.put(pathConstraint, false);
-        }
 
         QueryField qfEnrich = null;
         QueryField qfEnrichId = null;
-        if (config.getEnrich().contains(".")) {
-            QueryField[] enrichmentQueryFields =
-                createEnrichmentQueryFields(query);
-            qfEnrich = enrichmentQueryFields[0];
-            qfEnrichId = enrichmentQueryFields[1];
+        qfEnrich = createQueryFieldByPath(config.getEnrich(), query, false);
+        if (config.getEnrichIdentifier() != null) {
+            qfEnrichId = createQueryFieldByPath(config.getEnrichIdentifier(), query, false);
         } else {
-            qfEnrich = new QueryField(startClass, config.getEnrich());
-            String enrichIdentifier = config.getEnrichIdentifier();
-            if (enrichIdentifier != null && !"".equals(enrichIdentifier)
-                && !enrichIdentifier.equals(config.getEnrich())) {
-                qfEnrichId = new QueryField(startClass, enrichIdentifier);
-            } else {
-                qfEnrichId = qfEnrich;
-            }
+            qfEnrichId = qfEnrich;
         }
 
         if (keys != null) {
@@ -121,11 +115,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
         }
 
-        //add constraints not processed before
-        for (PathConstraint pc : pathConstraintsProcessed.keySet()) {
-            if (!pathConstraintsProcessed.get(pc)) {
-                addConstraint(pc, query, startClass);
-            }
+        for (PathConstraint pathConstraint : config.getPathConstraints()) {
+            addConstraint(pathConstraint, query);
         }
 
         query.setDistinct(true);
@@ -176,45 +167,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         return mainQuery;
     }
 
-    private QueryField[] createEnrichmentQueryFields(Query query) {
-        QueryField[] enrichmentQueryFields = new QueryField[2];
-        String enrichPath = config.getEnrich();
-        String enrichIdentifierPath = config.getEnrichIdentifier();
-        String[] paths = enrichPath.split("\\.");
-        QueryClass qc = startClass;
-        ConstraintSet cs = (ConstraintSet) query.getConstraint();
-        QueryField qf = null;
-        for (int i = 0; i < paths.length; i++) {
-            if (i == paths.length - 1) {
-                qf = new QueryField(qc, paths[i]);
-                enrichmentQueryFields[0] = qf;
-                if (enrichIdentifierPath != null && !"".equals(enrichIdentifierPath)
-                    && !enrichIdentifierPath.equals(enrichPath)) {
-                    String[] pathArray = enrichIdentifierPath.split("\\.");
-                    enrichmentQueryFields[1] = new QueryField(qc, pathArray[pathArray.length - 1]);
-                } else {
-                    enrichmentQueryFields[1] = qf;
-                }
-            } else {
-                qc = addReference(query, qc, paths[i]);
-                if (i == 0) {
-                //check if there are any constraints, not yet processed,
-                //starting with the same queryClass qc
-                    for (PathConstraint pc : config.getPathConstraints()) {
-                        if (!pathConstraintsProcessed.get(pc)) {
-                            String[] pathsConstraint = pc.getPath().split("\\.");
-                            if (pathsConstraint[0].equals(paths[0])) {
-                                addConstraint(pc, query, qc);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return enrichmentQueryFields;
-    }
-
-    private void addConstraint(PathConstraint pc, Query query, QueryClass qc) {
+    private void addConstraint(PathConstraint pc, Query query) {
         boolean isListConstraint = WidgetConfigUtil.isListConstraint(pc);
         boolean isFilterConstraint = WidgetConfigUtil.isFilterConstraint(config, pc);
         QueryValue queryValue = null;
@@ -225,25 +178,19 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             queryValue = new QueryValue(filter);
         }
 
+        QueryClass qc = startClass;
         QueryField qfConstraint = null;
         QueryClass qcConstraint = null;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
         String[] pathsConstraint = pc.getPath().split("\\.");
-        int limit = (qc == startClass) ? 0 : 1;
         //subQuery used only for population
         Query subQuery = new Query();
         ConstraintSet csSubQuery = new ConstraintSet(ConstraintOp.AND);
         subQuery.setConstraint(csSubQuery);
 
-        for (int index = 0; index < pathsConstraint.length - limit; index++) {
-            if (index == pathsConstraint.length - 1 - limit) {
-                if (index == 0) {
-                    qfConstraint = new QueryField(qc,
-                        pathsConstraint[index + limit]);
-                } else {
-                    qfConstraint = new QueryField(qcConstraint,
-                        pathsConstraint[index + limit]);
-                }
+        for (int index = 0; index < pathsConstraint.length; index++) {
+            if (index == pathsConstraint.length - 1) {
+                qfConstraint = new QueryField(qc, pathsConstraint[index]);
                 if (isListConstraint) {
                     if (action.startsWith("population")) {
                         subQuery.addToSelect(qfConstraint);
@@ -251,46 +198,53 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                         subQuery.addFrom(startClass);
                         subQuery.addFrom(qcConstraint);
                         QueryField qfStartClassId = new QueryField(startClass, "id");
-                        csSubQuery.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+                        csSubQuery.addConstraint(new BagConstraint(qfStartClassId,
+                                                 ConstraintOp.IN, bag.getOsb()));
                         QueryField outerQFConstraint = new QueryField(subQuery, qfConstraint);
-                        cs.addConstraint(new SimpleConstraint(qfConstraint, ConstraintOp.EQUALS, outerQFConstraint));
+                        cs.addConstraint(new SimpleConstraint(qfConstraint, ConstraintOp.EQUALS,
+                                                              outerQFConstraint));
                         query.addFrom(subQuery);
                     }
                 } else {
                     if (queryValue != null) {
-                        cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
+                        if (!"null".equalsIgnoreCase(queryValue.getValue().toString())) {
+                            cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
                                                               queryValue));
+                        } else {
+                            ConstraintOp op = (pc.getOp().equals(ConstraintOp.EQUALS))
+                                              ? ConstraintOp.IS_NULL
+                                              : ConstraintOp.IS_NOT_NULL;
+                            cs.addConstraint(new SimpleConstraint(qfConstraint, op));
+                        }
                     }
                 }
-                pathConstraintsProcessed.put(pc, true);
             } else {
+                QueryReference qr;
                 try {
-                    QueryObjectReference qor = new QueryObjectReference(qc,
-                                               pathsConstraint[index + limit]);
-                    qcConstraint = new QueryClass(qor.getType());
-                    query.addFrom(qcConstraint);
-                    cs.addConstraint(new ContainsConstraint(qor,
-                                     ConstraintOp.CONTAINS, qcConstraint));
-                    if (isListConstraint && action.startsWith("population")) {
-                        csSubQuery.addConstraint(new ContainsConstraint(qor,
-                                ConstraintOp.CONTAINS, qcConstraint));
-                    }
-                    pathConstraintsProcessed.put(pc, true);
+                    qr = new QueryObjectReference(qc,
+                                               pathsConstraint[index]);
+                    qcConstraint = new QueryClass(qr.getType());
                 } catch (IllegalArgumentException e) {
                     // Not a reference - try collection instead
-                    QueryCollectionReference qcr =
-                        new QueryCollectionReference(qc,
-                            pathsConstraint[index + 1]);
+                    qr = new QueryCollectionReference(qc, pathsConstraint[index]);
                     qcConstraint = new QueryClass(TypeUtil.getElementType(
-                        qc.getType(), pathsConstraint[index + limit]));
-                    query.addFrom(qcConstraint);
-                    cs.addConstraint(new ContainsConstraint(qcr,
-                        ConstraintOp.CONTAINS, qcConstraint));
+                        qc.getType(), pathsConstraint[index]));
+                }
+                if (addQueryClassInQuery(qcConstraint, qc)) {
+                    String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
+                    qc = qcConstraint;
+                    query.addFrom(qc);
+                    cs.addConstraint(new ContainsConstraint(qr,
+                            ConstraintOp.CONTAINS, qc));
                     if (isListConstraint && action.startsWith("population")) {
-                        csSubQuery.addConstraint(new ContainsConstraint(qcr,
-                                ConstraintOp.CONTAINS, qcConstraint));
+                        csSubQuery.addConstraint(new ContainsConstraint(qr,
+                               ConstraintOp.CONTAINS, qc));
                     }
-                    pathConstraintsProcessed.put(pc, true);
+                    queryClassInQuery.put(key, qc);
+                } else {
+                    //retrieve qc from queryClassInQuery map
+                    String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
+                    qc = queryClassInQuery.get(key);
                 }
             }
         }
