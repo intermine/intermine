@@ -841,7 +841,11 @@
                                  startClassDisplay="primaryIdentifier"
                                  enrich="goAnnotation.ontologyTerm.parents.name"
                                  enrichIdentifier="goAnnotation.ontologyTerm.parents.identifier"
-                                 constraints="organism.name=[list]"
+                                 constraints="goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
+                                              primaryIdentifier != null, goAnnotation.qualifier = null,
+                                              goAnnotation.ontologyTerm.parents.identifier != go:0008150,
+                                              goAnnotation.ontologyTerm.parents.identifier != go:0003674,
+                                              goAnnotation.ontologyTerm.parents.identifier != go:0005575"
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
