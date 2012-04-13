@@ -172,7 +172,7 @@ public class EnrichmentWidget extends Widget
             map.put("displayed", resRow.get(1).toString());
             map.put("id", resRow.get(2).toString());
             if (!termsToIds.containsKey(termId)) {
-                termsToIds.put(termId, new ArrayList<Map<String,Object>>());
+                termsToIds.put(termId, new ArrayList<Map<String, Object>>());
             }
             termsToIds.get(termId).add(map);
         }

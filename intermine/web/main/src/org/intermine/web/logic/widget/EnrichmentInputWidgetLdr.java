@@ -105,7 +105,6 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
 
                 // the number of times the item is applied in the sample, e.g. the number of
                 // companies that contain a department with this name
-                // TODO should check that casting from a long gives correct result
                 Integer count = ((Long) row.get(1)).intValue();
 
                 sampleCounts.put(identifier, count);
