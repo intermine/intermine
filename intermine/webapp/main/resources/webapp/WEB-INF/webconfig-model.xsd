@@ -110,13 +110,13 @@
         <xsd:attribute name="filterLabel" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="filters" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="typeClass" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="constraints" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="views" type="xsd:string"></xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="graphWidgetType">
         <xsd:complexContent>
             <xsd:extension base="widgetType">
+                <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="domainLabel" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="rangeLabel" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
@@ -133,6 +133,7 @@
     <xsd:complexType name="enrichmentWidgetType">
         <xsd:complexContent>
             <xsd:extension base="widgetType">
+                <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="label" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="externalLink" type="xsd:string"></xsd:attribute>
@@ -146,6 +147,8 @@
     <xsd:complexType name="bagTableWidgetType">
         <xsd:complexContent>
             <xsd:extension base="widgetType">
+                <xsd:attribute name="link" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="style" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="pathStrings" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="displayFields" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="exportField" type="xsd:string"></xsd:attribute>
