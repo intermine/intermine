@@ -1170,7 +1170,8 @@ factory = function(Backbone) {
         "wasSuccessful": type.isBoolean,
         "filters": type.isString,
         "filterLabel": type.isString,
-        "filterSelectedValue": type.isString
+        "filterSelectedValue": type.isString,
+        "externalLink": type.isString
       }
     };
   
