@@ -108,7 +108,10 @@ public class EnrichmentWidgetResultService extends WidgetService
     protected void addOutputConfig(WidgetConfig config) {
         super.addOutputConfig(config);
         addOutputInfo("label", ((EnrichmentWidgetConfig) config).getLabel());
-        addOutputInfo("externalLink", ((EnrichmentWidgetConfig) config).getExternalLink());
+        String externalLink = ((EnrichmentWidgetConfig) config).getExternalLink();
+        if (externalLink != null) {
+            addOutputInfo("externalLink", externalLink);
+        }
     }
 
     private void addOutputPathQuery(EnrichmentWidget widget, WidgetConfig config) {
