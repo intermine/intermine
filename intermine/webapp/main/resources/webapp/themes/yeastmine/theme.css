@@ -108,7 +108,7 @@ ul#nav { margin-left:-7px; }
 
 ul#nav a{ font-size:15px; text-decoration:none; color:#FFF; font-weight:bold; padding:0 20px; }
 
-ul#nav a:hover,ul#nav li#mymine a:hover{ color:#333; }
+ul#nav a:hover,ul#nav li#mymine a:hover{ color:#D2CEF7 !important; }
 
 ul#nav li#mymine a{ color:#FFF; }
 
@@ -260,7 +260,7 @@ table.dbsources td.leftcol {
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #DFDFDF; }
-  .keywordSearchResults .resultTableContainer table.dbsources th { background:#000; color:#FFF; font-size:13px; padding:2px 8px; }
+  .keywordSearchResults .resultTableContainer table.dbsources th { background:#d2cef7; color:#000; font-size:13px; padding:2px 8px; }
   .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#000; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
@@ -271,13 +271,17 @@ table.dbsources td.leftcol {
 .keywordSearchResults .resultTableContainer table.dbsources table.inner td { color:#000; }
 
 .keywordSearchResults .resultTableContainer table.dbsources div.objectKeys a,
-.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:14px; }
+.keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult a span.value { font-size:14px; color:#11728b !important; }
 
 div.keywordSearch div.examples h4 { color:#333; }
+
+div.keywordSearch div.form { background:#d2cef7; border:0; }
 
 /* keyword search results relevancy */
 div.resultTableContainer td.relevance div.full { color:#ff0000; }
 div.resultTableContainer td.relevance div.empty { color:#999999; }
+
+form#changeTableSizeForm { display:inline; }
 
 /* submenu */
 #submenu { color:#7A7A7A !important; }
@@ -312,11 +316,12 @@ ul#submenulist li div { border-left-color:#11728B; }
 
 /* regions */
 table#genomic-region-results-table th { background:#696599; }
-table#genomic-region-results-table tbody tr:nth-child(2n) td { background:#EEE; }
+table#genomic-region-results-table tbody tr:nth-child(2n) td { background:#EFEFEF; }
 table#genomic-region-results-table td { border-color:silver; }
 
 /* widgets */
-div.widgetcontainer div.widgetdataoverflow table tbody tr:nth-child(2n) td { background:#FAFAE6; }
+div.widgetcontainer div.widgetdataoverflow table tbody tr:nth-child(2n) td { background:#EFEFEF; }
+div.widgetdataoverflow thead th { background:#D2CEF7 !important; }
 
 /* bagUploadConfirm */
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#000; }
@@ -377,10 +382,10 @@ div.collection-table div.right a:hover,
 div.collection-table div.right a:visited { color:#000; }
 div.collection-table table { border-color:#F0F0F0; }
 div.collection-table thead th,
-div.collection-table thead td { background:#EBEBEB; border-color:#F0F0F0; }
+div.collection-table thead td { background:#D2CEF7; border-color:#F0F0F0; }
 div.collection-table table tbody tr td { border-top-color:silver; }
 div.collection-table table tbody tr:nth-child(2n) td,
-div.collection-table table tbody tr.odd td { background:#EEE; }
+div.collection-table table tbody tr.odd td { background:#EFEFEF; }
 div.collection-table table tbody tr.even td { background:#FFF; }
 div.collection-table table td.class { color:#886644; }
 div.collection-table table a,
