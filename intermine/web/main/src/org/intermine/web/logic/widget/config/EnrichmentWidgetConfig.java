@@ -30,6 +30,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     private String enrich;
     private String enrichIdentifier;
     private String startClassDisplay;
+    private String externalLink;
 
     /**
      * @return the label
@@ -105,6 +106,14 @@ public class EnrichmentWidgetConfig extends WidgetConfig
 
     public void setStartClassDisplay(String startClassDisplay) {
         this.startClassDisplay = startClassDisplay;
+    }
+
+    public String getExternalLink() {
+        return externalLink;
+    }
+
+    public void setExternalLink(String externalLink) {
+        this.externalLink = externalLink;
     }
 
     /**

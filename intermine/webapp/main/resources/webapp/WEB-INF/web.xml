@@ -613,6 +613,41 @@
     </metadata>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-list-table</servlet-name>
+    <servlet-class>org.intermine.webservice.server.widget.TableWidgetsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-list-table</servlet-name>
+    <url-pattern>/service/list/table/*</url-pattern>
+    <!-- Custom extensions that allow us to automatically generate documentation -->
+    <metadata>
+        <name>Table Widgets</name>
+        <minVersion>8</minVersion>
+        <methods>
+            <method authenticationRequired="true" function="get the data to produce a graph">GET</method>
+            <method authenticationRequired="true" function="get the data to produce a graph">POST</method>
+        </methods>
+        <params>
+            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
+            <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
+        </params>
+        <returns>
+            <format key="results">json</format>
+            <format>xml</format>
+        </returns>
+        <description>
+            This service returns data to produce a table representations
+            of the overview of data in a list.
+        </description>
+    </metadata>
+  </servlet-mapping>
+
    <!-- NEW IN VERSION 9 -->
 
   <servlet>
