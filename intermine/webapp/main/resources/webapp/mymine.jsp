@@ -25,6 +25,12 @@
   </tiles:insert>
   </c:when>
 
+  <%-- query history --%>
+  <c:when test="${subtabs[subtabName]  =='history'}">
+            <tiles:insert name="historyQueryView.jsp">
+              <tiles:put name="type" value="history"/>
+            </tiles:insert>
+  </c:when>
 
     <%-- saved queries --%>
     <c:when test="${subtabs[subtabName]  =='saved'}">
