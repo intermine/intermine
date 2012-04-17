@@ -1076,7 +1076,7 @@ public class AjaxServices
                     TableWidgetConfig tableWidgetConfig = (TableWidgetConfig) widgetConfig;
                     tableWidgetConfig.setClassKeys(classKeys);
                     tableWidgetConfig.setWebConfig(webConfig);
-                    TableWidget tableWidget = new TableWidget(tableWidgetConfig, imBag, os, null);
+                    TableWidget tableWidget = new TableWidget(tableWidgetConfig, imBag, os);
                     return tableWidget;
                 }
             }

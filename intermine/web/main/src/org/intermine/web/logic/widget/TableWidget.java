@@ -21,6 +21,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.TableWidgetConfig;
 
 /**
@@ -41,10 +42,8 @@ public class TableWidget extends Widget
      * @param config configuration for this widget
      * @param interMineBag bag for this widget
      * @param os objecstore
-     * @param selectedExtraAttribute not used
      */
-    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os,
-        String selectedExtraAttribute) {
+    public TableWidget(TableWidgetConfig config, InterMineBag interMineBag, ObjectStore os) {
         super(config);
         this.bag = interMineBag;
         this.os = os;
@@ -162,6 +161,11 @@ public class TableWidget extends Widget
 
     @Override
     public List<List<Object>> getResults() {
-        return null;
+        return bagWidgLdr.getFlattenedResults();
     }
+
+    public PathQuery getPathQuery() {
+        return bagWidgLdr.createPathQuery();
+    }
+
 }
