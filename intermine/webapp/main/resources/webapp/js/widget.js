@@ -421,73 +421,6 @@ factory = function(Backbone) {
   })();
   
 
-  /* Enrichment Widget table row.
-  */
-  var EnrichmentRowView,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  EnrichmentRowView = (function(_super) {
-  
-    __extends(EnrichmentRowView, _super);
-  
-    function EnrichmentRowView() {
-      this.toggleMatchesAction = __bind(this.toggleMatchesAction, this);
-      this.selectAction = __bind(this.selectAction, this);
-      this.render = __bind(this.render, this);
-      EnrichmentRowView.__super__.constructor.apply(this, arguments);
-    }
-  
-    EnrichmentRowView.prototype.tagName = "tr";
-  
-    EnrichmentRowView.prototype.events = {
-      "click td.check input": "selectAction",
-      "click td.matches a.count": "toggleMatchesAction"
-    };
-  
-    EnrichmentRowView.prototype.initialize = function(o) {
-      var k, v;
-      for (k in o) {
-        v = o[k];
-        this[k] = v;
-      }
-      this.model.bind('change', this.render);
-      return this.render();
-    };
-  
-    EnrichmentRowView.prototype.render = function() {
-      $(this.el).html(this.template("enrichment.row", {
-        "row": this.model.toJSON()
-      }));
-      return this;
-    };
-  
-    EnrichmentRowView.prototype.selectAction = function() {
-      return this.model.toggleSelected();
-    };
-  
-    EnrichmentRowView.prototype.toggleMatchesAction = function() {
-      if (!(this.matchesView != null)) {
-        return $(this.el).find('td.matches a.count').after((this.matchesView = new EnrichmentMatchesView({
-          "collection": new EnrichmentMatches(this.model.get("matches")),
-          "description": this.model.get("description"),
-          "template": this.template,
-          "matchCb": this.callbacks.matchCb,
-          "resultsCb": this.callbacks.resultsCb,
-          "listCb": this.callbacks.listCb,
-          "response": this.response
-        })).el);
-      } else {
-        return this.matchesView.toggle();
-      }
-    };
-  
-    return EnrichmentRowView;
-  
-  })(Backbone.View);
-  
-
   /* Enrichment Widget table row matches box.
   */
   var EnrichmentMatchesView,
@@ -600,12 +533,17 @@ factory = function(Backbone) {
     ChartView.prototype.chartOptions = {
       fontName: "Sans-Serif",
       fontSize: 11,
-      width: 550,
+      width: 460,
       height: 450,
-      legend: "bottom",
       colors: ["#2F72FF", "#9FC0FF"],
+      legend: {
+        position: "top"
+      },
       chartArea: {
-        top: 30
+        top: 30,
+        left: 50,
+        width: 400,
+        height: 305
       },
       hAxis: {
         titleTextStyle: {
@@ -693,6 +631,73 @@ factory = function(Backbone) {
     };
   
     return ChartView;
+  
+  })(Backbone.View);
+  
+
+  /* Enrichment Widget table row.
+  */
+  var EnrichmentRowView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentRowView = (function(_super) {
+  
+    __extends(EnrichmentRowView, _super);
+  
+    function EnrichmentRowView() {
+      this.toggleMatchesAction = __bind(this.toggleMatchesAction, this);
+      this.selectAction = __bind(this.selectAction, this);
+      this.render = __bind(this.render, this);
+      EnrichmentRowView.__super__.constructor.apply(this, arguments);
+    }
+  
+    EnrichmentRowView.prototype.tagName = "tr";
+  
+    EnrichmentRowView.prototype.events = {
+      "click td.check input": "selectAction",
+      "click td.matches a.count": "toggleMatchesAction"
+    };
+  
+    EnrichmentRowView.prototype.initialize = function(o) {
+      var k, v;
+      for (k in o) {
+        v = o[k];
+        this[k] = v;
+      }
+      this.model.bind('change', this.render);
+      return this.render();
+    };
+  
+    EnrichmentRowView.prototype.render = function() {
+      $(this.el).html(this.template("enrichment.row", {
+        "row": this.model.toJSON()
+      }));
+      return this;
+    };
+  
+    EnrichmentRowView.prototype.selectAction = function() {
+      return this.model.toggleSelected();
+    };
+  
+    EnrichmentRowView.prototype.toggleMatchesAction = function() {
+      if (!(this.matchesView != null)) {
+        return $(this.el).find('td.matches a.count').after((this.matchesView = new EnrichmentMatchesView({
+          "collection": new EnrichmentMatches(this.model.get("matches")),
+          "description": this.model.get("description"),
+          "template": this.template,
+          "matchCb": this.callbacks.matchCb,
+          "resultsCb": this.callbacks.resultsCb,
+          "listCb": this.callbacks.listCb,
+          "response": this.response
+        })).el);
+      } else {
+        return this.matchesView.toggle();
+      }
+    };
+  
+    return EnrichmentRowView;
   
   })(Backbone.View);
   
@@ -1255,9 +1260,9 @@ factory = function(Backbone) {
   return {
 
     "InterMineWidget": InterMineWidget,
-    "EnrichmentRowView": EnrichmentRowView,
     "EnrichmentMatchesView": EnrichmentMatchesView,
     "ChartView": ChartView,
+    "EnrichmentRowView": EnrichmentRowView,
     "ChartWidget": ChartWidget,
     "EnrichmentResults": EnrichmentResults,
     "EnrichmentView": EnrichmentView,
