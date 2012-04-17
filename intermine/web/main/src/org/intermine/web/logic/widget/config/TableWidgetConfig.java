@@ -178,7 +178,7 @@ public class TableWidgetConfig extends WidgetConfig
      */
     public TableWidget getWidget(InterMineBag imBag, ObjectStore os,
                                  List<String> selectedExtraAttribute) {
-        return new TableWidget(this, imBag, os, selectedExtraAttribute.get(0));
+        return new TableWidget(this, imBag, os);
     }
 
 }

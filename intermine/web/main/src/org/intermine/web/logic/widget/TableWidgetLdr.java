@@ -11,7 +11,6 @@ package org.intermine.web.logic.widget;
  */
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
 import org.intermine.metadata.AttributeDescriptor;
@@ -48,8 +45,10 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
@@ -57,12 +56,13 @@ import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 /**
  * @author Xavier Watkins
+ * @author dbutano
  *
  */
 public class TableWidgetLdr
 {
     private List<String> columns;
-    private List<List<String[]>> flattenedResults;
+    private List<List<Object>> flattenedResults;
     private String title, description;
     private int widgetTotal = 0;
     private InterMineBag bag;
@@ -74,7 +74,6 @@ public class TableWidgetLdr
     private String type;
     private TableWidgetConfig config;
     private ClassDescriptor cld;
-    //private static final Logger LOG = Logger.getLogger(TableWidgetLdr.class);
 
     /**
      * This class loads and formats the data for the count
@@ -112,8 +111,6 @@ public class TableWidgetLdr
      */
     public void setFlattenedResults() throws UnsupportedEncodingException {
         WebConfig webConfig = config.getWebConfig();
-        String externalLink = config.getExternalLink();
-
         Query q = getQuery(false, null);
 
         List<?> results;
@@ -142,25 +139,17 @@ public class TableWidgetLdr
             }
         }
 
-        flattenedResults = new ArrayList<List<String[]>>();
-
+        flattenedResults = new ArrayList<List<Object>>();
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-            ArrayList<String[]> flattenedRow = new ArrayList<String[]>();
+            ArrayList<Object> flattenedRow = new ArrayList<Object>();
             ResultsRow<?> resRow = (ResultsRow<?>) iter.next();
-            String countLinkKey = "";
 
-            boolean isFirst = true;
             for (int i = 0; i < q.getSelect().size(); i++) {
                 QuerySelectable select = q.getSelect().get(i);
 
                 // this will be the last column
                 if (select instanceof QueryFunction) {
-                    // if user hasn't configured a link, don't link the counts
-/*                    String link = (config.getLink() == null ? null : "widgetAction.do?bagName="
-                        + bag.getName()
-                        + "&link=" + config.getLink()
-                        + "&key=" + URLEncoder.encode(countLinkKey, "UTF-8"));
-                    flattenedRow.add(new String[] {String.valueOf(resRow.get(i)), link});*/
+                    flattenedRow.add(resRow.get(i));
                 } else {
                     if (select instanceof QueryClass) {
                         InterMineObject o = (InterMineObject) resRow.get(i);
@@ -174,38 +163,12 @@ public class TableWidgetLdr
                                 throw new Error("Cannot create path \"" + columnName
                                         + "\" for widget - check config");
                             }
-                            boolean isKeyField = isKeyField(path);
-
-                            String link = null;
-                            String val = null;
-                            if (fieldValue != null) {
-                                val = fieldValue.toString();
-                            }
-                            if (isKeyField) {
-                                if (fieldValue != null && StringUtils.isBlank(countLinkKey)) {
-                                    countLinkKey = fieldValue.toString();
-                                }
-                                link = getReportLink(o, bag.getName());
-                            } else if (!StringUtils.isBlank(externalLink)) {
-                                val = val + " <a href=\"" + externalLink + countLinkKey
-                                    + "\" target=\"_new\" class=\"extlink\">["
-                                    + config.getExternalLinkLabel() + "]</a>";
-                            }
-
-                            if (isFirst) {
-                                flattenedRow.add(new String[] {getCheckbox(countLinkKey)});
-                                isFirst = false;
-                            }
-                            flattenedRow.add(new String[] {val, link});
+                            flattenedRow.add(fieldValue);
                         }
+                        flattenedRow.add(o.getId());
                     } else if (select instanceof QueryField) {
                         String fieldValue = String.valueOf(resRow.get(i));
-                        countLinkKey = fieldValue;
-                        if (isFirst) {
-                            flattenedRow.add(new String[] {getCheckbox(fieldValue)});
-                            isFirst = false;
-                        }
-                        flattenedRow.add(new String[] {fieldValue});
+                        flattenedRow.add(fieldValue);
                     }
                 }
 
@@ -223,27 +186,11 @@ public class TableWidgetLdr
         widgetTotal = calcTotal(os, q);
     }
 
-    private String getCheckbox(String key) {
-        return "<input name=\"selected\" value=\"" + key + "\" id=\"selected_" + key
-            + "\" type=\"checkbox\">";
-    }
-
-    private boolean isKeyField(Path path) {
-        String startType = path.getStartClassDescriptor().getType().getSimpleName();
-        String fieldName = path.getEndFieldDescriptor().getName();
-        return ClassKeyHelper.isKeyField(config.getClassKeys(), startType, fieldName);
-    }
-
-    private String getReportLink(InterMineObject o, String bagName) {
-        return "report.do?id=" + o.getId() + "&amp;trail=|bag." + bag.getName()
-            + "|" + o.getId();
-    }
-
     /**
      * get the flattened results
      * @return the flattened results
      */
-    public List<List<String[]>> getFlattenedResults() {
+    public List<List<Object>> getFlattenedResults() {
         return flattenedResults;
     }
 
@@ -523,5 +470,25 @@ public class TableWidgetLdr
             return strings[0];
         }
         return s;
+    }
+
+    /**
+     * Returns the pathquery based on the views set in config file and the bag constraint
+     * Executed when the user selects any item in the matches column in the enrichment widget.
+     * @return the query generated
+     */
+    public PathQuery createPathQuery() {
+        PathQuery q = new PathQuery(model);
+        String[] views = config.getViews().split("\\s*,\\s*");
+        String typeClass = config.getTypeClass();
+        String prefix = typeClass.substring(typeClass.lastIndexOf(".") + 1);
+        for (String view : views) {
+            if (!view.startsWith(prefix)) {
+                view = prefix + "." + view;
+            }
+            q.addView(view);
+        }
+        q.addConstraint(Constraints.in(prefix, bag.getName()));
+        return q;
     }
 }
