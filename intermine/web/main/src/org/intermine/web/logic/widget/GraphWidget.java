@@ -103,15 +103,6 @@ public class GraphWidget extends Widget
     /**
      * {@inheritDoc}
      */
- /*   @Override
-    public List<List<String[]>> getFlattenedResults() {
-        // TODO Auto-generated method stub
-        return null;
-    }*/
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean getHasResults() {
         return (grapgWidgetLdr != null
