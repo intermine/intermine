@@ -1,5 +1,14 @@
 package org.intermine.webservice.server.widget;
 
+/*
+ * Copyright (C) 2002-2011 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,11 +30,11 @@ public class EnrichmentXMLProcessor implements WidgetResultProcessor {
     @Override
     public List<String> formatRow(List<Object> row) {
         StringBuffer sb = new StringBuffer("<result>");
-        sb.append(formatCell("item", row.get(0)));
+        sb.append(formatCell("identifier", row.get(0)));
         sb.append(formatCell("description", row.get(1)));
         sb.append(formatCell("pValue", row.get(2)));
         sb.append(formatCell("count", row.get(3)));
-        sb.append(formatCell("match", row.get(4)));
+        sb.append(formatCell("matches", row.get(4)));
         sb.append("</result>");
         return new LinkedList<String>(Arrays.asList(sb.toString()));
     }
