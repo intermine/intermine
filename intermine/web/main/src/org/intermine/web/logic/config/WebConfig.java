@@ -428,7 +428,7 @@ public class WebConfig
         String typeString = type.getClassName();
         if (types.containsKey(typeString)) {
             throw new IllegalArgumentException("Type " + typeString
-                    + " defined more that once in webconfig-model.xml");
+                    + " defined more than once in webconfig-model.xml");
         } else {
             types.put(type.getClassName(), type);
         }
