@@ -140,6 +140,7 @@ public class GraphWidget extends Widget
         return grapgWidgetLdr.getResultTable();
     }
 
+    @Override
     public PathQuery getPathQuery() {
         return grapgWidgetLdr.createPathQuery();
     }

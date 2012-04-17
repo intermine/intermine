@@ -11,8 +11,6 @@ package org.intermine.web.logic.widget;
  */
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +33,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
  * @author "Xavier Watkins"
+ * @author dbutano
  *
  */
 public class EnrichmentWidget extends Widget
@@ -221,52 +220,7 @@ public class EnrichmentWidget extends Widget
         return exportResults;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-/*    public List<List<String[]>> getFlattenedResults() {
-        if (results != null) {
-            Map<String, BigDecimal> pValues = results.getPValues();
-            Map<String, Integer> counts = results.getCounts();
-            Map<String, String> labels = results.getLabels();
-            List<List<String[]>> flattenedResults = new LinkedList<List<String[]>>();
-            for (String id : pValues.keySet()) {
-                List<String[]> row = new LinkedList<String[]>();
-
-                row.add(new String[] {"<input name=\"selected\" value=\"" + id
-                        + "\" id=\"selected_" + id + "\" type=\"checkbox\">"});
-
-                String label = labels.get(id);
-                if (config.getExternalLink() != null && !"".equals(config.getExternalLink())) {
-                    label += " <a href=\"" + config.getExternalLink() + id
-                             + "\" target=\"_new\" class=\"extlink\">[";
-                    if (config.getExternalLinkLabel() != null
-                        && !"".equals(config.getExternalLinkLabel())) {
-                        label += config.getExternalLinkLabel();
-                    }
-                    label += id + "]</a>";
-                }
-                row.add(new String[] {label});
-
-                BigDecimal bd = pValues.get(id);
-                if (bd.compareTo(new BigDecimal(0.00000099)) <= 0) {
-                    NumberFormat formatter = new DecimalFormat();
-                    formatter = new DecimalFormat("0.####E0");
-                    row.add(new String[] {formatter.format(bd)});
-                } else {
-                    row.add(new String[] {bd.setScale(7, BigDecimal.ROUND_HALF_EVEN)
-                            .toEngineeringString()});
-                }
-
-                row.add(new String[] {counts.get(id).toString(), "widgetAction.do?key=" + id
-                        + "&bagName=" + bag.getName() + "&link=" + config.getLink()});
-                flattenedResults.add(row);
-            }
-            return flattenedResults;
-        }
-        return null;
-    }*/
-
+    @Override
     public List<List<Object>> getResults() throws Exception {
         List<List<Object>> exportResults = new LinkedList<List<Object>>();
         if (results != null) {
@@ -287,6 +241,7 @@ public class EnrichmentWidget extends Widget
         return exportResults;
     }
 
+    @Override
     public PathQuery getPathQuery() {
         return ldr.createPathQuery();
     }

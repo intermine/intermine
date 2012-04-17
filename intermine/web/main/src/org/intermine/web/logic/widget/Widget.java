@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 import java.util.List;
 
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 
@@ -87,5 +88,16 @@ public abstract class Widget
         return config.getTitle();
     }
 
+    /**
+     * Return the result of a widget. Each row is represented as a list of Object
+     * @return a list representing the rows conatining a list of objects
+     * @throws Exception
+     */
     public abstract List<List<Object>> getResults() throws Exception;
+
+    /**
+     * Return the PathQuery generated dinamically by the attribute views in the config file
+     * @return the pathquery
+     */
+    public abstract PathQuery getPathQuery();
 }
