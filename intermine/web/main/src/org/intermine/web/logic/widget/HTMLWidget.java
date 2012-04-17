@@ -12,6 +12,7 @@ package org.intermine.web.logic.widget;
 
 import java.util.List;
 
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 /**
@@ -40,11 +41,6 @@ public class HTMLWidget extends Widget
         return null;
     }
 
-/*    @Override
-    public List<List<String[]>> getFlattenedResults() {
-        return null;
-    }*/
-
     @Override
     public List<List<Object>> getResults() {
         return null;
@@ -68,6 +64,11 @@ public class HTMLWidget extends Widget
     @Override
     public void setNotAnalysed(@SuppressWarnings("unused") int notAnalysed) {
         // nothing to do
+    }
+
+    @Override
+    public PathQuery getPathQuery() {
+        return null;
     }
 
 }
