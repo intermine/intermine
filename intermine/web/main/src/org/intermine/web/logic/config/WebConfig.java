@@ -458,11 +458,15 @@ public class WebConfig
             }
             //verify views
             String views = widget.getViews();
+            String simpleStartClass = widget.getStartClass();
             if (views != null) {
                 if (!"".equals(views)) {
                     String[] viewsBites = widget.getViews().split("\\s*,\\s*");
+                    if (widget instanceof TableWidgetConfig) {
+                        simpleStartClass = typeClass.substring(typeClass.lastIndexOf(".") + 1);
+                    }
                     for (String viewPath : viewsBites) {
-                        viewPath = widget.getStartClass() + "." + viewPath;
+                        viewPath = simpleStartClass + "." + viewPath;
                         try {
                             new Path(model, viewPath);
                         } catch (final PathException e) {
