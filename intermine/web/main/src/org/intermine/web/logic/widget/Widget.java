@@ -89,7 +89,8 @@ public abstract class Widget
     }
 
     /**
-     * Return the result of a widget. Each row is represented as a list of Object
+     * Return the result that represents the data from this widget.
+     * Each row is represented as a list of Object
      * @return a list representing the rows conatining a list of objects
      * @throws Exception
      */
