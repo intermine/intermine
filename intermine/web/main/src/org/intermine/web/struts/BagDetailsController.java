@@ -44,9 +44,11 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -129,6 +131,8 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("widgets", widgets);
         request.setAttribute("widget2extraAttrs", widget2extraAttrs);
 
+        PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, model);
+        SessionMethods.setQuery(session, pathQuery);
         PagedTable pagedResults = SessionMethods.getResultsTable(session, "bag." + imBag.getName());
 
         int bagSize = imBag.getSize();
