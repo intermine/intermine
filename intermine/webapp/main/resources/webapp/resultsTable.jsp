@@ -33,6 +33,7 @@
 <script src="${jsLib}/js/imtables.js"></script>
 
 <script>
+(function() {
     var query = ${QUERY.json};
     console.log(query);
     var service = new intermine.Service({
@@ -45,7 +46,7 @@
         view.$el.appendTo('#table-container');
         view.render();
     });
-
+})();
 </script>
 
 <div id="table-container" class="bootstrap"></div>
