@@ -59,17 +59,17 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
  * @author dbutano
  *
  */
-public class TableWidgetLdr
+public class TableWidgetLdr extends WidgetLdr
 {
     private List<String> columns;
     private List<List<Object>> flattenedResults;
     private String title, description;
     private int widgetTotal = 0;
-    private InterMineBag bag;
+    //private InterMineBag bag;
     private String pathString;
     private Model model;
     private String displayFields, exportField;
-    private ObjectStore os;
+    //private ObjectStore os;
     private Path origPath;
     private String type;
     private TableWidgetConfig config;
@@ -86,8 +86,7 @@ public class TableWidgetLdr
      */
     public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
         throws UnsupportedEncodingException {
-        this.os = os;
-        this.bag = bag;
+        super(bag, os, null);
         this.config = (TableWidgetConfig) widgetConfig;
         pathString = config.getPathStrings();
         model = os.getModel();
