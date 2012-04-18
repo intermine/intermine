@@ -43,7 +43,7 @@ public final class FriendlyMineQueryRunner
     private static Map<MultiKey, JSONObject> queryResultsCache
         = new CacheMap<MultiKey, JSONObject>();
     private static final String RELEASE_VERSION_URL = "/version/release";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private FriendlyMineQueryRunner() {
         // don't
