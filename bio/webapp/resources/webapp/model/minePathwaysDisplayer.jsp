@@ -76,7 +76,7 @@ function generateFriendlyMinePathways(jSONObject, target, mine) {
 <h3>Pathways from Other Mines</h3>
 
 <c:choose>
-  <c:when test="${minesForPathways != null && !empty(minesForPathways) && gene != null && !empty(gene)}">
+  <c:when test="${gene != null && !empty(gene) && ((minesForPathways != null && !empty(minesForPathways)) || !empty(gene.pathways))}">
 
       <p>
         <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
