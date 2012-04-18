@@ -25,6 +25,8 @@
 <!--//<![CDATA[
   var modifyDetailsURL = '<html:rewrite action="/modifyDetails"/>';
   var detailsType = 'bag';
+  var webappUrl = "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/";
+  var service = webappUrl + "service/";
 //]]>-->
 </script>
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
@@ -549,7 +551,9 @@
 	</script>
 
     <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
-
+    <script type="text/javascript">
+        window.widgets = new window.Widgets(window.service, "${token}");
+    </script>
     <c:forEach items="${widgets}" var="widget">
     <div class="box">
       <div class="feature">
