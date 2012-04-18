@@ -137,9 +137,9 @@ public class Mine
      * @param defaultValue the defaultValues to set, comma delim
      */
     public void setDefaultValues(String defaultValue) {
-        String[] bits = defaultValue.split("[, ]+");
+        String[] bits = defaultValue.split(",");
         for (String bit : bits) {
-            defaultValues.add(bit);
+            defaultValues.add(bit.trim());
         }
     }
 }
