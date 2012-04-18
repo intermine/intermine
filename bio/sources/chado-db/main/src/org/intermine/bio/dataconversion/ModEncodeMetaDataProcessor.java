@@ -63,6 +63,10 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
                     "dbEST_record",
                     "ShortReadArchive_project_ID (SRA)",
                     "ShortReadArchive_project_ID_list (SRA)")));
+    // preferred synonyms
+    private static final String STRAIN = "strain";
+    private static final String DEVSTAGE = "developmental stage";
+
 
     // submission maps
     // ---------------
@@ -70,9 +74,8 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     // maps from chado identifier to lab/project details
     private Map<Integer, SubmissionDetails> submissionMap =
             new HashMap<Integer, SubmissionDetails>();
-    // chado submission id to list of top level attributes, e.g. dev stage, organism_part
-    private Map<Integer, ExperimentalFactor> submissionEFMap =
-            new HashMap<Integer, ExperimentalFactor>();
+
+
     // subId to dcc id
     private Map<Integer, String> dccIdMap = new HashMap<Integer, String>();
 
@@ -141,6 +144,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
     // experimental factor maps
     // ------------------------
+    // chado submission id to list of top level attributes, e.g. dev stage, organism_part
+    private Map<Integer, ExperimentalFactor> submissionEFMap =
+            new HashMap<Integer, ExperimentalFactor>();
+    private Map<Integer, List<String[]>> submissionEFactorMap2 =
+            new HashMap<Integer, List<String[]>>();
+
     private Map<String, Integer> eFactorIdMap = new HashMap<String, Integer>();
     private Map<String, String> eFactorIdRefMap = new HashMap<String, String>();
     private Map<Integer, List<String>> submissionEFactorMap = new HashMap<Integer, List<String>>();
@@ -1438,14 +1447,15 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
 
             Integer rank = new Integer(res.getInt("rank"));
-            String  value    = res.getString("value");
+            String  value = res.getString("value");
 
             // the data is alternating between EF types and names, in order.
             if (submissionId != prevSub) {
                 // except for the first record, this is a new EF object
                 if (!res.isFirst()) {
                     submissionEFMap.put(prevSub, ef);
-                    LOG.debug("EF MAP: " + dccIdMap.get(submissionId) + "|" + ef.efNames);
+                    LOG.info("EF MAP: " + dccIdMap.get(prevSub) + "|" + ef.efNames);
+                    LOG.info("EF MAP types: " + rank + "|" + ef.efTypes);
                 }
                 ef = new ExperimentalFactor();
             }
@@ -2418,6 +2428,34 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         }
     }
 
+    private void createEFItemNEW(Integer current, String type,
+            String efName, String propertyIdentifier) throws ObjectStoreException {
+        // don't create an EF if it is a primer
+        if (type.endsWith("primer")) {
+            return;
+        }
+        String preferredType = getPreferredSynonym(type);
+        String key = efName + preferredType;
+        String [] efTok = {efName,preferredType};
+
+        // create the EF, if not there already
+        if (!eFactorIdMap.containsKey(key)) {
+            Item ef = getChadoDBConverter().createItem("ExperimentalFactor");
+            ef.setAttribute ("type", preferredType);
+            ef.setAttribute ("name", efName);
+            if (propertyIdentifier != null) {
+                ef.setReference("property", propertyIdentifier);
+            }
+            LOG.info("ExFactor created for sub " + dccIdMap.get(current) + ":" + efName + "|" + type);
+
+            Integer intermineObjectId = getChadoDBConverter().store(ef);
+            eFactorIdMap.put(key, intermineObjectId);
+            eFactorIdRefMap.put(key, ef.getIdentifier());
+        }
+        // if pertinent to the current sub, add to the map for the references
+        Util.addToListMap(submissionEFactorMap2, current, efTok);
+    }
+
     private void createEFItem(Integer current, String type,
             String efName, String propertyIdentifier) throws ObjectStoreException {
         // don't create an EF if it is a primer
@@ -2516,14 +2554,31 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             if (attHeading.startsWith("Characteristic")) {
                 isValidCharacteristic = true;
             }
+            // OR
+//            if (buildSubProperty != null) {
+//                if (attHeading.startsWith("Characteristic")) {
+//                    buildSubProperty.type = getPreferredSynonym(attName);
+//                    buildSubProperty.wikiPageUrl = attValue;
+//                    // add detail here as some Characteristics don't reference a wiki page
+//                    // but have all information on single row
+//                    buildSubProperty.addDetail(attName, attValue, attRank);
+//                } else {
+//                    buildSubProperty.addDetail(attHeading, attValue, attRank);
+//                }
+//            }
 
             if (buildSubProperty != null) {
                 if (attHeading.startsWith("Characteristic")) {
-                    buildSubProperty.type = getPreferredSynonym(attName);
-                    buildSubProperty.wikiPageUrl = attValue;
+
+                    String type = getPreferredSynonym(attName);
+                    String wikiUrl = attValue;
+                    String wikiType = checkWikiType(type, wikiUrl, currentSubId);
+
+                    buildSubProperty.type = wikiType;
+                    buildSubProperty.wikiPageUrl = wikiUrl;
                     // add detail here as some Characteristics don't reference a wiki page
                     // but have all information on single row
-                    buildSubProperty.addDetail(attName, attValue, attRank);
+                    buildSubProperty.addDetail(wikiType, attValue, attRank);
                 } else {
                     buildSubProperty.addDetail(attHeading, attValue, attRank);
                 }
@@ -2538,6 +2593,42 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             addToSubToTypes(subToTypes, currentSubId, buildSubProperty);
         }
     }
+
+    private String checkWikiType (String type, String wikiLink, Integer subId) {
+        // for devstages and strain check the type on the wikilink and use it if different
+        // from the declared one.
+        LOG.info("WIKILINK: " + wikiLink + " -- type: " + type);
+        if (wikiLink != null && wikiLink.contains(":")) {
+            String wikiType = wikiLink.substring(0, wikiLink.indexOf(':'));
+            if (type.equals(STRAIN)|| type.equals(DEVSTAGE)){
+                if (!congruentType(type, wikiType)) {
+                    LOG.warn("WIKILINK " + dccIdMap.get(subId) + ": "
+                            + type + " but in wiki url: " + wikiType);
+                    // not strictly necessary (code would deal with wikiType)
+                    if (wikiType.contains("Strain")){
+                        return STRAIN;
+                    }
+                    if (wikiType.contains("Stage")){
+                        return DEVSTAGE;
+                    }
+                }
+            }
+        }
+        return type;
+    }
+
+
+    private Boolean congruentType (String type, String wikiType) {
+        // check only strain and devstages
+        if (wikiType.contains("Strain") && !type.equals(STRAIN)){
+            return false;
+        }
+        if (wikiType.contains("Stage") && !type.equalsIgnoreCase(DEVSTAGE)){
+            return false;
+        }
+        return true;
+    }
+
 
     // Some submission mention e.g. an RNA Sample but the details of how that sample was created,
     // stage, strain, etc are in a previous submission.  There are references to previous submission
@@ -3738,6 +3829,39 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             }
         }
         LOG.info("TIME setting submission-experiment references: "
+                + (System.currentTimeMillis() - bT) + " ms");
+    }
+
+
+    //sub -> ef
+    private void setSubmissionEFactorsRefsNEW(Connection connection)
+        throws ObjectStoreException {
+        long bT = System.currentTimeMillis();     // to monitor time spent in the process
+        Iterator<Integer> subs = submissionEFactorMap2.keySet().iterator();
+        while (subs.hasNext()) {
+            Integer thisSubmissionId = subs.next();
+            List<String[]> eFactors = submissionEFactorMap2.get(thisSubmissionId);
+
+            LOG.info("EF REFS: " + thisSubmissionId + " (" + eFactors.get(0) + ")");
+            Iterator<String[]> ef = eFactors.iterator();
+            ReferenceList collection = new ReferenceList();
+            collection.setName("experimentalFactors");
+            while (ef.hasNext()) {
+                String [] thisEF = ef.next();
+                String efName = thisEF[0];
+                String efType = thisEF[1];
+                String key = efName + efType;
+                collection.addRefId(eFactorIdRefMap.get(efName + efType));
+                LOG.info("EF REFS!!: ->" + efName + " ref: " + eFactorIdRefMap.get(key));
+            }
+            if (!collection.equals(null)) {
+                LOG.info("EF REFS: ->" + thisSubmissionId + "|"
+                        + submissionMap.get(thisSubmissionId).interMineObjectId);
+                getChadoDBConverter().store(collection,
+                        submissionMap.get(thisSubmissionId).interMineObjectId);
+            }
+        }
+        LOG.info("TIME setting submission-exFactors references: "
                 + (System.currentTimeMillis() - bT) + " ms");
     }
 
