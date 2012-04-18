@@ -670,7 +670,11 @@ function getURL(bagName, type, idname) {
     });
 }
 
-
+function getCustomConverterCounts(bagName, converter, callback) {
+    AjaxServices.getCustomConverterCounts(bagName, converter, function(resultsArray) {
+      callback.call(window, resultsArray);
+    });
+}
 
 function saveToggleState(elementId) {
     var display = document.getElementById(elementId).style.display;
