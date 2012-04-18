@@ -84,5 +84,13 @@ text-align:left; }
         })();
         </script>
     </c:when>
+    <c:when test="${type == 'TableWidgetConfig'}" >
+        <div id="${widgetId}-widget" class="widget"></div>
+        <script type="text/javascript">
+        (function() {
+            window.widgets.table("${widgetId}", "${bagName}", "#${widgetId}-widget");
+        })();
+        </script>
+    </c:when>
 </c:choose>
 <!-- /widget.jsp -->
