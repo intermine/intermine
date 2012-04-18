@@ -153,13 +153,22 @@
 <TD valign="top" class="tableleftcol">
 <div class="results collection-table nowrap nomargin">
 <%-- Table displaying bag elements --%>
-<tiles:insert name="resultsTable.tile"/>
+<tiles:insert name="resultsTable.tile">
+     <tiles:put name="pagedResults" beanName="pagedResults" />
+     <tiles:put name="currentPage" value="bagDetails" />
+     <tiles:put name="bagName" value="${bag.name}" />
+     <tiles:put name="highlightId" value="${highlightId}"/>
+</tiles:insert>
 </div>
 
-
-<c:if test="${PROFILE.loggedIn}">
-    <table style="margin-top: 10px;">
-     <tr>
+<table style="margin-top: 10px;">
+  <tr>
+    <td><tiles:insert name="paging.tile">
+      <tiles:put name="resultsTable" beanName="pagedResults" />
+      <tiles:put name="currentPage" value="bagDetails" />
+      <tiles:put name="bag" beanName="bag" />
+    </tiles:insert></td>
+    <c:if test="${PROFILE.loggedIn}">
       <td><div id="listTags">
         <table>
           <tr>
@@ -175,10 +184,9 @@
           </tr>
         </table>
         </div></td>
-        </tr>
-    </table>
-</c:if>
-  
+    </c:if>
+  </tr>
+</table>
 
 <div id="clearLine">&nbsp;</div>
 
