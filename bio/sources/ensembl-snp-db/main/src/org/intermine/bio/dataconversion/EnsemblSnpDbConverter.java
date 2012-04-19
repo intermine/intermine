@@ -34,21 +34,35 @@ import org.intermine.xml.full.ReferenceList;
 
 /**
  * Read Ensembl SNP data directly from MySQL variation database.
+ * Ref to Ensembl variation schema -
+ * http://www.ensembl.org/info/docs/variation/variation_schema.html
+ *
  * @author Richard Smith
+ * @author Fengyuan Hu
  */
 public class EnsemblSnpDbConverter extends BioDBConverter
 {
     private static final String DATASET_TITLE = "Ensembl SNP data";
     private static final String DATA_SOURCE_NAME = "Ensembl";
-    private final Map<String, Set<String>> pendingSnpConsequences =
+    // pendingSnpConsequences: key - rs number, value- a collection of consequences
+    // The snp has been stored but it will appear multiple times, so hang consequences over
+    private final Map<String, Set<String>> pendingSnpRsNumberToConsequencesMap =
         new HashMap<String, Set<String>>();
-    private final Map<String, Integer> storedSnpIds = new HashMap<String, Integer>();
-    private final Map<String, String> storedSnpItemIdentifiers = new HashMap<String, String>();
+
+    // TODO replace rs number to variation id (ensembl id)
+    // replace variationStableId to variationId
+    // rsNumber to variationId (String to Integer)
+    // SnpItemId to SnpObjectId (String to Integer)
+
+    // storedSnpIds: key - rs number, value - IM object id
+    private final Map<String, Integer> storedSnpRsNumberToInterMineIdMap =
+        new HashMap<String, Integer>();
+    // storedSnpIds: key - rs number, value - item id
+    private final Map<String, String> snpRsNumberToItemIdMap = new HashMap<String, String>();
     private Set<String> snpSourceIds = null;
 
-    // store a mapping from variation_id in ensembl database to stored SNP id in objectstore
-    //private IntToIntMap variationIdToObjectId = new IntToIntMap();
-    private Map<Integer, String> variationIdToItemIdentifier = new HashMap<Integer, String>();
+    // store a mapping from variation_id in ensembl database to stored SNP item id
+    private Map<Integer, String> variationIdToItemIdMap = new HashMap<Integer, String>();
 
     // default to human or take value set by parser
     Integer taxonId = null;
@@ -136,15 +150,19 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         connection.close();
     }
 
-    private void storeFinalSnps() throws Exception {
-        LOG.info("storeFinalSnps() pendingConsequences.size(): " + pendingSnpConsequences.size());
-        LOG.info("storeFinalSnps() storedSnpIds.size(): " + storedSnpIds.size());
-        for (String rsNumber : pendingSnpConsequences.keySet()) {
-            Integer storedSnpId = storedSnpIds.get(rsNumber);
-            Set<String> consequenceIdentifiers = pendingSnpConsequences.get(rsNumber);
-            ReferenceList col =
-                new ReferenceList("consequences", new ArrayList<String>(consequenceIdentifiers));
-            store(col, storedSnpId);
+    /**
+     * Store the consequences as reference list to a SNP
+     * @throws Exception exception
+     */
+    protected void storeFinalSnps() throws Exception {
+        LOG.info("storeFinalSnps() pendingSnpRsNumberToConsequencesMap.size(): "
+                + pendingSnpRsNumberToConsequencesMap.size());
+        LOG.info("storeFinalSnps() storedSnpRsNumberToInterMineIdMap.size(): "
+                + storedSnpRsNumberToInterMineIdMap.size());
+        for (String rsNumber : pendingSnpRsNumberToConsequencesMap.keySet()) {
+            Integer storedSnpInterMineId = storedSnpRsNumberToInterMineIdMap.get(rsNumber);
+            Set<String> consequenceItemIdSet = pendingSnpRsNumberToConsequencesMap.get(rsNumber);
+            storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
         }
     }
 
@@ -156,90 +174,113 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         int counter = 0;
         int snpCounter = 0;
         int consequenceCounter = 0;
-        Item currentSnp = null;
         Set<String> seenLocsForSnp = new HashSet<String>();
-        String previousRsNumber = null;
         Boolean previousUniqueLocation = true;
         String previousTranscriptStableId = null;
-        Set<String> consequenceIdentifiers = new HashSet<String>();
+        Set<String> consequenceItemIdSet = new HashSet<String>();
         boolean storeSnp = false;
-        String currentSnpIdentifier = null;
+        String previousRsNumber = null;
+        Integer previousVariationId = null;
+        String currentRsNumber = null;
         Integer currentVariationId = null;
+        Item currentSnpItem = null; // the snp item to be stored
+        String currentSnpItemId = null;
         Map<String, Integer> nonTranscriptConsequences = new HashMap<String, Integer>();
 
         // This code is complicated because not all SNPs map to a unique location and often have
         // locations on multiple chromosomes - we're processing one chromosome at a time for faster
-        // queries to mySQL.
+        // queries to MySQL.
         while (res.next()) {
             counter++;
-            String rsNumber = res.getString("variation_name");
-            boolean newSnp = rsNumber.equals(previousRsNumber) ? false : true;
+
+            currentRsNumber = res.getString("variation_name");
+            currentVariationId = res.getInt("variation_id");
+
+            // a new snp can't be the previous one OR one with pending consequences
+            boolean newSnp = currentRsNumber.equals(previousRsNumber)
+                    || pendingSnpRsNumberToConsequencesMap
+                            .containsKey(currentRsNumber) ? false : true;
+
+            if (pendingSnpRsNumberToConsequencesMap.containsKey(currentRsNumber)) {
+                previousUniqueLocation = false;
+            }
 
             if (newSnp) {
                 // starting a new SNP, store the one just finished - previousRsNumber
 
-                Integer storedSnpId = storedSnpIds.get(previousRsNumber);
+                Integer storedSnpInterMineId = storedSnpRsNumberToInterMineIdMap
+                        .get(previousRsNumber);
 
-                // if we didn't get back a storedSnpId this was the first time we found this SNP,
-                // so store it now
-                if (storeSnp && storedSnpId == null) {
-                    storedSnpId = store(currentSnp);
-                    variationIdToItemIdentifier.put(currentVariationId, currentSnp.getIdentifier());
+                // if we didn't get back a storedSnpId this was the first time we found this
+                // (previous) SNP, so store it now
+                if (storeSnp && storedSnpInterMineId == null) {
+                    storedSnpInterMineId = store(currentSnpItem);
+                    storedSnpRsNumberToInterMineIdMap.put(previousRsNumber, storedSnpInterMineId);
                     snpCounter++;
                 }
 
                 if (previousUniqueLocation) {
                     // the SNP we just stored has only one location so we won't see it again
-                    storeSnpCollections(storedSnpId, consequenceIdentifiers);
+                    storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
                 } else {
-                    // we'll see this SNP multiple times so hang onto data
-                    Set<String> snpConsequences = pendingSnpConsequences.get(previousRsNumber);
+                    // we'll see the previous SNP multiple times so hang onto data
+                    Set<String> snpConsequences = pendingSnpRsNumberToConsequencesMap
+                            .get(previousRsNumber);
+
                     if (snpConsequences == null) {
                         snpConsequences = new HashSet<String>();
-                        pendingSnpConsequences.put(previousRsNumber, snpConsequences);
+                        pendingSnpRsNumberToConsequencesMap.put(previousRsNumber, snpConsequences);
+                        snpConsequences.addAll(consequenceItemIdSet);
                     }
-                    snpConsequences.addAll(consequenceIdentifiers);
-                    if (!storedSnpIds.containsKey(previousRsNumber)) {
-                        storedSnpIds.put(previousRsNumber, storedSnpId);
-                        storedSnpItemIdentifiers.put(previousRsNumber, currentSnp.getIdentifier());
-                    }
+
+//                    if (!storedSnpRsNumberToInterMineIdMap.containsKey(previousRsNumber)) {
+//                        storedSnpRsNumberToInterMineIdMap.put(previousRsNumber,
+//                                storedSnpInterMineId);
+//                        snpRsNumberToItemIdMap.put(previousRsNumber,
+//                                currentSnpItem.getIdentifier());
+//                    }
                 }
 
                 // START NEW SNP
-                previousRsNumber = rsNumber;
+                previousRsNumber = currentRsNumber;
                 seenLocsForSnp = new HashSet<String>();
-                consequenceIdentifiers = new HashSet<String>();
+                consequenceItemIdSet = new HashSet<String>();
                 storeSnp = true;
 
                 // map weight is the number of chromosome locations for the SNP, in practice there
                 // are sometimes fewer locations than the map_weight indicates
                 int mapWeight = res.getInt("map_weight");
-                boolean uniqueLocation = (mapWeight == 1) ? true : false;
-                previousUniqueLocation = uniqueLocation;
+                boolean currentUniqueLocation = (mapWeight == 1) ? true : false;
+                previousUniqueLocation = currentUniqueLocation;
 
-                // if not a unique location and we've seen the SNP before, don't store
-                if (!uniqueLocation && pendingSnpConsequences.containsKey(rsNumber)) {
+                // if not a unique location and we've seen the SNP before (e.g. on a
+                // different chromosome), don't store, because the snp has been stored
+                if (!currentUniqueLocation
+                        && pendingSnpRsNumberToConsequencesMap
+                                .containsKey(currentRsNumber)) {
                     storeSnp = false;
-                    currentSnpIdentifier = storedSnpItemIdentifiers.get(rsNumber);
                 }
 
                 if (storeSnp) {
-                    currentSnp = createItem("SNP");
-                    currentSnp.setAttribute("primaryIdentifier", rsNumber);
-                    currentSnp.setReference("organism", getOrganismItem(taxonId));
-                    currentSnp.setAttribute("uniqueLocation", "" + uniqueLocation);
+                    currentSnpItem = createItem("SNP");
+                    currentSnpItemId = currentSnpItem.getIdentifier();
 
-                    currentSnpIdentifier = currentSnp.getIdentifier();
-                    currentVariationId = res.getInt("variation_id");
+                    snpRsNumberToItemIdMap.put(currentRsNumber, currentSnpItemId);
+
+                    currentSnpItem.setAttribute("primaryIdentifier", currentRsNumber);
+                    currentSnpItem.setReference("organism", getOrganismItem(taxonId));
+                    currentSnpItem.setAttribute("uniqueLocation", "" + currentUniqueLocation);
+
+//                    currentVariationId = res.getInt("variation_id");
 
                     String alleles = res.getString("allele_string");
                     if (!StringUtils.isBlank(alleles)) {
-                        currentSnp.setAttribute("alleles", alleles);
+                        currentSnpItem.setAttribute("alleles", alleles);
                     }
 
                     String type = determineType(alleles);
                     if (type != null) {
-                        currentSnp.setAttribute("type", type);
+                        currentSnpItem.setAttribute("type", type);
                     }
 
                     // CHROMOSOME AND LOCATION
@@ -257,76 +298,82 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     loc.setAttribute("end", "" + chrEnd);
                     loc.setAttribute("strand", "" + chrStrand);
                     loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                    loc.setReference("feature", currentSnpIdentifier);
+                    // The magic part, location can reference back to snp, for snp with multiple
+                    // locations, no need to set reference in snp
+                    loc.setReference("feature", currentSnpItemId);
                     store(loc);
 
                     // if mapWeight is 1 there is only one chromosome location, so set shortcuts
-                    if (uniqueLocation) {
-                        currentSnp.setReference("chromosome", getChromosome(chrName, taxonId));
-                        currentSnp.setReference("chromosomeLocation", loc);
+                    if (currentUniqueLocation) {
+                        currentSnpItem.setReference("chromosome", getChromosome(chrName, taxonId));
+                        currentSnpItem.setReference("chromosomeLocation", loc);
                     }
                     seenLocsForSnp.add(chrName + ":" + chrStart);
 
                     // SOURCE
                     String source = res.getString("s.name");
-                    currentSnp.setReference("source", getSourceIdentifier(source));
+                    currentSnpItem.setReference("source", getSourceIdentifier(source));
 
                     // VALIDATION STATES
                     String validationStatus = res.getString("validation_status");
                     List<String> validationStates = getValidationStateCollection(validationStatus);
                     if (!validationStates.isEmpty()) {
-                        currentSnp.setCollection("validations", validationStates);
+                        currentSnpItem.setCollection("validations", validationStates);
                     }
                 }
             }
 
-            int mapWeight = res.getInt("map_weight");
-            boolean uniqueLocation = (mapWeight == 1) ? true : false;
+            currentSnpItemId = snpRsNumberToItemIdMap.get(currentRsNumber);
 
-            // we're on the same SNP but maybe a new location
+            if (currentSnpItemId == null) {
+                LOG.error("currentSNP is null. vf.variation_feature_id: "
+                        + res.getInt("variation_feature_id") + " CurrentRsNumber: "
+                        + currentRsNumber + " previousRsNumber: " + previousRsNumber
+                        + " storeSnp: " + storeSnp);
+            } else {
+                // we're on the same SNP but maybe a new location
 
-            int start = res.getInt("seq_region_start");
-            int end = res.getInt("seq_region_end");
-            int strand = res.getInt("seq_region_strand");
+                int start = res.getInt("seq_region_start");
+                int end = res.getInt("seq_region_end");
+                int strand = res.getInt("seq_region_strand");
 
-            int chrStart = Math.min(start, end);
-            int chrEnd = Math.max(start, end);
+                int chrStart = Math.min(start, end);
+                int chrEnd = Math.max(start, end);
 
-            if (currentSnp == null) {
-                LOG.error("currentSNP is null.  vf.variation_feature_id: "
-                        + res.getString("variation_feature_id") + " rsNumber: " + rsNumber
-                        + " previousRsNumber: " + previousRsNumber + " storeSnp: " + storeSnp);
-            }
+                String chrLocStr = chrName + ":" + chrStart;
+                if (!seenLocsForSnp.contains(chrLocStr)) {
+                    seenLocsForSnp.add(chrLocStr);
 
-            String chrLocStr = chrName + ":" + chrStart;
-            if (!seenLocsForSnp.contains(chrLocStr)) {
-                seenLocsForSnp.add(chrLocStr);
-
-                // if this location is on a chromosome we want, store it
-                Item loc = createItem("Location");
-                loc.setAttribute("start", "" + chrStart);
-                loc.setAttribute("end", "" + chrEnd);
-                loc.setAttribute("strand", "" + strand);
-                loc.setReference("feature", currentSnpIdentifier);
-                loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                store(loc);
+                    // if this location is on a chromosome we want, store it
+                    Item loc = createItem("Location");
+                    loc.setAttribute("start", "" + chrStart);
+                    loc.setAttribute("end", "" + chrEnd);
+                    loc.setAttribute("strand", "" + strand);
+                    loc.setReference("feature", currentSnpItemId);
+                    loc.setReference("locatedOn", getChromosome(chrName, taxonId));
+                    store(loc);
+                }
             }
 
             // CONSEQUENCE TYPES
             // for SNPs without a uniqueLocation there will be different consequences at each one.
             // some consequences will need to stored at the end
-            String transcriptStableId = res.getString("feature_stable_id");
+            String currentTranscriptStableId = res.getString("feature_stable_id");
 
-            if (!StringUtils.isBlank(transcriptStableId)) {
+            if (!StringUtils.isBlank(currentTranscriptStableId)) {
             // In Ensembl 66, there are records with same transcript different allel_string
             // | variation_feature_id | feature_stable_id | allele_string | consequence_types     |
             // |             53025155 | ENST00000465814   | A/T           | nc_transcript_variant |
             // |             53025155 | ENST00000465814   | A/C           | nc_transcript_variant |
             // |             53025155 | ENST00000465814   | A/G           | nc_transcript_variant |
-                boolean newConsequenceType =
-                    transcriptStableId.equals(previousTranscriptStableId) ? false : true;
+
+                // a new consequence type should not belong to same snp and same transcript
+                boolean newConsequenceType = currentTranscriptStableId
+                        .equals(previousTranscriptStableId)
+                        && currentRsNumber.equals(previousRsNumber) ? false
+                        : true;
                 if (newConsequenceType) {
-                    previousTranscriptStableId = transcriptStableId;
+                    previousTranscriptStableId = currentTranscriptStableId;
                     String type = res.getString("tv.consequence_types");
                     // Seen one example so far where consequence type is an empty string
                     if (StringUtils.isBlank(type)) {
@@ -350,13 +397,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                             res.getString("polyphen_score"));
 
                     consequenceItem.setReference("transcript",
-                            getTranscriptIdentifier(transcriptStableId));
+                            getTranscriptIdentifier(currentTranscriptStableId));
 
-                    consequenceIdentifiers.add(consequenceItem.getIdentifier());
+                    consequenceItemIdSet.add(consequenceItem.getIdentifier());
                     store(consequenceItem);
                     consequenceCounter++;
                 }
-            } else {
+            } else { // transcriptStableId is empty, log it
                 String variationConsequences = res.getString("vf.consequence_type");
                 Integer consequenceCount = nonTranscriptConsequences.get(variationConsequences);
 
@@ -364,6 +411,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     consequenceCount = new Integer(0);
                 }
 
+                // nonTranscriptConsequences is for log message only
                 nonTranscriptConsequences.put(variationConsequences,
                         new Integer(consequenceCount + 1));
             }
@@ -374,16 +422,70 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
         }
 
-        if (currentSnp != null && storeSnp) {
-            Integer storedSnpId = store(currentSnp);
-            variationIdToItemIdentifier.put(currentVariationId, currentSnp.getIdentifier());
-            if (!storedSnpIds.containsKey(storedSnpId)) {
-                storeSnpCollections(storedSnpId, consequenceIdentifiers);
+//        Integer storedSnpInterMineId = storedSnpRsNumberToInterMineIdMap.get(currentRsNumber);
+
+        //////////////////////
+        // The last record to store
+        Integer storedSnpInterMineId;
+
+        if (previousUniqueLocation) {
+            storedSnpInterMineId = store(currentSnpItem);
+            storedSnpRsNumberToInterMineIdMap.put(currentRsNumber, storedSnpInterMineId);
+            storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
+        } else {
+            storedSnpInterMineId = storedSnpRsNumberToInterMineIdMap.get(currentRsNumber);
+
+            if (storedSnpInterMineId == null) {
+                storedSnpInterMineId = store(currentSnpItem);
+                storedSnpRsNumberToInterMineIdMap.put(currentRsNumber, storedSnpInterMineId);
+
+                // we'll see the SNP on another chromosome
+                Set<String> snpConsequences = pendingSnpRsNumberToConsequencesMap
+                        .get(currentRsNumber);
+                if (snpConsequences == null) {
+                    snpConsequences = new HashSet<String>();
+                    pendingSnpRsNumberToConsequencesMap.put(currentRsNumber, snpConsequences);
+                    snpConsequences.addAll(consequenceItemIdSet);
+                }
+            } else {
+                pendingSnpRsNumberToConsequencesMap.get(currentRsNumber).addAll(consequenceItemIdSet);
             }
         }
+
+        /////////////////////
+
+//        if (currentSnpItemId != null && storeSnp && storedSnpInterMineId == null) {
+//            storedSnpInterMineId = store(currentSnpItem);
+//            storedSnpRsNumberToInterMineIdMap.put(currentRsNumber, storedSnpInterMineId);
+//
+//            if (previousUniqueLocation) {
+//                storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
+//            } else {
+//                // we'll see the SNP on another chromosome
+//                Set<String> snpConsequences = pendingSnpRsNumberToConsequencesMap
+//                        .get(currentRsNumber);
+//                if (snpConsequences == null) {
+//                    snpConsequences = new HashSet<String>();
+//                    pendingSnpRsNumberToConsequencesMap.put(currentRsNumber, snpConsequences);
+//                    snpConsequences.addAll(consequenceItemIdSet);
+//                }
+//
+////                if (!snpRsNumberToItemIdMap.containsKey(currentRsNumber)) {
+////                    snpRsNumberToItemIdMap.put(currentRsNumber,
+////                            currentSnpItem.getIdentifier());
+////                }
+//            }
+//        }
+//
+//        if (storedSnpInterMineId != null
+//                && pendingSnpRsNumberToConsequencesMap
+//                        .containsKey(currentRsNumber)) {
+//            pendingSnpRsNumberToConsequencesMap.get(currentRsNumber).addAll(consequenceItemIdSet);
+//        }
+
         LOG.info("Finished " + counter + " rows total, stored " + snpCounter + " SNPs for chr "
                 + chrName);
-        LOG.info("variationIdToItemIdentifier.size() = " + variationIdToItemIdentifier.size());
+        LOG.info("variationIdToItemIdMap.size() = " + variationIdToItemIdMap.size());
         LOG.info("Consequence count: " + consequenceCounter);
         LOG.info("Consequence types (consequence type to count) without transcript on Chromosome "
                 + chrName + " : " + nonTranscriptConsequences);
@@ -418,7 +520,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
             if (!StringUtils.isBlank(synonym)) {
                 synonymCounter++;
-                createSynonym(variationIdToItemIdentifier.get(variationId), synonym, true);
+                createSynonym(variationIdToItemIdMap.get(variationId), synonym, true);
             }
         }
         LOG.info("Created " + synonymCounter + " synonyms for chr " + chrName);
@@ -427,7 +529,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private void processGenotypes(Connection connection) throws Exception {
         // query for strains
         ResultSet res = queryStrains(connection);
-        int strainCounter = 0;
         while (res.next()) {
             Integer strainId = res.getInt("sample_id");
             String strainName = res.getString("name");
@@ -468,7 +569,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             String allele1 = res.getString("allele_1");
             String allele2 = res.getString("allele_2");
 
-            String snpItemIdentifier = variationIdToItemIdentifier.get(variationId);
+            String snpItemIdentifier = variationIdToItemIdMap.get(variationId);
 
             Item genotype = createItem("StrainGenotype");
             genotype.setAttribute("allele1", allele1);
@@ -525,7 +626,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             String allele = res.getString("allele");
             String frequency = res.getString("frequency");
 
-            String snpItemIdentifier = variationIdToItemIdentifier.get(variationId);
+            String snpItemIdentifier = variationIdToItemIdMap.get(variationId);
 
             Item genotype = createItem("PopulationGenotype");
             genotype.setAttribute("allele", allele);
@@ -619,7 +720,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     }
 
     private ResultSet queryAllelesForPopulation(Connection connection, Integer popId)
-    throws SQLException {
+        throws SQLException {
         String query = "SELECT a.variation_id, a.sample_id, ac.allele, a.frequency"
             + " FROM allele a, allele_code ac"
             + " WHERE a.sample_id = " + popId
@@ -632,12 +733,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         return res;
     }
 
-    private void storeSnpCollections(Integer storedSnpId, Set<String> consequenceIdentifiers)
+    private void storeSnpConsequenceCollections(Integer storedSnpInterMineId,
+            Set<String> consequenceItemIdSet)
         throws ObjectStoreException {
-        if (!consequenceIdentifiers.isEmpty()) {
+        if (!consequenceItemIdSet.isEmpty()) {
             ReferenceList col =
-                new ReferenceList("consequences", new ArrayList<String>(consequenceIdentifiers));
-            store(col, storedSnpId);
+                new ReferenceList("consequences", new ArrayList<String>(consequenceItemIdSet));
+            store(col, storedSnpInterMineId);
         }
     }
 
@@ -730,7 +832,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         List<String> stateIdentifiers = new ArrayList<String>();
         if (!StringUtils.isBlank(input)) {
             for (String state : input.split(",")) {
-                stateIdentifiers.add(getStateIdentifier(state));
+                stateIdentifiers.add(getStateIdentifier(state.trim()));
             }
         }
         return stateIdentifiers;
@@ -750,6 +852,17 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
     private ResultSet queryVariation(Connection connection, String chrName)
         throws SQLException {
+        // ensembl "variation_feature" table:
+        // Doc: http://www.ensembl.org/info/docs/variation/variation_schema.html#variation_feature
+        // Column: consequence_type (not integrated to intermine)
+        // Description: The SO accession(s) representing the 'worst' consequence(s) of the
+        //              variation in a transcript or regulatory region
+
+        // ensembl "transcript_variation" table
+        // Doc:http://www.ensembl.org/info/docs/variation/variation_schema.html#transcript_variation
+        // Column: consequence_types
+        // Description: The consequence(s) of the variant allele on this transcript
+
 
         String query = "SELECT vf.variation_feature_id, vf.variation_name, vf.variation_id,"
             + " vf.allele_string, sr.name,"

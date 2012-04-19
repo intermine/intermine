@@ -15,6 +15,11 @@
 <item id="9_1" class="ValidationState">
 <attribute name="name" value="cluster"/>
 </item>
+<item id="10_1" class="Consequence">
+<attribute name="description" value="nc_transcript_variant"/>
+<reference name="transcript" ref_id="12_1"/>
+<collection name="types"><reference ref_id="11_1"/></collection>
+</item>
 <item id="7_1" class="SOTerm">
 <attribute name="name" value="chromosome"/>
 <reference name="ontology" ref_id="0_1"/>
@@ -75,16 +80,6 @@
 </item>
 <item id="9_4" class="ValidationState">
 <attribute name="name" value="doublehit"/>
-</item>
-<item id="10_1" class="Consequence">
-<attribute name="description" value="nc_transcript_variant"/>
-<attribute name="peptideAlleles" value="NULL"/>
-<attribute name="polyphenPrediction" value="NULL"/>
-<attribute name="polyphenScore" value="NULL"/>
-<attribute name="siftPrediction" value="NULL"/>
-<attribute name="siftScore" value="NULL"/>
-<reference name="transcript" ref_id="12_1"/>
-<collection name="types"><reference ref_id="11_1"/></collection>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
