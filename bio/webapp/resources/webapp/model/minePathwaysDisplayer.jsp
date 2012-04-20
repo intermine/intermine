@@ -7,172 +7,189 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str" %>
 
-
 <!-- minePathwaysDisplayer.jsp -->
 <div id="mine-pathway-displayer" class="collection-table column-border">
 
-<script type="text/javascript" charset="utf-8">
-function getFriendlyMinePathways(mine, orthologues) {
-
-    AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
-      var jSONObject = jQuery.parseJSON(pathways),
-        position;
-
-      jQuery('#mine-pathway-displayer table thead th').each(function(i) {
-            if (jQuery(this).text() == mine) position = i;
-           });
-
-        if (jSONObject && jSONObject['results'].length > 0) {
-          generateFriendlyMinePathways(jSONObject, "#intermine_pathways_" + mine, mine);
-        } else {
-            jQuery("#intermine_pathways_" + mine).text('None');
-        }
-       jQuery('#mine-pathway-displayer table thead th:eq(' + position + ')').removeClass('loading');
-    });
-}
-
-function generateFriendlyMinePathways(jSONObject, target, mine) {
-  var url = '';
-  if (jSONObject['mineURL'] != undefined) {
-    url = jSONObject['mineURL'];
-  }
-
-  if (jSONObject['results'] != undefined) {
-     jQuery('<ul/>').appendTo(target);
-     var i;
-     jQuery.each(jSONObject['results'], function(index, pathway) {
-          jQuery('<li/>', {
-            'html': jQuery('<a/>', {
-            'href': url + "/report.do?id=" + pathway['id'],
-            'text': pathway['name'],
-            'target': '_blank',
-            'class': 'external',
-            'style': (index > 9) ? 'display:none;' : ''
-        })
-        }).appendTo(target + ' ul');
-        i = index;
-     });
-     if (i > 10) {
-       jQuery('<div/>', {
-         'class': 'toggle',
-         'style': 'margin-top:5px'
-       })
-       .append(jQuery('<a/>', {
-         'class': 'more',
-         'text': 'Show ' + (i - 9) + ' more pathway' + (((i - 9) > 1) ? 's' : ''),
-         'click': function() {
-           jQuery(target).find(':hidden').show();
-           jQuery(this).remove();
-         }
-       }))
-       .appendTo(target);
-     }
-  }
-}
-
-</script>
-
-<div class="header">
-<h3>Pathways from Other Mines</h3>
-
 <c:choose>
-  <c:when test="${gene != null && !empty(gene) && ((minesForPathways != null && !empty(minesForPathways)) || !empty(gene.pathways))}">
+<c:when test="${minesForPathways != null && !empty(minesForPathways) && gene != null && !empty(gene)}">
 
-      <p>
-        <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
-        Pathway data from other Mines for homologues of this gene.
-      </p>
-      </div>
+  <style>
+    #mine-pathway-displayer div.wrapper { height:300px; overflow-y:auto; overflow-x:hidden }
+    <c:forEach items="${minesForPathways}" var="entry">
+      /* might fail, does not use JS slugify! */
+      #mine-pathway-displayer table th.<c:out value="${fn:toLowerCase(entry.key.name)}"/> span { padding:1px 4px; border-radius:2px;
+        background:${entry.key.bgcolor}; color:${entry.key.frontcolor} !important }
+    </c:forEach>
+  </style>
 
-    <!-- one column for each mine -->
-    <table>
-      <thead>
-      <tr>
-            <!-- this mine -->
-            <th><span><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></span></th>
+  <script type="text/javascript" charset="utf-8">
+  (function() {
+    function getFriendlyMinePathways(mine, orthologues, callback) {
+      AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
+        callback(jQuery.parseJSON(pathways)['results']);
+      });
+    }
 
-            <!-- other mines -->
-            <c:forEach items="${minesForPathways}" var="entry">
-                <c:set var="mine" value="${entry.key}" />
-                <c:set var="homologues" value="${entry.value}" />
-                <th class="loading"><div class="mine"><span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span></div></th>
-            </c:forEach>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-          <!-- this mine -->
-        <td>
+    var Grid,
+    __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-            <c:choose>
-              <c:when test="${empty gene.pathways}">
-                None
-              </c:when>
-              <c:otherwise>
-              <div id="intermine_pathways_thisMine">
-              <ul>
-              <c:forEach items="${gene.pathways}" var="pathway" varStatus="status">
-                  <li>
-                    <c:choose>
-                      <c:when test="${status.index > 9}">
-                        <c:set var="style" value="display:none;" />
-                      </c:when>
-                      <c:otherwise>
-                        <c:set var="style" value="" />
-                      </c:otherwise>
-                    </c:choose>
-                    <html:link style="${style}" href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${pathway.id}">
-                      <c:out value="${pathway.name}"/>
-                    </html:link>
-                  </li>
-              </c:forEach>
-            </ul>
-            </div>
+    Grid = (function() {
 
-            <c:if test="${fn:length(style) > 0}">
-              <script type="text/javascript">
-                 var target = '#intermine_pathways_thisMine ul',
-                      i = jQuery(target).find('li').length - 10;
-              jQuery('<div/>', {
-               'class': 'toggle',
-               'style': 'margin-top:5px'
-             })
-             .append(jQuery('<a/>', {
-               'class': 'more',
-               'text': 'Show ' + i + ' more pathway' + ((i > 1) ? 's' : ''),
-               'click': function() {
-                 jQuery(target).find(':hidden').show();
-                 jQuery(this).remove();
-               }
-             }))
-             .appendTo(target);
-              </script>
-            </c:if>
+      Grid.prototype.columns = [];
 
-            </c:otherwise>
-            </c:choose>
-        </td>
+      Grid.prototype.rows = [];
 
-        <!-- other mines -->
-        <c:forEach items="${minesForPathways}" var="entry">
-            <td>
-            <c:set var="mine" value="${entry.key}" />
-            <div id="intermine_pathways_${mine.name}"></div>
-            <script type="text/javascript" charset="utf-8">
-                getFriendlyMinePathways('${mine.name}', '${entry.value}');
-            </script>
-            </td>
-        </c:forEach>
-      </tr>
-      </tbody>
-    </table>
+      Grid.prototype.grid = {};
 
-  </c:when>
-  <c:otherwise>
+      function Grid(el, head) {
+        var column, columnS, row, _i, _len;
+        jQuery(el).append(this.body = jQuery('<tbody/>'));
+        row = jQuery('<tr/>');
+        row.append(jQuery('<th/>'));
+        for (_i = 0, _len = head.length; _i < _len; _i++) {
+          column = head[_i];
+          this.columns.push(columnS = this.slugify(column));
+          row.append(jQuery('<th/>', {
+            'html': jQuery('<span/>', { 'text': column }),
+            'class': columnS + ' loading'
+          }));
+        }
+        row.appendTo(jQuery('<thead/>').appendTo(jQuery(el)));
+      }
+
+      Grid.prototype.add = function(row, column, data) {
+        var columnS, rowEl, rowS,
+          _this = this;
+        rowS = this.slugify(row);
+        columnS = this.slugify(column);
+        if (__indexOf.call(this.rows, rowS) < 0) {
+          rowEl = jQuery("<tr/>", {
+            'class': rowS
+          }).append(jQuery("<td/>", {
+            'text': row
+          }));
+          if (!this.rows.length) {
+            this.body.append(rowEl);
+            this.rows = [rowS];
+          } else {
+            (function() {
+              var index, row, _ref;
+              _ref = _this.rows;
+              for (index in _ref) {
+                row = _ref[index];
+                if (rowS.localeCompare(row) < 0) {
+                  _this.rows.splice(index, 0, rowS);
+                  _this.grid[row]['el'].before(rowEl);
+                  return;
+                }
+              }
+              _this.rows.push(rowS);
+              return _this.body.append(rowEl);
+            })();
+          }
+          (function() {
+            var columnS, _i, _len, _ref, _results;
+            _this.grid[rowS] = {
+              'el': rowEl,
+              'columns': {}
+            };
+            _ref = _this.columns;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              columnS = _ref[_i];
+              _results.push(_this.grid[rowS]['columns'][columnS] = (function() {
+                var el;
+                rowEl.append(el = jQuery('<td/>', {
+                  'class': columnS
+                }));
+                return el;
+              })());
+            }
+            return _results;
+          })();
+        }
+        return this.grid[rowS]['columns'][columnS].html(data);
+      };
+
+      Grid.prototype.slugify = function(text) {
+        return text.replace(/[^-a-zA-Z0-9,&\s]+/ig, '').replace(/-/gi, "_").replace(/\s/gi, "-").toLowerCase();
+      };
+
+      return Grid;
+
+    })();
+
+    // Who?
+    var thisMine = '${WEB_PROPERTIES["project.title"]}';
+
+    // Create the listing of all the mines we will have.
+    var mines = [];
+    // This mine.
+    mines.push(thisMine);
+    // All the other mines.
+    <c:forEach items="${minesForPathways}" var="entry">
+      mines.push('${entry.key.name}');
+    </c:forEach>
+
+    // Create a new Grid.
+    var target = '#mine-pathway-displayer table';
+    var grid = new Grid(target, mines);
+
+    // Add all pathways for this mine.
+    <c:forEach items="${gene.pathways}" var="pathway">
+    // Stop the loading sign.
+      jQuery(target).find('thead th.' + grid.slugify(thisMine)).removeClass('loading');
+      
+      // Add the results to the grid.
+      grid.add('${pathway.name}', thisMine, function() {
+        return jQuery('<a/>', {
+          'text':  'Yes',
+          'href':  "report.do?id=${pathway.id}"
+        });
+      });
+    </c:forEach>
+
+    // Fetch pathways for other mines.
+    <c:forEach items="${minesForPathways}" var="entry">
+      getFriendlyMinePathways('${entry.key.name}', '${entry.value}', function(results) {
+        // Stop the loading sign.
+        jQuery(target).find('thead th.' + grid.slugify('${entry.key.name}')).removeClass('loading');
+
+        // Add the results to the grid.
+        jQuery.each(results, function(index, pathway) {
+          grid.add(pathway['name'], '${entry.key.name}', function() {
+            return jQuery('<a/>', {
+              'class':  'external',
+              'text':   'Yes',
+              'target': '_blank',
+              'href':   '${entry.key.url}' + '/report.do?id=' + pathway['id']
+            });
+          });
+        });
+      });
+    </c:forEach>
+  }).call(this);
+  </script>
+
+  <div class="header">
+    <h3>Pathways from Other Mines</h3>
+    <p>
+      <img class="tinyQuestionMark" src="images/icons/information-small-blue.png" alt="?">
+      Pathway data from other Mines for homologues of this gene.
+    </p>
   </div>
-    <p>No pathways found.</p>
-  </c:otherwise>
 
+  <!-- target for Grid -->
+  <div class="wrapper">
+    <table></table>
+  </div>
+</c:when>
+<c:otherwise>
+  <div class="header">
+    <h3>Pathways from Other Mines</h3>
+  </div>
+  <p>No pathways found.</p>
+</c:otherwise>
 </c:choose>
 </div>
 <!-- /publicationCountsDisplayer.jsp -->
