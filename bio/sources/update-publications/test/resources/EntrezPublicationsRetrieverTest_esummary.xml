@@ -2,117 +2,117 @@
 <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 11 May 2002//EN" "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/eSummary_041029.dtd">
 <eSummaryResult>
 <DocSum>
-	<Id>10021333</Id>
-	<Item Name="PubDate" Type="Date">1999 Mar</Item>
-	<Item Name="EPubDate" Type="Date"></Item>
-	<Item Name="Source" Type="String">Development</Item>
-	<Item Name="AuthorList" Type="List">
-		<Item Name="Author" Type="String">Lie YS</Item>
-		<Item Name="Author" Type="String">Macdonald PM</Item>
-		<Item Name="Author" Type="String">Chow KL</Item>		
-	</Item>
-	<Item Name="Title" Type="String">Apontic binds the translational repressor Bruno and is implicated in regulation of oskar mRNA translation.</Item>
-	<Item Name="Volume" Type="String">126</Item>
-	<Item Name="Issue" Type="String">6</Item>
-	<Item Name="Pages" Type="String">1129-38</Item>
-	<Item Name="LangList" Type="List">
-		<Item Name="Lang" Type="String">English</Item>
-	</Item>
-	<Item Name="NlmUniqueID" Type="String">8701744</Item>
-	<Item Name="ISSN" Type="String">0950-1991</Item>
-	<Item Name="ESSN" Type="String">1477-9129</Item>
-	<Item Name="PubTypeList" Type="List">
-		<Item Name="PubType" Type="String">Journal Article</Item>
-	</Item>
-	<Item Name="RecordStatus" Type="String">PubMed - indexed for MEDLINE</Item>
-	<Item Name="PubStatus" Type="String">ppublish</Item>
-	<Item Name="ArticleIds" Type="List">
-		<Item Name="pubmed" Type="String">10021333</Item>
-		<Item Name="medline" Type="String">99146878</Item>
-	</Item>
-	<Item Name="History" Type="List">
-		<Item Name="pubmed" Type="Date">1999/02/18 00:00</Item>
-		<Item Name="medline" Type="Date">1999/02/18 00:01</Item>
-	</Item>
-	<Item Name="References" Type="List"></Item>
-	<Item Name="HasAbstract" Type="Integer">1</Item>
-	<Item Name="SO" Type="String">1999 Mar;126(6):1129-38</Item>
+    <Id>10021333</Id>
+    <Item Name="PubDate" Type="Date">1999 Mar</Item>
+    <Item Name="EPubDate" Type="Date"></Item>
+    <Item Name="Source" Type="String">Development</Item>
+    <Item Name="AuthorList" Type="List">
+        <Item Name="Author" Type="String">Lie YS</Item>
+        <Item Name="Author" Type="String">Macdonald PM</Item>
+        <Item Name="Author" Type="String">Chow KL</Item>        
+    </Item>
+    <Item Name="Title" Type="String">Apontic binds the translational repressor Bruno and is implicated in regulation of oskar mRNA translation.</Item>
+    <Item Name="Volume" Type="String">126</Item>
+    <Item Name="Issue" Type="String">6</Item>
+    <Item Name="Pages" Type="String">1129-38</Item>
+    <Item Name="LangList" Type="List">
+        <Item Name="Lang" Type="String">English</Item>
+    </Item>
+    <Item Name="NlmUniqueID" Type="String">8701744</Item>
+    <Item Name="ISSN" Type="String">0950-1991</Item>
+    <Item Name="ESSN" Type="String">1477-9129</Item>
+    <Item Name="PubTypeList" Type="List">
+        <Item Name="PubType" Type="String">Journal Article</Item>
+    </Item>
+    <Item Name="RecordStatus" Type="String">PubMed - indexed for MEDLINE</Item>
+    <Item Name="PubStatus" Type="String">ppublish</Item>
+    <Item Name="ArticleIds" Type="List">
+        <Item Name="pubmed" Type="String">10021333</Item>
+        <Item Name="medline" Type="String">99146878</Item>
+    </Item>
+    <Item Name="History" Type="List">
+        <Item Name="pubmed" Type="Date">1999/02/18 00:00</Item>
+        <Item Name="medline" Type="Date">1999/02/18 00:01</Item>
+    </Item>
+    <Item Name="References" Type="List"></Item>
+    <Item Name="HasAbstract" Type="Integer">1</Item>
+    <Item Name="SO" Type="String">1999 Mar;126(6):1129-38</Item>
 </DocSum>
 
 <DocSum>
-	<Id>10021351</Id>
-	<Item Name="PubDate" Type="Date">1999 Mar</Item>
-	<Item Name="EPubDate" Type="Date"></Item>
-	<Item Name="Source" Type="String">Development</Item>
-	<Item Name="AuthorList" Type="List">
-		<Item Name="Author" Type="String">Morita K</Item>
-		<Item Name="Author" Type="String">Chow KL</Item>
-		<Item Name="Author" Type="String">Ueno N</Item>
-	</Item>
-	<Item Name="Title" Type="String">Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family.</Item>
-	<Item Name="Volume" Type="String">126</Item>
-	<Item Name="Issue" Type="String">6</Item>
-	<Item Name="Pages" Type="String">1337-47</Item>
-	<Item Name="LangList" Type="List">
-		<Item Name="Lang" Type="String">English</Item>
-	</Item>
-	<Item Name="NlmUniqueID" Type="String">8701744</Item>
-	<Item Name="ISSN" Type="String">0950-1991</Item>
-	<Item Name="ESSN" Type="String">1477-9129</Item>
-	<Item Name="PubTypeList" Type="List">
-		<Item Name="PubType" Type="String">Journal Article</Item>
-	</Item>
-	<Item Name="RecordStatus" Type="String">PubMed - indexed for MEDLINE</Item>
-	<Item Name="PubStatus" Type="String">ppublish</Item>
-	<Item Name="ArticleIds" Type="List">
-		<Item Name="pubmed" Type="String">10021351</Item>
-		<Item Name="medline" Type="String">99146896</Item>
-	</Item>
-	<Item Name="History" Type="List">
-		<Item Name="pubmed" Type="Date">1999/02/18 00:00</Item>
-		<Item Name="medline" Type="Date">1999/02/18 00:01</Item>
-	</Item>
-	<Item Name="References" Type="List"></Item>
-	<Item Name="HasAbstract" Type="Integer">1</Item>
-	<Item Name="SO" Type="String">1999 Mar;126(6):1337-47</Item>
+    <Id>10021351</Id>
+    <Item Name="PubDate" Type="Date">1999 Mar</Item>
+    <Item Name="EPubDate" Type="Date"></Item>
+    <Item Name="Source" Type="String">Development</Item>
+    <Item Name="AuthorList" Type="List">
+        <Item Name="Author" Type="String">Morita K</Item>
+        <Item Name="Author" Type="String">Chow KL</Item>
+        <Item Name="Author" Type="String">Ueno N</Item>
+    </Item>
+    <Item Name="Title" Type="String">Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family.</Item>
+    <Item Name="Volume" Type="String">126</Item>
+    <Item Name="Issue" Type="String">6</Item>
+    <Item Name="Pages" Type="String">1337-47</Item>
+    <Item Name="LangList" Type="List">
+        <Item Name="Lang" Type="String">English</Item>
+    </Item>
+    <Item Name="NlmUniqueID" Type="String">8701744</Item>
+    <Item Name="ISSN" Type="String">0950-1991</Item>
+    <Item Name="ESSN" Type="String">1477-9129</Item>
+    <Item Name="PubTypeList" Type="List">
+        <Item Name="PubType" Type="String">Journal Article</Item>
+    </Item>
+    <Item Name="RecordStatus" Type="String">PubMed - indexed for MEDLINE</Item>
+    <Item Name="PubStatus" Type="String">ppublish</Item>
+    <Item Name="ArticleIds" Type="List">
+        <Item Name="pubmed" Type="String">10021351</Item>
+        <Item Name="medline" Type="String">99146896</Item>
+    </Item>
+    <Item Name="History" Type="List">
+        <Item Name="pubmed" Type="Date">1999/02/18 00:00</Item>
+        <Item Name="medline" Type="Date">1999/02/18 00:01</Item>
+    </Item>
+    <Item Name="References" Type="List"></Item>
+    <Item Name="HasAbstract" Type="Integer">1</Item>
+    <Item Name="SO" Type="String">1999 Mar;126(6):1337-47</Item>
 </DocSum>
 
 <DocSum>
-	<Id>10021351</Id>
-	<Item Name="PubDate" Type="Date">1999 Mar</Item>
-	<Item Name="EPubDate" Type="Date"></Item>
-	<Item Name="Source" Type="String">Development</Item>
-	<Item Name="AuthorList" Type="List">
-		<Item Name="Author" Type="String">Morita K</Item>
-		<Item Name="Author" Type="String">Chow KL</Item>
-		<Item Name="Author" Type="String">Ueno N</Item>
-	</Item>
-	<Item Name="Title" Type="String">Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family.</Item>
-	<Item Name="Volume" Type="String">126</Item>
-	<Item Name="Issue" Type="String">6</Item>
-	<Item Name="Pages" Type="String">1337-47</Item>
-	<Item Name="LangList" Type="List">
-		<Item Name="Lang" Type="String">English</Item>
-	</Item>
-	<Item Name="NlmUniqueID" Type="String">8701744</Item>
-	<Item Name="ISSN" Type="String">0950-1991</Item>
-	<Item Name="ESSN" Type="String">1477-9129</Item>
-	<Item Name="PubTypeList" Type="List">
-		<Item Name="PubType" Type="String">Journal Article</Item>
-	</Item>
-	<Item Name="RecordStatus" Type="String">PubMed - indexed for MEDLINE</Item>
-	<Item Name="PubStatus" Type="String">ppublish</Item>
-	<Item Name="ArticleIds" Type="List">
-		<Item Name="pubmed" Type="String">10021351</Item>
-		<Item Name="medline" Type="String">99146896</Item>
-	</Item>
-	<Item Name="History" Type="List">
-		<Item Name="pubmed" Type="Date">1999/02/18 00:00</Item>
-		<Item Name="medline" Type="Date">1999/02/18 00:01</Item>
-	</Item>
-	<Item Name="References" Type="List"></Item>
-	<Item Name="HasAbstract" Type="Integer">1</Item>
-	<Item Name="SO" Type="String">1999 Mar;126(6):1337-47</Item>
+    <Id>10021351</Id>
+    <Item Name="PubDate" Type="Date">1999 Mar</Item>
+    <Item Name="EPubDate" Type="Date"></Item>
+    <Item Name="Source" Type="String">Development</Item>
+    <Item Name="AuthorList" Type="List">
+        <Item Name="Author" Type="String">Morita K</Item>
+        <Item Name="Author" Type="String">Chow KL</Item>
+        <Item Name="Author" Type="String">Ueno N</Item>
+    </Item>
+    <Item Name="Title" Type="String">Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family.</Item>
+    <Item Name="Volume" Type="String">126</Item>
+    <Item Name="Issue" Type="String">6</Item>
+    <Item Name="Pages" Type="String">1337-47</Item>
+    <Item Name="LangList" Type="List">
+        <Item Name="Lang" Type="String">English</Item>
+    </Item>
+    <Item Name="NlmUniqueID" Type="String">8701744</Item>
+    <Item Name="ISSN" Type="String">0950-1991</Item>
+    <Item Name="ESSN" Type="String">1477-9129</Item>
+    <Item Name="PubTypeList" Type="List">
+        <Item Name="PubType" Type="String">Journal Article</Item>
+    </Item>
+    <Item Name="RecordStatus" Type="String">PubMed - indexed for MEDLINE</Item>
+    <Item Name="PubStatus" Type="String">ppublish</Item>
+    <Item Name="ArticleIds" Type="List">
+        <Item Name="pubmed" Type="String">10021351</Item>
+        <Item Name="medline" Type="String">99146896</Item>
+    </Item>
+    <Item Name="History" Type="List">
+        <Item Name="pubmed" Type="Date">1999/02/18 00:00</Item>
+        <Item Name="medline" Type="Date">1999/02/18 00:01</Item>
+    </Item>
+    <Item Name="References" Type="List"></Item>
+    <Item Name="HasAbstract" Type="Integer">1</Item>
+    <Item Name="SO" Type="String">1999 Mar;126(6):1337-47</Item>
 </DocSum>
 
 </eSummaryResult>

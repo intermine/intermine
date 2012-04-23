@@ -19,7 +19,7 @@
   </class>
   <class className="org.intermine.model.bio.Consequence">
     <fields>
-      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="types"/>
     </fields>
   </class>
   <class className="org.intermine.model.bio.ValidationState">
@@ -465,6 +465,12 @@
                      replacesFields="sequence"
                      placement="summary"
                      types="Protein"/>
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.CuratedProteinsDisplayer"
+                     jspName="model/curatedProteinsDisplayer.jsp"
+                     replacesFields="proteins"
+                     placement="summary"
+                     types="Gene"/>
 
 </reportdisplayers>
 

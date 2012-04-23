@@ -128,7 +128,7 @@ public class PathQueryBindingTest extends TestCase
         PathQuery q = new PathQuery(model);
         q.addView("Employee.name");
         q.addConstraint(new PathConstraintAttribute("Employee.age", ConstraintOp.LESS_THAN, "50"));
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"><constraint path=\"Employee.age\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 
     public void testNewPathQuery2() throws Exception {

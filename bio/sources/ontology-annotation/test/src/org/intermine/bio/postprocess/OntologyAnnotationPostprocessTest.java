@@ -75,12 +75,15 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
     public void testPostProcess() throws Exception {
         setUpData();
         OntologyAnnotationPostprocess gp = new OntologyAnnotationPostprocess(osw);
+        gp.setOntologyPrefix("GO");
         gp.postProcess();
 
         Gene resGene = (Gene) getFromDb(Gene.class).iterator().next();
 
         // Gene should come back with a collection of GO terms
-        assertEquals(2, resGene.getGoAnnotation().size());
+//        assertEquals(2, resGene.getGoAnnotation().size());
+
+        assertEquals(2, resGene.getOntologyAnnotations().size());
     }
 
     public void testMerging() throws Exception {

@@ -24,7 +24,7 @@ li { margin-left:auto; }
       #welcome ul#switcher a { text-decoration:none; border:1px solid #BEDCE4; padding:0 8px; }
       #welcome ul#switcher li.current a { background:#BFEBFE; }
 
-  #welcome #thumb { margin:0; background:url("../themes/metabolic/thumbs/welcome-thumb.png") no-repeat top; height:205px; }
+  #welcome #thumb { margin:0; background:url("../themes/metabolic/thumbs/welcome-thumb.png") no-repeat top; height:205px; float:left; }
       #welcome #thumb img { margin:2px 36px; }
   #welcome a.close { background:url("../themes/metabolic/icons/toggle-minus.png") no-repeat top; height:16px; width:16px; font-size:0;
       line-height:0; position:absolute; right:6px; top:6px; z-index:1000; }

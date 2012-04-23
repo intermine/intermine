@@ -46,7 +46,7 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.HeaderConfigLink;
 import org.intermine.web.logic.config.HeaderConfigTitle;
-import org.intermine.web.logic.config.InlineList;
+import org.intermine.web.logic.config.InlineListConfig;
 import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -601,22 +601,23 @@ public class ReportObject
 
     /**
      * Resolve an InlineList by filling it up with a list of list objects, part of initialise()
-     * @param list retrieved from Type
+     * @param listConfig retrieved from Type
      * @param bagOfInlineListNames is a bag of names of lists we have resolved so far so these
      *        fields are not resolved elsewhere and skipped instead
      * @see setDescriptorOnInlineList() is still needed when traversing FieldDescriptors
      */
-    private void initialiseInlineList(InlineList list,
+    private void initialiseInlineList(InlineListConfig listConfig,
             HashMap<String, Boolean> bagOfInlineListNames) {
         long startTime = System.currentTimeMillis();
         // soon to be list of values
         Set<Object> listOfListObjects = null;
         String columnToDisplayBy = null;
-        try {
+        InlineList list = null;
+		try {
             // create a new path to the collection of objects
             Path path = new Path(im.getModel(),
                     DynamicUtil.getSimpleClass(object.getClass()).getSimpleName()
-                    + '.' + list.getPath());
+                    + '.' + listConfig.getPath());
             try {
                 // save the suffix, the value we will show the list by
                 columnToDisplayBy = path.getLastElement();
@@ -627,9 +628,9 @@ public class ReportObject
                 throw new RuntimeException("You need to specify a key to display"
                         + "the list by, not just the root element.");
             }
-            // resolve path to a collection and save into a list
+            // resolve path to a collection and save into a new list
             listOfListObjects = PathUtil.resolveCollectionPath(path, object);
-            list.setListOfObjects(listOfListObjects, columnToDisplayBy);
+            list = new InlineList(listOfListObjects, columnToDisplayBy, listConfig.getShowLinksToObjects(), listConfig.getPath(), listConfig.getLineLength());
 
         } catch (PathException e) {
             throw new RuntimeException("Your collections of inline lists"
@@ -637,14 +638,14 @@ public class ReportObject
         }
 
         // place the list
-        if (list.getShowInHeader()) {
+        if (listConfig.getShowInHeader()) {
             inlineListsHeader.add(list);
         } else {
             inlineListsNormal.add(list);
         }
 
         // save name of the collection
-        String path = list.getPath();
+        String path = listConfig.getPath();
         bagOfInlineListNames.put(path.substring(0, path.indexOf('.')), true);
         long endTime = System.currentTimeMillis();
         LOG.info("TIME initialiseInlineLists took: " + (endTime - startTime) + "ms");
@@ -787,17 +788,17 @@ public class ReportObject
         refsAndCollections = new TreeMap<String, DisplayField>(String.CASE_INSENSITIVE_ORDER);
 
         /** InlineLists **/
-        inlineListsHeader = new ArrayList<InlineList>();
-        inlineListsNormal = new ArrayList<InlineList>();
+        inlineListsHeader = (inlineListsHeader != null) ? inlineListsHeader : new ArrayList<InlineList>(); 
+        inlineListsNormal = (inlineListsNormal != null) ? inlineListsNormal : new ArrayList<InlineList>(); 
 
         Type type = webConfig.getTypes().get(getClassDescriptor().getName());
         // init lists from WebConfig Type
-        List<InlineList> inlineListsWebConfig = type.getInlineLists();
+        List<InlineListConfig> inlineListsWebConfig = type.getInlineListConfig();
         // a map of inlineList object names so we do not include them elsewhere
         HashMap<String, Boolean> bagOfInlineListNames = new HashMap<String, Boolean>();
         // fill up
-        for (InlineList list : inlineListsWebConfig) {
-            initialiseInlineList(list, bagOfInlineListNames);
+        for (InlineListConfig listConfig : inlineListsWebConfig) {
+            initialiseInlineList(listConfig, bagOfInlineListNames);
         }
 
         /** Attributes, References, Collections through FieldDescriptors **/

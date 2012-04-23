@@ -36,8 +36,7 @@ my $prod_db_username = 'flymine';
 my $userprofile_db_username = 'flymine';
 my @dump_command = ("pg_dump", "-h", $HOST_NAME, "-c", "-U");
 my @psql_command = qw[psql -q -U];
-my @createdb_command = qw[createdb -U];
-my $db_prefix = "userprofile-release-";
+my $userprofile_db = "userprofile-flymine";
 my $prod_db_prefix = "flymine-release-";
 
 sub get_max_version {
@@ -47,7 +46,7 @@ sub get_max_version {
   or die "can't open pipe to read list of databases";
 
   while (my $line = <REMOTE>) {
-    if ($line =~ /$db_prefix([\d\.]+)/) {
+    if ($line =~ /$prod_db_prefix([\d\.]+)/) {
       my $this_version = $1;
       if ($this_version > $max_version) {
         $max_version = $this_version;
@@ -58,7 +57,7 @@ sub get_max_version {
   close REMOTE;
 
   if ($max_version == -1) {
-    die "can't find latest version of userprofile database\n";
+    die "can't find latest version of database\n";
   }
 
   return $max_version;
@@ -96,45 +95,12 @@ sub make_dump {
 
 }
 
-sub load_for_mirror {
-  my $db_name = shift;
-  my $dump_file = shift;
-  my @createdb_params = ($db_name);
-
-  if (defined $mirror_port) {
-    unshift @createdb_params, '-p', $mirror_port;
-  }
-
-  print <<EOF;
-attempting to create $db_name on $mirror_server with command:
-ssh $mirror_server "@createdb_command @createdb_params"
-  - expect a failure if the database already exists
-EOF
-
-  system ("ssh", $mirror_server, "@createdb_command @createdb_params");
-
-  my @psql_params = ("-f", $dump_file, $db_name);
-
-  if (defined $mirror_port) {
-    unshift @psql_params, "-p", $mirror_port;
-  }
-
-  print qq[loading with: ssh $mirror_server "@psql_command @psql_params"\n];
-
-  system ("ssh", $mirror_server, "psql --version");
-  system ("ssh", $mirror_server, "@psql_command @psql_params");
-
-
-}
-
 my $max_version = get_max_version();
 
 write_version($max_version);
 
 my $dump_file = "$dump_file_prefix.$max_version";
 
-make_dump($db_prefix . $max_version, $dump_file, 0);
+make_dump($userprofile_db, $dump_file, 0);
 make_dump($prod_db_prefix . $max_version, $dump_file . '.bags', 1);
 
-#load_for_mirror($db_prefix . $max_version, $dump_file, 0);
-#load_for_mirror($prod_db_prefix . $max_version, $dump_file . '.bags', 1);

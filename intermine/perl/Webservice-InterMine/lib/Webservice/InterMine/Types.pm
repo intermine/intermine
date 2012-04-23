@@ -61,7 +61,7 @@ require overload;
 use MooseX::Types -declare => [
     qw(
         Constraint ConstraintList ConstraintFactory
-        ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator
+        ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator LCBinaryOperator
         TernaryOperator MultiOperator LoopOperator ListOperator NotInWithUnderScores
         LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator NotQuiteMulti 
         XmlLoopOperators NoSpaceLoopOperator
@@ -80,14 +80,14 @@ use MooseX::Types -declare => [
         ServiceVersion
         ServiceRootUri ServiceRoot NotServiceRoot SlashedPath
 
-        Query QueryType QueryName QueryHandler IllegalQueryName ListableQuery
+        Query QueryType QueryName QueryHandler IllegalQueryName Listable
 
         Template TemplateFactory TemplateHash
 
         SavedQuery SavedQueryFactory
 
         ListFactory List ListName CanTreatAsList
-        ListOfLists ListOfListableQueries
+        ListOfLists ListOfListables
 
         ListOperable ListOfListOperables 
 
@@ -143,8 +143,10 @@ enum UnaryOperator,  [ 'IS NOT NULL', 'IS NULL' ];
 enum LCUnaryOperator,  [ 'is not null', 'is null' ];
 coerce UnaryOperator, from LCUnaryOperator, via {uc($_)};
 
-enum BinaryOperator, [ '=', '!=', '<', '>', '>=', '<=',];
+enum BinaryOperator, [ '=', '!=', '<', '>', '>=', '<=', 'CONTAINS', 'LIKE', 'NOT LIKE', 'DOES NOT CONTAIN'];
 enum FakeBinaryOperator, ['eq', 'ne', 'lt', 'gt', 'ge', 'le', 'EQ', 'NE', 'LT', 'GT', 'GE', 'LE'];
+enum LCBinaryOperator, ["contains", "like", "not like", "does not contain"];
+coerce BinaryOperator, from LCBinaryOperator, via {uc($_)};
 coerce BinaryOperator, from FakeBinaryOperator, via {$fake_to_real_ops{lc($_)}};
 
 enum LoopOperator,   [ 'IS', 'IS NOT',];
@@ -282,8 +284,8 @@ subtype IllegalQueryName, as Str, where { /[^\w\.,\s-]/ };
 enum QueryType, [ 'template', 'saved-query', ];
 class_type QueryHandler, { class => 'Webservice::InterMine::Query::Handler', };
 class_type Query,        { class => 'Webservice::InterMine::Query::Core', };
-role_type ListableQuery, {role => 'Webservice::InterMine::Query::Roles::Listable'};
-subtype ListOfListableQueries, as ArrayRef[ListableQuery];
+role_type Listable, {role => 'Webservice::InterMine::Role::Listable'};
+subtype ListOfListables, as ArrayRef[Listable];
 coerce QueryName, from IllegalQueryName, 
     via { 
         s/[^a-zA-Z0-9_,. -]/_/g; 
@@ -310,7 +312,7 @@ subtype ListName, as Str;
 duck_type CanTreatAsList, ['to_list_name'];
 subtype ListOfLists, as ArrayRef[List];
 
-subtype ListOperable, as List|ListableQuery;
+subtype ListOperable, as List|Listable;
 subtype ListOfListOperables, as ArrayRef[ListOperable];
 
 coerce ListFactory, from HashRef, via {
@@ -318,7 +320,7 @@ coerce ListFactory, from HashRef, via {
     Webservice::InterMine::ListFactory->new( $_ );
 };
 
-coerce ListName, from ListableQuery, via {
+coerce ListName, from Listable, via {
     my $service = $_->service;
     my $list = eval {$service->new_list(content => $_)};
     if (my $e = $@) {

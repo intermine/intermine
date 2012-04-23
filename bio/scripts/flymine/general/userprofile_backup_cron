@@ -5,9 +5,9 @@
 PATH=/usr/local/bin:/software/arch/postgresql/bin:$PATH
 export PATH
 
-dumps_dir=/shared/dumps/userprofile/flymine
+dumps_dir=/micklem/dumps/userprofile/flymine
 
-/software/noarch/bio_scripts/userprofile_backup -p 5432 $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
+$HOME/svn/trunk/bio/scripts/userprofile_backup $dumps_dir/incoming/userprofile_backup prod2 > $HOME/.userprofile_backup.output.new 2>&1
 
 if cmp -s $HOME/.userprofile_backup.output $HOME/.userprofile_backup.output.new
 then
@@ -26,7 +26,7 @@ latest_version=`cat $HOME/.userprofile_latest_version`
 
 if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version" ; then
     DUMP_SIZE=`stat -c "%s" $dumps_dir/incoming/userprofile_backup.$latest_version`
-    if test $DUMP_SIZE -lt "1000000" ; then
+    if test $DUMP_SIZE -lt "200000000" ; then
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >>$dumps_dir/log
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version probably too small - backups may be broken" >&2
         exit 1
@@ -39,7 +39,7 @@ fi
 
 if test -e "$dumps_dir/incoming/userprofile_backup.$latest_version.bags" ; then
     DUMP_SIZE=`stat -c "%s" $dumps_dir/incoming/userprofile_backup.$latest_version.bags`
-    if test $DUMP_SIZE -lt "50000000" ; then
+    if test $DUMP_SIZE -lt "10000000" ; then
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >>$dumps_dir/log
         echo "Dump file $dumps_dir/incoming/userprofile_backup.$latest_version.bags probably too small - backups may be broken" >&2
         exit 1

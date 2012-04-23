@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,8 +26,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathConstraint;
@@ -54,11 +51,8 @@ public class TemplatesImportAction extends InterMineAction
         throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-
-        ServletContext servletContext = session.getServletContext();
         Profile profile = SessionMethods.getProfile(session);
         TemplatesImportForm tif = (TemplatesImportForm) form;
-
         int deleted = 0, imported = 0, renamed = 0;
         BagManager bagManager = im.getBagManager();
         Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
@@ -110,7 +104,6 @@ public class TemplatesImportAction extends InterMineAction
 
     // clone the template and set the new special-character-free name
     private ApiTemplate renameTemplate(String newName, ApiTemplate template) {
-
         ApiTemplate newTemplate = template.clone();
         newTemplate.setName(newName);
         return newTemplate;
@@ -123,7 +116,6 @@ public class TemplatesImportAction extends InterMineAction
      */
     private boolean validateLookupConstraints(TemplateQuery template) {
         Map<PathConstraint, String> pathConstraints = template.getConstraints();
-
         for (PathConstraint constraint : pathConstraints.keySet()) {
             if (constraint instanceof PathConstraintLookup
                 && !template.getEditableConstraints().contains(constraint)) {

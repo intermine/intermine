@@ -36,7 +36,7 @@ public class ModelTest extends TestCase
 
     public void testGetInstanceByWrongName() throws Exception {
         try {
-            Model model = Model.getInstanceByName("wrong_name");
+            Model.getInstanceByName("wrong_name");
             fail("Expected IllegalArgumentException, wrong model name");
         } catch (IllegalArgumentException e) {
         }
@@ -49,24 +49,30 @@ public class ModelTest extends TestCase
     }
 
     public void testContructNullArguments() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false, new HashSet(), new HashSet(), new HashSet());
-        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
+        ClassDescriptor cld1 = new ClassDescriptor("Class1", null, false,
+                new HashSet<AttributeDescriptor>(),
+                new HashSet<ReferenceDescriptor>(),
+                new HashSet<CollectionDescriptor>());
+        ClassDescriptor cld2 = new ClassDescriptor("Class2", null, false,
+                new HashSet<AttributeDescriptor>(),
+                new HashSet<ReferenceDescriptor>(),
+                new HashSet<CollectionDescriptor>());
+        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Arrays.asList(new ClassDescriptor[] {cld1, cld2}));
 
         try {
-            Model model = new Model(null, "package.name", clds);
+            new Model(null, "package.name", clds);
             fail("Expected NullPointerException, name was null");
         } catch(NullPointerException e) {
         }
 
         try {
-            Model model = new Model("", "package.name", clds);
+            new Model("", "package.name", clds);
             fail("Expected IllegalArgumentException, name was empty string");
         } catch(IllegalArgumentException e) {
         }
 
         try {
-            Model model = new Model("model", "package.name", null);
+            new Model("model", "package.name", null);
             fail("Expected NullPointerException, name was null");
         } catch(NullPointerException e) {
         }
@@ -74,7 +80,7 @@ public class ModelTest extends TestCase
 
     public void testGetDirectSubs() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        Set hasAddressCds =
+        Set<ClassDescriptor> hasAddressCds =
             model.getClassDescriptorsForClass(org.intermine.model.testmodel.HasAddress.class);
         assertEquals(2, hasAddressCds.size());
 
@@ -85,20 +91,20 @@ public class ModelTest extends TestCase
             addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
         }
 
-        Set resultCds = model.getDirectSubs(addressCld);
-        Set expectedCdNames = new HashSet();
+        Set<ClassDescriptor> resultCds = model.getDirectSubs(addressCld);
+        Set<String> expectedCdNames = new HashSet<String>();
         expectedCdNames.add("org.intermine.model.testmodel.Employee");
         expectedCdNames.add("org.intermine.model.testmodel.Company");
-        Set resultCdNames = new HashSet();
-        for (Iterator iter = resultCds.iterator(); iter.hasNext(); ) {
-            resultCdNames.add(((ClassDescriptor) iter.next()).getName());
+        Set<String> resultCdNames = new HashSet<String>();
+        for (ClassDescriptor cld : resultCds) {
+            resultCdNames.add(cld.getName());
         }
         assertEquals(expectedCdNames, resultCdNames);
     }
 
     public void testGetAllSubs() throws Exception {
         Model model = Model.getInstanceByName("testmodel");
-        Set hasAddressCds =
+        Set<ClassDescriptor> hasAddressCds =
             model.getClassDescriptorsForClass(org.intermine.model.testmodel.HasAddress.class);
         assertEquals(2, hasAddressCds.size());
 
@@ -109,23 +115,23 @@ public class ModelTest extends TestCase
             addressCld = (ClassDescriptor) hasAddressCds.iterator().next();
         }
 
-        Set resultCds = model.getAllSubs(addressCld);
-        Set expectedCdNames = new HashSet();
+        Set<ClassDescriptor> resultCds = model.getAllSubs(addressCld);
+        Set<String> expectedCdNames = new HashSet<String>();
         expectedCdNames.add("org.intermine.model.testmodel.Company");
         expectedCdNames.add("org.intermine.model.testmodel.Employee");
         expectedCdNames.add("org.intermine.model.testmodel.Manager");
         expectedCdNames.add("org.intermine.model.testmodel.CEO");
-        Set resultCdNames = new HashSet();
-        for (Iterator iter = resultCds.iterator(); iter.hasNext(); ) {
-            resultCdNames.add(((ClassDescriptor) iter.next()).getName());
+        Set<String> resultCdNames = new HashSet<String>();
+        for (ClassDescriptor cld : resultCds) {
+            resultCdNames.add(cld.getName());
         }
         assertEquals(expectedCdNames, resultCdNames);
     }
 
     public void testGetClassDescriptorByName() throws Exception {
-        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, EMPTY_SET, EMPTY_SET, EMPTY_SET);
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
+        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Arrays.asList(new ClassDescriptor[] {cld1, cld2}));
         Model model = new Model("model", "package.name", clds);
 
         assertEquals(cld1, model.getClassDescriptorByName("Class1"));
@@ -145,7 +151,7 @@ public class ModelTest extends TestCase
     public void testGetClassDescriptorByWrongName() throws Exception {
         ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), new HashSet(), new HashSet());
         ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), new HashSet(), new HashSet());
-        Set clds = new HashSet(Arrays.asList(new Object[] {cld1, cld2}));
+        Set<ClassDescriptor> clds = new HashSet<ClassDescriptor>(Arrays.asList(new ClassDescriptor[] {cld1, cld2}));
         Model model = new Model("model", "package.name", clds);
 
         assertTrue(null == model.getClassDescriptorByName("WrongName"));

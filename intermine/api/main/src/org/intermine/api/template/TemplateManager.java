@@ -188,7 +188,6 @@ public class TemplateManager
      * @param allClasses the type of report page and superclasses
      * @return a list of template queries
      */
-    @SuppressWarnings("unchecked")
     public List<ApiTemplate> getReportPageTemplatesForAspect(String aspect,
             Set<String> allClasses) {
         List<ApiTemplate> templates = new ArrayList<ApiTemplate>();

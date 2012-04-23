@@ -528,7 +528,7 @@ input.submit {
 
 <script type="text/javascript">
   // placeholder value for search boxes
-  var placeholder = 'e.g. PPARG, Insulin, rs876498';
+  var placeholder = '<c:out value="${WEB_PROPERTIES['begin.searchBox.example']}" />';
   // class used when toggling placeholder
   var inputToggleClass = 'eg';
 

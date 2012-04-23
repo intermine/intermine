@@ -1,0 +1,187 @@
+<items>
+<item id="-1_1" class="Publication">
+<attribute name="abstractText" value="The product of the oskar gene directs posterior patterning in the Drosophila oocyte, where it must be deployed specifically at the posterior pole. Proper expression relies on the coordinated localization and translational control of the oskar mRNA. Translational repression prior to localization of the transcript is mediated, in part, by the Bruno protein, which binds to discrete sites in the 3' untranslated region of the oskar mRNA. To begin to understand how Bruno acts in translational repression, we performed a yeast two-hybrid screen to identify Bruno-interacting proteins. One interactor, described here, is the product of the apontic gene. Coimmunoprecipitation experiments lend biochemical support to the idea that Bruno and Apontic proteins physically interact in Drosophila. Genetic experiments using mutants defective in apontic and bruno reveal a functional interaction between these genes. Given this interaction, Apontic is likely to act together with Bruno in translational repression of oskar mRNA. Interestingly, Apontic, like Bruno, is an RNA-binding protein and specifically binds certain regions of the oskar mRNA 3' untranslated region."/>
+<attribute name="firstAuthor" value="Lie Y S"/>
+<attribute name="issue" value="6"/>
+<attribute name="journal" value="Development"/>
+<attribute name="month" value="Mar"/>
+<attribute name="pages" value="1129-38"/>
+<attribute name="pubMedId" value="10021333"/>
+<attribute name="title" value="Apontic binds the translational repressor Bruno and is implicated in regulation of oskar mRNA translation."/>
+<attribute name="volume" value="126"/>
+<attribute name="year" value="1999"/>
+<collection name="authors"><reference ref_id="-1_23"/><reference ref_id="-1_24"/></collection>
+<collection name="meshTerms"><reference ref_id="-1_2"/><reference ref_id="-1_3"/><reference ref_id="-1_4"/><reference ref_id="-1_5"/><reference ref_id="-1_6"/><reference ref_id="-1_7"/><reference ref_id="-1_8"/><reference ref_id="-1_9"/><reference ref_id="-1_10"/><reference ref_id="-1_11"/><reference ref_id="-1_12"/><reference ref_id="-1_13"/><reference ref_id="-1_14"/><reference ref_id="-1_15"/><reference ref_id="-1_16"/><reference ref_id="-1_17"/><reference ref_id="-1_18"/><reference ref_id="-1_19"/><reference ref_id="-1_20"/><reference ref_id="-1_21"/><reference ref_id="-1_22"/></collection>
+</item>
+<item id="-1_25" class="Publication">
+<attribute name="abstractText" value="P426L and I179S are the two most frequent
+   mutations in juvenile and adult metachromatic leukodystrophy (late-onset MLD), which, in contrast to infantile MLD, show marked phenotypic heterogeneity. To search for genotype-phenotype correlations in late-onset MLD. The authors
+   reviewed the clinical course of 22 patients homozygous for mutation P426L vs 20 patients heterozygous for mutation I179S, in which the second arylsulfatase A (ASA) mutation had also been determined. P426L homozygotes principally
+   presented with progressive gait disturbance caused by spastic paraparesis or cerebellar ataxia; mental disturbance was absent or insignificant at the onset of disease but became more apparent as the disease evolved. In contrast,
+   compound heterozygotes for I179S presented with schizophrenia-like behavioral abnormalities, social dysfunction, and mental decline, but motor deficits were scarce. Reduced peripheral nerve conduction velocities and less residual
+   ASA activity were present in P426L homozygotes vs I179S heterozygotes. The characteristic clinical differences between homozygous P426L and compound heterozygous I179S patients establish a distinct genotype-phenotype correlation
+   in late-onset metachromatic leukodystrophy."/>
+<attribute name="doi" value="Digital Object Identifier 123"/>
+<attribute name="firstAuthor" value="Morita K"/>
+<attribute name="issue" value="6"/>
+<attribute name="journal" value="Development"/>
+<attribute name="month" value="Mar"/>
+<attribute name="pages" value="1337-47"/>
+<attribute name="pubMedId" value="10021351"/>
+<attribute name="title" value="Regulation of body length and male tail ray pattern formation of Caenorhabditis elegans by a member of TGF-beta family."/>
+<attribute name="volume" value="126"/>
+<attribute name="year" value="1999"/>
+<collection name="authors"><reference ref_id="-1_50"/><reference ref_id="-1_51"/><reference ref_id="-1_52"/></collection>
+<collection name="meshTerms"><reference ref_id="-1_26"/><reference ref_id="-1_3"/><reference ref_id="-1_27"/><reference ref_id="-1_28"/><reference ref_id="-1_29"/><reference ref_id="-1_30"/><reference ref_id="-1_31"/><reference ref_id="-1_32"/><reference ref_id="-1_33"/><reference ref_id="-1_34"/><reference ref_id="-1_35"/><reference ref_id="-1_36"/><reference ref_id="-1_37"/><reference ref_id="-1_38"/><reference ref_id="-1_39"/><reference ref_id="-1_40"/><reference ref_id="-1_41"/><reference ref_id="-1_42"/><reference ref_id="-1_43"/><reference ref_id="-1_44"/><reference ref_id="-1_45"/><reference ref_id="-1_46"/><reference ref_id="-1_47"/><reference ref_id="-1_48"/><reference ref_id="-1_49"/></collection>
+</item>
+<item id="-1_50" class="Author">
+<attribute name="name" value="Morita K"/>
+</item>
+<item id="-1_51" class="Author">
+<attribute name="name" value="Chow K L"/>
+</item>
+<item id="-1_52" class="Author">
+<attribute name="name" value="Ueno N"/>
+</item>
+<item id="-1_24" class="Author">
+<attribute name="name" value="Macdonald P M"/>
+</item>
+<item id="-1_23" class="Author">
+<attribute name="name" value="Lie Y S"/>
+</item>
+<item id="-1_3" class="MeshTerm">
+<attribute name="name" value="Animals"/>
+</item>
+<item id="-1_30" class="MeshTerm">
+<attribute name="name" value="Caenorhabditis elegans Proteins"/>
+</item>
+<item id="-1_14" class="MeshTerm">
+<attribute name="name" value="Ovary"/>
+</item>
+<item id="-1_48" class="MeshTerm">
+<attribute name="name" value="Tissue Distribution"/>
+</item>
+<item id="-1_40" class="MeshTerm">
+<attribute name="name" value="Nerve Tissue"/>
+</item>
+<item id="-1_37" class="MeshTerm">
+<attribute name="name" value="Models, Biological"/>
+</item>
+<item id="-1_11" class="MeshTerm">
+<attribute name="name" value="Genes, Insect"/>
+</item>
+<item id="-1_43" class="MeshTerm">
+<attribute name="name" value="Phenotype"/>
+</item>
+<item id="-1_31" class="MeshTerm">
+<attribute name="name" value="DNA, Complementary"/>
+</item>
+<item id="-1_22" class="MeshTerm">
+<attribute name="name" value="Transcription Factors"/>
+</item>
+<item id="-1_20" class="MeshTerm">
+<attribute name="name" value="Repressor Proteins"/>
+</item>
+<item id="-1_29" class="MeshTerm">
+<attribute name="name" value="Caenorhabditis elegans"/>
+</item>
+<item id="-1_38" class="MeshTerm">
+<attribute name="name" value="Molecular Sequence Data"/>
+</item>
+<item id="-1_7" class="MeshTerm">
+<attribute name="name" value="Drosophila Proteins"/>
+</item>
+<item id="-1_34" class="MeshTerm">
+<attribute name="name" value="Helminth Proteins"/>
+</item>
+<item id="-1_49" class="MeshTerm">
+<attribute name="name" value="Transforming Growth Factor beta"/>
+</item>
+<item id="-1_10" class="MeshTerm">
+<attribute name="name" value="Gene Expression Regulation"/>
+</item>
+<item id="-1_2" class="MeshTerm">
+<attribute name="name" value="3' Untranslated Regions"/>
+</item>
+<item id="-1_28" class="MeshTerm">
+<attribute name="name" value="Body Constitution"/>
+</item>
+<item id="-1_33" class="MeshTerm">
+<attribute name="name" value="Genes, Helminth"/>
+</item>
+<item id="-1_45" class="MeshTerm">
+<attribute name="name" value="Sequence Homology, Amino Acid"/>
+</item>
+<item id="-1_9" class="MeshTerm">
+<attribute name="name" value="Gene Dosage"/>
+</item>
+<item id="-1_42" class="MeshTerm">
+<attribute name="name" value="Neuropeptides"/>
+</item>
+<item id="-1_46" class="MeshTerm">
+<attribute name="name" value="Signal Transduction"/>
+</item>
+<item id="-1_36" class="MeshTerm">
+<attribute name="name" value="Male"/>
+</item>
+<item id="-1_16" class="MeshTerm">
+<attribute name="name" value="Protein Biosynthesis"/>
+</item>
+<item id="-1_19" class="MeshTerm">
+<attribute name="name" value="Recombinant Proteins"/>
+</item>
+<item id="-1_12" class="MeshTerm">
+<attribute name="name" value="Insect Proteins"/>
+</item>
+<item id="-1_5" class="MeshTerm">
+<attribute name="name" value="DNA-Binding Proteins"/>
+</item>
+<item id="-1_26" class="MeshTerm">
+<attribute name="name" value="Amino Acid Sequence"/>
+</item>
+<item id="-1_44" class="MeshTerm">
+<attribute name="name" value="Sequence Analysis, DNA"/>
+</item>
+<item id="-1_15" class="MeshTerm">
+<attribute name="name" value="Protein Binding"/>
+</item>
+<item id="-1_32" class="MeshTerm">
+<attribute name="name" value="Epistasis, Genetic"/>
+</item>
+<item id="-1_21" class="MeshTerm">
+<attribute name="name" value="Saccharomyces cerevisiae"/>
+</item>
+<item id="-1_17" class="MeshTerm">
+<attribute name="name" value="RNA, Messenger"/>
+</item>
+<item id="-1_27" class="MeshTerm">
+<attribute name="name" value="Base Sequence"/>
+</item>
+<item id="-1_41" class="MeshTerm">
+<attribute name="name" value="Neurons"/>
+</item>
+<item id="-1_4" class="MeshTerm">
+<attribute name="name" value="Cell Compartmentation"/>
+</item>
+<item id="-1_18" class="MeshTerm">
+<attribute name="name" value="RNA-Binding Proteins"/>
+</item>
+<item id="-1_47" class="MeshTerm">
+<attribute name="name" value="Tail"/>
+</item>
+<item id="-1_13" class="MeshTerm">
+<attribute name="name" value="Mutation"/>
+</item>
+<item id="-1_6" class="MeshTerm">
+<attribute name="name" value="Drosophila"/>
+</item>
+<item id="-1_39" class="MeshTerm">
+<attribute name="name" value="Mutagenesis, Insertional"/>
+</item>
+<item id="-1_35" class="MeshTerm">
+<attribute name="name" value="Ligands"/>
+</item>
+<item id="-1_8" class="MeshTerm">
+<attribute name="name" value="Female"/>
+</item>
+</items>

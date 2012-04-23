@@ -165,13 +165,10 @@ public class PortalQueryAction extends InterMineAction
             return goToNoResults(mapping, session);
         }
 
-        // TODO why are we replacing commas with tabs?
-        String lookupStr = StringUtils.replace(extId, ",", "\t");
-
         PathQuery pathQuery = new PathQuery(model);
         pathQuery.addViews(PathQueryResultHelper.getDefaultViewForClass(className, model,
                 webConfig, null));
-        pathQuery.addConstraint(Constraints.lookup(className, lookupStr, null));
+        pathQuery.addConstraint(Constraints.lookup(className, extId, null));
 
         Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
         Profile profile = SessionMethods.getProfile(session);

@@ -12,7 +12,7 @@
 
 <c:choose>
   <c:when test="${not empty expType}">
-    <h2 style="font-weight: normal;">Experiment Type: <strong>${expType}</strong></h2>
+    <h2 style="font-weight: normal;">Technique: <strong>${expType}</strong></h2>
   </c:when>
   <c:otherwise>
     <h2 style="font-weight: normal;">Experiment Type: <i>not available</i></h2>

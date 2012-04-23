@@ -137,7 +137,7 @@ public class WebConfig
         digester.addCallParam("webconfig/class/longdisplayers/displayer/param", 1, "value");
 
         /* display inline tables as inline lists instead */
-        digester.addObjectCreate("webconfig/class/inlinelist/table", InlineList.class);
+        digester.addObjectCreate("webconfig/class/inlinelist/table", InlineListConfig.class);
         digester.addSetProperties("webconfig/class/inlinelist/table");
         digester.addSetNext("webconfig/class/inlinelist/table", "addInlineList");
         digester.addSetProperties("webconfig/class/inlinelist/table", "path", "path");
@@ -522,7 +522,7 @@ public class WebConfig
         String typeString = type.getClassName();
         if (types.containsKey(typeString)) {
             throw new IllegalArgumentException("Type " + typeString
-                    + " defined more that once in webconfig-model.xml");
+                    + " defined more than once in webconfig-model.xml");
         } else {
             types.put(type.getClassName(), type);
         }

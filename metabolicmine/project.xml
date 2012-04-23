@@ -7,40 +7,40 @@
 
   <sources>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
-    </source> 
-     <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
-     <property name="organisms" value="9606"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
+    </source>
+    <source name="ncbi-gene" type="ncbi-gene">
+      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
+      <property name="organisms" value="9606"/>
     </source>
     <source name="ncbi-summaries" type="ncbi-summaries">
-     <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/"/>
     </source>
-   <source name="mgi-identifiers" type="mgi-identifiers">
+    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
-   <source name="rgd-identifiers" type="rgd-identifiers">
+    <source name="rgd-identifiers" type="rgd-identifiers">
       <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current"/>
     </source>
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
-    </source> 
+    </source>
     <source name="arrayexpress-atlas" type="arrayexpress-atlas" dump="true">
-     <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/"/>
     </source>
     <source name="protein-atlas" type="protein-atlas">
-     <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current"/>
     </source>
     <source name="ensembl-human" type="ensembl" dump="true">
-     <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core"/>
-     <property name="src.data.dir.includes" value="9606.xml"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core"/>
+      <property name="src.data.dir.includes" value="9606.xml"/>
     </source>
     <source name="uniprot" type="uniprot">
       <property name="uniprot.organisms" value="9606 10090"/>
       <property name="createinterpro" value="true"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current/"/>
     </source>
-<!--    <source name="uniprot-fasta" type="fasta" dump="true">
+    <!--    <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606 10090"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
@@ -125,7 +125,7 @@
       <property name="organism" value="9606"/>
       <property name="sources" value="dbSNP"/>
     </source>
-<!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
+    <!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.10090.variation"/>
     </source>-->
     <source name="kegg-pathway" type="kegg-pathway">
@@ -140,7 +140,7 @@
       <property name="biopax.curated" value="false"/>
     </source>
     <source name="huge-gwas" type="huge-gwas">
-     <property name="src.data.dir" location="/micklem/data/metabolic/huge/current"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current"/>
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>

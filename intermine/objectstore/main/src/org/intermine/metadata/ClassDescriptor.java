@@ -141,7 +141,7 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
     public String getName() {
         return className;
     }
-    
+
     /**
      * Returns the simple class name described by this ClassDescriptor.
      *
@@ -408,15 +408,25 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         return null;
     }
 
+    // NOTE for backward compatibility we need to be able to build models with invalid reverse
+    // references configured, so add problems that are checked by the model merger for new models.
     private void configureReferenceDescriptors() throws MetaDataException {
         // ReferenceDescriptors need to find a ClassDescriptor for their referenced class
         for (ReferenceDescriptor rfd : refDescriptors) {
-            rfd.findReferencedDescriptor();
+            try {
+                rfd.findReferencedDescriptor();
+            } catch (NonFatalMetaDataException e) {
+                model.addProblem(e.getMessage());
+            }
         }
 
         // CollectionDescriptors need to find a ClassDescriptor for their referenced class
         for (CollectionDescriptor cod : colDescriptors) {
-            cod.findReferencedDescriptor();
+            try {
+                cod.findReferencedDescriptor();
+            } catch (NonFatalMetaDataException e) {
+                model.addProblem(e.getMessage());
+            }
         }
     }
 

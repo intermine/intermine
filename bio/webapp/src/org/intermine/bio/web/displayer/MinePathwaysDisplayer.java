@@ -110,6 +110,8 @@ public class MinePathwaysDisplayer extends ReportDisplayer
             }
             if (genes.length() > 0) {
                 mineToOrthologues.put(mine, genes.toString());
+            } else {
+                mineToOrthologues.put(mine, "");
             }
         }
         return mineToOrthologues;

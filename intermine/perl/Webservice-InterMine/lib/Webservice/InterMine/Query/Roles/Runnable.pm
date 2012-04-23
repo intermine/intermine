@@ -296,11 +296,13 @@ are no results.
 
 =cut
 
+my %_unsizable = map {$_ => 1} 'objects', 'jsonobjects', 'ro';
+
 sub first {
     my ($self, %options) = @_;
     $options{start} ||= 0;
-    # rows and objects are not the same thing
-    $options{size} = ($options{as} and $options{as} eq 'jsonobjects') ? undef : 1;
+    # rows and objects are not the same thing - and objects cannot be sized as a single row.
+    $options{size} = ($options{as} and $_unsizable{$options{as}}) ? undef : 1;
     my $it = $self->results_iterator(%options);
     return $it->next;
 }

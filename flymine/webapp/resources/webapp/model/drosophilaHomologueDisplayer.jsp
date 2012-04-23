@@ -19,7 +19,7 @@
 The 12 genomes homology only records homologues of <i>D. melanogaster</i> genes. So this tree
 displays the homologues of the D. melanogaster homologue of ${origSymbol}
 </c:if>
-<div id="phylotree"></div>
+<div id="phylotree">Loading &hellip;</div>
 <p>
     Data from the 12 genomes project
 </p>
@@ -299,7 +299,7 @@ phylogeny: [
         }
     ]
     }]};
-
+  jQuery('#phylotree').html('');
   var data = { newick: '(((((((D. melanogaster:6,(D. simulans:5,D. schellia:5)),(D. yakuba:6,D. erecta:6))melanogaster subgroup,D. ananassae:8)melanogaster group,(D. pseudoobscura:8,D. persimilis:8)obscura group),(D.willistoni:9)willistoni group))Sophophora,(((D.mojavensis:9)repleta group,(D.virilis:9)virilis group),(D.grimshawi:10)Hawaiian Drosophila)Drosophila)Drosophilidae;'};
   Smits.PhyloCanvas.Render.Style.line.stroke = '#8931bc';
   Smits.PhyloCanvas.Render.Style.highlightedEdgeCircle.fill = '#8931bc';

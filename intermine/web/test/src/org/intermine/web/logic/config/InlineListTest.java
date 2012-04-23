@@ -8,10 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.intermine.model.testmodel.Company;
 import org.intermine.util.DynamicUtil;
-
-import junit.framework.TestCase;
+import org.intermine.web.logic.results.InlineList;
 
 /**
  * Tests an InlineList appearing on Report page
@@ -48,11 +49,10 @@ public class InlineListTest extends TestCase
      */
     @SuppressWarnings("unchecked")
     public void testDuplo() throws Exception {
-        InlineList inlineList = new InlineList();
-        inlineList.setListOfObjects(
-                new HashSet(
-                        new ArrayList<Object>(
-                                Arrays.asList(company1, company2, company3))), "name");
+        HashSet<Object> listOfObjects = new HashSet<Object>(
+                new ArrayList<Object>(
+                        Arrays.asList(company1, company2, company3)));
+        InlineList inlineList = new InlineList(listOfObjects, "name", true, null, null);
 
         // traverse for compare
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();

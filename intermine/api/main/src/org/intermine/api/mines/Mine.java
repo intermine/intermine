@@ -28,6 +28,7 @@ public class Mine
     protected String bgcolor, frontcolor;
     protected Set<String> defaultValues = new HashSet<String>();
     protected String releaseVersion = null;
+    protected String description = null;
 
     /**
      * Constructor
@@ -43,6 +44,21 @@ public class Mine
      */
     public String getName() {
         return name;
+    }
+
+
+    /**
+     * @return the description of the mine
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description of the mine
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
@@ -127,11 +143,10 @@ public class Mine
      * @return the defaultValue
      */
     public String getDefaultValue() {
-        if (defaultValues.isEmpty()) {
-            return null;
+        for (String value : defaultValues) {
+            return value;
         }
-        Object[] values = defaultValues.toArray();
-        return values[0].toString();
+        return null;
     }
 
     /**
@@ -140,7 +155,7 @@ public class Mine
     public void setDefaultValues(String defaultValue) {
         String[] bits = defaultValue.split(",");
         for (String bit : bits) {
-            defaultValues.add(bit);
+            defaultValues.add(bit.trim());
         }
     }
 }

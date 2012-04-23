@@ -40,8 +40,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -94,7 +92,6 @@ import org.intermine.sql.Database;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.ObjectPipe;
 import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.KeywordSearchFacet;
 
 import com.browseengine.bobo.api.BoboBrowser;
