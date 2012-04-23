@@ -191,4 +191,4 @@
 </c:otherwise>
 </c:choose>
 </div>
-<!-- /publicationCountsDisplayer.jsp -->
+<!-- /minePathwaysDisplayer.jsp -->
