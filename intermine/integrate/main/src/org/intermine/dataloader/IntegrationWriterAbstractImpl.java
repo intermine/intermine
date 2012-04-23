@@ -144,7 +144,7 @@ public abstract class IntegrationWriterAbstractImpl implements IntegrationWriter
             if (obj instanceof ProxyReference) {
                 LOG.error("IDMAP CONTENTS:" + idMap.toString());
                 throw new IllegalArgumentException("Given a ProxyReference, but id not in ID Map."
-                        + " Source object ID: " + obj.getId()
+                        + " Source object ID: " + obj.toString()
                         + (idMap.size() < 100 ? ", idMap = " : ""));
             }
             if ((obj.getId() == null) || ignoreDuplicates) {

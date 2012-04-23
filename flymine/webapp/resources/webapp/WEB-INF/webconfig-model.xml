@@ -107,6 +107,7 @@
   <class className="org.intermine.model.bio.Disease">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
+      <fieldconfig fieldExpr="name"/>
     </fields>
   </class>
 
@@ -140,12 +141,12 @@
     <inlinelist>
       <table path="synonyms.value" showInHeader="true" lineLength="100" />
       <table path="probeSets.primaryIdentifier" showLinksToObjects="true" />
-      <table path="pathways.name" showLinksToObjects="true" />
     </inlinelist>
     <fields>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
       <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <bagdisplayers>
       <displayer src="friendlyMineLinkDisplayer.tile" showOnLeft="false" />
@@ -183,10 +184,10 @@
 
   <class className="org.intermine.model.bio.Homologue">
     <fields>
-      <fieldconfig fieldExpr="type"/>
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
+      <fieldconfig fieldExpr="type"/>
     </fields>
   </class>
 
@@ -464,14 +465,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.RNAiPhenotype">
-    <fields>
-      <fieldconfig fieldExpr="comment"/>
-      <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="code"/>
-    </fields>
-  </class>
-
 
   <class className="org.intermine.model.bio.RNAiScreen">
     <fields>
@@ -480,12 +473,11 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.RNAiScreenHit">
+  <class className="org.intermine.model.bio.RNAiResult">
     <fields>
-      <fieldconfig fieldExpr="result"/>
-      <fieldconfig fieldExpr="pcrProduct.primaryIdentifier" label="PCR Product"/>
-      <fieldconfig fieldExpr="rnaiScreen" showInInlineCollection="false" showInSummary="false" showInResults="false" label="RNAi Screen"/>
-      <fieldconfig fieldExpr="pcrProduct" showInInlineCollection="false" showInSummary="false" showInResults="false" label="PCR Product"/>
+      <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="score"/>
+      <fieldconfig fieldExpr="conditions"/>
       <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
       <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" label="PubMed ID"/>
     </fields>
@@ -576,6 +568,14 @@
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.RNASeqResult">
+    <fields>
+      <fieldconfig fieldExpr="stage"/>
+      <fieldconfig fieldExpr="expressionScore"/>
+      <fieldconfig fieldExpr="expressionLevel"/>
+    </fields>
+  </class>
+
   <class className="org.intermine.model.bio.UniProtFeature" label="Uniprot Feature">
     <fields>
       <fieldconfig fieldExpr="type"/>
@@ -652,13 +652,13 @@
                      replacesFields="regulatoryRegions"
                      placement="Regulation"
                      types="Gene"/>
-
+<!-- update to new model
     <reportdisplayer javaClass="org.flymine.web.displayer.RNAiDisplayer"
                      jspName="model/rnaiDisplayer.jsp"
                      replacesFields="rnaiResults"
                      placement="Regulation"
                      types="Gene"/>
-
+-->
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
                      jspName="model/sequenceFeatureDisplayer.jsp"
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
@@ -696,6 +696,31 @@
                      replacesFields=""
                      placement="summary"
                      types="Gene"/>
+
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinStructureATMDisplayer"
+                     jspName="model/proteinStructureATMDisplayer.jsp"
+                     replacesFields="atm"
+                     placement="summary"
+                     types="ProteinStructure"/>
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinSequenceDisplayer"
+                     jspName="model/proteinSequenceDisplayer.jsp"
+                     replacesFields="sequence"
+                     placement="summary"
+                     types="Protein"/>
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.FlyBaseExpressionDisplayer"
+                     jspName="model/flybaseExpressionDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     types="Gene"/>
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwayDescriptionDisplayer"
+                     jspName="model/pathwayDescriptionDisplayer.jsp"
+                     showImmediately="true"
+                     replacesFields="description"
+                     placement="top"
+                     types="Pathway"/>
 
   </reportdisplayers>
 

@@ -119,9 +119,9 @@ intermine/lists/list.py
 intermine/lists/listmanager.py
 tests/__init__.py
 tests/acceptance.py
-tests/live_format_tests.py
 tests/live_lists.py
-tests/live_lists_token.py
+tests/live_registry.py
+tests/live_results.py
 tests/live_summary_test.py
 tests/test.py
 tests/test_lists.py
@@ -140,6 +140,13 @@ tests/testservice/csvservice/service/template/results
 tests/testservice/csvservice/service/templates/xml
 tests/testservice/csvservice/service/version/release
 tests/testservice/csvservice/service/version/ws
+tests/testservice/legacyjsonrows/model
+tests/testservice/legacyjsonrows/lists/json
+tests/testservice/legacyjsonrows/query/results
+tests/testservice/legacyjsonrows/template/results
+tests/testservice/legacyjsonrows/templates/xml
+tests/testservice/legacyjsonrows/version/release
+tests/testservice/legacyjsonrows/version/ws
 tests/testservice/service/model
 tests/testservice/service/lists/json
 tests/testservice/service/query/results

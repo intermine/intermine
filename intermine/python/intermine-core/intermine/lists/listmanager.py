@@ -16,11 +16,16 @@ class ListManager(object):
     A Class for Managing List Content and Operations
     ================================================
 
-    This class serves as a delegate for the intermine.webservice.Service class, 
-    managing list content and operations. 
+    This class serves as a delegate for the intermine.webservice.Service class,
+    managing list content and operations.
 
     This class is not meant to be called itself, but rather for its
     methods to be called by the service object.
+
+    Note that the methods for creating lists can conflict in threaded applications, if
+    two threads are each allocated the same unused list name. You are
+    strongly advised to use locks to synchronise any list creation requests (create_list,
+    or intersect, union, subtract, diff) unless you are choosing your own names each time.
     """
 
     DEFAULT_LIST_NAME = "my_list_"
@@ -52,11 +57,11 @@ class ListManager(object):
 
     @staticmethod
     def safe_dict(d):
-        """Recursively clone json structure with UTF-8 dictionary keys""" 
-        if isinstance(d, dict): 
-            return dict([(k.encode('utf-8'), v) for k,v in d.iteritems()]) 
-        else: 
-            return d 
+        """Recursively clone json structure with UTF-8 dictionary keys"""
+        if isinstance(d, dict):
+            return dict([(k.encode('utf-8'), v) for k,v in d.iteritems()])
+        else:
+            return d
 
     def get_list(self, name):
         """Return a list from the service by name, if it exists"""
@@ -82,13 +87,22 @@ class ListManager(object):
 
     def get_list_count(self):
         """
-        Return the number of lists accessible at the given webservice. 
+        Return the number of lists accessible at the given webservice.
         This number will vary depending on who you are authenticated as.
         """
         return len(self.get_all_list_names())
 
     def get_unused_list_name(self):
-        """Get a list name that does not conflict with any lists you have access to"""
+        """
+        Get an unused list name
+        =======================
+
+        This method returns a new name that does not conflict
+        with any currently existing list name.
+
+        The list name is only guaranteed to be unused at the time
+        of allocation.
+        """
         list_names = self.get_all_list_names()
         counter = 1
         name = self.DEFAULT_LIST_NAME + str(counter)
@@ -98,6 +112,30 @@ class ListManager(object):
         self._temp_lists.add(name)
         return name
 
+    def _get_listable_query(self, queryable):
+        q = queryable.to_query()
+        if not q.views:
+            q.add_view(q.root.name + ".id")
+        else:
+            # Check to see if the class of the selected items is unambiguous
+            up_to_attrs = set((v[0:v.rindex(".")] for v in q.views))
+            if len(up_to_attrs) == 1:
+                q.select(up_to_attrs.pop() + ".id")
+        return q
+
+    def _create_list_from_queryable(self, queryable, name, description, tags):
+        q = self._get_listable_query(queryable)
+        uri = q.get_list_upload_uri()
+        params = q.to_query_params()
+        params["listName"] = name
+        params["description"] = description
+        params["tags"] = ";".join(tags)
+        form = urllib.urlencode(params)
+        resp = self.service.opener.open(uri, form)
+        data = resp.read()
+        resp.close()
+        return self.parse_list_upload_response(data)
+
     def create_list(self, content, list_type="", name=None, description=None, tags=[]):
         """
         Create a new list in the webservice
@@ -106,6 +144,9 @@ class ListManager(object):
         If no name is given, the list will be considered to be a temporary
         list, and will be automatically deleted when the program ends. To prevent
         this happening, give the list a name, either on creation, or by renaming it.
+
+        This method is not thread safe for anonymous lists - it will need synchronisation
+        with locks if you intend to create lists with multiple threads in parallel.
 
         @rtype: intermine.lists.List
         """
@@ -122,24 +163,17 @@ class ListManager(object):
                 ids = content
             else:
                 try:
+                    return self._create_list_from_queryable(content, name, description, tags)
+                except AttributeError:
                     ids = "\n".join(map(lambda x: '"' + x + '"', iter(content)))
-                except TypeError:
-                    try:
-                        uri = content.get_list_upload_uri()
-                    except:
-                        content = content.to_query()
-                        uri = content.get_list_upload_uri()
-                    params = content.to_query_params()
-                    params["listName"] = name
-                    params["description"] = description
-                    form = urllib.urlencode(params)
-                    resp = self.service.opener.open(uri, form)
-                    data = resp.read()
-                    resp.close()
-                    return self.parse_list_upload_response(data) 
 
         uri = self.service.root + self.service.LIST_CREATION_PATH
-        query_form = {'name': name, 'type': list_type, 'description': description, 'tags': ";".join(tags)}
+        query_form = {
+            'name': name,
+            'type': list_type,
+            'description': description,
+            'tags': ";".join(tags)
+        }
         uri += "?" + urllib.urlencode(query_form)
         data = self.service.opener.post_plain_text(uri, ids)
         return self.parse_list_upload_response(data)
@@ -295,7 +329,7 @@ class ListManager(object):
                 t = l.list_type
                 list_names.append(l.name)
             except AttributeError:
-                try: 
+                try:
                     m = l.model
                     list_names.append(self.create_list(l).name)
                 except AttributeError:

@@ -1,16 +1,96 @@
 <aspects>
-  <aspect name="modENCODE">
+
+  <aspect name="Chromatin Structure">
     <subtitle></subtitle>
-    <icon-image>model/images/modENCODE_s.png</icon-image>
-    <large-image>model/images/modENODE_s.png</large-image>
-    <intro-text>
-      The National Human Genome Research Institute (NHGRI) model organism ENCyclopedia Of DNA Elements 
-      (modENCODE) Project will try to identify all of the sequence-based functional elements in the 
-      Caenorhabditis elegans and Drosophila melanogaster genomes. 
-      The project is run as a Research Network. 
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Chromatin Structure
     </intro-text>
     <tile-name></tile-name>
-    <aspect-source name="modENCODE project" url="http://www.modencode.org/"/>
+  </aspect>
+  <aspect name="Chromatin Binding">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Chromatin Binding
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Copy Number Variation">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Copy Number Variation
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Gene Structure">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Gene Structure
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Histone modification and replacement">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Histone modification and replacement
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Replication">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Replication
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="RNA Expression Profiling">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>RNA Expression Profiling
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="TF Binding sites">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>TF Binding sites
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+
+  <aspect name="Conditions">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Conditions
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+  <aspect name="Results">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Results
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+
+  <aspect name="Methods">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Methods
+    </intro-text>
+    <tile-name></tile-name>
   </aspect>
 
   <aspect name="Genomics">
@@ -27,20 +107,13 @@
     <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
   </aspect>
 
-  <aspect name="Comparative Genomics">
-    <subtitle>Orthologues and paralogues</subtitle>
-    <icon-image>model/images/comparativeGenomics.png</icon-image>
-    <large-image>model/images/comparativeGenomics.png</large-image>
-    <intro-text>
-      Orthologues and Paralogues.  Orthologues are equivalent genes in
-      different species that evolved from a common ancestor by
-      speciation.  Paralogues are genes from the same homologous
-      superfamily found in another part of the genome of a particular
-      taxon. Paralogues are the result of gene duplication.
+  <aspect name="Functions">
+    <subtitle></subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>Functions
     </intro-text>
-    <tile-name>model/orthologues.jsp</tile-name>
-    <aspect-source name="Inparanoid" url="http://inparanoid.sbc.su.se/cgi-bin/index.cgi"/>
-    <aspect-source name="Treefam" url="http://www.treefam.org"/>
+    <tile-name></tile-name>
   </aspect>
 
   <aspect name="Proteins">
@@ -70,45 +143,6 @@
     <aspect-source name="miRBase" url="http://microrna.sanger.ac.uk/targets/v4/"/>
   </aspect>
 
-  <aspect name="Gene Ontology">
-    <subtitle></subtitle>
-    <icon-image>model/images/geneOntology.png</icon-image>
-    <large-image>model/images/geneOntology.png</large-image>
-    <intro-text>
-      Gene Ontology (GO) annotations for &lt;i&gt;Drosophila&lt;/i&gt; and &lt;i&gt;C. elegans&lt;/i&gt;.  The GO annotations are 'attached' to
-      Genes and so each Gene has a reference (link) to a list of its GO
-      annotations (if available).
-    </intro-text>
-    <tile-name>model/GO.jsp</tile-name>
-    <aspect-source name="Gene Ontology Consortium" url="http://www.geneontology.org/"/>
-  </aspect>
-
-  <aspect name="Phenotypes">
-    <subtitle>Phenotypes</subtitle>
-    <icon-image>model/images/phenotypes.png</icon-image>
-    <large-image>model/images/phenotypes.png</large-image>
-    <intro-text>
-     &lt;i&gt;Drosophila &lt;/i&gt; allele data as well as results from RNAi experiments in &lt;i&gt;Drosophila&lt;/i&gt; and &lt;i&gt;Caenorhabditis
-     elegans&lt;/i&gt;.
-    </intro-text>
-    <tile-name>model/RNAi.jsp</tile-name>
-    <aspect-source name="FlyBase" url="http://www.flybase.org"/>
-    <aspect-source name="Drosophila&lt;/i&gt; RNAi Screening Center" url="http://www.flyrnai.org/"/>
-    <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
-  </aspect>
-
-  <aspect name="Pathways">
-    <subtitle></subtitle>
-    <icon-image>model/images/pathways.png</icon-image>
-    <large-image>model/images/pathways.png</large-image>
-    <intro-text>
-      KEGG pathway data for &lt;i&gt;Drosophila melanogaster&lt;/i&gt;.
-    </intro-text>
-    <tile-name>model/pathways.jsp</tile-name>
-    <aspect-source name="Reactome" url="http://www.reactome.org/"/>
-    <aspect-source name="FlyReactome" url="http://www.fly.reactome.org/"/>
-  </aspect>
-
   <aspect name="Literature">
     <subtitle></subtitle>
     <icon-image>model/images/book.png</icon-image>
@@ -120,4 +154,6 @@
     <aspect-source name="FlyBase" url="http://www.flybase.org"/>
     <aspect-source name="WormBase" url="http://www.wormbase.org/"/>
   </aspect>
+
+
 </aspects>

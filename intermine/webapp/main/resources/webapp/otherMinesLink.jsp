@@ -4,8 +4,8 @@
 
 <script type="text/javascript" charset="utf-8">
 
-function getFriendlyMineLinks(mine, url, organismShortName, identifier, symbol) {
-    AjaxServices.getFriendlyMineReportLinks(mine, organismShortName, identifier, symbol, function(response) {
+function getFriendlyMineLinks(mine, url, organismShortName, identifier) {
+    AjaxServices.getFriendlyMineLinks(mine, organismShortName, identifier, function(response) {
       var jSONObject = jQuery.parseJSON(response)
       jQuery('#intermine_orthologue_links_' + mine).toggleClass('loading');
         if (jSONObject && jSONObject.length > 0) {
@@ -50,7 +50,7 @@ function generateMineLinks(jSONObject, url, organismShortName, target) {
               })
               .attr('href', function() {
                 var homologue = (organismShortName == shortName) ? '&orthologue=' + organismShortName : '';
-                return (url + "/portal.do?externalids=" + jQuery(this).text() + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
+                return (url + "/portal.do?externalids=" + gene['primaryIdentifier'] + homologue + "&class=Gene&origin=FlyMine").replace(/ /g, '+');
               })
               )
               .appendTo(self);
@@ -70,7 +70,7 @@ function generateMineLinks(jSONObject, url, organismShortName, target) {
       <span style="background:${mine.bgcolor};color:${mine.frontcolor};">${mine.name}</span>
       <div id="intermine_orthologue_links_${mine.name}" class="loading"></div>
       <script type="text/javascript" charset="utf-8">
-        getFriendlyMineLinks('${mine.name}', '${mine.url}', '${object.organism.shortName}','${object.primaryIdentifier}','${object.symbol}');
+        getFriendlyMineLinks('${mine.name}', '${mine.url}', '${object.organism.shortName}','${object.primaryIdentifier}');
       </script>
     </div>
   </c:forEach>

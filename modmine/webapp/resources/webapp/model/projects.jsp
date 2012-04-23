@@ -39,7 +39,9 @@
 
 </table>
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
-<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Switch to Experimentss View</a></td></tr>
+<tr>
+<td align="left"><a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do?">Additional Data Sources</a></td>
+<td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projectsSummary.do">Switch to Experimentss View</a></td></tr>
 </table>
 
 <table cellpadding="0" cellspacing="0" border="0" class="sortable-onload-2 rowstyle-alt no-arrow submission_table">
@@ -114,9 +116,16 @@ ${exp.piSurname}<br>
 
 <%-- CATEGORIES --%>
 <b>
-     <html:link
-        href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}"
-        title="View ${exp.name}">${exp.name}</html:link>
+<c:choose>
+<c:when test="${fn:contains(exp.name, '+')}">
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '+', '%2B')}"
+title="View ${exp.name}">${exp.name}</html:link>
+</c:when>
+<c:otherwise>
+<html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}"
+title="View ${exp.name}">${exp.name}</html:link>
+</c:otherwise>
+</c:choose>
 </b>
 <br></br>
 

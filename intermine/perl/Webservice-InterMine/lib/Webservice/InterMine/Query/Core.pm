@@ -11,10 +11,13 @@ use Carp;
 use List::Util qw/reduce/;
 use List::MoreUtils qw/uniq natatime/;
 use Scalar::Util qw/blessed/;
+use Perl6::Junction qw/any/;
 
-use MooseX::Types::Moose qw/Str Bool/;
-use InterMine::Model::Types qw/PathList PathHash PathString/;
+use MooseX::Types::Moose qw/Str Bool ArrayRef Undef/;
+use Moose::Util::TypeConstraints qw(match_on_type);
+use InterMine::Model::Types qw/PathList PathHash PathString ClassDescriptor/;
 use Webservice::InterMine::Types qw(
+  ListOperable Path CanTreatAsList
   SortOrder SortOrderList
   ConstraintList LogicOrStr JoinList
   QueryName PathDescriptionList
@@ -70,9 +73,9 @@ with the subclass information contained in the query.
 sub path {
     my ($self, $str) = @_;
     @_ == 2 or croak "Expected one argument - a path expression, got: @_";
-    my @paths = $self->all_paths or croak "This query does not have any paths yet";
+    # my @paths = $self->all_paths or croak "This query does not have any paths yet";
     $str = $self->prefix_path($str);
-    croak "$str is not a path in this query" unless (grep {$str eq $_} @paths);
+    # croak "$str is not a path in this query" unless (grep {$str eq $_} @paths);
     my $path = Webservice::InterMine::Path->new($str, $self, $self->type_dict);
     return $path;
 }
@@ -179,6 +182,7 @@ Used internally to process shortened, headless paths.
 
 sub prefix_path {
     my ($self, $str) = @_;
+    die "No path" unless $str;
     if ($self->has_root_path) {
         my $root = $self->root_path;
         my $new_path = ($str =~ /^$root/) ? $str : $self->root_path . ".$str";
@@ -189,6 +193,36 @@ sub prefix_path {
         return $str;
     }
 }
+
+=head2 to_query
+
+returns self to fulfil the Listable interface.
+
+=cut
+
+sub to_query {
+    my $self = shift;
+    return $self;
+}
+
+=head2 clone 
+
+Return a clone of this query.
+
+=cut
+
+sub clone {
+    my $self  = shift;
+    my $clone = bless {%$self}, ref $self;
+    $clone->{constraints} = [];
+    $clone->suspend_validation;
+    for my $con ($self->all_constraints) {
+        $clone->add_constraint(%$con);
+    }
+    $clone->resume_validation;
+    return $clone;
+}
+    
 
 =head2 DEMOLISH
 
@@ -376,7 +410,8 @@ sub get_constraint {
     my $code = shift;
     confess "get_constraint needs one argument - "
       . "the code of the constraint you want - "
-      . "and it must be one or two alphabetic characters"
+      . "and it must be one or two uppercase alphabetic characters,"
+      . " not $code"
       unless ( $code and $code =~ /^[A-Z]{1,2}$/ );
     my $criterion = sub { 
         $_->does('Webservice::InterMine::Constraint::Role::Operator')
@@ -417,6 +452,26 @@ sub remove {
             $self->$del($i);
         }
         $i++;
+    }
+}
+
+=head2 remove_constraint($constraint | $code)
+
+Remove the given constraint. If a string is passed instead, it is assumed
+to be the code for this constraint, and the constraint with the given 
+code is removed instead.
+
+=cut
+
+sub remove_constraint {
+    my $self = shift;
+    if (ref $_[0]) {
+        $self->remove(@_);
+    } else {
+        my $code = shift;
+        my $constraint = $self->get_constraint($code)
+            or confess "No constraint with code $code!";
+        $self->remove($constraint);
     }
 }
 
@@ -807,9 +862,6 @@ sub search {
     my $self = shift;
     my $constraints = shift;
     my $results_args = shift || {as => 'jsonobjects', json => 'instantiate'};
-    if ($self->view_is_empty and $self->has_root_path) {
-        $self->select("*");
-    }
     if (ref $constraints eq 'HASH') {
         while (my ($path, $con) = each(%$constraints)) {
             $self->add_constraint($path, $con);
@@ -820,10 +872,13 @@ sub search {
             $self->add_constraint($path, $con);
         }
     } else {
-        carp "Bad argument: '$constraints' should be a hashref or an array ref with an even number of elements";
+        croak "Bad argument: '$constraints' should be a hashref or an array ref with an even number of elements";
     }
 
     if (wantarray) {
+        if ($self->view_is_empty and $self->has_root_path) {
+            $self->select("*");
+        }
         return $self->results(%$results_args);
     } else {
         return $self;
@@ -862,6 +917,7 @@ constraints to be understood.
 =cut
 
 sub parse_constraint_string {
+    confess "No arguments given!" unless @_;
     if ( @_ > 1 ) {
         if ( @_ % 2 == 0 ) {
             my %args = @_;
@@ -884,6 +940,7 @@ sub parse_constraint_string {
                     %args = (path => $path, %$con);
                 } else {
                     %args = (path => $path);
+
                 }
 
                 my $value = $con;
@@ -896,25 +953,35 @@ sub parse_constraint_string {
                     }
                 }
 
-                if ($args{type}) {
-                    # Ignore
-                } elsif (not defined $value) {
-                    $args{op} = 'IS NULL'     if (grep {$args{op} eq $_} '=', 'eq', 'is');
-                    $args{op} = 'IS NOT NULL' if (grep {$args{op} eq $_} '!=', 'ne', 'isnt');
-                } elsif (ref $value eq 'ARRAY') {
-                    $args{op} ||= 'ONE OF';
-                    $args{values} = $value;
-                } elsif (blessed $value and $value->isa('Webservice::InterMine::List')) {
-                    $args{op} ||= 'IN';
-                    $args{value} = $value;
-                } elsif (blessed $value and $value->isa('Webservice::InterMine::Path')) {
-                    $args{op} ||= 'IS';
-                    $args{loop_path} = $value;
-                } elsif (blessed $value and $value->isa('InterMine::Model::ClassDescriptor')) {
-                    $args{type} ||= $value;
-                } else {
-                    $args{op} ||= '=';
-                    $args{value} = $value;
+                unless ($args{type}) {
+                    match_on_type $value => (
+                        ListOperable|CanTreatAsList, sub {
+                            $args{op} ||= "IN";
+                            $args{value} = $value;
+                        },
+                        ArrayRef, sub {
+                            $args{op} ||= "ONE OF";
+                            $args{values} = $value;
+                        },
+                        Undef, sub {
+                            if (not defined $args{op} || $args{op} eq any('=', 'eq', 'is')) {
+                                $args{op} = "IS NULL";
+                            } elsif ($args{op} eq any('!=', 'ne', 'isnt')) {
+                                $args{op} = "IS NOT NULL";
+                            }
+                        },
+                        ClassDescriptor, sub {
+                            $args{type} = $value;
+                        },
+                        Path, sub {
+                            $args{op} ||= 'IS',
+                            $args{loop_path} = $value;
+                        },
+                        sub {
+                            $args{op} ||= '=';
+                            $args{value} = $value;
+                        }
+                    );
                 }
                 return %args;
             }
@@ -1008,14 +1075,32 @@ sub _validate {    # called internally, obeys is_validating
     my $self = shift;
     return unless $self->is_validating;    # Can be paused, and resumed
     my @errs = @_;
+    my @from_paths = $self->_get_from_paths();
     push @errs, $self->validate_paths;
-    push @errs, $self->validate_sort_order;
+    push @errs, $self->validate_sort_order(@from_paths);
     push @errs, $self->validate_subclass_constraints;
     push @errs, $self->validate_consistency;
 
     #   push @errs, $self->validate_logic;
     @errs = grep { $_ } @errs;
     confess join( '', @errs ) if @errs;
+}
+
+sub _get_from_paths {
+    my $self = shift;
+    my @from;
+    push @from, map {s/\.[^\.]*$//; $_} $self->views;
+    my @con_paths = $self->map_constraints(sub { $_->path});
+    for my $cp (@con_paths) {
+        if (my $p = eval {$self->path}) {
+            if ($p->end_is_attribute) {
+                push @from, $p->prefix->to_string;
+            } else {
+                push @from, $p->to_string;
+            }
+        }
+    }
+    return @from;
 }
 
 before _validate => sub {
@@ -1056,7 +1141,9 @@ sub clean_out_irrelevant_sort_orders {
     my $self = shift;
     return if $self->view_is_empty;
     return if (not $self->has_sort_order or $self->sort_order_is_empty);
-    my @relevant_sos = $self->filter_sort_order(sub {$self->is_in_view($_->path)});
+    my @from = $self->_get_from_paths;
+    my @relevant_sos = $self->filter_sort_order(sub {
+            any(@from) eq $self->path($_->path)->prefix->to_string});
     if (@relevant_sos) {
         $self->_set_sort_order(\@relevant_sos);
     } else {
@@ -1067,14 +1154,24 @@ sub clean_out_irrelevant_sort_orders {
 
 sub validate_sort_order {
     my $self = shift;
+    my @from_paths = @_;
+    my @errors;
     return if $self->view_is_empty;
     if ($self->has_sort_order) {
         for my $so ($self->sort_orders) {
-            unless ( grep { $so->path eq $_ } $self->views ) {
-                return $so->path . " is not in the view\n";
+            my $p = eval { $self->path($so->path)};
+            if ($p) {
+                unless ( $p->prefix->to_string eq any(@from_paths) ) {
+                    push @errors, sprintf(
+                        "Order element %s refers to a class (%s) which isn't in the query\n",  
+                        $so->path, $p->prefix->to_string);
+                }
+            } else {
+                push @errors, sprintf("Order element path %s is invalid\n", $so->path);
             }
         }
     }
+    return @errors if @errors;
     return;
 }
 

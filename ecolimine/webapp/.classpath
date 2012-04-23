@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webapp"/>
+	<classpathentry kind="src" path="/intermine-web"/>
+	<classpathentry kind="src" path="/intermine-api-main"/>
+	<classpathentry kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -18,8 +18,7 @@
 
   <%-- class name --%>
   <div>
-    <c:out value="${imf:formatPathStr(pathString, INTERMINE_API, WEBCONFIG)}" />
-
+    <im:displaypath path="${pathString}"/>
     <%-- (x) img --%>
     <fmt:message key="view.removeFromViewHelp" var="removeFromViewTitle">
       <fmt:param value="${pathString}"/>

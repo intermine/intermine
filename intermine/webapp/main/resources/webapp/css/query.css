@@ -145,6 +145,10 @@ form#submitform input, form#submitform {
 .browserline {
   white-space: nowrap;}
 
+.browserline.empty { display:none; }
+.browserline.empty span.nullAttribute span.attributeField { color:#898989; }
+.browserline.empty span.nullAttribute
+
 table.noborder, table.noborder td, table.noborder th {
   border: none;}
 
@@ -228,7 +232,7 @@ span.tree_tee .ver
     border-right-style:none;
     border-left-style:none;
     border-top-style:none;
-    margin-right:12px;
+    margin-right:3px;
     color: white;
     position: relative;
     left: 10px;
@@ -270,7 +274,7 @@ span.tree_tee .ver
     border-right-style:none;
     border-left-style:none;
     border-top-style:none;
-    margin-right:12px;
+    margin-right:3px;
     color: white;
     position: relative;
     left: 10px;
@@ -297,6 +301,6 @@ span.tree_tee .ver
     position: relative;
     top: 2px;
  }
- 
+
 #queryBuilderBrowser div.loading { display:block; width:500px; height:400px; top:43px; left:0; position:absolute;
-	background:rgba(255, 255, 255, 0.90) url('../images/icons/ajax-loader.gif') no-repeat center; }
+  background:rgba(255, 255, 255, 0.90) url('../images/icons/ajax-loader.gif') no-repeat center; }

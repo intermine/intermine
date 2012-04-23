@@ -5,8 +5,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im" %>
 
-
-
 <!-- queryBuilderBrowser.jsp -->
 
 <html:xhtml/>
@@ -57,6 +55,7 @@
   <div class="heading">
     <fmt:message key="query.currentclass"/>
   </div>
+  
   <div class="body" id="browserbody">
     <div>
       <img class="icon" src="images/icons/queries-64.png" alt="query builder icon" />
@@ -65,5 +64,17 @@
     <br/>
     <tiles:insert page="/queryBuilderBrowserLines.jsp"/>
   </div>
+  
+  <div class="body toolbar">
+  	<input id="emptyFieldsCheckbox" type="checkbox" /> Show empty fields
+  </div>
+
+<script type="text/javascript">
+	jQuery("input#emptyFieldsCheckbox").click(function() {
+		//if (jQuery(this).is(':checked')) {
+			jQuery('#queryBuilderBrowser #browserbody div.browserline.empty').toggle();
+		//}
+	});
+</script>
 
 <!-- /queryBuilderBrowser.jsp -->

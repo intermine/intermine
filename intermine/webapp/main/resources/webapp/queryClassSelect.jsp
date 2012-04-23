@@ -42,6 +42,11 @@
 		handleClassClick(e);
       });
       jQuery('#submitClassSelect').attr('disabled','disabled');
+      
+      <!-- dbl click to submit the form as well -->
+      jQuery('select#queryClassSelector option').dblclick(function() {
+    	  jQuery('form#queryClassSelectForm').submit();
+      });
   }
 -->
 </script>

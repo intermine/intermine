@@ -24,7 +24,7 @@
     <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
       <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
           value='Save a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
-          onclick="updateMatchIDs();jQuery('#bigGreen').addClass('clicked');validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
+          onclick="if (!updateMatchIDs()) return false;jQuery('#bigGreen').addClass('clicked');validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
     </div>
     </c:when>
     <c:otherwise>
@@ -204,9 +204,7 @@
       <fmt:message key="bagUploadConfirm.unresolvedDesc"/>
     </div>
     <div class="body">
-    <html:submit property="goBack">
-      <fmt:message key="bagUploadConfirm.goBack"/>
-    </html:submit>
+      <input type="button" onclick="history.back();" id="goBack" value='<fmt:message key="bagUploadConfirm.goBack"/>' />
       <p>
         <fmt:message key="bagUploadConfirm.unresolved">
           <fmt:param value="${fn:length(unresolved)}"/>

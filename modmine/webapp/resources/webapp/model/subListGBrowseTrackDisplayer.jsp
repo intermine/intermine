@@ -329,30 +329,24 @@ div.active {
 
 <h3 id="GBTitle">GBrowse Tracks</h3>
 
+<div id="details" style="display: block" class="collection-table column-border">
 
 <c:forEach var="tracks" items="${tracks}" varStatus="track_status">
   <div class="trigger">
     <i style="color:black;">${tracks.key}</i>
   </div>
   <div class="toggle_container">
-  
-  <table id="${tracks.key}_table" class="stats">
-<%--
-   <col width="380px">
-   <col width="250px">
-   <col width="25px">
-   
-<col width="35%">
-<col width="30%">
-<col width="5%">
-<col width="30%">
---%>
-   <tr>
+
+  <table id="${tracks.key}_table" >
+<thead>
+  <tr>
       <td class="head" colspan="3">
         <input type="checkbox" id="${tracks.key}_all" value="${tracks.key}" onclick="checkAll(this.id)"/>
         <a id="${tracks.key}_a" title="View selected tracks for ${tracks.key} in GBrowse" target="_blank" onclick="if(!updateURL(this.id)){return false;}" >View Selected Tracks in GBrowse</a>
       </td>
     </tr>
+</thead>
+<tbody>
     <c:forEach var="trackDetails" items="${tracks.value}" varStatus="trackDetails_status">
       <tr>
         <td valign="middle" class="subnamecol">
@@ -373,30 +367,13 @@ div.active {
            <mm:allTracks tracks="${trackDetails.value}" dccId="${DCCid}"/>
          </td>
 
-<%-- === FILES ============================= 
-<c:forEach var="subFiles" items="${files}" varStatus="files_status">
-  <c:if test="${subFiles.key.title eq trackDetails.key}">
-  <td>
-    <span class="filelink">
-      <mm:dataFiles files="${subFiles.value}" dccId="${subFiles.key.dCCid}"/>
-    </span>
-      <mm:getTarball dccId="${subFiles.key.dCCid}"/>
-  </c:if>
-</c:forEach>  
 
-         
-    
-
- --%>
-
-
-         
-         
          </tr>
     </c:forEach>
-  </table>
+</tbody>
+    </table>
   </div>
-</c:forEach>
-
+  </c:forEach>
+</div>
 
 <!-- /subListGBrowseTrackDisplayer.jsp -->

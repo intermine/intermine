@@ -28,23 +28,23 @@
         <table width="100%">
           <tr>
             <td width="20%" align="left" valign="top">
-<a href="Use_Lists_in_Templates.html">previous</a>
+<a href="Use_Lists_in_Template_Searches.html">previous</a>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-Query Builder &#160; &#160; (10/11)
+Query Builder &#160; &#160; (10/12)
               </span>
             </td>
             <td width="20%" align="right" valign="top">
-<a href="MyMine.html">next</a>
+<a href="Regions.html">next</a>
             </td>
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Use Lists in Templates
+Use Lists in Template Searches
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-MyMine
+Regions
             </td>
           </tr>
         </table>
@@ -64,13 +64,13 @@ MyMine
 <ol>
 <li></li></ol></div></li>
 <li>
-<a href="Template_Queries.html" class="chapter-item" id="Template_Queries">Template Queries</a>
-<div style="display: none;" class="chapter-tab-box" id="Template_Queries-tab-box">
+<a href="Template_Searches.html" class="chapter-item" id="Template_Searches">Template Searches</a>
+<div style="display: none;" class="chapter-tab-box" id="Template_Searches-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
-<a href="Run_a_Template.html" class="chapter-item" id="Run_a_Template">Run a Template</a>
-<div style="display: none;" class="chapter-tab-box" id="Run_a_Template-tab-box">
+<a href="Run_a_Template_Search.html" class="chapter-item" id="Run_a_Template_Search">Run a Template Search</a>
+<div style="display: none;" class="chapter-tab-box" id="Run_a_Template_Search-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
@@ -94,13 +94,18 @@ MyMine
 <ol>
 <li></li></ol></div></li>
 <li>
-<a href="Use_Lists_in_Templates.html" class="chapter-item" id="Use_Lists_in_Templates">Use Lists in Templates</a>
-<div style="display: none;" class="chapter-tab-box" id="Use_Lists_in_Templates-tab-box">
+<a href="Use_Lists_in_Template_Searches.html" class="chapter-item" id="Use_Lists_in_Template_Searches">Use Lists in Template Searches</a>
+<div style="display: none;" class="chapter-tab-box" id="Use_Lists_in_Template_Searches-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
 <a href="Query_Builder.html" class="chapter-item" id="Query_Builder">Query Builder</a>
 <div style="display: none;" class="chapter-tab-box" id="Query_Builder-tab-box">
+<ol>
+<li></li></ol></div></li>
+<li>
+<a href="Regions.html" class="chapter-item" id="Regions">Regions</a>
+<div style="display: none;" class="chapter-tab-box" id="Regions-tab-box">
 <ol>
 <li></li></ol></div></li>
 <li>
@@ -119,31 +124,60 @@ MyMine
         <div >
 
 
-<p>The QueryBuilder allows you to edit queries or create new ones.  It is aimed at advanced 
-users but editing a Template query to change the output or add a filter is easy.</p>
+<p>The QueryBuilder is aimed at advanced users and allows you to edit queries or create new ones. The query builder can be accessed through the query builder tab in the top menu bar:</p>
 
-<p><strong>Now use the browser back button to return to the results table.</strong></p>
+<img alt="[Click on trail]"  src="mmQB_Tab.png"/>
 
-<p><strong>Click on 'Query' in the Trail to get back to the Template form:</strong></p>
-
-<img alt="[Click on trail]"  src="mmQueryBreadcrumb_2.png"/>
-
-<p><strong>Now click 'Edit Query' to bring up the QueryBuilder:</strong></p>
+<p>or from the <strong>Edit Query</strong> button on each template form:
 
 <p><img alt="[Click edit query]"  src="mmEditDiseaseTempl_2.png"/></p>
 
 
-<p>The pane on the left is a view of the data model starting at the Gene class and showing 
+<p> Clicking on <strong>Edit query</strong> on a template form will take you straight to the query builder.  However, if you want to start building your own query you will need to first select a starting point (starting class) for that query:</p>
+
+<img alt="[QB Class Selection]"  src="mmQB_ClassSelection.png"/>
+
+<p> The Query Builder is made up of distinct sections:</p>
+
+<img alt="[QB query builder]"  src="query_builder.png"/>
+
+<p>The pane on the left is a view of the data model starting at the class initially selected and showing 
 all attributes (e.g. name, symbol) and related classes (e.g. organism, Proteins).  
 metabolicMine uses an object based data model - biological types are termed 'classes' and 
 individual entries are termed 'objects'.  For example the <i>PPARG</i> and <i>TCF7L2</i> 
 Genes are both objects of the class Gene.</p>
 
 <p>You can click <img alt="[plus]" src="plus.gif"/> to open related classes and see their 
-attributes.  Use the <img alt="[show]"  src="show.gif"/> button to add fields to the output.  
-The <img alt="[constrain]" src="constrain.gif"/> button lets you add constraints (filters). </p> 
+attributes.  Building a query involves three main steps: 
+<ul>
 
-<img alt="[query builder]"  src="query_builder.png"/>
+<li>
+Navigating the data model to find the classes and fields of data you are interested in.
+
+</li>
+<li>
+Selecting the data you wish to see in your results.
+
+</li>
+<li>
+Refining your query with a set of constraints or filters.
+
+</li>
+</ul>
+
+</p>
+
+
+<p>Use the <img alt="[show]"  src="show.gif"/> buttons to add fields to the results output and  
+the <img alt="[constrain]" src="constrain.gif"/> buttons to refine your search (aka: add constraints or filters). </p> 
+
+<p>The right hand pane shows a summary of the query you are constructing: the fields you have selected to be in your results and the constraints you have added.  The lower pane allows you to edit the fields in your results - re-order the columns, remove columns and set the sort order.</p>
+
+
+<p>To illustrate the use of the Query Builder we will modify a template query.  Navigate to the templates page and select the template <strong>Gene --> Disease (OMIM)</strong></p>
+
+<p><strong>Now click 'Edit Query' to bring up the QueryBuilder:</strong></p>
+
 
 <p>The query summary section shows the constraints applied to this query.  Notice that one of 
 them says 'IN myGeneList'.  This shows us that the search is using only the Genes from the List (myGeneList)
@@ -155,33 +189,32 @@ We can just remove the Genes constraint, add a constraint for Disease and run th
 <p><strong>Click on the <img alt="[red cross]"  src="cross.gif"/> button next to 'IN myGeneList'' 
 to remove the constraint:</strong></p>
 
-<img alt="[remove constraint]"  src="mmRemoveListConstraint_2.png"/>
+<img alt="[QB remove constraint]"  src="mmRemoveListConstraint_2.png"/>
 
 <p><strong>Now, click on the Disease link in the 'Query Overview' panel': </strong></p>
 <p>Hint: you can find it in the middle of 'diseases Disease collection'.</p> 
 
-<p><img alt="[Add constraint]"  src="mmAddDisConstraint_2.png"/></p>
+<p><img alt="[QB Add constraint]"  src="mmAddDisConstraint_2.png"/></p>
 
 <p>As you hover over it you'll see a Tooltip with 'Show Disease in model browser'.</p>
 
 <p><strong>Scroll to the diseases model and find 'name' (It should have a box around it to show 
 that it appears in our query). To the right of 'name' click constrain:</strong></p>
 
-<img alt="[Constrain Disease Model]"  src="mmDisModelConstraint_2.png"/>
+<img alt="[QB Constrain Disease Model]"  src="mmDisModelConstraint_2.png"/>
 
 <p><strong>Type *diabetes* in the filter box and Click 'Add to query''</strong></p>
 
-<img alt="[Constrain Box]"  src="mmDisConstraintBox_2.png"/>
+<img alt="[QB Constrain Box]"  src="mmDisConstraintBox_2.png"/>
 
 <p><strong>Now scroll down the page and click 'Show results' to run the query:</strong></p>
 
-<img alt="[click show results]"  src="mmClickShowRes_2.png"/>
+<img alt="[QB click show results]"  src="mmClickShowRes_2.png"/>
 
 <p>The results table now shows all the Genes in metabolicMine for which there are known Disease 
 associations, the name of the Disease and its OMIM identifier.  You can use the summary buttons 
 <img alt="[summary icon]"  src="summary_maths.png" valign="middle"/> on 'Gene > diseases > name' to 
 find more information about the numbers of Genes associated with each Disease.</p>
-
 
 
 
@@ -191,23 +224,23 @@ find more information about the numbers of Genes associated with each Disease.</
         <table width="100%">
           <tr>
             <td width="20%" align="left" valign="top">
-<a href="Use_Lists_in_Templates.html">previous</a>
+<a href="Use_Lists_in_Template_Searches.html">previous</a>
             </td>
             <td width="60%" rowspan="2" align="center" valign="top">
               <span class="title">
-10/11
+10/12
               </span>
             </td>
             <td width="20%" align="right" valign="top">
-<a href="MyMine.html">next</a>
+<a href="Regions.html">next</a>
             </td>
           </tr>
           <tr>
             <td width="20%" align="left" class="nextprev" valign="top">
-Use Lists in Templates
+Use Lists in Template Searches
             </td>
             <td width="20%" align="right" class="nextprev" valign="top">
-MyMine
+Regions
             </td>
           </tr>
         </table>

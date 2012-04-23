@@ -17,7 +17,7 @@ my($service, $initial_list_count);
 unless ($do_live_tests) {
     plan( skip_all => "Acceptance tests for release testing only" );
 } else {
-    plan( tests => 118 );
+    plan( tests => 130 );
 
 my $module = 'Webservice::InterMine';
 my $id_file = 't/data/test-identifiers.list';
@@ -25,22 +25,24 @@ my $id_file = 't/data/test-identifiers.list';
 use_ok($module);
 
 $service = Webservice::InterMine->get_service(
-    'squirrel.flymine.org/intermine-test', 'Z1a3D3U16cicCdS0T6y4bdN1SQh');
+    'localhost:8080/intermine-test', 'test-user-token');
 
 $initial_list_count = $service->list_count;
 
 note "\nNo of lists to start with: " . $initial_list_count;
 
 my $query = $service->new_query(class => "Manager");
-$query->add_constraint(qw/department.employees.age > 50/);
+$query->add_constraint(qw/age > 35/);
+$query->add_constraint(qw/age < 45/);
 
 my $q2 = $service->new_query(class => "Manager");
-$q2->add_constraint(qw/age < 37/);
+$q2->add_constraint(qw/age > 30/);
+$q2->add_constraint(qw/age < 40/);
 
 my $first_list = $service->new_list(type => 'Employee', content => 'Helena Fatou "Gareth Keenan"');
 
 my %content_sources = (
-    string => 'Alex Anne "Gareth Keenan" Foo Bar "Keith Bishop" Vincent Baz', 
+    string => 'Alex EmployeeB1 "Gareth Keenan" Foo Bar "Keith Bishop" Vincent Baz', 
     array => [qw/Brenda Zop Carol Quux Jennifer Delphine Ina/], 
     file => $id_file,
     query => $q2,
@@ -96,7 +98,8 @@ APPENDING: {
 
         lives_ok {$list_to_append_to->append($content)} "Can append $source_type";
         is ($list_to_append_to->size, $appended_size, 
-            "$list_to_append_to now has the right size after $source_type");
+            "$list_to_append_to now has the right size after $source_type")
+            or diag explain [map {$_->{name}} $list_to_append_to->select("name")->all()];
 
         lives_ok {$list_to_append_overload += $content} "Can use overloading to append $source_type";
         is ($list_to_append_overload->size, $appended_size, 
@@ -115,7 +118,7 @@ APPENDING: {
     lives_ok {$list_to_append_to->append($list_to_append_c)} 
         "Can append a list";
     is($list_to_append_to->size, $appended_size, "List has the right size")
-        or diag [$list_to_append_to->get_unmatched_ids];
+        or diag explain [$list_to_append_to->get_unmatched_ids];
     lives_ok {$list_to_append_overload += $list_to_append_c}
         "Can overload append a list";
     is($list_to_append_overload->size, $appended_size, "List has the right size");
@@ -148,6 +151,9 @@ CLONING: {
 
 UNION: {
     my $union;
+    my $query_list = $service->new_list($query);
+    is($query_list->size, 13, "The first query has the right size");
+
     lives_ok {$union = $service->join_lists([@lists])} "Can join a bunch of lists";
     is $union->size, 15, "And the union is of the right size";
 
@@ -158,10 +164,10 @@ UNION: {
     is $union->size, 15, "And the union is of the right size";
 
     lives_ok {$union = $union + $query} "Can perform union with a query";
-    is $union->size, 36, "And it has the right size";
+    is $union->size, 28, "And it has the right size";
 
     lives_ok {$union = $q2 + $query} "Can perform union with two queries";
-    is $union->size, 23, "And it has the right size";
+    is $union->size, 16, "And it has the right size";
 
     lives_ok {$union = $lists[0] | [@lists[1 .. 3]]} "Can do the same thing with |";
     is $union->size, 15, "And the union is of the right size";
@@ -170,10 +176,10 @@ UNION: {
     is $union->size, 15, "And the union is of the right size";
 
     lives_ok {$union = $union | $query} "Can perform union with a query";
-    is $union->size, 36, "And it has the right size";
+    is $union->size, 28, "And it has the right size";
 
     lives_ok {$union = $q2 | $query} "Can perform union with two queries";
-    is $union->size, 23, "And it has the right size";
+    is $union->size, 16, "And it has the right size";
 }
 
 # Test Intersecting
@@ -197,11 +203,11 @@ INTERSECT: {
     is ($intersection->size, 4, "leads to a different result")
         or diag reduce(sub {$a + $b}, @lists[1 .. 3])->size;
 
-    lives_ok { $intersection = $query & reduce {$a + $b} @lists } "Can intersect with a query";
-    is $intersection->size, 1, "And it has the right size";
+    lives_ok { $intersection = $q2 & reduce {$a + $b} @lists } "Can intersect a list with a query";
+    is $intersection->size, 0, "And it has the right size";
 
     lives_ok {$intersection = $q2 & $query} "Can perform intersections with two queries";
-    is $intersection->size, 4, "And it has the right size";
+    is $intersection->size, 2, "And it has the right size";
 
     my $old_name = $intersection->name;
     lives_ok {$intersection &= $lists[3]} "Can intersection-assign";
@@ -223,12 +229,12 @@ DIFF: {
     is $difference->size, 8, "BEWARE!! Asymmetric diff is not commutative";
 
     lives_ok {$difference = $query ^ $q2} "Can diff queries";
-    is $difference->size, 19, "And with the right size";
+    is $difference->size, 14, "And with the right size";
 
     my $old_name = $difference->name;
     lives_ok {$difference ^= $lists[3]} "Can diff-assign";
     is $difference->name, $old_name, "The name stays the same";
-    is $difference->size, 23, "But the size has changed";
+    is $difference->size, 20, "But the size has changed";
 }
 
 # Test Subtraction
@@ -258,12 +264,12 @@ SUBTR: {
 
     lives_ok {$subtraction = $all - $query}
         "Can subtract queries from lists";
-    is $subtraction->size, 110, "Which produces the right size"
+    is $subtraction->size, 119, "Which produces the right size"
         or diag $subtraction, $service->new_list(content => $query);
 
     lives_ok {$subtraction = $service->new_query(class => "Employee") - $query}
         "Can subtract queries from queries";
-    is $subtraction->size, 110, "Which still produces the right size"
+    is $subtraction->size, 119, "Which still produces the right size"
         or diag $subtraction, $service->new_list(content => $query);
 
     lives_ok {$subtraction = $service->join_lists([@lists]) - $all}
@@ -273,14 +279,14 @@ SUBTR: {
     my $old_name = $all->name;
     lives_ok {$all -= $query} "Can subtract-assign";
     is $all->name, $old_name, "The name stays the same";
-    is $all->size, 110, "But the size has changed";
+    is $all->size, 119, "But the size has changed";
 
     lives_ok {$all -= "Fatou Helena"} "Can coerce arguments from strings";
-    is $all->size, 108, "And it works too";
+    is $all->size, 117, "And it works too";
     lives_ok {$all -= [qw/Anne/]} "Can coerce arguments from id lists";
-    is $all->size, 107, "And it works too";
+    is $all->size, 116, "And it works too";
     lives_ok {$all -= $id_file} "Can coerce arguments from files";
-    is $all->size, 104, "And it works too";
+    is $all->size, 113, "And it works too";
 }
 
 SHOWING: {
@@ -294,11 +300,11 @@ SHOWING: {
     my $expected_body = q!-------------+--------------+-------------------+--------------
 Employee.age.|.Employee.end.|.Employee.fullTime.|.Employee.name
 -------------+--------------+-------------------+--------------
-30...........|.6............|.false.............|.Karim........
-33...........|.1............|.false.............|.Jennifer.Schirrmann
-58...........|.6............|.true..............|.Jean-Marc....
-62...........|.UNDEF........|.false.............|.David.Brent..
-68...........|.UNDEF........|.false.............|.Frank.Möllers
+37...........|.4............|.false.............|.Karim........
+41...........|.UNDEF........|.false.............|.David.Brent..
+44...........|.UNDEF........|.false.............|.Frank.Möllers
+53...........|.0............|.true..............|.Jean-Marc....
+55...........|.9............|.false.............|.Jennifer.Schirrmann
 !;
     my ($head, $body) = split(/\n/, $buffer, 2);    
     like $head, $expected_head, "Can produce a head for a summary";
@@ -314,14 +320,72 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $list->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > Years Alive\tEmployee > End\tEmployee > Works Full Time\tEmployee > Name
-30\t6\tfalse\tKarim
-33\t1\tfalse\tJennifer Schirrmann
-58\t6\ttrue\tJean-Marc
-62\t""\tfalse\tDavid Brent
-68\t""\tfalse\tFrank Möllers
+    my $expected = qq|Employee > Years Alive\tEmployee > End\tEmployee > Works Full Time?\tEmployee > Name
+37\t4\tfalse\tKarim
+41\t""\tfalse\tDavid Brent
+44\t""\tfalse\tFrank Möllers
+53\t0\ttrue\tJean-Marc
+55\t9\tfalse\tJennifer Schirrmann
 |;
     is $buffer, $expected, "Can print a list";
+}
+
+TAGGING_ADDING: {
+    eval {
+        my $list = $service->new_list(
+            type => "Employee", 
+            content => $id_file
+        );
+        is($list->tags->size, 0, "Tags are empty to start with");
+        $list->add_tags("test-tag-a", "test-tag-b");
+        is($list->tags->size, 2, "Tags are the right size after request")
+            or diag $list->tags;
+        ok($list->tags->contains("test-tag-a", "test-tag-b"),
+            "The tags are correct"
+        );
+    };
+    note($@), fail("adding tags") if $@;
+}
+
+TAGGING_REMOVAL: {
+    eval {
+        my $list = $service->new_list(
+            type => "Employee", 
+            content => $id_file,
+            tags => [qw/test-tag-a test-tag-b test-tag-c/]
+        );
+        is(3, $list->tags->size, "Tags are the right size to start with");
+        $list->remove_tags("test-tag-a", "test-tag-c");
+        is(1, $list->tags->size, "Tags are the right size after request");
+        $list->remove_tags("test-tag-b", "test-tag-d");
+        is(0, $list->tags->size, "Tags are the right size after request");
+    };
+    note($@), fail("removing tags") if $@;
+}
+
+TAGGING_UPDATES: {
+    eval {
+        my $list = $service->new_list(
+            type => "Employee", 
+            content => $id_file,
+            tags => ["test-tag-x"],
+        );
+        my @tags = ("test-tag-a", "test-tag-b");
+        is($list->tags->size, 1, "Tags are empty to start with");
+        is_deeply(
+            [$service->_lists->add_tags($list, @tags)],
+            [@tags, "test-tag-x"],
+            "Added the tags correctly"
+        );
+        is($list->tags->size, 1, "But the list doesn't know anything about that");
+        $list->update_tags();
+        is($list->tags->size, 3, "Tags are the right size after update")
+            or diag $list->tags;
+        ok($list->tags->contains(@tags, "test-tag-x"),
+            "The tags are correct"
+        );
+    };
+    note($@), fail("adding tags") if $@;
 }
 
 RENAME_DELETE: {
@@ -351,4 +415,3 @@ END {
 }
 
 __END__
-

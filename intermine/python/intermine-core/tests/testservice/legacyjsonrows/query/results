@@ -1,0 +1,5 @@
+{"results":[
+[{"value":"foo","url":"/some/path/foo"},{"value":"bar","url":"/some/path/bar"},{"value":"baz","url":"/some/path/baz"}],
+[{"value":123,"url":"/some/path/123"},{"value":1.23,"url":"/some/path/1.23"},{"value":-1.23,"url":"/some/path/-1.23"}],
+[{"value":true,"url":"/some/path/123"},{"value":false,"url":"/some/path/1.23"},{"value":null,"url":"/some/path/-1.23"}]
+],"executionTime":"2011.04.02 14:41::10","wasSuccessful":true,"error":null,"statusCode":200}

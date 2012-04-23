@@ -99,15 +99,22 @@ public class SubmissionPropertiesDisplayer extends ReportDisplayer
         request.setAttribute("developmentalStageMap", developmentalStageMap);
 
         //== Strain ==
-        Map<Integer, String> strainMap = new HashMap<Integer, String>();
 
+        Set<Strain> strains = new HashSet<Strain>();
         for (Strain s : sub.getStrains()) {
             if (!"not applicable".equals(s.getName())) {
-                strainMap.put(s.getId(), s.getName());
+                strains.add(s);
             }
         }
+        request.setAttribute("strainInfoList", strains);
 
-        request.setAttribute("strainMap", strainMap);
+//        Map<Integer, String> strainMap = new HashMap<Integer, String>();
+//        for (Strain s : sub.getStrains()) {
+//            if (!"not applicable".equals(s.getName())) {
+//                strainMap.put(s.getId(), s.getName());
+//            }
+//        }
+//        request.setAttribute("strainMap", strainMap);
 
         //== Tissue ==
         Map<Integer, String> tissueMap = new HashMap<Integer, String>();
@@ -130,6 +137,10 @@ public class SubmissionPropertiesDisplayer extends ReportDisplayer
         }
 
         request.setAttribute("arrayMap", arrayMap);
+
+        // set the technique for the properties displayer
+        request.setAttribute("technique", sub.getExperimentType());
+
 
         //== SubmissionProperty ==
         request.setAttribute("submissionPropertyJSON", getSubmissionPropertyJSON(sub));

@@ -76,17 +76,6 @@
       <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic"/>
       <property name="src.data.includes" value="**/gene_association*"/>
     </source>
-    <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current"/>
-      <property name="kegg.organisms" value="9606 10090"/>
-    </source>
-    <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/metabolic/current"/>
-      <property name="biopax.organisms" value="9606 10090"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="false"/>
-    </source>
     <source name="psi-intact" type="psi" dump="true">
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="9606 10090"/>
@@ -132,13 +121,26 @@
       <property name="ensemblcompara.organisms" value="9606 10090 10116"/>
     </source>
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-     <property name="source.db.name" value="ensembl.9606.variation"/>
+      <property name="source.db.name" value="ensembl.9606.variation"/>
+      <property name="organism" value="9606"/>
+      <property name="sources" value="dbSNP"/>
     </source>
 <!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.10090.variation"/>
     </source>-->
-    <source name="ensembl-gwas-db-human" type="ensembl-gwas-db">
-     <property name="source.db.name" value="ensembl.9606.variation"/>
+    <source name="kegg-pathway" type="kegg-pathway">
+      <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current"/>
+      <property name="kegg.organisms" value="9606 10090"/>
+    </source>
+    <source name="reactome" type="biopax">
+      <property name="src.data.dir" location="/micklem/data/reactome/current"/>
+      <property name="biopax.organisms" value="9606 10090"/>
+      <property name="biopax.datasourcename" value="Reactome"/>
+      <property name="biopax.datasetname" value="Reactome data set"/>
+      <property name="biopax.curated" value="false"/>
+    </source>
+    <source name="huge-gwas" type="huge-gwas">
+     <property name="src.data.dir" location="/micklem/data/metabolic/huge/current"/>
     </source>
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml"/>
@@ -150,10 +152,10 @@
 
   <post-processing>
     <post-process name="create-references"/>
-    <post-process name="transfer-sequences"/>
+    <post-process name="transfer-sequences" dump="true"/>
 
     <!-- this runs the postprocessing steps in all sources -->
-    <post-process name="do-sources" dump="true"/>
+    <post-process name="do-sources"/>
     <post-process name="create-gene-flanking-features"/>
 
     <post-process name="create-bioseg-location-index"/>

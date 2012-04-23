@@ -14,17 +14,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.intermine.util.DynamicUtil;
-import org.intermine.model.testmodel.*;
-import org.intermine.metadata.Model;
-
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.intermine.metadata.Model;
+import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Broke;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.Types;
+import org.intermine.util.DynamicUtil;
 
 public class FullRendererTest extends XMLTestCase
 {
@@ -126,23 +131,12 @@ public class FullRendererTest extends XMLTestCase
         exp1.setIdentifier("1234");
         exp1.setClassName("");
         exp1.setImplementations("Broke Company");
-        Attribute atr1 = new Attribute();
-        atr1.setName("name");
-        atr1.setValue("BrokeCompany1");
-        exp1.addAttribute(atr1);
-        Attribute atr2 = new Attribute();
-        atr2.setName("debt");
-        atr2.setValue("10");
-        exp1.addAttribute(atr2);
-        Attribute atr3 = new Attribute();
-        atr3.setName("vatNumber");
-        atr3.setValue("0");
-        exp1.addAttribute(atr3);
-        ReferenceList refList1 = new ReferenceList();
-        refList1.setName("departments");
-        refList1.addRefId("5678");
-        refList1.addRefId("6789");
-        exp1.addCollection(refList1);
+        exp1.setAttribute("name", "BrokeCompany1");
+        exp1.setAttribute("debt", "10");
+        exp1.setAttribute("vatNumber", "0");
+        exp1.setAttribute("interestRate", "0.0");
+        List<String> refIds = new ArrayList<String>(Arrays.asList(new String[] {"5678", "6789"}));
+        exp1.setCollection("departments", refIds);
 
         assertEquals(exp1, new ItemFactory(model).makeItem(b));
     }
@@ -221,6 +215,7 @@ public class FullRendererTest extends XMLTestCase
 
         String expected = "<item id=\"1234\" class=\"\" implements=\"Broke Company\">" + ENDL
             + "<attribute name=\"debt\" value=\"10\"/>" + ENDL
+            + "<attribute name=\"interestRate\" value=\"0.0\"/>" + ENDL
             + "<attribute name=\"name\" value=\"BrokeCompany1\"/>" + ENDL
             + "<attribute name=\"vatNumber\" value=\"0\"/>" + ENDL
             + "<collection name=\"departments\">" + ENDL

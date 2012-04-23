@@ -29,7 +29,7 @@ public class ExporterImplTest extends TestCase
         List<List<ResultElement>> input = ExporterImplTest.getInput();
         RowFormatter formatter = new RowFormatterImpl(",", true);
         ExporterImpl exporter = new ExporterImpl(out, formatter);
-        exporter.export(input.iterator());
+        exporter.export(input.iterator(), null, null);
         assertEquals(getExpected(), out.toString());
     }
 

@@ -208,7 +208,7 @@ function onChangeAttributeOps(index, init) {
       //LIKE or NOT LIKE - CONTAINS  - LOOKUP
       if(document.getElementById("attributeOps(" + index + ")") != undefined && document.getElementById("attributeOps(" + index + ")")){
       var constraintOpIndex = document.getElementById("attributeOps(" + index + ")").value;
-        if (constraintOpIndex == '6' || constraintOpIndex == '7' || 
+        if (constraintOpIndex == '6' || constraintOpIndex == '7' ||
             constraintOpIndex == '10' || constraintOpIndex == '18') {
             if (document.getElementById("attributeValues(" + index + ")"))
               document.getElementById("attributeValues(" + index + ")").style.display = 'inline';

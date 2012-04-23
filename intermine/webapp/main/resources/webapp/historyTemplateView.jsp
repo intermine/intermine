@@ -8,7 +8,7 @@
 
 <%-- replace this with wsTemplateTable --%>
 
-<!-- historyTemplates.jsp -->
+<!-- historyTemplateView.jsp -->
 <html:xhtml/>
 
 <script type="text/javascript" src="js/tablesort.js"></script>
@@ -50,7 +50,7 @@
       <c:otherwise>
 
         <html:form action="/modifyTemplate">
-        <table cellspacing="0">
+        <table class="rowstyle-alt colstyle-alt" cellspacing="0">
           <tr>
             <th>
               <input type="checkbox" id="selected_template"
@@ -233,6 +233,29 @@
         <fmt:message key="history.importTemplates"/>
       </html:link>
     </span>
+    
+<script type="text/javascript">
+(function() {
+	jQuery(window).load(function(){
+		<%-- sort templates by a remembered column --%>
+		var order = im.getCookie("mymine.templates.order");
+		if (order && parseInt(order)) {
+			fdTableSort.jsWrapper(jQuery("form#modifyTemplateForm table").attr("id"), order);
+		}
+		
+		<%-- callback saving sort order of tables into a cookie --%>
+		window.sortCompleteCallback = function() {
+			var table = jQuery("form#modifyTemplateForm table");
+			var th = table.find("th.forwardSort");
+			if (!jQuery(th).exists()) {
+				th = table.find("th.reverseSort");
+			}
+			im.setCookie("mymine.templates.order", th.attr("class").replace(/[^0-9.]/g, ""));
+		};
+	});
+})();
+</script>  
+    
   </im:body>
 
-<!-- /historyTemplates.jsp -->
+<!-- /historyTemplateView.jsp -->

@@ -155,8 +155,8 @@ public final class GBrowseParser
             // in this case we should link only to the first data source
             // (nr of sources = nr of tracks according to peter ...)
             // wait for document on parsing and news about fgb2
-            
-            
+
+
             StringBuffer trackName = new StringBuffer();
             StringBuffer toAppend = new StringBuffer();
             boolean hasSelected = false;
@@ -208,9 +208,9 @@ public final class GBrowseParser
                         GBrowseTrack newTrack =
                             new GBrowseTrack(organism, trackName.toString(), trackName.toString(),
                                     dccId);
-                        addToGBMap(submissionsToTracks, dccId, newTrack);                       
+                        addToGBMap(submissionsToTracks, dccId, newTrack);
                     }
-                    
+
                 }
             }
             reader.close();

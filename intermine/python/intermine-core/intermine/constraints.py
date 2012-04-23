@@ -107,7 +107,7 @@ class LogicGroup(LogicNode):
         for node in [self.left, self.right]:
             if isinstance(node, LogicGroup):
                 node.parent = self
-            
+
     def __repr__(self):
         """
         Provide a sensible representation of a node
@@ -125,6 +125,7 @@ class LogicGroup(LogicNode):
             return '(' + core + ')' 
         else:
             return core
+
     def get_codes(self):
         """
         Get a list of all constraint codes used in this group.
@@ -140,6 +141,12 @@ class LogicGroup(LogicNode):
 class LogicParseError(ReadableException):
     """
     An error representing problems in parsing constraint logic.
+    """
+    pass
+
+class EmptyLogicError(ValueError):
+    """
+    An error representing the fact that an the logic string to be parsed was empty
     """
     pass
 
@@ -233,7 +240,7 @@ class LogicParser(object):
 
         @raise LogicParseError: if there is a syntax error in the logic
         """
-        def flatten(l): 
+        def flatten(l):
             """Flatten out a list which contains both values and sublists"""
             ret = []
             for item in l:
@@ -254,7 +261,9 @@ class LogicParser(object):
                 return x
 
         logic_str = logic_str.upper()
-        tokens = re.split("\s+", logic_str)
+        tokens = [t for t in re.split("\s+", logic_str) if t]
+        if not tokens:
+            raise EmptyLogicError()
         tokens = flatten([canonical(x, self.ops) for x in tokens])
         tokens = flatten([dedouble(x) for x in tokens])
         self.check_syntax(tokens)
@@ -373,18 +382,22 @@ class LogicParser(object):
         @raise AssertionError: is the tree doesn't have a unique root.
         """
         stack = []
-        for token in postfix_tokens:
-            if token not in self.ops:
-                stack.append(token)
-            else:
-                op = token
-                right = stack.pop()
-                left = stack.pop()
-                if not isinstance(right, LogicGroup): right = self.get_constraint(right)
-                if not isinstance(left, LogicGroup): left = self.get_constraint(left)
-                stack.append(LogicGroup(left, op, right))
-        assert len(stack) == 1, "Tree doesn't have a unique root"
-        return stack.pop()
+        try:
+            for token in postfix_tokens:
+                if token not in self.ops:
+                    stack.append(self.get_constraint(token))
+                else:
+                    op = token
+                    right = stack.pop()
+                    left = stack.pop()
+                    stack.append(LogicGroup(left, op, right))
+            assert len(stack) == 1, "Tree doesn't have a unique root"
+            return stack.pop()
+        except IndexError:
+            raise EmptyLogicError()
+
+class EmptyLogicError (IndexError):
+    pass
 
 class CodedConstraint(Constraint, LogicNode):
     """
@@ -418,6 +431,9 @@ class CodedConstraint(Constraint, LogicNode):
         self.op = op
         self.code = code
         super(CodedConstraint, self).__init__(path)
+
+    def get_codes(self):
+        return [self.code]
 
     def __str__(self):
         """
@@ -537,7 +553,14 @@ class ListConstraint(CodedConstraint):
      """
     OPS = set(['IN', 'NOT IN'])
     def __init__(self, path, op, list_name, code="A"):
-        self.list_name = list_name
+        if hasattr(list_name, 'to_query'):
+            q = list_name.to_query()
+            l = q.service.create_list(q)
+            self.list_name = l.name
+        elif hasattr(list_name, "name"):
+            self.list_name = list_name.name
+        else:
+            self.list_name = list_name
         super(ListConstraint, self).__init__(path, op, code)
 
     def to_string(self):
@@ -1039,7 +1062,8 @@ class ConstraintFactory(object):
         for CC in self.CONSTRAINT_CLASSES:
             try:
                 c = CC(*args, **kwargs)
-                if hasattr(c, "code"): c.code = self.get_next_code()
+                if hasattr(c, "code") and c.code == "A":
+                    c.code = self.get_next_code()
                 return c
             except TypeError, e:
                 pass

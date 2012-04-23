@@ -84,11 +84,20 @@
         text-align:justify;
         font-size:85%;
     }
+
+    #export-div { padding: 5px 20px 0 0; }
+    .export { margin-right: 5px; }
+    .export a { display: inline-block; background-position: top left; vertical-align: middle; background-repeat: no-repeat; }
+    .xgmml a { background-image:url('../../../images/formats/xgmml.gif'); width:59px; height:17px; }
+    .sif a { background-image:url('../../../images/formats/sif.gif'); width:35px; height:17px; }
+    .svg a { background-image:url('../../../images/formats/svg.gif'); width:35px; height:17px; }
+    .png a { background-image:url('../../../images/formats/png.gif'); width:52px; height:17px; }
+
 </style>
 
 <div align="center" style="padding-top: 20px;">
     <h3 class="interactions">Hierarchical View Of Drosophila Physical Regulatory Network</h3>
-    <br/>
+    <div id="export-div" align="left"></div>
     <div id="cytoscapeweb" style="text-align: center; width: 100%;">Please wait while the network data loads</div>
     <div id="menu">
     <!-- jQuery will add stuff here -->
@@ -169,6 +178,23 @@
             clickawayclose: true
          });
 
+    }
+
+    jQuery(document).ready(function() {
+        jQuery("#export-div").html("<span class=\"export\">Select a file type to export the network</span>" +
+                                   "<span class=\"export xgmml\"><a href=\"javascript:;\" onclick=\"exportNet('xgmml')\">XGMML</a></span>" +
+                                   "<span class=\"export sif\"><a href=\"javascript:;\" onclick=\"exportNet('sif')\">SIF</a></span>" +
+                                   "<span class=\"export svg\"><a href=\"javascript:;\" onclick=\"exportNet('svg')\">SVG</a></span>" +
+                                   "<span class=\"export png\"><a href=\"javascript:;\" onclick=\"exportNet('png')\">PNG</a></span>"
+                                   );
+      });
+
+    function exportNet(type) {
+        if (type == "sif") {
+            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type, { interactionAttr: "label", nodeAttr: "label" });
+        } else {
+            vis.exportNetwork(type, 'cytoscapeNetworkExport.do?type='+type);
+        }
     }
 
 </script>

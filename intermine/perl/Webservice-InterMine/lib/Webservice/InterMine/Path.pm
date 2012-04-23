@@ -74,7 +74,10 @@ sub new {
 
 sub to_string {
     my $self = shift;
-    return $self->{path};
+    return $self->{path} if $self->{path};
+    my @parts = @{ $self->{parts} };
+
+    join ".", $parts[0]->unqualified_name, map {$_->name} @parts[1 .. @parts - 1];
 }
 
 =head2 get_results_iterator([$format])
@@ -157,6 +160,58 @@ sub get_possible_values_count {
     return join('', $iter->get_all);
 }
 
+=head2 end_is_attribute()
+
+Return true if this object represents a path that ends in an 
+attribute.
+
+=cut
+
+sub end_is_attribute {
+    my $self = shift;
+    my $end = $self->last_bit;
+    if (class_of($end)) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+=head2 prefix()
+
+Return the path before this one. eg, for "Gene.exons.name", return
+a path representing "Gene.exons". The resulting path with have all the same
+data as this one, including subclass information.
+
+=cut
+
+sub prefix {
+    my $self = shift;
+    my %hash = %{ $self };
+    delete $hash{path};
+    my @parts = @{ $self->{parts} };
+    pop @parts;
+    die $self->to_string . " has no prefix" unless @parts;
+    $hash{parts} = [@parts];
+    $hash{subtypes} = { %{ $self->{subtypes} } };
+    return bless \%hash, (ref $self);
+}
+
+=head2 append(@parts)
+
+Return a path representing a path made from this one with further
+parts added on. Eg, for a path representing "Gene.exons", a call to 
+C<< $path->append("name") >> should return a path representing 
+"Gene.exons.name".
+
+=cut
+
+sub append {
+    my ($self, @parts) = @_;
+    return Path->new($self->to_string . "." . join('.', @parts), 
+        $self->{service}, $self->{subtypes});
+}
+
 =head1 FUNCTIONS
 
 =head2 validate_path
@@ -213,7 +268,6 @@ sub last_bit_but_one {
     my @bits = _parse( $model, $path_string, $types);
     return $bits[-2] || $bits[0];
 }
-
 sub last_class_type {
     my ( $model, $path_string ) = @_;
     my $end = last_bit_but_one( $model, $path_string );

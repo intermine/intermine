@@ -420,10 +420,12 @@ div.collection-table h3 { background:#EEF0F7; border-top-color:#002575; color:#0
 div.collection-table div.right a,
 div.collection-table div.right a:hover,
 div.collection-table div.right a:visited { color:#002575; }
+div.collection-table table { border-color:#E2F5FE; }
 div.collection-table thead th,
 div.collection-table thead td { background:#EEF0F7; border-color:#E2F5FE; }
+div.collection-table table tbody tr td { border-top-color:#E2F5FE; }
 div.collection-table table tbody tr:nth-child(2n) td,
-div.collection-table table tbody tr.odd td { background:#FBFDFE; border-top-color:#E2F5FE; border-bottom-color:#E2F5FE; }
+div.collection-table table tbody tr.odd td { background:#FBFDFE; }
 div.collection-table table tbody tr.even td { background:#FFF; }
 div.collection-table table td.class { color:#886644; }
 div.collection-table table a,
@@ -435,6 +437,11 @@ div.collection-table.column-border table tbody tr td.left-column-border { border
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#E2F5FE; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-color:#E2F5FE; }
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#E2F5FE; }
+div.collection-table div.header { background:#EEF0F7; border-top-color:#002575; }
+div.collection-table div.header h3 { text-shadow: 1px 1px 1px #FFFFFF; }
+div.collection-table div.header a,
+div.collection-table div.header a:hover,
+div.collection-table div.header a:visited { color:#002575; }
 /* collection table on results pages */
 div.collection-table.results table { border-top-color:#002575; }
 /* basic tables (on displayers etc.) */

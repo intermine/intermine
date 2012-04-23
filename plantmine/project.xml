@@ -1,0 +1,88 @@
+<project type="bio">
+  <property name="target.model" value="genomic"/>
+  <property name="source.location" location="../bio/sources/"/>
+  <property name="source.location" location="../bio/sources/experimental-sources/"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="plantmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+
+    <source name="plant-identifiers" type="plant-identifiers">
+     <property name="src.data.dir" location="/micklem/data/plantmine/gene-identifiers/current"/>
+     </source>
+    <source name="ensembl-plant" type="ensembl" dump="true">
+     <property name="src.data.dir" location="/micklem/data/ensembl/arabidopsis_thaliana/current_core"/>
+      <property name="src.data.dir.includes" value="3702.xml"/>
+    </source>
+    <source name="uniprot" type="uniprot" dump="true">
+      <property name="uniprot.organisms" value="3702"/>
+      <property name="src.data.dir" location="/micklem/data/plantmine/uniprot/current"/>
+      <property name="createinterpro" value="true"/>
+      <property name="creatego" value="true"/>
+    </source>
+    <source name="uniprot-keywords" type="uniprot-keywords">
+      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
+      <property name="src.data.dir.includes" value="keywlist.xml"/>
+    </source>
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/micklem/data/plantmine/biogrid/"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+      <property name="biogrid.organisms" value="3702"/>
+    </source>
+    <source name="interpro" type="interpro">
+      <property name="src.data.dir" location="/micklem/data/interpro/current"/>
+    </source>
+    <source name="go" type="go" dump="true">
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+    </source>
+   <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/micklem/data/plantmine/go-annotation/current"/>
+    </source>
+    <source name="pubmed-gene" type="pubmed-gene" dump="true">
+      <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
+      <property name="pubmed.organisms" value="3702"/>
+      <property name="src.data.dir.includes" value="gene2pubmed"/>
+      <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
+    </source>
+    <source name="ensembl-plant-chr-fasta" type="fasta">
+      <property name="fasta.taxonId" value="10090"/>
+      <property name="fasta.dataSetTitle" value="Ensembl A. thaliana chromosome sequence"/>
+      <property name="fasta.dataSourceName" value="Ensembl"/>
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
+      <property name="fasta.classAttribute" value="primaryIdentifier"/>
+      <property name="fasta.includes" value="*.fa"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl/arabidopsis_thaliana/current_core/fasta"/>
+    </source>
+    <source name="ensembl-snp-db-plant" type="ensembl-snp-db" dump="true">
+     <property name="source.db.name" value="ensembl.3702.variation"/>
+     <property name="organism" value="3702"/>
+     <property name="sources" value="Ensembl"/>
+    </source>
+    <source name="ensembl-gwas-db" type="ensembl-gwas-db"> 
+      <property name="source.db.name" value="ensembl.3702.variation"/> 
+    </source>
+    <source name="update-publications" type="update-publications">
+      <property name="src.data.file" location="build/publications.xml"/>
+    </source>
+    <source name="entrez-organism" type="entrez-organism">
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
+
+  </sources>
+
+  <post-processing>
+    <post-process name="create-references" />
+    <post-process name="create-chromosome-locations-and-lengths"/>
+    <post-process name="transfer-sequences"/>
+    <post-process name="do-sources" />
+    <post-process name="create-bioseg-location-index"/>
+    <post-process name="create-overlap-view" />
+    <post-process name="create-attribute-indexes"/>
+    <post-process name="summarise-objectstore"/>
+    <post-process name="create-autocomplete-index"/>
+    <post-process name="create-search-index"/>
+  </post-processing>
+
+</project>
+

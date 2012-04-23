@@ -114,7 +114,7 @@ public class PathQueryBuilderTest extends TestCase {
             throw e;
         } catch (BadRequestException e) {
             assertEquals(
-                    "XML is well formatted but you do not have access to the following " +
+                    "The query XML is well formatted but you do not have access to the following " +
                     "mentioned lists: [Decent Human Beings] query: <query model=\"testmodel\" " +
                     "view=\"Employee.age Employee.name\"><constraint path=\"Employee\" " +
                     "op=\"IN\" value=\"Decent Human Beings\" /></query>",

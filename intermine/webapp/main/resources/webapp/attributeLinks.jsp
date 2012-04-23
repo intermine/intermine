@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- attributeLinkDisplayer.jsp -->
 
@@ -13,15 +14,15 @@
       <c:set var="text" value="${confMapEntry.value.text}" />
       <c:set var="parameters" value="${confMapEntry.value.parameters}" />
       <c:set var="usePost" value="${confMapEntry.value.usePost}" />
+      <c:set var="useCheckbox" value="${confMapEntry.value.useCheckbox}" />
       <c:set var="linkId" value="${confMapEntry.value.linkId}" />
       <c:set var="enctype" value="${confMapEntry.value.enctype}" />
 
-      <c:if
-        test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
+      <c:if test="${!empty confMapEntry.value.valid && !empty confMapEntry.value.attributeValue}">
         <li class="external"><c:choose>
 
           <%-- GET form --%>
-          <c:when test="${empty usePost}">
+          <c:when test="${empty usePost || usePost == 'false'}">
             <c:if test="${!empty text}">
               <a href="${href}" class="ext_link" target="_new">${text}</a>
             </c:if>
@@ -30,16 +31,26 @@
           <%-- POST form --%>
           <c:otherwise>
             <c:if test="${!empty text}">
-              <a
-                href="javascript:document.getElementById('${linkId}Form').submit();"
-                class="ext_link">${text}</a>
+              <a href="javascript:document.getElementById('${linkId}Form').submit();" class="ext_link">${text}</a>
             </c:if>
 
-            <form action="${href}" method="post" id="${linkId}Form"
-              target="_blank" enctype="${enctype}"><c:forEach var="par"
-              items="${parameters}">
-              <input type="hidden" value="${par.value}" name="${par.key}" />
-            </c:forEach></form>
+            <form action="${href}" method="post" id="${linkId}Form" target="_blank" enctype="${enctype}" style="display:none;">
+              <c:forEach var="par" items="${parameters}">
+                    <c:set var="paramName" value="${par.key}" />
+                    <c:set var="paramValue" value="${par.value}" />
+                <c:choose>
+                    <c:when test="${useCheckbox == paramName}">
+                        <c:set var="paramArray" value="${fn:split(paramValue, ',')}" />
+                        <c:forEach var="identifier" items="${paramArray}">
+                            <input type="checkbox" checked="checked" value="${identifier}" name="${paramName}"/>
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="hidden" value="${paramValue}" name="${paramName}" />
+                    </c:otherwise>
+                </c:choose>
+              </c:forEach>
+             </form>
           </c:otherwise>
         </c:choose></li>
       </c:if>

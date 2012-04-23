@@ -32,7 +32,7 @@ Return an array-ref from parsing a row of data.
 override process => sub {
     my $self = shift;
     my $row = shift;
-    return [map {$_->{value}} @$row];
+    return [map {(ref $_ eq 'HASH') ? $_->{value} : $_} @$row];
 };
 
 no Moose;

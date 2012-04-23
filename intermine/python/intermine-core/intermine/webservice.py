@@ -7,19 +7,30 @@ import base64
 import httplib
 import re
 import copy
+import UserDict
+from itertools import groupby
 
+#class UJsonLibDecoder(object): # pragma: no cover
+#    def __init__(self):
+#        self.loads = ujson.decode
+#
 # Use core json for 2.6+, simplejson for <=2.5
+#try:
+#    import ujson
+#    json = UJsonLibDecoder()
+#except ImportError: # pragma: no cover
 try:
     import simplejson as json # Prefer this as it is faster
 except ImportError: # pragma: no cover
     try:
         import json
     except ImportError:
-        raise ImportError("Could not find any JSON module to import - please install simplejson to continue")
+        raise ImportError("Could not find any JSON module to import - "
+            + "please install simplejson or jsonlib to continue")
 
 # Local intermine imports
 from intermine.query import Query, Template
-from intermine.model import Model, Attribute, Reference, Collection
+from intermine.model import Model, Attribute, Reference, Collection, Column
 from intermine.util import ReadableException
 from intermine.lists.listmanager import ListManager
 
@@ -36,6 +47,73 @@ __author__ = "Alex Kalderimis"
 __organization__ = "InterMine"
 __license__ = "LGPL"
 __contact__ = "dev@intermine.org"
+
+class Registry(object, UserDict.DictMixin):
+    """
+    A Class representing an InterMine registry.
+    ===========================================
+
+    Registries are web-services that mines can automatically register themselves
+    with, and thus enable service discovery by clients.
+
+    SYNOPSIS
+    --------
+
+    example::
+
+        from intermine.webservice import Registry
+
+        # Connect to the default registry service
+        # at www.intermine.org/registry
+        registry = Registry()
+
+        # Find all the available mines:
+        for name, mine in registry.items():
+            print name, mine.version
+
+        # Dict-like interface for accessing mines.
+        flymine = registry["flymine"]
+
+        # The mine object is a Service
+        for gene in flymine.select("Gene.*").results():
+            process(gene)
+
+    This class is meant to aid with interoperation between
+    mines by allowing them to discover one-another, and
+    allow users to always have correct connection information.
+    """
+
+    MINES_PATH = "/mines.json"
+
+    def __init__(self, registry_url="http://www.intermine.org/registry"):
+        self.registry_url = registry_url
+        opener = InterMineURLOpener()
+        data = opener.open(registry_url + Registry.MINES_PATH).read()
+        mine_data = json.loads(data)
+        self.__mine_dict = dict(( (mine["name"], mine) for mine in mine_data["mines"]))
+        self.__synonyms = dict(( (name.lower(), name) for name in self.__mine_dict.keys() ))
+        self.__mine_cache = {}
+
+    def __contains__(self, name):
+        return name.lower() in self.__synonyms
+
+    def __getitem__(self, name):
+        lc = name.lower()
+        if lc in self.__synonyms:
+            if lc not in self.__mine_cache:
+                self.__mine_cache[lc] = Service(self.__mine_dict[self.__synonyms[lc]]["webServiceRoot"])
+            return self.__mine_cache[lc]
+        else:
+            raise KeyError("Unknown mine: " + name)
+
+    def __setitem__(self, name, item):
+        raise NotImplementedError("You cannot add items to a registry")
+
+    def __delitem__(self, name):
+        raise NotImplementedError("You cannot remove items from a registry")
+
+    def keys(self):
+        return self.__mine_dict.keys()
 
 class Service(object):
     """
@@ -71,10 +149,10 @@ class Service(object):
       list_on_server = service.get_list("On server")
       in_both = new_list & list_on_server
       in_both.name = "Intersection of these lists"
-      for row in in_both.to_attribute_query().results():
+      for row in in_both:
         do_something_with(row)
         ...
-      
+
     OVERVIEW
     --------
     The two methods the user will be most concerned with are:
@@ -86,8 +164,8 @@ class Service(object):
 
     TERMINOLOGY
     -----------
-    X{Query} is the term for an arbitrarily complex structured request for 
-    data from the webservice. The user is responsible for specifying the 
+    X{Query} is the term for an arbitrarily complex structured request for
+    data from the webservice. The user is responsible for specifying the
     structure that determines what records are returned, and what information
     about each record is provided.
 
@@ -121,7 +199,9 @@ class Service(object):
     SCHEME                 = 'http://'
     SERVICE_RESOLUTION_PATH = "/check/"
 
-    def __init__(self, root, username=None, password=None, token=None):
+    def __init__(self, root,
+            username=None, password=None, token=None,
+            prefetch_depth=1, prefetch_id_only=False):
         """
         Constructor
         ===========
@@ -148,8 +228,8 @@ class Service(object):
         There are two alternative authentication systems supported by InterMine
         webservices. The first is username and password authentication, which
         is supported by all webservices. Newer webservices (version 6+)
-        also support API access token authentication, which is the recommended 
-        system to use. Token access is more secure as you will never have 
+        also support API access token authentication, which is the recommended
+        system to use. Token access is more secure as you will never have
         to transmit your username or password, and the token can be easily changed
         or disabled without changing your webapp login details.
 
@@ -159,6 +239,8 @@ class Service(object):
         if not root.endswith("/service"): root = root + "/service"
 
         self.root = root
+        self.prefetch_depth = prefetch_depth
+        self.prefetch_id_only = prefetch_id_only
         self._templates = None
         self._model = None
         self._version = None
@@ -192,12 +274,13 @@ class Service(object):
 
     # Delegated list methods
 
-    LIST_MANAGER_METHODS = frozenset(["get_list", "get_all_lists", "get_all_list_names",
+    LIST_MANAGER_METHODS = frozenset(["get_list", "get_all_lists",
+        "get_all_list_names",
         "create_list", "get_list_count", "delete_lists", "l"])
 
     def __getattribute__(self, name):
         return object.__getattribute__(self, name)
-    
+
     def __getattr__(self, name):
         if name in self.LIST_MANAGER_METHODS:
             method = getattr(self._list_manager, name)
@@ -205,7 +288,7 @@ class Service(object):
         raise AttributeError("Could not find " + name)
 
     def __del__(self):
-        try: 
+        try:
             self._list_manager.delete_temporary_lists()
         except ReferenceError:
             pass
@@ -217,7 +300,7 @@ class Service(object):
         ==============================
 
         The version specifies what capabilities a
-        specific webservice provides. The most current 
+        specific webservice provides. The most current
         version is 3
 
         may raise ServiceError: if the version cannot be fetched
@@ -236,7 +319,7 @@ class Service(object):
         """Resolve the path to optional services"""
         url = self.root + self.SERVICE_RESOLUTION_PATH + variant
         return self.opener.open(url).read()
-    
+
     @property
     def release(self):
         """
@@ -248,7 +331,7 @@ class Service(object):
         The release is an arbitrary string used to distinguish
         releases of the datawarehouse. This usually coincides
         with updates to the data contained within. While a string,
-        releases usually sort in ascending order of recentness 
+        releases usually sort in ascending order of recentness
         (eg: "release-26", "release-27", "release-28"). They can also
         have less machine readable meanings (eg: "beta")
 
@@ -258,7 +341,7 @@ class Service(object):
             self._release = urllib.urlopen(self.root + self.RELEASE_PATH).read()
         return self._release
 
-    def new_query(self, root=None):
+    def load_query(self, xml, root=None):
         """
         Construct a new Query object for the given webservice
         =====================================================
@@ -270,17 +353,31 @@ class Service(object):
 
         @return: L{intermine.query.Query}
         """
-        return Query(self.model, self, root=root)
+        return Query.from_xml(xml, self.model, root=root)
 
-    def select(self, *columns):
+    def select(self, *columns, **kwargs):
         """
         Construct a new Query object with the given columns selected.
         =============================================================
 
-        As new_query, except that instead of a root class, a list of 
+        As new_query, except that instead of a root class, a list of
         output column expressions are passed instead.
         """
+        if "xml" in kwargs:
+            return self.load_query(kwargs["xml"])
+        if len(columns) == 1:
+            view = columns[0]
+            if isinstance(view, Attribute):
+                return Query(self.model, self).select("%s.%s" % (view.declared_in.name, view))
+            if isinstance(view, Reference):
+                return Query(self.model, self).select("%s.%s.*" % (view.declared_in.name, view))
+            elif not isinstance(view, Column) and not str(view).endswith("*"):
+                path = self.model.make_path(view)
+                if not path.is_attribute():
+                    return Query(self.model, self).select(str(view) + ".*")
         return Query(self.model, self).select(*columns)
+
+    new_query = select
 
     def get_template(self, name):
         """
@@ -289,9 +386,9 @@ class Service(object):
 
         Tries to retrieve a template of the given name
         from the webservice. If you are trying to fetch
-        a private template (ie. one you made yourself 
+        a private template (ie. one you made yourself
         and is not available to others) then you may need to authenticate
-        
+
         @see: L{intermine.webservice.Service.__init__}
 
         @param name: the template's name
@@ -305,12 +402,12 @@ class Service(object):
         try:
             t = self.templates[name]
         except KeyError:
-            raise ServiceError("There is no template called '" 
+            raise ServiceError("There is no template called '"
                 + name + "' at this service")
         if not isinstance(t, Template):
             t = Template.from_xml(t, self.model, self)
             self.templates[name] = t
-        return t 
+        return t
 
     @property
     def templates(self):
@@ -322,7 +419,7 @@ class Service(object):
 
         For efficiency's sake, Templates are not parsed until
         they are required, and until then they are stored as XML
-        strings. It is recommended that in most cases you would want 
+        strings. It is recommended that in most cases you would want
         to use L{Service.get_template}.
 
         You can use this property however to test for template existence though::
@@ -357,7 +454,7 @@ class Service(object):
 
         This is used when constructing queries to provide them
         with information on the structure of the data model
-        they are accessing. You are very unlikely to want to 
+        they are accessing. You are very unlikely to want to
         access this object directly.
 
         raises ModelParseError: if the model cannot be read
@@ -376,14 +473,14 @@ class Service(object):
         ===============================================
 
         This method is called internally by the query objects
-        when they are called to get results. You will not 
+        when they are called to get results. You will not
         normally need to call it directly
 
         @param path: The resource path (eg: "/query/results")
         @type path: string
         @param params: The query parameters for this request as a dictionary
         @type params: dict
-        @param rowformat: One of "rr", "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @param rowformat: One of "rr", "object", "count", "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
         @type rowformat: string
         @param view: The output columns
         @type view: list
@@ -392,7 +489,7 @@ class Service(object):
 
         @return: L{intermine.webservice.ResultIterator}
         """
-        return ResultIterator(self.root, path, params, rowformat, view, self.opener, cld)
+        return ResultIterator(self, path, params, rowformat, view, cld)
 
 class ResultObject(object):
     """
@@ -406,56 +503,109 @@ class ResultObject(object):
         ...    print gene.symbol
         ...    print map(lambda x: x.name, gene.pathways)
 
+    All objects will have "id" and "type" properties. The type refers to the
+    actual type of this object: if it is a subclass of the one requested, the
+    subclass name will be returned. The "id" refers to the internal database id
+    of the object, and is a guarantor of object identity.
+
     """
-    
-    def __init__(self, data, cld):
+
+    def __init__(self, data, cld, view=[]):
+        stripped = [v[v.find(".") + 1:] for v in view]
+        self.selected_attributes = [v for v in stripped if "." not in v]
+        self.reference_paths = dict(((k, list(i)) for k, i in groupby(stripped, lambda x: x[:x.find(".") + 1])))
         self._data = data
-        self._cld = cld
+        self._cld = cld if "class" not in data or cld.name == data["class"] else cld.model.get_class(data["class"])
         self._attr_cache = {}
+
+    def __str__(self):
+        dont_show = set(["objectId", "class"])
+        return "%s(%s)" % (self._cld.name, ",  ".join("%s = %r" % (k, v) for k, v in self._data.items()
+            if not isinstance(v, dict) and not isinstance(v, list) and k not in dont_show))
+
+    def __repr__(self):
+        dont_show = set(["objectId", "class"])
+        return "%s(%s)" % (self._cld.name, ", ".join("%s = %r" % (k, getattr(self, k)) for k in self._data.keys()
+            if k not in dont_show))
 
     def __getattr__(self, name):
         if name in self._attr_cache:
             return self._attr_cache[name]
+
+        if name == "type":
+            return self._data["class"]
 
         fld = self._cld.get_field(name)
         attr = None
         if isinstance(fld, Attribute):
             if name in self._data:
                 attr = self._data[name]
+            if attr is None:
+                attr = self._fetch_attr(fld)
         elif isinstance(fld, Reference):
+            ref_paths = self._get_ref_paths(fld)
             if name in self._data:
                 data = self._data[name]
             else:
                 data = self._fetch_reference(fld)
             if isinstance(fld, Collection):
-                attr = map(lambda x: ResultObject(x, fld.type_class), data)
-            else: 
-                attr = ResultObject(data, fld.type_class)
+                if data is None:
+                    attr = []
+                else:
+                    attr = map(lambda x: ResultObject(x, fld.type_class, ref_paths), data)
+            else:
+                if data is None:
+                    attr = None
+                else:
+                    attr = ResultObject(data, fld.type_class, ref_paths)
         else:
             raise WebserviceError("Inconsistent model - This should never happen")
         self._attr_cache[name] = attr
         return attr
 
-    def _fetch_reference(self, fld):
-        q = self._cld.model.service.new_query(self._cld.name)
-        q.select("id", fld.name + ".*")
-        q.where("id", "=", self._data["objectId"])
-        q.outerjoin(fld.name)
-        return q.first()._data[fld.name]
+    def _get_ref_paths(self, fld):
+        if fld.name + "." in self.reference_paths:
+            return self.reference_paths[fld.name + "."]
+        else:
+            return []
 
+    @property
+    def id(self):
+        """Return the internal DB identifier of this object. Or None if this is not an InterMine object"""
+        return self._data.get('objectId')
+
+    def _fetch_attr(self, fld):
+        if fld.name in self.selected_attributes:
+            return None # Was originally selected - no point asking twice
+        c = self._cld
+        if "id" not in c:
+            return None # Cannot reliably fetch anything without access to the objectId.
+        q = c.model.service.query(c, fld).where(id = self.id)
+        r = q.first()
+        return r._data[fld.name] if fld.name in r._data else None
+
+    def _fetch_reference(self, ref):
+        if ref.name + "." in self.reference_paths:
+            return None # Was originally selected - no point asking twice.
+        c = self._cld
+        if "id" not in c:
+            return None # Cannot reliably fetch anything without access to the objectId.
+        q = c.model.service.query(ref).outerjoin(ref).where(id = self.id)
+        r = q.first()
+        return r._data[ref.name] if ref.name in r._data else None
 
 class ResultRow(object):
     """
     An object for representing a row of data received back from the server.
     =======================================================================
 
-    ResultRows provide access to the fields of the row through index lookup. However, 
-    for convenience both list indexes and dictionary keys can be used. So the 
+    ResultRows provide access to the fields of the row through index lookup. However,
+    for convenience both list indexes and dictionary keys can be used. So the
     following all work:
 
         >>> # Assuming the view is "Gene.symbol", "Gene.organism.name":
         >>> row[0] == row["symbol"] == row["Gene.symbol"]
-        ... True 
+        ... True
 
     """
 
@@ -471,16 +621,6 @@ class ResultRow(object):
     def __iter__(self):
         """Return the list view of the row, so each cell can be processed"""
         return iter(self.to_l())
-
-    def __getitem__(self, key):
-        if isinstance(key, int):
-            return self.data[key]["value"]
-        elif isinstance(key, slice):
-            vals = map(lambda x: x["value"], self.data[key])
-            return vals
-        else:
-            index = self._get_index_for(key)
-            return self.data[index]["value"]
 
     def _get_index_for(self, key):
         if self.index_map is None:
@@ -499,12 +639,22 @@ class ResultRow(object):
         for view in self.views:
            short_form = re.sub("^[^.]+.", "", view)
            value = self[view]
-           parts.append(short_form + "=" + str(value))
+           parts.append(short_form + "=" + repr(value))
         return " ".join(parts)
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.data[key]
+        elif isinstance(key, slice):
+            return self.data[key]
+        else:
+            index = self._get_index_for(key)
+            return self.data[index]
 
     def to_l(self):
         """Return a list view of this row"""
-        return map(lambda x: x["value"], self.data)
+        return [x for x in self.data]
+
 
     def to_d(self):
         """Return a dictionary view of this row"""
@@ -538,7 +688,26 @@ class ResultRow(object):
             self._get_index_for(key)
             return True
         except KeyError:
-           return False 
+           return False
+
+class TableResultRow(ResultRow):
+    """
+    A class for parsing results from the jsonrows data format.
+    """
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return self.data[key]["value"]
+        elif isinstance(key, slice):
+            vals = map(lambda x: x["value"], self.data[key])
+            return vals
+        else:
+            index = self._get_index_for(key)
+            return self.data[index]["value"]
+
+    def to_l(self):
+        """Return a list view of this row"""
+        return map(lambda x: x["value"], self.data)
 
 class ResultIterator(object):
     """
@@ -547,22 +716,22 @@ class ResultIterator(object):
 
     These objects handle the iteration over results
     in the formats requested by the user. They are responsible
-    for generating an appropriate parser, 
+    for generating an appropriate parser,
     connecting the parser to the results, and delegating
     iteration appropriately.
     """
-    
+
     PARSED_FORMATS = frozenset(["rr", "list", "dict"])
     STRING_FORMATS = frozenset(["tsv", "csv", "count"])
-    JSON_FORMATS = frozenset(["jsonrows", "jsonobjects"])
+    JSON_FORMATS = frozenset(["jsonrows", "jsonobjects", "json"])
     ROW_FORMATS = PARSED_FORMATS | STRING_FORMATS | JSON_FORMATS
 
-    def __init__(self, root, path, params, rowformat, view, opener, cld=None):
+    def __init__(self, service, path, params, rowformat, view, cld=None):
         """
         Constructor
         ===========
 
-        Services are responsible for getting result iterators. You will 
+        Services are responsible for getting result iterators. You will
         not need to create one manually.
 
         @param root: The root path (eg: "http://www.flymine.org/query/service")
@@ -571,7 +740,7 @@ class ResultIterator(object):
         @type path: string
         @param params: The query parameters for this request
         @type params: dict
-        @param rowformat: One of "rr", "object", "count", "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects"
+        @param rowformat: One of "rr", "object", "count", "dict", "list", "tsv", "csv", "jsonrows", "jsonobjects", "json"
         @type rowformat: string
         @param view: The output columns
         @type view: list
@@ -584,20 +753,38 @@ class ResultIterator(object):
         if rowformat.startswith("object"): # Accept "object", "objects", "objectformat", etc...
             rowformat = "jsonobjects" # these are synonymous
         if rowformat not in self.ROW_FORMATS:
-            raise ValueError("'%s' is not one of the valid row formats (%s)" % (rowformat, repr(list(self.ROW_FORMATS))))
+            raise ValueError("'%s' is not one of the valid row formats (%s)"
+                    % (rowformat, repr(list(self.ROW_FORMATS))))
+
+        self.row = ResultRow if service.version >= 8 else TableResultRow
 
         if rowformat in self.PARSED_FORMATS:
-            params.update({"format" : "jsonrows"})
+            if service.version >= 8:
+                params.update({"format": "json"})
+            else:
+                params.update({"format" : "jsonrows"})
         else:
             params.update({"format" : rowformat})
 
-        self.url  = root + path
+        self.url  = service.root + path
         self.data = urllib.urlencode(params)
         self.view = view
-        self.opener = opener
+        self.opener = service.opener
         self.cld = cld
         self.rowformat = rowformat
         self._it = None
+
+    def __len__(self):
+        """
+        Return the number of items in this iterator
+        ===========================================
+
+        Note that this requires iterating over the full result set.
+        """
+        c = 0
+        for x in self:
+            c += 1
+        return c
 
     def __iter__(self):
         """
@@ -607,22 +794,30 @@ class ResultIterator(object):
         Returns the internal iterator object.
         """
         con = self.opener.open(self.url, self.data)
-        reader = {
-            "tsv"         : lambda: FlatFileIterator(con, EchoParser()),
-            "csv"         : lambda: FlatFileIterator(con, EchoParser()),
-            "count"       : lambda: FlatFileIterator(con, EchoParser()),
-            "list"        : lambda: JSONIterator(con, ListValueParser()),
-            "rr"          : lambda: JSONIterator(con, ResultRowParser(self.view)),
-            "dict"        : lambda: JSONIterator(con, DictValueParser(self.view)),
-            "jsonobjects" : lambda: JSONIterator(con, ResultObjParser(self.cld)),
-            "jsonrows"    : lambda: JSONIterator(con, EchoParser())
-        }.get(self.rowformat)()
+        identity = lambda x: x
+        flat_file_parser = lambda: FlatFileIterator(con, identity)
+        simple_json_parser = lambda: JSONIterator(con, identity)
+
+        try:
+            reader = {
+                "tsv"         : flat_file_parser,
+                "csv"         : flat_file_parser,
+                "count"       : flat_file_parser,
+                "json"        : simple_json_parser,
+                "jsonrows"    : simple_json_parser,
+                "list"        : lambda: JSONIterator(con, lambda x: self.row(x, self.view).to_l()),
+                "rr"          : lambda: JSONIterator(con, lambda x: self.row(x, self.view)),
+                "dict"        : lambda: JSONIterator(con, lambda x: self.row(x, self.view).to_d()),
+                "jsonobjects" : lambda: JSONIterator(con, lambda x: ResultObject(x, self.cld, self.view))
+            }.get(self.rowformat)()
+        except Exception, e:
+            raise Exception("Couldn't get iterator for "  + self.rowformat + str(e))
         return reader
 
     def next(self):
         """
         Returns the next row, in the appropriate format
-        
+
         @rtype: whatever the rowformat was determined to be
         """
         if self._it is None:
@@ -662,7 +857,7 @@ class FlatFileIterator(object):
         line = self.connection.next().strip()
         if line.startswith("[ERROR]"):
             raise WebserviceError(line)
-        return self.parser.parse(line)
+        return self.parser(line)
 
 class JSONIterator(object):
     """
@@ -688,7 +883,7 @@ class JSONIterator(object):
         self.footer = ""
         self.parse_header()
         self._is_finished = False
-    
+
     def __iter__(self):
         return self
 
@@ -715,7 +910,7 @@ class JSONIterator(object):
 
         The footer containts information as to whether the result
         set was successfully transferred in its entirety. This
-        method makes sure we don't silently accept an 
+        method makes sure we don't silently accept an
         incomplete result set.
 
         @raise WebserviceError: if the footer indicates there was an error
@@ -746,12 +941,13 @@ class JSONIterator(object):
                 self.check_return_status()
             else:
                 line = line.strip().strip(',')
-                if len(line)> 0:
+                if len(line) > 0:
                     try:
                         row = json.loads(line)
                     except json.decoder.JSONDecodeError, e:
-                        raise WebserviceError("Error parsing line from results: '" + line + "' - " + str(e)) 
-                    next_row = self.parser.parse(row)
+                        raise WebserviceError("Error parsing line from results: '"
+                                + line + "' - " + str(e))
+                    next_row = self.parser(row)
         except StopIteration:
             raise WebserviceError("Connection interrupted")
 
@@ -760,152 +956,6 @@ class JSONIterator(object):
             raise StopIteration
         else:
             return next_row
-
-class Parser(object):
-    """
-    Base class for result line parsers
-    ==================================
-
-    Sub-class this class to gain a default constructor
-
-    """
-
-    def __init__(self, view=[]):
-        """
-        Constructor
-        ===========
-
-        @param view: the list of output columns (default: [])
-        @type view: list
-        """
-        self.view = view
-
-    def parse(self, data):
-        """
-        Abstract method - implementations must provide behaviour
-
-        @param data: a line of data
-        """
-        raise UnimplementedError
-
-class EchoParser(Parser):
-    """
-    A result parser that echoes its input
-    =====================================
-
-    Use for parsing situations when you don't
-    actually want to change the data
-    """
-
-    def parse(self, data):
-        """
-        Most basic parser - just returns the fed in data structure
-
-        @param data: the data from the result set
-        """
-        return data
-
-class ListValueParser(Parser):
-    """
-    A result parser that produces lists
-    ===================================
-
-    Parses jsonrow formatted rows into lists
-    of values.
-    """
-
-
-    def parse(self, row):
-        """
-        Parse a row of JSON results into a list
-        
-        @param row: a row of data from a result set
-        @type row: a JSON string
-
-        @rtype: list
-        """
-        return [cell.get("value") for cell in row]
-
-class DictValueParser(Parser):
-    """
-    A result parser that produces dictionaries
-    ==========================================
-
-    Parses jsonrow formatted rows into dictionaries 
-    where the key is the view string for the cell, 
-    and the value is the contents of the returned cell.
-    """
-
-    def parse(self, row):
-        """
-        Parse a row of JSON results into a dictionary
-        
-        @param row: a row of data from a result set
-        @type row: a JSON string
-
-        @rtype: dict
-        """
-        pairs = zip(self.view, row)
-        return_dict = {}
-        for view, cell in pairs:
-            return_dict[view] = cell.get("value")
-        return return_dict
-
-class ResultRowParser(Parser):
-    """
-    A result parser that produces ResultRow objects, which support both index and key access
-    ========================================================================================
-
-    Parses jsonrow formatted rows into ResultRows,
-    which supports key access by list indices (based on the 
-    selected view) as well as lookup by view name (based 
-    on the selected view value).
-    """
-
-    def parse(self, row):
-        """
-        Parse a row of JSON results into a ResultRow
-        
-        @param row: a row of data from a result set
-        @type row: a JSON string
-
-        @rtype: ResultRow
-        """
-        rr = ResultRow(row, self.view)
-        return rr
-
-class ResultObjParser(Parser):
-    """
-    A result parser that produces ResultRow objects, which support both index and key access
-    ========================================================================================
-
-    Parses jsonrow formatted rows into ResultRows,
-    which supports key access by list indices (based on the 
-    selected view) as well as lookup by view name (based 
-    on the selected view value).
-    """
-
-    def __init__(self, cld):
-        """
-        Constructor
-        ===========
-
-        @param cld: the class of object this result object represents
-        @type cld: intermine.model.Class
-        """
-        self.cld = cld
-
-    def parse(self, row):
-        """
-        Parse a row of JSON results into a ResultRow
-        
-        @param row: a row of data from a result set
-        @type row: a JSON string
-
-        @rtype: ResultObject
-        """
-        ro = ResultObject(row, self.cld)
-        return ro
 
 class InterMineURLOpener(urllib.FancyURLopener):
     """
@@ -936,7 +986,7 @@ class InterMineURLOpener(urllib.FancyURLopener):
             self.addheader("Authorization", base64string)
             self.plain_post_header["Authorization"] = base64string
             self.using_authentication = True
-        else: 
+        else:
             self.using_authentication = False
 
     def post_plain_text(self, url, body):
@@ -953,7 +1003,7 @@ class InterMineURLOpener(urllib.FancyURLopener):
 
     def open(self, url, data=None):
         url = self.prepare_url(url)
-        return urllib.FancyURLopener.open(self, url, data) 
+        return urllib.FancyURLopener.open(self, url, data)
 
     def prepare_url(self, url):
         if self.token:
@@ -996,7 +1046,11 @@ class InterMineURLOpener(urllib.FancyURLopener):
         """
         content = fp.read()
         fp.close()
-        raise WebserviceError("There was a problem with our request", errcode, errmsg, content)
+        try:
+            message = json.loads(content)["error"]
+        except:
+            message = content
+        raise WebserviceError("There was a problem with our request", errcode, errmsg, message)
 
     def http_error_401(self, url, fp, errcode, errmsg, headers, data=None):
         """
@@ -1016,12 +1070,34 @@ class InterMineURLOpener(urllib.FancyURLopener):
         else:
             raise WebserviceError("No permissions - not logged in", errcode, errmsg, content)
 
+    def http_error_403(self, url, fp, errcode, errmsg, headers, data=None):
+        """
+        Handle 403 HTTP errors, attempting to return informative error messages
+        =======================================================================
+
+        401 errors indicate we don't have sufficient permission for the resource
+        we requested - usually a list or a tempate
+
+        @raise WebserviceError: in all circumstances
+
+        """
+        content = fp.read()
+        fp.close()
+        try:
+            message = json.loads(content)["error"]
+        except:
+            message = content
+        if self.using_authentication:
+            raise WebserviceError("Insufficient permissions", errcode, errmsg, message)
+        else:
+            raise WebserviceError("No permissions - not logged in", errcode, errmsg, message)
+
     def http_error_404(self, url, fp, errcode, errmsg, headers, data=None):
         """
         Handle 404 HTTP errors, attempting to return informative error messages
         =======================================================================
 
-        404 errors indicate that the requested resource does not exist - usually 
+        404 errors indicate that the requested resource does not exist - usually
         a template that is not longer available.
 
         @raise WebserviceError: in all circumstances
@@ -1029,21 +1105,29 @@ class InterMineURLOpener(urllib.FancyURLopener):
         """
         content = fp.read()
         fp.close()
-        raise WebserviceError("Missing resource", errcode, errmsg, content)
+        try:
+            message = json.loads(content)["error"]
+        except:
+            message = content
+        raise WebserviceError("Missing resource", errcode, errmsg, message)
     def http_error_500(self, url, fp, errcode, errmsg, headers, data=None):
         """
         Handle 500 HTTP errors, attempting to return informative error messages
         =======================================================================
 
         500 errors indicate that the server borked during the request - ie: it wasn't
-        our fault. 
+        our fault.
 
         @raise WebserviceError: in all circumstances
 
         """
         content = fp.read()
         fp.close()
-        raise WebserviceError("Internal server error", errcode, errmsg, content)
+        try:
+            message = json.loads(content)["error"]
+        except:
+            message = content
+        raise WebserviceError("Internal server error", errcode, errmsg, message)
 
 class UnimplementedError(Exception):
     pass

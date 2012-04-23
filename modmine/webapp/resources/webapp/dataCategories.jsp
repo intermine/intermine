@@ -26,7 +26,7 @@
   </tr>
 
   <tr><td rowspan="2" class="leftcol">
-        <html:link action="/aspect?name=modENCODE"> <p><img src="model/images/modENCODE.png" /></p>
+        <html:link action="/projectsSummary.do"> <p><img src="model/images/modENCODE.png" /></p>
         <p> modENCODE </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>
     <td>
@@ -66,7 +66,7 @@
     <td> </td>
     <td> </td>
     <td> &nbsp;</td>
-  
+
 
   <tr><td rowspan="2" class="leftcol">
         <html:link action="/aspect?name=Genomics"> <p><img src="model/images/genomics.gif" /></p>
@@ -85,7 +85,7 @@
     <td> &nbsp;</td>
 </tr>
   <tr><td rowspan="2"  class="leftcol">
-        <html:link action="/aspect?name=Comparative%20Genomics">
+        <html:link action="/aspect?name=Genomics">
           <p>  <img src="model/images/comparativeGenomics.png" /></p>
           <p> Comparative Genomics </p></html:link></td>
     <td>
@@ -98,7 +98,7 @@
     <td> O'Brien et al - <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Abstract&list_uids=15608241" target="_new">PubMed: 15608241</a></td>
     <td> &nbsp;</td>
 <!--
-    <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>    
+    <td><html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
 -->
   </tr>
   <tr>
@@ -142,7 +142,7 @@
     <td> &nbsp;</td>
   </tr>
 
-<!-- INTERACTIONS -->  
+<!-- INTERACTIONS -->
   <tr><td rowspan="4"  class="leftcol">
   <html:link action="/aspect?name=Interactions">
    <p> <img src="model/images/interaction.gif" /></p>
@@ -172,9 +172,9 @@
 <td> &nbsp;</td>
 </tr>
 
-<!-- PHENOTYPES --> 
+<!-- PHENOTYPES -->
 <tr><td rowspan="3" class="leftcol">
-<html:link action="/aspect?name=Phenotypes">
+<html:link action="/aspect?name=Functions">
  <p> <img src="model/images/phenotypes.png" /></p>
  <p> Phenotypes</p></html:link></td>
 <td> <i>D. melanogaster</i> </td>
@@ -201,10 +201,10 @@
 </tr>
 
 
-<!-- PATHWAYS --> 
+<!-- PATHWAYS -->
 
 <tr><td rowspan="2" class="leftcol">
-<html:link action="/aspect?name=Pathways">
+<html:link action="/aspect?name=Functions">
  <p> <img src="model/images/pathways.png" /></p>
  <p> Pathways</p></html:link></td>
 
@@ -232,11 +232,11 @@
 <td> &nbsp;</td>
 <td>&nbsp;</td>
 </tr>
- 
+
 
   <tr><td rowspan="2"  class="leftcol">
 
-        <html:link action="/aspect?name=Gene%20Ontology">
+        <html:link action="/aspect?name=Functions">
          <p> <img src="model/images/geneOntology.png" /></p>
         <p> Gene Ontology </p></html:link></td>
     <td> <i>D. melanogaster</i> </td>

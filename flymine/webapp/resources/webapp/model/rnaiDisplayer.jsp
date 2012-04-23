@@ -58,10 +58,10 @@
       </div>
     </c:forEach>
 
-    <html:link action="/collectionDetails?id=${object.id}&amp;field=rnaiResults&amp;trail=${param.trail}" styleClass="link">
+    <html:link action="/collectionDetails?id=${reportObject.object.id}&amp;field=rnaiResults&amp;trail=${param.trail}" styleClass="link">
       Show all in a table &raquo;
     </html:link>
-    
+
     <script type="text/javascript">
        jQuery('#rnai-displayer div.score').each(function(i) {
          var t = jQuery(this);

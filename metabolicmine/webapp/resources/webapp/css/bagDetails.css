@@ -92,7 +92,7 @@ div.box { margin-top:10px; }
 div.feature h3 { border-top-width:1px; border-top-style:solid; }
 div.feature ul li { float:left; margin:0 5px 0 0; padding-left:5px; }
 div.feature ul li.first { padding-left:0; border:0; }
-div.feature.convert form h3 { margin-top:10px; }
+/*div.feature.convert form h3 { margin-top:10px; }*/
 
 /* results table preview */
 #preview-table { cursor:pointer; }

@@ -748,6 +748,11 @@ div.plainbox div.templateFormContainer {
     padding: 0 10px;
 }
 
+input[type = "submit"].bagDetailsAction {
+    margin: 0em 0.1em 0em 0.1em;
+    padding: 0.1em 0.4em 0.1em 0.4em;
+}
+
 /* button styling */
 input[type = "submit"],
 input[type = "button"] {
@@ -989,16 +994,8 @@ ol.widgetList li a, ol.widgetList li a.active, ol.widgetList li a:hover {
     background-position: left;
     color: #000;
     text-decoration: none;
-    padding: 4px 6px 4px 26px;
+    padding: 4px 6px 4px 6px;
     border: 1px solid #D2D2D2;
-}
-
-ol.widgetList li a {
-    background-image: url('../images/icons/toggle_plus.png');
-}
-
-ol.widgetList li a.active {
-    background-image: url('../images/icons/toggle_minus.png');
 }
 
 /* template.do buttons */
@@ -1490,6 +1487,26 @@ div.floatRight { float:right; }
 #permalink div.popup p { font-size:12px; font-weight:normal; margin-bottom:6px; }
 #permalink div.popup input { width:392px; }
 
+/* timedate formatting */
+.intermine.timestamp { white-space:nowrap; display:none; }
+.timestamp { display:inline-block; }
+
+/* Mine name legibility fixes */
+.mine > span {
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  font-weight: bold;
+  border-radius: 2px;
+  -moz-border-radius: 2px;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  text-outline: 1px 1px white;
+}
+th > .mine {
+  padding: 0.2em;
+}
+th > .mine > span {
+  width: 100%;
+}
 
 /* ############ tables, lists & misc configuration ############ */
 /* inline lists */
@@ -1502,13 +1519,12 @@ div.inline-list div.right { display:inline; float:right; font-size:13px; }
 div.collection-table { margin-bottom:30px; }
 div.collection-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.collection-table div.right { display:inline; float:right; font-size:13px; }
-div.collection-table table { width:100%; border-spacing:0; border-collapse:collapse; }
+div.collection-table table { width:100%; border-spacing:0; border-bottom-width:1px; border-bottom-style:solid; }
 div.collection-table table th { padding:6px; font-size:12px; vertical-align:bottom; text-align:left; }
 div.collection-table table td { padding:3px 6px; font-size:12px; }
 div.collection-table table thead th,
-div.collection-table table thead td { font-weight:normal; border-bottom-width:1px; border-bottom-style:solid; font-size:13px; padding:2px 6px; text-align:left; }
-div.collection-table table tbody tr:nth-child(2n) td,
-div.collection-table table tbody tr.odd td { border-top-width:1px; border-top-style:solid; border-bottom-width:1px; border-bottom-style:solid; }
+div.collection-table table thead td { font-weight:normal; font-size:13px; padding:2px 6px; text-align:left; }
+div.collection-table table tbody tr td { border-top-width:1px; border-top-style:solid; }
 div.collection-table img { vertical-align:top; }
 div.collection-table.column-border table tbody tr td.left-column-border { border-left-width:1px; border-left-style:solid; }
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-width:1px; border-left-style:solid; }
@@ -1528,10 +1544,14 @@ div.collection-table.results div.selected-fields { padding:8px 0; }
 div.collection-table.results table { border-top-width:1px; border-top-style:solid; }
 div.collection-table.results table thead th { padding-top:6px; }
 div.collection-table.results table th:not(:last-child) { border-right-width:1px; border-right-style:solid; }
+div.collection-table div.header { padding:2px 6px; border-top-width:1px; border-top-style:solid; }
+div.collection-table div.header a { text-decoration:underline; }
+div.collection-table div.header a.active { text-decoration:none; font-weight:bold; }
+div.collection-table div.header h3 { padding:0 0 4px 0; border:0; }
 /* basic tables (on displayers etc.) */
 div.basic-table h3 { margin:0; border-top-width:1px; border-top-style:solid; padding:2px 6px; font-size:14px; }
 div.basic-table div.right { display:inline; float:right; font-size:13px; }
-div.basic-table table { border-spacing:0; border-collapse:collapse; }
+div.basic-table table { border-spacing:0; }
 div.basic-table table th,
 div.basic-table table td { padding:2px 2px 2px 6px; }
 div.basic-table table th { padding-top:6px; text-align:left; }
@@ -1549,24 +1569,44 @@ div.template h3 div.favorites { display:inline; }
 div.template h3 div.favorites img { vertical-align:middle; margin-bottom:2px; }
 /* togglers */
 div.collection-table div.toggle,
-div.collection-of-collections div.toggle { padding:2px; font-size:12px; }
+div.collection-of-collections div.toggle,
+div.inline-list div.toggle { padding:2px; font-size:12px; }
 div.collection-table div.toggle a,
-div.collection-of-collections div.toggle a { padding:1px 2px 1px 14px; border-radius:2px 2px 2px 2px; box-shadow:0 1px 2px #EFEFEF; cursor:pointer; }
+div.collection-of-collections div.toggle a,
+div.inline-list div.toggle a { padding:1px 2px 1px 14px; border-radius:2px 2px 2px 2px; box-shadow:0 1px 2px #EFEFEF; cursor:pointer; }
 div.collection-table div.toggle a.less,
-div.collection-of-collections div.toggle a.less { background:url("../images/report/arrow_collapse.gif") no-repeat scroll 2px 50% transparent; }
+div.collection-of-collections div.toggle a.less,
+div.inline-list div.toggle a.less { background:url("../images/report/arrow_collapse.gif") no-repeat scroll 2px 50% transparent; }
 div.collection-table div.toggle a.more,
-div.collection-of-collections div.toggle a.more { background:url("../images/report/arrow_expand.gif") no-repeat scroll 2px 50% transparent; }
+div.collection-of-collections div.toggle a.more,
+div.inline-list div.toggle a.more { background:url("../images/report/arrow_expand.gif") no-repeat scroll 2px 50% transparent; }
 div.collection-table div.show-in-table,
-div.collection-of-collections div.show-in-table { text-align:center; }
+div.collection-of-collections div.show-in-table,
+div.inline-list div.show-in-table { text-align:center; }
 /* header, the same as table header */
 h3.goog { border-top-width:1px; border-top-style:solid; margin-bottom:6px; padding-left:6px; font-size:14px; }
 /* applicable to all */
 div.basic-table h3.loading,
 div.collection-table h3.loading { background-image:url('../images/icons/ajax-loader.gif'); background-repeat:no-repeat; background-position:6px 5px;
-	padding-left:30px; }
+  padding-left:30px; }
 .one-line * { display:block; }
 .tiny-font * { font-size:11px; }
 .loading-spinner { background:url('../images/icons/ajax-loader.gif') no-repeat center; display:inline-block; width:16px; height:11px; }
+/* error warning */
+div.collection-table.warning h3,
+div.collection-of-collections.warning h3,
+div.basic-table.warning h3 { background-image:url('../images/icons/alert.png'); background-position:99% 3px; background-repeat:no-repeat;
+  background-color:#FFF4D1; border-color:#C77C39; color:#C77C39; text-shadow:1px 1px 1px #FFE194 !important;
+  padding-left:6px; }
+div.collection-table.warning,
+div.collection-of-collections.warning,
+div.basic-table.warning,
+div.collection-table.warning div.header,
+div.collection-of-collections.warning div.header,
+div.basic-table.warning div.header { background:#FFF4D1; border-color:#C77C39; }
+div.collection-table.warning p,
+div.collection-of-collections.warning p,
+div.basic-table.warning p { padding:2px 6px; }
 
 table.summary.results {
   border-collapse: collapse;
@@ -1585,3 +1625,5 @@ table.summary.results td {
  border: 1px solid grey;
 }
 
+/* Previously hard-coded colour in high-lighted search results */
+.im-highlighted-search-term: { background-color: #ffff77; }

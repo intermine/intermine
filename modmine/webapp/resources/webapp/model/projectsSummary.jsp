@@ -16,7 +16,9 @@
 <html:xhtml />
 
 <table cellpadding="0" cellspacing="0" border="0" class="topBar hints" width="95%">
-<tr><td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
+<tr>
+<td align="left"><a href="/${WEB_PROPERTIES['webapp.path']}/dataCategories.do?">Additional Data Sources</a></td>
+<td align="right"><a href="/${WEB_PROPERTIES['webapp.path']}/projects.do?">Switch to Projects View</a></td></tr>
 </table>
 
 <div class="body">
@@ -59,7 +61,7 @@ An individual 'submission' is a single instance of an experiment which tests var
   </td>
 
 <%-- FIX for experiments with + in the name (needs to be encoded)   --%>
-<td><h4>  
+<td><h4>
   <c:choose>
    <c:when test="${fn:contains(exp.name, '+')}">
 <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '+', '%2B')}">
@@ -95,7 +97,7 @@ Labs:
 
 <%-- REPOSITORY ENTRIES --%>
 <c:if test="${exp.repositedCount > 0}">
-It has produced 
+It has produced
 <c:if test="${exp.repositedCount == 1}">
 <b>${exp.repositedCount} entry in public repositories</b>.
     </c:if>
@@ -174,8 +176,8 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
       <br>
       </c:forEach>
      </c:if>
- 
-     
+
+
 <%-- GET DATA --%>
 <html:link
         href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">
@@ -207,7 +209,7 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 
 <td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
-<query name="" model="genomic" 
+<query name="" model="genomic"
    view="Submission.title Submission.DCCid Submission.experimentType Submission.organism.shortName "
    sortOrder="Submission.organism.shortName asc">
 <constraint path="Submission.organism.genus" op="=" value="Drosophila"/>
@@ -217,7 +219,7 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
-<query name="" model="genomic" 
+<query name="" model="genomic"
    view="Submission.title Submission.DCCid Submission.experimentType Submission.organism.shortName "
    sortOrder="Submission.organism.shortName asc">
 <constraint path="Submission.organism.genus" op="=" value="Caenorhabditis"/>

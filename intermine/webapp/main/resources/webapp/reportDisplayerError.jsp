@@ -5,12 +5,13 @@
 
 <!-- reportDisplayerError.jsp -->
 
-  <div class='box gray'>
-    <h3>Error rendering ${displayerName}</h3>
+  <div class='collection-table warning'>
+    <h3>${displayerName}</h3>
+    <p>There was a problem rendering the displayer.</p>
     <c:if test="${!empty exception}">
-      <a href="javascript:;" onClick="jQuery('#${displayerName}_error').toggle('slow')">show error</a>
-      <div id="${displayerName}_error" style="display:none">
-        ${exception}
+      <p><a href="#" onclick="jQuery('#${displayerName}_error').slideDown();">show error</a></p>
+      <div id="${displayerName}_error" style="display:none;">
+        <pre>${exception}</pre>
       </div>
     </c:if>
   </div>

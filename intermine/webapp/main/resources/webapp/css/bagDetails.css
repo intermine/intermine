@@ -125,4 +125,5 @@ div.template.table div.templateDetails { margin:0 !important; width:100%; }
   white-space:nowrap; }
 #friendlyMines ul li.toggler a { background:none; text-decoration:underline; }
 
-div.orthologues a { white-space:nowrap; margin-right:10px; }
+div.orthologues a { white-space:nowrap; }
+div.orthologues a:not(:first-child) { margin-left:10px; }

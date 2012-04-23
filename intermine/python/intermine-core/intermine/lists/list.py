@@ -29,7 +29,7 @@ class List(object):
         >>> print "The combination of the two lists has %d elements" % combined_list.size
         >>> print "The combination of the two lists has %d elements" % len(combined_list)
         >>>
-        >>> for row in combined_list.to_attribute_query().results():
+        >>> for row in combined_list:
         ...     print row
 
     OVERVIEW
@@ -208,30 +208,13 @@ class List(object):
 
         @rtype: intermine.query.Query
         """
-        q = self._service.new_query()
-        q.add_view(self.list_type + ".id")
+        q = self._service.new_query(self.list_type)
         q.add_constraint(self.list_type, "IN", self.name)
         return q
 
-    def to_attribute_query(self):
-        """
-        Construct a query to fetch information about the items in this list
-        ===================================================================
-
-        Return a query constrained to contain the objects in this list, with 
-        all the attributes of these objects selected for output as view columns
-        
-        @rtype: intermine.query.Query
-        """
-        q = self.to_query()
-        attributes = q.model.get_class(self.list_type).attributes
-        q.clear_view()
-        q.add_view(map(lambda x: self.list_type + "." + x.name, attributes))
-        return q
-    
     def __iter__(self):
         """Return an iterator over the objects in this list, with all attributes selected for output"""
-        return iter(self.to_attribute_query())
+        return iter(self.to_query())
 
     def __getitem__(self, index):
         """Get a member of this list by index"""
@@ -245,7 +228,7 @@ class List(object):
         if i not in range(self.size):
             raise IndexError("%d is not a valid index for a list of size %d" % (index, self.size))
 
-        return self.to_attribute_query().first(start=i, row="jsonobjects")
+        return self.to_query().first(start=i, row="jsonobjects")
 
     def __and__(self, other):
         """
@@ -294,11 +277,8 @@ class List(object):
                 try:
                     ids = "\n".join(map(lambda x: '"' + x + '"', iter(content)))
                 except TypeError:
-                    try:
-                        uri = content.get_list_append_uri()
-                    except:
-                        content = content.to_query()
-                        uri = content.get_list_append_uri()
+                    content = self._manager._get_listable_query(content)
+                    uri = content.get_list_append_uri()
                     params = content.to_query_params()
                     params["listName"] = name
                     params["path"] = None

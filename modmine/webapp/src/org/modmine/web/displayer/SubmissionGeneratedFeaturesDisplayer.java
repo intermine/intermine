@@ -10,6 +10,7 @@ package org.modmine.web.displayer;
  *
  */
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -30,20 +31,27 @@ import org.modmine.web.MetadataCache;
  *
  * @author julie sullivan
  * @author Fengyuan Hu
+ * @author sc
  *
  */
 public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
 {
-	@SuppressWarnings("unused")
-	private static final Logger LOG = Logger.getLogger(SubmissionGeneratedFeaturesDisplayer.class);
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(SubmissionGeneratedFeaturesDisplayer.class);
 
-	public SubmissionGeneratedFeaturesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
-		super(config, im);
-	}
+    /**
+     * Constructor
+     *
+     * @param config ReportDisplayerConfig
+     * @param im InterMineAPI
+     */
+    public SubmissionGeneratedFeaturesDisplayer(ReportDisplayerConfig config, InterMineAPI im) {
+        super(config, im);
+    }
 
-	@Override
-	public void display(HttpServletRequest request, ReportObject reportObject) {
-		// Removed logics from SubmissionDisplayerController
+    @Override
+    public void display(HttpServletRequest request, ReportObject reportObject) {
+        // Removed logics from SubmissionDisplayerController
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
         final ServletContext servletContext = request.getSession().getServletContext();
@@ -53,12 +61,33 @@ public class SubmissionGeneratedFeaturesDisplayer extends ReportDisplayer
         // submission object
         Submission s = (Submission) reportObject.getObject();
 
-        Map<String, Long> featureCounts = MetadataCache.getSubmissionFeatureCounts(os, s.getdCCid());
+        request.setAttribute("object", s);
+
+        Map<String, Long> featureCounts =
+                MetadataCache.getSubmissionFeatureCounts(os, s.getdCCid());
 
         request.setAttribute("featureCounts", featureCounts);
 
         Map<String, String> expFeatureDescription =
-            MetadataCache.getFeatTypeDescription(servletContext);
+                MetadataCache.getFeatTypeDescription(servletContext);
         request.setAttribute("expFeatDescription", expFeatureDescription);
-	}
+
+
+        Map<String, Map<String, Long>> expFeatEL =
+                MetadataCache.getExperimentFeatureExpressionLevelCounts(os);
+        request.setAttribute("expFeatEL", expFeatEL);
+
+        Map<String, Map<String, Long>> subFeatEL =
+                MetadataCache.getSubmissionFeatureExpressionLevelCounts(os);
+        request.setAttribute("subFeatEL", subFeatEL);
+
+        Map<String, Map<String, Map<String, Long>>> subFeatFileSource =
+                MetadataCache.getSubFileSourceCounts(os);
+        request.setAttribute("subFeatFileSource", subFeatFileSource);
+
+        Map<String, List<String>> unlocatedFeatureTypes =
+                MetadataCache.getUnlocatedFeatureTypes(os);
+        request.setAttribute("unlocatedFeat", unlocatedFeatureTypes);
+
+    }
 }

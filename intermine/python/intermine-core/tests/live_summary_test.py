@@ -15,13 +15,13 @@ class LiveSummaryTest(unittest.TestCase):
     def testNumericSummary(self):
         summary = self.QUERY.summarise("age")
         self.assertEqual(10, summary["min"])
-        self.assertEqual(68, summary["max"])
-        self.assertEqual(45.653543307086615, summary["average"])
-        self.assertEqual(12.716929069723534, summary["stdev"])
+        self.assertEqual(74, summary["max"])
+        self.assertEqual(44.878787878787875, summary["average"])
+        self.assertEqual(12.075481627447155, summary["stdev"])
 
     def testNonNumericSummary(self):
         summary = self.QUERY.summarise("fullTime")
-        self.assertEqual(51, summary[True])
+        self.assertEqual(56, summary[True])
         self.assertEqual(76, summary[False])
 
         summary = self.QUERY.summarise("department.name")

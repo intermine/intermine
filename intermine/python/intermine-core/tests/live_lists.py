@@ -1,15 +1,39 @@
-import sys
 import os
+import sys
 sys.path.insert(0, os.getcwd())
 
 import unittest
 from intermine.webservice import Service
 
+def emp_rows_without_ids(bag):
+    return [row[:3] + row[4:] for row in bag.to_query().rows()]
+
+
+# This is coded all as one enormous test so that we can do
+# a universal clean-up at the end.
 class LiveListTest(unittest.TestCase):
 
     TEST_ROOT = "http://localhost/intermine-test/service"
     TEST_USER = "intermine-test-user"
     TEST_PASS = "intermine-test-user-password"
+
+    # Expected rows
+    KARIM = [37, '4', False, 'Karim']
+    JENNIFER_SCHIRRMANN = [55, '9', False, 'Jennifer Schirrmann']
+    JENNIFER = [45, '8', True, 'Jennifer']
+    JEAN_MARC = [53, '0', True,  'Jean-Marc']
+    VINCENT = [29, '3', True, 'Vincent']
+    INA = [39, '8', True, 'Ina']
+    ALEX = [43, '0', True, 'Alex']
+    DELPHINE = [47, '9', False, 'Delphine']
+    BRENDA = [54, '2', False, 'Brenda']
+    KEITH = [56, None, False, 'Keith Bishop']
+    CAROL = [62, '3', True, 'Carol']
+    GARETH = [61, '8', True, 'Gareth Keenan']
+    DAVID = [41, None, False, 'David Brent']
+    FRANK = [44, None, False, u'Frank M\xf6llers']
+    JULIETTE = [71, None, False, 'Juliette Lebrac']
+    BWAH_HA = [74, None, False, "Bwa'h Ha Ha"]
 
     SERVICE = Service(TEST_ROOT, TEST_USER, TEST_PASS)
 
@@ -27,9 +51,11 @@ class LiveListTest(unittest.TestCase):
     def testListsFromFlyMine(self):
         s = Service("www.flymine.org/query")
         all_lists = s.get_all_lists()
-        self.assertEqual("CURRENT", all_lists[0].status)
+        possible_statuses = set(["CURRENT", "TO_UPGRADE", "NOT_CURRENT"])
+        got = set((l.status for l in all_lists)) 
+        self.assertTrue(got <= possible_statuses)
 
-    def testListTaggAdding(self):
+    def testListTagAdding(self):
         s = self.SERVICE
         t = self.TYPE;
         l = s.create_list(self.GUYS_NAMES, t, description="Id string")
@@ -37,7 +63,7 @@ class LiveListTest(unittest.TestCase):
         l.add_tags("a-tag", "b-tag")
         self.assertEqual(set(["a-tag", "b-tag"]), l.tags)
 
-    def testListTaggRemoval(self):
+    def testListTagRemoval(self):
         s = self.SERVICE
         t = self.TYPE;
         tags = ["a-tag", "b-tag", "c-tag"]
@@ -104,24 +130,21 @@ class LiveListTest(unittest.TestCase):
 
         l = s.create_list(self.EMPLOYEE_FILE, t)
         expected = [
-            [30, u'6', False, u'Karim'],
-            [33, u'1', False, u'Jennifer Schirrmann'],
-            [58, u'6', True,  u'Jean-Marc'],
-            [62, None, False, u'David Brent'],
-            [68, None, False, u'Frank M\xf6llers'],
+            LiveListTest.KARIM, LiveListTest.DAVID, LiveListTest.FRANK,
+            LiveListTest.JEAN_MARC, LiveListTest.JENNIFER_SCHIRRMANN
         ]
 
-        got = [row[:3] + row[4:] for row in l.to_attribute_query().rows()]
+        got = [row[:3] + row[4:] for row in l.to_query().rows()]
         self.assertEqual(got, expected)
-        
 
         # Test iteration:
-        got = [x.age for x in l]
-        self.assertEqual([30, 33, 58, 62, 68], got)
+        got = set([x.age for x in l])
+        expected_ages = set([37, 41, 44, 53, 55])
+        self.assertEqual(expected_ages, got)
 
-        self.assertEqual(30, l[0].age)
-        self.assertEqual(68, l[-1].age)
-        self.assertEqual(58, l[2].age)
+        self.assertTrue(l[0].age in expected_ages)
+        self.assertTrue(l[-1].age in expected_ages)
+        self.assertTrue(l[2].age in expected_ages)
         self.assertRaises(IndexError, lambda: l[5])
         self.assertRaises(IndexError, lambda: l[-6])
         self.assertRaises(IndexError, lambda: l["foo"])
@@ -133,28 +156,21 @@ class LiveListTest(unittest.TestCase):
 
         intersection = listA & listB
         self.assertEqual(intersection.size, 1)
-        expected = [[30, u'6', False, u'Karim']]
-        got = [row[:3] + row[4:] for row in intersection.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        expected = [LiveListTest.KARIM]
+        self.assertEqual(emp_rows_without_ids(intersection), expected)
 
-        q = s.new_query()
-        q.add_view("Employee.id")
-        q.add_constraint("Employee.age", '>', 60)
+        q = s.new_query("Employee").where("age", ">", 50)
         intersection = listB & q
         self.assertEqual(intersection.size, 2)
-        expected = [
-            [62, None, False,u'David Brent'],
-            [68, None, False,u'Frank M\xf6llers'],
-        ]
-        got = [row[:3] + row[4:] for row in intersection.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        expected = [LiveListTest.JEAN_MARC, LiveListTest.JENNIFER_SCHIRRMANN]
+        self.assertEqual(emp_rows_without_ids(intersection), expected)
 
         prev_name = listA.name
         prev_desc = listA.description
         listA &= listB
         self.assertEqual(listA.size, 1)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        expected = [[30, u'6', False, u'Karim']]
+        got = emp_rows_without_ids(listA)
+        expected = [LiveListTest.KARIM]
         self.assertEqual(got, expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
@@ -166,24 +182,17 @@ class LiveListTest(unittest.TestCase):
         union = listA | listB
         self.assertEqual(union.size, 10)
         expected = [
-            [30, u'6', False, u'Karim'],
-            [31, u'4', True, u'Jennifer'],
-            [39, None, False, u'Keith Bishop'],
-            [49, u'6', True, u'Ina'],
-            [51, u'4', True, u'Delphine'],
-            [54, u'0', False, u'Vincent'],
-            [57, u'5', False, u'Carol'],
-            [63, u'9', False, u'Alex'],
-            [64, u'1', True, u'Brenda'],
-            [64, u'7', True, u'Gareth Keenan'],
+            LiveListTest.VINCENT, LiveListTest.KARIM, LiveListTest.INA,
+            LiveListTest.ALEX, LiveListTest.JENNIFER, LiveListTest.DELPHINE,
+            LiveListTest.BRENDA, LiveListTest.KEITH, LiveListTest.GARETH,
+            LiveListTest.CAROL
         ]
-        got = [row[:3] + row[4:] for row in union.to_attribute_query().rows()]
+        got = [row[:3] + row[4:] for row in union.to_query().rows()]
         self.assertEqual(got, expected)
 
         union = listA + listB
         self.assertEqual(union.size, 10)
-        got = [row[:3] + row[4:] for row in union.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(union), expected)
 
         # Test appending
 
@@ -194,8 +203,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(listA.tags, set(["tagA", "tagB"]))
         fromService = s.get_list(listA.name)
         self.assertEqual(listA.tags, fromService.tags)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
 
@@ -204,8 +212,7 @@ class LiveListTest(unittest.TestCase):
         prev_desc = listA.description
         listA += self.LADIES_NAMES
         self.assertEqual(listA.size, 10)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
         self.assertEqual(len(listA.unmatched_identifiers), 5)
@@ -216,18 +223,17 @@ class LiveListTest(unittest.TestCase):
         listA += self.EMPLOYEE_FILE
         self.assertEqual(listA.size, 9)
         expected = [
-            [30, u'6', False, u'Karim'],
-            [33, u'1', False, u'Jennifer Schirrmann'],
-            [39, None, False, u'Keith Bishop'],
-            [54, u'0', False, u'Vincent'],
-            [58, u'6', True,  u'Jean-Marc'],
-            [62, None, False, u'David Brent'],
-            [63, u'9', False, u'Alex'],
-            [64, u'7', True, u'Gareth Keenan'],
-            [68, None, False, u'Frank M\xf6llers'],
+            LiveListTest.VINCENT,
+            LiveListTest.KARIM,
+            LiveListTest.DAVID,
+            LiveListTest.ALEX,
+            LiveListTest.FRANK,
+            LiveListTest.JEAN_MARC,
+            LiveListTest.JENNIFER_SCHIRRMANN,
+            LiveListTest.KEITH,
+            LiveListTest.GARETH
         ]
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
 
@@ -240,23 +246,13 @@ class LiveListTest(unittest.TestCase):
         listA += [listA, listB, listC]
         self.assertEqual(listA.size, 14)
         expected = [
-            [30, u'6', False, u'Karim'],
-            [31, u'4', True, u'Jennifer'],
-            [33, u'1', False, u'Jennifer Schirrmann'],
-            [39, None, False, u'Keith Bishop'],
-            [49, u'6', True, u'Ina'],
-            [51, u'4', True, u'Delphine'],
-            [54, u'0', False, u'Vincent'],
-            [57, u'5', False, u'Carol'],
-            [58, u'6', True,  u'Jean-Marc'],
-            [62, None, False, u'David Brent'],
-            [63, u'9', False, u'Alex'],
-            [64, u'1', True, u'Brenda'],
-            [64, u'7', True, u'Gareth Keenan'],
-            [68, None, False, u'Frank M\xf6llers'],
+            LiveListTest.VINCENT, LiveListTest.KARIM, LiveListTest.INA,
+            LiveListTest.DAVID, LiveListTest.ALEX,
+            LiveListTest.FRANK, LiveListTest.JENNIFER, LiveListTest.DELPHINE,
+            LiveListTest.JEAN_MARC, LiveListTest.BRENDA, LiveListTest.JENNIFER_SCHIRRMANN,
+            LiveListTest.KEITH, LiveListTest.GARETH, LiveListTest.CAROL
         ]
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
 
@@ -268,28 +264,16 @@ class LiveListTest(unittest.TestCase):
         prev_name = listA.name
         prev_desc = listA.description
         listA += [listA, listB, listC, q]
-        self.assertEqual(listA.size, 17)
+        self.assertEqual(listA.size, 16)
         expected = [
-            [30, u'6', False, u'Karim'],
-            [31, u'4', True, u'Jennifer'],
-            [33, u'1', False, u'Jennifer Schirrmann'],
-            [39, None, False, u'Keith Bishop'],
-            [49, u'6', True, u'Ina'],
-            [51, u'4', True, u'Delphine'],
-            [54, u'0', False, u'Vincent'],
-            [57, u'5', False, u'Carol'],
-            [58, u'6', True,  u'Jean-Marc'],
-            [62, None, False, u'David Brent'],
-            [63, u'9', False, u'Alex'],
-            [64, u'1', True, u'Brenda'],
-            [64, u'7', True, u'Gareth Keenan'],
-            [66, None, False, u'Joel Liotard'],
-            [68, None, False, u'Frank M\xf6llers'],
-            [71, None, False, u'Jennifer Taylor-Clarke'],
-            [72, None, False, u'Charles Miner']
+            LiveListTest.VINCENT, LiveListTest.KARIM, LiveListTest.INA,
+            LiveListTest.DAVID, LiveListTest.ALEX,
+            LiveListTest.FRANK, LiveListTest.JENNIFER, LiveListTest.DELPHINE,
+            LiveListTest.JEAN_MARC, LiveListTest.BRENDA, LiveListTest.JENNIFER_SCHIRRMANN,
+            LiveListTest.KEITH, LiveListTest.GARETH, LiveListTest.CAROL,
+            LiveListTest.JULIETTE, LiveListTest.BWAH_HA
         ]
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
 
@@ -300,24 +284,19 @@ class LiveListTest(unittest.TestCase):
         diff = listA ^ listB
         self.assertEqual(diff.size, 8)
         expected = [
-            [33, u'1', False, u'Jennifer Schirrmann'],
-            [39, None, False, u'Keith Bishop'],
-            [54, u'0', False, u'Vincent'],
-            [58, u'6', True,  u'Jean-Marc'],
-            [62, None, False, u'David Brent'],
-            [63, u'9', False, u'Alex'],
-            [64, u'7', True, u'Gareth Keenan'],
-            [68, None, False, u'Frank M\xf6llers'],
+            LiveListTest.VINCENT,
+            LiveListTest.DAVID, LiveListTest.ALEX,
+            LiveListTest.FRANK, 
+            LiveListTest.JEAN_MARC, LiveListTest.JENNIFER_SCHIRRMANN,
+            LiveListTest.KEITH, LiveListTest.GARETH
         ]
-        got = [row[:3] + row[4:] for row in diff.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(diff), expected)
 
         prev_name = listA.name
         prev_desc = listA.description
         listA ^= listB
         self.assertEqual(listA.size, 8)
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
 
@@ -328,12 +307,9 @@ class LiveListTest(unittest.TestCase):
         subtr = listA - listB
         self.assertEqual(subtr.size, 4)
         expected = [
-            [39, None, False, u'Keith Bishop'],
-            [54, u'0', False, u'Vincent'],
-            [63, u'9', False, u'Alex'],
-            [64, u'7', True, u'Gareth Keenan'],
+             LiveListTest.VINCENT, LiveListTest.ALEX, LiveListTest.KEITH,LiveListTest.GARETH
         ]
-        got = [row[:3] + row[4:] for row in subtr.to_attribute_query().rows()]
+        got = [row[:3] + row[4:] for row in subtr.to_query().rows()]
         self.assertEqual(got, expected)
 
         prev_name = listA.name
@@ -341,15 +317,49 @@ class LiveListTest(unittest.TestCase):
         listA -= listB
         self.assertEqual(listA.size, 4)
         self.assertEqual(listA.tags, set(["subtr-a", "subtr-b"]))
-        got = [row[:3] + row[4:] for row in listA.to_attribute_query().rows()]
-        self.assertEqual(got, expected)
+        self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
+        
+        # Test subqueries
+        with_cc_q = s.model.Bank.where("corporateCustomers.id", "IS NOT NULL")
+        with_cc_l = s.create_list(with_cc_q)
+
+        self.assertEqual(2, s.model.Bank.where(s.model.Bank ^ with_cc_q).count())
+        self.assertEqual(2, s.model.Bank.where(s.model.Bank ^ with_cc_l).count())
+
+        self.assertEqual(3, s.model.Bank.where(s.model.Bank < with_cc_q).count())
+        self.assertEqual(3, s.model.Bank.where(s.model.Bank < with_cc_l).count())
+
+        boring_q = s.new_query("Bank")
+        boring_q.add_constraint("Bank", "NOT IN", with_cc_q)
+        self.assertEqual(2, boring_q.count())
+
+        boring_q = s.new_query("Bank")
+        boring_q.add_constraint("Bank", "NOT IN", with_cc_l)
+        self.assertEqual(2, boring_q.count())
+
+        # Test query overloading
+
+        no_comps = s.new_query("Bank") - with_cc_q
+        self.assertEqual(2, no_comps.size)
+
+        no_comps = s.new_query("Bank") - with_cc_l
+        self.assertEqual(2, no_comps.size)
+
+        all_b = s.new_query("Bank") | with_cc_q
+        self.assertEqual(5, all_b.size)
+
+        all_b = s.new_query("Bank") | with_cc_l
+        self.assertEqual(5, all_b.size)
 
     def tearDown(self):
         s = self.SERVICE
         s.__del__()
         self.assertEqual(self.SERVICE.get_list_count(), self.initialListCount)
+
+class LiveListTestWithTokens(LiveListTest):
+    SERVICE = Service(LiveListTest.TEST_ROOT, token="test-user-token")
 
 if __name__ == '__main__':
     unittest.main()

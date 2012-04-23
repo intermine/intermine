@@ -47,6 +47,29 @@ class TestTemplates(WebserviceTest): # pragma: no cover
         t = Template.from_xml(xml, model)
         self.assertEqual(str(t.get_sort_order()), "Employee.name asc")
 
+    def testCodesInOrder(self):
+        """Should associate the right constraints with the right codes"""
+        model = self.service.model
+
+        xml = '''
+          <template name="codesNotInOrder">
+              <query nampe="codesNotInOrder" model="testmodel" view="Employee.name Employee.age">
+                  <constraint path="Employee.name" op="=" value="foo" code="X"/>
+                  <constraint path="Employee.name" op="=" value="bar" code="Y"/>
+                  <constraint path="Employee.name" op="=" value="baz" code="Z"/>
+              </query>
+          </template>
+          '''
+        t = Template.from_xml(xml, model)
+        v = None
+        try:
+            v = t.get_constraint("X").value
+        except:
+            pass
+
+        self.assertIsNotNone(v, msg = "Query (%s) should have a constraint with the code 'X'" % t)
+        self.assertEqual("foo", v, msg = "should be the correct constraint")
+
     def testIrrelevantConstraintLogic(self):
         """Should fix up bad logic"""
         model = self.service.model
@@ -81,15 +104,19 @@ class TestTemplates(WebserviceTest): # pragma: no cover
         self.assertEqual(str(t.get_logic()), "A or B or C")
 
         xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B and (D and E) or C">
-                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/><constraint path="Employee.fullTime" op="=" value="true"/>
+                <constraint path="Employee.name" op="IS NULL"/>
+                <constraint path="Employee.age" op="IS NOT NULL"/>
+                <constraint path="Employee.fullTime" op="=" value="true"/>
                 </query>
             </template>'''
         t = Template.from_xml(xml, model)
         self.assertEqual(str(t.get_logic()), "(A or B) and C")
 
         xml = '''<template name="bad_cl"><query name="bad_cl" model="testmodel" view="Employee.name Employee.age" constraintLogic="A or B or (D and E) and C">
-                <constraint path="Employee.name" op="IS NULL"/><constraint path="Employee.age" op="IS NOT NULL"/>
-                <constraint path="Employee.fullTime" op="=" value="true"/><constraint path="Employee.name" op="IS NULL"/>
+                <constraint path="Employee.name" op="IS NULL"/>
+                <constraint path="Employee.age" op="IS NOT NULL"/>
+                <constraint path="Employee.fullTime" op="=" value="true"/>
+                <constraint path="Employee.name" op="IS NULL"/>
                 </query>
             </template>'''
         t = Template.from_xml(xml, model)

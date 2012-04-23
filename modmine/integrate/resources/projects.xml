@@ -226,7 +226,7 @@
     <attribute name="title" value="Global Identification of Transcribed Regions of the C. elegans Genome"/>
     <attribute name="surnamePI" value="Waterston"/>
     <attribute name="namePI" value="Robert"/>
-    <attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/waterston/"/>
 <collection name="labs">
 	<reference ref_id="1097"/>
 	<reference ref_id="1062"/>
@@ -246,7 +246,7 @@
     <attribute name="title" value="Identification of DNA Elements Governing Chromatin Function in C. elegans"/>
     <attribute name="surnamePI" value="Lieb"/>
     <attribute name="namePI" value="Jason"/>
-    <attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/lieb/"/>
     <collection name="labs">
 			<reference ref_id="1078"/>
 			<reference ref_id="1052"/>
@@ -267,7 +267,7 @@
     <attribute name="title" value="Genome-wide profiling of histone variants in Drosophila and Caenorhabditis"/>
     <attribute name="surnamePI" value="Henikoff"/>
     <attribute name="namePI" value="Steven"/>
-    <attribute name="url" value="http://www.modencode.org/Henikoff.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/henikoff/"/>
 		<collection name="labs">
 			<reference ref_id="1069"/>
 			<reference ref_id="1051"/>
@@ -283,7 +283,7 @@
     <attribute name="title" value="Identification of Transcription Factor Binding Regions"/>
     <attribute name="surnamePI" value="Snyder"/>
     <attribute name="namePI" value="Michael"/>
-    <attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/snyder/"/>
 		<collection name="labs">
 			<reference ref_id="1095"/>
 			<reference ref_id="1062"/>
@@ -301,7 +301,7 @@
     <attribute name="title" value="Encyclopedia of C. elegans 3\u2019UTRs and their regulatory elements"/>
     <attribute name="surnamePI" value="Piano"/>
     <attribute name="namePI" value="Fabio"/>
-    <attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/piano/"/>
 		<collection name="labs">
 			<reference ref_id="1086"/>
 			<reference ref_id="1067"/>
@@ -317,7 +317,7 @@
     <attribute name="title" value="Comprehensive characterization of the Drosophila transcriptome"/>
     <attribute name="surnamePI" value="Celniker"/>
     <attribute name="namePI" value="Sue"/>
-    <attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<collection name="labs">
 			<reference ref_id="1056"/>
 			<reference ref_id="1055"/>
@@ -337,7 +337,7 @@
     <attribute name="title" value="Identification of Transcription Factor binding sites by high-throughput ChIP-chip experiments in Drosophila"/>
     <attribute name="surnamePI" value="White"/>
     <attribute name="namePI" value="Kevin"/>
-    <attribute name="url" value="http://www.modencode.org/White.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/white/"/>
 		<collection name="labs">
 			<reference ref_id="1098"/>
 			<reference ref_id="1053"/>
@@ -358,7 +358,7 @@
     <attribute name="title" value="Genome-Wide Mapping of Chromosomal Proteins in Drosophila"/>
     <attribute name="surnamePI" value="Karpen"/>
     <attribute name="namePI" value="Gary"/>
-    <attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/karpen/"/>
 		<collection name="labs">
 			<reference ref_id="1072"/>
 			<reference ref_id="1061"/>
@@ -374,7 +374,7 @@
     <attribute name="title" value="Annotation of the small RNA/microRNA component of the Drosophila genome"/>
     <attribute name="surnamePI" value="Lai"/>
     <attribute name="namePI" value="Eric"/>
-    <attribute name="url" value="http://www.modencode.org/Lai.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/lai/"/>
 		<collection name="labs">
 			<reference ref_id="1077"/>
 			<reference ref_id="1068"/>
@@ -388,7 +388,7 @@
     <attribute name="title" value="The Systematic Identification and Analysis of Replication Origins in Drosophila"/>
     <attribute name="surnamePI" value="MacAlpine"/>
     <attribute name="namePI" value="David"/>
-    <attribute name="url" value="http://www.modencode.org/MacAlpine.shtml"/>
+    <attribute name="url" value="http://www.modencode.org/macalpine/"/>
 		<collection name="labs">
 			<reference ref_id="1080"/>
 			<reference ref_id="1083"/>
@@ -402,7 +402,7 @@
 		<attribute name="title" value="Functional Validation of the Drosophila transcriptome by comparative genomics"/>
 		<attribute name="surnamePI" value="Oliver"/>
 		<attribute name="namePI" value="Brian"/>
-		<attribute name="url" value="http://www.modencode.org/Oliver.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/oliver/"/>
 		<collection name="labs">
 			<reference ref_id="1110"/>
 		</collection>
@@ -415,49 +415,49 @@
 		<attribute name="surname" value="Ahmad"/>
 		<attribute name="name" value="Kamran Ahmad"/>
 		<attribute name="affiliation" value="Harvard University"/>
-		<attribute name="url" value="http://www.modencode.org/Henikoff.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/henikoff/"/>
 		<reference name="project" ref_id="1012"/>
 	</item>
 	<item id="1052" class="" implements="Lab">
 		<attribute name="surname" value="Ahringer"/>
 		<attribute name="name" value="Julie Ahringer"/>
 		<attribute name="affiliation" value="University of Cambridge"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1053" class="" implements="Lab">
 		<attribute name="surname" value="Bellen"/>
 		<attribute name="name" value="Hugo Bellen"/>
 		<attribute name="affiliation" value="Baylor College of Medicine"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1054" class="" implements="Lab">
 		<attribute name="surname" value="Brenner"/>
 		<attribute name="name" value="Steven Brenner"/>
 		<attribute name="affiliation" value="University of California, Berkeley"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1055" class="" implements="Lab">
 		<attribute name="surname" value="Brent"/>
 		<attribute name="name" value="Michael Brent"/>
 		<attribute name="affiliation" value="Washington University"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1056" class="" implements="Lab">
 		<attribute name="surname" value="Celniker"/>
 		<attribute name="name" value="Sue Celniker"/>
 		<attribute name="affiliation" value="Lawrence Berkeley National Laboratory"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1057" class="" implements="Lab">
 		<attribute name="surname" value="Cherbas"/>
 		<attribute name="name" value="Peter Cherbas"/>
 		<attribute name="affiliation" value="Indiana University"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 <!--
@@ -465,7 +465,7 @@
 		<attribute name="surname" value="Collart"/>
 		<attribute name="name" value="Frank Collart"/>
 		<attribute name="affiliation" value=""/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	-->
@@ -473,287 +473,287 @@
 		<attribute name="surname" value="Dernburg"/>
 		<attribute name="name" value="Abby Dernburg"/>
 		<attribute name="affiliation" value="University of California, Berkeley"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1060" class="" implements="Lab">
 		<attribute name="surname" value="Desai"/>
 		<attribute name="name" value="Arshad Desai"/>
 		<attribute name="affiliation" value="University of California, San Diego"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1061" class="" implements="Lab">
 		<attribute name="surname" value="Elgin"/>
 		<attribute name="name" value="Sarah Elgin"/>
 		<attribute name="affiliation" value="Washington University"/>
-		<attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/karpen/"/>
 		<reference name="project" ref_id="1022"/>
 	</item>
 	<item id="1062" class="" implements="Lab">
 		<attribute name="surname" value="Gerstein"/>
 		<attribute name="name" value="Mark Gerstein"/>
 		<attribute name="affiliation" value="Yale University"/>
-		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/waterston/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1063" class="" implements="Lab">
 		<attribute name="surname" value="Gingeras"/>
 		<attribute name="name" value="Tom Gingeras"/>
 		<attribute name="affiliation" value="Cold Spring Harbor Laboratory"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1064" class="" implements="Lab">
 		<attribute name="surname" value="Graveley"/>
 		<attribute name="name" value="Brenton Graveley"/>
 		<attribute name="affiliation" value="University of Connecticut Health Center"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1065" class="" implements="Lab">
 		<attribute name="surname" value="Green"/>
 		<attribute name="name" value="Phil Green"/>
 		<attribute name="affiliation" value="University of Washington"/>
-		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/waterston/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1066" class="" implements="Lab">
 		<attribute name="surname" value="Green"/>
 		<attribute name="name" value="Roland Green"/>
 		<attribute name="affiliation" value="NimbleGen"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1067" class="" implements="Lab">
 		<attribute name="surname" value="Gunsalus"/>
 		<attribute name="name" value="Kristin Gunsalus"/>
 		<attribute name="affiliation" value="New York University"/>
-		<attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/piano/"/>
 		<reference name="project" ref_id="1014"/>
 	</item>
 	<item id="1068" class="" implements="Lab">
 		<attribute name="surname" value="Hannon"/>
 		<attribute name="name" value="Gregory Hannon"/>
 		<attribute name="affiliation" value="Cold Spring Harbor Laboratory"/>
-		<attribute name="url" value="http://www.modencode.org/Lai.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lai/"/>
 		<reference name="project" ref_id="1023"/>
 	</item>
 	<item id="1069" class="" implements="Lab">
 		<attribute name="surname" value="Henikoff"/>
 		<attribute name="name" value="Steven Henikoff"/>
 		<attribute name="affiliation" value="Fred Hutchinson Cancer Research Center"/>
-		<attribute name="url" value="http://www.modencode.org/Henikoff.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/henikoff/"/>
 		<reference name="project" ref_id="1012"/>
 	</item>
 	<item id="1070" class="" implements="Lab">
 		<attribute name="surname" value="Hoskins"/>
 		<attribute name="name" value="Roger Hoskins"/>
 		<attribute name="affiliation" value="Lawrence Berkeley National Laboratory"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1071" class="" implements="Lab">
 		<attribute name="surname" value="Hyman"/>
 		<attribute name="name" value="Anthony Hyman"/>
 		<attribute name="affiliation" value="Max Planck Institute"/>
-		<attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/snyder/"/>
 		<reference name="project" ref_id="1013"/>
 	</item>
 	<item id="1072" class="" implements="Lab">
 		<attribute name="surname" value="Karpen"/>
 		<attribute name="name" value="Gary Karpen"/>
 		<attribute name="affiliation" value="Lawrence Berkeley National Laboratory"/>
-		<attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/karpen/"/>
 		<reference name="project" ref_id="1022"/>
 	</item>
 	<item id="1073" class="" implements="Lab">
 		<attribute name="surname" value="Kellis"/>
 		<attribute name="name" value="Manolis Kellis"/>
 		<attribute name="affiliation" value="Massachusetts Institute of Technology"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1074" class="" implements="Lab">
 		<attribute name="surname" value="Kim"/>
 		<attribute name="name" value="John Kim"/>
 		<attribute name="affiliation" value="University of Michigan"/>
-		<attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/piano/"/>
 		<reference name="project" ref_id="1014"/>
 	</item>
 	<item id="1075" class="" implements="Lab">
 		<attribute name="surname" value="Kim"/>
 		<attribute name="name" value="Stuart Kim"/>
 		<attribute name="affiliation" value="Stanford University"/>
-		<attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/snyder/"/>
 		<reference name="project" ref_id="1013"/>
 	</item>
 	<item id="1076" class="" implements="Lab">
 		<attribute name="surname" value="Kuroda"/>
 		<attribute name="name" value="Mitzi Kuroda"/>
 		<attribute name="affiliation" value="Brigham and Women's Hospital"/>
-		<attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/karpen/"/>
 		<reference name="project" ref_id="1022"/>
 	</item>
 	<item id="1077" class="" implements="Lab">
 		<attribute name="surname" value="Lai"/>
 		<attribute name="name" value="Eric Lai"/>
 		<attribute name="affiliation" value="Sloan-Kettering Institute"/>
-		<attribute name="url" value="http://www.modencode.org/Lai.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lai/"/>
 		<reference name="project" ref_id="1023"/>
 	</item>
 	<item id="1078" class="" implements="Lab">
 		<attribute name="surname" value="Lieb"/>
 		<attribute name="name" value="Jason Lieb"/>
 		<attribute name="affiliation" value="University of North Carolina, Chapel Hill"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1079" class="" implements="Lab">
 		<attribute name="surname" value="Liu"/>
 		<attribute name="name" value="Xiaole Liu"/>
 		<attribute name="affiliation" value="Dana Farber Cancer Institute"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1080" class="" implements="Lab">
 		<attribute name="surname" value="MacAlpine"/>
 		<attribute name="name" value="David MacAlpine"/>
 		<attribute name="affiliation" value="Duke University"/>
-		<attribute name="url" value="http://www.modencode.org/MacAlpine.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/macalpine/"/>
 		<reference name="project" ref_id="1024"/>
 	</item>
 	<item id="1081" class="" implements="Lab">
 		<attribute name="surname" value="MacCoss"/>
 		<attribute name="name" value="Michael MacCoss"/>
 		<attribute name="affiliation" value="University of Washington"/>
-		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/waterston/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1082" class="" implements="Lab">
 		<attribute name="surname" value="Miller"/>
 		<attribute name="name" value="David Miller"/>
 		<attribute name="affiliation" value="Vanderbilt University"/>
-		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/waterston/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1083" class="" implements="Lab">
 		<attribute name="surname" value="Orr-Weaver"/>
 		<attribute name="name" value="Terry Orr-Weaver"/>
 		<attribute name="affiliation" value="Whitehead Institute"/>
-		<attribute name="url" value="http://www.modencode.org/MacAlpine.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/macalpine/"/>
 		<reference name="project" ref_id="1024"/>
 	</item>
 	<item id="1084" class="" implements="Lab">
 		<attribute name="surname" value="Park"/>
 		<attribute name="name" value="Peter Park"/>
 		<attribute name="affiliation" value="Brigham and Women's Hospital"/>
-		<attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/karpen/"/>
 		<reference name="project" ref_id="1022"/>
 	</item>
 	<item id="1085" class="" implements="Lab">
 		<attribute name="surname" value="Perrimon"/>
 		<attribute name="name" value="Norbert Perrimon"/>
 		<attribute name="affiliation" value="Harvard University"/>
-		<attribute name="url" value="http://www.modencode.org/Celniker.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/celniker/"/>
 		<reference name="project" ref_id="1020"/>
 	</item>
 	<item id="1086" class="" implements="Lab">
 		<attribute name="surname" value="Piano"/>
 		<attribute name="name" value="Fabio Piano"/>
 		<attribute name="affiliation" value="New York University"/>
-		<attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/piano/"/>
 		<reference name="project" ref_id="1014"/>
 	</item>
 	<item id="1087" class="" implements="Lab">
 		<attribute name="surname" value="Pirrotta"/>
 		<attribute name="name" value="Vincent Pirrotta"/>
 		<attribute name="affiliation" value="Rutgers University"/>
-		<attribute name="url" value="http://www.modencode.org/Karpen.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/karpen/"/>
 		<reference name="project" ref_id="1022"/>
 	</item>
 	<item id="1088" class="" implements="Lab">
 		<attribute name="surname" value="Posakony"/>
 		<attribute name="name" value="James Posakony"/>
 		<attribute name="affiliation" value="University of California, San Diego"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1089" class="" implements="Lab">
 		<attribute name="surname" value="Rajewsky"/>
 		<attribute name="name" value="Nikolaus Rajewsky"/>
 		<attribute name="affiliation" value="New York University"/>
-		<attribute name="url" value="http://www.modencode.org/Piano.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/piano/"/>
 		<reference name="project" ref_id="1014"/>
 	</item>
 	<item id="1090" class="" implements="Lab">
 		<attribute name="surname" value="Reinke"/>
 		<attribute name="name" value="Valerie Reinke"/>
 		<attribute name="affiliation" value="Yale University"/>
-		<attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/snyder/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1091" class="" implements="Lab">
 		<attribute name="surname" value="Ren"/>
 		<attribute name="name" value="Bing Ren"/>
 		<attribute name="affiliation" value="Ludwig Institute"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1092" class="" implements="Lab">
 		<attribute name="surname" value="Russell"/>
 		<attribute name="name" value="Steven Russell"/>
 		<attribute name="affiliation" value="University of Cambridge"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1093" class="" implements="Lab">
 		<attribute name="surname" value="Segal"/>
 		<attribute name="name" value="Eran Segal"/>
 		<attribute name="affiliation" value="Weizmann Institute"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1094" class="" implements="Lab">
 		<attribute name="surname" value="Slack"/>
 		<attribute name="name" value="Frank Slack"/>
 		<attribute name="affiliation" value="Yale University"/>
-		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/waterston/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1095" class="" implements="Lab">
 		<attribute name="surname" value="Snyder"/>
 		<attribute name="name" value="Michael Snyder"/>
 		<attribute name="affiliation" value="Yale University"/>
-		<attribute name="url" value="http://www.modencode.org/Snyder.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/snyder/"/>
 		<reference name="project" ref_id="1013"/>
 	</item>
 	<item id="1096" class="" implements="Lab">
 		<attribute name="surname" value="Strome"/>
 		<attribute name="name" value="Susan Strome"/>
 		<attribute name="affiliation" value="University of California, Santa Cruz"/>
-		<attribute name="url" value="http://www.modencode.org/Lieb.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/lieb/"/>
 		<reference name="project" ref_id="1011"/>
 	</item>
 	<item id="1097" class="" implements="Lab">
 		<attribute name="surname" value="Waterston"/>
 		<attribute name="name" value="Robert Waterston"/>
 		<attribute name="affiliation" value="University of Washington"/>
-		<attribute name="url" value="http://www.modencode.org/Waterston.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/waterston/"/>
 		<reference name="project" ref_id="1010"/>
 	</item>
 	<item id="1098" class="" implements="Lab">
 		<attribute name="surname" value="White"/>
 		<attribute name="name" value="Kevin White"/>
 		<attribute name="affiliation" value="University of Chicago"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 	<item id="1099" class="" implements="Lab">
 		<attribute name="surname" value="RWhite"/>
 		<attribute name="name" value="Robert White"/>
 		<attribute name="affiliation" value="University of Cambridge"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 
@@ -761,7 +761,7 @@
 		<attribute name="surname" value="Meyer"/>
 		<attribute name="name" value="Folken Meyer"/>
 		<attribute name="affiliation" value="Argonne National Lab"/>
-		<attribute name="url" value="http://www.modencode.org/White.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/white/"/>
 		<reference name="project" ref_id="1021"/>
 	</item>
 
@@ -769,7 +769,7 @@
 		<attribute name="surname" value="Oliver"/>
 		<attribute name="name" value="Brian Oliver"/>
 		<attribute name="affiliation" value="National Institutes of Health"/>
-		<attribute name="url" value="http://www.modencode.org/Oliver.shtml"/>
+		<attribute name="url" value="http://www.modencode.org/oliver/"/>
 		<reference name="project" ref_id="1025"/>
 	</item>
 

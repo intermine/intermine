@@ -71,7 +71,7 @@
 
                 <c:set var="constraintHeadingClass" value=""/>
                 <c:if test="${dec.disabled}">
-                    <c:set var="constraintHeadingClass" value="constraintHeadingDisabled"/>
+                    <c:set var="constraintHeadingClass" value=" constraintHeadingDisabled"/>
                 </c:if>
 
                 <td>
@@ -87,6 +87,11 @@
                             <span class="templateConstraintDescription">
                                 <c:out value=" - ${dec.description}" />
                             </span>
+                        </c:if>
+                        <c:if test="${not empty displayLogicExpression}">
+                        <span class="templateConstraintCode">
+                            <c:out value="  (${dec.code})" />
+                        </span>
                         </c:if>
                     </div>
                 </td>
@@ -192,7 +197,7 @@
                 <span id="operandEditSpan${index-1}">
                   <c:choose>
                   <%-- inputfield for an autocompletion --%>
-                  <c:when test="${!empty dec.autoCompleter}">
+                  <c:when test="${!empty dec.autoCompleter && empty dec.possibleValues}">
                     <input name="attributeValues(${index})" id="attributeId_${index}" size="45"
                       style="background: #ffffc8"
                       value="${dec.selectedValue}"
@@ -321,6 +326,12 @@
        </script>
         </c:forEach>
 </ol>
+<c:if test="${empty builder && !empty displayLogicExpression}">
+<div id="constraintLogicContainer" class="templateConstraintLogic">
+<strong><fmt:message key="query.constraintLogic"/>: </strong>
+<c:out value="${templateQuery.constraintLogic}"/>
+</div>
+</c:if>
 </div>
 <%-- edit/submit buttons --%>
 <c:if test="${empty builder}">

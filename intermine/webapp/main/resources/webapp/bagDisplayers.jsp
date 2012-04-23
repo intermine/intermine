@@ -11,6 +11,7 @@
 <html:xhtml/>
 <tiles:importAttribute name="bag"/>
 <tiles:importAttribute name="showOnLeft"/>
+
 <c:forEach items="${bag.classDescriptors}" var="cld">
     <c:if test="${fn:length(WEBCONFIG.types[cld.name].bagDisplayers) > 0}">
         <c:forEach items="${WEBCONFIG.types[cld.name].bagDisplayers}" var="displayer">

@@ -1,0 +1,14 @@
+To generate tour run command in this directory:
+
+perl ../../../../../bio/scripts/flymine/process_help.pl tourML.txt "metabolicMine Tour" .
+
+tar up the tour:
+
+Change up one directory (so style and js are included) and tar directory:
+
+tar -cvf mm_tour.tar --exclude='*svn*' .
+
+- scp the tar to www.flymine.org in /var/www/metabolicmine
+- backup then delete the existing tour, js and style directories
+- untar tar file
+- make sure all users have read permission on all files and execute permission on directories

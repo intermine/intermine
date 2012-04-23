@@ -51,18 +51,19 @@ public class SNPConsequenceTypesURLQuery implements WidgetURLQuery
         q.addViews("SNP.primaryIdentifier", "SNP.organism.shortName",
                 "SNP.locations.locatedOn.primaryIdentifier",
                 "SNP.locations.start", "SNP.locations.end", "SNP.locations.strand",
-                "SNP.consequences.type", "SNP.consequences.peptideAlleles",
+                "SNP.consequences.description", "SNP.consequences.peptideAlleles",
                 "SNP.consequences.transcript.primaryIdentifier");
         q.addConstraint(Constraints.in(bag.getType(), bag.getName()));
         q.setOuterJoinStatus("SNP.consequences.transcript", OuterJoinStatus.OUTER);
         q.setOuterJoinStatus("SNP.locations", OuterJoinStatus.OUTER);
         if (!showAll) {
             String[] keys = key.split(",");
-            q.addConstraint(Constraints.oneOfValues("SNP.consequences.type", Arrays.asList(keys)));
+            q.addConstraint(Constraints.oneOfValues("SNP.consequences.description",
+                    Arrays.asList(keys)));
         }
         q.addOrderBy("SNP.organism.shortName", OrderDirection.ASC);
         q.addOrderBy("SNP.primaryIdentifier", OrderDirection.ASC);
-        q.addOrderBy("SNP.consequences.type", OrderDirection.ASC);
+        q.addOrderBy("SNP.consequences.description", OrderDirection.ASC);
         return q;
     }
 }

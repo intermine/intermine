@@ -530,9 +530,6 @@
         <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
     </div>
     <div class="column last">
-        <a href="http://wellcome.ac.uk/" title="Wellcome Trust">
-          <img src="themes/metabolic/icons/wellcome-ico.png" alt="Wellcome Trust" />
-         </a>
          <a href="http://www.cam.ac.uk/" title="University of Cambridge">
           <img src="themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
         </a>

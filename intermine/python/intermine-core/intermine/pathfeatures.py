@@ -99,7 +99,7 @@ class SortOrderList(object):
     def __repr__(self):
         return '<' + self.class__.__name__ + ': [' + str(self) + ']>'
     def __str__(self):
-        return ",".join(map(str, self.sort_orders))
+        return " ".join(map(str, self.sort_orders))
     def clear(self):
         self.sort_orders = []
     def is_empty(self):

@@ -70,7 +70,7 @@ function clearBagName(element) {
 </script>
 
 <div class="filterBar">
-            Search Queries:&nbsp;
+            Filter:&nbsp;
             <input type="text" id="filterText" name="newName_${name}" size="20"
                 onkeyup="return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');"
                 onmouseup="if(this.value != null && this.value.length > 1) {return filterWebSearchablesHandler(event, this, '${type}', '${wsListId}');}"
@@ -142,7 +142,7 @@ function clearBagName(element) {
         <a href="#operations" title="Union" class="boxy inactive"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
         <a href="#operations" title="Intersect" class="boxy inactive"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
         <a href="#operations" title="Subtract" class="boxy inactive"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
-        <a href="#operations" title="Copy" class="boxy inactive"><img src="images/icons/copy.png" width="16" height="16" alt="Copy">Copy</a>
+        <a href="#" title="Copy" class="boxy inactive"><img src="images/icons/copy.png" width="16" height="16" alt="Copy">Copy</a>
         <a href="#" title="Delete" class="boxy inactive"><img src="images/icons/delete.png" width="16" height="16" alt="Delete">Delete</a>
     </c:otherwise>
     </c:choose>
@@ -166,6 +166,11 @@ function clearBagName(element) {
       jQuery(document).ready(function() {
         jQuery("#all_bag_bag_container input[name='selectedBags']").click(function() {
           var selected = jQuery("#all_bag_bag_container input[name='selectedBags']:checked").length;
+          if (selected > 1 ) {
+            jQuery("#filter_tool_bar a.boxy[title='Copy']").attr("href", "");
+          } else {
+            jQuery("#filter_tool_bar a.boxy[title='Copy']").attr("href", "#operations");
+          }
           if (selected > 0) {
             jQuery("#filter_tool_bar a.boxy[title='Copy']").removeClass('inactive');
             jQuery("#filter_tool_bar a.boxy[title='Delete']").removeClass('inactive');
@@ -193,6 +198,12 @@ function clearBagName(element) {
                   deleteBag();
                 } else {
                   jQuery("#listsButton").val(jQuery(this).attr('title').toLowerCase());
+                  if (jQuery(this).attr('title').toLowerCase() == "copy") {
+                    var selected = jQuery("#all_bag_bag_container input[name='selectedBags']:checked").length;
+                    if (selected > 1) {
+                      submitBagOperation();
+                    }
+                  }
                 }
             }
             e.preventDefault();
