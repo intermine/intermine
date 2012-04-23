@@ -15,12 +15,12 @@
 
   <style>
     #mine-pathway-displayer div.wrapper { height:300px; overflow-y:auto; overflow-x:hidden }
-  </style>
   <c:forEach items="${minesForPathways}" var="entry">
     /* might fail, does not use JS slugify! */
     #mine-pathway-displayer table th.<c:out value="${fn:toLowerCase(entry.key.name)}"/> span { padding:1px 4px; border-radius:2px;
       background:${entry.key.bgcolor}; color:${entry.key.frontcolor} !important }
   </c:forEach>
+  </style>
 
   <script type="text/javascript" charset="utf-8">
   (function() {
@@ -119,6 +119,11 @@
 
     })();
 
+    // Say that we have no results.
+    function showIsEmpty() {
+      jQuery('#mine-pathway-displayer div.header').after(jQuery('<p/>', { 'text': 'No pathways found' }));
+    }
+
     // Who?
     var thisMine = '${WEB_PROPERTIES["project.title"]}';
 
@@ -135,10 +140,12 @@
     var target = '#mine-pathway-displayer table';
     var grid = new Grid(target, mines);
 
-    // Stop the loading sign.
+    // Are we empty?
+    var isEmpty = true;
+
+    // Stop the loading sign and add all pathways for this mine.
     jQuery(target).find('thead th.' + grid.slugify(thisMine)).removeClass('loading');
 
-    // Add all pathways for this mine.
     <c:forEach items="${gene.pathways}" var="pathway">
       // Add the results to the grid.
       grid.add('${pathway.name}', thisMine, function() {
@@ -147,14 +154,18 @@
           'href':  "report.do?id=${pathway.id}"
         });
       });
+      isEmpty = false;
     </c:forEach>
 
+    // If we have just us, do we have any pathways?
+    if (isEmpty && mines.length === 1) showIsEmpty();
+
     // Fetch pathways for other mines.
-    <c:forEach items="${minesForPathways}" var="entry">
+    <c:forEach items="${minesForPathways}" var="entry" varStatus="status">
       getFriendlyMinePathways('${entry.key.name}', '${entry.value}', function(data) {
         // Stop the loading sign.
         jQuery(target).find('thead th.' + grid.slugify('${entry.key.name}')).removeClass('loading');
-        
+
         if (data !== null) {
           var results = jQuery.parseJSON(data)['results'];
 
@@ -168,8 +179,12 @@
                 'href':   '${entry.key.url}' + '/report.do?id=' + pathway['id']
               });
             });
+            isEmpty = false;
           });
         }
+
+        // Are we showing something?
+        if (isEmpty && mines.length === (${status.index} + 2)) showIsEmpty();
       });
     </c:forEach>
   }).call(this);
