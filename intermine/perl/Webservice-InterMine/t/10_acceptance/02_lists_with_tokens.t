@@ -320,12 +320,12 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $list->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|Employee > Years Alive\tEmployee > End\tEmployee > Works Full Time?\tEmployee > Name
-37\t4\tfalse\tKarim
-41\t""\tfalse\tDavid Brent
-44\t""\tfalse\tFrank Möllers
-53\t0\ttrue\tJean-Marc
-55\t9\tfalse\tJennifer Schirrmann
+    my $expected = qq|"Employee > Years Alive"\t"Employee > End"\t"Employee > Works Full Time?"\t"Employee > Name"
+"37"\t"4"\t"false"\t"Karim"
+"41"\t""\t"false"\t"David Brent"
+"44"\t""\t"false"\t"Frank Möllers"
+"53"\t"0"\t"true"\t"Jean-Marc"
+"55"\t"9"\t"false"\t"Jennifer Schirrmann"
 |;
     is $buffer, $expected, "Can print a list";
 }

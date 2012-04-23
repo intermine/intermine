@@ -30,7 +30,6 @@ import org.intermine.xml.full.FullParser;
 import org.intermine.xml.full.FullRenderer;
 import org.intermine.xml.full.Item;
 
-
 /**
  * TestCase to provide methods for comparing Items and collections of Items.
  *
@@ -50,7 +49,7 @@ public abstract class ItemsTestCase extends TestCase
         TestCase.assertEquals(a, b);
     }
 
-    public static void assertEquals(Set a, Set b) throws Exception
+    public static void assertEquals(Set<Item> a, Set<Item> b) throws Exception
     {
         // check that these are both items sets
         if (!checkItemSet(a) || ! checkItemSet(b)) {
@@ -64,12 +63,12 @@ public abstract class ItemsTestCase extends TestCase
         }
     }
 
-    public static String compareItemSets(Set a, Set b) {
+    public static String compareItemSets(Set<Item> a, Set<Item> b) {
         return compareItemSets(a, b, true);
     }
 
-    private static boolean checkItemSet(Set set) {
-        Iterator iter = set.iterator();
+    private static boolean checkItemSet(Set<Item> set) {
+        Iterator<Item> iter = set.iterator();
         while (iter.hasNext()) {
             if (!(iter.next() instanceof Item)) {
                 return false;
@@ -78,7 +77,7 @@ public abstract class ItemsTestCase extends TestCase
         return true;
     }
 
-    private static String compareItemSets(Set a, Set b, boolean checkItems) {
+    private static String compareItemSets(Set<Item> a, Set<Item> b, boolean checkItems) {
         // check these are both item sets
         if (checkItems && (!checkItemSet(a) || !checkItemSet(b))) {
             throw new IllegalArgumentException("Comparing sets that contains objects that "
@@ -87,8 +86,8 @@ public abstract class ItemsTestCase extends TestCase
 
         // now have compatible collections of items, compare them
         StringBuffer message = new StringBuffer();
-        Set inAnotB = diffItemSets(a, b);
-        Set inBnotA = diffItemSets(b, a);
+        Set<Item> inAnotB = diffItemSets(a, b);
+        Set<Item> inBnotA = diffItemSets(b, a);
         if (inAnotB.isEmpty() && inBnotA.isEmpty()) {
             // should be success, let TestCase handle it
             TestCase.assertEquals(a, b);
@@ -97,7 +96,7 @@ public abstract class ItemsTestCase extends TestCase
             message.append("Item collections do not match." + ENDL);
             if (!inAnotB.isEmpty()) {
                 message.append("In expected, not actual: " + ENDL);
-                TreeSet ts = new TreeSet();
+                TreeSet<Item> ts = new TreeSet<Item>();
                 ts.addAll(inAnotB);
                 message.append(ts + ENDL);
                 message.append("Summary of expected: " + ENDL);
@@ -107,7 +106,7 @@ public abstract class ItemsTestCase extends TestCase
             }
             if (!inBnotA.isEmpty()) {
                 message.append("In actual, not expected: " + ENDL);
-                TreeSet ts = new TreeSet();
+                TreeSet<Item> ts = new TreeSet<Item>();
                 ts.addAll(inBnotA);
                 message.append(ts + ENDL);
                 message.append("Summary of actual: " + ENDL);
@@ -126,14 +125,14 @@ public abstract class ItemsTestCase extends TestCase
      * @param b a set of Items
      * @return the set of Items in a but not in b
      */
-    public static Set diffItemSets(Set a, Set b) {
-        Set diff = new HashSet(a);
-        Iterator i = a.iterator();
+    public static Set<Item> diffItemSets(Set<Item> a, Set<Item> b) {
+        Set<Item> diff = new HashSet<Item>(a);
+        Iterator<Item> i = a.iterator();
         while (i.hasNext()) {
-            Item itemA = (Item) i.next();
-            Iterator j = b.iterator();
+            Item itemA = i.next();
+            Iterator<Item> j = b.iterator();
             while (j.hasNext()) {
-                Item itemB = (Item) j.next();
+                Item itemB = j.next();
                 if (itemA.equals(itemB)) {
                     diff.remove(itemA);
                 }
@@ -151,9 +150,9 @@ public abstract class ItemsTestCase extends TestCase
     public static String countItemClasses(Collection<Item> items) {
         Map<String, List> counts = new TreeMap<String, List>();
         for(Item item : items) {
-            List clsItems = counts.get(item.getClassName());
+            List<String> clsItems = counts.get(item.getClassName());
             if (clsItems == null) {
-                clsItems = new ArrayList();
+                clsItems = new ArrayList<String>();
                 counts.put(item.getClassName(), clsItems);
             }
             clsItems.add(item.getIdentifier());
@@ -165,6 +164,25 @@ public abstract class ItemsTestCase extends TestCase
                       + entry.getValue() + ENDL);
         }
         return sb.toString();
+    }
+
+    /**
+     * For a collection of items return the count of given class name.
+     * @param items the Item collection to count
+     * @return the count for a given classname in the collection
+     */
+    public static int countItemByClass(Collection<Item> items, String className) {
+        Map<String, List> counts = new TreeMap<String, List>();
+        for(Item item : items) {
+            List<String> clsItems = counts.get(item.getClassName());
+            if (clsItems == null) {
+                clsItems = new ArrayList<String>();
+                counts.put(item.getClassName(), clsItems);
+            }
+            clsItems.add(item.getIdentifier());
+        }
+
+        return counts.get(className).size();
     }
 
 

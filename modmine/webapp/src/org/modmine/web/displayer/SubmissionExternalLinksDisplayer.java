@@ -112,7 +112,7 @@ public class SubmissionExternalLinksDisplayer extends ReportDisplayer
             ExportResultsIterator results = im.getPathQueryExecutor(profile).execute(query);
 
             if (results == null || !results.hasNext()) {
-//                throw new Exception("None of the submissions has database records information...");
+//          throw new Exception("None of the submissions has database records information...");
             } else {
                 while (results.hasNext()) {
                     List<ResultElement> row = results.next();

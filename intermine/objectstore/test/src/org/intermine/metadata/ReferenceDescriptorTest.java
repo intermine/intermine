@@ -130,6 +130,56 @@ public class ReferenceDescriptorTest extends TestCase
         }
     }
 
+    // test reverse references that don't point to one another
+    public void testRevereseReferenceNotReciprocal() throws Exception {
+        // rfd1 points to Class2 but has reverse-reference that points to another field  in Class1
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfd2");
+        ReferenceDescriptor rfdOther1 = new ReferenceDescriptor("rfdOther1", "package.name.Class2", "rfd2");
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "package.name.Class1", "rfdOther1");
+        Set refs1 = new HashSet(Arrays.asList(new ReferenceDescriptor[] {rfd1, rfdOther1}));
+        Set refs2 = new HashSet(Arrays.asList(new ReferenceDescriptor[] {rfd2}));
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+        // this no longer throws an exception , instead creates the model but adds a problem
+        assertEquals(1, model.getProblems().size());
+    }
+
+    // test reverse reference points to an attribute
+    public void testRevereseReferenceIsAttribute() throws Exception {
+        // rfd1 points to Class2.atd2 which is an attribute
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "atd2");
+        AttributeDescriptor atd2 = new AttributeDescriptor("atd2", "java.lang.String");
+        Set refs1 = Collections.singleton(rfd1);
+        Set atts = Collections.singleton(atd2);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, atts, new HashSet(), new HashSet());
+        try {
+            Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2})));
+            fail("Expected a MetaDataException to be thrown");
+        } catch (MetaDataException e) {
+        }
+    }
+
+
+    // test reverse reference of the wrong referenced type
+    public void testRevereseReferenceWrongType() throws Exception {
+        // rfd1 points to Class2 but has reverse-reference rfd2 which exists but is a refernece to Class3
+        ReferenceDescriptor rfd1 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfd2");
+        ReferenceDescriptor rfd2 = new ReferenceDescriptor("rfd2", "package.name.Class3", "rfd1");
+        ReferenceDescriptor rfd3 = new ReferenceDescriptor("rfd1", "package.name.Class2", "rfd2");
+        //ReferenceDescriptor rfdOther2 = new ReferenceDescriptor("rfdOther2", "package.name.Class1", "rfd2");
+        Set refs1 = Collections.singleton(rfd1);
+        Set refs2 = Collections.singleton(rfd2);
+        Set refs3 = Collections.singleton(rfd3);
+        ClassDescriptor cld1 = new ClassDescriptor("package.name.Class1", null, false, new HashSet(), refs1, new HashSet());
+        ClassDescriptor cld2 = new ClassDescriptor("package.name.Class2", null, false, new HashSet(), refs2, new HashSet());
+        ClassDescriptor cld3 = new ClassDescriptor("package.name.Class3", null, false, new HashSet(), refs3, new HashSet());
+
+        Model model = new Model("model", "package.name", new HashSet(Arrays.asList(new Object[] {cld1, cld2, cld3})));
+        assertEquals(1, model.getProblems().size());
+    }
+
     public void testRelationTypeOneToOne() throws Exception {
         ReferenceDescriptor ref1  = new ReferenceDescriptor("ref1", "package.name.Class1", "ref2");
         ReferenceDescriptor ref2  = new ReferenceDescriptor("ref2", "package.name.Class1", null);

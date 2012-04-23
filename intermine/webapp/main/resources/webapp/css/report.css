@@ -27,7 +27,6 @@ h2 { margin-bottom:10px; }
     #object_header span.label { min-width:100px; display:inline-block; white-space:nowrap; }
 
     /* header items */
-    #object_header table.fields { width:0%; }
     #object_header table.fields tr td:not(:first-child) { padding-right:20px; }
 
     /* header inline lists */

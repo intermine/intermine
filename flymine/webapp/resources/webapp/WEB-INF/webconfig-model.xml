@@ -233,6 +233,7 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="organism.name" name="Organism"/>
+      <fieldconfig fieldExpr="ontologyAnnotations" hideInQueryBuilder="true" />
     </fields>
   </class>
 
@@ -467,6 +468,11 @@
 
 
   <class className="org.intermine.model.bio.RNAiScreen">
+      <headerconfig>
+    <titles>
+        <title mainTitles="name" />
+    </titles>
+        </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="publication.title"/>
@@ -612,7 +618,7 @@
 
    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
-                     replacesFields="goAnnotation,ontologyAnnotations"
+                     replacesFields="goAnnotation,ontologyAnnotation"
                      placement="Function"
                      types="Gene"/>
 
@@ -711,7 +717,7 @@
 
      <reportdisplayer javaClass="org.intermine.bio.web.displayer.FlyBaseExpressionDisplayer"
                      jspName="model/flybaseExpressionDisplayer.jsp"
-                     replacesFields=""
+                     replacesFields="rnaSeqResults"
                      placement="summary"
                      types="Gene"/>
 

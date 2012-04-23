@@ -139,6 +139,21 @@ Revision history for Webservice-InterMine
 0.9904: Added dependency on Set::Crossproduct for testing.
         More tests for list constraint construction.
         Consistent ability to use subqueries and lists in constraints.
+0.9905: Changed expectations in live tests to take into account the fact that servers now return more thoroughly escaped TSV files.
+0.9906: Added CONTAINS, LIKE, NOT LIKE, DOES NOT CONTAIN, as binary operators.
+
+0.9907: Tue Jan 10 16:50:01 GMT 2012
+        Separation of concept of Listable into a general listable and a listable implementation for queries.
+0.9908: Tue Jan 10 18:38:04 GMT 2012
+        Use general roles to allow better subclassing.
+0.9909: Tue Jan 10 19:00:18 GMT 2012
+        Bux fix release for correct role use to allow extension.
+0.9910: Wed Jan 18 14:15:52 GMT 2012
+        Added support for lazy reference fetching, as found in the Python and Ruby clients
+0.9911: Fri Feb  3 12:07:25 GMT 2012
+        Added support and tests for lazy attribute fetching.
+0.9912: Wed Mar 21 12:41:34 GMT 2012
+        Added support for enrichment widgets.
 
         
 

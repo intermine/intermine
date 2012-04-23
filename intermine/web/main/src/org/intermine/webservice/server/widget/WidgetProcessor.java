@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
-public interface WidgetProcessor {
+public interface WidgetProcessor
+{
 
     List<String> process(String name, WidgetConfig widgetConfig);
 }

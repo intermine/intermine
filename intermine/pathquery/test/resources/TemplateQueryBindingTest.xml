@@ -1,0 +1,26 @@
+<template-queries>
+    <template name="allCompanies" title="All Companies --&gt; Data" longDescription="" comment="comment">
+        <query name="allCompanies" model="testmodel" view="Company"></query>
+    </template>
+    <template name="employeesWithOldManagers" title="Old Managers --&gt; Employees" longDescription="" comment="This template is exciting">
+        <query name="employeesWithOldManagers" model="testmodel" view="Employee.name Employee.age Employee.department.name Employee.department.manager.age">
+            <pathDescription pathString="Employee.department" description="Department of the Employee"/>
+            <constraint path="Employee.department.manager.age" op=">" value="10"/>
+        </query>
+    </template>
+    <template name="companyInBag" title="List --&gt; Company" longDescription="" comment="Cote d'Ivoire">
+        <query name="companyInBag" model="testmodel" view="Company">
+            <constraint path="Company" op="IN" value="bag1"/>
+        </query>
+    </template>
+    <template name="queryWithConstraint" title="Company --&gt; CEO" longDescription="this is the queryWithConstraint description" comment="">
+        <query name="queryWithConstraint" model="testmodel" view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
+            <constraint path="Company.departments.employees" type="CEO"/>
+        </query>
+    </template>
+    <template name="employeeEndInBag" title="List --&gt; Employee" longDescription="" comment="">
+        <query name="employeeEndInBag" model="testmodel" view="Employee.name">
+            <constraint path="Employee.end" op="IN" value="e1" code="A"/>
+        </query>
+    </template>
+</template-queries>

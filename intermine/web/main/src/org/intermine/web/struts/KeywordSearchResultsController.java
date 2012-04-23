@@ -10,8 +10,8 @@ package org.intermine.web.struts;
  *
  */
 
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +30,6 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
-import org.apache.lucene.document.Document;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -39,12 +38,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.search.KeywordSearch;
@@ -54,7 +48,6 @@ import org.intermine.web.search.KeywordSearchResult;
 
 import com.browseengine.bobo.api.BrowseHit;
 import com.browseengine.bobo.api.BrowseResult;
-import com.browseengine.bobo.api.FacetAccessible;
 
 /**
  * Controller for keyword search.

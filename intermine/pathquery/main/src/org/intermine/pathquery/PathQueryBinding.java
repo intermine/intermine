@@ -88,6 +88,8 @@ public class PathQueryBinding
             writer.writeAttribute("view", StringUtil.join(query.getView(), " "));
             if (query.getDescription() != null) {
                 writer.writeAttribute("longDescription", query.getDescription());
+            } else {
+                writer.writeAttribute("longDescription", "");
             }
             StringBuilder sort = new StringBuilder();
             boolean needComma = false;

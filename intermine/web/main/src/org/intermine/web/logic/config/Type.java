@@ -48,7 +48,7 @@ public class Type
     private Map<String, List<Displayer>> aspectDisplayers = new HashMap<String, List<Displayer>>();
 
     /** @var inline lists attached to the object type */
-    private LinkedList<InlineList> inlineLists = new LinkedList<InlineList>();
+    private LinkedList<InlineListConfig> inlineLists = new LinkedList<InlineListConfig>();
 
     /** @var header configuration having paths to titles to show */
     private HeaderConfigTitle headerConfigTitle;
@@ -212,8 +212,8 @@ public class Type
      * Add an InlineList for this object, used from WebConfig
      * @param list lalala
      */
-    public void addInlineList(InlineList list) {
-        inlineLists.add(list);
+    public void addInlineList(InlineListConfig listConfig) {
+        inlineLists.add(listConfig);
     }
 
     /**
@@ -266,7 +266,7 @@ public class Type
      *
      * @return inline lists
      */
-    public List<InlineList> getInlineLists() {
+    public List<InlineListConfig> getInlineListConfig() {
         return inlineLists;
     }
 

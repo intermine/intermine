@@ -103,40 +103,6 @@ public class FriendlyMineManager
             lastCacheRefresh = System.currentTimeMillis();
             cached = true;
             FriendlyMineQueryRunner.updateReleaseVersion(mines);
-            // FIXME there is a delay when using the client, See #2829
-//            for (Mine mine : mines.values()) {
-//                String webserviceURL = mine.getUrl() + "/service";
-//                ServiceFactory services = new ServiceFactory(webserviceURL);
-//                String currentReleaseVersion = mine.getReleaseVersion();
-//                String newReleaseVersion = null;
-//                try {
-//                    newReleaseVersion = services.getQueryService().getRelease();
-//                } catch (Exception e) {
-//                    final String msg = "Unable to retrieve release version for " + mine.getName();
-//                    LOG.warn(msg);
-//                    continue;
-//                }
-//
-//                if (StringUtils.isEmpty(newReleaseVersion)
-//                        && StringUtils.isEmpty(currentReleaseVersion)) {
-//                    // didn't get a release version this time or last time
-//                    final String msg = "Unable to retrieve release version for " + mine.getName();
-//                    LOG.warn(msg);
-//                    continue;
-//                }
-//
-//                // if release version is different
-//                if (StringUtils.isEmpty(newReleaseVersion)
-//                        || StringUtils.isEmpty(currentReleaseVersion)
-//                        || !newReleaseVersion.equals(currentReleaseVersion)
-//                        || DEBUG) {
-//
-//                    // update release version
-//                    mine.setReleaseVersion(newReleaseVersion);
-//
-//                    intermineLinkCache = new HashMap<MultiKey, Collection<JSONObject>>();
-//                }
-//            }
         }
     }
 
@@ -175,6 +141,7 @@ public class FriendlyMineManager
             String defaultValues = mineProps.getProperty("defaultValues");
             String bgcolor = mineProps.getProperty("bgcolor");
             String frontcolor = mineProps.getProperty("frontcolor");
+            String description = mineProps.getProperty("description");
 
             if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)) {
                 final String msg = "InterMine configured incorrectly in web.properties.  "
@@ -185,13 +152,13 @@ public class FriendlyMineManager
 
             if (mineName.equals(localMineName)) {
                 if (localMine.getUrl() == null) {
-                    parseLocalConfig(url, logo, defaultValues, bgcolor, frontcolor);
+                    parseLocalConfig(url, logo, defaultValues, bgcolor, frontcolor, description);
                 }
             } else {
                 Mine mine = mines.get(mineId);
                 if (mine == null) {
                     parseRemoteConfig(mineName, mineId, defaultValues, url, logo, bgcolor,
-                            frontcolor);
+                            frontcolor, description);
                 }
             }
         }
@@ -199,24 +166,26 @@ public class FriendlyMineManager
     }
 
     private void parseLocalConfig(String url, String logo, String defaultValues,
-            String bgcolor, String frontcolor) {
+            String bgcolor, String frontcolor, String description) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
             localMine.setLogo(logo);
             localMine.setBgcolor(bgcolor);
             localMine.setFrontcolor(frontcolor);
             localMine.setDefaultValues(defaultValues);
+            localMine.setDescription(description);
         }
     }
 
     private void parseRemoteConfig(String mineName, String mineId, String defaultValues,
-            String url, String logo, String bgcolor, String frontcolor) {
+            String url, String logo, String bgcolor, String frontcolor, String description) {
         Mine mine = new Mine(mineName);
         mine.setUrl(url);
         mine.setLogo(logo);
         mine.setBgcolor(bgcolor);
         mine.setFrontcolor(frontcolor);
         mine.setDefaultValues(defaultValues);
+        mine.setDescription(description);
         mines.put(mineId, mine);
     }
 

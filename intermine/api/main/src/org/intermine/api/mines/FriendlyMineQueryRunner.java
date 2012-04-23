@@ -43,7 +43,7 @@ public final class FriendlyMineQueryRunner
     private static Map<MultiKey, JSONObject> queryResultsCache
         = new CacheMap<MultiKey, JSONObject>();
     private static final String RELEASE_VERSION_URL = "/version/release";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private FriendlyMineQueryRunner() {
         // don't
@@ -52,8 +52,6 @@ public final class FriendlyMineQueryRunner
     /**
      * Query a mine and recieve map of results.  only processes first two columns set as id and
      * name
-     *
-     * TODO use Java  webservice client instead.  See #2829
      *
      * @param mine mine to query
      * @param xmlQuery query to run
@@ -67,7 +65,7 @@ public final class FriendlyMineQueryRunner
         if (jsonMine != null) {
             return jsonMine;
         }
-        List<Map<String, String>> genes = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> results = new ArrayList<Map<String, String>>();
 
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
@@ -77,13 +75,17 @@ public final class FriendlyMineQueryRunner
         }
         XMLTableResult table = new XMLTableResult(reader);
         for (List<String> row: table.getData()) {
-            Map<String, String> gene = new HashMap<String, String>();
-            gene.put("id", row.get(0));
-            gene.put("name", row.get(1));
-            genes.add(gene);
+            Map<String, String> result = new HashMap<String, String>();
+            result.put("id", row.get(0));
+            result.put("name", row.get(1));
+            if (row.size() > 2) {
+                // used for extra value, eg. organism name
+                result.put("ref", row.get(2));
+            }
+            results.add(result);
         }
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("results", genes);
+        data.put("results", results);
         jsonMine = new JSONObject(data);
         queryResultsCache.put(key, jsonMine);
         return jsonMine;
@@ -114,6 +116,7 @@ public final class FriendlyMineQueryRunner
      * @param mines list of mines to update
      */
     public static void updateReleaseVersion(Map<String, Mine> mines) {
+        boolean clearCache = false;
         for (Mine mine : mines.values()) {
             String currentReleaseVersion = mine.getReleaseVersion();
             String url = mine.getUrl() + WEBSERVICE_URL + RELEASE_VERSION_URL;
@@ -122,7 +125,7 @@ public final class FriendlyMineQueryRunner
             String newReleaseVersion;
             try {
                 newReleaseVersion = IOUtils.toString(reader);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOG.warn(msg, e);
                 continue;
             }
@@ -142,8 +145,11 @@ public final class FriendlyMineQueryRunner
                 // update release version
                 mine.setReleaseVersion(newReleaseVersion);
 
-                queryResultsCache = new HashMap<MultiKey, JSONObject>();
+                clearCache = true;
             }
+        }
+        if (clearCache) {
+            queryResultsCache = new HashMap<MultiKey, JSONObject>();
         }
     }
 

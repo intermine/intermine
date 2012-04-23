@@ -12,6 +12,12 @@
   <collection name="submissions" referenced-type="Submission"/>
 </class>
 
+<class name="ChromatinState" extends="SequenceFeature" is-interface="true">
+  <attribute name="state" type="java.lang.String"/>
+  <reference name="sequence" referenced-type="Sequence"/>
+  <reference name="submission" referenced-type="Submission"/>
+</class>
+
 <class name="PeptideCollection" extends="BioEntity" is-interface="true">
   <collection name="polypeptideRegions" referenced-type="PolypeptideRegion"/>
   <collection name="submissions" referenced-type="Submission" reverse-reference="peptides"/>

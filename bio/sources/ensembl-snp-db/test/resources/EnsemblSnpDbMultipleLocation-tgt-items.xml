@@ -1,0 +1,155 @@
+<items>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Ensembl SNP data"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="6_2" class="Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_7" class="Location">
+<attribute name="end" value="593308"/>
+<attribute name="start" value="593308"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_2" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000440200"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_3" class="Location">
+<attribute name="end" value="129740"/>
+<attribute name="start" value="129740"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_1" class="Consequence">
+<attribute name="description" value="nc_transcript_variant,intron_variant"/>
+<reference name="transcript" ref_id="11_1"/>
+<collection name="types"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
+</item>
+<item id="6_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="SNP">
+<attribute name="alleles" value="T/A"/>
+<attribute name="primaryIdentifier" value="rs80179172"/>
+<attribute name="type" value="snp"/>
+<attribute name="uniqueLocation" value="false"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<reference name="source" ref_id="8_1"/>
+<collection name="consequences"><reference ref_id="9_2"/><reference ref_id="9_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="Consequence">
+<attribute name="description" value="nc_transcript_variant,intron_variant"/>
+<reference name="transcript" ref_id="11_2"/>
+<collection name="types"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
+</item>
+<item id="7_3" class="SOTerm">
+<attribute name="name" value="transcript"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="Location">
+<attribute name="end" value="102445290"/>
+<attribute name="start" value="102445290"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="10_1" class="ConsequenceType">
+<attribute name="type" value="nc_transcript_variant"/>
+</item>
+<item id="7_2" class="SOTerm">
+<attribute name="name" value="SNP"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_5" class="Location">
+<attribute name="end" value="60109"/>
+<attribute name="start" value="60109"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Ensembl"/>
+</item>
+<item id="5_8" class="Location">
+<attribute name="end" value="78143"/>
+<attribute name="start" value="78143"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_9" class="Location">
+<attribute name="end" value="170981318"/>
+<attribute name="start" value="170981318"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="Source">
+<attribute name="name" value="dbSNP"/>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="5_2" class="Location">
+<attribute name="end" value="85888"/>
+<attribute name="start" value="85888"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_1" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000455207"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_4" class="Location">
+<attribute name="end" value="180823702"/>
+<attribute name="start" value="180823702"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="Location">
+<attribute name="end" value="397150"/>
+<attribute name="start" value="397150"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_2" class="ConsequenceType">
+<attribute name="type" value="intron_variant"/>
+</item>
+</items>
