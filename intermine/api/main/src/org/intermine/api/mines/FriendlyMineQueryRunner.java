@@ -65,7 +65,7 @@ public final class FriendlyMineQueryRunner
         if (jsonMine != null) {
             return jsonMine;
         }
-        List<Map<String, String>> genes = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> results = new ArrayList<Map<String, String>>();
 
         BufferedReader reader = runWebServiceQuery(mine, xmlQuery);
         if (reader == null) {
@@ -75,13 +75,17 @@ public final class FriendlyMineQueryRunner
         }
         XMLTableResult table = new XMLTableResult(reader);
         for (List<String> row: table.getData()) {
-            Map<String, String> gene = new HashMap<String, String>();
-            gene.put("id", row.get(0));
-            gene.put("name", row.get(1));
-            genes.add(gene);
+            Map<String, String> result = new HashMap<String, String>();
+            result.put("id", row.get(0));
+            result.put("name", row.get(1));
+            if (row.size() > 2) {
+                // used for extra value, eg. organism name
+                result.put("ref", row.get(2));
+            }
+            results.add(result);
         }
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("results", genes);
+        data.put("results", results);
         jsonMine = new JSONObject(data);
         queryResultsCache.put(key, jsonMine);
         return jsonMine;
