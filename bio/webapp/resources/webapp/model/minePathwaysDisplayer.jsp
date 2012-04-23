@@ -136,10 +136,9 @@
     var grid = new Grid(target, mines);
 
     // Add all pathways for this mine.
-    <c:forEach items="${gene.pathways}" var="pathway">
     // Stop the loading sign.
-      jQuery(target).find('thead th.' + grid.slugify(thisMine)).removeClass('loading');
-      
+    jQuery(target).find('thead th.' + grid.slugify(thisMine)).removeClass('loading');
+    <c:forEach items="${gene.pathways}" var="pathway">      
       // Add the results to the grid.
       grid.add('${pathway.name}', thisMine, function() {
         return jQuery('<a/>', {
