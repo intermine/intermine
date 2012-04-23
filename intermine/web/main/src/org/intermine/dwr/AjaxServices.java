@@ -44,7 +44,6 @@ import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.AdditionalConverter;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.bag.UnknownBagTypeException;
