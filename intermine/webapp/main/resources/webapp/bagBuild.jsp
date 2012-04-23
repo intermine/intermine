@@ -66,9 +66,9 @@
         el.disabled = false;
      }
      if (type.length > 0){
-        jQuery('#submitBag').attr('disabled', '');
+        jQuery('#submitBag').attr('disabled', false);
      } else {
-        jQuery('#submitBag').attr('disabled', 'disabled');
+        jQuery('#submitBag').attr('disabled', true);
      }
    }
 //]]>-->
