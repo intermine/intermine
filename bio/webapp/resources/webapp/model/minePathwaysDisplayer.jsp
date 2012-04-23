@@ -26,7 +26,9 @@
   (function() {
     function getFriendlyMinePathways(mine, orthologues, callback) {
       AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
-        callback(jQuery.parseJSON(pathways)['results']);
+        if (pathways) {
+            callback(jQuery.parseJSON(pathways)['results']);
+        }
       });
     }
 
@@ -135,10 +137,11 @@
     var target = '#mine-pathway-displayer table';
     var grid = new Grid(target, mines);
 
-    // Add all pathways for this mine.
     // Stop the loading sign.
     jQuery(target).find('thead th.' + grid.slugify(thisMine)).removeClass('loading');
-    <c:forEach items="${gene.pathways}" var="pathway">      
+
+    // Add all pathways for this mine.
+    <c:forEach items="${gene.pathways}" var="pathway">
       // Add the results to the grid.
       grid.add('${pathway.name}', thisMine, function() {
         return jQuery('<a/>', {
