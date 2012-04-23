@@ -13,8 +13,8 @@
 
     <template name="employeesFromCompanyAndDepartment" description="View all the employees that work within a certain department of the specified company" >
       <query name="employeesFromCompanyAndDepartment" model="testmodel" view="Employee.name Employee.age" constraintLogic="A and B">
-        <constraint path="Employee.department.company.name" op="=" value="CompanyA" identifier="Company.name" editable="true" code="A" />
-        <constraint path="Employee.department.name" op="=" value="Department*" identifier="Department.name" editable="true" code="B" />
+        <constraint path="Employee.department.company.name" op="=" value="CompanyA" identifier="Company.name" editable="true" code="B" />
+        <constraint path="Employee.department.name" op="=" value="Department*" identifier="Department.name" editable="true" code="A" />
       </query>
     </template>
 

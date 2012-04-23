@@ -288,6 +288,7 @@
         // jQuery("#pasteInput").val(liftedCoords); // hack
 
            }
+         return true;
    }
 
    function loadExample(exampleSpans) {

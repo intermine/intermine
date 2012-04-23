@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -10,7 +9,9 @@
 
 <!-- queryBuilderConstraint.jsp -->
 
-<script type="text/javascript">
+
+<%@page import="org.apache.struts.Globals"%>
+<%@page import="org.apache.struts.action.Action"%><script type="text/javascript">
   var addedConstraint = 0;
 </script>
 <div id="constraint" style="display:none">
@@ -29,11 +30,6 @@
   <c:set var="constraint" value="${dec}" scope="request"/>
   <tiles:insert page="constraintSettings.jsp"/>
 </c:if>
-
-<%--to prevent submit twice --%>
-<html:hidden
-property="<%=org.apache.struts.taglib.html.Constants.TOKEN_KEY%>"
-value="<bean:write name='<%=org.apache.struts.Globals.TRANSACTION_TOKEN_KEY%>'/>"/>
 
 <c:if test="${!editingTemplateConstraint}">
   <div class="heading constraintTitle">

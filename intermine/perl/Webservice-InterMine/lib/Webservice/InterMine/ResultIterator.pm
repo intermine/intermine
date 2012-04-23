@@ -305,7 +305,7 @@ sub set_headers {
             chomp( ( $key, $value ) = split( /:\s*/, $line, 2 ) );
         } 
         $headers{$key} = $value if $key;
-        warn "HEADER $key = $value" if $ENV{DEBUG};
+        warn "HEADER $key = $value" if ($key and $ENV{DEBUG});
         $self->_set_error_code($code)      if $code;
         $self->_set_error_message($phrase) if $phrase;
     }
@@ -377,7 +377,9 @@ returns the next row in the appropriate format
 sub next {
     my $self = shift;
     until ($self->row_parser->header_is_parsed) {
-        $self->row_parser->parse_header($self->read_line);
+        my $line = $self->read_line;
+        last unless (defined $line);
+        $self->row_parser->parse_header($line);
     }
     my $next = $self->row_parser->parse_line($self->read_line);
     unless (defined $next) {
@@ -487,25 +489,32 @@ sub connect {
     my $query_form = $self->parameters;
 
     $query_form->{format} = $self->request_format;
-    $uri->query_form($query_form);
     
-    my $connection = Net::HTTP->new( Host => $uri->host )
-        or confess "Could not connect to host $@";
+    my $connection = Net::HTTP->new( Host => $uri->host, PeerPort => $uri->port )
+        or confess "Could not connect to host: $uri $@";
     my %headers = (
         'User-Agent' => $self->user_agent,
-#        'Content-Type' => 'application/x-www-form-urlencoded; charset=utf-8',
+        'Content-Type' => 'application/x-www-form-urlencoded'
     );
+
+
+    my $method = "POST";
     if (my $auth = $self->authorization) {
+        $method = "GET"; # I do not know why...
         $headers{Authorization} = $auth;
+        $uri->query_form($query_form);
     }
 
-#    my @pairs;
-#    while (my @pair = each %$query_form) {
-#        push @pairs, join('=', map {uri_escape($_)} @pair);
-#    }
-#    my $content = join('&', @pairs);
-    warn "getting $uri\n" if $ENV{DEBUG};
-    $connection->write_request(GET => "$uri", %headers);
+    my @pairs;
+    while (my @pair = each %$query_form) {
+        warn join("=", @pair), "\n" if $ENV{DEBUG};
+        push @pairs, join('=', map {uri_escape($_)} @pair);
+    }
+    my $content = join('&', @pairs);
+    warn $connection->format_request($method => "$uri", %headers, $content), "\n"
+        if $ENV{DEBUG};
+    $connection->write_request(POST => "$uri", %headers, $content)
+        or die "Unable to write request";
     $self->set_connection($connection);
 }
 

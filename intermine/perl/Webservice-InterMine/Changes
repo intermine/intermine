@@ -126,6 +126,19 @@ Revision history for Webservice-InterMine
 0.9814: Fixed bug in simple service
 0.9815: Moved simple classes out to own distribution (See: Webservice::InterMine::Simple on CPAN).
 0.9816: Added list-tagging support
+0.9817: Updated tests for new fixture set. Added select method to consumers of the HasQuery role.
+0.9818: Some more documentation of result formats, and some tests to go with them.
+0.9819: Added support for redirected webservice urls.
+0.9900: Use of new json format where available
+        Support for redirection and private ports
+        Use of POST where possible.
+0.9901: Added remove_constraint method. 
+0.9902: Added better validation of sort-orders, allowing valid orders that were previously disallowed
+0.9903: Added coercion for SeviceVersion to cope with the fact that the version service now returns a new line on the end. 
+        Added more tolerant list creation from queries. Now will accept queries that have non-id fields selected, as long as it is non-ambiguous what is requested.
+0.9904: Added dependency on Set::Crossproduct for testing.
+        More tests for list constraint construction.
+        Consistent ability to use subqueries and lists in constraints.
 
         
 

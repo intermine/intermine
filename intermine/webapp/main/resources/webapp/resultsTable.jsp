@@ -10,6 +10,9 @@
 <html:xhtml/>
 
 <c:set var="jsLib" value="${WEB_PROPERTIES['ws.imtables.provider']}"/>
+<%-- Required for displaying the contents of invalid bags --%>
+<tiles:importAttribute name="invalid" ignore="true"/>
+<tiles:importAttribute name="bag" ignore="true"/>
 
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/cupertino/jquery-ui-1.8.18.custom.css"></link>
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>

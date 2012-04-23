@@ -73,6 +73,7 @@ public class JSONRowFormatterTest extends TestCase {
 
     JSONRowResultProcessor processor;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected void setUp() throws Exception {
 
@@ -225,13 +226,6 @@ public class JSONRowFormatterTest extends TestCase {
                 executionTime);
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
-        /* For debugging, as ant can't give long enough error messages */
-//        FileWriter fw = new FileWriter(new File("/tmp/ant_debug.txt"));
-//        fw.write("EXPECTED:\n=====\n");
-//        fw.write(expected);
-//        fw.write("\nGOT:\n======\n");
-//        fw.write(sw.toString());
-//        fw.close();
         assertEquals(expected, sw.toString());
     }
 

@@ -1,8 +1,8 @@
 var duplicateArray 		= new Array(),
-	tdColorArray   		= new Array(),
-	highlightColor 		= '#FFF3D3',
-	bagList 			= jQuery('input#matchIDs').val(),
-	identifiersInTheBag = bagList.split(" ");
+  tdColorArray   		= new Array(),
+  highlightColor 		= '#FFF3D3',
+  bagList 			= jQuery('input#matchIDs').val(),
+  identifiersInTheBag = bagList.split(" ");
 
 function initForm(buildNewBag) {
     if (buildNewBag == null || buildNewBag != 'true') {
@@ -14,7 +14,11 @@ function initForm(buildNewBag) {
  * Turn bagList back to its input field form
  */
 function updateMatchIDs() {
-	jQuery('input#matchIDs').val(bagList);
+  if (bagList.length > 0) {
+    jQuery('input#matchIDs').val(bagList);
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -93,8 +97,8 @@ function addId2Bag(objectId, row, parentId, issueType) {
       });
 
       if (!isIdentifierInTheBag(objectId)) {
-    	identifiersInTheBag.push(objectId);
-    	  
+      identifiersInTheBag.push(objectId);
+
         // update the number of matches count
         updateCount('#matchCount', 1);
 
@@ -162,7 +166,7 @@ function removeIdFromBag(objectId, row, parentId, issueType) {
     if (isIdentifierInTheBag(objectId)) {
       // remove the item from the identifiers
       identifiersInTheBag.splice(identifiersInTheBag.indexOf(objectId), 1);
-    	
+
       // update the number of matches count
       updateCount('#matchCount', -1);
 
@@ -320,39 +324,39 @@ function removeIdFromListOfMatches(identifier) {
 }
 
 function addAll(issue, flatArray){
-	// split string into rows
-	// a,b,c,d|e,f,g,h
-	var a = flatArray.split("|");
-	if (a.length > 100) {
-	    var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
-	    if (! (r == true)) {
-	        return;
-	    }
-	    // show a loading message that the identifiers are being resolved
-	    jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'addingIdentifiers')
-	    .html('<p>Additional matches are being resolved, please wait.</p>')
-	    .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
-	}
-	
-	// loading img
-	jQuery('<div/>', {
-		'class': 'loading'
-	}).appendTo(jQuery("#sidebar ul li." + issue));
-	
+  // split string into rows
+  // a,b,c,d|e,f,g,h
+  var a = flatArray.split("|");
+  if (a.length > 100) {
+      var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
+      if (! (r == true)) {
+          return;
+      }
+      // show a loading message that the identifiers are being resolved
+      jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'addingIdentifiers')
+      .html('<p>Additional matches are being resolved, please wait.</p>')
+      .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
+  }
+
+  // loading img
+  jQuery('<div/>', {
+    'class': 'loading'
+  }).appendTo(jQuery("#sidebar ul li." + issue));
+
     jQuery.each(a, function(i, v) {
-    	// use a queue for long running code
-    	im.queue.put(function() {
-    		// split rows into vars
-    		var b = v.split(",");
-    		addId2Bag(b[0], b[1], b[2], b[3]);
-    	}, this);	  
+      // use a queue for long running code
+      im.queue.put(function() {
+        // split rows into vars
+        var b = v.split(",");
+        addId2Bag(b[0], b[1], b[2], b[3]);
+      }, this);
     });
-    
+
     // queue in switching of links and message
     im.queue.put(function() {
-    	jQuery("#sidebar ul li." + issue + ' div.loading').remove();
+      jQuery("#sidebar ul li." + issue + ' div.loading').remove();
         toggleBagLinks(issue, 'add');
-        jQuery('#addingIdentifiers').remove();    	
+        jQuery('#addingIdentifiers').remove();
     }, this)
 }
 
@@ -361,35 +365,35 @@ function removeAll(issue, flatArray){
     // a,b,c,d|e,f,g,h
     var a = flatArray.split("|");
     if (a.length > 100) {
-    	var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
+      var r = window.confirm('There are many items in the table. This operation can take a while. Please be patient and do not stop script or cancel it now.');
         if (! (r == true)) {
-        	return;
+          return;
         }
-	    // show a loading message that the identifiers are being resolved
-	    jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'removingIdentifiers')
-	    .html('<p>Removing identifiers from a bag, please wait.</p>')
-	    .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
+      // show a loading message that the identifiers are being resolved
+      jQuery('#error_msg.topBar.errors').clone().addClass('loading').attr('id', 'removingIdentifiers')
+      .html('<p>Removing identifiers from a bag, please wait.</p>')
+      .appendTo(jQuery("#error_msg.topBar.errors").parent()).show();
     }
-    
-	// loading img
-	jQuery('<div/>', {
-		'class': 'loading'
-	}).appendTo(jQuery("#sidebar ul li." + issue));    
-    
+
+  // loading img
+  jQuery('<div/>', {
+    'class': 'loading'
+  }).appendTo(jQuery("#sidebar ul li." + issue));
+
     jQuery.each(a, function(i, v) {
-    	// use a queue for long running code
-    	im.queue.put(function() {
-    		// split rows into vars
-    		var b = v.split(",");
-    		removeIdFromBag(b[0], b[1], b[2], b[3]);
-    	}, this);	  
+      // use a queue for long running code
+      im.queue.put(function() {
+        // split rows into vars
+        var b = v.split(",");
+        removeIdFromBag(b[0], b[1], b[2], b[3]);
+      }, this);
     });
-    
+
     // queue in switching of links and message
     im.queue.put(function() {
-    	jQuery("#sidebar ul li." + issue + ' div.loading').remove();
+      jQuery("#sidebar ul li." + issue + ' div.loading').remove();
         toggleBagLinks(issue, 'remove');
-        jQuery('#removingIdentifiers').remove();    	
+        jQuery('#removingIdentifiers').remove();
     }, this);
 }
 

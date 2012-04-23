@@ -42,9 +42,16 @@
     </c:when>
     <c:otherwise>
         </select>
-        <script type="text/javascript">
-             displayTagSelect("${title}", "${selectId}", "${type}");
-        </script>
+        <c:choose>
+        <c:when test="${!empty type}">
+          <script type="text/javascript">
+               displayTagSelect("${title}", "${selectId}", "${type}");
+          </script>
+        </c:when>
+        <c:otherwise>
+         <!--  type is empty!! This is not good -->
+        </c:otherwise>
+       </c:choose>
     </c:otherwise>
 </c:choose>
 

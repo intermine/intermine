@@ -42,6 +42,10 @@
 <!--
 jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\"/>');
 
+// append browser version into the message area
+var browser = navigator.userAgent;
+jQuery("form#contactForm textarea#fbcomment").val(jQuery("form#contactForm textarea#fbcomment").val() + "\n\n---- Browser: ----\n\n" + browser);
+
 // JS submit handler for the form
 jQuery("#contactForm").submit(function(e) {
   // no synchronous beans for you
@@ -60,6 +64,11 @@ jQuery("#contactForm").submit(function(e) {
       // show the response message
       jQuery("#contactForm").parent().prepend(jQuery(data).find("#contactFormResponse").clone());
       jQuery("#contactFormResponse").show();
+      
+      // hide the form again (what a mess...)
+      if (jQuery("#contactFormResponse #error_msg.topBar.messages").exists()) {
+    	  jQuery("form#contactForm").hide();
+      }
     }
   );
 });

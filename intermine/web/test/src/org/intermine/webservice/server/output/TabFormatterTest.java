@@ -63,26 +63,31 @@ public class TabFormatterTest extends TestCase {
         tim.setId(new Integer(5));
         tim.setName("Tim Canterbury");
         tim.setAge(30);
+        tim.setEnd("a");
 
         gareth = new Employee();
         gareth.setId(new Integer(6));
         gareth.setName("Gareth Keenan");
         gareth.setAge(32);
+        gareth.setEnd("b");
 
         dawn = new Employee();
         dawn.setId(new Integer(7));
         dawn.setName("Dawn Tinsley");
         dawn.setAge(26);
+        dawn.setEnd(null);
 
         keith = new Employee();
         keith.setId(new Integer(8));
         keith.setName("Keith Bishop");
         keith.setAge(41);
+        keith.setEnd("quote here -> \" <- there");
 
         lee = new Employee();
         lee.setId(new Integer(9));
         lee.setName("Lee");
         lee.setAge(28);
+        lee.setEnd("tab here -> \t <- there");
 
         os.setResultsSize(5);
 
@@ -104,7 +109,7 @@ public class TabFormatterTest extends TestCase {
         os.addRow(row5);
 
         PathQuery pq = new PathQuery(model);
-        pq.addViews("Employee.name", "Employee.age");
+        pq.addViews("Employee.name", "Employee.age", "Employee.end");
 
         Map pathToQueryNode = new HashMap();
         Query q;
@@ -132,7 +137,7 @@ public class TabFormatterTest extends TestCase {
     public void testFormatHeader() {
         TabFormatter fmtr = new TabFormatter();
 
-        String expected = "foo\tbar\tbaz";
+        String expected = "\"foo\"\t\"bar\"\t\"baz\"";
 
         assertEquals(expected, fmtr.formatHeader(attributes));
 
@@ -143,7 +148,7 @@ public class TabFormatterTest extends TestCase {
 
     public void testFormatResult() {
         TabFormatter fmtr = new TabFormatter();
-        String expected = "One\tTwo\tThree";
+        String expected = "\"One\"\t\"Two\"\t\"Three\"";
         assertEquals(expected,
                 fmtr.formatResult(Arrays.asList("One", "Two", "Three")));
 
@@ -170,12 +175,12 @@ public class TabFormatterTest extends TestCase {
         out.flush();
 
         String expected =
-              "foo\tbar\tbaz\n"
-            + "Tim Canterbury\t30\n"
-            + "Gareth Keenan\t32\n"
-            + "Dawn Tinsley\t26\n"
-            + "Keith Bishop\t41\n"
-            + "Lee\t28\n";
+              "\"foo\"\t\"bar\"\t\"baz\"\n"
+            + "\"Tim Canterbury\"\t\"30\"\t\"a\"\n"
+            + "\"Gareth Keenan\"\t\"32\"\t\"b\"\n"
+            + "\"Dawn Tinsley\"\t\"26\"\t\"\"\n"
+            + "\"Keith Bishop\"\t\"41\"\t\"quote here -> \"\" <- there\"\n"
+            + "\"Lee\"\t\"28\"\t\"tab here -> \t <- there\"\n";
 
         assertTrue(pw == out.getWriter());
         assertEquals(5, out.getResultsCount());
@@ -193,12 +198,12 @@ public class TabFormatterTest extends TestCase {
         out.flush();
 
         String expected =
-              "foo\tbar\tbaz\n"
-            + "Tim Canterbury\t30\n"
-            + "Gareth Keenan\t32\n"
-            + "Dawn Tinsley\t26\n"
-            + "Keith Bishop\t41\n"
-            + "Lee\t28\n"
+              "\"foo\"\t\"bar\"\t\"baz\"\n"
+            + "\"Tim Canterbury\"\t\"30\"\t\"a\"\n"
+            + "\"Gareth Keenan\"\t\"32\"\t\"b\"\n"
+            + "\"Dawn Tinsley\"\t\"26\"\t\"\"\n"
+            + "\"Keith Bishop\"\t\"41\"\t\"quote here -> \"\" <- there\"\n"
+            + "\"Lee\"\t\"28\"\t\"tab here -> \t <- there\"\n"
             + "[ERROR] 500 Our bad";
 
         assertTrue(pw == out.getWriter());

@@ -30,6 +30,7 @@
 <link rel="stylesheet" type="text/css" href="css/report.print.css" media="print" />
 
 <div id="header_wrap">
+
   <div id="object_header">
     <c:if test="${object.headerLink != null}">
         <c:set var="headerLink" value="${object.headerLink}"/>
@@ -83,7 +84,7 @@
             value="${imf:formatFieldChain(field.pathString, INTERMINE_API, WEBCONFIG)}"/>
           <c:choose>
             <c:when test="${field.valueHasDisplayer}">
-              <td>
+              <td class="label">
                   ${fieldDisplayText}&nbsp;
                   <im:typehelp type="${field.pathString}"/>
               </td>
@@ -97,8 +98,8 @@
               <c:set var="tableCount" value="${tableCount+1}" scope="page" />
             </c:when>
             <c:otherwise>
-              <c:if test="${!field.doNotTruncate}">
-                <td>${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+              <c:if test="${!field.doNotTruncate && !empty field.value}">
+                <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
                 <td><strong>${field.value}</strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
               </c:if>
@@ -112,8 +113,10 @@
       <c:forEach var="field" items="${object.objectSummaryFields}">
         <c:if test="${field.doNotTruncate}">
           <tr>
-            <td>${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
-            <td><strong>${field.value}</strong></td>
+            <c:if test="${!empty field.value}">
+              <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
+              <td><strong>${field.value}</strong></td>
+            </c:if>
           </tr>
         </c:if>
       </c:forEach>
@@ -127,7 +130,7 @@
     </c:if>
 
   <%-- shown @ top displayers --%>
-  <div id="displayers" class="table">
+  <div class="displayers">
     <tiles:insert page="/reportDisplayers.jsp">
       <tiles:put name="placement" value="top" />
       <tiles:put name="reportObject" beanName="object" />
@@ -286,10 +289,22 @@
 </div>
 
 <div class="grid_10">
-  <tiles:insert page="/reportDisplayers.jsp">
-    <tiles:put name="placement" value="summary" />
+
+  <div id="summaryCategory" class="aspectBlock">
+   <tiles:insert page="/reportDisplayers.jsp">
+      <tiles:put name="placement" value="summary" />
     <tiles:put name="reportObject" beanName="object" />
-  </tiles:insert>
+     </tiles:insert>
+
+   <tiles:insert name="reportAspect.tile">
+        <tiles:put name="mapOfInlineLists" beanName="mapOfInlineLists" />
+        <tiles:put name="placement" value="im:summary" />
+        <tiles:put name="reportObject" beanName="object" />
+        <tiles:put name="trail" value="${request.trail}" />
+        <tiles:put name="aspectId" value="${templateIdPrefix}${status.index}" />
+        <tiles:put name="opened" value="${status.index == 0}" />
+     </tiles:insert>
+  </div>
 
   <c:forEach items="${categories}" var="aspect" varStatus="status">
     <div id="${fn:replace(aspect, " ", "_")}Category" class="aspectBlock">
@@ -322,7 +337,6 @@
     </tiles:insert>
   </div>
 </div>
-
 </div>
 </div>
 

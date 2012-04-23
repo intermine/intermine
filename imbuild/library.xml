@@ -83,7 +83,6 @@
   </target>
 
   <!-- CODE GENERATION -->
-
   <target name="-init-generate" if="gen.code" depends="init, -init-deps">
     <mkdir dir="${gen.src.dir}"/>
   </target>

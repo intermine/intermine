@@ -169,10 +169,10 @@ div#filter_tool_bar {
   background: #FFF url('blue_grad.png') repeat-x top left;
 }
 #tool_bar_div {
-    background-color:#CACACA;
+    background-color:#E0E0E0;
 }
 .tb_button {
-  border:1px solid #CACACA;
+  border:1px solid #E0E0E0;
 }
 .tb_button:hover {
   margin-right:0;
@@ -348,10 +348,12 @@ div.collection-table h3 { background:#EBEBEB; border-top-color:#004499; color:#0
 div.collection-table div.right a,
 div.collection-table div.right a:hover,
 div.collection-table div.right a:visited { color:#004499; }
+div.collection-table table { border-color:#F0F0F0; }
 div.collection-table thead th,
 div.collection-table thead td { background:#EBEBEB; border-color:#F0F0F0; }
+div.collection-table table tbody tr td { border-top-color:#F0F0F0; }
 div.collection-table table tbody tr:nth-child(2n) td,
-div.collection-table table tbody tr.odd td { background:#FAFAFA; border-top-color:#F0F0F0; border-bottom-color:#F0F0F0; }
+div.collection-table table tbody tr.odd td { background:#FAFAFA; }
 div.collection-table table tbody tr.even td { background:#FFF; }
 div.collection-table table td.class { color:#886644; }
 div.collection-table table a,
@@ -363,6 +365,11 @@ div.collection-table.column-border table tbody tr td.left-column-border { border
 div.collection-table.column-border table tbody tr td:nth-child(n+2) { border-left-color:#F0F0F0; }
 div.collection-table.column-border-by-2 table tbody tr td.left-column-border { border-left-color:#F0F0F0; }
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-color:#F0F0F0; }
+div.collection-table div.header { background:#EBEBEB; border-top-color:#004499; }
+div.collection-table div.header h3 { text-shadow: 1px 1px 1px #FFFFFF; }
+div.collection-table div.header a,
+div.collection-table div.header a:hover,
+div.collection-table div.header a:visited { color:#004499; }
 /* collection table on results pages */
 div.collection-table.results table { border-top-color:#004499; }
 /* basic tables (on displayers etc.) */

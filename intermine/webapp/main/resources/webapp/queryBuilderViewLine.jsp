@@ -11,10 +11,10 @@
 <c:if test="${fn:length(viewStrings) > 1}">
   <fmt:message key="view.removeAllFromView" var="removeAllFromViewTitle"/>
   <html:link action="/queryBuilderViewChange?method=removeFromView" title="Remove All">
-		<img border="0" src="images/removeAll.gif" title="${removeAllFromViewTitle}" />
-	</html:link>
-</c:if>  
-<div class="clearer">&nbsp;</div> 
+    <img border="0" src="images/removeAll.gif" title="${removeAllFromViewTitle}" />
+  </html:link>
+</c:if>
+<div class="clearer">&nbsp;</div>
 <div id="viewDivs">
   <c:forEach var="path" items="${viewStrings}" varStatus="status">
     <c:set var="pathString" value="${path.key}"/>

@@ -4,7 +4,7 @@
 <p>metabolicMine is a data warehouse that integrates diverse biological data sets and 
 the tools to explore them. The main focus of metabolicMine is genomics and proteomics of 
 common metabolic diseases. By integrating such data into one place it is possible to 
-construct queries across domains of biological knowledge.</p>
+construct searches across domains of biological knowledge.</p>
 
 <p> See a List of all the data sources from the toolbar on any metabolicMine page:</p>
 <img alt="[Quick Search]" src="mmToolbar_Data_2.png"/>
@@ -14,31 +14,29 @@ construct queries across domains of biological knowledge.</p>
 up an identifier and viewing a report page.  This quick tour will
 introduce some of the features:</p>
 
-<p>The first thing you'll see is the <strong>First Time Here</strong> box. 
+<p>The first thing you'll see is the <strong>First Time Here</strong> box.</p> 
 
-<img alt="[First Time Here]" src="mmFTHbox.png"/></p>
+<img alt="[First Time Here]" src="mmFTHbox.png"/>
 
 <p>Here's where you'll find our handy <strong>Feature Hints</strong>. Scroll through when you 
 need a quick reminder of the different parts of metabolicMine and what everything does.
 Don't worry - you can minimize the box when you're done with it.</p>
 
 <p>Moving down the page we encounter three colour-coded boxes showing the main ways of 
-interacting with the database. On the left (in orange) we have the Search box, in the middle 
-(in green) the Lists and on the right (in purple) our predefined Templates.</p>
+interacting with the database. On the left (in orange) we have the Search box, on the right
+(in green) the Lists and below (in purple) our predefined Template searches.</p>
 
-<img alt="[Function Boxes]" src="mmFunctionBoxes.png"/>
+<img alt="[Function Boxes]" src="mmHomePage_dec2011.png"/>
 
-<p><strong>Search</strong> is available, just like on other sites, simply type in
+<p>To <strong>Search</strong>, simply type in
 an identifier to see a report page. You can search with identifiers 
 (Gene symbols, accession codes, PubMed IDs etc.) or keywords (eg. Diabetes) and Authors (eg. Sanger F). 
 Additionally, you can use Boolean (AND, OR, NOT) and wildcards (*) to refine your results.</p>
 
-<p><u>Filtering with Facets</u>
+<p><u>Filtering your search</u>
 <br>Our search engine operates across all data fields giving you the highest chance 
-of getting a result. <strong>Facets</strong> show you the different places where your 
-search words were found (eg. Gene, Protein, Go Term, Template). You can use the facets 
-to filter for the type of results that are most important to you. When you filter by facet you
-can even save a List straight from your results. There's more about Lists later.</p>
+of getting a result. <strong>Filters</strong> show you the different places where your 
+search words were found (eg. Gene, Protein, Go Term, Template search), allowing you to easily find the type of results that are most important to you. Certain filters (for example Gene or Protein) also allow you to save a List straight from your results. There's more about Lists later.</p>
 
 <p><img alt="[Facets]" src="mmLuceneFacets_diabet.png"/></p>
 
@@ -47,7 +45,7 @@ upload your own Lists (favourite Genes, SNPs etc) or save them from results tabl
 We also create useful <strong>Public Lists</strong> for everyone to use. You can start to explore 
 your data on the List Analysis Page. 
 Here are just some of the things you can do:<UL>
-<LI>Ask questions about the data using our predefined Templates</LI>
+<LI>Ask questions about the data using our predefined Template Searches</LI>
 <LI>Combine or subtract the content of other Lists</LI>
 <LI>Uncover hidden relationships with our analysis <strong>Widgets</strong></LI>
 </UL>
@@ -57,71 +55,84 @@ Here are just some of the things you can do:<UL>
 <br>You're automatically taken to the List Analysis Page when you first create a List 
 or when you visit a List that you've stored previously.</p>
 
-<p><strong>Template queries</strong> are 'predefined' queries that are designed around specific tasks. 
-Templates provide you with a simple form that lets you define your starting point and optional 
+<p><strong>Template Searches</strong> are 'predefined' searches that are designed around specific tasks. 
+Template searches provide you with a simple form that lets you define your starting point and optional 
 filters to help focus your search.
 
-Our Templates are designed around the common tasks performed by our Biologist Community. 
+Our Template Searches are designed around the common tasks performed by our Biologist Community. 
 They cover common questions like:<UL>
 <LI>I have a List of SNPs - do any of them affect Genes?</LI>
 <LI>This Gene came up in my results - what can I find out about it?</LI>
 <LI>I'm interested in this chromosome region - what's in there that could be linked with this disease?</LI>
 </UL>
 
-<br>You can create your own Templates after you create a <strong>MyMine</strong> account and log in. 
-You can modify our pre-existing Templates or start from scratch with the QueryBuilder.
-Alternatively, the metabolicMine Team are search speciaLists so we can quickly build Custom 
-Templates for you.</p>
+<br>You can create your own Template searches after you create a <strong>MyMine</strong> account and log in. 
+You can modify our pre-existing Template searches or start from scratch with the QueryBuilder.
+Alternatively, the metabolicMine Team are search specialists so we can quickly build Custom 
+Template searches for you.</p>
 
 <p>The Powerhouse of metabolicMine, <strong>QueryBuilder (QB)</strong> allows you to construct your own 
 custom queries, modify your previous queries and Edit Templates. The easiest way to get started 
-with QB is by editing one of our pre-existing Template queries. Follow the simple tutorial in the 
-QueryBuilder section to change a Template output or add a filter.</p>
+with QB is by editing one of our pre-existing Template Searches. Follow the simple tutorial in the 
+QueryBuilder section to change a Template search output or add a filter.</p>
 
 <p><strong>MyMine</strong> is your <u>personal space</u> on metabolicMine. Creating an account allows you 
-to save your Queries, Lists and Templates you've modified for later use. You can also mark the 
-most useful Public Templates as favourites so they're easier to find.</p>
+to save your Queries, Lists and Template searches you've modified for later use. You can also mark the 
+most useful Public Template searches as favourites so they're easier to find.</p>
 
-<p> All these features are accessible from the Tab toolbar on every matabolicMine page:</p>
+<p> All these features are accessible from the Tab toolbar on every metabolicMine page:</p>
 
 <img alt="[Tab Shortcuts]" src="mmToolbar_home.png"/>
 
 
 <h1>2. Report Page</h1>
 
-<p>A quick search box appears in the menu bar of all pages.  You can search for any identifier 
+<p>A search box appears in the menu bar of all pages as well as on the home page.  You can search for any identifier 
 or symbol for Genes, Proteins, transcripts and so on.  You can use '*' as a wildcard.</p>
 
-<p><strong>Run a quick search for the Human Gene <i>PPARG</i>:</strong></p>
+<p><strong>Run a search for the Human Gene <i>PPARG</i>:</strong></p>
 
 <img alt="[Quick Search]" src="mmQuickSearch_PPARG.png"/>
 
 <p>
+Select the Human PPARG gene (second result) from the set of results.
 The report page shows information from many data sources in one place.  There are corresponding 
-pages for all objects in metabolicMine, use <img alt="[details...]" valign="bottom" src="details.png"/> links to browse.
+pages for all objects in metabolicMine. A set of 'Quick links' at the top of the page allow you to navigate to specific information more easily:
 </p>
 
-<img alt="[Report Page Summary]"  src="mmReportPagePPARG_2.png"/>
+<img alt="[Quick Links]"  src="mmQuickLinks_dec2011.png"/>
 
 <p>
-Our stored Template queries are run for this Gene when the page is loaded giving you an 
-indication of the number of results returned by the query.
+Report pages include summary tables of information, many of which can be expanded to give more extensive information, links to report pages for related objects and links to other mines and external databases. 
+<p>
+
+
+<img alt="[Report Page Summary]"  src="mmRP_dec2011.png"/>
+
+<p>
+Many report pages include interactive viewers allowing detailed analysis of certain data:
 </p>
 
-<img alt="[object details Templates]"  src="mmReportPageBotPPARG_2.png"/>
+<img alt="[Report Viewers]"  src="mmRP_Viewers_dec2011.png"/>
+
+<p>
+Report pages also include the results for a number of our stored 'Template searches' which are automatically run when the page is loaded.  The results can be expanded and collapsed, or if the number of results is large, viewed in a table.
+</p>
+
+<img alt="[object details Templates]"  src="mmRP_Template_dec2011.png"/>
 
 
-<h1>3. Template Queries</h1>
+<h1>3. Template Searches</h1>
 
-<p>MetabolicMine includes a library of <strong>Template queries</strong> - predefined queries designed 
+<p>MetabolicMine includes a library of <strong>Template searches</strong> - predefined searches designed 
 to perform a particular task.  Each one has a description and a form to fill in.  For example, 
-there are Templates to find GO annotation for a Gene, to retrieve Protein-Protein interactions 
+there are Template searches to find GO annotation for a Gene, to retrieve Protein-Protein interactions 
 or even predict the consequences for a set of SNPs.</p>
 
-<p>You can find all metabolicMine Templates on the Templates page, accessible via the toolbar on 
-any page. Here you can search the titles and descriptions of all Templates.</p>
+<p>You can find all metabolicMine Template searches on the Templates page, accessible via the toolbar on 
+any page. Here you can search the titles and descriptions of all Template searches.</p>
 
-<p><i>We can add Templates to this page at any time - it only takes a few minutes - so if you have 
+<p><i>We can add Template searches to this page at any time - it only takes a few minutes - so if you have 
 a suggestion, let us know!</i></p>
 
 <img alt="[Templates Tab]"  src="mmToolbar_Templates_2.png"/>
@@ -132,28 +143,28 @@ a suggestion, let us know!</i></p>
 <img alt="[Search Gene Templates]"  src="mmTemplateSearch_Gene.png"/>
 
 
-<p><strong>and select the Template 'Gene ---> GO terms':</strong></p>
+<p><strong>and select the Template search 'Gene ---> GO terms':</strong></p>
 
 <img alt="[Select Gene --> GO Template]"  src="mmGeneGOtemplate_2.png"/>
 
 
-<h1>4. Run a Template</h1>
+<h1>4. Run a Template Search</h1>
 
-<p>The Template we found in our previous search takes a particular Gene as input and returns 
+<p>The Template search we just found takes a particular Gene as input and returns 
 the GeneOntology (GO) annotation(s) of the Gene. We clicked on the title of the Template to show 
-the Template form. </p>
+the Template search form. </p>
 
 <p>
 <img alt="[Select Gene --> GO Template]"  src="mmGeneGOtemplate_2.png"/>
 </p>
 
-<p>Now you can run the Template with the default value or restrict it to the Gene of your 
+<p>Now you can run the Template search with the default value or restrict it to the Gene of your 
 choice. You can enter any identifier and metabolicMine will try to find the right Gene.  For 
 example, for the <i>H. sapiens</i> Gene <i>PPARG</i> you can enter 'PPARG', 'PPARgamma', 
 'ENSG00000132170', 'GLM1' or any synonym.  You can even enter a transcript (ENST00000397010) 
 or Protein (PPARG_HUMAN) identifier and metabolicMine will convert it for you.</p>
 
-<p><strong>Click 'Show Results' to run this Template with the default value:</strong></p>
+<p><strong>Click 'Show Results' to run this Template search with the default value:</strong></p>
 
 <p>
 <img alt="[Template form]"  src="mmGeneGOtemplForm_3.png"/>
@@ -162,7 +173,7 @@ or Protein (PPARG_HUMAN) identifier and metabolicMine will convert it for you.</
 <h1>5. Results Page</h1>
 
 <p>
-The results table for the Template 'Gene --> GO terms' shows the starting Gene (primary 
+The results table for the Template search 'Gene --> GO terms' shows the starting Gene (primary 
 identifier and symbol) with details of each GO term applied to the Gene.
 </p>
 
@@ -193,14 +204,14 @@ All results pages have a number of export options:
 
 <p>metabolicMine can operate on custom Lists of data.  You can save Lists from results 
 pages or create them by uploading your own Lists of identifiers.  Lists can be used when 
-running Template queries and can be analysed using a series of <strong>widgets</strong> on the List Analysis page.  
+running Template searches and can be analysed using a series of <strong>widgets</strong> on the List Analysis page.  
 You can merge, subtract and find common members if you have more than one List.</p>
 
 
 <p>
 metabolicMine includes a set of 'Public' Lists (marked with 'PL') that we think might be 
 useful for our users. These originate from external datasources (including journal articles 
-and external databases) or have been contributes by our Biologist community. Let us know if you find 
+and external databases) or have been contributed by our Biologist community. Let us know if you find 
 any <i>must-have</i> Lists</p>
 
 <p><FONT COLOR="FF6600"><i>We can add more Lists at any time - it only takes a few minutes - so if you have a 
@@ -232,18 +243,16 @@ even contain a mix of identifier types.</p>
 
 <p>
 If some identifiers don't produce an exact match a confirmation page lets you resolve 
-any issues.  In our example, two Genes were found through a synonym and three have been 
-converted to their corresponding Gene through their Transcript or Protein primary accession numbers. 
+any issues.  In our example, one gene was found through a synonym and two have been 
+converted to their corresponding gene through their Transcript or Protein primary accession numbers. 
 You can check through each issue or just add all the matches to your List.
 </p>
 
-<p><strong>Click 'Add all' to include all suggested Genes to the List:</strong></p>
+<p><strong>Click 'Add all' to include all suggested Genes in the List:</strong></p>
 
-<img alt="[List ID resolver]"  src="mmListConvers_2.png"/>
+<img alt="[List ID resolver]"  src="mmList_confirmation_dec2011.png"/>
 
 <p><strong>Choose a name for your List and save it - we'll use 'myGeneList' for this exercise:</strong></p>
-
-<img alt="[Save List]"  src="mmSaveList_2.png"/>
 
 
 <h1>8. List Analysis Page</h1>
@@ -263,32 +272,32 @@ so if you have suggestions on what you'd like to see, please let us know.</i></F
 <img alt="[List widgets]"  src="mmGOpathLipWidget_2.png"/>
 
 <p>
-Template queries have been executed on the whole List, just like on the Gene report page.  
+Template searches have been executed on the whole List, just like on the Gene report page.  
 This is a simple way to retrieve further information about the entire List.  For example, 
 you could retrieve a list of Orthologues or Protein Domains.
 </p>
 
-<h1>9. Use Lists in Templates</h1>
+<h1>9. Use Lists in Template Searches</h1>
 
 <p>
-You can use Lists in any Template query, or in queries you create yourself in the QueryBuilder.  
+You can use Lists in any Template search, or in queries you create yourself in the QueryBuilder.  
 As the List analysis page suggested, some of the Genes in our List are involved in lipid 
 pathways so it might be interesting to see if any of them are linked to a Disease. metabolicMine
 includes human Disease / Gene relationships from <a href="http://www.ncbi.nlm.nih.gov/omim" target="_new">OMIM</a>. 
-OMIM is a curated database of human Genes and Genetic disorders which we can query with 
-one of our predefined Templates. 
+OMIM is a curated database of human Genes and Genetic disorders which we can search with 
+one of our predefined Template searches. 
 </p>
 
-<p><strong>Click on the Templates Tab (located on the top menu bar) and search the Template queries for 'disease'. 
+<p><strong>Click on the Templates Tab (located on the top menu bar) and search the Templates for 'disease'. 
 Now select the Template </strong></p>
 <p><strong>'Gene --> Disease (OMIM)':</strong></p>
 
 <img alt="[Select Template]"  src="mmTemplateSearch_Dis_2.png"/>
 
-<p>Now that we have created a List the Template query gives us the option to use it 
+<p>Now that we have created a list the template search gives us the option to use it 
 instead of entering an identifier.</p>
 
-<p><strong>Click the checkbox to select the List you named earlier, and then run the query.</strong></p>
+<p><strong>Click the checkbox to select the List you named earlier, and then run the search.</strong></p>
 
 <img alt="[Run Template with List]"  src="mmDiseaseTemplList_2.png"/>
 
@@ -296,11 +305,11 @@ instead of entering an identifier.</p>
 Diseases (according to the OMIM database). Using the Column Summary button on the 'Gene > Symbol' we 
 can see that 10 of our Genes have Disease associations (Total unique values: 10).</p>
 
-<p>You can also create new Lists from results tables.  We can save the List Disease Genes 
-from this query to view in the List analysis page or to use in more Templates.</p>
+<p>You can also create new lists from results tables.  We can save the list <strong>Disease Genes</strong> 
+from this query to view in the List analysis page or to use in more Template searches.</p>
 
 <p><strong>Click on the checkbox by 'Gene > primaryIdentifier' to select all of the entries. 
-Now click on the 'Create List' button (just above primaryIdentifier column) and choose a 
+Now click on the 'Create List' button (just above the primaryIdentifier column) and choose a 
 name for the saved List.</strong>
 
 If you wanted to select a subset you can click on the individual entries. Alternatively, 
@@ -320,31 +329,60 @@ For example we could also retrieve:
 
 <h1>10. Query Builder</h1>
 
-<p>The QueryBuilder allows you to edit queries or create new ones.  It is aimed at advanced 
-users but editing a Template query to change the output or add a filter is easy.</p>
+<p>The QueryBuilder is aimed at advanced users and allows you to edit queries or create new ones. The query builder can be accessed through the query builder tab in the top menu bar:</p>
 
-<p><strong>Now use the browser back button to return to the results table.</strong></p>
+<img alt="[Click on trail]"  src="mmQB_Tab.png"/>
 
-<p><strong>Click on 'Query' in the Trail to get back to the Template form:</strong></p>
-
-<img alt="[Click on trail]"  src="mmQueryBreadcrumb_2.png"/>
-
-<p><strong>Now click 'Edit Query' to bring up the QueryBuilder:</strong></p>
+<p>or from the <strong>Edit Query</strong> button on each template form:
 
 <p><img alt="[Click edit query]"  src="mmEditDiseaseTempl_2.png"/></p>
 
 
-<p>The pane on the left is a view of the data model starting at the Gene class and showing 
+<p> Clicking on <strong>Edit query</strong> on a template form will take you straight to the query builder.  However, if you want to start building your own query you will need to first select a starting point (starting class) for that query:</p>
+
+<img alt="[QB Class Selection]"  src="mmQB_ClassSelection.png"/>
+
+<p> The Query Builder is made up of distinct sections:</p>
+
+<img alt="[QB query builder]"  src="query_builder.png"/>
+
+<p>The pane on the left is a view of the data model starting at the class initially selected and showing 
 all attributes (e.g. name, symbol) and related classes (e.g. organism, Proteins).  
 metabolicMine uses an object based data model - biological types are termed 'classes' and 
 individual entries are termed 'objects'.  For example the <i>PPARG</i> and <i>TCF7L2</i> 
 Genes are both objects of the class Gene.</p>
 
 <p>You can click <img alt="[plus]" src="plus.gif"/> to open related classes and see their 
-attributes.  Use the <img alt="[show]"  src="show.gif"/> button to add fields to the output.  
-The <img alt="[constrain]" src="constrain.gif"/> buttons let you refine your search (aka: add constraints or filters). </p> 
+attributes.  Building a query involves three main steps: 
+<ul>
 
-<img alt="[query builder]"  src="query_builder.png"/>
+<li>
+Navigating the data model to find the classes and fields of data you are interested in.
+
+</li>
+<li>
+Selecting the data you wish to see in your results.
+
+</li>
+<li>
+Refining your query with a set of constraints or filters.
+
+</li>
+</ul>
+
+</p>
+
+
+<p>Use the <img alt="[show]"  src="show.gif"/> buttons to add fields to the results output and  
+the <img alt="[constrain]" src="constrain.gif"/> buttons to refine your search (aka: add constraints or filters). </p> 
+
+<p>The right hand pane shows a summary of the query you are constructing: the fields you have selected to be in your results and the constraints you have added.  The lower pane allows you to edit the fields in your results - re-order the columns, remove columns and set the sort order.</p>
+
+
+<p>To illustrate the use of the Query Builder we will modify a template query.  Navigate to the templates page and select the template <strong>Gene --> Disease (OMIM)</strong></p>
+
+<p><strong>Now click 'Edit Query' to bring up the QueryBuilder:</strong></p>
+
 
 <p>The query summary section shows the constraints applied to this query.  Notice that one of 
 them says 'IN myGeneList'.  This shows us that the search is using only the Genes from the List (myGeneList)
@@ -356,27 +394,27 @@ We can just remove the Genes constraint, add a constraint for Disease and run th
 <p><strong>Click on the <img alt="[red cross]"  src="cross.gif"/> button next to 'IN myGeneList'' 
 to remove the constraint:</strong></p>
 
-<img alt="[remove constraint]"  src="mmRemoveListConstraint_2.png"/>
+<img alt="[QB remove constraint]"  src="mmRemoveListConstraint_2.png"/>
 
 <p><strong>Now, click on the Disease link in the 'Query Overview' panel': </strong></p>
 <p>Hint: you can find it in the middle of 'diseases Disease collection'.</p> 
 
-<p><img alt="[Add constraint]"  src="mmAddDisConstraint_2.png"/></p>
+<p><img alt="[QB Add constraint]"  src="mmAddDisConstraint_2.png"/></p>
 
 <p>As you hover over it you'll see a Tooltip with 'Show Disease in model browser'.</p>
 
 <p><strong>Scroll to the diseases model and find 'name' (It should have a box around it to show 
 that it appears in our query). To the right of 'name' click constrain:</strong></p>
 
-<img alt="[Constrain Disease Model]"  src="mmDisModelConstraint_2.png"/>
+<img alt="[QB Constrain Disease Model]"  src="mmDisModelConstraint_2.png"/>
 
 <p><strong>Type *diabetes* in the filter box and Click 'Add to query''</strong></p>
 
-<img alt="[Constrain Box]"  src="mmDisConstraintBox_2.png"/>
+<img alt="[QB Constrain Box]"  src="mmDisConstraintBox_2.png"/>
 
 <p><strong>Now scroll down the page and click 'Show results' to run the query:</strong></p>
 
-<img alt="[click show results]"  src="mmClickShowRes_2.png"/>
+<img alt="[QB click show results]"  src="mmClickShowRes_2.png"/>
 
 <p>The results table now shows all the Genes in metabolicMine for which there are known Disease 
 associations, the name of the Disease and its OMIM identifier.  You can use the summary buttons 
@@ -384,24 +422,85 @@ associations, the name of the Disease and its OMIM identifier.  You can use the 
 find more information about the numbers of Genes associated with each Disease.</p>
 
 
+<h1>11. Regions</h1>
 
-<h1>11. MyMine</h1>
+<p> The Regions Search allows you to explore the features contained within a genomic interval or set of regions.  To access the Regions Search 
+click on the Regions tab in the top menu bar:</p>
 
-<p> All Lists and queries you ran will be saved temporarily in metabolicMine for the current session. 
+<img alt="[Regions Tab]"  src="mmTabBarRegion.png"/>
+
+<p>Region search is available for the Human and Mouse genomes.  First select the organism you wish to use:
+
+<img alt="[Regions Organism]"   src="mmRegionsOrganm.png"/>
+
+<p>Next you will see a set of feature types that you can look for in your genomic region(s). By default, all features are selected.  Deselect any features you do not wish to search for.  Alternatively un-check <strong>Select Feature Types</strong> to turn all features off and re-select those that are relevant.</p>
+
+
+<img alt="[Regions Features]"   src="mmRegionsFeatType.png"/>
+
+
+<p>A set of chromosome interval co-ordinates is only relevant in the context of the genome build that it is based upon. As such, working between one genome release and another may require co-ordinates to be re-mapped - a process known as <strong>lift-over</strong>. Using the radio buttons, select the genomic build that the co-ordinates originate from.</p>
+
+<img alt="[Regions Liftover]"   src="mmRegionsLiftover.png"/>
+
+
+<p>You can either type, cut and paste or upload the genomic regions from a file. Each region should be on new line.  <p>Genome regions in the following formats are accepted:
+<ul>
+
+<li>
+chromosome:start..end, eg. chr3:185000000..189000000 or 3:185000000..189000000
+
+</li>
+<li>
+chromosome:start-end, eg. 9:79835469-83810180
+</li>
+<li>
+tab delimited, eg. chr start end (chr11 90460352 94560352)
+</li>
+</ul>
+</p>
+
+You also need to select the co-ordinate system that you're using. Both base coordinate (e.g. BLAST, GFF/GFF3) and interbase coordinate (e.g. UCSC BED, Chado) systems are supported. By default, the base coordinate is selected. </p>
+
+<img alt="[Regions BaseCoord]"   src="mmRegionsPaste.png"/>
+
+<p>Optionally, using the slider, you can choose to extend the regions to include a distance on either side of your start and end position(s). This is particularly useful when working with small regions.</p>
+
+
+<img alt="[Regions Extend]"   src="mmRegionsExtendReg.png"/>
+
+<p>Finally, Click the <strong>Search</strong> button to start the analysis. [Be sure not to click the <strong>Reset</strong> button next to it!] </p>
+
+<img alt="[Regions Search]"   src="mmRegionsSearch.png"/>
+
+<p>metabolicMine executes your search and then loads the analysis results. Depending on the size of the regions, this may take a minute - a bar, top-centre of the page shows progress of the search. </p>
+
+
+<img alt="[Regions ProgressBar]"   src="mmRegionsProgr.png"/>
+
+<p>Search results are reported in table format with results displayed separately for each interval. From the results page you can export in a number of formats (TAB | CSV | GFF3 | SEQ), either per region or for the entire results set. Feature identifiers in blue are linked to the corresponding entries in the database; click the identifier name to see the report page. Importantly, from your results you can also create Lists (by feature type) which can then be used for further analysis. </p>
+
+
+<img alt="[Regions Results]"   src="mmRegionsResults_annot2.png"/>
+
+
+<h1>12. MyMine</h1>
+
+<p> All Lists and searches you ran will be saved temporarily in metabolicMine for the current session. 
 To save them permanently, you can create a <strong>MyMine account</strong>. You only need to provide an email 
-address and a password to Generate an account, there is no other information required.  Your saved data 
+address and a password to generate an account, there is no other information required.  Your saved data 
 is always private.</p>
 
 <img alt="[Click log in]"  src="mmToolbar_logIn_2.png"/>
 
-<p> You can then access all your Lists, Queries and Templates via the MyMine page. In MyMine you can save 
+<p> You can then access all your Lists, Queries and Template searches via the MyMine page. In MyMine you can save 
 Lists and Queries you create in the QueryBuilder.  You can also use QueryBuilder to turn queries into 
-new Templates of your own.  You can even export/import Queries and Templates as XML to share them with others. </p>
+new Template searches of your own.  You can even export/import Queries and Template searches as XML to share them with others. </p>
 
 <img alt="[myMine Tab]"  src="mmToolbar_myMine_2.png"/>
 
  
-<p>The <img alt="[Favourite]"  src="star_active.gif"/> icon lets you set Templates as favourites so 
+<p>The <img alt="[Favourite]"  src="star_active.gif"/> icon lets you set Template searches as favourites so 
 it's easy to access the ones you use often.</p>
 
 <img alt="[Favourite Templates]"  src="mmFavTempl_2.png"/>
@@ -409,4 +508,4 @@ it's easy to access the ones you use often.</p>
 <p/>
 <p/>
 
-<p>Please contact us if you have any questions or suggestions: <strong>support@interMine.org</strong></p>
+<p>Please contact us if you have any questions or suggestions: <strong>metabolicmine@intermine.org</strong></p>

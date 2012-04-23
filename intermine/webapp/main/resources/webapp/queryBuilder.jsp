@@ -89,16 +89,19 @@
   <div style="clear:both;"></div>
 </div>
 <div id="queryBuilderContainer">
-<div id="queryBuilderBrowser" class="modelbrowse" ><tiles:insert page="/queryBuilderBrowser.jsp"/></div>
-
-<div id="rightColumn" >
-  <div id="query-builder-summary">
-    <tiles:insert name="queryBuilderSummary.tile"/>
-  </div>
-  <a name="constraint-editor"></a>
+	<div id="queryBuilderBrowser" class="modelbrowse" >
+		<tiles:insert page="/queryBuilderBrowser.jsp"/>
+	</div>
+	
+	<div id="rightColumn" >
+	  <div id="query-builder-summary">
+		<tiles:insert name="queryBuilderSummary.tile"/>
+	  </div>
+	  <a name="constraint-editor"></a>
+	  <div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
 </div>
-</div>
-<div style="clear:both;">
   <tiles:get name="queryBuilderView.tile"/>
 </div>
 <div id="queryBuilderConstraint">

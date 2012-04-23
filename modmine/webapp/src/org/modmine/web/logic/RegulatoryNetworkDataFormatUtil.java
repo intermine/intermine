@@ -148,10 +148,10 @@ public final class RegulatoryNetworkDataFormatUtil
 
         for (CytoscapeNetworkNodeData node : interactionNodeSet) {
             if (node.getSourceLabel() == null || "".equals(node.getSourceLabel())) {
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
-                        + node.getSoureceId() + "\">");
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
+                        + node.getSourceId() + "\">");
             } else {
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel() + "\">");
             }
 
@@ -167,9 +167,9 @@ public final class RegulatoryNetworkDataFormatUtil
                                     + Double.toString(nodeXLeft)
                                     + "\" y=\""
                                     + Double.toString(nodeYLeft)
-                                    + "\" w=\"10\" outline=\"#666666\" fill=\"#ff0000\" "
+                                    + "\" w=\"32\" outline=\"#666666\" fill=\"#ff0000\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
 
                     nodeYLeft = nodeYLeft + stepYLeft;
@@ -182,9 +182,9 @@ public final class RegulatoryNetworkDataFormatUtil
                                     + Double.toString(nodeXRight)
                                     + "\" y=\""
                                     + Double.toString(nodeYRight)
-                                    + "\" w=\"10\" outline=\"#666666\" fill=\"#ff0000\" "
+                                    + "\" w=\"32\" outline=\"#666666\" fill=\"#ff0000\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
 
                     nodeYRight = nodeYRight + stepYRight;
@@ -198,9 +198,9 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                     + Integer.toString(nodeXLevel1)
-                                    + "\" y=\"250\" w=\"10\" outline=\"#666666\" fill=\"#33cc33\" "
+                                    + "\" y=\"250\" w=\"32\" outline=\"#666666\" fill=\"#33cc33\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
                         nodeXLevel1 = nodeXLevel1 + 50; // step 50
                         break;
@@ -208,9 +208,9 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                     + Integer.toString(nodeXLevel2)
-                                    + "\" y=\"400\" w=\"10\" outline=\"#666666\" fill=\"#33cc33\" "
+                                    + "\" y=\"400\" w=\"32\" outline=\"#666666\" fill=\"#33cc33\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
                         nodeXLevel2 = nodeXLevel2 + 50;
                         break;
@@ -218,9 +218,9 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                     + Integer.toString(nodeXLevel3)
-                                    + "\" y=\"550\" w=\"10\" outline=\"#666666\" fill=\"#33cc33\" "
+                                    + "\" y=\"550\" w=\"32\" outline=\"#666666\" fill=\"#33cc33\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
                         nodeXLevel3 = nodeXLevel3 + 50;
                         break;
@@ -228,9 +228,9 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                     + Integer.toString(nodeXLevel4)
-                                    + "\" y=\"700\" w=\"10\" outline=\"#666666\" fill=\"#33cc33\" "
+                                    + "\" y=\"700\" w=\"32\" outline=\"#666666\" fill=\"#33cc33\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
                         nodeXLevel4 = nodeXLevel4 + 50;
                         break;
@@ -238,9 +238,9 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                     + Integer.toString(nodeXLevel5)
-                                    + "\" y=\"850\" w=\"10\" outline=\"#666666\" fill=\"#33cc33\" "
+                                    + "\" y=\"850\" w=\"32\" outline=\"#666666\" fill=\"#33cc33\" "
                                     + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"24\" labelanchor=\"c\" "
+                                    + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                     + "type=\"ELLIPSE\"/>");
                         nodeXLevel5 = nodeXLevel5 + 50;
                         break;
@@ -374,34 +374,35 @@ public final class RegulatoryNetworkDataFormatUtil
 
         for (CytoscapeNetworkNodeData node : interactionNodeSet) {
             if (node.getSourceLabel().startsWith("mir")) { // miRNA node
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel().replace("mir-", "miR") + "\">");
+
                 if ("left".equals(node.getExtraInfo().get("hposition"))) {
                     if ("top".equals(node.getExtraInfo().get("vposition"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXLeftTop)
-                                + "\" y=\"-250\" fill=\"#ff00ff\" "
+                                + "\" y=\"-250\" w=\"24\" fill=\"#ff00ff\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"0\" "
-                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"24\" labelanchor=\"c\" "
                                 + "type=\"ELLIPSE\"/>");
                         nodeXLeftTop = nodeXLeftTop + 30;
                     } else if ("middle".equals(node.getExtraInfo().get("vposition"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXLeftMid)
-                                + "\" y=\"-50\" fill=\"#ff00ff\" "
+                                + "\" y=\"-50\" w=\"24\" fill=\"#ff00ff\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"0\" "
-                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"24\" labelanchor=\"c\" "
                                 + "type=\"ELLIPSE\"/>");
                         nodeXLeftMid = nodeXLeftMid + 40;
                     } else if ("bottom".equals(node.getExtraInfo().get("vposition"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXLeftBot)
-                                + "\" y=\"150\" fill=\"#ff00ff\" "
+                                + "\" y=\"150\" w=\"24\" fill=\"#ff00ff\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"0\" "
-                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"24\" labelanchor=\"c\" "
                                 + "type=\"ELLIPSE\"/>");
                         nodeXLeftBot = nodeXLeftBot + 50;
                     }
@@ -410,59 +411,60 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXRightTop)
-                                + "\" y=\"-20\" fill=\"#ff00ff\" "
+                                + "\" y=\"-20\" w=\"24\" fill=\"#ff00ff\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"0\" "
-                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"24\" labelanchor=\"c\" "
                                 + "type=\"ELLIPSE\"/>");
                         nodeXRightTop = nodeXRightTop + 40;
                     } else if ("middle".equals(node.getExtraInfo().get("vposition"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXRightMid)
-                                + "\" y=\"180\" fill=\"#ff00ff\" "
+                                + "\" y=\"180\" w=\"24\" fill=\"#ff00ff\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"0\" "
-                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"24\" labelanchor=\"c\" "
                                 + "type=\"ELLIPSE\"/>");
                         nodeXRightMid = nodeXRightMid + 30;
                     } else if ("bottom".equals(node.getExtraInfo().get("vposition"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"ELLIPSE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXRightBot)
-                                + "\" y=\"380\" fill=\"#ff00ff\" "
+                                + "\" y=\"380\" w=\"24\" fill=\"#ff00ff\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"0\" "
-                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"18\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-8\" h=\"24\" labelanchor=\"c\" "
                                 + "type=\"ELLIPSE\"/>");
                         nodeXRightBot = nodeXRightBot + 50;
                     }
                 }
             } else { // TF node
-                sb.append("<node id=\"" + node.getSoureceId() + "\" label=\""
+                sb.append("<node id=\"" + node.getSourceId() + "\" label=\""
                         + node.getSourceLabel().split("-")[0].toUpperCase()
                         + node.getSourceLabel().split("-")[1] + "\">");
+
                 if ("top".equals(node.getExtraInfo().get("vposition"))) {
                     if ("yellow".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidTop)
-                                + "\" y=\"-125\" w=\"10\" outline=\"#666666\" fill=\"yellow\" "
+                                + "\" y=\"-125\" w=\"32\" outline=\"#666666\" fill=\"yellow\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     } else if ("blu".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidTop)
-                                + "\" y=\"-125\" w=\"10\" outline=\"#666666\" fill=\"#4169e1\" "
+                                + "\" y=\"-125\" w=\"32\" outline=\"#666666\" fill=\"#4169e1\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     } else if ("red".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidTop)
-                                + "\" y=\"-125\" w=\"10\" outline=\"#666666\" fill=\"red\" "
+                                + "\" y=\"-125\" w=\"32\" outline=\"#666666\" fill=\"red\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     }
                     nodeXMidTop = nodeXMidTop + 50;
@@ -471,25 +473,25 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidMid)
-                                + "\" y=\"75\" w=\"10\" outline=\"#666666\" fill=\"yellow\" "
+                                + "\" y=\"75\" w=\"32\" outline=\"#666666\" fill=\"yellow\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     } else if ("blu".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidMid)
-                                + "\" y=\"75\" w=\"10\" outline=\"#666666\" fill=\"#4169e1\" "
+                                + "\" y=\"75\" w=\"32\" outline=\"#666666\" fill=\"#4169e1\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     } else if ("red".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidMid)
-                                + "\" y=\"75\" w=\"10\" outline=\"#666666\" fill=\"red\" "
+                                + "\" y=\"75\" w=\"32\" outline=\"#666666\" fill=\"red\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     }
                     nodeXMidMid = nodeXMidMid + 65;
@@ -498,25 +500,25 @@ public final class RegulatoryNetworkDataFormatUtil
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidBot)
-                                + "\" y=\"275\" w=\"10\" outline=\"#666666\" fill=\"yellow\" "
+                                + "\" y=\"275\" w=\"32\" outline=\"#666666\" fill=\"yellow\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     } else if ("blu".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidBot)
-                                + "\" y=\"275\" w=\"10\" outline=\"#666666\" fill=\"#4169e1\" "
+                                + "\" y=\"275\" w=\"32\" outline=\"#666666\" fill=\"#4169e1\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     } else if ("red".equals(node.getExtraInfo().get("TF_type"))) {
                         sb.append("<att type=\"string\" name=\"shape\" value=\"TRIANGLE\"/>")
                             .append("<graphics x=\""
                                 + Integer.toString(nodeXMidBot)
-                                + "\" y=\"275\" w=\"10\" outline=\"#666666\" fill=\"red\" "
+                                + "\" y=\"275\" w=\"32\" outline=\"#666666\" fill=\"red\" "
                                 + "cy:nodeTransparency=\"0.8\" width=\"1\" "
-                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"40\" labelanchor=\"c\" "
+                                + "cy:nodeLabelFont=\"Arial-0-11\" h=\"32\" labelanchor=\"c\" "
                                 + "type=\"TRIANGLE\"/>");
                     }
                     nodeXMidBot = nodeXMidBot + 90;

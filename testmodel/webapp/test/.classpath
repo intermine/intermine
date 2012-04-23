@@ -22,7 +22,7 @@
 	<classpathentry kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="/testmodel-webapp-main/resources/webapp"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
-	<classpathentry kind="lib" path="lib/httpunit.jar"/>
+	<classpathentry kind="lib" path="lib/httpunit.jar" sourcepath="/home/ajk59/.m2/repository/httpunit/httpunit/1.6.2/httpunit-1.6.2-sources.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="output" path="bin"/>

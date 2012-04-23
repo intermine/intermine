@@ -62,8 +62,8 @@ use MooseX::Types -declare => [
     qw(
         Constraint ConstraintList ConstraintFactory
         ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator
-        TernaryOperator MultiOperator LoopOperator ListOperator
-        LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator LCMultiOperator 
+        TernaryOperator MultiOperator LoopOperator ListOperator NotInWithUnderScores
+        LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator NotQuiteMulti 
         XmlLoopOperators NoSpaceLoopOperator
 
         LogicOperator LogicGroup LogicOrStr
@@ -86,7 +86,7 @@ use MooseX::Types -declare => [
 
         SavedQuery SavedQueryFactory
 
-        ListFactory List ListName
+        ListFactory List ListName CanTreatAsList
         ListOfLists ListOfListableQueries
 
         ListOperable ListOfListOperables 
@@ -161,6 +161,8 @@ coerce LoopOperator, from NoSpaceLoopOperator, via {'IS NOT'};
 
 enum ListOperator,   [ 'IN', 'NOT IN',];
 enum LCListOperator, [ 'in', 'not in', ];
+enum NotInWithUnderScores, [ 'not_in', 'NOT_IN' ];
+coerce ListOperator, from NotInWithUnderScores, via {'NOT IN'};
 coerce ListOperator, from LCListOperator, via {uc($_)};
 
 subtype TernaryOperator, as Str, where {$_ eq 'LOOKUP'};
@@ -168,8 +170,8 @@ subtype LCTernaryOperator, as Str, where {$_ eq 'lookup'};
 coerce TernaryOperator, from LCTernaryOperator, via {uc($_)};
 
 enum MultiOperator, [ 'ONE OF', 'NONE OF', ];
-enum LCMultiOperator, [ 'one of', 'none of', ];
-coerce MultiOperator, from LCMultiOperator, via {uc($_)};
+subtype NotQuiteMulti, as Str, where {/^n?one[ _-]of$/i};
+coerce MultiOperator, from NotQuiteMulti, via {s/[_-]/ /g;uc($_)};
 
 class_type Constraint, { class => 'Webservice::InterMine::Constraint' };
 subtype ConstraintList, as ArrayRef [Constraint];
@@ -237,7 +239,9 @@ coerce Service, from Str, via {
 };
 
 subtype ServiceVersion, as Int, where {$_ > 0}, 
-    message {'I could not get the version number for this service - please check the url and make sure the service is available'};
+    message {'I could not get the version number for this service - please check the url and make sure the service is available. I expected a number, but got ' . $_};
+
+coerce ServiceVersion, from Str, via {s/\s*//g;$_};
 
 subtype ServiceRootUri, as Uri, where {$_->path =~ m|/service$| && $_->scheme},
     message { "Uri does not look like a service url: got $_" };
@@ -303,6 +307,7 @@ coerce TemplateFactory, from ArrayRef, via {
 class_type ListFactory, { class => 'Webservice::InterMine::ListFactory', };
 class_type List, {class => 'Webservice::InterMine::List'};
 subtype ListName, as Str;
+duck_type CanTreatAsList, ['to_list_name'];
 subtype ListOfLists, as ArrayRef[List];
 
 subtype ListOperable, as List|ListableQuery;
@@ -314,17 +319,14 @@ coerce ListFactory, from HashRef, via {
 };
 
 coerce ListName, from ListableQuery, via {
-    require Webservice::InterMine::Path;
     my $service = $_->service;
-    if ($_->view_size != 1) {
-        confess "Cannot convert this query to a list";
+    my $list = eval {$service->new_list(content => $_)};
+    if (my $e = $@) {
+        confess "Cannot coerce this query into a list, because:\n" . $e;
     }
-    my $path = $_->view->[0];
-    my $type = Webservice::InterMine::Path::last_class_type($_->model, $path);
-
-    my $list = $service->new_list(type => $type, content => $_);
     return $list->name;
 };
+coerce ListName, from CanTreatAsList, via {$_->to_list_name};
 coerce ListName, from List, via {$_->name};
 
 # SAVED QUERIES
@@ -344,9 +346,9 @@ coerce SavedQueryFactory, from Str, via {
 # RESULT ITERATION
 
 role_type RowParser, {role => "Webservice::InterMine::Parser"};
-enum RowFormat, ['arrayrefs', 'hashrefs', 'xml', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'jsondatatable', 'count'];
+enum RowFormat, ['arrayrefs', 'hashrefs', 'xml', 'tab', 'tsv', 'csv', 'jsonobjects', 'jsonrows', 'jsondatatable', 'count', 'json'];
 enum JsonFormat, ['perl', 'inflate', 'instantiate'];
-enum RequestFormat, ['tab', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml', 'jsondatatable'];
+enum RequestFormat, ['tab', 'csv', 'count', 'jsonobjects', 'jsonrows', 'xml', 'jsondatatable', 'json'];
 subtype TSVFormat, as Str, where {/^tsv$/i};
 
 class_type ResultIterator, {class => 'Webservice::InterMine::ResultIterator'};

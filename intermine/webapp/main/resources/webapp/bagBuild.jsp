@@ -10,10 +10,17 @@
 <!-- bagBuild.jsp -->
 <html:xhtml/>
 
-<c:set var="bagExampleIdentifiers" value="${WEB_PROPERTIES['bag.example.identifiers']}"/>
-
 <script language="javascript">
 <!--//<![CDATA[
+
+  <%-- Java to JavaScript map --%>
+  <c:if test="${!empty bagExampleIdentifiers && !empty bagExampleIdentifiers['default']}">
+    var bagExampleIdentifiers = {};
+    <c:forEach items="${bagExampleIdentifiers}" var="exampleType">
+      bagExampleIdentifiers['${exampleType.key}'.replace(/\s/gi,"").toLowerCase()] = '${exampleType.value}';
+    </c:forEach>
+  </c:if>
+
    function switchInputs(open, close) {
       jQuery('#' + open + 'Input').attr("disabled","");
       jQuery('#' + close + 'Input').attr("disabled","disabled");
@@ -31,10 +38,17 @@
        jQuery('#pasteInput').attr("disabled","");
     }
 
-    function loadExample(example) {
+    function loadExample() {
       switchInputs('paste','file');
       jQuery('#pasteInput').focus();
-      jQuery('#pasteInput').val(example);
+
+      <%-- based on the selected type, load an example list identifiers --%>
+      var example = bagExampleIdentifiers[jQuery("select#typeSelector option:selected").val().toLowerCase()];
+      if (!example) {
+        example = bagExampleIdentifiers['default'];
+      }
+       jQuery('#pasteInput').val(example);
+
       return false;
     }
 
@@ -122,8 +136,8 @@
                </td>
                <td>
                  <c:set var="bagExampleComment" value="${WEB_PROPERTIES['bag.example.comment']}"/>
-                 <c:if test="${!empty bagExampleIdentifiers}">
-                       <html:link href="" onclick="javascript:loadExample('${bagExampleIdentifiers}');return false;">
+                 <c:if test="${!empty bagExampleIdentifiers && !empty bagExampleIdentifiers['default']}">
+                       <html:link href="" onclick="javascript:loadExample();return false;">
                          (click to see an example)<img src="images/disclosed.gif" title="Click to Show example"/>
                        </html:link>
                  </c:if>
@@ -142,6 +156,10 @@
                    onchange="switchInputs('file','paste');"
                    onkeydown="switchInputs('file','paste');" size="28" />
                </td>
+           </tr>
+           <tr>
+               <td></td>
+               <td class="label"><html:checkbox property="caseSensitive"/>&nbsp;<label><fmt:message key="bagBuild.caseSensitive"/></label></td>
            </tr>
        </table>
 

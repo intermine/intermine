@@ -1,6 +1,6 @@
 th {
   padding: 8px 12px 4px 12px;
-  font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; color: #4f6b72; border: 1px solid #C1DAD7; letter-spacing: 1px; text-transform: uppercase; text-align: left; background: #CAE8EA url(../images/bg_header.jpg) no-repeat; vertical-align:middle;}
+  font: bold 10px/22px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; color: #4f6b72; border: 1px solid #C1DAD7; letter-spacing: 1px; text-transform: uppercase; text-align: left; background: #CAE8EA; vertical-align:middle;}
 
 th.sortable,
 th.sortable-text,
@@ -14,8 +14,8 @@ th.sortable-sortIPAddress,
 th.sortable-sortEnglishLonghandDateFormat,
 th.sortable-sortScientificNotation,
 th.sortable-sortImage,
-th.sortable-sortFileSize { 
-  padding: 8px 12px 4px 16px;        
+th.sortable-sortFileSize {
+  padding: 8px 12px 4px 16px;
   cursor:pointer; background: #CAE8EA url(../images/bg_header_sortable.jpg) no-repeat;}
 
 th.forwardSort {
@@ -43,7 +43,7 @@ th.sort-active a
 */
 
 td.lft {
-  text-align:left; background: #F5FAFA url(../images/td_alt.jpg) no-repeat; border-width: 1px 1px 1px 1px;}
+  text-align:left; background: #F5FAFA; border-width: 1px 1px 1px 1px;}
 
 tr.alt {
         background: #F5FAFA; color: #797268; border-width: 1px 1px 1px 1px; }
@@ -51,16 +51,16 @@ tr.alt {
 /* Poor old Internet Explorer has a bug that means we can't use background images for the table rows
    as it trys to download the image each and every time that it is used... */
 tr[class="alt"] td {
-        background: #F5FAFA url(../images/td_alt.jpg) no-repeat;border-width: 1px 1px 1px 1px;}
+        background: #F5FAFA;border-width: 1px 1px 1px 1px;}
 
 td[class~="alt"]{
-        background: #fff url(../images/col_alt.jpg) no-repeat !important; border-width: 1px 1px 1px 1px;}
-        
+        background: #EDF3F3 !important; border-width: 1px 1px 1px 1px;}
+
 .sorting {
     padding: 6px 12px 6px 12px;
     font: normal 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7;color: #4f6b72;}
-        
-/* blue and green boxes surrounding class names in the query history table */ 
+
+/* blue and green boxes surrounding class names in the query history table */
 .historySummaryRoot {
   padding:0 2px 1px 2px;
   background-color: #e7F1E7;border: 1px solid #bbb;font-size: 10px;font-weight: bold;}
@@ -72,4 +72,4 @@ td[class~="alt"]{
 .upgrade {font-size:10px;}
 td.upgrade { border-right: 1px solid #C1DAD7;border-bottom: 1px solid #C1DAD7; }
 td.upgrade a {background-image:url('../images/icons/upgrade-list-g.png') !important; background-repeat:no-repeat;
-	background-position:50% 50% !important; height:45px; width:102px; display:block; }
+  background-position:50% 50% !important; height:45px; width:102px; display:block; }

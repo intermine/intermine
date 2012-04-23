@@ -35,10 +35,10 @@ public class ResultElementConverterTest extends TestCase
         els.add(el1);
         els.add(el2);
         els.add(el3);
-        List<Object> objs = new ResultElementConverter().convert(els);
+        List<Object> objs = new ResultElementConverter().convert(els, null, null);
         assertEquals(o1, objs.get(0));
         assertEquals(o2, objs.get(1));
         assertEquals(o3, objs.get(2));
     }
-    
+
 }

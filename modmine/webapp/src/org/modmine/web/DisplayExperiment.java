@@ -78,23 +78,7 @@ public class DisplayExperiment
         if (!StringUtils.isBlank(proj.getName())) {
             this.projectName = proj.getName();
         }
-        /*
-        else {
-            // This is a temporary fix for modMine 20 to cope with un-merged Projects
-            if ("Celniker".equals(piSurname)) {
-                this.projectName = "The Drosophila Transcriptome";
-            } else if ("Waterston".equals(piSurname)) {
-                this.projectName = "The C. elegans Transcriptome";
-            } else if ("Lai".equals(piSurname)) {
-                this.projectName = "Small and microRNAs";
-            } else if ("Oliver".equals(piSurname)) {
-                this.projectName = "Comparative Genomics";
-            } else if ("Piano".equals(piSurname)) {
-                this.projectName = "The 3' UTRome";
-            }
-        }
-         */
-        
+
         Set<String> expTypes = new HashSet<String>();
 
         for (Submission submission : exp.getSubmissions()) {

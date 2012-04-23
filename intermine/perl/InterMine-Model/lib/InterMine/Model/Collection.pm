@@ -48,12 +48,17 @@ override '_get_moose_options' => sub {
     my @ops = super;
     my $push_method = "add" . ucfirst($self->name);
     my $get_method = "get" . ucfirst($self->name);
+    my $size_method = $self->name . "_count";
+    my $empty_method = $self->name . "_is_empty";
+
     $push_method =~ s/s$//;
     $get_method =~ s/s$//;
     $get_method .= "ByIndex";
     my $handles = {};
     $handles->{$push_method} = "push";
     $handles->{$get_method} = "get";
+    $handles->{$size_method} = "count";
+    $handles->{$empty_method} = "is_empty";
 
     push @ops, (
         traits => ['Array'], 

@@ -38,13 +38,6 @@
 </div>
 
 <script type="text/javascript">
-google.load("visualization", "1", {packages: ["corechart"]});
-google.setOnLoadCallback(function() {
-  jQuery(function() {
-    drawFlyAtlasChart();
-  });
-});
-
 function drawFlyAtlasChart(event, sortBySignal, useLinearScale, showSignal) {
   var sortByName = !sortBySignal;
   var showEnrichment = !showSignal;
@@ -132,13 +125,11 @@ function drawFlyAtlasChart(event, sortBySignal, useLinearScale, showSignal) {
 
   google.visualization.events.addListener(viz, 'select', function() {
          var selection = viz.getSelection();
-         console.log(selection);
          for (var i = 0; i < selection.length; i++) {
            var item = selection[i];
            if (item.row != null && item.column != null) {
              // it is a cell
              var objectId = objectIds[item.row];
-             console.log(objectId);
              window.location.assign(baseUrl + objectId);
            }
          }
@@ -165,6 +156,8 @@ jQuery("input[name='dataPoint']").change(function() {
   var orderBySignal = ('signal' == jQuery("input[name='orderExpr']:checked").val());
   drawFlyAtlasChart(null, orderBySignal, useLinearScale, showSignal);
 });
+
+google.load("visualization", "1", {"packages": ["corechart"], "callback": drawFlyAtlasChart});
 
 </script>
 

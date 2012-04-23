@@ -1,8 +1,8 @@
 <webconfig>
-<!-- ============================================================ 
+<!-- ============================================================
        alphabetical order to facilitate comparison with flymine
        fields: summary in the qb
-     ============================================================ -->      
+     ============================================================ -->
   <class className="org.intermine.model.bio.Allele">
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier"/>
@@ -261,7 +261,9 @@
 
     <class className="org.intermine.model.bio.GOTerm">
     <headerconfig>
-      <titles mainTitles="identifier|name" subTitles="ontology.name" />
+      <titles>
+      <title mainTitles="identifier|name" subTitles="ontology.name" />
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -301,7 +303,7 @@
   </class>
 
   <class className="org.intermine.model.bio.Lab">
-  <!-- modMine --> 
+  <!-- modMine -->
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="affiliation"/>
@@ -351,7 +353,9 @@
 
   <class className="org.intermine.model.bio.OntologyTerm">
     <headerconfig>
-      <titles mainTitles="identifier|name" subTitles="ontology.name" />
+    <titles>
+      <title mainTitles="identifier|name" subTitles="ontology.name" />
+  </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="identifier"/>
@@ -369,7 +373,9 @@
 
   <class className="org.intermine.model.bio.Organism">
     <headerconfig>
-      <titles mainTitles="name"/>
+      <titles>
+      <title mainTitles="name"/>
+      </titles>
     </headerconfig>
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -410,7 +416,7 @@
       <fieldconfig fieldExpr="allele.primaryIdentifier"/>
     </fields>
   </class>
-<!-- ************ 
+<!-- ************
   <class className="org.intermine.model.bio.Primer">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -566,16 +572,16 @@
       </titles>
     </headerconfig>
     <fields>
-      <fieldconfig fieldExpr="title"/>
-      <fieldconfig fieldExpr="design"/>
-      <fieldconfig fieldExpr="DCCid" label="DCC id"/>
+      <fieldconfig fieldExpr="title" />
+      <fieldconfig fieldExpr="design" />
+      <fieldconfig fieldExpr="DCCid" label="DCC id" />
       <fieldconfig fieldExpr="experimentDate" displayer="model/dateDisplayer.jsp" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="publicReleaseDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
       <fieldconfig fieldExpr="embargoDate" displayer="model/dateDisplayer.jsp" showInResults="false"  showInInlineCollection="false" />
     </fields>
     <bagdisplayers>
-      <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
       <displayer src="subListDetailsDisplayer.tile" showOnLeft="true" />
+      <displayer src="subListGBrowseTrackDisplayer.tile" showOnLeft="true"/>
     </bagdisplayers>
   </class>
 
@@ -626,7 +632,7 @@
   </class>
 
   <class className="org.intermine.model.bio.Tissue">
-  <!-- modMine -->   
+  <!-- modMine -->
     <fields>
       <fieldconfig fieldExpr="name"/>
       <fieldconfig fieldExpr="species"/>
@@ -696,7 +702,7 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
                      replacesFields="goAnnotation,ontologyAnnotations"
-                     placement="Function"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
@@ -768,13 +774,13 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.RegulatoryRegionsDisplayer"
                      jspName="model/regulatoryRegionsDisplayer.jsp"
                      replacesFields="regulatoryRegions"
-                     placement="Regulation"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.flymine.web.displayer.RNAiDisplayer"
                      jspName="model/rnaiDisplayer.jsp"
                      replacesFields="rnaiResults"
-                     placement="Regulation"
+                     placement="Genomics"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.SequenceFeatureDisplayer"
@@ -792,19 +798,19 @@
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionPropertiesDisplayer"
                      jspName="model/submissionPropertiesDisplayer.jsp"
                      replacesFields="properties,experimentalFactors,developmentalStages,arrays,antibodies,strains,publication,relatedSubmissions,resultFiles,submissionData,bioEntities,dataSource,expressionLevels,features,readCounts,tissues,cellLines"
-                     placement="modENCODE"
+                     placement="Conditions"
                      types="Submission"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionGeneratedFeaturesDisplayer"
                      jspName="model/submissionGeneratedFeaturesDisplayer.jsp"
                      replacesFields=""
-                     placement="modENCODE"
+                     placement="Results"
                      types="Submission"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionExternalLinksDisplayer"
                      jspName="model/submissionExternalLinksDisplayer.jsp"
                      replacesFields="databaseRecords"
-                     placement="modENCODE"
+                     placement="Results"
                      types="Submission"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionFileDownloadDisplayer"
@@ -816,7 +822,7 @@
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionProtocolsDisplayer"
                      jspName="model/submissionProtocolsDisplayer.jsp"
                      replacesFields="protocols,appliedProtocols"
-                     placement="modENCODE"
+                     placement="Methods"
                      types="Submission"/>
 
 <!-- <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
@@ -828,10 +834,14 @@
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.UniProtCommentsDisplayer"
                      jspName="model/uniProtCommentsDisplayer.jsp"
                      replacesFields="comments"
-                     placement="Function"
+                     placement="summary"
                      types="Protein"/>
 
-
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.ProteinSequenceDisplayer"
+                     jspName="model/proteinSequenceDisplayer.jsp"
+                     replacesFields="sequence"
+                     placement="summary"
+                     types="Protein"/>
 
   </reportdisplayers>
 
@@ -890,7 +900,7 @@
                                  filters="biological_process,cellular_component,molecular_function"
                                  filterLabel="Ontology"
                                  typeClass="org.intermine.model.bio.Gene,org.intermine.model.bio.Protein"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=" />
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=" />
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment" title="Protein Domain Enrichment"
                                  link="org.intermine.bio.web.widget.ProteinDomainURLQuery"
@@ -908,6 +918,7 @@
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
                                  typeClass="org.intermine.model.bio.Gene"
                                  externalLinkLabel="PubMed:" />
+<!--
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          link="org.intermine.bio.web.widget.HomologueURLQuery"
@@ -927,8 +938,6 @@
                          columnTitle="Interactions"
                          style="height:431px;"/>
 
-
-<!--
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
                       content="Have an idea for a widget?  Contact us at help [at] modencode.org!"

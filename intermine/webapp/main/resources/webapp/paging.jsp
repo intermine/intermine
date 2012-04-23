@@ -7,11 +7,18 @@
 
 <!-- paging.jsp -->
 
-<tiles:importAttribute name="resultsTable" ignore="false" />
-<tiles:importAttribute name="currentPage" ignore="false" />
+<tiles:importAttribute name="resultsTable" ignore="true" />
+<tiles:importAttribute name="currentPage" ignore="true" />
 <tiles:importAttribute name="bag" ignore="true" />
+<tiles:importAttribute name="invalid" ignore="true" />
 
 <html:xhtml/>
+
+<c:choose>
+    <c:when test="${invalid}">
+      <span>Showing ${bag.size} values</span>
+    </c:when>
+    <c:otherwise>
 
   <%-- Paging controls --%>
     <tiles:insert page="/tablePageLinks.jsp">
@@ -41,6 +48,7 @@
         <script language="JavaScript">
           <!--
               document.resultsCountText = "<img src='images/spinner.gif'/> ${estimateMessage} ${resultsTable.estimatedSize}";
+              if (jQuery("span#top-estimated-size").exists()) jQuery("span#top-estimated-size").html(document.resultsCountText.replace(/[A-Za-z:$-]/g, ""));
             -->
         </script>
       </c:when>
@@ -65,9 +73,12 @@
         <script language="JavaScript">
           <!--
               document.resultsCountText = "${exactMessage} ${resultsTable.estimatedSize}";
+              if (jQuery("span#top-estimated-size").exists()) jQuery("span#top-estimated-size").html(document.resultsCountText.replace(/[A-Za-z:$-]/g, ""));
             -->
         </script>
       </c:otherwise>
     </c:choose>
+    </c:otherwise>
+</c:choose>
 
 <!-- /paging.jsp -->

@@ -191,8 +191,11 @@ subtest "Test field type constraints" => sub {
 
     subtest "Test collection types" => sub {
         note "\ntesting collections";
-        plan tests => 7;
+        plan tests => 10;
         my $dep = $model->make_new("Department");
+
+        ok $dep->employees_is_empty, "is_empty works correctly";
+
         my $emp1 = $model->make_new("Employee");
         my $emp2 = $model->make_new("Employee");
         my $emp3 = $model->make_new("Employee");
@@ -223,6 +226,9 @@ subtest "Test field type constraints" => sub {
             [$dep->getEmployees], 
             [$emp1, $emp2, $manager, $emp3, $manager2, $emp4, $emp5],
             "The list elements are all set ok";
+
+       is $dep->employees_count, 7, "Can get the count";
+       ok !$dep->employees_is_empty, "is_empty works correctly";
     };
 };
 

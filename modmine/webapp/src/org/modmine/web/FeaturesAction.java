@@ -99,7 +99,8 @@ public class FeaturesAction extends InterMineAction
 
         boolean doGzip = false;
         if (request.getParameter("gzip") != null
-                && request.getParameter("gzip").equalsIgnoreCase("true")) {
+//                && request.getParameter("gzip").equalsIgnoreCase("true")) {
+            && "true".equalsIgnoreCase(request.getParameter("gzip"))) {
             doGzip = true;
         }
 
@@ -116,7 +117,7 @@ public class FeaturesAction extends InterMineAction
             Set<String> organisms = exp.getOrganisms();
             taxIds = getTaxonIds(organisms);
 
-            if (featureType.equalsIgnoreCase("all")) {
+            if ("all".equalsIgnoreCase(featureType)) {
                 // fixed query for the moment
                 String project = request.getParameter("project");
                 String rootChoice = getRootFeature(project);
@@ -173,7 +174,9 @@ public class FeaturesAction extends InterMineAction
             }
         } else if ("submission".equals(type)) {
             dccId = request.getParameter("submission");
-            sourceFile = request.getParameter("file");
+            if (request.getParameter("file") != null) {
+                sourceFile = request.getParameter("file").replace(" ", "+");
+            }
 
             Submission sub = MetadataCache.getSubmissionByDccId(os, dccId);
             List<String>  unlocFeatures =
@@ -182,7 +185,7 @@ public class FeaturesAction extends InterMineAction
             Integer organism = sub.getOrganism().getTaxonId();
             taxIds.add(organism);
 
-            if (featureType.equalsIgnoreCase("all")) {
+            if ("all".equalsIgnoreCase(featureType)) {
                 String project = request.getParameter("project");
                 String rootChoice = getRootFeature(project);
                 List<String> gffFeatures = new LinkedList<String>(gffFields.get(project));
@@ -248,13 +251,14 @@ public class FeaturesAction extends InterMineAction
             q.addConstraint(Constraints.type("Submission.features", featureType));
 
             String path = "Submission.features.expressionLevels";
-            q.addView(path + ".name");
+            q.addView("Submission.features.primaryIdentifier");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
             q.addView(path + ".dcpm");
             q.addView(path + ".dcpmBases");
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
+            q.addView(path + ".name");
 
             q.addConstraint(Constraints.eq("Submission.DCCid", dccId));
         } else if ("expEL".equals(type)) {
@@ -263,13 +267,14 @@ public class FeaturesAction extends InterMineAction
             q.addConstraint(Constraints.type("Experiment.submissions.features", featureType));
 
             String path = "Experiment.submissions.features.expressionLevels";
-            q.addView(path + ".name");
+            q.addView("Experiment.submissions.features.primaryIdentifier");
             q.addView(path + ".value");
             q.addView(path + ".readCount");
             q.addView(path + ".dcpm");
             q.addView(path + ".dcpmBases");
             q.addView(path + ".transcribed");
             q.addView(path + ".predictionStatus");
+            q.addView(path + ".name");
 
             q.addConstraint(Constraints.eq("Experiment.name", eName));
         } else if ("span".equals(type)) {
@@ -354,7 +359,7 @@ public class FeaturesAction extends InterMineAction
                 exportForm.setDoGzip(doGzip);
             }
 
-            exporter.export(pt, request, response, exportForm);
+            exporter.export(pt, request, response, exportForm, null, null);
 
             // If null is returned then no forwarding is performed and
             // to the output is not flushed any jsp output, so user
@@ -367,8 +372,8 @@ public class FeaturesAction extends InterMineAction
             q.addView(featureType + ".id");
             dccId = request.getParameter("submission");
             q.addConstraint(Constraints.eq(featureType + ".submissions.DCCid", dccId));
-            sourceFile = request.getParameter("file");
-            if (sourceFile != null) {
+            if (request.getParameter("file") != null) {
+                sourceFile = request.getParameter("file").replace(" ", "+");
                 q.addConstraint(Constraints.eq(featureType + ".sourceFile", sourceFile));
             }
 
@@ -394,7 +399,7 @@ public class FeaturesAction extends InterMineAction
      */
     private String getRootFeature(String project) {
         String rootChoice = null;
-        if (project.equalsIgnoreCase("Waterston")) {
+        if ("Waterston".equalsIgnoreCase(project)) {
             rootChoice = "Transcript";
         } else {
             rootChoice = "Gene";
@@ -495,10 +500,10 @@ public class FeaturesAction extends InterMineAction
     private Set<Integer> getTaxonIds(Set<String> organisms) {
         Set<Integer> taxIds = new HashSet<Integer>();
         for (String name : organisms) {
-            if (name.equalsIgnoreCase("D. melanogaster")) {
+            if ("D. melanogaster".equalsIgnoreCase(name)) {
                 taxIds.add(7227);
             }
-            if (name.equalsIgnoreCase("C. elegans")) {
+            if ("C. elegans".equalsIgnoreCase(name)) {
                 taxIds.add(6239);
             }
         }

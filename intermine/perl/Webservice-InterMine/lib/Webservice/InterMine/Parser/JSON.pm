@@ -84,7 +84,8 @@ has footer => (
 sub parse_header {
     my $self = shift;
     my $line = shift;
-    warn $line if $ENV{DEBUG};
+    warn "HEADER-LINE: " . ((defined $line) ? $line : "NULL") if $ENV{DEBUG};
+    return unless (defined $line);
     $self->add_to_header($line);
 }
 
@@ -134,10 +135,7 @@ sub parse_line {
         $line =~ s/,\s*$//;
         my $json = eval {$self->decode($line);};
         unless ($json) {
-            require Data::Dumper;
-            confess Data::Dumper->Dump({
-                "error" => $@, "problem line" => $line
-            });
+            confess "error: " => $@, "problem line: " => $line;
         }
         return $self->process($json) || $line;
     } else {

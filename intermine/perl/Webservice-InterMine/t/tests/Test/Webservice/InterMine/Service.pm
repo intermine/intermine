@@ -9,9 +9,10 @@ use Test::More;
 use Test::Exception;
 use Test::MockObject;
 use InterMine::Model::TestModel;
+use URI;
 
 sub class         { 'Webservice::InterMine::Service' }
-sub fake_queryurl { 'fake.url/path' }
+sub fake_queryurl { URI->new('fake.url/path') }
 sub fake_viewlist { [qw/one two three/] }
 sub user_agent    { 'WebserviceInterMinePerlAPIClient' }
 
@@ -64,12 +65,9 @@ sub setup : Test(setup) {
             return $fakeRes;
         },
     );
-    $fakeRes->mock( status_line => sub { "Hello, I'm a status line" } )->mock(
-        content => sub {
-            my $self = shift;
-            return $self->{_content};
-        },
-    );
+    $fakeRes->mock( status_line => sub { "Hello, I'm a status line" } )
+            ->mock( content => sub { $_[0]->{_content} } )
+            ->mock( base => sub { $_[0]->{_base} } );
     $fakeRes->set_false('is_error')->mock( code => sub { 'FAKE_CODE' } )
       ->mock( message => sub { 'FAKE_MESSAGE' } );
     $test->{Res} = $fakeRes;
@@ -89,6 +87,7 @@ sub setup : Test(setup) {
             my ( $self, $uri ) = @_;
             $self->{get_count}++;
             my $url = "$uri";
+            $fakeRes->{_base} = URI->new($uri);
             if ( $url =~ m!/model! ) {
                 $fakeRes->{_content} = $model;
             }
@@ -157,11 +156,12 @@ sub basic_service : Test(3) {
 
 }
 
-sub auth_service : Test(1) {
+sub auth_service : Test(2) {
     my $test = shift;
     my @args = ( root => $test->fake_queryurl, user => 'Foo', pass => 'Bar' );
     $SIG{__WARN__} = sub {};
-    my $service = eval {$test->class->new(@args)};
+    my $service;
+    lives_ok {$service = $test->class->new(@args)};
     isnt($service->get_authstring, undef, "With a user, there is authentication");
 }
     

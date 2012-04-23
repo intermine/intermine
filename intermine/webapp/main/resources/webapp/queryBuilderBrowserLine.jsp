@@ -23,32 +23,38 @@
         </c:forEach>
       </c:if>
       <a name="${node.pathString}">&nbsp;</a>
-      <c:set var="isNull" value="${EMPTY_FIELD_MAP[node.parentType][node.fieldName]}"/>
+      <!-- empty collection/reference or attribute -->
+      <c:set var="isNull" value="${node.isNull}"/>
       <c:if test="${isNull}">
-        <span class="nullStrike">
+      	<c:choose>
+      		<c:when test="${node.button}"><span class="nullStrike"></c:when>
+      		<c:otherwise><span class="nullAttribute"></c:otherwise>
+      	</c:choose>
       </c:if>
       <%-- construct the real path for this node --%>
       <c:set var="fullpath" value="${node.pathString}"/>
       <c:choose>
-        <c:when test="${node.reverseReference && node.reference}">
-        </c:when>
-        <c:when test="${isNull}">
-          <img class="toggle" border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
-        </c:when>
-        <c:when test="${node.button == '+'}">
-          <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.pathString}"
-            title="${node.pathString}"
-            onclick="return toggleNode('${node.pathString}', '${node.pathString}')">
-            <img class="toggle" id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
-          </html:link>
-        </c:when>
-        <c:when test="${node.button == '-'}">
-          <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.prefix}"
-            title="${node.pathString}"
-            onclick="return toggleNode('${node.pathString}', '${node.pathString}');">
-            <img class="toggle" id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
-          </html:link>
-        </c:when>
+      	<c:when test="${node.button == '+' || node.button == '-'}">
+      		<c:choose>
+		        <c:when test="${isNull}">
+		          	<img class="toggle" border="0" src="images/plus-disabled.gif" width="11" height="11" title="+"/>
+		        </c:when>
+		        <c:when test="${node.button == '+'}">
+		          <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.pathString}"
+		            title="${node.pathString}"
+		            onclick="return toggleNode('${node.pathString}', '${node.pathString}')">
+		            <img class="toggle" id="img_${node.pathString}" border="0" src="images/plus.gif" width="11" height="11" title="+"/>
+		          </html:link>
+		        </c:when>
+		        <c:when test="${node.button == '-'}">
+		          <html:link action="/queryBuilderChange?method=changePath&amp;path=${node.prefix}"
+		            title="${node.pathString}"
+		            onclick="return toggleNode('${node.pathString}', '${node.pathString}');">
+		            <img class="toggle" id="img_${node.pathString}" border="0" src="images/minus.gif" width="11" height="11" title="-"/>
+		          </html:link>
+		        </c:when>
+	        </c:choose>
+	    </c:when>
         <c:otherwise>
           <img src="images/blank.gif" width="11" height="11" title=" "/>
         </c:otherwise>
@@ -158,10 +164,12 @@
                  height="13" title="constrain"/>
           </c:when>
           <c:otherwise>
-            <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
-                onclick="return addConstraint('${node.pathString}', '${imf:formatPathStr(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
-              <img class="arrow" src="images/constrain.gif" width="70" height="13"/>
-            </html:link>
+            <c:if test="${node.type != 'ClobAccess'}">
+	            <html:link action="/queryBuilderChange?method=newConstraint&path=${node.pathString}#${node.pathString}" title="${addConstraintToTitle}"
+	                onclick="return addConstraint('${node.pathString}', '${imf:formatPathStr(node.pathString, INTERMINE_API, WEBCONFIG)}');" >
+	              <img class="arrow" src="images/constrain.gif" width="70" height="13"/>
+	            </html:link>
+            </c:if>
           </c:otherwise>
         </c:choose>
         <c:if test="${isNull}">

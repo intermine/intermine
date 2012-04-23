@@ -45,18 +45,24 @@ function editName(name){
 }
 
 function renameElement(name, type, index){
-    document.getElementById('form_'+name).style.display="none";
-    document.getElementById('name_'+name).innerHTML="<i>saving...</i>";
-    document.getElementById('name_'+name).style.display="block";
-    AjaxServices.rename(name,type, (document.getElementById('newName_'+name).value).replace(/^\s*|\s*$/g,""), function(str){
-        document.getElementById('name_'+name).innerHTML=str;
-        // coming from mymine
+    var uid = name + type;
+    var selectionInput;
+    document.getElementById('form_' + uid).style.display="none";
+    document.getElementById('name_' + uid).innerHTML="<i>saving...</i>";
+    document.getElementById('name_' + uid).style.display="block";
+    AjaxServices.rename(name,type, (document.getElementById('newName_' + uid).value).replace(/^\s*|\s*$/g,""), function(str){
+        document.getElementById('name_' + uid).innerHTML=str;
         if (document.getElementById('selected_' + type + '_' + index) != null) {
-            document.getElementById('selected_' + type + '_' + index).value=str;
             // coming from bags/templates pages
+            document.getElementById('selected_' + type + '_' + index).value=str;
         } else {
-            document.getElementById('selected_user_' + type + '_' + index).value=str;
+            // coming from mymine
+            if (selectionInput = document.getElementById('selected_user_' + type + '_' + index)) {
+                selectionInput.value = str;
+            }
         }
+        // reload so that new "IDs" based on the name match
+        window.location.reload();
     });
 }
 
@@ -664,6 +670,7 @@ function getConvertCountForBag(bagName, type, idname) {
     });
 }
 
+// I don't think this is used anymore
 function getURL(bagName, type, idname) {
     AjaxServices.getConvertCountForBag(bagName, type, function(count) {
         dwr.util.setValue(type + '_convertcount_'+idname, count)
@@ -723,15 +730,25 @@ function validateBagOperations(formName, operation) {
             }
         }
     }
-    AjaxServices.validateBagOperations(
-      bagName, selectedBags, operation, function(errMsg) {
-          if (errMsg != '') {
-              Boxy.alert(errMsg, null, {title: 'Error', modal: false});
-          } else {
-              frm.listsButton.value = operation;
-              frm.submit();
-          }
+    AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
+        if (errMsg != '') {
+            var msgBagInUse = "You are trying to delete the list";
+            // if the list they are trying to delete is in use, prompt for response
+            // then delete list if the user clicks OK
+            if (operation == 'delete' && errMsg.substring(0,33) == msgBagInUse) {
+                Boxy.confirm(errMsg, function() {
+                    frm.listsButton.value = operation;
+                    frm.submit();
+                }, {title: 'Warning', modal: false});
+            } else {
+                Boxy.alert(errMsg, null, {title: 'Error', modal: false});
+            }
+        } else {
+            frm.listsButton.value = operation;
+            frm.submit();
+        }
     });
+
 }
 
 // table.jsp, bagUploadConfirm.jsp
@@ -788,7 +805,11 @@ function validateBagName(formName) {
 }*/
 
 function setConstraintLogic(expression) {
-  AjaxServices.setConstraintLogic(expression, function() {
+    AjaxServices.setConstraintLogic(expression, function(messages) {
+    if (messages != "") {
+      jQuery('#msg').append(messages);
+      jQuery('#msg').fadeIn(2000);
+    }
     reDrawConstraintLogic();
     jQuery('#constraintLogic').toggle();
     jQuery('#editConstraintLogic').toggle();
@@ -797,8 +818,9 @@ function setConstraintLogic(expression) {
 
 function reDrawConstraintLogic() {
   AjaxServices.getConstraintLogic(function(expression) {
-      expression = expression.replace('[','');
-      jQuery('#constraintLogic').text(expression.replace(']',''));
+      expression = expression.replace('[','').replace(']','').replace(',',' and');
+      jQuery('#constraintLogic').text(expression);
+      jQuery('span#editConstraintLogic input#expr').val(expression);
   });
 }
 
@@ -842,3 +864,6 @@ function getHTML(status, bagName) {
       return "<a href='bagUpgrade.do?bagName=" + bagName + "' class='bagToUpgrade'>Upgrade</html:link>";
 }
 
+function updateTemplate(field, value) {
+    AjaxServices.updateTemplate(field, value);
+}

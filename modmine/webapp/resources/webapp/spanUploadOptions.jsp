@@ -29,7 +29,6 @@
 <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
 <script type="text/javascript" class="source">
 
-<!--//<![CDATA[
    function switchInputs(open, close) {
       jQuery('#' + open + 'Input').attr("disabled","");
       jQuery('#' + close + 'Input').attr("disabled","disabled");
@@ -61,172 +60,174 @@
    function orgNameChanged(org) {
 
      // Change genome build
-     if (org == "D. melanogaster") {
-        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.fly']}</i>");
-     } else if (org == "C. elegans") {
-        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.worm']}</i>");
-     }
+     changeGenomeBuild(org);
 
      // Reset textarea and file input
      resetInputs();
 
-     // Show the tree of selected organism
-     loadOrgTree(org);
+     if ("${source}" == "facetedSearch") {
+       loadFacetedSearchInfo(org);
+     } else {
+         // Show the tree of selected organism
+         loadOrgTree(org);
 
-     // jsTree
-     jQuery("#tree")
-     .bind("loaded.jstree", function (event, data) {
-         data.inst.open_all(-1);
-       })
-     .bind("change_state.jstree", function(event, data) {
-         var checked_ids = getCheckedNodeIds();
+         // jsTree
+         jQuery("#tree")
+         .bind("loaded.jstree", function (event, data) {
+             data.inst.open_all(-1);
+           })
+         .bind("change_state.jstree", function(event, data) {
+             var checked_ids = getCheckedNodeIds();
 
-         var featureTypes = [];
-         for(i=0; i<checked_ids.length; i++) {
-           <c:forEach var="expFTMap" items="${expFTMap}">
-             if(checked_ids[i] == "${expFTMap.key}") {
-               <c:forEach var="featureTypeList" items="${expFTMap.value}">
-                 featureTypes.push("${featureTypeList}");
+             var featureTypes = [];
+             for(i=0; i<checked_ids.length; i++) {
+               <c:forEach var="expFTMap" items="${expFTMap}">
+                 if(checked_ids[i] == "${expFTMap.key}") {
+                   <c:forEach var="featureTypeList" items="${expFTMap.value}">
+                     featureTypes.push("${featureTypeList}");
+                   </c:forEach>
+                 }
                </c:forEach>
              }
-           </c:forEach>
-         }
 
-         var uniqueFeatureTypes = featureTypes.unique().sort();
+             var uniqueFeatureTypes = featureTypes.unique().sort();
 
-         var ftHTMLArray = [];
-         for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
-                    + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
-         }
+             var ftHTMLArray = [];
+             for(i=0; i<uniqueFeatureTypes.length; i++) {
+               ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
+                        + uniqueFeatureTypes[i] + "'/>" + uniqueFeatureTypes[i] + "<br/>");
+             }
 
-         jQuery("#featureType").html(ftHTMLArray.join(""));
-         if(ftHTMLArray.join("") != "") {
-             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
-           else {
-             jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
-     })
-     .jstree({
-         "themes" : {
-                     "theme" : "apple",
-                     "dots" : true,
-                     "icons" : false
-                     },
-         "plugins" : [ "themes", "html_data", "checkbox" ]
-     });
-
+             jQuery("#featureType").html(ftHTMLArray.join(""));
+             if(ftHTMLArray.join("") != "") {
+                 jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
+               else {
+                 jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
+         })
+         .jstree({
+             "themes" : {
+                         "theme" : "apple",
+                         "dots" : true,
+                         "icons" : false
+                         },
+             "plugins" : [ "themes", "html_data", "checkbox" ]
+         });
+     }
    }
 
    jQuery(document).ready(function(){
-     // store expriments with feature types in an array
-       expArray = [];
+     if ("${source}" == "facetedSearch") {
+          // Get the current organism name in the dropbox
+          var orgSelected = jQuery('#orgSelector').find('option').filter(':selected').text();
+          changeGenomeBuild(orgSelected);
+          loadFacetedSearchInfo(orgSelected);
+     } else {
+         // store expriments with feature types in an array
+         expArray = [];
 
-       <c:forEach var="expFTMap" items="${expFTMap}" varStatus="counter">
-         expArray.push("${expFTMap.key}");
-       </c:forEach>
+         <c:forEach var="expFTMap" items="${expFTMap}" varStatus="counter">
+           expArray.push("${expFTMap.key}");
+         </c:forEach>
 
-     // Store org-tree in a 2D array
-     // as array[orgName][HTML]
-     orgArray = new Array(${fn:length(orgSet)});
+       // Store org-tree in a 2D array
+       // as array[orgName][HTML]
+       orgArray = new Array(${fn:length(orgSet)});
 
-     // Build experiment tree and featureType checkbox
-     <c:forEach var="orgName" items="${orgList}" varStatus="counter">
-       var treeHTMLArray = [];
-       treeHTMLArray.push("<p id='selectExperiments' style='padding-bottom: 5px;'>Select Experiments:</p>");
-       treeHTMLArray.push("<div id='tree' style='width:740px;'>");
-       treeHTMLArray.push("<ul id='${orgName}'>");
+       // Build experiment tree and featureType checkbox
+       <c:forEach var="orgName" items="${orgList}" varStatus="counter">
+         var treeHTMLArray = [];
+         treeHTMLArray.push("<p id='selectExperiments' style='padding-bottom: 5px;'>Select Experiments:</p>");
+         treeHTMLArray.push("<div id='tree' style='width:740px;'>");
+         treeHTMLArray.push("<ul id='${orgName}'>");
 
-       <c:forEach var="orgMap" items="${orgMap}">
-         if ("${orgMap.key}" == "${orgName}") {
-          <c:forEach var="cagMap" items="${orgMap.value}">
-          if ("${cagMap.value}" == "{}") {
-              // if exp is null, fix this
-              treeHTMLArray.push("<li><i><b style='color:grey;' title='no data available'>");
-              treeHTMLArray.push("${cagMap.key}");
-              treeHTMLArray.push("</b></i><ul>");
-          }
-          else {
-              treeHTMLArray.push("<li><a><i><b>");
-              treeHTMLArray.push("${cagMap.key}");
-              treeHTMLArray.push("</b></i></a><ul>");
-          }
-          <c:forEach var="expMap" items="${cagMap.value}">
-            // Link out experiments by right click and open a new page
-            // Check if experiments have feature types
-            for (i=0; i<expArray.length; i++) {
-              if ("${expMap.key.name}" == expArray[i]) {
-                treeHTMLArray.push("<li id=\"${expMap.key.name}\"><a href=\"${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${expMap.key.name}\">");
-                treeHTMLArray.push("${expMap.key.name}");
-                treeHTMLArray.push("</a></li>");
-              }
+         <c:forEach var="orgMap" items="${orgMap}">
+           if ("${orgMap.key}" == "${orgName}") {
+            <c:forEach var="cagMap" items="${orgMap.value}">
+            if ("${cagMap.value}" == "{}") {
+                // if exp is null, fix this
+                treeHTMLArray.push("<li><i><b style='color:grey;' title='no data available'>");
+                treeHTMLArray.push("${cagMap.key}");
+                treeHTMLArray.push("</b></i><ul>");
             }
-          </c:forEach>
-          treeHTMLArray.push("</ul></li>");
-          </c:forEach>
-         }
+            else {
+                treeHTMLArray.push("<li><a><i><b>");
+                treeHTMLArray.push("${cagMap.key}");
+                treeHTMLArray.push("</b></i></a><ul>");
+            }
+            <c:forEach var="expMap" items="${cagMap.value}">
+              // Link out experiments by right click and open a new page
+              // Check if experiments have feature types
+              for (i=0; i<expArray.length; i++) {
+                if ("${expMap.key.name}" == expArray[i]) {
+                  treeHTMLArray.push("<li id=\"${expMap.key.name}\"><a href=\"${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${expMap.key.name}\">");
+                  treeHTMLArray.push("${expMap.key.name}");
+                  treeHTMLArray.push("</a></li>");
+                }
+              }
+            </c:forEach>
+            treeHTMLArray.push("</ul></li>");
+            </c:forEach>
+           }
+         </c:forEach>
+         treeHTMLArray.push("</ul>");
+         treeHTMLArray.push("</div>");
+
+         // Add to array
+         orgArray[${counter.count-1}] = new Array(2);
+         orgArray[${counter.count-1}][0] = "${orgName}";
+         orgArray[${counter.count-1}][1] = treeHTMLArray.join("");
        </c:forEach>
-       treeHTMLArray.push("</ul>");
-       treeHTMLArray.push("</div>");
 
-       // Add to array
-       orgArray[${counter.count-1}] = new Array(2);
-       orgArray[${counter.count-1}][0] = "${orgName}";
-       orgArray[${counter.count-1}][1] = treeHTMLArray.join("");
-     </c:forEach>
+       // Get the current organism name in the dropbox
+       var orgSelected = jQuery('#orgSelector').find('option').filter(':selected').text();
 
-     // Get the current organism name in the dropbox
-     var orgSelected = jQuery('#orgSelector').find('option').filter(':selected').text();
+       // Add genome build
+       changeGenomeBuild(orgSelected);
 
-     // Add genome build
-     if (orgSelected == "D. melanogaster") {
-        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.fly']}</i>");
-     } else if (orgSelected == "C. elegans") {
-        jQuery("#genomeVersion").html("<i>genome version:${WEB_PROPERTIES['genomeVersion.worm']}</i>");
+       // Show the tree of selected organism
+       loadOrgTree(orgSelected);
+
+       jQuery("#tree")
+       .bind("loaded.jstree", function (event, data) {
+          data.inst.open_all(-1);
+        })
+       .bind("change_state.jstree", function(event, data) {
+           var checked_ids = getCheckedNodeIds();
+
+           var featureTypes = [];
+           for(i=0; i<checked_ids.length; i++) {
+             <c:forEach var="expFTMap" items="${expFTMap}">
+               if(checked_ids[i] == "${expFTMap.key}") {
+                 <c:forEach var="featureTypeList" items="${expFTMap.value}">
+                   featureTypes.push("${featureTypeList}");
+                 </c:forEach>
+               }
+             </c:forEach>
+           }
+
+           var uniqueFeatureTypes = featureTypes.unique().sort();
+
+           var ftHTMLArray = [];
+           for(i=0; i<uniqueFeatureTypes.length; i++) {
+             ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
+                      + uniqueFeatureTypes[i] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + uniqueFeatureTypes[i] + "<br/>");
+           }
+
+           jQuery("#featureType").html(ftHTMLArray.join(""));
+           if(ftHTMLArray.join("") != "") {
+             jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
+           else {
+             jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
+       })
+       .jstree({
+           "themes" : {
+                       "theme" : "apple",
+                       "dots" : true,
+                       "icons" : false
+                      },
+           "plugins" : [ "themes", "html_data", "checkbox" ]
+       });
      }
-
-     // Show the tree of selected organism
-     loadOrgTree(orgSelected);
-
-     jQuery("#tree")
-     .bind("loaded.jstree", function (event, data) {
-        data.inst.open_all(-1);
-      })
-     .bind("change_state.jstree", function(event, data) {
-         var checked_ids = getCheckedNodeIds();
-
-         var featureTypes = [];
-         for(i=0; i<checked_ids.length; i++) {
-           <c:forEach var="expFTMap" items="${expFTMap}">
-             if(checked_ids[i] == "${expFTMap.key}") {
-               <c:forEach var="featureTypeList" items="${expFTMap.value}">
-                 featureTypes.push("${featureTypeList}");
-               </c:forEach>
-             }
-           </c:forEach>
-         }
-
-         var uniqueFeatureTypes = featureTypes.unique().sort();
-
-         var ftHTMLArray = [];
-         for(i=0; i<uniqueFeatureTypes.length; i++) {
-           ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='"
-                    + uniqueFeatureTypes[i] + "' onclick='uncheck(this.checked, \"featureTypes\")'/>" + uniqueFeatureTypes[i] + "<br/>");
-         }
-
-         jQuery("#featureType").html(ftHTMLArray.join(""));
-         if(ftHTMLArray.join("") != "") {
-           jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:"); }
-         else {
-           jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>Please select some experiments first</i>"); }
-     })
-     .jstree({
-         "themes" : {
-                     "theme" : "apple",
-                     "dots" : true,
-                     "icons" : false
-                    },
-         "plugins" : [ "themes", "html_data", "checkbox" ]
-     });
 
      // qtip configuration
      jQuery("#baseCorRadioSpan").qtip({
@@ -275,21 +276,78 @@
        }
    }
 
+   function changeGenomeBuild(orgSelected) {
+       // Add genome build
+       if (orgSelected == "D. melanogaster") {
+          jQuery("#genomeVersion").html("<i>genome version: ${WEB_PROPERTIES['genomeVersion.fly']}</i>");
+       } else if (orgSelected == "C. elegans") {
+          jQuery("#genomeVersion").html("<i>genome version: ${WEB_PROPERTIES['genomeVersion.worm']}</i>");
+       } else {
+          jQuery("#genomeVersion").html("<i>genome version: unknown</i>");
+       }
+   }
+
+   function loadFacetedSearchInfo(orgSelected) {
+
+       <c:forEach var="orgSubMap" items="${orgSubMap}">
+       if ("${orgSubMap.key}" == orgSelected) {
+          var subHTMLArray = [];
+          <c:forEach var="subList" items="${orgSubMap.value}">
+              <c:forEach var="sub" items="${subList}">
+                  subHTMLArray.push("<span>${sub}</span><br/>");
+              </c:forEach>
+
+              if(subHTMLArray.join("") != "") {
+                  jQuery("#exp").html("<p>Selected Submissions:</p>" + subHTMLArray.join("")); }
+                else {
+                  jQuery("#exp").html("<p>Selected Submissions:</p><i>No submission</i>");
+                  jQuery('#resetBotton').attr("disabled", true);
+                  jQuery('#submitSpan').attr("disabled", true);
+                }
+          </c:forEach>
+       }
+       </c:forEach>
+
+       // JS + JSTL is really bad coding practice...
+       <c:forEach var="orgFtMap" items="${orgFtMap}">
+       if ("${orgFtMap.key}" == orgSelected) {
+           <c:choose>
+               <c:when test="${fn:length(orgFtMap.value) gt 0}">
+                   var ftHTMLArray = [];
+                   <c:forEach var="featureType" items="${orgFtMap.value}">
+                       ftHTMLArray.push("<input type='checkbox' checked='yes' class='featureType' name='featureTypes' value='${featureType}'/>${featureType}<br/>");
+                   </c:forEach>
+                   jQuery("#selectFeatureTypes").html("<input type=\"checkbox\" checked=\"yes\" name=\"check\" id=\"check\" onclick=\"checkAll(this.id)\"/>Select Feature Types:");
+                   jQuery("#featureType").html(ftHTMLArray.join(""));
+               </c:when>
+               <c:otherwise>
+                   jQuery("#selectFeatureTypes").html("Select Feature Types:<br><i>No feature types, please start a <a href='http://data.modencode.org'>new search</a></i>");
+                   jQuery('#resetBotton').attr("disabled", true);
+                   jQuery('#submitSpan').attr("disabled", true);
+               </c:otherwise>
+           </c:choose>
+       }
+       </c:forEach>
+   }
+
    function beforeSubmit() {
-     var checked_ids = getCheckedNodeIds();
-     jQuery("#hiddenExpField").val(checked_ids.join(","))
+
+     if ("${source}" != "facetedSearch") {
+         var checked_ids = getCheckedNodeIds();
+         jQuery("#hiddenExpField").val(checked_ids.join(","));
+
+         // validation
+         if (jQuery("#hiddenExpField").val() == "") {
+           alert("Please select some experiments...");
+           return false;
+         }
+     }
 
      var checkedFeatureTypes = [];
      jQuery(".featureType").each(function() {
          if (this.checked) { checkedFeatureTypes.push(this.value); }
        });
      var checkedFeatureTypesToString = checkedFeatureTypes.join(",");
-
-     // validation
-     if (jQuery("#hiddenExpField").val() == "") {
-       alert("Please select some experiments...");
-       return false;
-     }
 
      if (jQuery(".featureType").val() == null || checkedFeatureTypesToString == "") {
        alert("Please select some feature types...");
@@ -388,8 +446,6 @@
      }
 }
 
-
- //]]>-->
 </script>
 
 <div align="center" style="padding-top: 20px;">
@@ -406,7 +462,14 @@
             <li><b>chromosome:start-end</b>, e.g. <i>2R:5866746-5868284</i> or <i>chrII:14646344-14667746</i></li>
             <li><b>tab delimited</b></li>
            </ul>
-        <li>Both <b>base coordinate</b> (e.g. BLAST, GFF/GFF3) and <b>interbase coordinate</b> (e.g. UCSC BED, Chado) systems are supported, users need to explicitely select one. By default, the base coordinate is selected.</li>
+        <li>Both <b>base coordinate</b> (e.g. <a href="http://www.ncbi.nlm.nih.gov/BLAST/blastcgihelp.shtml#get_subsequence" target="_blank">BLAST</a>,
+            <a href="http://www.sequenceontology.org/gff3.shtml" target="_blank">GFF/GFF3</a>) and <b>interbase coordinate</b> (e.g.
+            <a href="http://genome.ucsc.edu/FAQ/FAQformat#format1" target="_blank">UCSC BED</a>,
+            <a href="http://gmod.org/wiki/Introduction_to_Chado#Interbase_Coordinates" target="_blank">Chado</a>)
+            systems are supported, e.g. for a DNA piece <b>GCCATGTA</b>,
+            the position of the <b>ATG</b> in interbase is [3, 6], and in base coordinates is [4, 6].
+            Users need to explicitly select one. By default, the base coordinate is selected.
+        </li>
         <li>Each genome region needs to take a <b>new line</b>.</li>
         <li>Only experiments with features are listed below.</li>
         <li>Right click <b>an experiment</b> in the tree to go to experiment report page.</li>
@@ -419,13 +482,13 @@
    <li>
       <span>
         <fmt:message key="spanUpload.spanConstraint">
-        <fmt:param value="${spanConstraint}"/>
+            <fmt:param value="${spanConstraint}"/>
         </fmt:message>
       </span>
       <html:select styleId="orgSelector" property="orgName" onchange="orgNameChanged(this.value);">
-      <c:forEach items="${orgList}" var="orgName">
-          <html:option value="${orgName}">${orgName}</html:option>
-      </c:forEach>
+          <c:forEach items="${orgList}" var="orgName">
+              <html:option value="${orgName}">${orgName}</html:option>
+          </c:forEach>
       </html:select>
       <span id="genomeVersion" style="padding:10px;">
       </span>
@@ -474,9 +537,12 @@
 
    </ol>
 
+<input type="hidden" name='source' value="${source}">
+<input type="hidden" name='submissions' value="${submissions}">
+
     <div align="right">
        <%-- reset button --%>
-       <input type="button" onClick="resetInputs()" value="Reset" />
+       <input type="button" id="resetBotton" onClick="resetInputs()" value="Reset" />
        <html:submit styleId="submitSpan" onclick="javascript: return beforeSubmit();"><fmt:message key="spanBuild.search"/></html:submit>
     </div>
 

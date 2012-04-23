@@ -33,12 +33,11 @@ import org.intermine.model.bio.Submission;
 import org.intermine.model.bio.SubmissionProperty;
 import org.intermine.util.Util;
 import org.intermine.web.logic.session.SessionMethods;
-import org.modmine.web.GBrowseParser.GBrowseTrack;
 import org.modmine.web.logic.ModMineUtil;
 
 /**
  * Class that generates GBrowse track links for a List of submissions.
- * @author 
+ * @author fh
  */
 public class SubListDetailsController extends TilesAction
 {
@@ -79,20 +78,18 @@ public class SubListDetailsController extends TilesAction
             subDCCids.add(sub.getdCCid());
         }
 
-
         Set<String> orgSet = new LinkedHashSet<String>();
         for (Submission sub : subs) {
             orgSet.add(sub.getOrganism().getShortName());
         }
 
 
-        
         /* ======== FILES ========== */
         // do the same for files associated with a submission
         // note: we need submission and not dccId because the gbrowse displayer uses
         // submissions titles.
         Map<Submission, List<ResultFile>> subFiles =
-            new LinkedHashMap<Submission, List<ResultFile>>();        
+            new LinkedHashMap<Submission, List<ResultFile>>();
         for (Submission sub : subs) {
             List<ResultFile> files =
                 MetadataCache.getFilesByDccId(im.getObjectStore(), sub.getdCCid());
@@ -104,18 +101,17 @@ public class SubListDetailsController extends TilesAction
             subFiles.put(sub, files);
         }
         request.setAttribute("files", subFiles);
-        
- 
-        
+
+
 //        /* ======== PROPERTIES ========== */
 //        // do the same for properties associated with a submission
 //        // note: we need submission and not dccId because the gbrowse displayer uses
 //        // submissions titles.
         Map<Submission, List<SubmissionProperty>> subProps =
-            new LinkedHashMap<Submission, List<SubmissionProperty>>();        
+            new LinkedHashMap<Submission, List<SubmissionProperty>>();
         for (Submission sub : subs) {
             for (SubmissionProperty prop : sub.getProperties()) {
-                String subName =  prop.getName();
+//                String subName =  prop.getName();
 //                int index = fileName.lastIndexOf(System.getProperty("file.separator"));
 //                file.setName(fileName.substring(index + 1));
                 Util.addToListMap(subProps, sub, prop);
@@ -129,17 +125,14 @@ public class SubListDetailsController extends TilesAction
         // note: we need submission and not dccId because the gbrowse displayer uses
         // submissions titles.
         Map<Submission, List<String[]>> subReposited =
-            new LinkedHashMap<Submission, List<String[]>>();        
+            new LinkedHashMap<Submission, List<String[]>>();
         for (Submission sub : subs) {
             List<String[]> reposited =
                 MetadataCache.getRepositoryEntriesByDccId(im.getObjectStore(), sub.getdCCid());
             subReposited.put(sub, reposited);
         }
         request.setAttribute("reposited", subReposited);
-        
 
-        
-        
         return null;
     }
 }

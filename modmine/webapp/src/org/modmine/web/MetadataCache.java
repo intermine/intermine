@@ -93,6 +93,78 @@ public final class MetadataCache
     private static long lastTrackCacheRefresh = 0;
     private static final long TWO_HOUR = 7200000;
 
+    // hardcoded (sigh) categories descriptions, to be able to pass them to the website
+    private static final String CHROMATIN_STRUCTURE_SHORT_DESC
+        = "A map of chromatin type and nucleosome dynamics based on extracting chromatin fractions"
+        + " at different salt concentrations.";
+    private static final String COPY_NUMBER_VARIATION_SHORT_DESC
+        = "Genome-wide profile of copy-number variation in D. melanogaster, mapped in cell lines,"
+        + " follicle cells and salivary glands.";
+    private static final String GENE_STRUCTURE_SHORT_DESC
+        = "Detailed annotation of genomes based on transcriptime sequencing"
+        + " and experimental validation of gene models.";
+    private static final String HISTONE_MODIFICATION_SHORT_DESC
+        = "A genome-wide map of histone modifications in at different developmental stages.";
+    private static final String METADATA_ONLY_SHORT_DESC
+        = "Metadata about D. melanogaster RNA samples created at Bloomington,"
+        + " and the validation of novel miRNAs in C. elegans.";
+    private static final String OTHER_CHROMATIN_SHORT_DESC
+        = "A binding map for non-histone, non-TF, chromatin associated proteins,"
+        + " including PolII and insulators.";
+    private static final String RNA_EXPRESSION_PROFILING_SHORT_DESC
+        = "Expression profiles of transcriptomes in cell lines and at different"
+        + " developmental stages.";
+    private static final String REPLICATION_SHORT_DESC
+        = "A map of origins, initiators and timing of DNA replication in D. melanogaster.";
+    private static final String TF_BINDING_SITE_SHORT_DESC
+        = "Binding locations of transcription factors at different developmental stages.";
+
+
+    private static final String CHROMATIN_STRUCTURE_DESC
+        = "Maps the chromatin type and nucleosome dynamics of different genomic regions"
+        + " in D. melanogaster and C. elegans by profiling chromatin fractions extracted"
+        + " at different salt concentrations. Associated publication: Henikoff et al. (2009).";
+    private static final String COPY_NUMBER_VARIATION_DESC
+        = "Uses comparative genomic hybridisation to look at copy-number variation of different"
+        + " D. melanogaster genome regions. The experiments were performed in a number of different"
+        + " cell lines, as well as using polytene chromosome from follicle cells and"
+        + " salivary glands. Associated publication: N Sher, S Li, G Bell, T Eng, M Eaton,"
+        + " D MacAlpine, and TL Orr-Weaver, manuscript in preparation.";
+    private static final String GENE_STRUCTURE_DESC
+        = "Aims to annotate the genomes of D. melanogaster and C. elegans by predicting"
+        + " and experimentally validating gene models, as well as analysing gene expression"
+        + " at different developmental stages. Associated publications: Graveley et al. (2010);"
+        + " Gerstein et al. (2010); Allen et al. (2011); Hoskins et al. (2011);"
+        + " Ramani et al. (2011).";
+    private static final String HISTONE_MODIFICATION_DESC
+        = "Aims to map a range of histone modifications in the genomes of D. melanogaster"
+        + " and C. elegans and use the data to analyse the impact of histone modifications"
+        + " on regulation and different types of chromatin state. Associated publications:"
+        + " Kharchenko et al. (2010); Roy et al. (2010); Liu et al. (2011); Riddle et al. (2011).";
+    private static final String METADATA_ONLY_DESC
+        = "Contains metadata about D. melanogaster RNA samples created at Bloomington and"
+        + " the validation of novel miRNAs in C. elegans.";
+    private static final String OTHER_CHROMATIN_DESC
+        = "Focuses on the locations of genomic binding for a number of non-histone"
+        + " chromosomal proteins, including PolII and insulator associated proteins."
+        + " Associated publications: Negre et al. (2010); Kharchenko et al. (2010);"
+        + " Gerstein et al. (2010); Negre et al. (2011).";
+    private static final String RNA_EXPRESSION_PROFILING_DESC
+        = "Focuses on expression profiling of D. melanogaster and C. elegans, including"
+        + " developmental time courses for D. melanogaster and other Drosophila species,"
+        + " as well as expression profiling of a number of different Drosophila cell lines."
+        + " Associated publications: Graveley et al. (2010); Gerstein et al. (2010); Spencer"
+        + " et al. (2011); Lamm et al. (2011); Cherbas et al. (2011); Daines et al. (2011).";
+    private static final String REPLICATION_DESC
+        = "Looks in detail at the origin, initiators and timing of DNA replication in"
+        + " D. melanogaster. Associated publication: Eaton et al. (2011); Nordman et al. (2011).";
+    private static final String TF_BINDING_SITE_DESC
+        = "Aims to map the in vivo binding locations of a range of developmentally important"
+        + " transcription factors in D. melanogaster and C. elegans. Associated publications:"
+        + " Roy et al. (2010); Gerstein et al. (2010); Negre et al. (2011); Kharchenko et al."
+        + "(2010); Niu et al. (2011).";
+
+
     private MetadataCache() {
     }
 
@@ -435,7 +507,13 @@ public final class MetadataCache
         if (submissionIdCache == null) {
             readSubmissionIds(os);
         }
-        return (Submission) os.getObjectById(submissionIdCache.get(dccId));
+
+        if (submissionIdCache.get(dccId) != null) {
+            return (Submission) os.getObjectById(submissionIdCache.get(dccId));
+        } else {
+            return null;
+        }
+
     }
 
     /**
@@ -483,17 +561,17 @@ public final class MetadataCache
     * @param  os objectStore
     * @return map exp-repository entries count
     */
-   public static Map<String, Integer> getExperimentRepositoryCount(
-           ObjectStore os) {
-       
-       if (experimentRepositedCountCache == null) {
-           getExperimentRepositoryEntries(os);
-       }
-       return experimentRepositedCountCache;
-   }
+    public static Map<String, Integer> getExperimentRepositoryCount(
+            ObjectStore os) {
 
-       
-       
+        if (experimentRepositedCountCache == null) {
+            getExperimentRepositoryEntries(os);
+        }
+        return experimentRepositedCountCache;
+    }
+
+
+
     /**
      *
      * @param  os objectStore
@@ -505,7 +583,7 @@ public final class MetadataCache
 
         Map<String, List<String[]>> subRepositedMap = getRepositoryEntries(os);
 
-        experimentRepositedCountCache = 
+        experimentRepositedCountCache =
             new HashMap<String, Integer>();
 
         for (DisplayExperiment exp : getExperiments(os)) {
@@ -520,7 +598,7 @@ public final class MetadataCache
             // entry produced by 2 different submissions.
             Set<String[]> expRepsCleaned = removeDuplications(expReps);
             reposited.put(exp.getName(), expRepsCleaned);
-            
+
             experimentRepositedCountCache.put(exp.getName(), expRepsCleaned.size());
         }
         return reposited;
@@ -557,9 +635,9 @@ public final class MetadataCache
         }
         return new ArrayList<String[]>();
     }
-  
-    
-    
+
+
+
     /**
      * Get GBrowseTracks information for each Experiment.
      * @param os objectStore
@@ -605,13 +683,13 @@ public final class MetadataCache
     /*
      * ========================== PRIVATE METHODS ============================
      *
-     * Note: actual database queries can generally be moved to 
-     * CreateModMineMetaDataCache, you need to express the results in the 
+     * Note: actual database queries can generally be moved to
+     * CreateModMineMetaDataCache, you need to express the results in the
      * key-value format and add a label to ModMineCacheKeys
      *
      */
 
-    
+
     private static void fetchGBrowseTracks() {
         long timeSinceLastRefresh = System.currentTimeMillis()
                 - lastTrackCacheRefresh;
@@ -773,6 +851,82 @@ public final class MetadataCache
         }
         if (cat.startsWith("Replication") || cat.endsWith("Replication")) {
             return "Replication";
+        }
+        return cat;
+    }
+
+    /**
+     * to get the short description of the category
+     *
+     * @param exp the DisplayExperiment
+     * @return the short description of the category
+     */
+    private static String getCategoryShortDescription(DisplayExperiment exp) {
+        String cat = adaptCategory(exp);
+        if ("Chromatin Structure".equalsIgnoreCase(cat)) {
+            return CHROMATIN_STRUCTURE_SHORT_DESC;
+        }
+        if ("Copy Number Variation".equalsIgnoreCase(cat)) {
+            return COPY_NUMBER_VARIATION_SHORT_DESC;
+        }
+        if ("Gene Structure".equalsIgnoreCase(cat)) {
+            return GENE_STRUCTURE_SHORT_DESC;
+        }
+        if ("Histone modification and replacement".equalsIgnoreCase(cat)) {
+            return HISTONE_MODIFICATION_SHORT_DESC;
+        }
+        if ("Metadata only".equalsIgnoreCase(cat)) {
+            return METADATA_ONLY_SHORT_DESC;
+        }
+        if ("Other chromatin binding sites".equalsIgnoreCase(cat)) {
+            return OTHER_CHROMATIN_SHORT_DESC;
+        }
+        if ("RNA expression profiling".equalsIgnoreCase(cat)) {
+            return RNA_EXPRESSION_PROFILING_SHORT_DESC;
+        }
+        if ("Replication".equalsIgnoreCase(cat)) {
+            return REPLICATION_SHORT_DESC;
+        }
+        if ("TF binding sites".equalsIgnoreCase(cat)) {
+            return TF_BINDING_SITE_SHORT_DESC;
+        }
+        return cat;
+    }
+
+    /**
+     * to get the description of the category
+     *
+     * @param exp the DisplayExperiment
+     * @return the short description of the category
+     */
+    private static String getCategoryDescription(DisplayExperiment exp) {
+        String cat = adaptCategory(exp);
+        if ("Chromatin Structure".equalsIgnoreCase(cat)) {
+            return CHROMATIN_STRUCTURE_DESC;
+        }
+        if ("Copy Number Variation".equalsIgnoreCase(cat)) {
+            return COPY_NUMBER_VARIATION_DESC;
+        }
+        if ("Gene Structure".equalsIgnoreCase(cat)) {
+            return GENE_STRUCTURE_DESC;
+        }
+        if ("Histone modification and replacement".equalsIgnoreCase(cat)) {
+            return HISTONE_MODIFICATION_DESC;
+        }
+        if ("Metadata only".equalsIgnoreCase(cat)) {
+            return METADATA_ONLY_DESC;
+        }
+        if ("Other chromatin binding sites".equalsIgnoreCase(cat)) {
+            return OTHER_CHROMATIN_DESC;
+        }
+        if ("RNA expression profiling".equalsIgnoreCase(cat)) {
+            return RNA_EXPRESSION_PROFILING_DESC;
+        }
+        if ("Replication".equalsIgnoreCase(cat)) {
+            return REPLICATION_DESC;
+        }
+        if ("TF binding sites".equalsIgnoreCase(cat)) {
+            return TF_BINDING_SITE_DESC;
         }
         return cat;
     }
@@ -1449,13 +1603,13 @@ public final class MetadataCache
 
         for (Object key : props.keySet()) {
             String keyString = (String) key;
-            
-            String[] token = keyString.split("\\.");
+
+            String[] token = keyString.split("\\.", 3); // to preserve file suffix
             String dccId = token[0];
             String featName = token[1];
             String fileName = token[2];
             Long count = Long.parseLong((String) props.get(key));
-               
+
             addToMap(submissionFileSourceCounts, dccId, featName, fileName,
                     count);
         }

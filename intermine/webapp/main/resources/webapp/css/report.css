@@ -14,7 +14,7 @@ h2 { margin-bottom:10px; }
 /* report page */
 #pagecontentmax { padding-top:0; }
 #header_wrap { background-repeat:repeat-x; background-position:left top; background-attachment:scroll;
-	padding-top:10px; }
+  padding-top:10px; }
 
 /* header */
 #object_header { width:94%; margin-left:3%; margin-right:3%; position:relative; font-size:12px; }
@@ -23,8 +23,12 @@ h2 { margin-bottom:10px; }
     #object_header p.description { margin:0; padding-bottom:10px; }
       #object_header p.description img { vertical-align:top; }
 
+    #object_header td.label,
+    #object_header span.label { min-width:100px; display:inline-block; white-space:nowrap; }
+
     /* header items */
-    #object_header table.fields { width:50%; }
+    #object_header table.fields { width:0%; }
+    #object_header table.fields tr td:not(:first-child) { padding-right:20px; }
 
     /* header inline lists */
   #object_header div.inline-list { margin:0; }
@@ -34,8 +38,8 @@ h2 { margin-bottom:10px; }
     #headerLink { position:absolute; top:0; right:0; z-index:3; font-size:12px; }
 
     /* top displayers */
-    #object_header #displayers.table { margin:0; }
-        #object_header #displayers.table h3 { border:0; }
+    #object_header div.displayers { margin:0; }
+    #object_header div.displayers h3 { border:0; }
 
     /* share this */
   #object_header #share { position:relative; font-size:11px; margin-top:6px; }
@@ -51,8 +55,8 @@ h2 { margin-bottom:10px; }
 #headercontainer, #header_wrap, #navtrail { z-index:2; position:relative; }
 #navtrail { display:inline-block; float:right; background:inherit; width:96.4%; }
 #headercontainer { background:inherit; display:inline-block; }
-#fixed-menu { position:fixed; top:0; width:100%; z-index:1; box-shadow: 0px 1px 4px #A9A9A9; z-index:3;
-    -moz-box-shadow: 0px 1px 4px #A9A9A9; -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
+#fixed-menu { position:fixed; top:0; width:100%; z-index:1; box-shadow: 0px 1px 4px #A9A9A9; -moz-box-shadow: 0px 1px 4px #A9A9A9;
+  -webkit-box-shadow: 0px 1px 4px #A9A9A9; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { border-bottom-width:1px; border-bottom-style:solid; }
 #content { z-index:0; }
 #fixed-menu div.wrap, #toc-menu-wrap div.wrap { margin:0 auto; width:94%; vertical-align:bottom; }
@@ -86,7 +90,7 @@ div.container_12 { padding-top:30px; }
 
 /* links in other mines & external links */
 .sidebar #external-links .loading { background:url('../images/icons/ajax-loader.gif') no-repeat left center; display:block;
-	width:100%; height:18px; margin-bottom:5px; }
+  width:100%; height:18px; margin-bottom:5px; }
 .sidebar #external-links ul { margin-left:6px; }
 .sidebar #external-links ul li ul { padding-left:6px; }
 .sidebar #external-links ul li ul li { display:inline-block; }
@@ -121,7 +125,13 @@ form#fly-atlas-options table tr td { padding:6px; }
 
 /* Pathways displayer */
 #mine-pathway-displayer th.loading { background-image:url('../images/icons/ajax-loader.gif'); padding-left:22px;
-	background-repeat:no-repeat; background-position:0 5px; }
+  background-repeat:no-repeat; background-position:0 5px; }
+
+/* Displayer Wrappers */
+div.wrapper { margin-bottom:30px; }
+
+/* templates */
+div.template h3 span.name { cursor:pointer; }
 
 /* resizing on small screens */
 @media only screen and (max-width:1440px) {

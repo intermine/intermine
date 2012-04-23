@@ -16,13 +16,13 @@
 	}
 %>
 
-  <c:set var="nr" value="<%=filesSize%>" /> 
+  <c:set var="nr" value="<%=filesSize%>" />
   <c:choose>
   <c:when test="${nr > 20}">
   <br></br>
     <a href="${WEB_PROPERTIES['ftp.prefix']}/${dccId}/extracted"
-      title="Access the submission ${nr} files" class="value extlink""> 
-    <c:out value="${nr} files" /> </a>            
+      title="Access the submission ${nr} files" class="value extlink"">
+    <c:out value="${nr} files" /> </a>
   </c:when>
   <c:otherwise>
   <c:forEach items="${files}" var="file" varStatus="file_status">
@@ -34,8 +34,6 @@
    <a href="${file.url}"
       title="Download ${file.type} file ${file.name}" class="value extlink"> <c:out
       value="${file.name}" /> </a>
-   <br>
-   </br>
   </c:forEach>
 </c:otherwise>
 </c:choose>

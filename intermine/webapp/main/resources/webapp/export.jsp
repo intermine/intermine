@@ -12,28 +12,57 @@
 </c:if>
 <html:xhtml/>
 
-<html:link action="/exportOptions?table=${tableName}&amp;type=csv&amp;trail=${queryTrailLink}|${tableName}">
-  <fmt:message key="exporter.csv.description"/>
-</html:link>
-<br/>
-
-<c:if test="${WEB_PROPERTIES['galaxy.display'] != false}">
-    <html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}">
-        <fmt:message key="exporter.galaxy.description"/>
+<c:choose>
+  <c:when test="${results_page != null}">
+    <span class="csv">
+      <html:link action="/exportOptions?table=${tableName}&amp;type=csv&amp;trail=${queryTrailLink}|${tableName}" title="Export results as comma or tab separated values (suitable for import into Excel)"></html:link>
+    </span>
+  </c:when>
+  <c:otherwise>
+    <html:link action="/exportOptions?table=${tableName}&amp;type=csv&amp;trail=${queryTrailLink}|${tableName}">
+      <fmt:message key="exporter.csv.description"/>
     </html:link>
     <br/>
+  </c:otherwise>
+</c:choose>
+
+<c:if test="${WEB_PROPERTIES['galaxy.display'] != false}">
+    <c:choose>
+      <c:when test="${results_page != null}">
+        <span class="galaxy">
+          <html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}" title="Export to Galaxy"></html:link>
+        </span>
+      </c:when>
+      <c:otherwise>
+        <html:link action="/galaxyExportOptions?table=${tableName}&amp;trail=${queryTrailLink}|${tableName}">
+            <fmt:message key="exporter.galaxy.description"/>
+        </html:link>
+        <br/>
+      </c:otherwise>
+    </c:choose>
 </c:if>
 
 <c:forEach var="entry" items="${exporters}" varStatus="status">
   <c:set var="exporterId" value="${entry.key}"/>
   <c:choose>
-    <c:when test="${empty entry.value}">
-      <span class="nullStrike"><fmt:message key="exporter.${exporterId}.description"/></span><br>
+    <c:when test="${results_page != null}">
+      <c:if test="${!empty entry.value}">
+        <span class="${exporterId}">
+          <html:link action="/exportOptions?table=${tableName}&amp;type=${exporterId}&amp;trail=${queryTrailLink}|${tableName}" title="Export in ${exporterId} format"></html:link>
+        </span>
+      </c:if>
     </c:when>
     <c:otherwise>
-      <html:link action="/exportOptions?table=${tableName}&amp;type=${exporterId}&amp;trail=${queryTrailLink}|${tableName}">
-        <fmt:message key="exporter.${exporterId}.description"/>
-      </html:link><br>
+      <c:choose>
+        <c:when test="${empty entry.value}">
+          <span class="nullStrike"><fmt:message key="exporter.${exporterId}.description"/></span><br>
+        </c:when>
+        <c:otherwise>
+          <html:link action="/exportOptions?table=${tableName}&amp;type=${exporterId}&amp;trail=${queryTrailLink}|${tableName}">
+            <fmt:message key="exporter.${exporterId}.description"/>
+          </html:link><br>
+        </c:otherwise>
+      </c:choose>
     </c:otherwise>
   </c:choose>
 </c:forEach>

@@ -1,5 +1,13 @@
 .templateTitleBold {
+  margin-top: 4px;
   padding: 4px;
   font-weight: bold;}
+
+.templateDescription {
+  padding: 4px;
+  font-style: italic; font-size: 90%;}
+
+.parameterValues {
+  margin-top: 5px;}
 
 li.tb_button.inactive a { color:#BBB; }

@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.apache.struts.upload.FormFile;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
 import org.modmine.web.logic.SpanOverlapQueryRunner;
@@ -74,33 +76,38 @@ public class SpanUploadAction extends InterMineAction
         String whichInput = spanUploadForm.getWhichInput();
         FormFile formFile = spanUploadForm.getFormFile();
 
-        // Check if experiment or feature type is empty
-        if (spanUploadForm.getExperiments()[0] == null
-                || "".equals(spanUploadForm.getExperiments()[0])) {
-
-            recordError(new ActionMessage("spanBuild.spanFieldSelection",
-                    "experiments"), request);
-            return mapping.findForward("spanUploadOptions");
-        }
-
         if (spanUploadForm.getFeatureTypes() == null) {
             recordError(new ActionMessage("spanBuild.spanFieldSelection",
                     "feature types"), request);
             return mapping.findForward("spanUploadOptions");
         }
 
-        // Parse experiments strings
-        // Due to jsTree, the checkbox values regarding to experiments is in one string
-        spanUploadForm.setExperiments(spanUploadForm.getExperiments()[0]
-                .split(","));
+        List<String> subKeys;
+        if ("facetedSearch".equals(spanUploadForm.getSource())) {
+            subKeys = Arrays.asList(StringUtil.split(spanUploadForm.getSubmissions(), ","));
+        } else {
+            // Check if experiment or feature type is empty
+            if (spanUploadForm.getExperiments()[0] == null
+                    || "".equals(spanUploadForm.getExperiments()[0])) {
 
-        // Get submission dcc ids of selected experiments
-        Set<String> dCCIdSet = new HashSet<String>();
-        Map<String, Set<String>> expSubIdMap = MetadataCache.getExperimentSubmissionDCCids(os);
-        for (String s : spanUploadForm.getExperiments()) {
-            dCCIdSet.addAll(expSubIdMap.get(s));
+                recordError(new ActionMessage("spanBuild.spanFieldSelection",
+                        "experiments"), request);
+                return mapping.findForward("spanUploadOptions");
+            }
+
+            // Parse experiments strings
+            // Due to jsTree, the checkbox values regarding to experiments is in one string
+            spanUploadForm.setExperiments(spanUploadForm.getExperiments()[0]
+                    .split(","));
+
+            // Get submission dcc ids of selected experiments
+            Set<String> dCCIdSet = new HashSet<String>();
+            Map<String, Set<String>> expSubIdMap = MetadataCache.getExperimentSubmissionDCCids(os);
+            for (String s : spanUploadForm.getExperiments()) {
+                dCCIdSet.addAll(expSubIdMap.get(s));
+            }
+            subKeys = new ArrayList<String>(dCCIdSet);
         }
-        spanUploadForm.setDccIDSetOfExp(dCCIdSet);
 
         // Get pasted text or uploaded file
         BufferedReader reader = null;
@@ -247,8 +254,6 @@ public class SpanUploadAction extends InterMineAction
         for (String aClass : spanUploadForm.getFeatureTypes()) {
             ftKeys.add(Class.forName(modelPackName + "." + aClass));
         }
-
-        List<String> subKeys = new ArrayList<String>(spanUploadForm.getDccIDSetOfExp());
 
         if (chrInfoMap == null || chrInfoMap.size() < 1) {
             SpanOverlapQueryRunner queryRunner = new SpanOverlapQueryRunner(

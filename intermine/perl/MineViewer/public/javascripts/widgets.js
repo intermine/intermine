@@ -65,7 +65,6 @@ function getChartFilter() {
 }
 
 function displayChartWidget(widget_name, widget) {
-    console.log("in the right place");
     var request_data = {
         widget: widget_name,
         list: getCurrentList(),
@@ -86,10 +85,14 @@ function displayChartWidget(widget_name, widget) {
             $.extend(options, {isStacked: true, height: 500});
         } else if (res.chartType == "ScatterPlot") {
             Chart = viz.ScatterChart;
+            $.extend(options, {series: {0: {pointSize: 3, lineWidth: 0}, 1: {pointSize: 0, lineWidth: 1}}});
         } else if (res.chartType == "PieChart") {
             Chart = viz.PieChart;
         } else if (res.chartType == "XYLineChart") {
-            Chart = viz.LineChart;
+            Chart = viz.ScatterChart;
+            $.extend(options, {series: {0: {pointSize: 0, lineWidth: 2}, 1: {pointSize: 0, lineWidth: 1}}});
+        } else if (res.chartType == "Histogram") {
+            return plotHistogram(targetElem, res, widget);
         }
 
         if (widget.labels) {
@@ -102,6 +105,33 @@ function displayChartWidget(widget_name, widget) {
         }
         $('#widget-chart').show();
     });
+}
+
+function plotHistogram(elem, res, widget) {
+    var i = 0;
+    var mod = 5;
+    var l = res.results.length;
+    var step = (res.results[2][0] - res.results[1][0]) * mod;
+    console.log(step);
+    var series = [{data: [], lines: {show: true}}, {data: [], bars: {show: true, barWidth: step}}];
+    var count = 0;
+    for (i = 1; i < l; i++) {
+        series[0].data.push([res.results[i][0], res.results[i][2]]);
+        count += res.results[i][1];
+        if (i % mod == 0) {
+            series[1].data.push([res.results[i][0] - step, count]);
+            count = 0;
+        }
+    }
+    if (count != 0) {
+        series[1].data.push([res.results[i][0] - step, count]);
+    }
+
+    var options = {colors: ["#3366CC", "#DC3912"]};
+    console.log(series, options);
+    $(elem).css({width: "600px", height: "300px"});
+    $(elem).show();
+    $.plot($(elem), series, options);
 }
 
 function displayEnrichmentWidget(widget_name, widget) {

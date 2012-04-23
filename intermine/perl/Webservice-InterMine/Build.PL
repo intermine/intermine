@@ -53,6 +53,7 @@ my $build = Module::Build->new(
         'Test::MockObject'          => 0,
         'Test::MockObject::Extends' => 0,
         'XML::Rules'                => 0,
+        'Set::CrossProduct'         => 0,
     },
 );
 $build->create_build_script;
