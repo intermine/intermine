@@ -12,7 +12,6 @@ package org.intermine.api.mines;
 
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,7 +22,6 @@ import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.webservice.client.core.ServiceFactory;
 import org.json.JSONObject;
 
 /**
@@ -143,6 +141,7 @@ public class FriendlyMineManager
             String defaultValues = mineProps.getProperty("defaultValues");
             String bgcolor = mineProps.getProperty("bgcolor");
             String frontcolor = mineProps.getProperty("frontcolor");
+            String description = mineProps.getProperty("description");
 
             if (StringUtils.isEmpty(mineName) || StringUtils.isEmpty(url)) {
                 final String msg = "InterMine configured incorrectly in web.properties.  "
@@ -153,13 +152,13 @@ public class FriendlyMineManager
 
             if (mineName.equals(localMineName)) {
                 if (localMine.getUrl() == null) {
-                    parseLocalConfig(url, logo, defaultValues, bgcolor, frontcolor);
+                    parseLocalConfig(url, logo, defaultValues, bgcolor, frontcolor, description);
                 }
             } else {
                 Mine mine = mines.get(mineId);
                 if (mine == null) {
                     parseRemoteConfig(mineName, mineId, defaultValues, url, logo, bgcolor,
-                            frontcolor);
+                            frontcolor, description);
                 }
             }
         }
@@ -167,24 +166,26 @@ public class FriendlyMineManager
     }
 
     private void parseLocalConfig(String url, String logo, String defaultValues,
-            String bgcolor, String frontcolor) {
+            String bgcolor, String frontcolor, String description) {
         if (localMine.getUrl() == null) {
             localMine.setUrl(url);
             localMine.setLogo(logo);
             localMine.setBgcolor(bgcolor);
             localMine.setFrontcolor(frontcolor);
             localMine.setDefaultValues(defaultValues);
+            localMine.setDescription(description);
         }
     }
 
     private void parseRemoteConfig(String mineName, String mineId, String defaultValues,
-            String url, String logo, String bgcolor, String frontcolor) {
+            String url, String logo, String bgcolor, String frontcolor, String description) {
         Mine mine = new Mine(mineName);
         mine.setUrl(url);
         mine.setLogo(logo);
         mine.setBgcolor(bgcolor);
         mine.setFrontcolor(frontcolor);
         mine.setDefaultValues(defaultValues);
+        mine.setDescription(description);
         mines.put(mineId, mine);
     }
 

@@ -28,6 +28,7 @@ public class Mine
     protected String bgcolor, frontcolor;
     protected Set<String> defaultValues = new HashSet<String>();
     protected String releaseVersion = null;
+    protected String description = null;
 
     /**
      * Constructor
@@ -43,6 +44,21 @@ public class Mine
      */
     public String getName() {
         return name;
+    }
+
+
+    /**
+     * @return the description of the mine
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description of the mine
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
