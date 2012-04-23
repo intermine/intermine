@@ -11,24 +11,22 @@
 <div id="mine-pathway-displayer" class="collection-table column-border">
 
 <c:choose>
-<c:when test="${minesForPathways != null && !empty(minesForPathways) && gene != null && !empty(gene)}">
+<c:when test="${gene != null && !empty(gene)}">
 
   <style>
     #mine-pathway-displayer div.wrapper { height:300px; overflow-y:auto; overflow-x:hidden }
-    <c:forEach items="${minesForPathways}" var="entry">
-      /* might fail, does not use JS slugify! */
-      #mine-pathway-displayer table th.<c:out value="${fn:toLowerCase(entry.key.name)}"/> span { padding:1px 4px; border-radius:2px;
-        background:${entry.key.bgcolor}; color:${entry.key.frontcolor} !important }
-    </c:forEach>
   </style>
+  <c:forEach items="${minesForPathways}" var="entry">
+    /* might fail, does not use JS slugify! */
+    #mine-pathway-displayer table th.<c:out value="${fn:toLowerCase(entry.key.name)}"/> span { padding:1px 4px; border-radius:2px;
+      background:${entry.key.bgcolor}; color:${entry.key.frontcolor} !important }
+  </c:forEach>
 
   <script type="text/javascript" charset="utf-8">
   (function() {
     function getFriendlyMinePathways(mine, orthologues, callback) {
       AjaxServices.getFriendlyMinePathways(mine, orthologues, function(pathways) {
-        if (pathways) {
-            callback(jQuery.parseJSON(pathways)['results']);
-        }
+        callback(pathways);
       });
     }
 
@@ -153,21 +151,25 @@
 
     // Fetch pathways for other mines.
     <c:forEach items="${minesForPathways}" var="entry">
-      getFriendlyMinePathways('${entry.key.name}', '${entry.value}', function(results) {
+      getFriendlyMinePathways('${entry.key.name}', '${entry.value}', function(data) {
         // Stop the loading sign.
         jQuery(target).find('thead th.' + grid.slugify('${entry.key.name}')).removeClass('loading');
+        
+        if (data !== null) {
+          var results = jQuery.parseJSON(data)['results'];
 
-        // Add the results to the grid.
-        jQuery.each(results, function(index, pathway) {
-          grid.add(pathway['name'], '${entry.key.name}', function() {
-            return jQuery('<a/>', {
-              'class':  'external',
-              'text':   'Yes',
-              'target': '_blank',
-              'href':   '${entry.key.url}' + '/report.do?id=' + pathway['id']
+          // Add the results to the grid.
+          jQuery.each(results, function(index, pathway) {
+            grid.add(pathway['name'], '${entry.key.name}', function() {
+              return jQuery('<a/>', {
+                'class':  'external',
+                'text':   'Yes',
+                'target': '_blank',
+                'href':   '${entry.key.url}' + '/report.do?id=' + pathway['id']
+              });
             });
           });
-        });
+        }
       });
     </c:forEach>
   }).call(this);
