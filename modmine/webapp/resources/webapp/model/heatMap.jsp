@@ -220,7 +220,7 @@ var max_map = parseInt(${MAX_MAP});
                                          );
             // cluster on gene/exons
             if (feature_count > max_cluster) {
-                jQuery("#cl-hc").attr('disabled', 'disabled');
+                jQuery("#cl-hc").attr('disabled', true);
             }
 
             if (feature_count > 3 && feature_count <= max_cluster) {
@@ -235,7 +235,7 @@ var max_map = parseInt(${MAX_MAP});
                 }
 
             } else {
-                jQuery("#cl-km").attr('disabled', 'disabled');
+                jQuery("#cl-km").attr('disabled', true);
             }
 
             // cluster on conditions
@@ -284,7 +284,7 @@ var max_map = parseInt(${MAX_MAP});
                                          );
 
             if (feature_count > max_cluster) {
-                jQuery("#ds-hc").attr('disabled', 'disabled');
+                jQuery("#ds-hc").attr('disabled', true);
             }
             if (feature_count > 3 && feature_count <= max_cluster) {
                 hm_ds.clusterSamples();
@@ -298,7 +298,7 @@ var max_map = parseInt(${MAX_MAP});
                 }
 
             } else {
-                jQuery("#ds-km").attr('disabled', 'disabled');
+                jQuery("#ds-km").attr('disabled', true);
             }
 
             hm_ds.draw();
