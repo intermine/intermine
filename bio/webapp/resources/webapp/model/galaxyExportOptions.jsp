@@ -57,7 +57,7 @@
     jQuery("#dbkey").val("");
 
     if ("${canExportAsBED}" == "false") {
-        jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', 'disabled');
+        jQuery("input[name='exportOptions']").filter("[value='feature']").attr('disabled', true);
     }
 
     jQuery("input[name='exportOptions']").filter("[value='view']").attr('checked', true);

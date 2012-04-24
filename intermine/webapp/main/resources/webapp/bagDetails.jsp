@@ -161,7 +161,7 @@
           </html:select>
      <input type="submit" name="addToBag" id="addToBag" value="Add" />
      <script type="text/javascript" charset="utf-8">
-          jQuery('#addToBag').attr('disabled','disabled');
+          jQuery('#addToBag').attr('disabled', true);
         </script>
     </c:when>
     <c:otherwise>
