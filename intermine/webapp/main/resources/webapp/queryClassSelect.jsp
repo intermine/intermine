@@ -41,7 +41,7 @@
       jQuery('#queryClassSelector').click(function(e){
 		handleClassClick(e);
       });
-      jQuery('#submitClassSelect').attr('disabled','disabled');
+      jQuery('#submitClassSelect').attr('disabled', true);
       
       <!-- dbl click to submit the form as well -->
       jQuery('select#queryClassSelector option').dblclick(function() {

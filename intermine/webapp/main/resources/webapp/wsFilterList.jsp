@@ -256,7 +256,7 @@ function clearBagName(element) {
 
  <script type="text/javascript">
 <%-- enable filter only after the list is populated --%>
-    jQuery('#filterText').attr('disabled','');
+    jQuery('#filterText').attr('disabled', false);
     if (document.getElementById('${ws_input_aspect}') !=null
             && document.getElementById('${ws_input_aspect}').value != '') {
      filterAspect('${type}', '${wsListId}');
