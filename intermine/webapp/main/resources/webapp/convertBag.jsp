@@ -64,11 +64,12 @@
                       text: function() {
                         return "" + _name + " (" + _count + ")";
                       },
-                      click: function() {
-                        var _value;
+                      click: function(e) {
+                        var _value, form;
                         _value = jQuery(this).attr("data-value");
                         jQuery("input[name='extraFieldValue']").attr("value", _value);
-                        jQuery("form#modifyBagDetailsForm").submit();
+                        form = jQuery(e.target).closest('form');
+                        form.submit();
                       }
                     });
                   }
