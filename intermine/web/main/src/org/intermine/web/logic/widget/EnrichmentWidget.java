@@ -133,10 +133,8 @@ public class EnrichmentWidget extends Widget
         return results.getPValues().size() > 0;
     }
 
-    private Map<String, List<String>> getTermsToIdsForExport(List<String> selectedIds) throws Exception {
-        EnrichmentWidgetImplLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
-                (EnrichmentWidgetConfig) config, filter);
-
+    private Map<String, List<String>> getTermsToIdsForExport(List<String> selectedIds)
+        throws Exception {
         Query q = ldr.getExportQuery(selectedIds);
 
         Results res = os.execute(q);
@@ -155,10 +153,8 @@ public class EnrichmentWidget extends Widget
         return termsToIds;
     }
 
-    private Map<String, List<Map<String, Object>>> getTermsToIds(List<String> selectedIds) throws Exception {
-        EnrichmentWidgetImplLdr ldr = new EnrichmentWidgetImplLdr(bag, os,
-                (EnrichmentWidgetConfig) config, filter);
-
+    private Map<String, List<Map<String, Object>>> getTermsToIds(List<String> selectedIds)
+        throws Exception {
         Query q = ldr.getExportQuery(selectedIds);
 
         Results res = os.execute(q);
