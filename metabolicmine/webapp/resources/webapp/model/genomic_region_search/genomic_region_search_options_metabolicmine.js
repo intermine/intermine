@@ -143,7 +143,7 @@
        if (org == "M. musculus") { organism = "mouse"};
 
         jQuery.ajax({
-            url: 'http://met1:5000/lift/versions/' + organism,
+            url: liftOverUrl + "versions/" + organism,
             dataType: 'jsonp',
             success: function(data) {
                 jQuery('#liftover-genome-versions').text('');
@@ -185,7 +185,7 @@
 
             jQuery.ajax({
                 type: 'POST', // actually GET
-                url: "http://met1:5000/lift/" + organism,
+                url: liftOverUrl + organism,
                 data: { coords: coords, source: source, target: target },
                 dataType: 'jsonp',
 
