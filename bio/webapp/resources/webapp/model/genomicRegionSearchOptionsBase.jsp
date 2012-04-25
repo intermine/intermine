@@ -29,11 +29,12 @@
 
         <link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.13.custom.css"/>
 
-        <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
-        <script type="text/javascript" src="model/genomic_region_search/genomic_region_search_options_base.js"></script>
-        <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
-        <script type="text/javascript" src="model/jquery_ui/jquery-ui-1.8.13.custom.min.js"></script>
+
         <script type="text/javascript">
+            //liftOver url, set it before loading "genomic_region_search_options_metabolicmine.js"
+            var liftOverUrl = "${WEB_PROPERTIES['genomicRegionSearch.liftOver.url']}";
+            liftOverUrl = /\/$/.test(liftOverUrl)? liftOverUrl : liftOverUrl + "/";
+
             // webData must be defined in base jsp first, and customized page can make use of it.
             var webDataJSON = jQuery.parseJSON('${webData}');
 
@@ -56,6 +57,10 @@
                 }
             });
         </script>
+        <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
+        <script type="text/javascript" src="model/genomic_region_search/genomic_region_search_options_base.js"></script>
+        <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
+        <script type="text/javascript" src="model/jquery_ui/jquery-ui-1.8.13.custom.min.js"></script>
 
         <div id="grs-options-body" align="center" style="padding-top: 20px;">
             <im:boxarea titleKey="genomicRegionSearch.title" stylename="plainbox" fixedWidth="85%" titleStyle="font-size: 1.2em; text-align: center;">
