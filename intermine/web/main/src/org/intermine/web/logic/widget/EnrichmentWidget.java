@@ -168,8 +168,10 @@ public class EnrichmentWidget extends Widget
             ResultsRow resRow = (ResultsRow) iter.next();
             String termId = resRow.get(0).toString();
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("displayed", resRow.get(1).toString());
-            map.put("id", resRow.get(2).toString());
+            String displayed = (resRow.get(1) != null) ? resRow.get(1).toString() : "";
+            String id = (resRow.get(2) != null) ? resRow.get(2).toString() : "";
+            map.put("displayed", displayed);
+            map.put("id", id);
             if (!termsToIds.containsKey(termId)) {
                 termsToIds.put(termId, new ArrayList<Map<String, Object>>());
             }
