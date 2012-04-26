@@ -14,29 +14,23 @@
 <tiles:importAttribute name="invalid" ignore="true"/>
 <tiles:importAttribute name="bag" ignore="true"/>
 
-<link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/cupertino/jquery-ui-1.8.18.custom.css"></link>
+<link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/flick/jquery-ui-1.8.19.custom.css"></link>
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
 
 <script src="${jsLib}/lib/underscore-min.js"></script>
 <script src="${jsLib}/lib/backbone.js"></script>
-<script src="${jsLib}/lib/jquery-ui-1.8.18.custom.min.js"></script>
-<script src="${jsLib}/lib/DataTables-1.9.0/media/js/jquery.dataTables.js"></script>
-<script src="${jsLib}/lib/paging.js"></script>
-<script src="${jsLib}/lib/google-code-prettify/prettify.js"></script>
-<script src="${jsLib}/lib/bootstrap-tab.js"></script>
-<script src="${jsLib}/lib/bootstrap-button.js"></script>
-<script src="${jsLib}/lib/bootstrap-typeahead.js"></script>
-<script src="${jsLib}/lib/bootstrap-tooltip.js"></script>
-<script src="${jsLib}/lib/bootstrap-dropdown.js"></script>
-<script src="${jsLib}/lib/bootstrap-modal.js"></script>
+
 <script src="${jsLib}/lib/imjs/src/model.js"></script>
 <script src="${jsLib}/lib/imjs/src/lists.js"></script>
 <script src="${jsLib}/lib/imjs/src/service.js"></script>
 <script src="${jsLib}/lib/imjs/src/query.js"></script>
+
+<script src="${jsLib}/js/deps.js"></script>
 <script src="${jsLib}/js/imtables.js"></script>
 
 <script>
 (function() {
+    intermine.css.headerIcon = "fm-header-icon";
     var query = ${QUERY.json};
     console.log(query);
     var service = new intermine.Service({
@@ -52,5 +46,5 @@
 })();
 </script>
 
-<div id="table-container" class="bootstrap"></div>
+<div id="table-container"></div>
 
