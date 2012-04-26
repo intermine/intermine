@@ -136,6 +136,10 @@ public class GraphWidget extends Widget
         return grapgWidgetLdr.createPathQuery();
     }
 
+    public PathQuery getSimplePathQuery() {
+        return grapgWidgetLdr.createSimplePathQuery();
+    }
+
     /**
      * class used to format the p-values on the graph
      * @author julie
