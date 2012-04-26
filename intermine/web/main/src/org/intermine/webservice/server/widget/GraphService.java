@@ -88,6 +88,7 @@ public class GraphService extends WidgetService
             throw new InternalErrorException("Problem loading widget");
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
+        addOutputInfo("simplePathQuery", widget.getSimplePathQuery().toJson());
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
 
         addOutputResult(widget);

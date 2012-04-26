@@ -338,6 +338,37 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         return q;
     }
 
+    /**
+     * Returns the pathquery based on the classkey.
+     * Executed when the user selects any columns in the in the graph widget.
+     * @return the query generated
+     */
+    public PathQuery createSimplePathQuery() {
+        PathQuery q = new PathQuery(os.getModel());
+        List<String> keyFieldNames = bag.getKeyFieldNames();
+        String prefix = config.getStartClass() + ".";
+        for (String keyFieldName : keyFieldNames) {
+            if (!keyFieldName.startsWith(prefix)) {
+                keyFieldName = prefix + keyFieldName;
+            }
+            q.addView(keyFieldName);
+        }
+
+        // bag constraint
+        if (config.isBagPathSet()) {
+            q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
+        } else {
+            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        }
+
+        //category constraint
+        q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
+        //series constraint
+        q.addConstraint(Constraints.eq(prefix + config.getSeriesPath(),"%series"));
+
+        return q;
+    }
+
     private int addExpected(Map<String, Long> resultsTable) {
         // get counts of gene in database for gene
         Query q = createQuery(GraphWidgetActionType.EXPECTED);
