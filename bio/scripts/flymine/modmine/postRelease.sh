@@ -231,8 +231,10 @@ ant -Drelease=modmine-$PREL default remove-webapp release-webapp
 
 echo
 echo "IMPORTANT: you are required to manually change:"
-echo "        /etc/httpd/conf.d/proxy_ajp.conf"
-echo "on mod2 and restart the server with"
+#echo "        /etc/httpd/conf.d/proxy_ajp.conf"
+echo "        /etc/apache2/sites-available/intermine.modencode.org.conf"
+#echo "on mod2 and restart the server with"
+echo "on web0 and restart the server with"
 echo "        sudo /usr/sbin/apachectl restart"
 echo 
 
@@ -322,7 +324,7 @@ then
 prepare_production
 fi
 
-interact "Archiving new (current) mine modmine-r$REL:"
+interact "Archiving new mine modmine-r$REL:"
 if [ "$DOIT" != "n" ]
 then
 archive_mine
