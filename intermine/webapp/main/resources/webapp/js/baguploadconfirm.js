@@ -6,7 +6,7 @@ var duplicateArray 		= new Array(),
 
 function initForm(buildNewBag) {
     if (buildNewBag == null || buildNewBag != 'true') {
-        jQuery("#newBagName").attr('disabled', 'disabled');
+        jQuery("#newBagName").attr('disabled', true);
     }
 }
 
