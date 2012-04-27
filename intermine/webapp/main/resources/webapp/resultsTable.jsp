@@ -25,6 +25,16 @@
 <script src="js/imtables-deps.js"></script>
 <script src="js/imtables.js"></script>
 
+<c:set var="initValue" value="0"/>
+
+<c:if test="${empty currentUniqueId}">
+    <c:set var="currentUniqueId" value="${initValue}" scope="application"/>
+</c:if>
+
+<c:set var="tableContainerId" value="_unique_id_${currentUniqueId}" scope="request"/>
+
+<c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
+
 <script>
 (function() {
     intermine.css.headerIcon = "fm-header-icon";
@@ -37,11 +47,10 @@
 
     jQuery(function() {
         var view = new intermine.query.results.CompactView(service, query);
-        view.$el.appendTo('#table-container');
+        view.$el.appendTo('#${tableContainerId}');
         view.render();
     });
 })();
 </script>
 
-<div id="table-container"></div>
-
+<div id="${tableContainerId}"></div>
