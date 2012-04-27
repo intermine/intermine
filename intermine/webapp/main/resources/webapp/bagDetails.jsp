@@ -185,24 +185,22 @@
 <c:if test ="${bag.type ne 'Submission'}">
 <div class="results collection-table nowrap nomargin">
 
+<style type="text/css">
+    .bag-detail-table { max-width: 1000px; }
+</style>
+
 <%-- Table displaying bag elements --%>
 <tiles:insert name="resultsTable.tile">
      <tiles:put name="pagedResults" beanName="pagedResults" />
      <tiles:put name="currentPage" value="bagDetails" />
      <tiles:put name="bagName" value="${bag.name}" />
      <tiles:put name="highlightId" value="${highlightId}"/>
+     <tiles:put name="cssClass" value="bag-detail-table"/>
 </tiles:insert>
 </div>
 
 <table style="margin-top: 10px;">
   <tr>
-      <td>
-          <tiles:insert name="paging.tile">
-            <tiles:put name="resultsTable" beanName="pagedResults" />
-            <tiles:put name="currentPage" value="bagDetails" />
-            <tiles:put name="bag" beanName="bag" />
-          </tiles:insert>
-      </td>
       <c:if test="${PROFILE.loggedIn}">
         <td>
             <div id="listTags">
