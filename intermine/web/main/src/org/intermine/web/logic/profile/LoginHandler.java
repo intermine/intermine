@@ -189,8 +189,8 @@ public abstract class LoginHandler extends InterMineAction
             if (api.getBagManager().isAnyBagNotCurrent(profile)
                     && !DatabaseUtil.isBagValuesEmpty(con)) {
                 Thread upgrade = new Thread(procedure);
-                upgrade.start();
                 upgrade.setDaemon(true);
+                upgrade.start();
             }
         } catch (SQLException sqle) {
             LOG.error("Problems retrieving the connection", sqle);
