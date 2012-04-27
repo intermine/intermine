@@ -20,13 +20,10 @@
 <script src="${jsLib}/lib/underscore-min.js"></script>
 <script src="${jsLib}/lib/backbone.js"></script>
 
-<script src="${jsLib}/lib/imjs/src/model.js"></script>
-<script src="${jsLib}/lib/imjs/src/lists.js"></script>
-<script src="${jsLib}/lib/imjs/src/service.js"></script>
-<script src="${jsLib}/lib/imjs/src/query.js"></script>
+<script src="js/im.js"></script>
 
-<script src="${jsLib}/js/deps.js"></script>
-<script src="${jsLib}/js/imtables.js"></script>
+<script src="js/imtables-deps.js"></script>
+<script src="js/imtables.js"></script>
 
 <script>
 (function() {
