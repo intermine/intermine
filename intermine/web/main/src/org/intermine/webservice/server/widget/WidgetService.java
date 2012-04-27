@@ -44,6 +44,12 @@ public abstract class WidgetService extends JSONService
         return imBag;
     }
 
+    protected void addOutputAttribute(String label, String value) {
+        if (value != null && !"".equals(value.trim())){
+            addOutputInfo(label, value);
+        }
+    }
+
     protected void addOutputListInfo(InterMineBag imBag) {
         addOutputInfo("type", imBag.getType());
         addOutputInfo("list", imBag.getName());
@@ -51,20 +57,17 @@ public abstract class WidgetService extends JSONService
     }
 
     protected void addOutputConfig(WidgetConfig config) {
-        addOutputInfo("title", config.getTitle());
-        addOutputInfo("description", config.getDescription());
+        addOutputAttribute("title", config.getTitle());
+        addOutputAttribute("description", config.getDescription());
     }
 
     protected void addOutputFilter(WidgetConfig widgetConfig, String filterSelectedValue,
         InterMineBag imBag) {
-        String filterLabel = widgetConfig.getFilterLabel();
-        if (filterLabel != null && !"".equals(filterLabel)) {
-            addOutputInfo("filterLabel", filterLabel);
-        }
+        addOutputAttribute("filterLabel", widgetConfig.getFilterLabel());
         String filters = widgetConfig.getFiltersValues(im.getObjectStore(), imBag);
         if (filters != null && !"".equals(filters)) {
-            addOutputInfo("filters", filters);
-            addOutputInfo("filterSelectedValue", filterSelectedValue);
+            addOutputAttribute("filters", filters);
+            addOutputAttribute("filterSelectedValue", filterSelectedValue);
         }
     }
 
