@@ -13,6 +13,7 @@
 <%-- Required for displaying the contents of invalid bags --%>
 <tiles:importAttribute name="invalid" ignore="true"/>
 <tiles:importAttribute name="bag" ignore="true"/>
+<tiles:importAttribute name="cssClass" ignore="true"/>
 
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/flick/jquery-ui-1.8.19.custom.css"></link>
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
@@ -53,4 +54,4 @@
 })();
 </script>
 
-<div id="${tableContainerId}"></div>
+<div id="${tableContainerId}" class="${cssClass}"></div>
