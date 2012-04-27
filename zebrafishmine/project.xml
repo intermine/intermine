@@ -1,0 +1,34 @@
+<project type="bio">
+  <property name="target.model" value="genomic"/>
+  <property name="source.location" location="../bio/sources/"/>
+  <property name="common.os.prefix" value="common"/>
+  <property name="intermine.properties.file" value="zebrafishmine.properties"/>
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <sources>
+      <source name="zebrafish-anatomy-ontology" type="zebrafish-anatomy-ontology">
+        <property name="src.data.file" location="/micklem/data/zfin/zebrafish_anatomy.obo"/>
+      </source>
+      <source name="zfin-publication" type="zfin-publication">
+        <property name="src.data.dir" location="/micklem/data/zfin"/>
+        <property name="src.data.dir.includes" value="zfinpubs.txt"/>
+      </source>
+      <!--
+      <source name="update-publications" type="update-publications">
+        <property name="src.data.file" location="build/publications.xml" />
+      </source>
+      -->
+  </sources>
+  <post-processing>
+    <post-process name="create-references"/>
+    <post-process name="transfer-sequences" dump="true"/>
+
+    <!-- this runs the postprocessing steps in all sources -->
+    <post-process name="do-sources"/>
+
+    <post-process name="summarise-objectstore"/>
+    <post-process name="create-autocomplete-index"/>
+    <post-process name="create-search-index"/>
+  </post-processing>
+
+</project>
+

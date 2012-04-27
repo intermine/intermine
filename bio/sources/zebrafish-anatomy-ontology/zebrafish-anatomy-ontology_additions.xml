@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<classes>
+  <class name="AnatomyTerm" extends="OntologyTerm" is-interface="true">
+  </class>
+</classes>
