@@ -15,16 +15,19 @@
 <tiles:importAttribute name="bag" ignore="true"/>
 <tiles:importAttribute name="cssClass" ignore="true"/>
 
+<link type="text/css" rel="stylesheet" href="${jsLib}/css/bootstrap.css"></link>
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/flick/jquery-ui-1.8.19.custom.css"></link>
 <link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
+<link type="text/css" rel="stylesheet" href="${jsLib}/css/tables.css"></link>
+<link type="text/css" rel="stylesheet" href="${jsLib}/css/flymine.css"></link>
 
 <script src="${jsLib}/lib/underscore-min.js"></script>
 <script src="${jsLib}/lib/backbone.js"></script>
 
 <script src="js/im.js"></script>
 
-<script src="js/imtables-deps.js"></script>
-<script src="js/imtables.js"></script>
+<script src="${jsLib}/js/deps.js"></script>
+<script src="${jsLib}/js/imtables.js"></script>
 
 <c:set var="initValue" value="0"/>
 
@@ -40,7 +43,6 @@
 (function() {
     intermine.css.headerIcon = "fm-header-icon";
     var query = ${QUERY.json};
-    console.log(query);
     var service = new intermine.Service({
         "root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
         "token": "${PROFILE.dayToken}"
