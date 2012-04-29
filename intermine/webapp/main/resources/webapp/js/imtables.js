@@ -7,7 +7,7 @@
  * Copyright 2012, Alex Kalderimis
  * Released under the LGPL license.
  * 
- * Built at Thu Apr 26 2012 18:25:33 GMT+0100 (BST)
+ * Built at Sun Apr 29 2012 21:07:17 GMT+0100 (BST)
 */
 
 
@@ -1890,9 +1890,14 @@
         this.query.trigger("start:list-creation");
         this.nothingSelected();
         this.$('.modal').show().addClass("in").draggable({
-          handle: "h2"
+          handle: "h2",
+          drag: function(e, ui) {
+            return console.log(e, ui);
+          }
         });
-        this.$('.modal-header h2').tooltip({
+        this.$('.modal-header h2').css({
+          cursor: "move"
+        }).tooltip({
           title: "Drag me around!"
         });
         return this.$('.btn-primary').unbind('click').click(function() {
