@@ -575,17 +575,19 @@ public class WebConfig
      * @param widget the widget
      */
     public void addWidget(final WidgetConfig widget) {
-        widgets.put(widget.getId(), widget);
-        final String[] widgetTypes = widget.getTypeClass().split(",");
-        for (final String widgetType: widgetTypes) {
-            final Type type = types.get(widgetType);
-            if (type == null) {
-                final String msg = "Invalid web config. " + widgetType + " is not a valid class. "
-                    + "Please correct the entry in the webconfig-model.xml for the "
-                    + widget.getId() + " widget.";
-                LOG.warn(msg);
-            } else {
-                type.addWidget(widget);
+        if (!widgets.containsKey(widget.getId())) {
+            widgets.put(widget.getId(), widget);
+            final String[] widgetTypes = widget.getTypeClass().split(",");
+            for (final String widgetType: widgetTypes) {
+                final Type type = types.get(widgetType);
+                if (type == null) {
+                    final String msg = "Invalid web config. " + widgetType + " is not a valid "
+                        + "class. Please correct the entry in the webconfig-model.xml for the "
+                        + widget.getId() + " widget.";
+                    LOG.warn(msg);
+                } else {
+                    type.addWidget(widget);
+                }
             }
         }
     }
