@@ -94,6 +94,7 @@ public class CodeService extends AbstractQueryService
                         perlWSModuleVer,
                         pathQueryIsPublic(pq, im, profile),
                         profile.getUsername());
+        info.readWebProperties(webProperties);
         WebserviceCodeGenerator codeGen = getCodeGenerator(lang);
         String sc = codeGen.generate(info);
         if (formatIsJSON()) {
