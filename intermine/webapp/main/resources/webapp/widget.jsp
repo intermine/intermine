@@ -56,10 +56,18 @@ text-align:left; }
         <script type="text/javascript">
         (function() {
             var callbacks = {
-                selectCb: function(pq) {
+                matchCb: function(id, type) {
+                    window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
+                },
+                resultsCb: function(pq) {
                     window.open(window.service + "query/results?query=" +
                         encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
-                    console.log(new intermine.Query(pq).toXML());
+                    console.log("resultsCb", new intermine.Query(pq).toXML());
+                },
+                listCb: function(pq) {
+                    window.open(window.service + "query/results?query=" +
+                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
+                    console.log("listCb", new intermine.Query(pq).toXML());
                 }
             };
             window.widgets.chart("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
@@ -74,10 +82,15 @@ text-align:left; }
                 matchCb: function(id, type) {
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
                 },
-                viewCb: function(pq) {
+                resultsCb: function(pq) {
                     window.open(window.service + "query/results?query=" +
                         encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
-                    console.log(new intermine.Query(pq).toXML());
+                    console.log("resultsCb", new intermine.Query(pq).toXML());
+                },
+                listCb: function(pq) {
+                    window.open(window.service + "query/results?query=" +
+                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
+                    console.log("listCb", new intermine.Query(pq).toXML());
                 }
             };
             window.widgets.enrichment("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
