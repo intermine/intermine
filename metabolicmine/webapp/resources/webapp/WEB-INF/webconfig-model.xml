@@ -606,17 +606,20 @@
                                 interactions.interactingGenes.primaryIdentifier,
                                 interactions.interactingGenes.symbol,
                                 interactions.experiment.name"/>
-<!-- 
+    
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
         pathStrings="SNP.consequences.description"
-        link="org.metabolicmine.web.widget.SNPConsequenceTypesURLQuery"
         description="Consequence types for SNPs in this list"
         displayFields="type"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.SNP"
         columnTitle="SNPs"
-        style="height:420px;"
+        views="primaryIdentifier, organism.shortName,
+                locations.locatedOn.primaryIdentifier,
+                locations.start, locations.end, locations.strand,
+                consequences.description, consequences.peptideAlleles,
+                consequences.transcript.primaryIdentifier"
     />
- -->
+
 </widgets>
 </webconfig>
