@@ -558,6 +558,22 @@
                                        publications.journal, publications.year, publications.pubMedId"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
+    <enrichmentwidgetdisplayer id="snp_publication_enrichment"
+                                 title="Publication Enrichment for SNPs"
+                                 description="Publications enriched for SNPs in this list."
+                                 label="Publication"
+                                 startClass="SNP"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="GWASResults.study.publication.title"
+                                 enrichIdentifier="publications.pubMedId"
+                                 constraints="organism.name=[list],primaryIdentifier != null"
+                                 typeClass="org.intermine.model.bio.SNP"
+                                 views="primaryIdentifier, organism.name,
+                                       GWASResults.study.publication.title, GWASResults.study.publication.firstAuthor,
+                                       GWASResults.study.publication.journal, GWASResults.study.publication.year, GWASResults.study.publication.pubMedId"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+
+
 <!--
 
     <enrichmentwidgetdisplayer id="gwas_enrichment" title="GWAS Phenotype Enrichment"
