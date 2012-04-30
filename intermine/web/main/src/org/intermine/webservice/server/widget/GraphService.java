@@ -99,10 +99,8 @@ public class GraphService extends WidgetService
         super.addOutputConfig(config);
         GraphWidgetConfig graphConfig = (GraphWidgetConfig) config;
         addOutputInfo("chartType", graphConfig.getGraphType());
-        if (graphConfig.getSeriesValues() != null) {
-            addOutputInfo("seriesValues", graphConfig.getSeriesValues());
-        }
-        addOutputInfo("seriesLabels", graphConfig.getSeriesLabels());
+        addOutputAttribute("seriesValues", graphConfig.getSeriesValues());
+        addOutputAttribute("seriesLabels", graphConfig.getSeriesLabels());
     }
 
     protected WidgetResultProcessor getProcessor() {
