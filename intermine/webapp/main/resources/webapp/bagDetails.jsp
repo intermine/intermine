@@ -196,6 +196,7 @@
      <tiles:put name="bagName" value="${bag.name}" />
      <tiles:put name="highlightId" value="${highlightId}"/>
      <tiles:put name="cssClass" value="bag-detail-table"/>
+     <tiles:put name="pageSize" value="10"/>
 </tiles:insert>
 </div>
 
