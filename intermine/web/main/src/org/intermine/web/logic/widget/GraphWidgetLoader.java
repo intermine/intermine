@@ -332,8 +332,10 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         String prefix = config.getStartClass() + ".";
         //category constraint
         q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
-        //series constraint
-        q.addConstraint(Constraints.eq(prefix + config.getSeriesPath(),"%series"));
+        if (!config.isActualExpectedCriteria()) {
+            //series constraint
+            q.addConstraint(Constraints.eq(prefix + config.getSeriesPath(), "%series"));
+        }
 
         return q;
     }
