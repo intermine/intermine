@@ -15,11 +15,6 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/resultstables.css'/>" />
 
-<!-- TODO!!! - point at something that is not a squirrel!! -->
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/bootstrap.css"></link>
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/tables.css"></link>
-<link type="text/css" rel="stylesheet" href="http://squirrel/imtables/css/flymine.css"></link>
-
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
 String pageName = (String) request.getAttribute("pageName");
@@ -45,6 +40,20 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
     <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
+
+    <!-- Ideally these imports should live in resultsTable.jsp - but I cannot get them to only import once -->
+    <c:set var="jsLib" value="${WEB_PROPERTIES['ws.imtables.provider']}"/>
+    <link type="text/css" rel="stylesheet" href="${jsLib}/css/bootstrap.css"></link>
+    <link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/flick/jquery-ui-1.8.19.custom.css"></link>
+    <link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
+    <link type="text/css" rel="stylesheet" href="${jsLib}/css/tables.css"></link>
+    <link type="text/css" rel="stylesheet" href="${jsLib}/css/flymine.css"></link>
+
+    <script src="${jsLib}/lib/underscore-min.js"></script>
+    <script src="${jsLib}/lib/backbone.js"></script>
+    <script src="js/im.js"></script>
+    <script src="${jsLib}/js/deps.js"></script>
+    <script src="${jsLib}/js/imtables.js"></script>
   <c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
     <!--
     <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>

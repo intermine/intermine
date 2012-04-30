@@ -9,25 +9,16 @@
 
 <html:xhtml/>
 
-<c:set var="jsLib" value="${WEB_PROPERTIES['ws.imtables.provider']}"/>
 <%-- Required for displaying the contents of invalid bags --%>
 <tiles:importAttribute name="invalid" ignore="true"/>
 <tiles:importAttribute name="bag" ignore="true"/>
 <tiles:importAttribute name="cssClass" ignore="true"/>
+<tiles:importAttribute name="pageSize" ignore="true"/>
 
-<link type="text/css" rel="stylesheet" href="${jsLib}/css/bootstrap.css"></link>
-<link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/flick/jquery-ui-1.8.19.custom.css"></link>
-<link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
-<link type="text/css" rel="stylesheet" href="${jsLib}/css/tables.css"></link>
-<link type="text/css" rel="stylesheet" href="${jsLib}/css/flymine.css"></link>
-
-<script src="${jsLib}/lib/underscore-min.js"></script>
-<script src="${jsLib}/lib/backbone.js"></script>
-
-<script src="js/im.js"></script>
-
-<script src="${jsLib}/js/deps.js"></script>
-<script src="${jsLib}/js/imtables.js"></script>
+<c:if test="${empty pageSize}">
+    <c:set var="pageSize" value="25"/>
+</c:if>
+  
 
 <c:set var="initValue" value="0"/>
 
@@ -49,7 +40,7 @@
     });
 
     jQuery(function() {
-        var view = new intermine.query.results.CompactView(service, query);
+        var view = new intermine.query.results.CompactView(service, query, {}, {pageSize: ${pageSize}});
         view.$el.appendTo('#${tableContainerId}');
         view.render();
     });
