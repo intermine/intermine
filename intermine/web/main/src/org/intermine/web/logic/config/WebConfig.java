@@ -427,6 +427,9 @@ public class WebConfig
         WidgetConfig widget = null;
         StringBuffer validationMessage = new StringBuffer();
         for (String widgetId : widgets.keySet()) {
+            if (widgetId.contains(" ")) {
+                validationMessage.append("The id for the widget " + widgetId + " contains spaces.");
+            }
             widget = widgets.get(widgetId);
             //verify startClass
             String startClass = widget.getStartClass();
@@ -448,13 +451,8 @@ public class WebConfig
             //verify constraints (only path)
             List<PathConstraint> pathConstraints = widget.getPathConstraints();
             for (PathConstraint pathConstraint : pathConstraints) {
-                try {
-                    new Path(model, widget.getStartClass() + "." + pathConstraint.getPath());
-                } catch (final PathException e) {
-                    validationMessage.append("The path " + pathConstraint.getPath()
-                        + " set in the constraints for the widget " + widgetId
-                        + " is not in the model.");
-                }
+                validateAttributePath(model, widget.getStartClass(), pathConstraint.getPath(),
+                                     "constraints", widgetId, validationMessage);
             }
             //verify views
             String views = widget.getViews();
@@ -466,49 +464,51 @@ public class WebConfig
                         simpleStartClass = typeClass.substring(typeClass.lastIndexOf(".") + 1);
                     }
                     for (String viewPath : viewsBites) {
-                        viewPath = simpleStartClass + "." + viewPath;
-                        try {
-                            new Path(model, viewPath);
-                        } catch (final PathException e) {
-                            validationMessage.append("The path " + viewPath + " set in the views "
-                                + "for the widget " + widgetId + " is not in the model.");
-                        }
+                        validateAttributePath(model, simpleStartClass, viewPath, "views", widgetId,
+                                validationMessage);
                     }
                 }
             }
             //verify enrich and enrichId for enrichement widgets
             if (widget instanceof EnrichmentWidgetConfig) {
                 String enrich = ((EnrichmentWidgetConfig) widget).getEnrich();
-                validatePath(model, widget.getStartClass(), enrich, "enrich", widgetId,
+                validateAttributePath(model, widget.getStartClass(), enrich, "enrich", widgetId,
                              validationMessage);
                 String enrichId = ((EnrichmentWidgetConfig) widget).getEnrichIdentifier();
                 if (enrichId != null) {
-                    validatePath(model, widget.getStartClass(), enrichId, "enrichIdentifier",
-                                 widgetId, validationMessage);
+                    validateAttributePath(model, widget.getStartClass(), enrichId,
+                                         "enrichIdentifier", widgetId, validationMessage);
                 }
             }
             //verify categoryPath and seriesPath for graph widgets
             if (widget instanceof GraphWidgetConfig) {
                 String categoryPath = ((GraphWidgetConfig) widget).getCategoryPath();
-                validatePath(model, widget.getStartClass(), categoryPath, "categoryPath", widgetId,
-                            validationMessage);
+                validateAttributePath(model, widget.getStartClass(), categoryPath, "categoryPath",
+                                      widgetId, validationMessage);
                 String seriesPath = ((GraphWidgetConfig) widget).getSeriesPath();
                 if (!"".equals(seriesPath) && !"ActualExpectedCriteria".equals(seriesPath)) {
-                    validatePath(model, widget.getStartClass(), seriesPath, "seriesPath", widgetId,
-                            validationMessage);
+                    validateAttributePath(model, widget.getStartClass(), seriesPath, "seriesPath",
+                                          widgetId, validationMessage);
                 }
             }
         }
         return validationMessage.toString();
     }
 
-    private void validatePath(Model model, String startClass, String pathToValidate, String label,
-                              String widgetId, StringBuffer validationMessage) {
+    private void validateAttributePath(Model model, String startClass, String pathToValidate,
+                                       String label, String widgetId, StringBuffer validationMsg) {
+        Path path;
         try {
-            new Path(model, startClass + "." + pathToValidate);
+            path = new Path(model, startClass + "." + pathToValidate);
+            if (!path.endIsAttribute()) {
+                validationMsg.append("The path " + pathToValidate
+                        + " set in " + label + " for the widget " + widgetId
+                        + " is not an attribute.");
+            }
         } catch (final PathException e) {
-            validationMessage.append("The attribute " + label + " " + pathToValidate
-                + " set for the widget " + widgetId + " is not in the model.");
+            validationMsg.append("The path " + pathToValidate
+                    + " set in " + label + " for the widget " + widgetId
+                    + " is not in the model.");
         }
     }
 
