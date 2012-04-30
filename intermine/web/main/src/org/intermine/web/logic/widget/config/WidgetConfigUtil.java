@@ -18,7 +18,7 @@ public class WidgetConfigUtil {
     public static boolean isListConstraint(PathConstraint pc) {
         String value = PathConstraint.getValue(pc);
         value = value.replace(" ", "");
-        if ("[list]".equals(value)) {
+        if ("[list]".equalsIgnoreCase(value)) {
             return true;
         }
         return false;
@@ -37,7 +37,7 @@ public class WidgetConfigUtil {
     public static boolean isFilterConstraint(final WidgetConfig config, PathConstraint pc) {
         String value = PathConstraint.getValue(pc);
         value = value.replace(" ", "");
-        if (value.equals("[" + config.getFilterLabel() + "]")) {
+        if (value.equalsIgnoreCase("[" + config.getFilterLabel() + "]")) {
             return true;
         }
         return false;
