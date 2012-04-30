@@ -69,9 +69,9 @@ public class WidgetLdr {
     protected QueryValue buildQueryValue(PathConstraint pc) {
         String value = PathConstraint.getValue(pc);
         QueryValue queryValue = null;
-        if ("true".equals(value)) {
+        if ("true".equalsIgnoreCase(value)) {
             queryValue = new QueryValue(true);
-        } else if ("false".equals(value)) {
+        } else if ("false".equalsIgnoreCase(value)) {
             queryValue = new QueryValue(false);
         } else {
             queryValue = new QueryValue(value);
