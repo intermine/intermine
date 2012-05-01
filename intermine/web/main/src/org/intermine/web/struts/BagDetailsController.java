@@ -227,9 +227,8 @@ public class BagDetailsController extends TilesAction
         request.setAttribute("notUseQuery", Boolean.TRUE);
 
         // Get us token so we can show non-public widgets.
-        request.setAttribute("token", profile.getApiKey());
-        LOG.info("API key: " + profile.getApiKey());
-        //request.setAttribute("token", (im.getProfileManager()).generate24hrKey(profile));
+        request.setAttribute("token", profile.getDayToken());
+        LOG.info("API key: " + profile.getDayToken());
 
         return null;
     }
