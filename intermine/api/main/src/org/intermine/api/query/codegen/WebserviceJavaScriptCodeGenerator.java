@@ -56,7 +56,8 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
           + ENDL;
 
     protected static final String PRELUDE =
-        "<!-- This is an automatically generated code snippet to run your query" + ENDL
+        "<html>" + ENDL
+        + "<!-- This is an automatically generated code snippet to run your query" + ENDL
         + " using the intermine JavaScript client library. It is assumed that you" + ENDL
         + " will be wanting to run this query from a webpage, and so the code is" + ENDL
         + " formatted such that you can just cut and paste it into any webpage -->" + ENDL + ENDL;
@@ -82,6 +83,7 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
                 "/lib/css/flick/jquery-ui-1.8.19.custom.css\"></link>\n");
         sb.append("<link type=\"text/css\" rel=\"stylesheet\" href=\"" + lib 
                 + "/lib/google-code-prettify/prettify.css\"></link>\n");
+        sb.append("<script src=\"" + lib + "/lib/jquery-1.7.js\"></script>\n");
         sb.append("<script src=\"" + lib + "/lib/underscore-min.js\"></script>\n");
         sb.append("<script src=\"" + lib + "/lib/backbone.js\"></script>\n");
         sb.append("<script src=\"" + wsCodeGenInfo.getBaseUrl() + "/js/im.js\"></script>\n");
@@ -117,23 +119,28 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
         }
 
         StringBuffer sb = new StringBuffer().append(PRELUDE);
+        sb.append("<head>" + ENDL);
         sb.append(getImports(wsCodeGenInfo));
-        sb.append("<script type=\"text/css\">\n");
+        sb.append("<script type=\"text/javascript\">\n");
         sb.append("(function($) {\n");
         sb.append("    var query = " + query.getJson() + ";\n");
         sb.append("    var service = new intermine.Service({\n");
         sb.append("        root: \"" + wsCodeGenInfo.getBaseUrl() + "\",\n");
-        sb.append("        token: \"YOUR-TOKEN-HERE\"\n");
+        sb.append("     // token: \"YOUR-TOKEN-HERE\"\n");
         sb.append("    });\n");
         sb.append("\n");
-        sb.append("$(function() {\n");
-        sb.append("    var view = new intermine.query.results.CompactView(service, query);\n");
-        sb.append("    view.$el.appendTo('#" + title + "-table-container-" + counter + "');\n");
-        sb.append("    view.render();\n");
-        sb.append("});\n");
+        sb.append("    $(function() {\n");
+        sb.append("      var view = new intermine.query.results.CompactView(service, query);\n");
+        sb.append("      view.$el.appendTo('#" + title + "-table-container-" + counter + "');\n");
+        sb.append("      view.render();\n");
+        sb.append("    });\n");
         sb.append("})(jQuery);\n");
         sb.append("</script>\n");
-        sb.append("<div id=\"#" + title + "table-container-" + counter + "\"></div>\n");
+        sb.append("</head>" + ENDL);
+        sb.append("<body>" + ENDL);
+        sb.append("  <div id=\"" + title + "-table-container-" + counter + "\"></div>\n");
+        sb.append("</body>" + ENDL);
+        sb.append("</html>");
 
         counter++;
 
