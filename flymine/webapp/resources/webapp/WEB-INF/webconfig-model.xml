@@ -852,7 +852,7 @@
                                        keywords.name, keywords.description"/>
 
 
-      <enrichmentwidgetdisplayer id="go_enrichment_for_gene" 
+      <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
                                  description="GO terms enriched for items in this list."
                                  label="GO Term"
@@ -901,6 +901,19 @@
                                        proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
+
+      <enrichmentwidgetdisplayer id="bdgp_enrichment"
+                                 title="BDGP Enrichment"
+                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BDGP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
+                                 label="Terms"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="mRNAExpressionResults.mRNAExpressionTerms[MRNAExpressionTerm].name"
+                                 constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
+                                 typeClass="org.intermine.model.bio.Gene"
+                                 views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
+                                        mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"/>
+
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
                                  description="Publications enriched for genes in this list."
@@ -916,17 +929,6 @@
                                        publications.journal, publications.year, publications.pubMedId"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
-      <enrichmentwidgetdisplayer id="bdgp_enrichment"
-                                 title="BDGP Enrichment"
-                                 description="ImaGO terms enriched for genes in this list - data from &lt;a href=&quot;http://www.fruitfly.org/cgi-bin/ex/insitu.pl&quot; target=&quot;_new&quot;&gt;BDGP&lt;/a&gt;.  Note that not all genes have been assayed by BDGP."
-                                 label="Terms"
-                                 startClass="Gene"
-                                 startClassDisplay="primaryIdentifier"
-                                 enrich="mRNAExpressionResults.mRNAExpressionTerms[MRNAExpressionTerm].name"
-                                 constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
-                                 typeClass="org.intermine.model.bio.Gene"
-                                 views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
-                                        mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"/>
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"
                                  title="Pathway Enrichment"
@@ -937,10 +939,10 @@
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="pathways.name"
-                                 enrichIdentifier="pathways.identifier"
+                                 enrichIdentifier="pathways"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views="secondaryIdentifier, symbol, organism.name,
+                                 views="secondaryIdentifier, symbol, organism,
                                         pathways.identifier, pathways.name, pathways.dataSets.name"/>
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
