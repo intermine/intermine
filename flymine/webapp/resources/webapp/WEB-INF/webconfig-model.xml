@@ -939,7 +939,7 @@
                                  startClass="Gene"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="pathways.name"
-                                 enrichIdentifier="pathways"
+                                 enrichIdentifier="pathways.identifier"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/>
