@@ -493,7 +493,7 @@
                       views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
                              chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
-      <enrichmentwidgetdisplayer id="go_enrichment_for_gene" 
+      <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
                                  description="GO terms enriched for items in this list."
                                  label="GO Term"
@@ -565,13 +565,26 @@
                                  startClass="SNP"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="GWASResults.study.name"
-                                 enrichIdentifier="GWASResults.study.identifier"
                                  constraints="organism.name=[list],primaryIdentifier != null"
                                  typeClass="org.intermine.model.bio.SNP"
                                  views="primaryIdentifier, organism.name,
                                        GWASResults.study.name, GWASResults.study.firstAuthor"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
+    <enrichmentwidgetdisplayer id="snp_publication_enrichment"
+                                 title="Publication Enrichment for SNPs"
+                                 description="Publications enriched for SNPs in this list."
+                                 label="Publication"
+                                 startClass="SNP"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="GWASResults.study.publication.title"
+                                 enrichIdentifier="GWASResults.study.publication.pubMedId"
+                                 constraints="organism.name=[list],primaryIdentifier != null"
+                                 typeClass="org.intermine.model.bio.SNP"
+                                 views="primaryIdentifier, organism.name,
+                                       GWASResults.study.publication.title, GWASResults.study.publication.firstAuthor,
+                                       GWASResults.study.publication.journal, GWASResults.study.publication.year, GWASResults.study.publication.pubMedId"
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
 <!--
 
@@ -621,7 +634,7 @@
                                 interactions.interactingGenes.primaryIdentifier,
                                 interactions.interactingGenes.symbol,
                                 interactions.experiment.name"/>
-    
+
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
         pathStrings="SNP.consequences.description"
         description="Consequence types for SNPs in this list"
