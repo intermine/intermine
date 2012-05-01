@@ -164,6 +164,10 @@ public class TableWidget extends Widget
         return bagWidgLdr.getFlattenedResults();
     }
 
+    public String getType() {
+        return bagWidgLdr.getType();
+    }
+
     public PathQuery getPathQuery() {
         return bagWidgLdr.createPathQuery();
     }

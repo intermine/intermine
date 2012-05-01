@@ -103,6 +103,9 @@ public class TableWidgetLdr extends WidgetLdr
         setFlattenedResults();
     }
 
+    public String getType() {
+        return type;
+    }
 
     /**
      * builds, runs query.  builds the results sets to be used to build widget
