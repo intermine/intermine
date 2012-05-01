@@ -60,14 +60,31 @@ text-align:left; }
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
                 },
                 resultsCb: function(pq) {
-                    window.open(window.service + "query/results?query=" +
-                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
-                    console.log("resultsCb", new intermine.Query(pq).toXML());
-                },
-                listCb: function(pq) {
-                    window.open(window.service + "query/results?query=" +
-                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
-                    console.log("listCb", new intermine.Query(pq).toXML());
+                    var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/bootstrap.css\" rel=\"stylesheet\">" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/jquery-1.7.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/underscore-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/backbone.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/model.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/service.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/deps.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/imtables.js\"></scr"+"ipt>" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/tables.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/css/flick/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
+                    "<script type=\"text/javascript\">$(function() { " +
+                        "var pq = " + JSON.stringify(pq) + ";" +
+                        "var service = new intermine.Service({'root': \"" + service + "\"});" +
+                        "var view = new intermine.query.results.CompactView(service, pq);" +
+                        "view.$el.appendTo(\"#container\"); view.render();" +
+                    " });</scr"+"ipt>" +
+                    "</head><body><div id=\"container\"></div></body></html>";
+
+                    var w = window.open();
+                    w.document.open();
+                    w.document.write(data);
+                    w.document.close();
                 }
             };
             window.widgets.chart("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
@@ -83,14 +100,31 @@ text-align:left; }
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
                 },
                 resultsCb: function(pq) {
-                    window.open(window.service + "query/results?query=" +
-                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
-                    console.log("resultsCb", new intermine.Query(pq).toXML());
-                },
-                listCb: function(pq) {
-                    window.open(window.service + "query/results?query=" +
-                        encodeURIComponent(new intermine.Query(pq).toXML()) + "&format=html");
-                    console.log("listCb", new intermine.Query(pq).toXML());
+                    var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/bootstrap.css\" rel=\"stylesheet\">" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/jquery-1.7.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/underscore-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/backbone.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/model.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/service.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/deps.js\"></scr"+"ipt>" +
+                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/imtables.js\"></scr"+"ipt>" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/tables.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/css/flick/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
+                    "<script type=\"text/javascript\">$(function() { " +
+                        "var pq = " + JSON.stringify(pq) + ";" +
+                        "var service = new intermine.Service({'root': \"" + service + "\"});" +
+                        "var view = new intermine.query.results.CompactView(service, pq);" +
+                        "view.$el.appendTo(\"#container\"); view.render();" +
+                    " });</scr"+"ipt>" +
+                    "</head><body><div id=\"container\"></div></body></html>";
+
+                    var w = window.open();
+                    w.document.open();
+                    w.document.write(data);
+                    w.document.close();
                 }
             };
             window.widgets.enrichment("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
