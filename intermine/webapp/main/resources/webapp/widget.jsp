@@ -75,7 +75,7 @@ text-align:left; }
                     "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
                     "<script type=\"text/javascript\">$(function() { " +
                         "var pq = " + JSON.stringify(pq) + ";" +
-                        "var service = new intermine.Service({'root': \"" + service + "\"});" +
+                        "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
                         "var view = new intermine.query.results.CompactView(service, pq);" +
                         "view.$el.appendTo(\"#container\"); view.render();" +
                     " });</scr"+"ipt>" +
@@ -115,7 +115,7 @@ text-align:left; }
                     "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
                     "<script type=\"text/javascript\">$(function() { " +
                         "var pq = " + JSON.stringify(pq) + ";" +
-                        "var service = new intermine.Service({'root': \"" + service + "\"});" +
+                        "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
                         "var view = new intermine.query.results.CompactView(service, pq);" +
                         "view.$el.appendTo(\"#container\"); view.render();" +
                     " });</scr"+"ipt>" +
