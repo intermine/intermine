@@ -170,22 +170,6 @@ type.isUndefined = (function(_super) {
 
 })(type.Root);
 
-/* Merge properties of 2 dictionaries.
-*/
-var merge;
-
-merge = function(child, parent) {
-  var key;
-  for (key in parent) {
-    if (!(child[key] != null)) {
-      if (Object.prototype.hasOwnProperty.call(parent, key)) {
-        child[key] = parent[key];
-      }
-    }
-  }
-  return child;
-};
-
 /* Pure JS based JS script, CSS loader.
 */
 var CSSLoader, JSLoader, Load, Loader,
@@ -290,6 +274,10 @@ Load = (function() {
                 return _this.done(resource);
               });
             }
+            break;
+          case "css":
+            new CSSLoader(resource.path);
+            this.done(resource);
         }
       }
       if (this.count || this.wait) {
@@ -359,6 +347,22 @@ PlainExporter = (function() {
 
 })();
 
+/* Merge properties of 2 dictionaries.
+*/
+var merge;
+
+merge = function(child, parent) {
+  var key;
+  for (key in parent) {
+    if (!(child[key] != null)) {
+      if (Object.prototype.hasOwnProperty.call(parent, key)) {
+        child[key] = parent[key];
+      }
+    }
+  }
+  return child;
+};
+
 var factory;
 factory = function(Backbone) {
 
@@ -426,56 +430,6 @@ factory = function(Backbone) {
   })();
   
 
-  /* Models underpinning Table Widget results.
-  */
-  var TableResults, TableRow,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  TableRow = (function(_super) {
-  
-    __extends(TableRow, _super);
-  
-    function TableRow() {
-      this.validate = __bind(this.validate, this);
-      TableRow.__super__.constructor.apply(this, arguments);
-    }
-  
-    TableRow.prototype.spec = {
-      "matches": type.isInteger,
-      "identifier": type.isInteger,
-      "descriptions": type.isArray
-    };
-  
-    TableRow.prototype.initialize = function(row, widget) {
-      this.widget = widget;
-      return this.validate(row);
-    };
-  
-    TableRow.prototype.validate = function(row) {
-      return this.widget.validateType(row, this.spec);
-    };
-  
-    return TableRow;
-  
-  })(Backbone.Model);
-  
-  TableResults = (function(_super) {
-  
-    __extends(TableResults, _super);
-  
-    function TableResults() {
-      TableResults.__super__.constructor.apply(this, arguments);
-    }
-  
-    TableResults.prototype.model = TableRow;
-  
-    return TableResults;
-  
-  })(Backbone.Collection);
-  
-
   /* Enrichment Widget table row.
   */
   var EnrichmentRowView,
@@ -525,7 +479,8 @@ factory = function(Backbone) {
     EnrichmentRowView.prototype.toggleMatchesAction = function() {
       if (!(this.matchesView != null)) {
         return $(this.el).find('td.matches a.count').after((this.matchesView = new EnrichmentMatchesView({
-          "collection": new EnrichmentMatches(this.model.get("matches")),
+          "matches": this.model.get("matches"),
+          "identifiers": [this.model.get("identifier")],
           "description": this.model.get("description"),
           "template": this.template,
           "matchCb": this.callbacks.matchCb,
@@ -632,7 +587,7 @@ factory = function(Backbone) {
         "description": this.description,
         "descriptionLimit": this.descriptionLimit,
         "type": this.response.type,
-        "matches": this.collection.toJSON(),
+        "matches": this.matches,
         "matchesLimit": this.matchesLimit,
         "style": this.style || "width:300px;margin-left:-300px"
       }));
@@ -650,9 +605,7 @@ factory = function(Backbone) {
       return this.pq.where.push({
         "path": this.response.pathConstraint,
         "op": "ONE OF",
-        "values": this.collection.map(function(match) {
-          return match.get('id');
-        })
+        "values": this.identifiers
       });
     };
   
@@ -674,6 +627,56 @@ factory = function(Backbone) {
     return EnrichmentMatchesView;
   
   })(Backbone.View);
+  
+
+  /* Models underpinning Table Widget results.
+  */
+  var TableResults, TableRow,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  TableRow = (function(_super) {
+  
+    __extends(TableRow, _super);
+  
+    function TableRow() {
+      this.validate = __bind(this.validate, this);
+      TableRow.__super__.constructor.apply(this, arguments);
+    }
+  
+    TableRow.prototype.spec = {
+      "matches": type.isInteger,
+      "identifier": type.isInteger,
+      "descriptions": type.isArray
+    };
+  
+    TableRow.prototype.initialize = function(row, widget) {
+      this.widget = widget;
+      return this.validate(row);
+    };
+  
+    TableRow.prototype.validate = function(row) {
+      return this.widget.validateType(row, this.spec);
+    };
+  
+    return TableRow;
+  
+  })(Backbone.Model);
+  
+  TableResults = (function(_super) {
+  
+    __extends(TableResults, _super);
+  
+    function TableResults() {
+      TableResults.__super__.constructor.apply(this, arguments);
+    }
+  
+    TableResults.prototype.model = TableRow;
+  
+    return TableResults;
+  
+  })(Backbone.Collection);
   
 
   /* View maintaining Table Widget.
@@ -877,7 +880,8 @@ factory = function(Backbone) {
                   "matchCb": _this.options.matchCb,
                   "quickPq": quickPq,
                   "imjs": new intermine.Service({
-                    'root': _this.widget.service
+                    'root': _this.widget.service,
+                    'token': _this.widget.token
                   }),
                   "type": _this.response.type
                 })).el);
@@ -1021,36 +1025,10 @@ factory = function(Backbone) {
 
   /* Models underpinning Enrichment Widget results.
   */
-  var EnrichmentMatch, EnrichmentMatches, EnrichmentResults, EnrichmentRow,
+  var EnrichmentResults, EnrichmentRow,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-  
-  EnrichmentMatch = (function(_super) {
-  
-    __extends(EnrichmentMatch, _super);
-  
-    function EnrichmentMatch() {
-      EnrichmentMatch.__super__.constructor.apply(this, arguments);
-    }
-  
-    return EnrichmentMatch;
-  
-  })(Backbone.Model);
-  
-  EnrichmentMatches = (function(_super) {
-  
-    __extends(EnrichmentMatches, _super);
-  
-    function EnrichmentMatches() {
-      EnrichmentMatches.__super__.constructor.apply(this, arguments);
-    }
-  
-    EnrichmentMatches.prototype.model = EnrichmentMatch;
-  
-    return EnrichmentMatches;
-  
-  })(Backbone.Collection);
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
   
   EnrichmentRow = (function(_super) {
   
@@ -1310,13 +1288,15 @@ factory = function(Backbone) {
     };
   
     EnrichmentView.prototype.viewAction = function() {
-      var descriptions, match, matches, model, _i, _j, _len, _len2, _ref, _ref2, _ref3;
+      var descriptions, match, matches, model, rowIdentifiers, _i, _j, _len, _len2, _ref, _ref2, _ref3;
       matches = [];
       descriptions = [];
+      rowIdentifiers = [];
       _ref = this.collection.selected();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         model = _ref[_i];
         descriptions.push(model.get('description'));
+        rowIdentifiers.push(model.get('identifier'));
         _ref2 = model.get('matches');
         for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
           match = _ref2[_j];
@@ -1326,7 +1306,8 @@ factory = function(Backbone) {
       if (matches.length) {
         if ((_ref3 = this.matchesView) != null) _ref3.remove();
         return $(this.el).find('div.actions').after((this.matchesView = new EnrichmentMatchesView({
-          "collection": new EnrichmentMatches(matches),
+          "matches": matches,
+          "identifiers": rowIdentifiers,
           "description": descriptions.join(', '),
           "template": this.template,
           "style": "width:300px",
@@ -1659,10 +1640,10 @@ factory = function(Backbone) {
   return {
 
     "InterMineWidget": InterMineWidget,
-    "TableResults": TableResults,
     "EnrichmentRowView": EnrichmentRowView,
     "TableRowView": TableRowView,
     "EnrichmentMatchesView": EnrichmentMatchesView,
+    "TableResults": TableResults,
     "TableView": TableView,
     "ChartView": ChartView,
     "ChartWidget": ChartWidget,
@@ -1703,21 +1684,19 @@ window.Widgets = (function() {
     }, {
       name: "Backbone",
       path: "http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js",
-      type: "js"
+      type: "js",
+      wait: true
     }, {
       name: "google",
       path: "https://www.google.com/jsapi",
       type: "js"
     }, {
-      name: "intermine.imjs.model",
       path: "https://raw.github.com/alexkalderimis/imjs/master/src/model.js",
       type: "js"
     }, {
-      name: "intermine.imjs.query",
       path: "https://raw.github.com/alexkalderimis/imjs/master/src/query.js",
       type: "js"
     }, {
-      name: "intermine.imjs.service",
       path: "https://raw.github.com/alexkalderimis/imjs/master/src/service.js",
       type: "js"
     }
