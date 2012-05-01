@@ -636,9 +636,9 @@
                                 interactions.experiment.name"/>
 
     <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
-        pathStrings="SNP.consequences.description"
+        pathStrings="SNP.consequences"
         description="Consequence types for SNPs in this list"
-        displayFields="type"
+        displayFields="description, transcript.primaryIdentifier"
         exportField="primaryIdentifier"
         typeClass="org.intermine.model.bio.SNP"
         columnTitle="SNPs"
