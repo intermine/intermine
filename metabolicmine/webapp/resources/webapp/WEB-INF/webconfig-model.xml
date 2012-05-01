@@ -493,6 +493,23 @@
                       views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
                              chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
+      <graphdisplayer id="chromosome_distribution_for_snp"
+                      title="Chromosome Distribution"
+                      description="Actual: number of items in this list found on each chromosome.  Expected: given the total number of items on the chromosome and the number of items in this list, the number of items expected to be found on each chromosome."
+                      graphType="ColumnChart"
+                      rangeLabel="Count"
+                      domainLabel="Chromosome"
+                      filterLabel="Organism"
+                      filters="organism.name=[list]"
+                      startClass="SNP"
+                      typeClass="org.intermine.model.bio.SNP"
+                      categoryPath="chromosome.primaryIdentifier"
+                      seriesLabels="Actual,Expected"
+                      seriesPath="ActualExpectedCriteria"
+                      constraints="organism.name=[Organism]"
+                      views="primaryIdentifier, organism.shortName, locations.locatedOn.primaryIdentifier,
+                             locations.start, locations.end, locations.strand"/>
+
       <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
                                  description="GO terms enriched for items in this list."
@@ -558,7 +575,7 @@
                                        publications.journal, publications.year, publications.pubMedId"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
-    <enrichmentwidgetdisplayer id="snp_gwas_study_enrichment"
+      <enrichmentwidgetdisplayer id="snp_gwas_study_enrichment"
                                  title="GWAS study Enrichment for SNPs"
                                  description="GWAS studies enriched for SNPs in this list."
                                  label="GWAS Study"
@@ -571,7 +588,7 @@
                                        GWASResults.study.name, GWASResults.study.firstAuthor"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
-    <enrichmentwidgetdisplayer id="snp_publication_enrichment"
+      <enrichmentwidgetdisplayer id="snp_publication_enrichment"
                                  title="Publication Enrichment for SNPs"
                                  description="Publications enriched for SNPs in this list."
                                  label="Publication"
@@ -635,19 +652,18 @@
                                 interactions.interactingGenes.symbol,
                                 interactions.experiment.name"/>
 
-    <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
-        pathStrings="SNP.consequences"
-        description="Consequence types for SNPs in this list"
-        displayFields="description, transcript.primaryIdentifier"
-        exportField="primaryIdentifier"
-        typeClass="org.intermine.model.bio.SNP"
-        columnTitle="SNPs"
-        views="primaryIdentifier, organism.shortName,
-                locations.locatedOn.primaryIdentifier,
-                locations.start, locations.end, locations.strand,
-                consequences.description, consequences.peptideAlleles,
-                consequences.transcript.primaryIdentifier"
-    />
+      <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
+                         pathStrings="SNP.consequences"
+                         description="Consequence types for SNPs in this list"
+                         displayFields="description, transcript.primaryIdentifier"
+                         exportField="primaryIdentifier"
+                         typeClass="org.intermine.model.bio.SNP"
+                         columnTitle="SNPs"
+                         views="primaryIdentifier, organism.shortName,
+                                locations.locatedOn.primaryIdentifier,
+                                locations.start, locations.end, locations.strand,
+                                consequences.description, consequences.peptideAlleles,
+                                consequences.transcript.primaryIdentifier"/>
 
 </widgets>
 </webconfig>
