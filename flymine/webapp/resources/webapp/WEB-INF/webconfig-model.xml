@@ -942,8 +942,7 @@
                                  enrichIdentifier="pathways"
                                  constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views="secondaryIdentifier, symbol, organism,
-                                        pathways.identifier, pathways.name, pathways.dataSets.name"/>
+                                 views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/>
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          description="Counts of orthologues in other organisms for the genes in this list."
