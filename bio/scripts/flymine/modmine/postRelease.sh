@@ -70,6 +70,7 @@ fi
 
 # set previous release
 let PREL=$REL-1
+
 echo
 echo "--------------------------------------------------------------"
 echo "Post release house keeping: dealing with releases $REL and $PREL"
@@ -235,7 +236,8 @@ echo "IMPORTANT: you are required to manually change:"
 echo "        /etc/apache2/sites-available/intermine.modencode.org.conf"
 #echo "on mod2 and restart the server with"
 echo "on web0 and restart the server with"
-echo "        sudo /usr/sbin/apachectl restart"
+#echo "        sudo /usr/sbin/apachectl restart"
+echo "        sudo /etc/init.d/apache2 restart"
 echo 
 
 cd $RETURNDIR
