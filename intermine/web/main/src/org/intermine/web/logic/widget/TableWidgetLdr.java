@@ -486,11 +486,21 @@ public class TableWidgetLdr extends WidgetLdr
         String prefix = typeClass.substring(typeClass.lastIndexOf(".") + 1);
         for (String view : views) {
             if (!view.startsWith(prefix)) {
-                view = prefix + "." + view;
+                view = prefix  + "." + view;
             }
             q.addView(view);
         }
         q.addConstraint(Constraints.in(prefix, bag.getName()));
+
+        String ps = config.getPathStrings();
+        if (ps.contains("[") && ps.contains("]")) {
+            //e.g.Gene.homologues[type=orthologue].homologue.organism
+            String constraintPath, constraintValue;
+            constraintPath = ps.substring(ps.indexOf('[') + 1, ps.indexOf('=')); //e.g. type
+            constraintValue = ps.substring(ps.indexOf('=') + 1, ps.indexOf(']')); //e.g. orthologue
+            q.addConstraint(Constraints.eq(ps.substring(0, ps.indexOf('[')) + "." + constraintPath,
+                                           constraintValue));
+        }
         return q;
     }
 }
