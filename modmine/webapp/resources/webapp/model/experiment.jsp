@@ -602,9 +602,10 @@ All GBrowse tracks generated for this experiment:
 
        <td class="sorting" bgcolor="white">
           <c:forEach items="${sub.experimentalFactors}" var="factor" varStatus="status">
+          <%--<br>${factor.type}--${factorType}--%>
             <c:if test="${factor.type == factorType && !fn:startsWith(factor.name, 'No Antibody')}" >
                 <c:choose>
-                   <c:when test="${factor.property != null}">
+                   <c:when test="${not empty factor.property}">
 
     <c:set var="thisTypeCount" value="${thisTypeCount + 1}"></c:set>
            <c:choose>
@@ -664,11 +665,10 @@ All GBrowse tracks generated for this experiment:
 </c:choose>
 </c:otherwise>
 </c:choose>
+</c:if>
 
-
-                  </c:if>
 <br>
-                   </c:when>
+</c:when>
                   <c:when test="${thisTypeCount > 5 && status.last}">
                   ...
 <br>
