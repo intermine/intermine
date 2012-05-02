@@ -93,7 +93,13 @@ public class TableWidgetService extends WidgetService
      */
     private void addOutputPathQuery(TableWidget widget, WidgetConfig config) {
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
-        String prefix =  widget.getType() + ".";
+        TableWidgetConfig tableWidgetConfig = (TableWidgetConfig) config;
+        String pathStrings = tableWidgetConfig.getPathStrings();
+        if (pathStrings.contains("[") && pathStrings.contains("]")) {
+            pathStrings = pathStrings.substring(0, pathStrings.indexOf("["))
+                          + pathStrings.substring(pathStrings.indexOf("]") + 1);
+        }
+        String prefix =  pathStrings + ".";
         addOutputInfo("pathConstraint", prefix + "id");
     }
 
