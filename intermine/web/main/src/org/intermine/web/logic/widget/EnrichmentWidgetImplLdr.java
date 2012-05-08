@@ -300,8 +300,10 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     public PathQuery createPathQueryForMatches() {
         Model model = os.getModel();
         PathQuery pathQuery = new PathQuery(model);
-        String viewPath = config.getStartClass() + "." + config.getStartClassDisplay();
-        pathQuery.addView(viewPath);
+        String enrichIdentifier = config.getStartClass() + "." + config.getEnrichIdentifier();
+        String startClassDisplayView = config.getStartClass() + "." + config.getStartClassDisplay();
+        pathQuery.addView(enrichIdentifier);
+        pathQuery.addView(startClassDisplayView);
         // bag constraint
         pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         return pathQuery;
