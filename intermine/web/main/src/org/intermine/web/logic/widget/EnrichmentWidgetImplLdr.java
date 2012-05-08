@@ -29,6 +29,7 @@ import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
@@ -304,6 +305,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         String startClassDisplayView = config.getStartClass() + "." + config.getStartClassDisplay();
         pathQuery.addView(enrichIdentifier);
         pathQuery.addView(startClassDisplayView);
+        pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
         // bag constraint
         pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         return pathQuery;
