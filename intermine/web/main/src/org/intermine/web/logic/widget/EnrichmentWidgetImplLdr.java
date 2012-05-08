@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -288,5 +289,21 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         // bag constraint
         q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         return q;
+    }
+
+    /**
+     * Returns the pathquery based on the view set in config file in the startClassDisplay
+     * and the bag constraint
+     * Executed when the user click on the matches column in the enrichment widget.
+     * @return the query generated
+     */
+    public PathQuery createPathQueryForMatches() {
+        Model model = os.getModel();
+        PathQuery pathQuery = new PathQuery(model);
+        String viewPath = config.getStartClass() + "." + config.getStartClassDisplay();
+        pathQuery.addView(viewPath);
+        // bag constraint
+        pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        return pathQuery;
     }
 }
