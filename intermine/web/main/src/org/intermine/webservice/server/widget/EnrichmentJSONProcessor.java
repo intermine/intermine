@@ -38,8 +38,8 @@ public class EnrichmentJSONProcessor implements WidgetResultProcessor {
         backingMap.put("p-value", row.get(2));
         // Counts (index 3) are not necessary here, as it it trivial to
         // fetch from the matches array (as result.matches.length)
-        List<Map<String, Object>> matchesDetail = (List<Map<String, Object>>) row.get(4);
-        backingMap.put("matches", matchesDetail);
+        //List<Map<String, Object>> matchesDetail = (List<Map<String, Object>>) row.get(4);
+        backingMap.put("matches", row.get(3));
         JSONObject jo = new JSONObject(backingMap);
         return new LinkedList<String>(Arrays.asList(jo.toString()));
     }

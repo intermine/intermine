@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -126,7 +127,7 @@ public class EnrichmentWidgetResultService extends WidgetService
             pathConstraint = part1 + part2;
         }
         addOutputInfo("pathConstraint", config.getStartClass() + "." + pathConstraint);
-        //addOutputInfo("matchPathConstraint", config.getStartClass() + ".id");
+        addOutputInfo("pathQueryForMatches", widget.getPathQueryForMatches().toJson());
     }
 
     protected WidgetResultProcessor getProcessor() {

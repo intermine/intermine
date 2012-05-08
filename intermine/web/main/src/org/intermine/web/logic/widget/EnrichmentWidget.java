@@ -231,8 +231,6 @@ public class EnrichmentWidget extends Widget
                 row.add(labels.get(id));
                 row.add(pValues.get(id).doubleValue());
                 row.add(counts.get(id));
-                Map<String, List<Map<String, Object>>> termsToIds = getTermsToIds(Arrays.asList(id));
-                row.add(termsToIds.get(id));
                 exportResults.add(row);
             }
         }
@@ -242,6 +240,10 @@ public class EnrichmentWidget extends Widget
     @Override
     public PathQuery getPathQuery() {
         return ldr.createPathQuery();
+    }
+
+    public PathQuery getPathQueryForMatches() {
+        return ldr.createPathQueryForMatches();
     }
 
     /**
