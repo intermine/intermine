@@ -32,7 +32,8 @@
 <script type="text/javascript" src="<html:rewrite page='/js/report.js'/>"></script>
 
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/widget.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/intermine.api.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/intermine.widgets.js'/>"></script>
 <div class="body">
 <c:choose>
 <c:when test="${!empty bag}">
@@ -340,7 +341,7 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
 <script type="text/javascript">
-	window.widgets = new window.Widgets(window.service, "${PROFILE.dayToken}");
+	window.widgets = new intermine.widgets(window.service, "${PROFILE.dayToken}");
 </script>
 
 <c:forEach items="${widgets}" var="widget">

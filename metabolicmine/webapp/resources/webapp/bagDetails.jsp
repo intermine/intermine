@@ -30,7 +30,8 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/widget.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/intermine.api.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/intermine.widgets.js'/>"></script>
 
 <%-- CSS framework --%>
 <link rel="stylesheet" type="text/css" href="css/960gs.css" />
@@ -551,7 +552,7 @@
 
     <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
     <script type="text/javascript">
-        window.widgets = new window.Widgets(window.service, "${token}");
+        window.widgets = new intermine.widgets(window.service, "${token}");
     </script>
     <c:forEach items="${widgets}" var="widget">
     <div class="box">
