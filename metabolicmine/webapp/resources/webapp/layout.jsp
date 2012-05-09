@@ -132,12 +132,55 @@
     <c:set var="googleAnalyticsId" value="${WEB_PROPERTIES['google.analytics.id']}"/>
     <c:if test="${!empty googleAnalyticsId}">
         <script type="text/javascript">
-            document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-        </script>
-        <script type="text/javascript">
-            var pageTracker = _gat._getTracker('${googleAnalyticsId}');
-            pageTracker._initData();
-            pageTracker._trackPageview();
+          switch ("${userTracking}") {
+            case "1":
+              document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+              document.write(unescape("%3Cscript src='http://www.google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+              
+              var pageTracker = _gat._getTracker('${googleAnalyticsId}');
+              pageTracker._initData();
+              pageTracker._trackPageview();
+
+              break;
+
+            case "2":
+              // save cookie
+              var saveTrackingAnswer = function(answer) {
+                var date = new Date();
+                date.setTime(date.getTime() + 31536000000);
+                document.cookie = "userTracking=" + escape(answer) + "; expires=" + date.toUTCString() + "; path=/";
+              };
+              // show msg
+              jQuery("#ctxHelpDiv").after( function() {
+                return el = jQuery("<div/>", { 'class': 'topBar info userTracking', 'style': 'margin:5px 0' })
+                .html( function() {
+                    return jQuery('<p/>', { 'text': 'Can we track your general usage of the webapp through Google Analytics?' })
+                    .append( function() {
+                      return jQuery('<a/>', {
+                        'text': 'No',
+                        'href': '#',
+                        'click': function(e) {
+                          e.preventDefault();
+                          saveTrackingAnswer("0");
+                          jQuery(el).remove();
+                        }
+                      })
+                    } )
+                    .append( function() {
+                      return jQuery('<a/>', {
+                        'text': 'Yes',
+                        'href': '#',
+                        'style': 'margin:0 10px',
+                        'click': function(e) {
+                          e.preventDefault();
+                          saveTrackingAnswer("1");
+                          jQuery(el).remove();
+                        }
+                      })
+                    } )
+                } )
+              } );
+          }
         </script>
     </c:if>
     <c:if test="${!empty fixedLayout}">
