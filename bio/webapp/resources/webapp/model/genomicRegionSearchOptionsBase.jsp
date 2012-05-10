@@ -88,8 +88,20 @@
                     <li id="genomicRegionInput">
                        <%-- textarea --%>
                        <span>Type/Paste in genomic regions in</span>
-                       <span id="baseCorRadioSpan"><html:radio property="dataFormat" styleId="isNotInterBaseCoordinate" value="isNotInterBaseCoordinate">&nbsp;base coordinate</html:radio></span>
-                       <span id="interBaseCorRadioSpan"><html:radio property="dataFormat" styleId="isInterBaseCoordinate" value="isInterBaseCoordinate">&nbsp;interbase coordinate</html:radio></span>
+                       <span id="baseCorRadioSpan">
+                           <html:radio property="dataFormat" styleId="isNotInterBaseCoordinate" value="isNotInterBaseCoordinate">&nbsp;base coordinate
+                               <a title="e.g. BLAST, GFF/GFF3" onclick="document.getElementById('ctxHelpTxt').innerHTML='base coordinate: e.g. BLAST, GFF/GFF3';document.getElementById('ctxHelpDiv').style.display=''; window.scrollTo(0, 0);return false">
+                                   <img style="padding: 4px 3px" alt="?" src="images/icons/information-small-blue.png" class="tinyQuestionMark">
+                               </a>
+                           </html:radio>
+                       </span>
+                       <span id="interBaseCorRadioSpan">
+                           <html:radio property="dataFormat" styleId="isInterBaseCoordinate" value="isInterBaseCoordinate">&nbsp;interbase coordinate
+                               <a title="e.g. UCSC BED, Chado" onclick="document.getElementById('ctxHelpTxt').innerHTML='interbase coordinate: e.g. UCSC BED, Chado';document.getElementById('ctxHelpDiv').style.display=''; window.scrollTo(0, 0);return false">
+                                   <img style="padding: 4px 3px" alt="?" src="images/icons/information-small-blue.png" class="tinyQuestionMark">
+                               </a>
+                           </html:radio>
+                       </span>
 
                        <%-- example span --%>
                        <div style="text-align:left;">
