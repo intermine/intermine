@@ -424,9 +424,9 @@ public class GFF3Converter extends DataConverter
             return null;
         }
 
-        if (identifier.startsWith("chr")) {
-            identifier = identifier.substring(3);
-        }
+//        if (identifier.startsWith("chr")) {
+//            identifier = identifier.substring(3);
+//        }
 
         Item seq = seqs.get(identifier);
         if (seq == null) {
