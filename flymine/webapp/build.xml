@@ -6,15 +6,6 @@
   <target name="-pre-jar"
           depends="application.-pre-jar, -add-struts-config"/>
 
-  <!-- it's hacky to override do-generate, but it gets run at the right time 
-  <target name="do-generate">
-    <mkdir dir="${build.dir}/webapp"/>
-    <mkdir dir="${build.dir}/webapp/sitemaps"/>
-    <ant antfile="build.xml" dir="../sitemap" target="generate-sitemap" inheritAll="false">
-      <property name="sitemap.output" value="${build.dir}/webapp/sitemaps"/>
-    </ant>
-  </target>-->
-
   <target name="-add-struts-config"
           description="Append the struts config modifications to the webapp"
       depends="-pre-init">
