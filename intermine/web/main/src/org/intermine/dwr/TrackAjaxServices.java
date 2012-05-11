@@ -147,12 +147,14 @@ public class TrackAjaxServices {
 
     public List getQueryTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
+        String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "' ";
         String sql = "SELECT type, COUNT(type),"
             + " (SELECT COUNT(*) FROM (SELECT username FROM querytrack WHERE username!=''"
-                                      + " AND type=qt.type GROUP BY username)"
-                                      + " AS querysubselect),"
+                                      + " AND type=qt.type AND" + timeStampConstraint
+                                      + " GROUP BY username) AS querysubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM querytrack"
-                                      + " WHERE username='' AND type=qt.type"
+                                      + " WHERE username='' AND type=qt.type AND"
+                                      + timeStampConstraint
                                       + " GROUP BY sessionidentifier) AS querysubselect2)"
             + " FROM querytrack AS qt WHERE qt.timestamp > '" + startTimeRange.toString() + "'"
             + " GROUP BY qt.type ORDER BY COUNT(type) DESC LIMIT 20";
@@ -161,13 +163,15 @@ public class TrackAjaxServices {
 
     public List getTemplateTracksPercentage(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
+        String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT templatename, COUNT(templatename),"
-            + " (SELECT COUNT(*) FROM (SELECT username FROM templatetrack WHERE username!=''"
-                                      + " AND templatename=tt.templatename GROUP BY username)"
-                                      + " AS templatesubselect),"
+            + " (SELECT COUNT(*) FROM (SELECT username FROM templatetrack WHERE username!='' "
+                                   + "AND templatename=tt.templatename AND" + timeStampConstraint
+                                   + "GROUP BY username) AS templatesubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM templatetrack"
-                                      + " WHERE username='' AND templatename=tt.templatename"
-                                      + " GROUP BY sessionidentifier) AS templatesubselect2)"
+                                    + " WHERE username='' AND templatename=tt.templatename AND"
+                                    + timeStampConstraint + " GROUP BY sessionidentifier) "
+                                    + "AS templatesubselect2)"
             + " FROM templatetrack AS tt WHERE tt.timestamp > '" + startTimeRange.toString() + "'"
             + " GROUP BY tt.templatename ORDER BY COUNT(templatename) DESC LIMIT 20";
         return getTracksDataTable(sql);
@@ -192,13 +196,15 @@ public class TrackAjaxServices {
 
     public List getSearchTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
+        String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT keyword, COUNT(keyword),"
             + " (SELECT COUNT(*) FROM (SELECT username FROM searchtrack WHERE username!=''"
-                                      + " AND keyword=st.keyword GROUP BY username)"
-                                      + " AS searchsubselect),"
+                                      + " AND keyword=st.keyword AND" + timeStampConstraint
+                                      + "GROUP BY username) AS searchsubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM searchtrack"
-                                      + " WHERE username='' AND keyword=st.keyword"
-                                      + " GROUP BY sessionidentifier) AS searchsubselect2)"
+                                      + " WHERE username='' AND keyword=st.keyword AND"
+                                      + timeStampConstraint
+                                      + "GROUP BY sessionidentifier) AS searchsubselect2)"
             + " FROM searchtrack AS st WHERE st.timestamp > '" + startTimeRange.toString() + "'"
             + " GROUP BY st.keyword ORDER BY COUNT(keyword) DESC LIMIT 50";
         return getTracksDataTable(sql);
@@ -206,13 +212,16 @@ public class TrackAjaxServices {
 
     public List getListExecutionTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
+        String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT type, COUNT(type),"
             + " (SELECT COUNT(*) FROM (SELECT username FROM listtrack WHERE username!=''"
-                                      + " AND event='EXECUTION' AND type=lt.type GROUP BY username)"
-                                      + " AS listsubselect),"
+                                      + " AND event='EXECUTION' AND type=lt.type AND"
+                                      + timeStampConstraint
+                                      + "GROUP BY username) AS listsubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM listtrack"
-                                      + " WHERE username='' AND event='EXECUTION' AND type=lt.type"
-                                      + " GROUP BY sessionidentifier) AS listsubselect2)"
+                                      + " WHERE username='' AND event='EXECUTION' AND type=lt.type AND"
+                                      + timeStampConstraint
+                                      + "GROUP BY sessionidentifier) AS listsubselect2)"
             + " FROM listtrack AS lt WHERE lt.timestamp > '" + startTimeRange.toString() + "'"
             + " AND lt.event='EXECUTION' GROUP BY lt.type ORDER BY COUNT(type) DESC LIMIT 20";
         return getTracksDataTable(sql);
@@ -220,12 +229,15 @@ public class TrackAjaxServices {
 
     public List getListCreationTracksDataTable(String timeRange) {
         Date startTimeRange = calculateDate(timeRange);
+        String timeStampConstraint = " timestamp > '" + startTimeRange.toString() + "'";
         String sql = "SELECT type, COUNT(type),"
             + " (SELECT COUNT(*) FROM (SELECT username FROM listtrack WHERE username!=''"
-                                      + " AND event='CREATION' AND type=lt.type GROUP BY username)"
-                                      + " AS listsubselect),"
+                                      + " AND event='CREATION' AND type=lt.type AND"
+                                      + timeStampConstraint
+                                      + "GROUP BY username) AS listsubselect),"
             + " (SELECT COUNT(*) FROM (SELECT sessionidentifier FROM listtrack"
-                                      + " WHERE username='' AND event='CREATION' AND type=lt.type"
+                                      + " WHERE username='' AND event='CREATION' AND type=lt.type AND"
+                                      + timeStampConstraint
                                       + " GROUP BY sessionidentifier) AS listsubselect2)"
             + " FROM listtrack AS lt WHERE lt.timestamp > '" + startTimeRange.toString() + "'"
             + " AND lt.event='CREATION' GROUP BY lt.type ORDER BY COUNT(type) DESC LIMIT 20";
