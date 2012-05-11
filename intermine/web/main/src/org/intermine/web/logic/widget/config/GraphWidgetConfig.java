@@ -10,7 +10,6 @@ package org.intermine.web.logic.widget.config;
  *
  */
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.widget.GraphWidget;
@@ -30,7 +28,6 @@ import org.intermine.web.logic.widget.GraphWidget;
  */
 public class GraphWidgetConfig extends WidgetConfig
 {
-    private static final Logger LOG = Logger.getLogger(GraphWidgetConfig.class);
     private String domainLabel;
     private String rangeLabel;
     private String graphType;
@@ -200,7 +197,6 @@ public class GraphWidgetConfig extends WidgetConfig
      */
     public Map<String, Collection<String>> getExtraAttributes(InterMineBag imBag, ObjectStore os)
         throws Exception {
-        Collection<String> extraAttributes = new ArrayList<String>();
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
         return returnMap;
     }
