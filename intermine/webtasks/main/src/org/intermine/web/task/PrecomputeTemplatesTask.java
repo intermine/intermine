@@ -57,7 +57,6 @@ public class PrecomputeTemplatesTask extends Task
 
     protected String alias;
     protected int minRows = -1;
-    protected ObjectStoreSummary oss = null;
     protected ObjectStore os = null;
     protected ObjectStoreWriter userProfileOS = null;
     protected String userProfileAlias;
@@ -148,7 +147,7 @@ public class PrecomputeTemplatesTask extends Task
                 throw new BuildException(alias + " isn't an ObjectStoreInterMineImpl");
             }
             userProfileOS = ObjectStoreWriterFactory.getObjectStoreWriter(userProfileAlias);
-            precomputeTemplates(os, oss);
+            precomputeTemplates();
         } catch (Exception err) {
             throw new BuildException("Exception creating objectstore/profile manager", err);
         } finally {
@@ -165,10 +164,8 @@ public class PrecomputeTemplatesTask extends Task
 
     /**
      * Create precomputed tables for all template queries in the given ObjectStore.
-     * @param os the ObjectStore to precompute in
-     * @param oss the ObjectStoreSummary for os
      */
-    protected void precomputeTemplates(ObjectStore os, ObjectStoreSummary oss) {
+    protected void precomputeTemplates() {
         List<ApiTemplate> toSummarise = new ArrayList<ApiTemplate>();
         List<ParallelPrecomputer.Job> jobs = new ArrayList<ParallelPrecomputer.Job>();
         for (Map.Entry<String, ApiTemplate> entry : getPrecomputeTemplateQueries().entrySet()) {
@@ -220,7 +217,8 @@ public class PrecomputeTemplatesTask extends Task
         } catch (ObjectStoreException e) {
             throw new BuildException(e);
         }
-
+        // TODO:  don't require servlet context to create oss, we can't get it here yet
+        ObjectStoreSummary oss = null;
         TemplateSummariser summariser = new TemplateSummariser(os, userProfileOS, oss);
         for (ApiTemplate template : toSummarise) {
             if (doSummarise) {
@@ -235,15 +233,13 @@ public class PrecomputeTemplatesTask extends Task
 
     /**
      * Call ObjectStoreInterMineImpl.precompute() with the given Query.
-     * @param os the ObjectStore to call precompute() on
      * @param query the query to precompute
      * @param indexes the index QueryNodes
      * @param name the name of the query we are precomputing (used for documentation is an exception
      * is thrown
      * @throws BuildException if the query cannot be precomputed.
      */
-    protected void precompute(ObjectStore os, Query query, Collection<QueryNode> indexes,
-            String name) {
+    protected void precompute(Query query, Collection<QueryNode> indexes, String name) {
         long start = System.currentTimeMillis();
 
         try {

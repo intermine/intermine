@@ -93,6 +93,6 @@ public class PrecomputeTemplatesTaskTest extends TestCase
         List expIndexes = new ArrayList(Arrays.asList(new Object[] {qcEmp, qcDept, qfAge, qfName}));
         assertEquals(expIndexes.toString(), indexes.toString());
 
-        task.precompute(os, actualQ, indexes, "template");
+        task.precompute(actualQ, indexes, "template");
     }
 }
