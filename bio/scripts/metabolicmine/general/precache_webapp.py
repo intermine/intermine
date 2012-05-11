@@ -6,7 +6,7 @@ Script to index keyword search and cache region search
 
 import sys, pycurl, urllib
 
-DEFAULT_URL = 'http://metabolicmine.org/test/'
+DEFAULT_URL = 'http://metabolicmine.org/beta/'
 
 if (len(sys.argv) > 2):
     print 'Usage: python curl_test.py <URL>'
