@@ -202,24 +202,6 @@ public class GraphWidgetConfig extends WidgetConfig
         throws Exception {
         Collection<String> extraAttributes = new ArrayList<String>();
         Map<String, Collection<String>> returnMap = new HashMap<String, Collection<String>>();
-/*        if (extraAttributeClass != null && extraAttributeClass.length() > 0) {
-            try {
-                Class<?> clazz = TypeUtil.instantiate(extraAttributeClass);
-                Method extraAttributeMethod = clazz.getMethod("getExtraAttributes",
-                            new Class[] {ObjectStore.class, InterMineBag.class});
-                // invoking a static method the first argument is ignored
-                extraAttributes = (Collection<String>) extraAttributeMethod.invoke(null, os, imBag);
-            } catch (Exception e) {
-                LOG.error(e.getMessage());
-                return returnMap;
-            }
-        }
-        if (extraAttributes.size() > 0) {
-            returnMap.put("Organism", extraAttributes);
-        }
-        if (editable != null && "true".equals(editable)) {
-            returnMap.put("Editable", new ArrayList<String>());
-        }*/
         return returnMap;
     }
 
