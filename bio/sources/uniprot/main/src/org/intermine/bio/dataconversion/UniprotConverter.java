@@ -72,6 +72,7 @@ public class UniprotConverter extends BioDirectoryConverter
     private boolean createInterpro = false;
     private boolean creatego = false;
     private boolean loadFragments = false;
+    private boolean allowduplicates = false;
     private Set<String> taxonIds = null;
 
     protected IdResolverFactory flyResolverFactory;
@@ -217,12 +218,25 @@ public class UniprotConverter extends BioDirectoryConverter
      * @param creatego whether or not to import GO terms (true/false)
      */
     public void setCreatego(String creatego) {
-        if ("true".equals(creatego)) {
+        if ("true".equalsIgnoreCase(creatego)) {
             this.creatego = true;
         } else {
             this.creatego = false;
         }
     }
+
+    /**
+     * Toggle whether or not to allow duplicate sequences
+     * @param allowduplicates whether or not to allow duplicate sequences
+     */
+    public void setAllowduplicates(String allowduplicates) {
+        if ("true".equalsIgnoreCase(allowduplicates)) {
+            this.allowduplicates = true;
+        } else {
+            this.allowduplicates = false;
+        }
+    }
+
 
     /**
      * Sets the list of taxonIds that should be imported if using split input files.
@@ -549,8 +563,8 @@ public class UniprotConverter extends BioDirectoryConverter
             }
             Set<UniprotEntry> isoforms = new HashSet<UniprotEntry>();
             // have we already seen a protein for this organism with the same sequence?
-            if (!uniprotEntry.isIsoform() && seenSequence(uniprotEntry.getTaxonId(),
-                    uniprotEntry.getMd5checksum())) {
+            if (!uniprotEntry.isIsoform() && !allowduplicates
+                    && seenSequence(uniprotEntry.getTaxonId(), uniprotEntry.getMd5checksum())) {
                 // if we have seen this sequence before for this organism just add the
                 // primaryAccession of this protein as a synonym for the one already stored.
                 Map<String, String> orgSequences = sequences.get(uniprotEntry.getTaxonId());
