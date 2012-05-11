@@ -27,7 +27,6 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
-
 /**
  * Read the HuGE GWAS flat file and create GWAS items and GWASResults.
  * @author Richard Smith
@@ -46,6 +45,9 @@ public class HugeGwasConverter extends BioFileConverter
 
     private static final String HUMAN_TAXON = "9606";
     private List<String> invalidGenes = Arrays.asList(new String[] {"nr", "intergenic"});
+
+    // approximately the minimum permitted double value in postgres
+    private static final double MIN_POSTGRES_DOUBLE = 1.0E-307;
 
     private static final Logger LOG = Logger.getLogger(HugeGwasConverter.class);
 
@@ -148,7 +150,15 @@ public class HugeGwasConverter extends BioFileConverter
     protected Double parsePValue(String s) {
         s = s.replace("x10", "E");
         try {
-            return Double.parseDouble(s);
+            double pValue = Double.parseDouble(s);
+
+            // Postgres JDBC driver is allowing double values outside the permitted range to be
+            // stored which are then unusable.  This a hack to prevent it.
+            if (pValue < MIN_POSTGRES_DOUBLE) {
+                pValue = 0.0;
+            }
+
+            return pValue;
         } catch (NumberFormatException e) {
             return null;
         }
