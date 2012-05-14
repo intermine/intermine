@@ -57,11 +57,6 @@ public abstract class Widget
     public abstract List<List<String>> getExportResults(String[]selected) throws Exception;
 
     /**
-     * @return results of widget
-     */
-    //public abstract List<List<String[]>> getFlattenedResults();
-
-    /**
      * @return the hasResults
      */
     public abstract boolean getHasResults();
