@@ -67,7 +67,7 @@ public class GraphWidget extends Widget
     public void validateBagType() {
         String typeClass = config.getTypeClass();
         if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
-            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
+            throw new ResourceNotFoundException("Could not find a graph widget called \""
                     + config.getId() + "\" with type " + bag.getType());
         }
     }
@@ -136,6 +136,11 @@ public class GraphWidget extends Widget
         return grapgWidgetLdr.createPathQuery();
     }
 
+    /**
+     * Returns the pathquery based on the classkey.
+     * Executed when the user selects any columns in the in the graph widget and a popup is shown.
+     * @return the query generated
+     */
     public PathQuery getSimplePathQuery() {
         return grapgWidgetLdr.createSimplePathQuery();
     }

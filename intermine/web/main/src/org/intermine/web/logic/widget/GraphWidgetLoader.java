@@ -316,7 +316,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
 
     /**
      * Returns the pathquery based on the views set in config file and the bag constraint.
-     * Executed when the user selects any columns in the in the graph widget.
+     * Executed when the user click on 'View results' button in the graph widget.
      * @return the query generated
      */
     public PathQuery createPathQuery() {
@@ -342,7 +342,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
 
     /**
      * Returns the pathquery based on the classkey.
-     * Executed when the user selects any columns in the in the graph widget.
+     * Executed when the user selects any columns in the in the graph widget and a popup is shown.
      * @return the query generated
      */
     public PathQuery createSimplePathQuery() {
