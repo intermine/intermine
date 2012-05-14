@@ -15,8 +15,9 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.intermine.api.InterMineAPITestCase;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -26,14 +27,12 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 import org.intermine.web.struts.MockServletContext;
 
-public class WidgetConfigUtilTest extends InterMineAPITestCase
+public class WidgetConfigUtilTest extends TestCase
 {
-    public WidgetConfigUtilTest(String arg) {
-        super(arg);
-    }
+    protected ObjectStore os;
 
     public void setUp() throws Exception {
-        super.setUp();
+        os = ObjectStoreFactory.getObjectStore("os.unittest");
     }
 
     public void testIsListConstraint() {
@@ -51,7 +50,7 @@ public class WidgetConfigUtilTest extends InterMineAPITestCase
         String path1 = "Employee.department.manager";
         String path2 = "Employee.department.manager[CEO]";
         String path3 = "Employee.department.manager[ceo]";
-        Model model = im.getModel();
+        Model model = os.getModel();
         assertEquals(false, WidgetConfigUtil.isPathContainingSubClass(model, path1));
         assertEquals(true, WidgetConfigUtil.isPathContainingSubClass(model, path2));
         assertEquals(false, WidgetConfigUtil.isPathContainingSubClass(model, path3));
@@ -82,8 +81,8 @@ public class WidgetConfigUtilTest extends InterMineAPITestCase
         context.addInputStream("/WEB-INF/webconfig-model.xml", is);
         context.addInputStream("/WEB-INF/CLASS_NAME_MAPPINGS", classesIS);
         context.addInputStream("/WEB-INF/FIELD_NAME_MAPPINGS", fieldsIS);
-        WebConfig webConfig = WebConfig.parse(context, im.getModel());
-        WidgetConfig widgetConfig = webConfig.getWidgets().get("contractor_enrichment");
+        WebConfig webConfig = WebConfig.parse(context, os.getModel());
+        WidgetConfig widgetConfig = webConfig.getWidgets().get("contractor_enrichment_with_filter");
         return widgetConfig;
     }
 }
