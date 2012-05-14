@@ -1,0 +1,5 @@
+<project name="panther" default="default" basedir=".">
+  <description>build, test, package panther</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>

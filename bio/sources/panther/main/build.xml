@@ -1,0 +1,4 @@
+<project name="panther-tasks" default="default" basedir=".">
+  <description>build panther tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
