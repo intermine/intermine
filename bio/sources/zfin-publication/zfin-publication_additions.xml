@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<classes>
-  <class name="ZfinBibliography" extends="Publication" is-interface="true">
-    <attribute name="zfinPublicationId" type="java.lang.String"/>  
-  </class>
-</classes>
