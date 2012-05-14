@@ -175,5 +175,5 @@ intermine.load = function() {
   }
 };
 
-intermine.resources = {"widgets":{"latest":"http://radekstepan.github.com/intermine-widget-client/intermine.widgets.js"}};
+intermine.resources = {"widgets":{"latest":"http://radekstepan.github.com/intermine-widget-client/latest/intermine.widgets.js","v1.0.0":"http://radekstepan.github.com/intermine-widget-client/v1.0.0/intermine.widgets.js"}};
 }).call(this);

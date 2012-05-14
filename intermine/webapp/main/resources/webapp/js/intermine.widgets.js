@@ -2,22 +2,95 @@
 var o = {};
 
 var JST = {};
-JST["error.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="alert alert-block">\n    <h4 class="alert-heading">'),b.push(d(this.title)),b.push(" for "),b.push(d(this.name)),b.push("</h4>\n    <p>"),b.push(this.text),b.push("</p>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["actions.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<a class="btn btn-small '),this.disabled&&b.push("disabled"),b.push(' view">View</a>\n<a class="btn btn-small '),this.disabled&&b.push("disabled"),b.push(' export">Download</a>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["extra.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push('<div class="group" style="display:inline-block;margin-right:5px">\n    <label>'),b.push(d(this.label)),b.push("</label>\n    ");if(this.possible.length>1){b.push('\n        <select name="'),b.push(d(this.label)),b.push('" class="span2">\n            '),f=this.possible;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <option value="'),b.push(d(a)),b.push('" '),this.selected===a&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(a)),b.push("\n                </option>\n            ");b.push("\n        </select>\n    ")}else b.push("\n        "),b.push(d(this.possible[0])),b.push("\n    ");b.push("\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["noresults.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="alert alert-info">\n    <p>The Widget has no results.</p>\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["loading.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="loading" style="background:rgba(255,255,255,0.9);position:absolute;top:0;left:0;height:100%;width:100%;text-align:center;">\n    <p style="padding-top:50%;font-weight:bold;">Loading &hellip;</p>\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["error.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="alert alert-block">\n    <h4 class="alert-heading">'),b.push(d(this.title)),b.push(" for "),b.push(d(this.name)),b.push("</h4>\n    <p>"),b.push(this.text),b.push("</p>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["invalidjsonkey.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<li style="vertical-align:bottom">\n    <span style="display:inline-block" class="label label-important">'),b.push(d(this.key)),b.push("</span> is "),b.push(d(this.actual)),b.push("; was expecting "),b.push(d(this.expected)),b.push("\n</li>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["actions.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<a class="btn btn-small '),this.disabled&&b.push("disabled"),b.push(' view">View</a>\n<a class="btn btn-small '),this.disabled&&b.push("disabled"),b.push(' export">Download</a>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["extra.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push('<div class="group" style="display:inline-block;margin-right:5px">\n    <label>'),b.push(d(this.label)),b.push("</label>\n    ");if(this.possible.length>1){b.push('\n        <select name="'),b.push(d(this.label)),b.push('" class="span2">\n            '),f=this.possible;for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n                <option value="'),b.push(d(a)),b.push('" '),this.selected===a&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(a)),b.push("\n                </option>\n            ");b.push("\n        </select>\n    ")}else b.push("\n        "),b.push(d(this.possible[0])),b.push("\n    ");b.push("\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["popover.values.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push("<h4>"),b.push(d(this.values.length)),b.push(" "),b.push(d(this.type)),this.values.length!==1&&b.push(d("s")),b.push(":</h4>\n\n"),f=this.values.slice(0,this.valuesLimit-1+1||9e9);for(c=0,e=f.length;c<e;c++)a=f[c],b.push('\n    <a href="#" class="match">'),b.push(d(a)),b.push("</a>\n");b.push("\n"),this.values.length>this.valuesLimit&&b.push("&hellip;")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["popover.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="popover" style="position:absolute;top:5px;right:0;z-index:1;display:block">\n    <div class="popover-inner" style="'),b.push(d(this.style)),b.push('">\n        <a style="cursor:pointer;margin:2px 5px 0 0" class="close">×</a>\n        <h3 class="popover-title">\n            '),b.push(d(this.description.slice(0,this.descriptionLimit-1+1||9e9))),b.push("\n            "),this.description.length>this.descriptionLimit&&b.push("&hellip;"),b.push('\n        </h3>\n        <div class="popover-content">\n            <div class="values">\n                <!-- popover.values.eco -->\n            </div>\n            <div style="margin-top:10px">\n                <a class="btn btn-small btn-primary results">View results</a>\n                <a class="btn btn-small list disabled">Create list</a>\n            </div>\n        </div>\n    </div>\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["chart.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="form">\n        <form style="margin:0">\n            <!-- extra.eco -->\n        </form>\n    </div>\n</header>\n<div class="content"></div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="actions" style="padding:10px 0">\n        <!-- actions.eco -->\n    </div>\n</header>\n<div class="content">\n    <!-- table.table.eco -->\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["table.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push('<td class="check"><input type="checkbox" '),this.row.selected&&b.push('checked="checked"'),b.push(" /></td>\n"),f=this.row.descriptions;for(c=0,e=f.length;c<e;c++)a=f[c],b.push("\n    <td>"),b.push(d(a)),b.push("</td>\n");b.push("\n<td>"),b.push(d(this.row.matches)),b.push("</td>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["table.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f,g,h,i;b.push('<!-- actual fixed head -->\n<div class="head" style="display:table">\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;"><input type="checkbox" class="check" /></div>\n    '),h=this.columns;for(c=0,f=h.length;c<f;c++)a=h[c],b.push('\n        <div style="font-weight:bold;display:table-cell;padding:0 8px;">'),b.push(d(a)),b.push("</div>\n    ");b.push('\n    <div style="clear:both"></div>\n</div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                '),i=this.columns;for(e=0,g=i.length;e<g;e++)a=i[e],b.push("\n                    <th>"),b.push(d(a)),b.push("</th>\n                ");b.push("\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop table.row.eco -->\n        </tbody>\n    </table>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<td class="check"><input type="checkbox" '),this.row.selected&&b.push('checked="checked"'),b.push(' /></td>\n<td class="description">\n    '),b.push(d(this.row.description)),b.push("\n    "),this.row.externalLink&&(b.push('\n        [<a href="'),b.push(this.row.externalLink),b.push('" target="_blank">Link</a>]\n    ')),b.push('\n</td>\n<td class="pValue">'),b.push(d(this.row["p-value"].toPrecision(5))),b.push('</td>\n<td class="matches">\n    <a class="count" style="cursor:pointer">'),b.push(d(this.row.matches)),b.push("</a>\n</td>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["enrichment.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="form">\n        <!-- enrichment.form.eco -->\n    </div>\n\n    <div class="actions" style="padding:10px 0">\n        <!-- actions.eco -->\n    </div>\n</header>\n<div class="content">\n    <!-- enrichment.table.eco -->\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<!-- actual fixed head -->\n<div class="head" style="display:table">\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;"><input type="checkbox" class="check" /></div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">'),b.push(d(this.label)),b.push('</div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">p-Value</div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">Matches</div>\n    <div style="clear:both"></div>\n</div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                <th>'),b.push(d(this.label)),b.push("</th>\n                <th>p-Value</th>\n                <th>Matches</th>\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop enrichment.row.eco -->\n        </tbody>\n    </table>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.form.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f,g,h,i,j;b.push('<form style="margin:0">\n    <div class="group" style="display:inline-block;margin-right:5px">\n        <label>Test Correction</label>\n        <select name="errorCorrection" class="span2">\n            '),i=this.errorCorrections;for(e=0,g=i.length;e<g;e++)a=i[e],b.push('\n                <option value="'),b.push(d(a)),b.push('" '),this.options.errorCorrection===a&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(a)),b.push("\n            </option>\n            ");b.push('\n        </select>\n    </div>\n\n    <div class="group" style="display:inline-block;margin-right:5px">\n        <label>Max p-value</label>\n        <select name="pValue" class="span2">\n            '),j=this.pValues;for(f=0,h=j.length;f<h;f++)c=j[f],b.push('\n                <option value="'),b.push(d(c)),b.push('" '),this.options.pValue===c&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(c)),b.push("\n                </option>\n            ");b.push("\n        </select>\n    </div>\n</form>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["table.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push('<td class="check"><input type="checkbox" '),this.row.selected&&b.push('checked="checked"'),b.push(" /></td>\n"),f=this.row.descriptions;for(c=0,e=f.length;c<e;c++)a=f[c],b.push("\n    <td>"),b.push(d(a)),b.push("</td>\n");b.push("\n<td>"),b.push(d(this.row.matches)),b.push("</td>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="actions" style="padding:10px 0">\n        <!-- actions.eco -->\n    </div>\n</header>\n<div class="content">\n    <!-- table.table.eco -->\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["table.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f,g,h,i;b.push('<!-- actual fixed head -->\n<div class="head" style="display:table">\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;"><input type="checkbox" class="check" /></div>\n    '),h=this.columns;for(c=0,f=h.length;c<f;c++)a=h[c],b.push('\n        <div style="font-weight:bold;display:table-cell;padding:0 8px;">'),b.push(d(a)),b.push("</div>\n    ");b.push('\n    <div style="clear:both"></div>\n</div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                '),i=this.columns;for(e=0,g=i.length;e<g;e++)a=i[e],b.push("\n                    <th>"),b.push(d(a)),b.push("</th>\n                ");b.push("\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop table.row.eco -->\n        </tbody>\n    </table>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["enrichment.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push("<header>\n    <h3>"),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="form">\n        <!-- enrichment.form.eco -->\n    </div>\n\n    <div class="actions" style="padding:10px 0">\n        <!-- actions.eco -->\n    </div>\n</header>\n<div class="content">\n    <!-- enrichment.table.eco -->\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+/* Merge properties of 2 dictionaries.
+*/
+
+var merge;
+
+merge = function(child, parent) {
+  var key;
+  for (key in parent) {
+    if (!(child[key] != null)) {
+      if (Object.prototype.hasOwnProperty.call(parent, key)) {
+        child[key] = parent[key];
+      }
+    }
+  }
+  return child;
+};
+
+/* Create file download with custom content.
+*/
+
+var Exporter, PlainExporter,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+Exporter = (function() {
+
+  Exporter.name = 'Exporter';
+
+  Exporter.prototype.mime = 'text/plain';
+
+  Exporter.prototype.charset = 'UTF-8';
+
+  Exporter.prototype.url = window.webkitURL || window.URL;
+
+  function Exporter(a, data, filename) {
+    var builder;
+    if (filename == null) {
+      filename = 'widget.tsv';
+    }
+    this.destroy = __bind(this.destroy, this);
+
+    builder = new (window.WebKitBlobBuilder || window.MozBlobBuilder || window.BlobBuilder)();
+    builder.append(data);
+    a.attr('download', filename);
+    (this.href = this.url.createObjectURL(builder.getBlob("" + this.mime + ";charset=" + this.charset))) && (a.attr('href', this.href));
+    a.attr('data-downloadurl', [this.mime, filename, this.href].join(':'));
+  }
+
+  Exporter.prototype.destroy = function() {
+    return this.url.revokeObjectURL(this.href);
+  };
+
+  return Exporter;
+
+})();
+
+PlainExporter = (function() {
+
+  PlainExporter.name = 'PlainExporter';
+
+  function PlainExporter(data) {
+    var w;
+    w = window.open();
+    w.document.open();
+    w.document.write(data);
+    w.document.close();
+  }
+
+  PlainExporter.prototype.destroy = function() {};
+
+  return PlainExporter;
+
+})();
+
 /* Types in JS.
 */
 
@@ -189,79 +262,6 @@ type.isUndefined = (function(_super) {
 
 })(type.Root);
 
-/* Merge properties of 2 dictionaries.
-*/
-
-var merge;
-
-merge = function(child, parent) {
-  var key;
-  for (key in parent) {
-    if (!(child[key] != null)) {
-      if (Object.prototype.hasOwnProperty.call(parent, key)) {
-        child[key] = parent[key];
-      }
-    }
-  }
-  return child;
-};
-
-/* Create file download with custom content.
-*/
-
-var Exporter, PlainExporter,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-Exporter = (function() {
-
-  Exporter.name = 'Exporter';
-
-  Exporter.prototype.mime = 'text/plain';
-
-  Exporter.prototype.charset = 'UTF-8';
-
-  Exporter.prototype.url = window.webkitURL || window.URL;
-
-  function Exporter(a, data, filename) {
-    var builder;
-    if (filename == null) {
-      filename = 'widget.tsv';
-    }
-    this.destroy = __bind(this.destroy, this);
-
-    builder = new (window.WebKitBlobBuilder || window.MozBlobBuilder || window.BlobBuilder)();
-    builder.append(data);
-    a.attr('download', filename);
-    (this.href = this.url.createObjectURL(builder.getBlob("" + this.mime + ";charset=" + this.charset))) && (a.attr('href', this.href));
-    a.attr('data-downloadurl', [this.mime, filename, this.href].join(':'));
-  }
-
-  Exporter.prototype.destroy = function() {
-    return this.url.revokeObjectURL(this.href);
-  };
-
-  return Exporter;
-
-})();
-
-PlainExporter = (function() {
-
-  PlainExporter.name = 'PlainExporter';
-
-  function PlainExporter(data) {
-    var w;
-    w = window.open();
-    w.document.open();
-    w.document.write(data);
-    w.document.close();
-  }
-
-  PlainExporter.prototype.destroy = function() {};
-
-  return PlainExporter;
-
-})();
-
 var factory;
 factory = function(Backbone) {
 
@@ -276,6 +276,8 @@ factory = function(Backbone) {
     InterMineWidget.name = 'InterMineWidget';
   
     function InterMineWidget() {
+      this.imService = __bind(this.imService, this);
+  
       this.error = __bind(this.error, this);
   
       this.validateType = __bind(this.validateType, this);
@@ -333,9 +335,155 @@ factory = function(Backbone) {
       throw new Error(type);
     };
   
+    InterMineWidget.prototype.imService = function() {
+      if (!(this.imjs != null)) {
+        this.imjs = new intermine.Service({
+          'root': this.service,
+          'token': this.token
+        });
+      }
+      return this.imjs;
+    };
+  
     return InterMineWidget;
   
   })();
+  
+
+  /* Enrichment Widget main class.
+  */
+  
+  var EnrichmentWidget,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentWidget = (function(_super) {
+  
+    __extends(EnrichmentWidget, _super);
+  
+    EnrichmentWidget.name = 'EnrichmentWidget';
+  
+    EnrichmentWidget.prototype.widgetOptions = {
+      "title": true,
+      "description": true,
+      matchCb: function(id, type) {
+        return typeof console !== "undefined" && console !== null ? console.log(id, type) : void 0;
+      },
+      resultsCb: function(pq) {
+        return typeof console !== "undefined" && console !== null ? console.log(pq) : void 0;
+      },
+      listCb: function(pq) {
+        return typeof console !== "undefined" && console !== null ? console.log(pq) : void 0;
+      }
+    };
+  
+    EnrichmentWidget.prototype.errorCorrections = ["Holm-Bonferroni", "Benjamini Hochberg", "Bonferroni", "None"];
+  
+    EnrichmentWidget.prototype.pValues = ["0.05", "0.10", "1.00"];
+  
+    EnrichmentWidget.prototype.spec = {
+      response: {
+        "title": type.isString,
+        "description": type.isString,
+        "pathQuery": type.isJSON,
+        "pathConstraint": type.isString,
+        "error": type.isNull,
+        "list": type.isString,
+        "notAnalysed": type.isInteger,
+        "requestedAt": type.isString,
+        "results": type.isArray,
+        "label": type.isString,
+        "statusCode": type.isHTTPSuccess,
+        "type": type.isString,
+        "wasSuccessful": type.isBoolean,
+        "filters": type.isString,
+        "filterLabel": type.isString,
+        "filterSelectedValue": type.isString,
+        "externalLink": type.isString,
+        "pathQueryForMatches": type.isString
+      }
+    };
+  
+    function EnrichmentWidget(service, token, id, bagName, el, widgetOptions) {
+      this.service = service;
+      this.token = token;
+      this.id = id;
+      this.bagName = bagName;
+      this.el = el;
+      if (widgetOptions == null) {
+        widgetOptions = {};
+      }
+      this.render = __bind(this.render, this);
+  
+      this.widgetOptions = merge(widgetOptions, this.widgetOptions);
+      this.formOptions = {
+        errorCorrection: "Holm-Bonferroni",
+        pValue: "0.05"
+      };
+      EnrichmentWidget.__super__.constructor.call(this);
+      this.render();
+    }
+  
+    EnrichmentWidget.prototype.render = function() {
+      var data, key, timeout, value, _ref, _ref1,
+        _this = this;
+      timeout = window.setTimeout((function() {
+        return $(_this.el).append(_this.loading = $(_this.template('loading')));
+      }), 400);
+      if ((_ref = this.view) != null) {
+        _ref.undelegateEvents();
+      }
+      data = {
+        'widget': this.id,
+        'list': this.bagName,
+        'correction': this.formOptions.errorCorrection,
+        'maxp': this.formOptions.pValue,
+        'token': this.token
+      };
+      _ref1 = this.formOptions;
+      for (key in _ref1) {
+        value = _ref1[key];
+        if (key !== 'errorCorrection' && key !== 'pValue') {
+          data['filter'] = value;
+        }
+      }
+      return $.ajax({
+        'url': "" + this.service + "list/enrichment",
+        'dataType': "jsonp",
+        'data': data,
+        success: function(response) {
+          var _ref2;
+          window.clearTimeout(timeout);
+          if ((_ref2 = _this.loading) != null) {
+            _ref2.remove();
+          }
+          _this.validateType(response, _this.spec.response);
+          if (response.wasSuccessful) {
+            _this.name = response.title;
+            return _this.view = new EnrichmentView({
+              "widget": _this,
+              "el": _this.el,
+              "template": _this.template,
+              "response": response,
+              "form": {
+                "options": _this.formOptions,
+                "pValues": _this.pValues,
+                "errorCorrections": _this.errorCorrections
+              },
+              "options": _this.widgetOptions
+            });
+          }
+        },
+        error: function(err) {
+          return _this.error(err, "AJAXTransport");
+        }
+      });
+    };
+  
+    return EnrichmentWidget;
+  
+  })(InterMineWidget);
   
 
   /* Chart Widget main class.
@@ -570,142 +718,6 @@ factory = function(Backbone) {
     };
   
     return TableWidget;
-  
-  })(InterMineWidget);
-  
-
-  /* Enrichment Widget main class.
-  */
-  
-  var EnrichmentWidget,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  EnrichmentWidget = (function(_super) {
-  
-    __extends(EnrichmentWidget, _super);
-  
-    EnrichmentWidget.name = 'EnrichmentWidget';
-  
-    EnrichmentWidget.prototype.widgetOptions = {
-      "title": true,
-      "description": true,
-      matchCb: function(id, type) {
-        return typeof console !== "undefined" && console !== null ? console.log(id, type) : void 0;
-      },
-      resultsCb: function(pq) {
-        return typeof console !== "undefined" && console !== null ? console.log(pq) : void 0;
-      },
-      listCb: function(pq) {
-        return typeof console !== "undefined" && console !== null ? console.log(pq) : void 0;
-      }
-    };
-  
-    EnrichmentWidget.prototype.errorCorrections = ["Holm-Bonferroni", "Benjamini Hochberg", "Bonferroni", "None"];
-  
-    EnrichmentWidget.prototype.pValues = ["0.05", "0.10", "1.00"];
-  
-    EnrichmentWidget.prototype.spec = {
-      response: {
-        "title": type.isString,
-        "description": type.isString,
-        "pathQuery": type.isJSON,
-        "pathConstraint": type.isString,
-        "error": type.isNull,
-        "list": type.isString,
-        "notAnalysed": type.isInteger,
-        "requestedAt": type.isString,
-        "results": type.isArray,
-        "label": type.isString,
-        "statusCode": type.isHTTPSuccess,
-        "type": type.isString,
-        "wasSuccessful": type.isBoolean,
-        "filters": type.isString,
-        "filterLabel": type.isString,
-        "filterSelectedValue": type.isString,
-        "externalLink": type.isString,
-        "pathQueryForMatches": type.isString
-      }
-    };
-  
-    function EnrichmentWidget(service, token, id, bagName, el, widgetOptions) {
-      this.service = service;
-      this.token = token;
-      this.id = id;
-      this.bagName = bagName;
-      this.el = el;
-      if (widgetOptions == null) {
-        widgetOptions = {};
-      }
-      this.render = __bind(this.render, this);
-  
-      this.widgetOptions = merge(widgetOptions, this.widgetOptions);
-      this.formOptions = {
-        errorCorrection: "Holm-Bonferroni",
-        pValue: "0.05"
-      };
-      EnrichmentWidget.__super__.constructor.call(this);
-      this.render();
-    }
-  
-    EnrichmentWidget.prototype.render = function() {
-      var data, key, timeout, value, _ref, _ref1,
-        _this = this;
-      timeout = window.setTimeout((function() {
-        return $(_this.el).append(_this.loading = $(_this.template('loading')));
-      }), 400);
-      if ((_ref = this.view) != null) {
-        _ref.undelegateEvents();
-      }
-      data = {
-        'widget': this.id,
-        'list': this.bagName,
-        'correction': this.formOptions.errorCorrection,
-        'maxp': this.formOptions.pValue,
-        'token': this.token
-      };
-      _ref1 = this.formOptions;
-      for (key in _ref1) {
-        value = _ref1[key];
-        if (key !== 'errorCorrection' && key !== 'pValue') {
-          data['filter'] = value;
-        }
-      }
-      return $.ajax({
-        'url': "" + this.service + "list/enrichment",
-        'dataType': "jsonp",
-        'data': data,
-        success: function(response) {
-          var _ref2;
-          window.clearTimeout(timeout);
-          if ((_ref2 = _this.loading) != null) {
-            _ref2.remove();
-          }
-          _this.validateType(response, _this.spec.response);
-          if (response.wasSuccessful) {
-            _this.name = response.title;
-            return _this.view = new EnrichmentView({
-              "widget": _this,
-              "el": _this.el,
-              "template": _this.template,
-              "response": response,
-              "form": {
-                "options": _this.formOptions,
-                "pValues": _this.pValues,
-                "errorCorrections": _this.errorCorrections
-              },
-              "options": _this.widgetOptions
-            });
-          }
-        },
-        error: function(err) {
-          return _this.error(err, "AJAXTransport");
-        }
-      });
-    };
-  
-    return EnrichmentWidget;
   
   })(InterMineWidget);
   
@@ -952,7 +964,7 @@ factory = function(Backbone) {
           "resultsCb": this.callbacks.resultsCb,
           "listCb": this.callbacks.listCb,
           "response": this.response,
-          "imjs": this.imjs
+          "imService": this.imService
         })).el);
       } else {
         return this.popoverView.toggle();
@@ -960,6 +972,336 @@ factory = function(Backbone) {
     };
   
     return EnrichmentRowView;
+  
+  })(Backbone.View);
+  
+
+  /* View maintaining Enrichment Widget.
+  */
+  
+  var EnrichmentView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  EnrichmentView = (function(_super) {
+  
+    __extends(EnrichmentView, _super);
+  
+    EnrichmentView.name = 'EnrichmentView';
+  
+    function EnrichmentView() {
+      this.viewAction = __bind(this.viewAction, this);
+  
+      this.exportAction = __bind(this.exportAction, this);
+  
+      this.selectAllAction = __bind(this.selectAllAction, this);
+  
+      this.formAction = __bind(this.formAction, this);
+  
+      this.renderTableBody = __bind(this.renderTableBody, this);
+  
+      this.renderTable = __bind(this.renderTable, this);
+  
+      this.renderToolbar = __bind(this.renderToolbar, this);
+      return EnrichmentView.__super__.constructor.apply(this, arguments);
+    }
+  
+    EnrichmentView.prototype.events = {
+      "click div.actions a.view": "viewAction",
+      "click div.actions a.export": "exportAction",
+      "change div.form select": "formAction",
+      "click div.content input.check": "selectAllAction"
+    };
+  
+    EnrichmentView.prototype.initialize = function(o) {
+      var k, v;
+      for (k in o) {
+        v = o[k];
+        this[k] = v;
+      }
+      this.collection = new EnrichmentResults();
+      this.collection.bind('change', this.renderToolbar);
+      return this.render();
+    };
+  
+    EnrichmentView.prototype.render = function() {
+      $(this.el).html(this.template("enrichment", {
+        "title": this.options.title ? this.response.title : "",
+        "description": this.options.description ? this.response.description : "",
+        "notAnalysed": this.response.notAnalysed
+      }));
+      $(this.el).find("div.form").html(this.template("enrichment.form", {
+        "options": this.form.options,
+        "pValues": this.form.pValues,
+        "errorCorrections": this.form.errorCorrections
+      }));
+      if (this.response.filterLabel != null) {
+        $(this.el).find('div.form form').append(this.template("extra", {
+          "label": this.response.filterLabel,
+          "possible": this.response.filters.split(','),
+          "selected": this.response.filterSelectedValue
+        }));
+      }
+      if (this.response.results.length > 0) {
+        this.renderToolbar();
+        this.renderTable();
+      } else {
+        $(this.el).find("div.content").html($(this.template("noresults")));
+      }
+      return this;
+    };
+  
+    EnrichmentView.prototype.renderToolbar = function() {
+      return $(this.el).find("div.actions").html($(this.template("actions", {
+        "disabled": this.collection.selected().length === 0
+      })));
+    };
+  
+    EnrichmentView.prototype.renderTable = function() {
+      var height, i, table, _fn, _i, _ref,
+        _this = this;
+      $(this.el).find("div.content").html($(this.template("enrichment.table", {
+        "label": this.response.label
+      })));
+      table = $(this.el).find("div.content table");
+      _fn = function(i) {
+        var data, row;
+        data = _this.response.results[i];
+        if (_this.response.externalLink) {
+          data.externalLink = _this.response.externalLink + data.identifier;
+        }
+        row = new EnrichmentRow(data, _this.widget);
+        return _this.collection.add(row);
+      };
+      for (i = _i = 0, _ref = this.response.results.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        _fn(i);
+      }
+      this.renderTableBody(table);
+      height = $(this.el).height() - $(this.el).find('header').height() - $(this.el).find('div.content div.head').height();
+      $(this.el).find("div.content div.wrapper").css('height', "" + height + "px");
+      $(this.el).find("div.content div.head").css("width", $(this.el).find("div.content table").width() + "px");
+      table.find('thead th').each(function(i, th) {
+        return $(_this.el).find("div.content div.head div:eq(" + i + ")").width($(th).width());
+      });
+      return table.css({
+        'margin-top': '-' + table.find('thead').height() + 'px'
+      });
+    };
+  
+    EnrichmentView.prototype.renderTableBody = function(table) {
+      var fragment, row, _i, _len, _ref;
+      fragment = document.createDocumentFragment();
+      _ref = this.collection.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        fragment.appendChild(new EnrichmentRowView({
+          "model": row,
+          "template": this.template,
+          "type": this.response.type,
+          "callbacks": {
+            "matchCb": this.options.matchCb,
+            "resultsCb": this.options.resultsCb,
+            "listCb": this.options.listCb
+          },
+          "response": this.response,
+          "imService": this.widget.imService()
+        }).el);
+      }
+      return table.find('tbody').html(fragment);
+    };
+  
+    EnrichmentView.prototype.formAction = function(e) {
+      this.widget.formOptions[$(e.target).attr("name")] = $(e.target[e.target.selectedIndex]).attr("value");
+      return this.widget.render();
+    };
+  
+    EnrichmentView.prototype.selectAllAction = function() {
+      this.collection.toggleSelected();
+      this.renderToolbar();
+      return this.renderTableBody($(this.el).find("div.content table"));
+    };
+  
+    EnrichmentView.prototype.exportAction = function(e) {
+      var model, pq, rowIdentifiers, _i, _len, _ref,
+        _this = this;
+      rowIdentifiers = [];
+      _ref = this.collection.selected();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        model = _ref[_i];
+        rowIdentifiers.push(model.get('identifier'));
+      }
+      pq = typeof JSON !== "undefined" && JSON !== null ? JSON.parse(this.response['pathQueryForMatches']) : void 0;
+      pq.where.push({
+        "path": this.response.pathConstraint,
+        "op": "ONE OF",
+        "values": rowIdentifiers
+      });
+      return this.widget.imService().query(pq, function(q) {
+        return q.rows(function(response) {
+          var dict, ex, model, object, result, _j, _k, _len1, _len2, _ref1;
+          dict = {};
+          for (_j = 0, _len1 = response.length; _j < _len1; _j++) {
+            object = response[_j];
+            if (!(dict[object[0]] != null)) {
+              dict[object[0]] = [];
+            }
+            dict[object[0]].push(object[1]);
+          }
+          result = [];
+          _ref1 = _this.collection.selected();
+          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
+            model = _ref1[_k];
+            result.push([model.get('description'), model.get('p-value')].join("\t") + "\t" + dict[model.get('identifier')].join(','));
+          }
+          if (result.length) {
+            ex = new PlainExporter(result.join("\n"));
+            return window.setTimeout((function() {
+              return ex.destroy();
+            }), 5000);
+          }
+        });
+      });
+    };
+  
+    EnrichmentView.prototype.viewAction = function() {
+      var descriptions, model, rowIdentifiers, _i, _len, _ref, _ref1;
+      descriptions = [];
+      rowIdentifiers = [];
+      _ref = this.collection.selected();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        model = _ref[_i];
+        descriptions.push(model.get('description'));
+        rowIdentifiers.push(model.get('identifier'));
+      }
+      if (rowIdentifiers.length) {
+        if ((_ref1 = this.popoverView) != null) {
+          _ref1.remove();
+        }
+        return $(this.el).find('div.actions').after((this.popoverView = new EnrichmentPopoverView({
+          "identifiers": rowIdentifiers,
+          "description": descriptions.join(', '),
+          "template": this.template,
+          "style": "width:300px",
+          "matchCb": this.options.matchCb,
+          "resultsCb": this.options.resultsCb,
+          "listCb": this.options.listCb,
+          "response": this.response,
+          "imService": this.widget.imService()
+        })).el);
+      }
+    };
+  
+    return EnrichmentView;
+  
+  })(Backbone.View);
+  
+
+  /* Chart Widget bar onclick box.
+  */
+  
+  var ChartPopoverView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  ChartPopoverView = (function(_super) {
+  
+    __extends(ChartPopoverView, _super);
+  
+    ChartPopoverView.name = 'ChartPopoverView';
+  
+    function ChartPopoverView() {
+      this.close = __bind(this.close, this);
+  
+      this.listAction = __bind(this.listAction, this);
+  
+      this.resultsAction = __bind(this.resultsAction, this);
+  
+      this.matchAction = __bind(this.matchAction, this);
+  
+      this.renderValues = __bind(this.renderValues, this);
+  
+      this.render = __bind(this.render, this);
+      return ChartPopoverView.__super__.constructor.apply(this, arguments);
+    }
+  
+    ChartPopoverView.prototype.descriptionLimit = 50;
+  
+    ChartPopoverView.prototype.valuesLimit = 5;
+  
+    ChartPopoverView.prototype.events = {
+      "click a.match": "matchAction",
+      "click a.results": "resultsAction",
+      "click a.list": "listAction",
+      "click a.close": "close"
+    };
+  
+    ChartPopoverView.prototype.initialize = function(o) {
+      var k, v;
+      for (k in o) {
+        v = o[k];
+        this[k] = v;
+      }
+      return this.render();
+    };
+  
+    ChartPopoverView.prototype.render = function() {
+      var values,
+        _this = this;
+      $(this.el).html(this.template("popover", {
+        "description": this.description,
+        "descriptionLimit": this.descriptionLimit,
+        "style": 'width:300px'
+      }));
+      values = [];
+      this.imService.query(this.quickPq, function(q) {
+        return q.rows(function(response) {
+          var object, _i, _len;
+          for (_i = 0, _len = response.length; _i < _len; _i++) {
+            object = response[_i];
+            values.push((function(object) {
+              var column, _j, _len1;
+              for (_j = 0, _len1 = object.length; _j < _len1; _j++) {
+                column = object[_j];
+                if (column.length > 0) {
+                  return column;
+                }
+              }
+            })(object));
+          }
+          return _this.renderValues(values);
+        });
+      });
+      return this;
+    };
+  
+    ChartPopoverView.prototype.renderValues = function(values) {
+      return $(this.el).find('div.values').html(this.template("popover.values", {
+        'values': values,
+        'type': this.type,
+        'valuesLimit': this.valuesLimit
+      }));
+    };
+  
+    ChartPopoverView.prototype.matchAction = function(e) {
+      this.matchCb($(e.target).text(), this.type);
+      return e.preventDefault();
+    };
+  
+    ChartPopoverView.prototype.resultsAction = function() {
+      return this.resultsCb(this.resultsPq);
+    };
+  
+    ChartPopoverView.prototype.listAction = function() {
+      return this.listCb(this.resultsPq);
+    };
+  
+    ChartPopoverView.prototype.close = function() {
+      return $(this.el).remove();
+    };
+  
+    return ChartPopoverView;
   
   })(Backbone.View);
   
@@ -1013,178 +1355,6 @@ factory = function(Backbone) {
     };
   
     return TableRowView;
-  
-  })(Backbone.View);
-  
-
-  /* View maintaining Table Widget.
-  */
-  
-  var TableView,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  TableView = (function(_super) {
-  
-    __extends(TableView, _super);
-  
-    TableView.name = 'TableView';
-  
-    function TableView() {
-      this.viewAction = __bind(this.viewAction, this);
-  
-      this.exportAction = __bind(this.exportAction, this);
-  
-      this.selectAllAction = __bind(this.selectAllAction, this);
-  
-      this.renderTableBody = __bind(this.renderTableBody, this);
-  
-      this.renderTable = __bind(this.renderTable, this);
-  
-      this.renderToolbar = __bind(this.renderToolbar, this);
-      return TableView.__super__.constructor.apply(this, arguments);
-    }
-  
-    TableView.prototype.events = {
-      "click div.actions a.view": "viewAction",
-      "click div.actions a.export": "exportAction",
-      "click div.content input.check": "selectAllAction"
-    };
-  
-    TableView.prototype.initialize = function(o) {
-      var k, v;
-      for (k in o) {
-        v = o[k];
-        this[k] = v;
-      }
-      this.collection = new TableResults();
-      this.collection.bind('change', this.renderToolbar);
-      return this.render();
-    };
-  
-    TableView.prototype.render = function() {
-      $(this.el).html(this.template("table", {
-        "title": this.options.title ? this.response.title : "",
-        "description": this.options.description ? this.response.description : "",
-        "notAnalysed": this.response.notAnalysed
-      }));
-      if (this.response.results.length > 0) {
-        this.renderToolbar();
-        this.renderTable();
-      } else {
-        $(this.el).find("div.content").html($(this.template("noresults")));
-      }
-      return this;
-    };
-  
-    TableView.prototype.renderToolbar = function() {
-      return $(this.el).find("div.actions").html($(this.template("actions", {
-        "disabled": this.collection.selected().length === 0
-      })));
-    };
-  
-    TableView.prototype.renderTable = function() {
-      var height, i, table, _fn, _i, _ref,
-        _this = this;
-      $(this.el).find("div.content").html($(this.template("table.table", {
-        "columns": this.response.columns.split(',')
-      })));
-      table = $(this.el).find("div.content table");
-      _fn = function(i) {
-        var row;
-        row = new TableRow(_this.response.results[i], _this.widget);
-        return _this.collection.add(row);
-      };
-      for (i = _i = 0, _ref = this.response.results.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-        _fn(i);
-      }
-      this.renderTableBody(table);
-      height = $(this.el).height() - $(this.el).find('header').height() - $(this.el).find('div.content div.head').height();
-      $(this.el).find("div.content div.wrapper").css('height', "" + height + "px");
-      $(this.el).find("div.content div.head").css("width", $(this.el).find("div.content table").width() + "px");
-      table.find('thead th').each(function(i, th) {
-        return $(_this.el).find("div.content div.head div:eq(" + i + ")").width($(th).width());
-      });
-      return table.css({
-        'margin-top': '-' + table.find('thead').height() + 'px'
-      });
-    };
-  
-    TableView.prototype.renderTableBody = function(table) {
-      var fragment, row, _i, _len, _ref;
-      fragment = document.createDocumentFragment();
-      _ref = this.collection.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        row = _ref[_i];
-        fragment.appendChild(new TableRowView({
-          "model": row,
-          "template": this.template,
-          "response": this.response
-        }).el);
-      }
-      return table.find('tbody').html(fragment);
-    };
-  
-    TableView.prototype.selectAllAction = function() {
-      this.collection.toggleSelected();
-      this.renderToolbar();
-      return this.renderTableBody($(this.el).find("div.content table"));
-    };
-  
-    TableView.prototype.exportAction = function(e) {
-      var ex, model, result, _i, _len, _ref;
-      result = [this.response.columns.replace(/,/g, "\t")];
-      _ref = this.collection.selected();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        model = _ref[_i];
-        result.push(model.get('descriptions').join("\t") + "\t" + model.get('matches'));
-      }
-      if (result.length) {
-        try {
-          ex = new Exporter($(e.target), result.join("\n"), "" + this.widget.bagName + " " + this.widget.id + ".tsv");
-        } catch (TypeError) {
-          ex = new PlainExporter(result.join("\n"));
-        }
-        return window.setTimeout((function() {
-          return ex.destroy();
-        }), 5000);
-      }
-    };
-  
-    TableView.prototype.viewAction = function() {
-      var descriptions, model, rowIdentifiers, _i, _len, _ref, _ref1;
-      descriptions = [];
-      rowIdentifiers = [];
-      _ref = this.collection.selected();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        model = _ref[_i];
-        descriptions.push(model.get('descriptions')[0]);
-        rowIdentifiers.push(model.get('identifier'));
-      }
-      if (rowIdentifiers.length) {
-        if ((_ref1 = this.popoverView) != null) {
-          _ref1.remove();
-        }
-        return $(this.el).find('div.actions').after((this.popoverView = new TablePopoverView({
-          "identifiers": rowIdentifiers,
-          "description": descriptions.join(', '),
-          "template": this.template,
-          "matchCb": this.options.matchCb,
-          "resultsCb": this.options.resultsCb,
-          "listCb": this.options.listCb,
-          "pathQuery": this.response.pathQuery,
-          "pathConstraint": this.response.pathConstraint,
-          "imjs": new intermine.Service({
-            'root': this.widget.service,
-            'token': this.widget.token
-          }),
-          "type": this.response.type
-        })).el);
-      }
-    };
-  
-    return TableView;
   
   })(Backbone.View);
   
@@ -1256,7 +1426,7 @@ factory = function(Backbone) {
         "values": this.identifiers
       });
       values = [];
-      this.imjs.query(this.pathQuery, function(q) {
+      this.imService.query(this.pathQuery, function(q) {
         console.log(q.toXML());
         return q.rows(function(response) {
           var object, _i, _len;
@@ -1427,10 +1597,7 @@ factory = function(Backbone) {
                   "listCb": _this.options.listCb,
                   "matchCb": _this.options.matchCb,
                   "quickPq": quickPq,
-                  "imjs": new intermine.Service({
-                    'root': _this.widget.service,
-                    'token': _this.widget.token
-                  }),
+                  "imService": _this.widget.imService(),
                   "type": _this.response.type
                 })).el);
               }
@@ -1457,13 +1624,183 @@ factory = function(Backbone) {
   })(Backbone.View);
   
 
+  /* View maintaining Table Widget.
+  */
+  
+  var TableView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  
+  TableView = (function(_super) {
+  
+    __extends(TableView, _super);
+  
+    TableView.name = 'TableView';
+  
+    function TableView() {
+      this.viewAction = __bind(this.viewAction, this);
+  
+      this.exportAction = __bind(this.exportAction, this);
+  
+      this.selectAllAction = __bind(this.selectAllAction, this);
+  
+      this.renderTableBody = __bind(this.renderTableBody, this);
+  
+      this.renderTable = __bind(this.renderTable, this);
+  
+      this.renderToolbar = __bind(this.renderToolbar, this);
+      return TableView.__super__.constructor.apply(this, arguments);
+    }
+  
+    TableView.prototype.events = {
+      "click div.actions a.view": "viewAction",
+      "click div.actions a.export": "exportAction",
+      "click div.content input.check": "selectAllAction"
+    };
+  
+    TableView.prototype.initialize = function(o) {
+      var k, v;
+      for (k in o) {
+        v = o[k];
+        this[k] = v;
+      }
+      this.collection = new TableResults();
+      this.collection.bind('change', this.renderToolbar);
+      return this.render();
+    };
+  
+    TableView.prototype.render = function() {
+      $(this.el).html(this.template("table", {
+        "title": this.options.title ? this.response.title : "",
+        "description": this.options.description ? this.response.description : "",
+        "notAnalysed": this.response.notAnalysed
+      }));
+      if (this.response.results.length > 0) {
+        this.renderToolbar();
+        this.renderTable();
+      } else {
+        $(this.el).find("div.content").html($(this.template("noresults")));
+      }
+      return this;
+    };
+  
+    TableView.prototype.renderToolbar = function() {
+      return $(this.el).find("div.actions").html($(this.template("actions", {
+        "disabled": this.collection.selected().length === 0
+      })));
+    };
+  
+    TableView.prototype.renderTable = function() {
+      var height, i, table, _fn, _i, _ref,
+        _this = this;
+      $(this.el).find("div.content").html($(this.template("table.table", {
+        "columns": this.response.columns.split(',')
+      })));
+      table = $(this.el).find("div.content table");
+      _fn = function(i) {
+        var row;
+        row = new TableRow(_this.response.results[i], _this.widget);
+        return _this.collection.add(row);
+      };
+      for (i = _i = 0, _ref = this.response.results.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+        _fn(i);
+      }
+      this.renderTableBody(table);
+      height = $(this.el).height() - $(this.el).find('header').height() - $(this.el).find('div.content div.head').height();
+      $(this.el).find("div.content div.wrapper").css('height', "" + height + "px");
+      $(this.el).find("div.content div.head").css("width", $(this.el).find("div.content table").width() + "px");
+      table.find('thead th').each(function(i, th) {
+        return $(_this.el).find("div.content div.head div:eq(" + i + ")").width($(th).width());
+      });
+      return table.css({
+        'margin-top': '-' + table.find('thead').height() + 'px'
+      });
+    };
+  
+    TableView.prototype.renderTableBody = function(table) {
+      var fragment, row, _i, _len, _ref;
+      fragment = document.createDocumentFragment();
+      _ref = this.collection.models;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        fragment.appendChild(new TableRowView({
+          "model": row,
+          "template": this.template,
+          "response": this.response
+        }).el);
+      }
+      return table.find('tbody').html(fragment);
+    };
+  
+    TableView.prototype.selectAllAction = function() {
+      this.collection.toggleSelected();
+      this.renderToolbar();
+      return this.renderTableBody($(this.el).find("div.content table"));
+    };
+  
+    TableView.prototype.exportAction = function(e) {
+      var ex, model, result, _i, _len, _ref;
+      result = [this.response.columns.replace(/,/g, "\t")];
+      _ref = this.collection.selected();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        model = _ref[_i];
+        result.push(model.get('descriptions').join("\t") + "\t" + model.get('matches'));
+      }
+      if (result.length) {
+        try {
+          ex = new Exporter($(e.target), result.join("\n"), "" + this.widget.bagName + " " + this.widget.id + ".tsv");
+        } catch (TypeError) {
+          ex = new PlainExporter(result.join("\n"));
+        }
+        return window.setTimeout((function() {
+          return ex.destroy();
+        }), 5000);
+      }
+    };
+  
+    TableView.prototype.viewAction = function() {
+      var descriptions, model, rowIdentifiers, _i, _len, _ref, _ref1;
+      descriptions = [];
+      rowIdentifiers = [];
+      _ref = this.collection.selected();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        model = _ref[_i];
+        descriptions.push(model.get('descriptions')[0]);
+        rowIdentifiers.push(model.get('identifier'));
+      }
+      if (rowIdentifiers.length) {
+        if ((_ref1 = this.popoverView) != null) {
+          _ref1.remove();
+        }
+        return $(this.el).find('div.actions').after((this.popoverView = new TablePopoverView({
+          "identifiers": rowIdentifiers,
+          "description": descriptions.join(', '),
+          "template": this.template,
+          "matchCb": this.options.matchCb,
+          "resultsCb": this.options.resultsCb,
+          "listCb": this.options.listCb,
+          "pathQuery": this.response.pathQuery,
+          "pathConstraint": this.response.pathConstraint,
+          "imService": this.widget.imService(),
+          "type": this.response.type
+        })).el);
+      }
+    };
+  
+    return TableView;
+  
+  })(Backbone.View);
+  
+
   /* Enrichment Widget table row matches box.
   */
   
   var EnrichmentPopoverView,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
   
   EnrichmentPopoverView = (function(_super) {
   
@@ -1526,12 +1863,12 @@ factory = function(Backbone) {
         "values": this.identifiers
       });
       values = [];
-      this.imjs.query(pq, function(q) {
+      this.imService.query(pq, function(q) {
         return q.rows(function(response) {
-          var object, _i, _len;
+          var object, value, _i, _len;
           for (_i = 0, _len = response.length; _i < _len; _i++) {
             object = response[_i];
-            values.push((function(object) {
+            value = (function(object) {
               var column, _j, _len1, _ref;
               _ref = object.reverse();
               for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
@@ -1540,7 +1877,10 @@ factory = function(Backbone) {
                   return column;
                 }
               }
-            })(object));
+            })(object);
+            if (__indexOf.call(values, value) < 0) {
+              values.push(value);
+            }
           }
           return _this.renderValues(values);
         });
@@ -1595,360 +1935,21 @@ factory = function(Backbone) {
   })(Backbone.View);
   
 
-  /* View maintaining Enrichment Widget.
-  */
-  
-  var EnrichmentView,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  EnrichmentView = (function(_super) {
-  
-    __extends(EnrichmentView, _super);
-  
-    EnrichmentView.name = 'EnrichmentView';
-  
-    function EnrichmentView() {
-      this.viewAction = __bind(this.viewAction, this);
-  
-      this.exportAction = __bind(this.exportAction, this);
-  
-      this.selectAllAction = __bind(this.selectAllAction, this);
-  
-      this.formAction = __bind(this.formAction, this);
-  
-      this.renderTableBody = __bind(this.renderTableBody, this);
-  
-      this.renderTable = __bind(this.renderTable, this);
-  
-      this.renderToolbar = __bind(this.renderToolbar, this);
-      return EnrichmentView.__super__.constructor.apply(this, arguments);
-    }
-  
-    EnrichmentView.prototype.events = {
-      "click div.actions a.view": "viewAction",
-      "click div.actions a.export": "exportAction",
-      "change div.form select": "formAction",
-      "click div.content input.check": "selectAllAction"
-    };
-  
-    EnrichmentView.prototype.initialize = function(o) {
-      var k, v;
-      for (k in o) {
-        v = o[k];
-        this[k] = v;
-      }
-      this.collection = new EnrichmentResults();
-      this.collection.bind('change', this.renderToolbar);
-      return this.render();
-    };
-  
-    EnrichmentView.prototype.render = function() {
-      $(this.el).html(this.template("enrichment", {
-        "title": this.options.title ? this.response.title : "",
-        "description": this.options.description ? this.response.description : "",
-        "notAnalysed": this.response.notAnalysed
-      }));
-      $(this.el).find("div.form").html(this.template("enrichment.form", {
-        "options": this.form.options,
-        "pValues": this.form.pValues,
-        "errorCorrections": this.form.errorCorrections
-      }));
-      if (this.response.filterLabel != null) {
-        $(this.el).find('div.form form').append(this.template("extra", {
-          "label": this.response.filterLabel,
-          "possible": this.response.filters.split(','),
-          "selected": this.response.filterSelectedValue
-        }));
-      }
-      if (this.response.results.length > 0) {
-        this.renderToolbar();
-        this.renderTable();
-      } else {
-        $(this.el).find("div.content").html($(this.template("noresults")));
-      }
-      return this;
-    };
-  
-    EnrichmentView.prototype.renderToolbar = function() {
-      return $(this.el).find("div.actions").html($(this.template("actions", {
-        "disabled": this.collection.selected().length === 0
-      })));
-    };
-  
-    EnrichmentView.prototype.renderTable = function() {
-      var height, i, table, _fn, _i, _ref,
-        _this = this;
-      $(this.el).find("div.content").html($(this.template("enrichment.table", {
-        "label": this.response.label
-      })));
-      table = $(this.el).find("div.content table");
-      _fn = function(i) {
-        var data, row;
-        data = _this.response.results[i];
-        if (_this.response.externalLink) {
-          data.externalLink = _this.response.externalLink + data.identifier;
-        }
-        row = new EnrichmentRow(data, _this.widget);
-        return _this.collection.add(row);
-      };
-      for (i = _i = 0, _ref = this.response.results.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-        _fn(i);
-      }
-      this.renderTableBody(table);
-      height = $(this.el).height() - $(this.el).find('header').height() - $(this.el).find('div.content div.head').height();
-      $(this.el).find("div.content div.wrapper").css('height', "" + height + "px");
-      $(this.el).find("div.content div.head").css("width", $(this.el).find("div.content table").width() + "px");
-      table.find('thead th').each(function(i, th) {
-        return $(_this.el).find("div.content div.head div:eq(" + i + ")").width($(th).width());
-      });
-      return table.css({
-        'margin-top': '-' + table.find('thead').height() + 'px'
-      });
-    };
-  
-    EnrichmentView.prototype.renderTableBody = function(table) {
-      var fragment, row, _i, _len, _ref;
-      fragment = document.createDocumentFragment();
-      _ref = this.collection.models;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        row = _ref[_i];
-        fragment.appendChild(new EnrichmentRowView({
-          "model": row,
-          "template": this.template,
-          "type": this.response.type,
-          "callbacks": {
-            "matchCb": this.options.matchCb,
-            "resultsCb": this.options.resultsCb,
-            "listCb": this.options.listCb
-          },
-          "response": this.response,
-          "imjs": new intermine.Service({
-            'root': this.widget.service,
-            'token': this.widget.token
-          })
-        }).el);
-      }
-      return table.find('tbody').html(fragment);
-    };
-  
-    EnrichmentView.prototype.formAction = function(e) {
-      this.widget.formOptions[$(e.target).attr("name")] = $(e.target[e.target.selectedIndex]).attr("value");
-      return this.widget.render();
-    };
-  
-    EnrichmentView.prototype.selectAllAction = function() {
-      this.collection.toggleSelected();
-      this.renderToolbar();
-      return this.renderTableBody($(this.el).find("div.content table"));
-    };
-  
-    EnrichmentView.prototype.exportAction = function(e) {
-      var model, pq, rowIdentifiers, _i, _len, _ref,
-        _this = this;
-      rowIdentifiers = [];
-      _ref = this.collection.selected();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        model = _ref[_i];
-        rowIdentifiers.push(model.get('identifier'));
-      }
-      pq = typeof JSON !== "undefined" && JSON !== null ? JSON.parse(this.response['pathQueryForMatches']) : void 0;
-      pq.where.push({
-        "path": this.response.pathConstraint,
-        "op": "ONE OF",
-        "values": rowIdentifiers
-      });
-      return new intermine.Service({
-        'root': this.widget.service,
-        'token': this.widget.token
-      }).query(pq, function(q) {
-        return q.rows(function(response) {
-          var dict, ex, model, object, result, _j, _k, _len1, _len2, _ref1;
-          dict = {};
-          for (_j = 0, _len1 = response.length; _j < _len1; _j++) {
-            object = response[_j];
-            if (!(dict[object[0]] != null)) {
-              dict[object[0]] = [];
-            }
-            dict[object[0]].push(object[1]);
-          }
-          result = [];
-          _ref1 = _this.collection.selected();
-          for (_k = 0, _len2 = _ref1.length; _k < _len2; _k++) {
-            model = _ref1[_k];
-            result.push([model.get('description'), model.get('p-value')].join("\t") + "\t" + dict[model.get('identifier')].join(','));
-          }
-          if (result.length) {
-            ex = new PlainExporter(result.join("\n"));
-            return window.setTimeout((function() {
-              return ex.destroy();
-            }), 5000);
-          }
-        });
-      });
-    };
-  
-    EnrichmentView.prototype.viewAction = function() {
-      var descriptions, model, rowIdentifiers, _i, _len, _ref, _ref1;
-      descriptions = [];
-      rowIdentifiers = [];
-      _ref = this.collection.selected();
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        model = _ref[_i];
-        descriptions.push(model.get('description'));
-        rowIdentifiers.push(model.get('identifier'));
-      }
-      if (rowIdentifiers.length) {
-        if ((_ref1 = this.popoverView) != null) {
-          _ref1.remove();
-        }
-        return $(this.el).find('div.actions').after((this.popoverView = new EnrichmentPopoverView({
-          "identifiers": rowIdentifiers,
-          "description": descriptions.join(', '),
-          "template": this.template,
-          "style": "width:300px",
-          "matchCb": this.options.matchCb,
-          "resultsCb": this.options.resultsCb,
-          "listCb": this.options.listCb,
-          "response": this.response,
-          "imjs": new intermine.Service({
-            'root': this.widget.service,
-            'token': this.widget.token
-          })
-        })).el);
-      }
-    };
-  
-    return EnrichmentView;
-  
-  })(Backbone.View);
-  
-
-  /* Chart Widget bar onclick box.
-  */
-  
-  var ChartPopoverView,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-  
-  ChartPopoverView = (function(_super) {
-  
-    __extends(ChartPopoverView, _super);
-  
-    ChartPopoverView.name = 'ChartPopoverView';
-  
-    function ChartPopoverView() {
-      this.close = __bind(this.close, this);
-  
-      this.listAction = __bind(this.listAction, this);
-  
-      this.resultsAction = __bind(this.resultsAction, this);
-  
-      this.matchAction = __bind(this.matchAction, this);
-  
-      this.renderValues = __bind(this.renderValues, this);
-  
-      this.render = __bind(this.render, this);
-      return ChartPopoverView.__super__.constructor.apply(this, arguments);
-    }
-  
-    ChartPopoverView.prototype.descriptionLimit = 50;
-  
-    ChartPopoverView.prototype.valuesLimit = 5;
-  
-    ChartPopoverView.prototype.events = {
-      "click a.match": "matchAction",
-      "click a.results": "resultsAction",
-      "click a.list": "listAction",
-      "click a.close": "close"
-    };
-  
-    ChartPopoverView.prototype.initialize = function(o) {
-      var k, v;
-      for (k in o) {
-        v = o[k];
-        this[k] = v;
-      }
-      return this.render();
-    };
-  
-    ChartPopoverView.prototype.render = function() {
-      var values,
-        _this = this;
-      $(this.el).html(this.template("popover", {
-        "description": this.description,
-        "descriptionLimit": this.descriptionLimit,
-        "style": 'width:300px'
-      }));
-      values = [];
-      this.imjs.query(this.quickPq, function(q) {
-        return q.rows(function(response) {
-          var object, _i, _len;
-          for (_i = 0, _len = response.length; _i < _len; _i++) {
-            object = response[_i];
-            values.push((function(object) {
-              var column, _j, _len1;
-              for (_j = 0, _len1 = object.length; _j < _len1; _j++) {
-                column = object[_j];
-                if (column.length > 0) {
-                  return column;
-                }
-              }
-            })(object));
-          }
-          return _this.renderValues(values);
-        });
-      });
-      return this;
-    };
-  
-    ChartPopoverView.prototype.renderValues = function(values) {
-      return $(this.el).find('div.values').html(this.template("popover.values", {
-        'values': values,
-        'type': this.type,
-        'valuesLimit': this.valuesLimit
-      }));
-    };
-  
-    ChartPopoverView.prototype.matchAction = function(e) {
-      this.matchCb($(e.target).text(), this.type);
-      return e.preventDefault();
-    };
-  
-    ChartPopoverView.prototype.resultsAction = function() {
-      return this.resultsCb(this.resultsPq);
-    };
-  
-    ChartPopoverView.prototype.listAction = function() {
-      return this.listCb(this.resultsPq);
-    };
-  
-    ChartPopoverView.prototype.close = function() {
-      return $(this.el).remove();
-    };
-  
-    return ChartPopoverView;
-  
-  })(Backbone.View);
-  
-
   return {
 
-    "InterMineWidget": InterMineWidget,
-    "ChartWidget": ChartWidget,
-    "TableWidget": TableWidget,
     "EnrichmentWidget": EnrichmentWidget,
+    "ChartWidget": ChartWidget,
+    "InterMineWidget": InterMineWidget,
+    "TableWidget": TableWidget,
     "CoreModel": CoreModel,
     "EnrichmentRowView": EnrichmentRowView,
-    "TableRowView": TableRowView,
-    "TableView": TableView,
-    "TablePopoverView": TablePopoverView,
-    "ChartView": ChartView,
-    "EnrichmentPopoverView": EnrichmentPopoverView,
     "EnrichmentView": EnrichmentView,
     "ChartPopoverView": ChartPopoverView,
+    "TableRowView": TableRowView,
+    "TablePopoverView": TablePopoverView,
+    "ChartView": ChartView,
+    "TableView": TableView,
+    "EnrichmentPopoverView": EnrichmentPopoverView,
 
   };
 };
@@ -1967,6 +1968,8 @@ $ = window.jQuery || window.Zepto;
 Widgets = (function() {
 
   Widgets.name = 'Widgets';
+
+  Widgets.prototype.VERSION = '1.0.0';
 
   Widgets.prototype.wait = true;
 
