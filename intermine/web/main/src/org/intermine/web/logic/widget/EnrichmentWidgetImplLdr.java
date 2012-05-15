@@ -304,6 +304,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         String enrichIdentifier;
         boolean subClassContraint = false;
         String subClassType = "";
+        String subClassPath = "";
         if (config.getEnrichIdentifier() != null) {
             enrichIdentifier = config.getStartClass() + "." + config.getEnrichIdentifier();
         } else {
@@ -312,7 +313,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 subClassContraint = true;
                 subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
                                                     enrichPath.indexOf("]"));
-                enrichIdentifier = enrichPath.substring(0, enrichPath.indexOf("["));
+                subClassPath = enrichPath.substring(0, enrichPath.indexOf("["));
+                enrichIdentifier = subClassPath + enrichPath.substring(enrichPath.indexOf("]") + 1);
             } else {
                 enrichIdentifier = enrichPath;
             }
@@ -326,7 +328,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         //subclass constraint
         if (subClassContraint) {
-            pathQuery.addConstraint(Constraints.type(enrichIdentifier, subClassType));
+            pathQuery.addConstraint(Constraints.type(subClassPath, subClassType));
         }
         return pathQuery;
     }
