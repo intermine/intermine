@@ -22,6 +22,38 @@
     </fields>
     <tabledisplayer src="/model/tableManager.jsp"/>
   </class>
-
+   <widgets>
+   <enrichmentwidgetdisplayer id="contractor_enrichment"
+                 title="Contractor Enrichment"
+                 label="Contractor"
+                 description="The relationship between contractors and employees"
+                 startClass="Employee"
+                 startClassDisplay="name"
+                 enrich="department.company.contractors.name"
+                 typeClass="org.intermine.model.testmodel.Employee"
+                 views="name, age, department.name"/>
+       <enrichmentwidgetdisplayer id="contractor_enrichment_with_filter1"
+                 title="Contractor Enrichment"
+                 label="Contractor"
+                 filterLabel="testFilter"
+                 filters="department.name=[list]"
+                 description="The relationship between contractors and employees"
+                 startClass="Employee"
+                 startClassDisplay="name"
+                 enrich="department.company.contractors.name"
+                 typeClass="org.intermine.model.testmodel.Employee"
+                 views="name, age, department.name"/>
+        <enrichmentwidgetdisplayer id="contractor_enrichment_with_filter2"
+                 title="Contractor Enrichment"
+                 label="Contractor"
+                 filterLabel="testFilter"
+                 filters="ContractorA, ContractorB"
+                 description="The relationship between contractors and employees"
+                 startClass="Employee"
+                 startClassDisplay="name"
+                 enrich="department.company.contractors.name"
+                 typeClass="org.intermine.model.testmodel.Employee"
+                 views="name, age, department.name"/>
+     </widgets>
   <tableExportConfig id="myExporter" actionPath="/somePath" className="java.lang.String"/>
 </webconfig>
