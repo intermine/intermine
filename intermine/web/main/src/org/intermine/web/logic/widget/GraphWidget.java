@@ -22,9 +22,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
-
-
-
 /**
  * @author "Xavier Watkins"
  * @author "Alex Kalderimis"
