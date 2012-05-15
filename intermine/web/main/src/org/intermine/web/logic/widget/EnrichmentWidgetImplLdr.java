@@ -301,13 +301,33 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     public PathQuery createPathQueryForMatches() {
         Model model = os.getModel();
         PathQuery pathQuery = new PathQuery(model);
-        String enrichIdentifier = config.getStartClass() + "." + config.getEnrichIdentifier();
+        String enrichIdentifier;
+        boolean subClassContraint = false;
+        String subClassType = "";
+        if (config.getEnrichIdentifier() != null) {
+            enrichIdentifier = config.getStartClass() + "." + config.getEnrichIdentifier();
+        } else {
+            String enrichPath = config.getStartClass() + "." + config.getEnrich();
+            if (WidgetConfigUtil.isPathContainingSubClass(model, enrichPath)) {
+                subClassContraint = true;
+                subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
+                                                    enrichPath.indexOf("]"));
+                enrichIdentifier = enrichPath.substring(0, enrichPath.indexOf("["));
+            } else {
+                enrichIdentifier = enrichPath;
+            }
+        }
+
         String startClassDisplayView = config.getStartClass() + "." + config.getStartClassDisplay();
         pathQuery.addView(enrichIdentifier);
         pathQuery.addView(startClassDisplayView);
         pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
         // bag constraint
         pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        //subclass constraint
+        if (subClassContraint) {
+            pathQuery.addConstraint(Constraints.type(enrichIdentifier, subClassType));
+        }
         return pathQuery;
     }
 }
