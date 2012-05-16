@@ -27,7 +27,6 @@
     <merge-additions file="bio/sources/go/go_additions.xml"/>
     <merge-additions file="bio/sources/go-annotation/go-annotation_additions.xml"/>
     <merge-additions file="bio/sources/uniprot/uniprot_additions.xml"/>
-    <merge-additions file="bio/sources/flymine/protein-structure/protein-structure_additions.xml"/>
     <merge-additions file="bio/sources/pdb/pdb_additions.xml"/>
     <merge-additions file="bio/sources/flymine/flyreg/flyreg_additions.xml"/>
     <merge-additions file="bio/sources/flymine/long-oligo/long-oligo_additions.xml"/>
@@ -45,7 +44,6 @@
     <merge-additions file="bio/sources/flymine/anoph-expr/anoph-expr_additions.xml"/>
     <merge-additions file="bio/sources/flymine/bdgp-insitu/bdgp-insitu_additions.xml"/>
     <merge-additions file="bio/sources/biogrid/biogrid_additions.xml"/>
-    <merge-additions file="bio/sources/miranda/miranda_additions.xml"/>
     <merge-additions file="bio/sources/biopax/biopax_additions.xml"/>
     <merge-additions file="bio/sources/treefam/treefam_additions.xml"/>
     <merge-additions file="bio/sources/interpro-go/interpro-go_additions.xml"/>
