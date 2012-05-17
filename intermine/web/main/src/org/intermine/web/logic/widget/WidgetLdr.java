@@ -29,10 +29,13 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
+import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
-public class WidgetLdr {
+public class WidgetLdr
+{
 
     protected ObjectStore os;
     protected InterMineBag bag;
@@ -55,10 +58,20 @@ public class WidgetLdr {
      * @param os the object store
      * @param filter the filter
      */
-    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter) {
+    public WidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config) {
         this.bag = bag;
         this.os = os;
         this.filter = filter;
+        try {
+            startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
+                                        + config.getStartClass()));
+        } catch (ClassNotFoundException e) {
+            if (config instanceof EnrichmentWidgetConfig
+                || config instanceof GraphWidgetConfig) {
+                throw new IllegalArgumentException("Not found the class set in startClass for the"
+                    + " widget " + config.getId(), e);
+               }
+        }
     }
 
     /**

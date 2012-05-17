@@ -43,15 +43,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
 
     public EnrichmentWidgetImplLdr(InterMineBag bag, ObjectStore os, EnrichmentWidgetConfig config,
         String filter) {
-        super(bag, os, filter);
+        super(bag, os, filter, config);
         this.config = config;
-        try {
-            startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
-                                        + config.getStartClass()));
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Not found the class set in startClass for the"
-                    + " widget " + config.getId(), e);
-        }
     }
 
     /**
