@@ -10,31 +10,15 @@ package org.intermine.web.logic.widget;
  *
  */
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import junit.framework.TestCase;
-
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.web.logic.config.WebConfig;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
-import org.intermine.web.struts.MockServletContext;
 
-public class WidgetConfigUtilTest extends TestCase
+public class WidgetConfigUtilTest extends WidgetConfigTestCase
 {
-    protected ObjectStore os;
-
-    public void setUp() throws Exception {
-        os = ObjectStoreFactory.getObjectStore("os.unittest");
-    }
-
     public void testIsListConstraint() {
         PathConstraint pc1 = new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "EmployeeA1");
         PathConstraint pc2 = new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "[]");
@@ -57,7 +41,7 @@ public class WidgetConfigUtilTest extends TestCase
     }
 
     public void testIsFilterConstraint() throws Exception {
-        WidgetConfig config = createWidgetConfig();
+        WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         PathConstraint pc1 = new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "EmployeeA1");
         PathConstraint pc2 = new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "[filter]");
         PathConstraint pc3 = new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "[testFilter]");
@@ -66,23 +50,5 @@ public class WidgetConfigUtilTest extends TestCase
         assertEquals(false, WidgetConfigUtil.isFilterConstraint(config, pc2));
         assertEquals(true, WidgetConfigUtil.isFilterConstraint(config, pc3));
         assertEquals(true, WidgetConfigUtil.isFilterConstraint(config, pc4));
-    }
-    
-    private WidgetConfig createWidgetConfig() throws Exception {
-        MockServletContext context = new MockServletContext();
-        final Properties p = new Properties();
-        p.setProperty("web.config.classname.mappings", "CLASS_NAME_MAPPINGS");
-        p.setProperty("web.config.fieldname.mappings", "FIELD_NAME_MAPPINGS");
-        SessionMethods.setWebProperties(context, p);
-
-        final InputStream is = getClass().getClassLoader().getResourceAsStream("WebConfigTest.xml");
-        final InputStream classesIS = getClass().getClassLoader().getResourceAsStream("testClassMappings.properties");
-        final InputStream fieldsIS = getClass().getClassLoader().getResourceAsStream("testFieldMappings.properties");
-        context.addInputStream("/WEB-INF/webconfig-model.xml", is);
-        context.addInputStream("/WEB-INF/CLASS_NAME_MAPPINGS", classesIS);
-        context.addInputStream("/WEB-INF/FIELD_NAME_MAPPINGS", fieldsIS);
-        WebConfig webConfig = WebConfig.parse(context, os.getModel());
-        WidgetConfig widgetConfig = webConfig.getWidgets().get("contractor_enrichment_with_filter");
-        return widgetConfig;
     }
 }
