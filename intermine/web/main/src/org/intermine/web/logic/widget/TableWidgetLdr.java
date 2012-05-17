@@ -86,7 +86,7 @@ public class TableWidgetLdr extends WidgetLdr
      */
     public TableWidgetLdr(WidgetConfig widgetConfig, InterMineBag bag, ObjectStore os)
         throws UnsupportedEncodingException {
-        super(bag, os, null);
+        super(bag, os, null, widgetConfig);
         this.config = (TableWidgetConfig) widgetConfig;
         pathString = config.getPathStrings();
         model = os.getModel();

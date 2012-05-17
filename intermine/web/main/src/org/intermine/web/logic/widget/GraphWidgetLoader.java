@@ -48,15 +48,8 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
     private List<List<Object>> resultTable = new LinkedList<List<Object>>();
 
     public GraphWidgetLoader(InterMineBag bag, ObjectStore os, GraphWidgetConfig config, String filter) {
-        super(bag, os, filter);
+        super(bag, os, filter, config);
         this.config = config;
-        try {
-            startClass = new QueryClass(Class.forName(os.getModel().getPackageName() + "."
-                                        + config.getStartClass()));
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Not found the class set in startClass for the"
-                                               + " widget " + config.getId(), e);
-        }
         LinkedHashMap<String, long[]> categorySeriesMap = new LinkedHashMap<String, long[]>();
         if (!config.isActualExpectedCriteria()) {
             Query q = createQuery(GraphWidgetActionType.ACTUAL);
