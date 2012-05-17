@@ -60,7 +60,9 @@ public class TemplateQueryBinding extends PathQueryBinding
             writer.writeCharacters("\n");
             writer.writeStartElement("template");
             writer.writeAttribute("name", template.getName());
-            writer.writeAttribute("title", template.getTitle());
+            if (template.getTitle() != null) {
+                writer.writeAttribute("title", template.getTitle());
+            }
             if (template.getComment() == null) {
                 writer.writeAttribute("comment", "");
             } else {
