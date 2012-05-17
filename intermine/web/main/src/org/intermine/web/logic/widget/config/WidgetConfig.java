@@ -54,13 +54,6 @@ public abstract class WidgetConfig
     private String views;
 
     /**
-     * The Constructor
-     */
-    public WidgetConfig() {
-        super();
-    }
-
-    /**
      * @return the id
      */
     public String getId() {
