@@ -225,7 +225,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                     qcConstraint = new QueryClass(TypeUtil.getElementType(
                         qc.getType(), pathsConstraint[index]));
                 }
-                if (addQueryClassInQuery(qcConstraint, qc)) {
+                if (!isQueryClassInQuery(qcConstraint, qc)) {
                     String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
                     qc = qcConstraint;
                     query.addFrom(qc);

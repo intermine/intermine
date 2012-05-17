@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -44,13 +45,7 @@ public class WidgetLdr
     private static final Logger LOG = Logger.getLogger(WidgetLdr.class);
 
     //map containing queryclass already in the query
-    protected Map<String, QueryClass> queryClassInQuery;
-
-    /**
-     * Constructor by default
-     */
-    public WidgetLdr() {
-    }
+    protected Map<String, QueryClass> queryClassInQuery = new HashMap<String, QueryClass>();
 
     /**
      * Constructor initializing intermine bag, the object store and the filter
@@ -96,7 +91,7 @@ public class WidgetLdr
      * Create a queryField starting from the path given in input and add the contain constraints
      * between all the queryclass composing the path.
      * If addToSelect is true, add the queryFiled as select, group by and order by element.
-     * @param path the path used to create the queryField
+     * @param path the path used to create the queryField. The path doesn't containt the startClass
      * @param query the query to modify
      * @param addToSelect if true add the queryFiled as select, group by and order by element
      * @return the queryField created
@@ -160,7 +155,7 @@ public class WidgetLdr
                 qcTmp = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
             }
         }
-        if (addQueryClassInQuery(qcTmp, qc)) {
+        if (!isQueryClassInQuery(qcTmp, qc)) {
             String key = generateKeyForQueryClassInQuery(qcTmp, qc);
             qc = qcTmp;
             query.addFrom(qc);
@@ -181,9 +176,9 @@ public class WidgetLdr
     * @param queryClassParent the query class parent in the path
      * @return true if the queryClass is in queryClassInQuery map, otherwise false
      */
-    protected boolean addQueryClassInQuery(QueryClass queryClass, QueryClass queryClassParent) {
+    protected boolean isQueryClassInQuery(QueryClass queryClass, QueryClass queryClassParent) {
         String key = generateKeyForQueryClassInQuery(queryClass, queryClassParent);
-        if (!queryClassInQuery.containsKey(key)) {
+        if (queryClassInQuery.containsKey(key)) {
             return true;
         }
         return false;
