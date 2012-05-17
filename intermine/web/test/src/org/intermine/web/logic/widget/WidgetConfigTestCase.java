@@ -47,6 +47,5 @@ public class WidgetConfigTestCase extends InterMineAPITestCase {
         context.addInputStream("/WEB-INF/CLASS_NAME_MAPPINGS", classesIS);
         context.addInputStream("/WEB-INF/FIELD_NAME_MAPPINGS", fieldsIS);
         webConfig = WebConfig.parse(context, os.getModel());
-        webConfig.getClass();
     }
 }
