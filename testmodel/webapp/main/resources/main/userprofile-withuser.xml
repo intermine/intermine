@@ -34,6 +34,51 @@
             <bagValue value="Hans Schmelzer"/>
             <bagValue value="Frank Möllers"/>
         </bag>
+        <bag name="Invalido Bago" description="The magical disappearing bag" type="TopHat">
+            <bagValue value="A Rabbit"/>
+            <bagValue value="Two White Doves"/>
+            <bagValue value="A Bouquet of Flowers"/>
+            <bagValue value="A Charming Young Assistant"/>
+            <bagValue value="A Chain of Colourful Handkerchiefs"/>
+        </bag>
+        <bag name="A Fixable Bag" description="You can fix this bag by changing its type to 'Employee'" type="Worker" dateCreated="1234567890">
+            <bagValue value="David Brent"/>
+            <bagValue value="Neil Godwin"/>
+            <bagValue value="Devon White"/>
+            <bagValue value="Fatou"/>
+        </bag>
+        <bag name="Ante-Diluvians" type="MagicalCreature" description="Those that didn't quite make the ark">
+            <bagValue value="Unicorn" extra="Equines"/>
+            <bagValue value="Dragon" extra="Reptiles"/>
+            <bagValue value="T. Rex" extra="Reptiles"/>
+            <bagValue value="Fairies" extra="Hominids"/>
+            <bagValue value="Gnomes" extra="Hominids"/>
+            <bagValue value="Elves" extra="Hominids"/>
+            <bagValue value="Nessie" extra="Reptiles"/>
+            <bagValue value="Roc" extra="Avians"/>
+            <bagValue value="Thunderbird" extra="Avians"/>
+            <bagValue value="Yeti" extra="Hominids"/>
+            <bagValue value="Pixies" extra="Hominids"/>
+            <bagValue value="Kraken" extra="Molluscs"/>
+            <bagValue value="Hydra" extra="Reptiles"/>
+            <bagValue value="Taniwha" extra="Reptiles"/>
+            <bagValue value="Big-Foot" extra="Hominids"/>
+            <bagValue value="Basilisk" extra="Reptiles"/>
+            <bagValue value="Chimaera" extra="Crosses"/>
+            <bagValue value="Minotaur" extra="Crosses"/>
+            <bagValue value="Centaurs" extra="Crosses"/>
+            <bagValue value="Cyclops" extra="Hominids"/>
+            <bagValue value="Cerberus" extra="Canines"/>
+            <bagValue value="Fauns" extra="Crosses"/>
+            <bagValue value="Phoenix" extra="Avians"/>
+            <bagValue value="Titan" extra="Hominids"/>
+            <bagValue value="Griffin" extra="Crosses"/>
+            <bagValue value="Leviathan" extra="Molluscs"/>
+            <bagValue value="Sasquatch" extra="Hominids"/>
+            <bagValue value="Salamander" extra="Reptiles"/>
+            <bagValue value="Xanthus" extra="Equines"/>
+            <bagValue value="Wendigo" extra="Unknown"/>
+        </bag>
     </bags>
     <template-queries>
         <template name="private-template-1" title="A private template for testing"

@@ -1,0 +1,5 @@
+<antlib>
+    <typedef
+        name="create-indexes"
+        classname="org.intermine.task.CreateIndexesTask"/>
+</antlib>
