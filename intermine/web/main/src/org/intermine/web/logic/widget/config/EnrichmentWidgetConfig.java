@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget.config;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,19 +19,23 @@ import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
  * @author Julie Sullivan
+ * @author dbutano
  */
 public class EnrichmentWidgetConfig extends WidgetConfig
 {
     private String label;
-    private String append;
     private String enrich;
     private String enrichIdentifier;
     private String startClassDisplay;
     private String externalLink;
+    private List<PathConstraint> pathConstraintsForView = new ArrayList<PathConstraint>();
 
     /**
      * @return the label
@@ -68,22 +73,6 @@ public class EnrichmentWidgetConfig extends WidgetConfig
         return returnMap;
     }
 
-
-    /**
-     * just used for tiffin for now
-     * @return the text to append to the end of the external link
-     */
-    public String getAppend() {
-        return append;
-    }
-
-    /**
-     * @param append the text to append
-     */
-    public void setAppend(String append) {
-        this.append = append;
-    }
-
     public String getEnrich() {
         return enrich;
     }
@@ -114,6 +103,40 @@ public class EnrichmentWidgetConfig extends WidgetConfig
 
     public void setExternalLink(String externalLink) {
         this.externalLink = externalLink;
+    }
+
+    public void setConstraintsForView(String constraints) {
+        setPathConstraintsForView(constraints);
+    }
+
+    public void setPathConstraintsForView(String constraints) {
+        String[] constraintsList = constraints.split("\\s*,\\s*");
+        String path = null;
+        String value = null;
+        ConstraintOp op = null;
+        String[] splitConstraint;
+        for (String constraint : constraintsList) {
+            int opIndex = constraint.indexOf("!=");
+            if (opIndex != -1) {
+                op = ConstraintOp.NOT_EQUALS;
+                splitConstraint = constraint.split("\\s*!=\\s*");
+                path = splitConstraint[0];
+                value = splitConstraint[1];
+            } else {
+                opIndex = constraint.indexOf("=");
+                if (opIndex != -1) {
+                    op = ConstraintOp.EQUALS;
+                    splitConstraint = constraint.split("\\s*=\\s*");
+                    path = splitConstraint[0];
+                    value = splitConstraint[1];
+                }
+            }
+            this.pathConstraintsForView.add(new PathConstraintAttribute(path, op, value));
+        }
+    }
+
+    public List<PathConstraint> getPathConstraintsForView() {
+        return pathConstraintsForView;
     }
 
     /**

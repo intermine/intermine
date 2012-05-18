@@ -282,6 +282,12 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         PathQuery q = createPathQueryView(os, config);
         // bag constraint
         q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        List<PathConstraint> pathConstraintsForView = config.getPathConstraintsForView();
+        if (pathConstraintsForView != null) {
+            for (PathConstraint pc : pathConstraintsForView) {
+                q.addConstraint(pc);
+            }
+        }
         return q;
     }
 
@@ -322,6 +328,13 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         //subclass constraint
         if (subClassContraint) {
             pathQuery.addConstraint(Constraints.type(subClassPath, subClassType));
+        }
+        //constraints for view
+        List<PathConstraint> pathConstraintsForView = config.getPathConstraintsForView();
+        if (pathConstraintsForView != null) {
+            for (PathConstraint pc : pathConstraintsForView) {
+                pathQuery.addConstraint(pc);
+            }
         }
         return pathQuery;
     }
