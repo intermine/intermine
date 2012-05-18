@@ -34,6 +34,13 @@ public class WidgetConfigUtil {
         return false;
     }
 
+    public static String getPathWithoutSubClass(Model model, String path) {
+        if (isPathContainingSubClass(model, path)) {
+            path = path.substring(0, path.indexOf("[")) + path.substring(path.indexOf("]") + 1);
+        }
+        return path;
+    }
+
     public static boolean isFilterConstraint(final WidgetConfig config, PathConstraint pc) {
         String value = PathConstraint.getValue(pc);
         value = value.replace(" ", "");
