@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -28,7 +27,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -65,7 +63,7 @@ public class WidgetLdr
                 || config instanceof GraphWidgetConfig) {
                 throw new IllegalArgumentException("Not found the class set in startClass for the"
                     + " widget " + config.getId(), e);
-               }
+            }
         }
     }
 
@@ -201,24 +199,4 @@ public class WidgetLdr
         }
     }
 
-    /**
-     * Create a pathquery having a view composed by all items set in the view attribute
-     * in the config file
-     * @param os th eobject store
-     * @param config the widget config
-     * @return the path query created
-     */
-    protected PathQuery createPathQueryView(ObjectStore os, WidgetConfig config) {
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-        String[] views = config.getViews().split("\\s*,\\s*");
-        String prefix = config.getStartClass() + ".";
-        for (String view : views) {
-            if (!view.startsWith(prefix)) {
-                view = prefix + view;
-            }
-            q.addView(view);
-        }
-        return q;
-    }
 }

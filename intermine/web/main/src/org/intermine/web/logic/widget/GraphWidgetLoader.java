@@ -34,9 +34,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -307,62 +305,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         return resultTable;
     }
 
-    /**
-     * Returns the pathquery based on the views set in config file and the bag constraint.
-     * Executed when the user click on 'View results' button in the graph widget.
-     * @return the query generated
-     */
-    public PathQuery createPathQuery() {
-        PathQuery q = createPathQueryView(os, config);
 
-        // bag constraint
-        if (config.isBagPathSet()) {
-            q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
-        } else {
-            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
-        }
-
-        String prefix = config.getStartClass() + ".";
-        //category constraint
-        q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
-        if (!config.isActualExpectedCriteria()) {
-            //series constraint
-            q.addConstraint(Constraints.eq(prefix + config.getSeriesPath(), "%series"));
-        }
-
-        return q;
-    }
-
-    /**
-     * Returns the pathquery based on the classkey.
-     * Executed when the user selects any columns in the in the graph widget and a popup is shown.
-     * @return the query generated
-     */
-    public PathQuery createSimplePathQuery() {
-        PathQuery q = new PathQuery(os.getModel());
-        List<String> keyFieldNames = bag.getKeyFieldNames();
-        String prefix = config.getStartClass() + ".";
-        for (String keyFieldName : keyFieldNames) {
-            if (!keyFieldName.startsWith(prefix)) {
-                keyFieldName = prefix + keyFieldName;
-            }
-            q.addView(keyFieldName);
-        }
-
-        // bag constraint
-        if (config.isBagPathSet()) {
-            q.addConstraint(Constraints.in(config.getBagPath(), bag.getName()));
-        } else {
-            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
-        }
-
-        //category constraint
-        q.addConstraint(Constraints.eq(prefix + config.getCategoryPath(), "%category"));
-        //series constraint
-        q.addConstraint(Constraints.eq(prefix + config.getSeriesPath(),"%series"));
-
-        return q;
-    }
 
     private int addExpected(Map<String, Long> resultsTable) {
         // get counts of gene in database for gene

@@ -12,6 +12,8 @@ package org.intermine.web.logic.widget;
 
 import java.util.List;
 
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
@@ -96,4 +98,25 @@ public abstract class Widget
      * @return the pathquery
      */
     public abstract PathQuery getPathQuery();
+
+    /**
+     * Create a pathquery having a view composed by all items set in the view attribute
+     * in the config file
+     * @param os th eobject store
+     * @param config the widget config
+     * @return the path query created
+     */
+    protected PathQuery createPathQueryView(ObjectStore os, WidgetConfig config) {
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
+        String[] views = config.getViews().split("\\s*,\\s*");
+        String prefix = config.getStartClass() + ".";
+        for (String view : views) {
+            if (!view.startsWith(prefix)) {
+                view = prefix + view;
+            }
+            q.addView(view);
+        }
+        return q;
+    }
 }
