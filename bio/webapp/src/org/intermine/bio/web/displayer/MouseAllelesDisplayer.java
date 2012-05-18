@@ -207,8 +207,8 @@ public class MouseAllelesDisplayer extends ReportDisplayer
                     sorted.put(term, (Integer) terms.get(term));
                 }
                 // "mark" top 20 and order by natural order - the keys
-                HashMap<String, Map<String, Object>> marked =
-                        new HashMap<String, Map<String, Object>>();
+                TreeMap<String, Map<String, Object>> marked =
+                        new TreeMap<String, Map<String, Object>>();
                 Integer i = 0;
                 for (String term : sorted.keySet()) {
                     // wrapper map

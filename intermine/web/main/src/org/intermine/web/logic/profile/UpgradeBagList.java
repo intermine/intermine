@@ -74,6 +74,8 @@ public class UpgradeBagList implements Runnable
                 Map<String, Object> bagAttributes = new HashMap<String, Object>();
 
                 bagAttributes.put("status", Constants.UPGRADING_BAG);
+
+                LOG.info("Start upgrading the bag list " + bag.getName());
                 status.put(bag.getName(), bagAttributes);
 
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);

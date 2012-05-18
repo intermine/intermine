@@ -38,45 +38,6 @@
             });
         })
         .trigger('change');
-
-         // qtip configuration
-         // color scheme for differnt mines
-         jQuery("#baseCorRadioSpan").qtip({
-               content: 'e.g. BLAST, GFF/GFF3',
-               style: {
-                 border: {
-                   width: 3,
-                   radius: 8,
-                   color: '#6699CC'
-                 },
-                 tip: 'bottomLeft',
-                 name: 'cream'
-               },
-                position: {
-                  corner: {
-                     target: 'topMiddle',
-                     tooltip: 'bottomLeft'
-                  }
-                },
-               show: 'mouseover',
-               hide: 'mouseout'
-         });
-
-         jQuery("#interBaseCorRadioSpan").qtip({
-               content: 'e.g. UCSC BED, Chado',
-               style: {
-                 border: {
-                   width: 3,
-                   radius: 8,
-                   color: '#6699CC'
-                 },
-                 tip: 'topLeft',
-                 name: 'cream'
-               },
-               show: 'mouseover',
-               hide: 'mouseout'
-         });
-
     });
 
    function appendGenomeBuild(org) {
@@ -143,7 +104,7 @@
        if (org == "M. musculus") { organism = "mouse"};
 
         jQuery.ajax({
-            url: 'http://met1:5000/lift/versions/' + organism,
+            url: liftOverUrl + "versions/" + organism,
             dataType: 'jsonp',
             success: function(data) {
                 jQuery('#liftover-genome-versions').text('');
@@ -185,7 +146,7 @@
 
             jQuery.ajax({
                 type: 'POST', // actually GET
-                url: "http://met1:5000/lift/" + organism,
+                url: liftOverUrl + organism,
                 data: { coords: coords, source: source, target: target },
                 dataType: 'jsonp',
 

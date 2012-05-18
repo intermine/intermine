@@ -1,0 +1,136 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use File::Path qw(make_path);
+use Net::FTP;
+
+#Define ARGVs
+
+if (@ARGV != 3) {
+    die 
+"Wrong number of arguments: DATA_DIRECTORY ORGANISM_NAME WHICH_DATABASE \nPlease supply the organism name, the download desination directory, and which data you want to download (core or variation)\n eg /data/ensembl mus_musculus core\nThe organism name must match the ensembl filenames, as this is the search string the script uses.\nThe data will be saved to the directory for this organism, eg /data/ensembl/mus_musculus core ";
+} 
+
+my ($data_dir, $organisms, $database_name) = @ARGV;
+
+# ensembl ftp site
+
+my $server = "ftp.ensemblgenomes.org";
+my $releases_dir = "pub/plants";
+my $current_dir = "current/mysql";
+
+
+# -------- access ftp server ------------- #
+my $ftp = Net::FTP->new($server, Passive => 1)
+  or die "Cannot connect to $server: $@";
+
+$ftp->login("anonymous",'-anonymous@')
+  or die "Cannot login ", $ftp->message;
+
+$ftp->cwd($releases_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+$ftp->cwd($current_dir)
+  or die "Cannot change working directory ", $ftp->message;
+
+$ftp->binary;
+
+# get list of all directories
+my @dir_list = $ftp->ls();
+
+my @organism_names = split(/,/, $organisms);
+
+for my $organism_name (@organism_names) {
+        
+    # TODO download variation db too
+    my $species_prefix = $organism_name . "_" . $database_name . "_";
+
+    my $species_dir = "";
+
+    for my $dir (@dir_list) {
+        if ($dir =~ m/$species_prefix/) {
+            $species_dir = $dir;
+        }
+    }
+    
+    if ($species_dir eq '') {
+        print "no data found for $organism_name\n";
+        next;
+    }
+    
+    my $version = substr($species_dir, length($species_prefix), length($species_dir));
+    
+    my $organism_dir = "$data_dir/$organism_name";
+    if (!(-d $organism_dir)) {
+        print "creating $organism_dir\n";
+        make_path "$organism_dir" or die "failed to create $organism_dir $!";
+    }
+    
+    my $download_dir = "$data_dir/$organism_name/$species_prefix$version";
+    
+    $ftp->cwd($species_dir)
+        or die "Cannot change working directory ", $ftp->message;
+    
+    unless (-d $download_dir)  {
+        # make download directory locally
+        print "creating $download_dir\n";
+        make_path "$download_dir" or die "failed to create $download_dir";
+    }
+    # get list of all files
+    my @file_list = $ftp->ls();
+    
+    # download all filesy
+    my @downloaded_files;
+    for my $file (@file_list) {
+	my $new_file = "$download_dir/$file";
+	
+	if (-f substr($new_file, 0, -3)) { # minus the .gz that is
+	    warn "File already exists - skipping download of $file\n";
+	}
+	elsif (-f $new_file) {
+	    my $where = (-s $new_file);
+	    my $total = $ftp->size($file);
+	    if ($where == $total) {
+		warn "Archive already exists - skipping download of $file\n";
+		next;
+	    }
+	    else {
+		warn "Archive already exists - resuming download of $file\n";
+		$ftp->get($file, $new_file, $where)
+		    or die "failed to get file: $file - ", $ftp->message;
+		push @downloaded_files, $new_file;
+	    }
+	}
+	else {
+	    print("downloading ... $file\n");
+	    $ftp->get($file, $new_file)
+		or die "failed to get file: $file";
+	    push @downloaded_files, $new_file;
+	}
+    }
+    if (@downloaded_files) {
+	
+	# unzip files, report success/failure
+	my $decompress_command = "gzip -dr ". join(' ', @downloaded_files). "\n";
+	print 'Extracting downloaded files (', scalar(@downloaded_files),
+	" files downloaded)\n";
+	
+	if ((system $decompress_command) != 0) {
+	    die "$decompress_command failed: $?\n";
+	}
+	else {
+	    print "$organism_name \nCurrent version $version ok\n\n";
+	}
+    }
+    else {
+	warn "No files downloaded - nothing to extract\n";
+    }
+    # move back up to main directory, just in case we are still looping
+    $ftp->cwd("../")
+        or die "Cannot change working directory ", $ftp->message;
+}
+
+
+
+

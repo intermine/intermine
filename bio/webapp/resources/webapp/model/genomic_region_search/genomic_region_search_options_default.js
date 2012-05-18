@@ -36,45 +36,6 @@
             });
         })
         .trigger('change');
-
-         // qtip configuration
-         // color scheme for differnt mines
-         jQuery("#baseCorRadioSpan").qtip({
-               content: 'e.g. BLAST, GFF/GFF3',
-               style: {
-                 border: {
-                   width: 3,
-                   radius: 8,
-                   color: '#6699CC'
-                 },
-                 tip: 'bottomLeft',
-                 name: 'cream'
-               },
-                position: {
-                  corner: {
-                     target: 'topMiddle',
-                     tooltip: 'bottomLeft'
-                  }
-                },
-               show: 'mouseover',
-               hide: 'mouseout'
-         });
-
-         jQuery("#interBaseCorRadioSpan").qtip({
-               content: 'e.g. UCSC BED, Chado',
-               style: {
-                 border: {
-                   width: 3,
-                   radius: 8,
-                   color: '#6699CC'
-                 },
-                 tip: 'topLeft',
-                 name: 'cream'
-               },
-               show: 'mouseover',
-               hide: 'mouseout'
-         });
-
     });
 
    function appendGenomeBuild(org) {

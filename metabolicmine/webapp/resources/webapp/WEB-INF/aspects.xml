@@ -80,11 +80,20 @@
     </intro-text>
     <tile-name></tile-name>
   </aspect>
-    <aspect name="Consequence">
+  <aspect name="Consequence">
     <subtitle></subtitle>
     <icon-image></icon-image>
     <large-image></large-image>
     <intro-text>
+    </intro-text>
+    <tile-name></tile-name>
+  </aspect>
+  <aspect name="Gene Ontology">
+    <subtitle>GO Term</subtitle>
+    <icon-image></icon-image>
+    <large-image></large-image>
+    <intro-text>
+        Gene Ontology
     </intro-text>
     <tile-name></tile-name>
   </aspect>
