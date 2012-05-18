@@ -18,6 +18,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
+import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
@@ -61,6 +62,10 @@ public class GraphWidget extends Widget
         return new Vector();
     }
 
+    /**
+     * Validate the bag type using the attribute typeClass set in the config file.
+     * Throws a ResourceNotFoundException if it's not valid
+     */
     public void validateBagType() {
         String typeClass = config.getTypeClass();
         if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
@@ -128,9 +133,33 @@ public class GraphWidget extends Widget
         return grapgWidgetLdr.getResultTable();
     }
 
-    @Override
+    /**
+     * Returns the pathquery based on the views set in config file and the bag constraint.
+     * Executed when the user click on 'View results' button in the graph widget.
+     * @return the query generated
+     */
     public PathQuery getPathQuery() {
-        return grapgWidgetLdr.createPathQuery();
+        PathQuery q = createPathQueryView(os, config);
+
+        // bag constraint
+        if (((GraphWidgetConfig) config).isBagPathSet()) {
+            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getBagPath(),
+                                           bag.getName()));
+        } else {
+            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        }
+
+        String prefix = config.getStartClass() + ".";
+        //category constraint
+        q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
+                                      "%category"));
+        if (!((GraphWidgetConfig) config).isActualExpectedCriteria()) {
+            //series constraint
+            q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
+                                          "%series"));
+        }
+
+        return q;
     }
 
     /**
@@ -139,7 +168,32 @@ public class GraphWidget extends Widget
      * @return the query generated
      */
     public PathQuery getSimplePathQuery() {
-        return grapgWidgetLdr.createSimplePathQuery();
+        PathQuery q = new PathQuery(os.getModel());
+        List<String> keyFieldNames = bag.getKeyFieldNames();
+        String prefix = config.getStartClass() + ".";
+        for (String keyFieldName : keyFieldNames) {
+            if (!keyFieldName.startsWith(prefix)) {
+                keyFieldName = prefix + keyFieldName;
+            }
+            q.addView(keyFieldName);
+        }
+
+        // bag constraint
+        if (((GraphWidgetConfig) config).isBagPathSet()) {
+            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getBagPath(),
+                                           bag.getName()));
+        } else {
+            q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        }
+
+        //category constraint
+        q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
+                                      "%category"));
+        //series constraint
+        q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
+                                      "%series"));
+
+        return q;
     }
 
     /**

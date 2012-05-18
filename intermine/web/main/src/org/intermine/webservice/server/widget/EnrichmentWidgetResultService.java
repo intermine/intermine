@@ -114,19 +114,7 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     private void addOutputPathQuery(EnrichmentWidget widget, WidgetConfig config) {
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
-        String enrichIdentifier = ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
-        String pathConstraint = "";
-        if (enrichIdentifier != null && !"".equals(enrichIdentifier)) {
-            pathConstraint = enrichIdentifier;
-        } else {
-            pathConstraint = ((EnrichmentWidgetConfig) config).getEnrich();
-        }
-        if (pathConstraint.contains("[")) {
-            String part1 = pathConstraint.substring(0, pathConstraint.indexOf("["));
-            String part2 = pathConstraint.substring(pathConstraint.indexOf("]") + 1);
-            pathConstraint = part1 + part2;
-        }
-        addOutputInfo("pathConstraint", config.getStartClass() + "." + pathConstraint);
+        addOutputInfo("pathConstraint", widget.getPathConstraint());
         addOutputInfo("pathQueryForMatches", widget.getPathQueryForMatches().toJson());
     }
 

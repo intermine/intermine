@@ -22,13 +22,18 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
@@ -47,6 +52,7 @@ public class EnrichmentWidget extends Widget
     private EnrichmentResults results;
     private String errorCorrection, max;
     private EnrichmentWidgetImplLdr ldr;
+    private String pathConstraint;
 
 
     /**
@@ -69,6 +75,10 @@ public class EnrichmentWidget extends Widget
         process();
     }
 
+    /**
+     * Validate the bag type using the attribute typeClass set in the config file.
+     * Throws a ResourceNotFoundException if it's not valid
+     */
     public void validateBagType() {
         String typeClass = config.getTypeClass();
         if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
@@ -237,13 +247,110 @@ public class EnrichmentWidget extends Widget
         return exportResults;
     }
 
-    @Override
-    public PathQuery getPathQuery() {
-        return ldr.createPathQuery();
+    /**
+     * Returns the pathConstraint based on the enrichmentIdentifier will be applied on the pathQUery
+     * @return the pathConstraint generated
+     */
+    public String getPathConstraint() {
+        return pathConstraint;
     }
 
+    /**
+     * Returns the pathquery based on the views set in config file and the bag constraint
+     * Executed when the user selects any item in the matches column in the enrichment widget.
+     * @return the query generated
+     */
+    public PathQuery getPathQuery() {
+        PathQuery q = createPathQueryView(os, config);
+        // bag constraint
+        q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        //constraints for view (bdgp_enrichment)
+        List<PathConstraint> pathConstraintsForView =
+            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
+        if (pathConstraintsForView != null) {
+            for (PathConstraint pc : pathConstraintsForView) {
+                q.addConstraint(pc);
+            }
+        }
+        //add type constraints for subclasses
+        String enrichIdentifier = ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
+        boolean subClassContraint = false;
+        String subClassType = "";
+        String subClassPath = "";
+        if (enrichIdentifier != null && !"".equals(enrichIdentifier)) {
+            enrichIdentifier = config.getStartClass() + "."
+                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
+        } else {
+            String enrichPath = config.getStartClass() + "."
+                + ((EnrichmentWidgetConfig) config).getEnrich();
+            if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), enrichPath)) {
+                subClassContraint = true;
+                subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
+                                                    enrichPath.indexOf("]"));
+                subClassPath = enrichPath.substring(0, enrichPath.indexOf("["));
+                enrichIdentifier = subClassPath + enrichPath.substring(enrichPath.indexOf("]") + 1);
+            } else {
+                enrichIdentifier = enrichPath;
+            }
+        }
+        pathConstraint = enrichIdentifier;
+        if (subClassContraint) {
+            q.addConstraint(Constraints.type(subClassPath, subClassType));
+        }
+        return q;
+    }
+
+    /**
+     * Returns the pathquery based on the view set in config file in the startClassDisplay
+     * and the bag constraint
+     * Executed when the user click on the matches column in the enrichment widget.
+     * @return the query generated
+     */
     public PathQuery getPathQueryForMatches() {
-        return ldr.createPathQueryForMatches();
+        Model model = os.getModel();
+        PathQuery pathQuery = new PathQuery(model);
+        String enrichIdentifier;
+        boolean subClassContraint = false;
+        String subClassType = "";
+        String subClassPath = "";
+        EnrichmentWidgetConfig ewc = ((EnrichmentWidgetConfig) config);
+        if (((EnrichmentWidgetConfig) config).getEnrichIdentifier() != null) {
+            enrichIdentifier = config.getStartClass() + "."
+                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
+        } else {
+            String enrichPath = config.getStartClass() + "."
+                + ((EnrichmentWidgetConfig) config).getEnrich();
+            if (WidgetConfigUtil.isPathContainingSubClass(model, enrichPath)) {
+                subClassContraint = true;
+                subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
+                                                    enrichPath.indexOf("]"));
+                subClassPath = enrichPath.substring(0, enrichPath.indexOf("["));
+                enrichIdentifier = subClassPath + enrichPath.substring(enrichPath.indexOf("]") + 1);
+            } else {
+                enrichIdentifier = enrichPath;
+            }
+        }
+
+        String startClassDisplayView = config.getStartClass() + "."
+            + ((EnrichmentWidgetConfig) config).getStartClassDisplay();
+        pathQuery.addView(enrichIdentifier);
+        pathQuery.addView(startClassDisplayView);
+        pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
+        // bag constraint
+        pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        //subclass constraint
+        if (subClassContraint) {
+            pathQuery.addConstraint(Constraints.type(subClassPath, subClassType));
+        }
+        //constraints for view
+        List<PathConstraint> pathConstraintsForView =
+            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
+        if (pathConstraintsForView != null) {
+            for (PathConstraint pc : pathConstraintsForView) {
+                pathQuery.addConstraint(pc);
+            }
+        }
+        return pathQuery;
     }
 
     /**
