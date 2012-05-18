@@ -853,7 +853,7 @@ public class UniprotConverter extends BioDirectoryConverter
             for (Map.Entry<String, Set<String>> dbref : dbrefs.entrySet()) {
                 String key = dbref.getKey();
                 Set<String> values = dbref.getValue();
-                if ("GO".equals(key)) {
+                if ("GO".equalsIgnoreCase(key)) {
                     for (String goTerm : values) {
                         String code = getGOEvidenceCode(entry.getGOEvidence(goTerm));
                         Item goEvidence = createItem("GOEvidence");
