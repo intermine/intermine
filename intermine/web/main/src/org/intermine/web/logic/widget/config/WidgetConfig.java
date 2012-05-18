@@ -48,7 +48,6 @@ public abstract class WidgetConfig
     private String title;
     private String filterLabel, filters;
     private String startClass;
-    private String constraints;
     private List<PathConstraint> pathConstraints = new ArrayList<PathConstraint>();
     private String typeClass;
     private String views;
@@ -232,16 +231,11 @@ public abstract class WidgetConfig
         this.views = views;
     }
 
-    public String getConstraints() {
-        return constraints;
-    }
-
     public void setConstraints(String constraints) {
-        this.constraints = constraints;
-        setPathConstraints();
+        setPathConstraints(constraints, pathConstraints);
     }
 
-    public void setPathConstraints() {
+    protected void setPathConstraints(String constraints, List<PathConstraint> pathConstraints) {
         String[] constraintsList = constraints.split("\\s*,\\s*");
         String path = null;
         String value = null;
@@ -263,7 +257,7 @@ public abstract class WidgetConfig
                     value = splitConstraint[1];
                 }
             }
-            this.pathConstraints.add(new PathConstraintAttribute(path, op, value));
+            pathConstraints.add(new PathConstraintAttribute(path, op, value));
         }
     }
 
