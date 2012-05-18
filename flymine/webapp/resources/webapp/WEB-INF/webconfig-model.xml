@@ -912,7 +912,8 @@
                                  constraints="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
                                  typeClass="org.intermine.model.bio.Gene"
                                  views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
-                                        mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"/>
+                                        mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"
+                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"/>
 
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
