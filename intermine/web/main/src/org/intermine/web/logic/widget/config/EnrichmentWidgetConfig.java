@@ -19,9 +19,7 @@ import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
@@ -106,33 +104,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     }
 
     public void setConstraintsForView(String constraints) {
-        setPathConstraintsForView(constraints);
-    }
-
-    public void setPathConstraintsForView(String constraints) {
-        String[] constraintsList = constraints.split("\\s*,\\s*");
-        String path = null;
-        String value = null;
-        ConstraintOp op = null;
-        String[] splitConstraint;
-        for (String constraint : constraintsList) {
-            int opIndex = constraint.indexOf("!=");
-            if (opIndex != -1) {
-                op = ConstraintOp.NOT_EQUALS;
-                splitConstraint = constraint.split("\\s*!=\\s*");
-                path = splitConstraint[0];
-                value = splitConstraint[1];
-            } else {
-                opIndex = constraint.indexOf("=");
-                if (opIndex != -1) {
-                    op = ConstraintOp.EQUALS;
-                    splitConstraint = constraint.split("\\s*=\\s*");
-                    path = splitConstraint[0];
-                    value = splitConstraint[1];
-                }
-            }
-            this.pathConstraintsForView.add(new PathConstraintAttribute(path, op, value));
-        }
+        setPathConstraints(constraints, pathConstraintsForView);
     }
 
     public List<PathConstraint> getPathConstraintsForView() {
