@@ -154,15 +154,15 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         assertEquals("Employee_", widgetLdr.generateKeyForQueryClassInQuery(queryClassParent, null));
     }
 
-    public void testCreatePathQueryView() {
+/*    public void testCreatePathQueryView() {
         PathQuery pathQuery = new PathQuery(os.getModel());
         pathQuery.addView("Employee.name");
         pathQuery.addView("Employee.age");
         pathQuery.addView("Employee.department.name");
         assertEquals(pathQuery, widgetLdr.createPathQueryView(os,
                 webConfig.getWidgets().get(("contractor_enrichment"))));
-    }
-    
+    }*/
+
     public class MokaWidgetLdr extends WidgetLdr
     {
         public MokaWidgetLdr(InterMineBag bag, ObjectStore os, String filter, WidgetConfig config) {
