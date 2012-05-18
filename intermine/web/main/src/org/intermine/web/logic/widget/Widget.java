@@ -16,6 +16,7 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 
 /**
@@ -115,6 +116,7 @@ public abstract class Widget
             if (!view.startsWith(prefix)) {
                 view = prefix + view;
             }
+            view = WidgetConfigUtil.getPathWithoutSubClass(model, view);
             q.addView(view);
         }
         return q;
