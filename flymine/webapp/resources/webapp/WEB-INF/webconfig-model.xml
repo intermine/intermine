@@ -823,7 +823,7 @@
                                  startClassDisplay="symbol"
                                  enrich="transcripts[MRNA].miRNAinteractions.mirnagene.symbol"
                                  typeClass="org.intermine.model.bio.Gene"
-                                 views="symbol,miRNAtargets.target.gene.symbol"/>
+                                 views="symbol,transcripts[MRNA].miRNAinteractions.mirnagene.symbol"/>
 
       <enrichmentwidgetdisplayer id="protein_features"
                                  title="UniProt Features"
