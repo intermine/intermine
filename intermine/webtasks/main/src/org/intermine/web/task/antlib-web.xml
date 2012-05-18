@@ -32,4 +32,7 @@
     <typedef
         name="model-update"
         classname="org.intermine.web.task.ModelUpdateTask"/>
+    <typedef
+        name="create-quicksearch-index"
+        classname="org.intermine.web.task.CreateSearchIndexTask"/>
 </antlib>
