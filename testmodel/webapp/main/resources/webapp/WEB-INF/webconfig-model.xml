@@ -11,10 +11,11 @@
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works In"/>
+      <fieldconfig fieldExpr="department.manager.name" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Under"/>
       <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false" label="Works For"/>
       <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true" label="Years Alive"/>
       <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Full Time?"/>
-      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Lives at"/>
+      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Lives At"/>
     </fields>
   </class>
 
