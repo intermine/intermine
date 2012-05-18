@@ -175,7 +175,7 @@ _.extend(intermine, (function() {
     };
 
     Table.prototype = {
-        constructor: Table,
+        constructor: Table
     };
 
     var Model = function(model) {
@@ -220,6 +220,7 @@ _.extend(intermine, (function() {
     Model.prototype.getPathInfo = function(path, subclasses) {
         var self = this;
         subclasses = subclasses || {};
+        console.log(path, subclasses);
         var pathInfo = {};
         var parts = path.split(".");
         var cd = this.classes[parts.shift()];
@@ -232,6 +233,7 @@ _.extend(intermine, (function() {
                 cd = self.classes[subclasses[keyPath]];
                 fields = _({}).extend(cd.attributes, cd.references, cd.collections);
             }
+            keyPath += "." + fieldName;
             var fd = fields[fieldName];
             cd = fd.referencedType ? self.classes[fd.referencedType] : null;
             return fd;
@@ -354,7 +356,6 @@ if (typeof console == "undefined") {
 }
 
 _.extend(intermine, (function() {
-    var log = _(console.log).bind(console);
 
     var Query = function(properties, service) {
         
@@ -474,7 +475,6 @@ _.extend(intermine, (function() {
                 return _(f).bind(this)
             }));
             unwanted = _.flatten([_(unwanted).map(mapFn)]);
-            console.log(unwanted);
             
             this.sortOrder = _(this.sortOrder).filter(function(so) {return !_(unwanted).include(so.path);});
 
@@ -1259,7 +1259,7 @@ _.extend(intermine, (function() {
         this.count = function(q, cont) {
             var req = {
                 query: q.toXML(),
-                format: jQuery.support.cors ? "jsoncount" : "jsonpcount",
+                format: jQuery.support.cors ? "jsoncount" : "jsonpcount"
             };
             var promise = jQuery.Deferred();
             this.makeRequest(QUERY_RESULTS_PATH, req, function(data) {
