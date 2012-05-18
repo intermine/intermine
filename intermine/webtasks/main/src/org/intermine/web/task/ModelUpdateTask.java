@@ -9,6 +9,7 @@ package org.intermine.web.task;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
@@ -30,7 +31,7 @@ import org.intermine.pathquery.PathException;
  * the userProfileAlias) when the model has been changed
  * @author butano
  */
-public class ModelUpdateTask extends Task 
+public class ModelUpdateTask extends Task
 {
     private String osAlias;
     private String userProfileAlias;
