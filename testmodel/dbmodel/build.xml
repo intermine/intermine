@@ -21,6 +21,15 @@
                      sourceName="testsource"
                      sourceType="testsource"/>
   </target>
+
+  <target name="enormocorp" depends="loadsadata">
+    <!-- Invalidate (delete) summary properties -->
+    <delete file="${objectstoresummary.properties}"/>
+    <insert-xml-data integrationWriter="integration.unittestmulti"
+                     xmlResource="testmodel_enormo_data.xml"
+                     sourceName="enormocorp"
+                     sourceType="testsource"/>
+  </target>
   <!-- OVERRIDEN TO ADD MODEL XML TO JAR -->
 
   <target name="-init-presetdef-jar" depends="-pre-init">
