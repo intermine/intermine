@@ -87,6 +87,16 @@ public class GenomicRegionSearchAction extends InterMineAction
             String genomeVersionSource = (String) grsForm.get("liftover-genome-version-source");
             String genomeVersionTarget = (String) grsForm.get("liftover-genome-version-target");
 
+            if (genomeVersionSource.contains("/")) {
+                genomeVersionSource =
+                    genomeVersionSource.substring(genomeVersionSource.indexOf("/") + 1);
+            }
+
+            if (genomeVersionTarget.contains("/")) {
+                genomeVersionTarget =
+                    genomeVersionTarget.substring(genomeVersionTarget.indexOf("/") + 1);
+            }
+
             // liftOverServiceAvailable == true
             // liftOver == true
             // url != null or empty

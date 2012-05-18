@@ -1,0 +1,18 @@
+This directory contains all the script for general purpose of 
+metabolicMine, such as precache the webapp, etc.
+
+Scripts:
+-----------------------------------------
+precache_webapp.py
+precache_webapp_parallel.py
+
+Implementation:
+    the scripts make http calls to make a keyword search, and 
+    load region search option page.
+
+Usage:
+    python precache_webapp.py <URL>
+    - or -
+    python precache_webapp.py (default url is used)
+
+

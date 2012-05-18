@@ -29,11 +29,12 @@
 
         <link type="text/css" rel="stylesheet" href="model/jquery_ui/css/smoothness/jquery-ui-1.8.13.custom.css"/>
 
-        <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
-        <script type="text/javascript" src="model/genomic_region_search/genomic_region_search_options_base.js"></script>
-        <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
-        <script type="text/javascript" src="model/jquery_ui/jquery-ui-1.8.13.custom.min.js"></script>
+
         <script type="text/javascript">
+            //liftOver url, set it before loading "genomic_region_search_options_metabolicmine.js"
+            var liftOverUrl = "${WEB_PROPERTIES['genomicRegionSearch.liftOver.url']}";
+            liftOverUrl = /\/$/.test(liftOverUrl)? liftOverUrl : liftOverUrl + "/";
+
             // webData must be defined in base jsp first, and customized page can make use of it.
             var webDataJSON = jQuery.parseJSON('${webData}');
 
@@ -56,6 +57,10 @@
                 }
             });
         </script>
+        <script type="text/javascript" src="model/jquery_qtip/jquery.qtip-1.0.js"></script>
+        <script type="text/javascript" src="model/genomic_region_search/genomic_region_search_options_base.js"></script>
+        <script type="text/javascript" src="model/genomic_region_search/${optionsJavascript}.js"></script>
+        <script type="text/javascript" src="model/jquery_ui/jquery-ui-1.8.13.custom.min.js"></script>
 
         <div id="grs-options-body" align="center" style="padding-top: 20px;">
             <im:boxarea titleKey="genomicRegionSearch.title" stylename="plainbox" fixedWidth="85%" titleStyle="font-size: 1.2em; text-align: center;">
@@ -83,8 +88,20 @@
                     <li id="genomicRegionInput">
                        <%-- textarea --%>
                        <span>Type/Paste in genomic regions in</span>
-                       <span id="baseCorRadioSpan"><html:radio property="dataFormat" styleId="isNotInterBaseCoordinate" value="isNotInterBaseCoordinate">&nbsp;base coordinate</html:radio></span>
-                       <span id="interBaseCorRadioSpan"><html:radio property="dataFormat" styleId="isInterBaseCoordinate" value="isInterBaseCoordinate">&nbsp;interbase coordinate</html:radio></span>
+                       <span id="baseCorRadioSpan">
+                           <html:radio property="dataFormat" styleId="isNotInterBaseCoordinate" value="isNotInterBaseCoordinate">&nbsp;base coordinate
+                               <a title="e.g. BLAST, GFF/GFF3" onclick="document.getElementById('ctxHelpTxt').innerHTML='base coordinate: e.g. BLAST, GFF/GFF3';document.getElementById('ctxHelpDiv').style.display=''; window.scrollTo(0, 0);return false">
+                                   <img style="padding: 4px 3px" alt="?" src="images/icons/information-small-blue.png" class="tinyQuestionMark">
+                               </a>
+                           </html:radio>
+                       </span>
+                       <span id="interBaseCorRadioSpan">
+                           <html:radio property="dataFormat" styleId="isInterBaseCoordinate" value="isInterBaseCoordinate">&nbsp;interbase coordinate
+                               <a title="e.g. UCSC BED, Chado" onclick="document.getElementById('ctxHelpTxt').innerHTML='interbase coordinate: e.g. UCSC BED, Chado';document.getElementById('ctxHelpDiv').style.display=''; window.scrollTo(0, 0);return false">
+                                   <img style="padding: 4px 3px" alt="?" src="images/icons/information-small-blue.png" class="tinyQuestionMark">
+                               </a>
+                           </html:radio>
+                       </span>
 
                        <%-- example span --%>
                        <div style="text-align:left;">

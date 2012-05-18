@@ -70,7 +70,10 @@ public class GoConverter extends BioFileConverter
     protected String termCollectionName = "goAnnotation";
     protected String annotationClassName = "GOAnnotation";
     private String gaff = "2.0";
+    private static final String DEFAULT_ANNOTATION_TYPE = "gene";
+    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
     protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
+    private static Config defaultConfig = null;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
 
@@ -87,7 +90,8 @@ public class GoConverter extends BioFileConverter
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
         ontologyResolverFactory = new OntologyIdResolverFactory("GO");
-
+        defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
+                DEFAULT_ANNOTATION_TYPE);
         readConfig();
     }
 
@@ -181,9 +185,8 @@ public class GoConverter extends BioFileConverter
             String taxonId = parseTaxonId(array[12]);
             Config config = configs.get(taxonId);
             if (config == null) {
-                config = new Config("primaryIdentifier", null, "gene");
-                configs.put(taxonId, config);
-                LOG.error("No entry for organism with taxonId = '"
+                config = defaultConfig;
+                LOG.warn("No entry for organism with taxonId = '"
                         + taxonId + "' found in go-annotation config file.  Using default");
             }
             int readColumn = config.readColumn();
@@ -200,7 +203,7 @@ public class GoConverter extends BioFileConverter
                         + "found for goterm " + goId + " and productId " + productId);
             }
 
-            String type = configs.get(taxonId).annotationType;
+            String type = config.annotationType;
             if ("1.0".equals(gaff)) {
                 // type of gene product
                 type = array[11];
@@ -412,7 +415,11 @@ public class GoConverter extends BioFileConverter
             clsName = "Gene";
             String taxonId = organism.getAttribute("taxonId").getValue();
             if (idField == null) {
-                idField = configs.get(taxonId).identifier;
+                Config config = configs.get(taxonId);
+                if (config == null) {
+                    config = defaultConfig;
+                }
+                idField = config.identifier;
                 if (idField == null) {
                     throw new RuntimeException("Could not find a identifier property for taxon: "
                                                + taxonId + " check properties file: " + PROP_FILE);

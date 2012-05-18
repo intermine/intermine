@@ -56,10 +56,11 @@ public class AgeSalaryLdr implements DataSetLdr {
             total++;
         }
 
-        LinearRegression regression = new LinearRegression(points);
+/*        LinearRegression regression = new LinearRegression(points);
         for (int i = 1; i < resultTable.size(); i++) {
             resultTable.get(i).add(regression.regress((Double) resultTable.get(i).get(0)));
         }
+        */
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

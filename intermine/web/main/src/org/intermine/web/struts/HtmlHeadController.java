@@ -13,6 +13,7 @@ package org.intermine.web.struts;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
@@ -124,8 +125,34 @@ public class HtmlHeadController extends TilesAction
             }
         }
         request.setAttribute("htmlPageTitle", htmlPageTitle);
+
+        // Can we employ user tracking?
+        String userTrackingMessage = (String) SessionMethods.getWebProperties(
+                request.getSession().getServletContext()).get(
+                "google.analytics.message");
+        request.setAttribute("userTrackingMessage", userTrackingMessage);
+        request.setAttribute("userTracking", canWeUserTrack(request));
+
         return null;
     }
 
+    /**
+     * Determone if we can employ user tracking
+     * @param request HTTP Servlet Request
+     * @return Integer 0/1/2 - "[no]/[yes]/[not yet]"
+     */
+    private String canWeUserTrack(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return "2";
+        }
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if ("userTracking".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return "2";
+    }
 
 }

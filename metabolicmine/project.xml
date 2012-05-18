@@ -1,44 +1,44 @@
 <project type="bio">
-  <property name="target.model" value="genomic"/>
-  <property name="source.location" location="../bio/sources/"/>
-  <property name="common.os.prefix" value="common"/>
-  <property name="intermine.properties.file" value="metabolicmine.properties"/>
-  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
+  <property name="target.model" value="genomic" />
+  <property name="source.location" location="../bio/sources/" />
+  <property name="common.os.prefix" value="common" />
+  <property name="intermine.properties.file" value="metabolicmine.properties" />
+  <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
 
   <sources>
     <source name="ensembl-hgnc" type="ensembl-hgnc">
-      <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl-ids/current" />
     </source>
     <source name="ncbi-gene" type="ncbi-gene">
-      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
-      <property name="organisms" value="9606"/>
+      <property name="src.data.dir" location="/micklem/data/ncbi/current/" />
+      <property name="organisms" value="9606" />
     </source>
     <source name="ncbi-summaries" type="ncbi-summaries">
-      <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/gene-summaries/current/" />
     </source>
     <source name="mgi-identifiers" type="mgi-identifiers">
-      <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
+      <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current" />
     </source>
     <source name="rgd-identifiers" type="rgd-identifiers">
-      <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current"/>
+      <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current" />
     </source>
     <source name="so" type="so">
-      <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
+      <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
     <source name="arrayexpress-atlas" type="arrayexpress-atlas" dump="true">
-      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/" />
     </source>
     <source name="protein-atlas" type="protein-atlas">
-      <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
     <source name="ensembl-human" type="ensembl" dump="true">
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core"/>
-      <property name="src.data.dir.includes" value="9606.xml"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core" />
+      <property name="src.data.dir.includes" value="9606.xml" />
     </source>
     <source name="uniprot" type="uniprot">
-      <property name="uniprot.organisms" value="9606 10090"/>
-      <property name="createinterpro" value="true"/>
-      <property name="src.data.dir" location="/micklem/data/uniprot/current/"/>
+      <property name="uniprot.organisms" value="9606 10090" />
+      <property name="createinterpro" value="true" />
+      <property name="src.data.dir" location="/micklem/data/uniprot/current/" />
     </source>
     <!--    <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606 10090"/>
@@ -53,119 +53,118 @@
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
     </source>-->
     <source name="uniprot-keywords" type="uniprot-keywords">
-      <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
-      <property name="src.data.dir.includes" value="keywlist.xml"/>
+      <property name="src.data.dir" location="/micklem/data/uniprot/current" />
+      <property name="src.data.dir.includes" value="keywlist.xml" />
     </source>
     <source name="interpro" type="interpro">
-      <property name="src.data.dir" location="/micklem/data/interpro/current"/>
+      <property name="src.data.dir" location="/micklem/data/interpro/current" />
     </source>
     <source name="psi-mi-ontology" type="psi-mi-ontology">
-      <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
+      <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo" />
     </source>
     <source name="mgi-alleles" type="mgi-alleles">
-      <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/mouse-pheno/current" />
     </source>
     <source name="mammalian-phenotype-ontology" type="mammalian-phenotype-ontology">
-      <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/current/MPheno_OBO.obo"/>
+      <property name="src.data.file" location="/micklem/data/metabolic/mouse-pheno/current/MPheno_OBO.obo" />
     </source>
     <source name="go" type="go" dump="true">
-      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo" />
     </source>
     <source name="go-annotation" type="go-annotation">
-      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
-      <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic"/>
-      <property name="src.data.includes" value="**/gene_association*"/>
+      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo" />
+      <property name="src.data.dir" location="/micklem/data/go-annotation/metabolic" />
+      <property name="src.data.includes" value="**/gene_association*" />
     </source>
     <source name="psi-intact" type="psi" dump="true">
-      <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
-      <property name="intact.organisms" value="9606 10090"/>
+      <property name="src.data.dir" location="/micklem/data/psi/intact/current" />
+      <property name="intact.organisms" value="9606 10090" />
     </source>
     <source name="biogrid" type="biogrid">
-      <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-      <property name="biogrid.organisms" value="9606 10090"/>
+      <property name="src.data.dir" location="/micklem/data/biogrid/current" />
+      <property name="src.data.dir.includes" value="*psi25.xml" />
+      <property name="biogrid.organisms" value="9606 10090" />
     </source>
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
-      <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
-      <property name="pubmed.organisms" value="9606 10090"/>
-      <property name="src.data.dir.includes" value="gene2pubmed"/>
-      <property name="infoFile" location="/micklem/data/pubmed/current/gene_info"/>
+      <property name="src.data.dir" location="/micklem/data/pubmed/current" />
+      <property name="pubmed.organisms" value="9606 10090" />
+      <property name="src.data.dir.includes" value="gene2pubmed" />
+      <property name="infoFile" location="/micklem/data/pubmed/current/gene_info" />
     </source>
     <source name="omim" type="omim">
-      <property name="src.data.dir" location="/micklem/data/metabolic/omim/test"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/omim/test" />
     </source>
     <source name="ensembl-mouse" type="ensembl" dump="true">
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core"/>
-      <property name="src.data.dir.includes" value="10090.xml"/>
+      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core" />
+      <property name="src.data.dir.includes" value="10090.xml" />
     </source>
     <source name="ensembl-human-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="9606"/>
-      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence"/>
-      <property name="fasta.dataSourceName" value="Ensembl"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="*.fa"/>
-      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core/fasta"/>
+      <property name="fasta.taxonId" value="9606" />
+      <property name="fasta.dataSetTitle" value="Ensembl human chromosome sequence" />
+      <property name="fasta.dataSourceName" value="Ensembl" />
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
+      <property name="fasta.classAttribute" value="primaryIdentifier" />
+      <property name="fasta.includes" value="*.fa" />
+      <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core/fasta" />
     </source>
     <source name="ensembl-mouse-chr-fasta" type="fasta">
-      <property name="fasta.taxonId" value="10090"/>
-      <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence"/>
-      <property name="fasta.dataSourceName" value="Ensembl"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Chromosome"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="*.fa"/>
-      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core/fasta"/>
+      <property name="fasta.taxonId" value="10090" />
+      <property name="fasta.dataSetTitle" value="Ensembl mouse chromosome sequence" />
+      <property name="fasta.dataSourceName" value="Ensembl" />
+      <property name="fasta.className" value="org.intermine.model.bio.Chromosome" />
+      <property name="fasta.classAttribute" value="primaryIdentifier" />
+      <property name="fasta.includes" value="*.fa" />
+      <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core/fasta" />
     </source>
     <source name="ensembl-compara" type="ensembl-compara" dump="true">
-      <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-compara/current"/>
-      <property name="ensemblcompara.organisms" value="9606 10090 10116"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-compara/current" />
+      <property name="ensemblcompara.organisms" value="9606 10090 10116" />
     </source>
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">
-      <property name="source.db.name" value="ensembl.9606.variation"/>
-      <property name="organism" value="9606"/>
-      <property name="sources" value="dbSNP"/>
+      <property name="source.db.name" value="ensembl.9606.variation" />
+      <property name="organism" value="9606" />
+      <property name="sources" value="dbSNP" />
     </source>
     <!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
      <property name="source.db.name" value="ensembl.10090.variation"/>
     </source>-->
     <source name="kegg-pathway" type="kegg-pathway">
-      <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current"/>
-      <property name="kegg.organisms" value="9606 10090"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current" />
+      <property name="kegg.organisms" value="9606 10090" />
     </source>
     <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/current"/>
-      <property name="biopax.organisms" value="9606 10090"/>
-      <property name="biopax.datasourcename" value="Reactome"/>
-      <property name="biopax.datasetname" value="Reactome data set"/>
-      <property name="biopax.curated" value="false"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/current" />
+      <property name="biopax.organisms" value="9606 10090" />
+      <property name="biopax.datasourcename" value="Reactome" />
+      <property name="biopax.datasetname" value="Reactome data set" />
+      <property name="biopax.curated" value="false" />
     </source>
     <source name="huge-gwas" type="huge-gwas">
-      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/huge/current" />
     </source>
     <source name="update-publications" type="update-publications">
-      <property name="src.data.file" location="build/publications.xml"/>
+      <property name="src.data.file" location="build/publications.xml" />
     </source>
     <source name="entrez-organism" type="entrez-organism">
-      <property name="src.data.file" location="build/organisms.xml"/>
+      <property name="src.data.file" location="build/organisms.xml" />
     </source>
   </sources>
 
   <post-processing>
-    <post-process name="create-references"/>
-    <post-process name="transfer-sequences" dump="true"/>
+    <post-process name="create-references" />
+    <post-process name="transfer-sequences" dump="true" />
 
     <!-- this runs the postprocessing steps in all sources -->
-    <post-process name="do-sources"/>
-    <post-process name="create-gene-flanking-features"/>
+    <post-process name="do-sources" />
+    <post-process name="create-gene-flanking-features" />
 
-    <post-process name="create-bioseg-location-index"/>
+    <post-process name="create-bioseg-location-index" />
     <post-process name="create-overlap-view" />
 
-    <post-process name="summarise-objectstore"/>
-    <post-process name="create-autocomplete-index"/>
-    <post-process name="create-search-index"/>
-    <post-process name="create-attribute-indexes"/>
+    <post-process name="summarise-objectstore" />
+    <post-process name="create-autocomplete-index" />
+    <post-process name="create-search-index" />
+    <post-process name="create-attribute-indexes" />
   </post-processing>
 
 </project>
-

@@ -29,7 +29,7 @@ PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
 PROPDIR=$HOME/.intermine
-SCRIPTDIR=../bio/scripts/flymine/modmine/
+SCRIPTDIR=../bio/scripts/modmine/
 
 ARKDIR=/micklem/releases/modmine
 
@@ -213,6 +213,7 @@ done
 IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
+#SOURCES=chado-db-wormbase-c_elegans,modmine-static,modencode-metadata
 SOURCES=modmine-static,modencode-metadata
 #SOURCES=modencode-metadata,worm-network
 fi
