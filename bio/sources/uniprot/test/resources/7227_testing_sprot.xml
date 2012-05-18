@@ -53,6 +53,7 @@
   <text>I'm a duplicate!</text>
 </comment>
 <comment type="similarity">
+  <text evidence="EC1 EC2">Contains 1 homeobox DNA-binding domain.</text>
 </comment>
 <comment type="alternative products">
 <event type="alternative splicing"/>

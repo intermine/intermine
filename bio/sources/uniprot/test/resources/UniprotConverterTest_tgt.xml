@@ -1,20 +1,4 @@
 <items>
-<item id="8_2" class="Protein">
-<attribute name="isFragment" value="false"/>
-<attribute name="isUniprotCanonical" value="false"/>
-<attribute name="name" value="eve's name"/>
-<attribute name="primaryAccession" value="Q1234-2"/>
-<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
-<attribute name="uniprotAccession" value="Q1234"/>
-<attribute name="uniprotName" value="EVE_DROME"/>
-<reference name="organism" ref_id="11_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="genes"><reference ref_id="14_1"/><reference ref_id="14_2"/></collection>
-<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
-<collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
-<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-</item>
 <item id="20_2" class="Synonym">
 <attribute name="value" value="shortname"/>
 <reference name="subject" ref_id="8_1"/>
@@ -66,6 +50,14 @@
 <item id="15_2" class="GOEvidenceCode">
 <attribute name="code" value="IMP"/>
 </item>
+<item id="20_4" class="Synonym">
+<attribute name="value" value="alternativeName - short"/>
+<reference name="subject" ref_id="8_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="ECNumber">
+<attribute name="identifier" value="1.1.1.1"/>
+</item>
 <item id="8_1" class="Protein">
 <attribute name="isFragment" value="false"/>
 <attribute name="isUniprotCanonical" value="true"/>
@@ -79,21 +71,13 @@
 <attribute name="uniprotName" value="EVE_DROME"/>
 <reference name="organism" ref_id="11_1"/>
 <reference name="sequence" ref_id="10_1"/>
-<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/></collection>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="ecNumbers"><reference ref_id="9_1"/><reference ref_id="9_2"/><reference ref_id="9_3"/></collection>
 <collection name="genes"><reference ref_id="14_1"/><reference ref_id="14_2"/></collection>
 <collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
 <collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
 <collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
-</item>
-<item id="20_4" class="Synonym">
-<attribute name="value" value="alternativeName - short"/>
-<reference name="subject" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_2" class="ECNumber">
-<attribute name="identifier" value="1.1.1.1"/>
 </item>
 <item id="20_6" class="Synonym">
 <attribute name="value" value="EVE_DROME-2"/>
@@ -104,6 +88,11 @@
 <attribute name="length" value="376"/>
 <attribute name="md5checksum" value="010f63e81bfbde1299baffea3f5801e7"/>
 <attribute name="residues" value="MHGYRTYNMESHHAHHDASPVDQKPLVVDLLATQYGKPQTPPPSPNECLSSPDNSLNGSRGSEIPADPSVRRYRTAFTRDQLGRLEKEFYKENYVSRPRRCELAAQLNLPESTIKVWFQNRRMKDKRQRIAVAWPYAAVYSDPAFAASILQAAANSVGMPYPPYAPAAAAAAAAAAAVATNPMMATGMPPMGMPQMPTMQMPGHSGHAGHPSPYGQYRYTPYHIPARPAPPHPAGPHMHHPHMMGSSATGSSYSAGAAGLLGALPSATCYTGLGVGVPKTQTPPLDLQSSSSPHSSTLSLSPVGSDHAKVFDRSPVAQSAPSVPAPAPLTTTSPLPAPGLLMPSAKRPASDMSPPPTTTVIAEPKPKLFKPYKTEA"/>
+</item>
+<item id="4_3" class="Comment">
+<attribute name="text" value="Contains 1 homeobox DNA-binding domain."/>
+<attribute name="type" value="similarity"/>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
 </item>
 <item id="4_2" class="Comment">
 <attribute name="text" value="I'm a duplicate!"/>
@@ -203,6 +192,22 @@
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
+<item id="8_2" class="Protein">
+<attribute name="isFragment" value="false"/>
+<attribute name="isUniprotCanonical" value="false"/>
+<attribute name="name" value="eve's name"/>
+<attribute name="primaryAccession" value="Q1234-2"/>
+<attribute name="primaryIdentifier" value="EVE_DROME-2"/>
+<attribute name="uniprotAccession" value="Q1234"/>
+<attribute name="uniprotName" value="EVE_DROME"/>
+<reference name="organism" ref_id="11_1"/>
+<collection name="comments"><reference ref_id="4_1"/><reference ref_id="4_2"/><reference ref_id="4_3"/><reference ref_id="4_4"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="genes"><reference ref_id="14_1"/><reference ref_id="14_2"/></collection>
+<collection name="keywords"><reference ref_id="5_1"/><reference ref_id="5_2"/><reference ref_id="5_3"/></collection>
+<collection name="proteinDomains"><reference ref_id="6_1"/><reference ref_id="6_2"/></collection>
+<collection name="publications"><reference ref_id="3_1"/><reference ref_id="3_2"/></collection>
+</item>
 <item id="20_1" class="Synonym">
 <attribute name="value" value="Q1234-1"/>
 <reference name="subject" ref_id="8_1"/>
@@ -282,15 +287,15 @@
 <item id="11_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
 </item>
-<item id="4_3" class="Comment">
-<attribute name="text" value="Some isoforms may be generated by alternative trans-splicing of exons sequentially encoded by the same DNA strand."/>
-<attribute name="type" value="alternative products"/>
-</item>
 <item id="7_3" class="UniProtFeature">
 <attribute name="begin" value="111"/>
 <attribute name="end" value="127"/>
 <attribute name="type" value="helix"/>
 <reference name="feature" ref_id="5_4"/>
 <reference name="protein" ref_id="8_1"/>
+</item>
+<item id="4_4" class="Comment">
+<attribute name="text" value="Some isoforms may be generated by alternative trans-splicing of exons sequentially encoded by the same DNA strand."/>
+<attribute name="type" value="alternative products"/>
 </item>
 </items>
