@@ -161,9 +161,9 @@ $MODEL_TRANSLATION_TABLE = {
               };
               // show msg
               jQuery("#ctxHelpDiv").after( function() {
-                return el = jQuery("<div/>", { 'class': 'topBar info userTracking' })
+                return el = jQuery("<div/>", { 'class': 'topBar info userTracking', 'style': 'margin:10px 24px' })
                 .html( function() {
-                    return jQuery('<p/>', { 'text': 'Can we track your general usage of the webapp through Google Analytics?' })
+                    return jQuery('<p/>', { 'text': '${userTrackingMessage}' })
                     .append( function() {
                       return jQuery('<a/>', {
                         'text': 'No',

@@ -154,7 +154,7 @@
               jQuery("#ctxHelpDiv").after( function() {
                 return el = jQuery("<div/>", { 'class': 'topBar info userTracking', 'style': 'margin:5px 0' })
                 .html( function() {
-                    return jQuery('<p/>', { 'text': 'Can we track your general usage of the webapp through Google Analytics?' })
+                    return jQuery('<p/>', { 'text': '${userTrackingMessage}' })
                     .append( function() {
                       return jQuery('<a/>', {
                         'text': 'No',
