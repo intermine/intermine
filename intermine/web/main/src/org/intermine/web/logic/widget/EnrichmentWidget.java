@@ -352,15 +352,4 @@ public class EnrichmentWidget extends Widget
         }
         return pathQuery;
     }
-
-    /**
-     *
-     * @return List of column labels
-     */
-    public List<String> getColumns() {
-        String label = (!"Benjamini Hochberg".equalsIgnoreCase(errorCorrection)) ? "p-Value"
-                                                                                 : "q-Value";
-        return Arrays.asList(new String[] {((EnrichmentWidgetConfig) config).getLabel(), label,
-            ""});
-    }
 }
