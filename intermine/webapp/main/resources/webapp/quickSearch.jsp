@@ -26,13 +26,25 @@ style="width:150px;color:#666;font-style:italic;font-size:1em" type="text" id="q
 <!-- /quickSearch.jsp -->
 
  <script type="text/javascript">
-  // associate functions with search that redir to a keyword objects listing instead of search results
-  jQuery('#quickSearchButton').click(function() {
-    // if placeholder text in place, take us elsewhere
-    if (jQuery("#quickSearchInput").val() == "${ids}") {
-      jQuery(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
-      return false;
+  (function() {
+    var index = function(value) {
+      switch (value) {
+        case "${ids}":
+        case "":
+          // if placeholder text or no text in place, take us to the index
+          jQuery(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
+          return false;
+      }
     }
-  });
-
+    // onclick
+    jQuery('#quickSearchButton').click(function() {
+      return index(jQuery("#quickSearchInput").val());
+    });
+    // on enter
+    jQuery('#quickSearchInput').keypress(function(e){
+      if(e.which == 13){
+        return index(jQuery("#quickSearchInput").val());
+      }
+    });
+  })()
 </script>
