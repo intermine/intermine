@@ -23,7 +23,6 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 
 public class WidgetLdrTest extends WidgetConfigTestCase {
@@ -78,7 +77,8 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         Query q = new Query();
         q.setConstraint(new ConstraintSet(ConstraintOp.AND));
         q.addFrom(widgetLdr.getStartQueryClass());
-        widgetLdr.createQueryFieldByPath("department.company.contractors.name", q, true);
+        QueryField contractorNameQf = widgetLdr.createQueryFieldByPath("department.company.contractors.name", q, true);
+        assertEquals(name.toString(), contractorNameQf.toString());
         assertEquals(query.toString(), q.toString());
 
         widgetLdr.createQueryFieldByPath("department.company.name", q, false);
@@ -86,59 +86,19 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         
     }
 
-    /**
-     * Add a contains constraint to Query (q) from qcStart using path
-     */
-/*    protected void testAddReference(Query query, QueryClass qc, String path) {
-        ConstraintSet cs = (ConstraintSet) query.getConstraint();
-        QueryReference qr = null;
-        String type = "";
-        boolean useSubClass = false;
-        if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), path)) {
-            useSubClass = true;
-            type = path.substring(path.indexOf("[") + 1, path.indexOf("]"));
-            path = path.substring(0, path.indexOf("["));
-        }
-        QueryClass qcTmp = null;
-        try {
-            qr = new QueryObjectReference(qc, path);
-            if (useSubClass) {
-                try {
-                    qcTmp = new QueryClass(Class.forName(os.getModel().getPackageName()
-                                                      + "." + type));
-                } catch (ClassNotFoundException cnfe) {
-                    fail("The type " + type + " doesn't exist in the model.");
-                }
-            } else {
-                qcTmp = new QueryClass(qr.getType());
-            }
-        } catch (IllegalArgumentException e) {
-            // Not a reference - try collection instead
-            qr = new QueryCollectionReference(qc, path);
-            if (useSubClass) {
-                try {
-                    qcTmp = new QueryClass(Class.forName(os.getModel().getPackageName()
-                                                      + "." + type));
-                } catch (ClassNotFoundException cnfe) {
-                    fail("The type " + type + " doesn't exist in the model.");
-                }
-            } else {
-                qcTmp = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
-            }
-        }
-        if (addQueryClassInQuery(qcTmp, qc)) {
-            String key = generateKeyForQueryClassInQuery(qcTmp, qc);
-            qc = qcTmp;
-            query.addFrom(qc);
-            cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
-            queryClassInQuery.put(key, qc);
-        } else {
-            //retrieve qc from queryClassInQuery map
-            String key = generateKeyForQueryClassInQuery(qcTmp, qc);
-            qc = queryClassInQuery.get(key);
-        }
-        return qc;
-    }*/
+    public void testAddReference() throws ClassNotFoundException {
+        Query query = new Query();
+        ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+        query.setConstraint(cs);
+        QueryClass startQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Employee"));
+        query.addFrom(startQc);
+        widgetLdr.addReference(query, startQc, "department");
+        ContainsConstraint cc = (ContainsConstraint) (cs.getConstraints().iterator().next());
+        assertEquals("Department", cc.getQueryClass().getType().getSimpleName());
+        QueryObjectReference qr = (QueryObjectReference) cc.getReference();
+        assertEquals("department", qr.getFieldName());
+        assertEquals("Employee", qr.getQcType().getSimpleName());
+    }
 
     public void testAddQueryClassInQuery() throws ClassNotFoundException {
         QueryClass queryClassParent = new QueryClass(Class.forName("org.intermine.model.testmodel.Department"));
@@ -154,14 +114,7 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         assertEquals("Employee_", widgetLdr.generateKeyForQueryClassInQuery(queryClassParent, null));
     }
 
-/*    public void testCreatePathQueryView() {
-        PathQuery pathQuery = new PathQuery(os.getModel());
-        pathQuery.addView("Employee.name");
-        pathQuery.addView("Employee.age");
-        pathQuery.addView("Employee.department.name");
-        assertEquals(pathQuery, widgetLdr.createPathQueryView(os,
-                webConfig.getWidgets().get(("contractor_enrichment"))));
-    }*/
+/*    */
 
     public class MokaWidgetLdr extends WidgetLdr
     {
