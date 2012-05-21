@@ -66,7 +66,7 @@ public class GraphWidget extends Widget
      * Validate the bag type using the attribute typeClass set in the config file.
      * Throws a ResourceNotFoundException if it's not valid
      */
-    public void validateBagType() {
+    private void validateBagType() {
         String typeClass = config.getTypeClass();
         if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
             throw new ResourceNotFoundException("Could not find a graph widget called \""
