@@ -307,3 +307,10 @@ div.collection-of-collections div.show-in-table a:hover,
 div.collection-of-collections div.show-in-table a:visited { color:#1F7492; }
 /* header, the same as table header */
 h3.goog { background:#F5F5F5; border-top-color:#1F7492; color:#1F7492; text-shadow:1px 1px 1px #FFF; }
+
+/* embeddable widgets */
+div.bagDetails-page div.widget { border-color:#1F7492; } /* div.basic-table a.link */
+div.bagDetails-page div.widget h3 { color:#1F7492; } /* div.basic-table a.link */
+div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#E6F7FE; } /* div.collection-of-collections div.collection-table h3 */
+div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#EFFAFE; } /* div.collection-table table tbody tr.odd td */
+div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }

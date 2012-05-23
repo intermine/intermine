@@ -359,3 +359,10 @@ div.collection-of-collections div.show-in-table a:hover,
 div.collection-of-collections div.show-in-table a:visited { color:#5E665C; }
 /* header, the same as table header */
 h3.goog { background:#F0FCEC; border-top-color:#5E665C; color:#5E665C; text-shadow:1px 1px 1px #FFF; }
+
+/* embeddable widgets */
+div.bagDetails-page div.widget { border-color:#5E665C; } /* div.basic-table a.link */
+div.bagDetails-page div.widget h3 { color:#5E665C; } /* div.basic-table a.link */
+div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#DBEED6; } /* div.collection-of-collections div.collection-table h3 */
+div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#F9FFF7; } /* div.collection-table table tbody tr.odd td */
+div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }

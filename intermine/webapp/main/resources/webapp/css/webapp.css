@@ -1627,3 +1627,7 @@ table.summary.results td {
 
 /* Previously hard-coded colour in high-lighted search results */
 .im-highlighted-search-term: { background-color: #ffff77; }
+
+/* widgets */
+div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !important; display:block; float:left; margin:0 10px 20px 10px;
+    text-align:left; border-width:1px; border-style:solid; }
