@@ -318,25 +318,21 @@
      <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
 </div>
 <script language="javascript">
-  function openWidget(widgetid,linkid) {
-      jQuery('#widgetcontainer'+widgetid).show();
-      AjaxServices.saveToggleState(widgetid, true);
-      window.location.href= "#anchorage" + widgetid;
-  }
-  function closeWidget(widgetid,linkid) {
-      jQuery('#widgetcontainer'+widgetid).hide();
-      AjaxServices.saveToggleState(widgetid, false);
+  function toggleWidget(widgetid) {
+    var w = jQuery('#' + widgetid + '-widget');
+    w.toggle();
+    AjaxServices.saveToggleState(widgetid, w.is(":visible"));
   }
 </script>
 
 <p id="toggleWidgets">Click to select widgets you would like to display:
   <ol class="widgetList">
   <c:forEach items="${widgets}" var="widget">
-    <li><a title="toggle widget" href="javascript:openWidget('${widget.id}','togglelink${widget.id}')" id="togglelink${widget.id}">${widget.title}</a></li>
+    <li><a title="toggle widget" onclick="toggleWidget('${widget.id}')">${widget.title}</a></li>
   </c:forEach>
   </ol>
 </p>
-<div style="clear:both;"></div>
+<div style="clear:both"></div>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
