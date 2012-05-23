@@ -478,3 +478,10 @@ div.collection-of-collections div.show-in-table a:hover,
 div.collection-of-collections div.show-in-table a:visited { color:#002575; }
 /* header, the same as table header */
 h3.goog { background:#EEF0F7; border-top-color:#002575; color:#002575; text-shadow:1px 1px 1px #FFF; }
+
+/* embeddable widgets */
+div.bagDetails-page div.widget { border-color:#002575; }
+div.bagDetails-page div.widget h3 { color:#002575; }
+div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#E2F5FE; }
+div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#FBFDFE; }
+div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
