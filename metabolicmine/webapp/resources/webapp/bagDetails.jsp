@@ -540,10 +540,7 @@
             jQuery(this).click(function() {
                 jQuery(this).toggleClass('active');
                 var widgetName = jQuery(this).attr('name');
-                var widget = jQuery('#widgetcontainer' + widgetName).toggle();
-                if (widget.is(":visible")) {
-                    window.location.href= "#anchorage" + widgetName;
-                }
+                var widget = jQuery('#' + widgetName + '-widget').toggle();
                 AjaxServices.saveToggleState('widgetcontainer' + widgetName, widget.is(":visible"));
                 });
             });
