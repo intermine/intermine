@@ -24,10 +24,10 @@
         <c:set value="header.links.${entry}" var="linkProp"/>
         <c:choose>
           <c:when test="${!empty WEB_PROPERTIES[linkProp]}">
-      <li <c:if test="${status.last}">class="last"</c:if>><a href="${WEB_PROPERTIES[linkProp]}">${entry}</a></li>
+      <li <c:if test="${status.last}">class="last"</c:if>><a href="${WEB_PROPERTIES[linkProp]}" target="_blank">${entry}</a></li>
           </c:when>
           <c:otherwise>
-      <li <c:if test="${status.last}">class="last"</c:if>><a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a></li>
+      <li <c:if test="${status.last}">class="last"</c:if>><a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml" target="_blank">${entry}</a></li>
           </c:otherwise>
         </c:choose>
       </c:forEach>
