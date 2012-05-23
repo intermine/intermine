@@ -22,6 +22,7 @@ public class OrganismData
     private String abbreviation;
     private int taxonId;
     private String ensemblPrefix;
+    private String uniprot;
 
     /**
      * Create a new OrganismData object.  Not public because these are created only by
@@ -32,10 +33,14 @@ public class OrganismData
     }
 
     /**
-     * Get the short of this organism, eg. D. melanogaster
+     * Get the short of this organism, eg. D. melanogaster.  may be null for some organisms from
+     * uniprot
      * @return the genus
      */
     public String getShortName() {
+        if (genus == null || species == null) {
+            return null;
+        }
         return genus.substring(0, 1) + ". " + species;
     }
 
@@ -118,11 +123,26 @@ public class OrganismData
     }
 
     /**
+     * @return the uniprot prefix, eg. HUMAN or DROME
+     */
+    public String getUniprot() {
+        return uniprot;
+    }
+
+    /**
+     * @param uniprot the uniprot prefix, eg. HUMAN or DROME
+     */
+    public void setUniprot(String uniprot) {
+        this.uniprot = uniprot;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return genus + " " + species + ", " + abbreviation + ", " + taxonId + ", " + ensemblPrefix;
+        return genus + " " + species + ", " + abbreviation + ", " + taxonId + ", " + ensemblPrefix
+                + ", " + uniprot;
     }
 
     /**
