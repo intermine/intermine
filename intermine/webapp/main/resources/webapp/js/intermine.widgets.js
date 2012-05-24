@@ -15,7 +15,7 @@ JST["enrichment.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;ret
 JST["enrichment.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<!-- actual fixed head -->\n<div class="head" style="display:table">\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;"><input type="checkbox" class="check" /></div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">'),b.push(d(this.label)),b.push('</div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">p-Value</div>\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;">Matches</div>\n    <div style="clear:both"></div>\n</div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                <th>'),b.push(d(this.label)),b.push("</th>\n                <th>p-Value</th>\n                <th>Matches</th>\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop enrichment.row.eco -->\n        </tbody>\n    </table>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["enrichment.form.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f,g,h,i,j;b.push('<form style="margin:0">\n    <div class="group" style="display:inline-block;margin-right:5px;float:left">\n        <label>Test Correction</label>\n        <select name="errorCorrection" class="span2">\n            '),i=this.errorCorrections;for(e=0,g=i.length;e<g;e++)a=i[e],b.push('\n                <option value="'),b.push(d(a)),b.push('" '),this.options.errorCorrection===a&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(a)),b.push("\n            </option>\n            ");b.push('\n        </select>\n    </div>\n\n    <div class="group" style="display:inline-block;margin-right:5px;float:left">\n        <label>Max p-value</label>\n        <select name="pValue" class="span2">\n            '),j=this.pValues;for(f=0,h=j.length;f<h;f++)c=j[f],b.push('\n                <option value="'),b.push(d(c)),b.push('" '),this.options.pValue===c&&b.push(d('selected="selected"')),b.push(">\n                    "),b.push(d(c)),b.push("\n                </option>\n            ");b.push('\n        </select>\n    </div>\n</form>\n<div style="clear:both"></div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["chart.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="header">\n    <h3>'),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="form">\n        <form style="margin:0">\n            <!-- extra.eco -->\n        </form>\n    </div>\n</div>\n<div class="content"></div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
-JST["table.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push('<td class="check"><input type="checkbox" '),this.row.selected&&b.push('checked="checked"'),b.push(" /></td>\n"),f=this.row.descriptions;for(c=0,e=f.length;c<e;c++)a=f[c],b.push("\n    <td>"),b.push(d(a)),b.push("</td>\n");b.push("\n<td>"),b.push(d(this.row.matches)),b.push("</td>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
+JST["table.row.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f;b.push('<td class="check"><input type="checkbox" '),this.row.selected&&b.push('checked="checked"'),b.push(" /></td>\n"),f=this.row.descriptions;for(c=0,e=f.length;c<e;c++)a=f[c],b.push("\n    <td>"),b.push(d(a)),b.push("</td>\n");b.push('\n<td class="matches">\n    <a class="count" style="cursor:pointer">'),b.push(d(this.row.matches)),b.push("</a>\n</td>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){b.push('<div class="header">\n    <h3>'),this.title&&b.push(d(this.title)),b.push("</h3>\n    <p>"),this.description&&b.push(this.description),b.push("</p>\n    "),this.notAnalysed&&(b.push("\n        <p>Number of Genes in this list not analysed in this widget: <a>"),b.push(d(this.notAnalysed)),b.push("</a></p>\n    ")),b.push('\n\n    <div class="actions" style="padding:10px 0">\n        <!-- actions.eco -->\n    </div>\n</div>\n<div class="content">\n    <!-- table.table.eco -->\n</div>')}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 JST["table.table.eco"]=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var a,c,e,f,g,h,i;b.push('<!-- actual fixed head -->\n<div class="head" style="display:table">\n    <div style="font-weight:bold;display:table-cell;padding:0 8px;"><input type="checkbox" class="check" /></div>\n    '),h=this.columns;for(c=0,f=h.length;c<f;c++)a=h[c],b.push('\n        <div style="font-weight:bold;display:table-cell;padding:0 8px;">'),b.push(d(a)),b.push("</div>\n    ");b.push('\n    <div style="clear:both"></div>\n</div>\n<div class="wrapper" style="overflow:auto;overflow-x:hidden">\n    <table class="table table-striped">\n        <!-- head for proper cell width -->\n        <thead style="visibility:hidden">\n            <tr>\n                <th></th>\n                '),i=this.columns;for(e=0,g=i.length;e<g;e++)a=i[e],b.push("\n                    <th>"),b.push(d(a)),b.push("</th>\n                ");b.push("\n            </tr>\n        </thead>\n        <tbody>\n            <!-- loop table.row.eco -->\n        </tbody>\n    </table>\n</div>")}).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}
 /* Types in JS.
@@ -975,7 +975,11 @@ factory = function(Backbone) {
     };
   
     EnrichmentRowView.prototype.selectAction = function() {
-      return this.model.toggleSelected();
+      this.model.toggleSelected();
+      if (this.popoverView != null) {
+        $(this.el).find('td.matches a.count').after(this.popoverView.el);
+        return this.popoverView.delegateEvents();
+      }
     };
   
     EnrichmentRowView.prototype.toggleMatchesAction = function() {
@@ -1016,6 +1020,8 @@ factory = function(Backbone) {
     TableRowView.name = 'TableRowView';
   
     function TableRowView() {
+      this.toggleMatchesAction = __bind(this.toggleMatchesAction, this);
+  
       this.selectAction = __bind(this.selectAction, this);
   
       this.render = __bind(this.render, this);
@@ -1025,7 +1031,8 @@ factory = function(Backbone) {
     TableRowView.prototype.tagName = "tr";
   
     TableRowView.prototype.events = {
-      "click td.check input": "selectAction"
+      "click td.check input": "selectAction",
+      "click td.matches a.count": "toggleMatchesAction"
     };
   
     TableRowView.prototype.initialize = function(o) {
@@ -1046,7 +1053,30 @@ factory = function(Backbone) {
     };
   
     TableRowView.prototype.selectAction = function() {
-      return this.model.toggleSelected();
+      this.model.toggleSelected();
+      if (this.popoverView != null) {
+        $(this.el).find('td.matches a.count').after(this.popoverView.el);
+        return this.popoverView.delegateEvents();
+      }
+    };
+  
+    TableRowView.prototype.toggleMatchesAction = function() {
+      if (!(this.popoverView != null)) {
+        return $(this.el).find('td.matches a.count').after((this.popoverView = new TablePopoverView({
+          "identifiers": [this.model.get("identifier")],
+          "description": this.model.get("descriptions").join(', '),
+          "template": this.template,
+          "matchCb": this.matchCb,
+          "resultsCb": this.resultsCb,
+          "listCb": this.listCb,
+          "pathQuery": this.response.pathQuery,
+          "pathConstraint": this.response.pathConstraint,
+          "imService": this.imService,
+          "type": this.response.type
+        })).el);
+      } else {
+        return this.popoverView.toggle();
+      }
     };
   
     return TableRowView;
@@ -1157,7 +1187,11 @@ factory = function(Backbone) {
         fragment.appendChild(new TableRowView({
           "model": row,
           "template": this.template,
-          "response": this.response
+          "response": this.response,
+          "matchCb": this.options.matchCb,
+          "resultsCb": this.options.resultsCb,
+          "listCb": this.options.listCb,
+          "imService": this.widget.imService
         }).el);
       }
       return table.find('tbody').html(fragment);
@@ -1209,7 +1243,8 @@ factory = function(Backbone) {
           "pathQuery": this.response.pathQuery,
           "pathConstraint": this.response.pathConstraint,
           "imService": this.widget.imService,
-          "type": this.response.type
+          "type": this.response.type,
+          "style": 'width:300px'
         })).el);
       }
     };
@@ -1234,7 +1269,9 @@ factory = function(Backbone) {
     TablePopoverView.name = 'TablePopoverView';
   
     function TablePopoverView() {
-      this.close = __bind(this.close, this);
+      this.toggle = __bind(this.toggle, this);
+  
+      this.adjustPopover = __bind(this.adjustPopover, this);
   
       this.listAction = __bind(this.listAction, this);
   
@@ -1256,7 +1293,7 @@ factory = function(Backbone) {
       "click a.match": "matchAction",
       "click a.results": "resultsAction",
       "click a.list": "listAction",
-      "click a.close": "close"
+      "click a.close": "toggle"
     };
   
     TablePopoverView.prototype.initialize = function(o) {
@@ -1277,7 +1314,7 @@ factory = function(Backbone) {
       $(this.el).html(this.template("popover", {
         "description": this.description,
         "descriptionLimit": this.descriptionLimit,
-        "style": 'width:300px'
+        "style": this.style || "width:300px;margin-left:-300px"
       }));
       this.pathQuery = JSON.parse(this.pathQuery);
       this.pathQuery.where.push({
@@ -1301,7 +1338,8 @@ factory = function(Backbone) {
               }
             })(object));
           }
-          return _this.renderValues(values);
+          _this.renderValues(values);
+          return _this.adjustPopover();
         });
       });
       return this;
@@ -1328,8 +1366,29 @@ factory = function(Backbone) {
       return this.listCb(this.pathQuery);
     };
   
-    TablePopoverView.prototype.close = function() {
-      return $(this.el).remove();
+    TablePopoverView.prototype.adjustPopover = function() {
+      var _this = this;
+      return window.setTimeout((function() {
+        var diff, head, header, parent, popover, table, widget;
+        table = $(_this.el).closest('div.wrapper');
+        popover = $(_this.el).find('.popover');
+        parent = popover.closest('td.matches');
+        if (!parent.length) {
+          return;
+        }
+        widget = parent.closest('div.inner');
+        header = widget.find('div.header');
+        head = widget.find('div.content div.head');
+        diff = ((parent.position().top - header.height() + head.height()) + 30 + popover.outerHeight()) - table.height();
+        if (diff > 0) {
+          return popover.css('top', -diff);
+        }
+      }), 0);
+    };
+  
+    TablePopoverView.prototype.toggle = function() {
+      $(this.el).toggle();
+      return this.adjustPopover();
     };
   
     return TablePopoverView;
