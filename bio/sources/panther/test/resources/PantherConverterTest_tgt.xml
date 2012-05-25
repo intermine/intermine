@@ -1,0 +1,108 @@
+<items>
+<item id="9_1" class="CrossReference">
+<attribute name="identifier" value="PTHR10000"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="CrossReference">
+<attribute name="identifier" value="PTHR10000"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="OrthologueEvidence">
+<reference name="evidenceCode" ref_id="7_1"/>
+</item>
+<item id="4_2" class="Organism">
+<attribute name="taxonId" value="10090"/>
+</item>
+<item id="7_1" class="OrthologueEvidenceCode">
+<attribute name="abbreviation" value="AA"/>
+<attribute name="name" value="Amino acid sequence comparison"/>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="secondaryIdentifier" value="ENSG00000146733"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_3" class="Homologue">
+<attribute name="type" value="least diverged orthologue"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="homologue" ref_id="3_3"/>
+<collection name="crossReferences"><reference ref_id="9_3"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="4_3" class="Organism">
+<attribute name="taxonId" value="10116"/>
+</item>
+<item id="6_4" class="Homologue">
+<attribute name="type" value="least diverged orthologue"/>
+<reference name="gene" ref_id="3_3"/>
+<reference name="homologue" ref_id="3_1"/>
+<collection name="crossReferences"><reference ref_id="9_4"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="secondaryIdentifier" value="MGI:97788"/>
+<reference name="organism" ref_id="4_2"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_4" class="CrossReference">
+<attribute name="identifier" value="PTHR10000"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Panther"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="6_2" class="Homologue">
+<attribute name="type" value="least diverged orthologue"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="homologue" ref_id="3_1"/>
+<collection name="crossReferences"><reference ref_id="9_2"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Panther data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="9_3" class="CrossReference">
+<attribute name="identifier" value="PTHR10000"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_3" class="Gene">
+<attribute name="primaryIdentifier" value="RGD:1308764"/>
+<reference name="organism" ref_id="4_3"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Homologue">
+<attribute name="type" value="least diverged orthologue"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="homologue" ref_id="3_2"/>
+<collection name="crossReferences"><reference ref_id="9_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+</items>

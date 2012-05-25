@@ -1,7 +1,22 @@
 <?xml version="1.0"?>
-<!-- This file details any extensions needed to the data model to store data from this source, everything else is automatically generated from the model description so this is all we need to do to add to the model. -->
-
 <classes>
-<!-- add any <class> elements here -->
-
+<class name="Homologue" is-interface="true">
+  <attribute name="type" type="java.lang.String"/>
+  <reference name="gene" referenced-type="Gene" reverse-reference="homologues"/>
+  <reference name="homologue" referenced-type="Gene"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
+  <collection name="evidence" referenced-type="OrthologueEvidence"/>
+  <collection name="crossReferences" referenced-type="CrossReference"/>
+</class>
+<class name="OrthologueEvidence" is-interface="true">
+  <reference name="evidenceCode" referenced-type="OrthologueEvidenceCode"/>
+  <collection name="publications" referenced-type="Publication"/>
+</class>
+<class name="OrthologueEvidenceCode" is-interface="true">
+    <attribute name="abbreviation" type="java.lang.String"/>
+    <attribute name="name" type="java.lang.String"/>
+</class>
+<class name="Gene" is-interface="true">
+  <collection name="homologues" referenced-type="Homologue" reverse-reference="gene"/>
+</class>
 </classes>
