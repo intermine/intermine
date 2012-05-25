@@ -1,4 +1,4 @@
-package DataDownloader::Source::FlyCVTerms;
+package DataDownloader::Source::Panther;
 
 use Moose;
 extends 'DataDownloader::Source::FtpBase';
