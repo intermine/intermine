@@ -10,7 +10,7 @@ use constant {
     SOURCE_DIR => 'panther',
     SOURCES => [
         {
-            HOST => 'ftp://ftp.pantherdb.org',
+            HOST => 'ftp.pantherdb.org',
             REMOTE_DIR => '/ortholog/current/',
             FILE => 'RefGenomeOrthologs.tar.gz',
             EXTRACT => 1,
