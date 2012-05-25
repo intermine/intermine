@@ -9,5 +9,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry kind="lib" path="main/resources"/>
+	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
