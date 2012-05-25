@@ -149,8 +149,9 @@ my $default_cleaner = sub {
     if ($self->needs_unzipping) {
         $self->debug("Extracting " . $self->get_destination);
         given ($self->get_destination->stringify) {
-            when (/\.gz$/) {$self->unzip_gz;}
-            when (/\.zip$/) {$self->unzip_zip;}
+            when (/\.tar\.gz$/) {$self->untarball;}
+            when (/\.gz$/)      {$self->unzip_gz; }
+            when (/\.zip$/)     {$self->unzip_zip;}
             default {throw "DownloadError", "Can't extract $_"}
         };
     }

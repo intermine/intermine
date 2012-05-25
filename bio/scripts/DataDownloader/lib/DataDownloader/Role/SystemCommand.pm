@@ -60,6 +60,22 @@ sub unzip_gz {
     }
 }
 
+=head untarball
+
+Decompress a downloaded tarball.
+
+=cut
+
+sub untarball {
+    my $self = shift;
+    my $file = shift || $self->get_destination;
+    my @args = ('tar', "-zxf", "$file", "-C", $self->get_destination_dir);
+    if (-s $file) { # Don't operate on non existent files...
+        $self->execute_system_command(@args);
+    }
+    unlink($file);
+}
+
 =head2 unzip_zip
 
 Decompress a downloaded file using unzip.
