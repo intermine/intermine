@@ -419,8 +419,7 @@ public class TagManager
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
         }
-        if (tagName.startsWith(TagNames.IM_PREFIX)
-                && !profile.isSuperuser() && !TagNames.IM_FAVOURITE.equals(tagName)) {
+        if (tagNameNeedsPermission(tagName) && !profile.isSuperuser()) {
             throw new TagNamePermissionException();
         }
         if (!isValidTagName(tagName)) {
@@ -429,7 +428,11 @@ public class TagManager
 
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
-
+    
+    private static boolean tagNameNeedsPermission(String tagName) {
+        return tagName.startsWith(TagNames.IM_PREFIX)
+                && !TagNames.IM_FAVOURITE.equals(tagName);
+    }
 
     /**
      * Associate a template with a certain tag.
