@@ -11,7 +11,8 @@ package org.intermine.web.displayer;
  */
 
 @SuppressWarnings("serial")
-class ReportDisplayerNoResultsException extends Exception {
+class ReportDisplayerNoResultsException extends Exception
+{
 
     String mistake;
 
