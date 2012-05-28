@@ -11,16 +11,11 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import org.intermine.api.profile.Profile;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-
-import servletunit.struts.MockStrutsTestCase;
 
 /**
  * Tests for ViewChange.
@@ -28,7 +23,7 @@ import servletunit.struts.MockStrutsTestCase;
  * @author Kim Rutherford
  */
 
-public class ViewChangeTest extends MockStrutsTestCase
+public class ViewChangeTest extends WebappTestCase
 {
     public ViewChangeTest (String arg) {
         super(arg);
@@ -47,11 +42,6 @@ public class ViewChangeTest extends MockStrutsTestCase
 
         addRequestParameter("path", "Employee.age");
         addRequestParameter("method", "removeFromView");
-
-        //necessary to work-round struts test case not invoking our SessionListener
-        getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
 
         setRequestPathInfo("/viewChange");
 

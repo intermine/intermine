@@ -10,16 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.Constants;
-
-import servletunit.struts.MockStrutsTestCase;
-
-public class TreeActionTest extends MockStrutsTestCase
+public class TreeActionTest extends WebappTestCase
 {
     public TreeActionTest(String arg1) {
         super(arg1);
@@ -38,11 +32,6 @@ public class TreeActionTest extends MockStrutsTestCase
 
         setRequestPathInfo("/changeTree");
         addRequestParameter("method", "expand");
-
-        //necessary to work-round struts test case not invoking our SessionListener
-        getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
 
         actionPerform();
         verifyNoActionErrors();
@@ -64,11 +53,6 @@ public class TreeActionTest extends MockStrutsTestCase
 
         setRequestPathInfo("/changeTree");
         addRequestParameter("method", "collapse");
-
-        //necessary to work-round struts test case not invoking our SessionListener
-        getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
 
         actionPerform();
         verifyNoActionErrors();

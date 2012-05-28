@@ -74,7 +74,7 @@ public class BagConversionHelperTest extends MockStrutsTestCase {
         final ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
         final ProfileManager profileManager = new ProfileManager(os, uosw);
         profile = new Profile(profileManager, "test", new Integer(101), "testpass",
-                new HashMap(), new HashMap(), new HashMap(), true);
+                new HashMap(), new HashMap(), new HashMap(), true, false);
         session = getSession();
         session.setAttribute(Constants.PROFILE, profile);
     }

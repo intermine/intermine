@@ -10,7 +10,10 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.web.ProfileBinding;
 
 /**
  *
@@ -89,7 +93,7 @@ public class InitialiserPluginTest extends TestCase
         String bobName = "bob";
 
         bobProfile = new Profile(pm, bobName, bobId, bobPass,
-                                 new HashMap(), new HashMap(), new HashMap(), true);
+                                 new HashMap(), new HashMap(), new HashMap(), true, false);
 
         pm.createProfile(bobProfile);
     }
@@ -144,20 +148,26 @@ public class InitialiserPluginTest extends TestCase
     public void testCleanTags() throws Exception {
         setUpUserProfiles();
         TagManager tagManager = new TagManagerFactory(userProfileOSW).getTagManager();
-        tagManager.addTag("test-tag1", "org.intermine.model.testmodel.Department", "class", "bob");
-        tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Department", "class", "bob");
-        tagManager.addTag("test-tag2", "org.intermine.model.testmodel.Employee", "class", "bob");
+        
+        String format = 
+          "<tag name=\"%s\" objectIdentifier=\"org.intermine.model.testmodel.%s\" type=\"class\"/>";
+        
+        String toLoad = "<tags>"
+           + String.format(format, "test-tag1", "Department")
+           + String.format(format, "test-tag2", "Department")
+           + String.format(format, "test-tag3", "Employee")
+           + String.format(format, "test-tag4", "Wibble")
+           + String.format(format, "test-tag5", "Aardvark")
+           + "</tags>";
 
-        List tags = tagManager.getTags("test_tag_", null, "class", null);
-        assertEquals(3, tags.size());
-
-        // test that these go away
-        tagManager.addTag("test-tag", "org.intermine.model.testmodel.Wibble", "class", "bob");
-        tagManager.addTag("test-tag", "org.intermine.model.testmodel.Aardvark", "class", "bob");
+        Reader reader = new StringReader(toLoad);
+        ObjectStoreWriter osw = ObjectStoreWriterFactory.getObjectStoreWriter("os.unittest");
+        ProfileBinding.unmarshal(reader, pm, bobProfile.getUsername(), bobProfile.getPassword(), 
+                new HashSet(), osw, pm.getVersion());
 
         InitialiserPlugin.cleanTags(tagManager);
 
-        tags = tagManager.getTags("test_tag%", null, "class", null);
+        List<Tag> tags = tagManager.getTags("test_tag%", null, "class", null);
         assertEquals(3, tags.size());
     }
 }

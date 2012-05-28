@@ -29,7 +29,6 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
 
 public class ProfileTest extends TestCase
 {
@@ -68,7 +67,7 @@ public class ProfileTest extends TestCase
 
     public void testModifySavedMaps() throws Exception {
         Profile profile = new Profile(null, "bob", bobId, "pass",
-                                      new HashMap(), new HashMap(), new HashMap(), true);
+                                  new HashMap(), new HashMap(), new HashMap(), true, false);
 
         try {
             profile.getSavedQueries().put("query0", null);
@@ -85,7 +84,7 @@ public class ProfileTest extends TestCase
 
     public void testSaveNoManager() throws Exception {
         Profile profile = new Profile(null, "bob", bobId, "pass",
-                                      new HashMap(), new HashMap(), new HashMap(), true);
+                                  new HashMap(), new HashMap(), new HashMap(), true, false);
         profile.saveQuery("query1", sq);
         profile.saveBag("bag1", bag);
         profile.saveTemplate("template", template);
@@ -105,7 +104,7 @@ public class ProfileTest extends TestCase
         Map tmpls = new HashMap();
         tmpls.put("tmpl1", template);
 
-        Profile profile = new Profile(null, "bob", bobId, "pass", queries, bags, tmpls, true);
+        Profile profile = new Profile(null, "bob", bobId, "pass", queries, bags, tmpls, true, false);
         profile.deleteQuery("query1");
         // It isn't possible to delete a bag without a manager but we never do in the code
         //profile.deleteBag("bag1");
@@ -118,7 +117,7 @@ public class ProfileTest extends TestCase
 
     public void testSaveWithManager() throws Exception {
         Profile profile = new Profile(profileManager, "bob", bobId, "pass",
-                                      new HashMap(), new HashMap(), new HashMap(), true);
+                                  new HashMap(), new HashMap(), new HashMap(), true, false);
 
         try {
             profile.saveQuery("query1", sq);
@@ -141,7 +140,7 @@ public class ProfileTest extends TestCase
 
     public void testDeleteWithManager() throws Exception {
         Profile profile = new Profile(profileManager, "bob", bobId, "pass",
-                                      new HashMap(), new HashMap(), new HashMap(), true);
+                                      new HashMap(), new HashMap(), new HashMap(), true, false);
 
         try {
             profile.deleteQuery("query1");

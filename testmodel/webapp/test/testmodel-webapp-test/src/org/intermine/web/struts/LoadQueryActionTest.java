@@ -10,25 +10,18 @@ package org.intermine.web.struts;
  *
  */
 
-import java.util.HashMap;
-
-import org.intermine.api.profile.Profile;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
-
-import servletunit.struts.MockStrutsTestCase;
 
 /**
  * Tests for the LoadQueryAction class
  *
  * @author Kim Rutherford
  */
-public class LoadQueryActionTest extends MockStrutsTestCase
+public class LoadQueryActionTest extends WebappTestCase
 {
     public LoadQueryActionTest(String arg) {
         super(arg);
     }
-
 
     public void tearDown() throws Exception {
          getActionServlet().destroy();
@@ -37,10 +30,7 @@ public class LoadQueryActionTest extends MockStrutsTestCase
     public void testLoadXml() {
         String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" +
                 "</query>";
-
-        getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
+        
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "false");
@@ -56,9 +46,6 @@ public class LoadQueryActionTest extends MockStrutsTestCase
     public void testLoadXmlSkipBuilder() {
         String xml = "<query name=\"\" model=\"testmodel\" view=\"Employee Employee.name\">\n" +
                 "</query>";
-        getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
         addRequestParameter("method", "xml");
         addRequestParameter("query", xml);
         addRequestParameter("skipBuilder", "true");
