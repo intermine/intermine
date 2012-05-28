@@ -11,9 +11,20 @@ package org.intermine.web.logic.widget;
  */
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.intermine.api.InterMineAPITestCase;
+import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.model.testmodel.Company;
+import org.intermine.model.testmodel.CompanyShadow;
+import org.intermine.model.testmodel.Department;
+import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.MockServletContext;
@@ -47,5 +58,52 @@ public class WidgetConfigTestCase extends InterMineAPITestCase {
         context.addInputStream("/WEB-INF/CLASS_NAME_MAPPINGS", classesIS);
         context.addInputStream("/WEB-INF/FIELD_NAME_MAPPINGS", fieldsIS);
         webConfig = WebConfig.parse(context, os.getModel());
+    }
+    
+    protected InterMineBag createEmployeeList() throws Exception {
+        ObjectStoreWriter osw = null;
+        try {
+            Profile superUser = im.getProfileManager().getSuperuserProfile();
+            Employee e1 = new Employee();
+            e1.setName("Employee1");
+            Employee e2 = new Employee();
+            e2.setName("Employee2");
+            Department d1 = new Department();
+            d1.setName("department");
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            osw.store(d1);
+            e1.setDepartment(d1);
+            e2.setDepartment(d1);
+            osw.store(e1);
+            osw.store(e2);
+            InterMineBag list = superUser.createBag("employeeList", "Employee", "", im.getClassKeys());
+            Collection<Integer> ids = new ArrayList<Integer>();
+            ids.add(e1.getId()); ids.add(e2.getId());
+            list.addIdsToBag(ids, "Employee");
+            return list;
+        } finally {
+            osw.close();
+        }
+    }
+    
+    protected InterMineBag createCompanyList() throws Exception {
+        ObjectStoreWriter osw = null;
+        try {
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            Profile superUser = im.getProfileManager().getSuperuserProfile();
+            Company c1 = new CompanyShadow();
+            c1.setName("CompanyA");
+            Company c2 = new CompanyShadow();
+            c2.setName("CompanyB");
+            osw.store(c1);
+            osw.store(c2);
+            InterMineBag list = superUser.createBag("companyList", "Company", "", im.getClassKeys());
+            Collection<Integer> ids = new ArrayList<Integer>();
+            ids.add(c1.getId()); ids.add(c2.getId());
+            list.addIdsToBag(ids, "Company");
+            return list;
+        } finally {
+            osw.close();
+        }
     }
 }
