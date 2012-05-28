@@ -43,28 +43,55 @@ public class QueryExpression implements QueryEvaluable
      * Position of specified string in other specified string
      */
     public static final int INDEX_OF = 5;
+
     /**
      * Lower case version of the given string
      */
     public static final int LOWER = 6;
+
     /**
      * Upper case version of the given string
      */
     public static final int UPPER = 7;
+
     /**
      * Return the greatest value from two expressions, e.g. (col1, 0)
      */
     public static final int GREATEST = 8;
+
     /**
      * Return the lowest value from two expressions, e.g. (col1, 0)
      */
     public static final int LEAST = 9;
+
+    /**
+     * Return the modulo of two expressions, e.g. (col1, 2)
+     */
+    public static final int MODULO = 10;
 
     private QueryEvaluable arg1;
     private int op;
     private QueryEvaluable arg2;
     private QueryEvaluable arg3;
     private Class<?> type;
+    
+    private String getOpName(int op) {
+        switch(op) {
+            case ADD:      return "ADD";
+            case MULTIPLY: return "MULTIPLY";
+            case SUBTRACT: return "SUBTRACT";
+            case DIVIDE:   return "DIVIDE";
+            case SUBSTRING:return "SUBSTRING";
+            case INDEX_OF: return "INDEX OF";
+            case LOWER:    return "LOWER";
+            case UPPER:    return "UPPER";
+            case GREATEST: return "GREATEST";
+            case LEAST:    return "LEAST";
+            case MODULO:   return "MOD";
+            default:
+                throw new IllegalStateException("Unknown operator: " + op);
+        }
+    }
 
     /**
      * Constructs an arithmetic QueryExpression from two evaluable items
@@ -76,7 +103,7 @@ public class QueryExpression implements QueryEvaluable
      * types and the specified operation
      */
     public QueryExpression(QueryEvaluable arg1, int op, QueryEvaluable arg2) {
-        if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE
+        if (op == ADD || op == SUBTRACT || op == MULTIPLY || op == DIVIDE || op == MODULO
                 || op == GREATEST || op == LEAST) {
             if (Number.class.isAssignableFrom(arg1.getType())
                     && Number.class.isAssignableFrom(arg2.getType())
@@ -99,7 +126,7 @@ public class QueryExpression implements QueryEvaluable
                 this.type = UnknownTypeValue.class;
             } else {
                 throw new ClassCastException("Invalid arguments (" + arg1.getType() + ", "
-                        + arg2.getType() + ") for specified operation");
+                        + arg2.getType() + ") for specified operation (" + getOpName(op) + ")");
             }
         } else if (op == INDEX_OF) {
             if (arg1.getType().equals(UnknownTypeValue.class)) {

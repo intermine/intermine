@@ -149,11 +149,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ContainsDuplicatesMN", new HashSet(Arrays.asList(new String[] {"Contractor", "Company", "OldComsOldContracts", "InterMineObject"})));
         results.put("ContainsNotMN", new Failure(ObjectStoreException.class, "Cannot represent many-to-many collection DOES NOT CONTAIN in SQL")); //TODO: Fix this (ticket #445)
         results2.put("ContainsNotMN", NO_RESULT);
-        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, COUNT(*)");
+        results.put("SimpleGroupBy", "SELECT DISTINCT a1_.id AS a1_id, COUNT(*) AS a2_ FROM Company AS a1_, Department AS a3_ WHERE a1_.id = a3_.companyId GROUP BY a1_.CEOId, a1_.addressId, a1_.bankId, a1_.id, a1_.name, a1_.vatNumber ORDER BY a1_.id, a2_");
         results2.put("SimpleGroupBy", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("MultiJoin", "SELECT a1_.id AS a1_id, a2_.id AS a2_id, a3_.id AS a3_id, a4_.id AS a4_id FROM Company AS a1_, Department AS a2_, Manager AS a3_, Address AS a4_ WHERE a1_.id = a2_.companyId AND a2_.managerId = a3_.id AND a3_.addressId = a4_.id AND a3_.name = 'EmployeeA1' ORDER BY a1_.id, a2_.id, a3_.id, a4_.id");
         results2.put("MultiJoin", new HashSet(Arrays.asList(new String[] {"Department", "Manager", "Company", "Address", "InterMineObject"})));
-        results.put("SelectComplex", "SELECT DISTINCT (AVG(a1_.vatNumber) + 20) AS a3_, STDDEV(a1_.vatNumber) AS a4_, a2_.name AS a5_, a2_.id AS a2_id FROM Company AS a1_, Department AS a2_ GROUP BY a2_.companyId, a2_.id, a2_.managerId, a2_.name ORDER BY (AVG(a1_.vatNumber) + 20), STDDEV(a1_.vatNumber), a2_.name, a2_.id");
+        results.put("SelectComplex", "SELECT DISTINCT (AVG(a1_.vatNumber) + 20) AS a3_, STDDEV(a1_.vatNumber) AS a4_, a2_.name AS a5_, a2_.id AS a2_id FROM Company AS a1_, Department AS a2_ GROUP BY a2_.companyId, a2_.id, a2_.managerId, a2_.name ORDER BY (AVG(a1_.vatNumber) + 20), a4_, a2_.name, a2_.id");
         results2.put("SelectComplex", new HashSet(Arrays.asList(new String[] {"Department", "Company", "InterMineObject"})));
         results.put("SelectClassAndSubClasses", "SELECT a1_.id AS a1_id, a1_.name AS orderbyfield0 FROM Employee AS a1_ ORDER BY a1_.name, a1_.id");
         results2.put("SelectClassAndSubClasses", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Employee"})));
@@ -390,7 +390,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("ObjectStoreBagsForObject2", Collections.singleton("osbag_int"));
         results.put("SelectForeignKey", "SELECT a1_.departmentId AS a2_ FROM Employee AS a1_ ORDER BY a1_.departmentId");
         results2.put("SelectForeignKey", Collections.singleton("Employee"));
-        results.put("WhereCount", "SELECT a1_.id AS a1_id, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, COUNT(*)");
+        results.put("WhereCount", "SELECT a1_.id AS a1_id, COUNT(*) AS a3_ FROM Department AS a1_, Employee AS a2_ WHERE a1_.id = a2_.departmentId GROUP BY a1_.companyId, a1_.id, a1_.managerId, a1_.name HAVING COUNT(*) > 1 ORDER BY a1_.id, a3_");
         results2.put("WhereCount", new HashSet(Arrays.asList(new String[] {"InterMineObject", "Department", "Employee"})));
         results.put("LimitedSubquery", "SELECT DISTINCT a1_.a2_ AS a2_ FROM (SELECT a1_.name AS a2_ FROM Employee AS a1_ LIMIT 3) AS a1_ ORDER BY a1_.a2_");
         results2.put("LimitedSubquery", Collections.singleton("Employee"));
@@ -408,11 +408,11 @@ public class SqlGeneratorTest extends SetupDataTestCase
         results2.put("EmptyBagConstraint", Collections.EMPTY_SET);
         results.put("SelectFunctionNoGroup", "SELECT MIN(a1_.id) AS a2_ FROM Employee AS a1_");
         results2.put("SelectFunctionNoGroup", Collections.singleton("Employee"));
-        results.put("SelectClassFromInterMineObject", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)");
+        results.put("SelectClassFromInterMineObject", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM InterMineObject AS a1_ GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results2.put("SelectClassFromInterMineObject", Collections.singleton("InterMineObject"));
-        results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employee AS a1_ GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)");
+        results.put("SelectClassFromEmployee", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employee AS a1_ GROUP BY a1_.class ORDER BY a1_.class, a3_");
         results2.put("SelectClassFromEmployee", Collections.singleton("Employee"));
-        results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, COUNT(*)")));
+        results.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Employable AS a1_, Broke AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, a3_", "SELECT a1_.class AS a2_, COUNT(*) AS a3_ FROM Broke AS a1_, Employable AS a1__1 WHERE a1_.id = a1__1.id GROUP BY a1_.class ORDER BY a1_.class, a3_")));
         results2.put("SelectClassFromBrokeEmployable", new HashSet(Arrays.asList("Employable", "Broke")));
         results.put("SubclassCollection", "SELECT a1_.id AS a1_id FROM Department AS a1_ ORDER BY a1_.id");
         results2.put("SubclassCollection", new HashSet(Arrays.asList("InterMineObject", "Department", "Manager")));

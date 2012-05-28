@@ -83,7 +83,8 @@ public class QueryCast implements QueryEvaluable
     /**
      * {@inheritDoc}
      */
-    public void youAreType(@SuppressWarnings("unused") Class<?> cls) {
+    @Override
+    public void youAreType(Class<?> cls) {
         throw new ClassCastException("youAreType called on a QueryCast");
     }
 

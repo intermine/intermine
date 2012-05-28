@@ -43,9 +43,31 @@ public class QueryFunction implements QueryEvaluable
      * Sample standard deviation of a number of rows
      */
     public static final int STDDEV = 5;
+    
+    /**
+     * Smallest integer value greater than input.
+     */
+    public static final int CEIL = 6;
+    
+    /**
+     * Greatest integer value less than input.
+     */
+    public static final int FLOOR = 7;
 
-    private QueryEvaluable obj;
-    private int op;
+    /**
+     * Round to a given number of decimal places.
+     */
+    public static final int ROUND = 9;
+    
+    /**
+     * Get the bucket this value would be assigned in an equal-depth histogram.
+     */
+    public static final int WIDTH_BUCKET = 10;
+
+    protected QueryEvaluable obj;
+    protected int op;
+    
+    private QueryEvaluable obj2;
 
     /**
      * @param qe the QueryEvaluable to aggregate over
@@ -59,6 +81,26 @@ public class QueryFunction implements QueryEvaluable
             constructNonCount(qe, op);
         } else {
             throw new IllegalArgumentException("Value unsuitable for QueryFunction: " + qe);
+        }
+    }
+
+    /**
+     * Constructor for functions that take two parameters.
+     * @param qe The first parameter.
+     * @param op The operation code.
+     * @param qe2 The second parameter.
+     */
+    public QueryFunction(QueryEvaluable qe, int op, QueryEvaluable qe2) {
+        this(qe, op);
+        if ((qe instanceof QueryField) || (qe instanceof QueryExpression)
+                || (qe instanceof QueryCast) || (qe instanceof QueryForeignKey)) {
+            if (!(Integer.class.isAssignableFrom(qe2.getType())
+                    || qe2.getType().equals(UnknownTypeValue.class))) {
+                  throw new IllegalArgumentException("Invalid parameter argument type for specified operation");
+            }
+            obj2 = qe2; 
+        } else {
+            throw new IllegalArgumentException("Parameter Value unsuitable for QueryFunction: " + qe2);
         }
     }
 
@@ -97,9 +139,18 @@ public class QueryFunction implements QueryEvaluable
     public QueryEvaluable getParam() {
         return obj;
     }
+    
+    /**
+     * Returns the second evaluable, where these is one.
+     * @return The second evaluable.
+     */
+    public QueryEvaluable getParam2() {
+        return obj2;
+    }
 
     private void constructNonCount(QueryEvaluable qe, int op) {
-        if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == STDDEV)) {
+        if (!(op == SUM || op == AVERAGE || op == MIN || op == MAX || op == STDDEV
+                || op == CEIL || op == FLOOR || op == ROUND)) {
             throw new IllegalArgumentException("Invalid operation for specified argument");
         }
         if (!(Number.class.isAssignableFrom(qe.getType())

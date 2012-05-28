@@ -56,6 +56,7 @@ import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
+import org.intermine.objectstore.query.WidthBucketFunction;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.Util;
 
@@ -186,7 +187,11 @@ public class IqlQuery
         for (QueryOrderable qn : q.getOrderBy()) {
             retval.append(needComma ? ", " : " ORDER BY ");
             needComma = true;
-            retval.append(nodeToString(q, qn, newParameters, null));
+            if (q.getSelect().contains(qn) && qn instanceof QueryFunction) {
+                retval.append(q.getAliases().get(qn));
+            } else {
+                retval.append(nodeToString(q, qn, newParameters, null));
+            }
         }
         if (q.getLimit() != Integer.MAX_VALUE) {
             retval.append(" LIMIT " + q.getLimit());
@@ -260,6 +265,27 @@ public class IqlQuery
                     case QueryFunction.STDDEV:
                         retval = "STDDEV(";
                         break;
+                    case QueryFunction.CEIL:
+                        retval = "CEIL(";
+                        break;
+                    case QueryFunction.FLOOR:
+                        retval = "FLOOR(";
+                        break;
+                    case QueryFunction.ROUND:
+                        retval = "ROUND(";
+                        retval += nodeToString(q, qf.getParam(), parameters, null);
+                        retval += ", ";
+                        retval += nodeToString(q, qf.getParam2(), parameters, null);
+                        retval += ")";
+                        return retval;
+                    case QueryFunction.WIDTH_BUCKET:
+                        WidthBucketFunction wbf = (WidthBucketFunction) qf;
+                        retval = "WIDTH_BUCKET(";
+                        retval += nodeToString(q, wbf.getParam(), parameters, null) + ", ";
+                        retval += nodeToString(q, wbf.getMaxParam(), parameters, null) + ", ";
+                        retval += nodeToString(q, wbf.getMinParam(), parameters, null) + ", ";
+                        retval += nodeToString(q, wbf.getBinsParam(), parameters, null) + ")";
+                        return retval;
                     default:
                         throw (new IllegalArgumentException("Invalid QueryFunction operation: "
                                     + qf.getOperation()));
@@ -548,6 +574,9 @@ public class IqlQuery
                     break;
                 case QueryExpression.DIVIDE:
                     retval += " / ";
+                    break;
+                case QueryExpression.MODULO:
+                    retval += " % ";
                     break;
                 default:
                     throw (new IllegalArgumentException("Invalid QueryExpression operation: "

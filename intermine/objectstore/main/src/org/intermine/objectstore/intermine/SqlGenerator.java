@@ -10,6 +10,14 @@ package org.intermine.objectstore.intermine;
  *
  */
 
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBID_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBPAGE_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
+import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +37,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
+import org.apache.log4j.Logger;
+import org.apache.torque.engine.database.model.Domain;
+import org.apache.torque.engine.database.model.SchemaType;
+import org.apache.torque.engine.platform.Platform;
+import org.apache.torque.engine.platform.PlatformFactory;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -36,18 +49,12 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStoreException;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGVAL_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.BAGID_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOB_TABLE_NAME;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBID_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBPAGE_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.CLOBVAL_COLUMN;
-import static org.intermine.objectstore.intermine.ObjectStoreInterMineImpl.INT_BAG_TABLE_NAME;
 import org.intermine.objectstore.proxy.ProxyReference;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
 import org.intermine.objectstore.query.Clob;
 import org.intermine.objectstore.query.Constraint;
+import org.intermine.objectstore.query.ConstraintHelper;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ContainsConstraint;
@@ -66,9 +73,9 @@ import org.intermine.objectstore.query.QueryClassBag;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
 import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryForeignKey;
-import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
@@ -82,7 +89,7 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.UnknownTypeValue;
-import org.intermine.objectstore.query.ConstraintHelper;
+import org.intermine.objectstore.query.WidthBucketFunction;
 import org.intermine.objectstore.query.iql.IqlQuery;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseUtil;
@@ -90,12 +97,6 @@ import org.intermine.util.AlwaysMap;
 import org.intermine.util.CombinedIterator;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-
-import org.apache.log4j.Logger;
-import org.apache.torque.engine.database.model.Domain;
-import org.apache.torque.engine.database.model.SchemaType;
-import org.apache.torque.engine.platform.Platform;
-import org.apache.torque.engine.platform.PlatformFactory;
 
 /**
  * Code to generate an sql statement from a Query object.
@@ -2245,6 +2246,9 @@ public final class SqlGenerator
                     case QueryExpression.DIVIDE:
                         op = " / ";
                         break;
+                    case QueryExpression.MODULO:
+                        op = " % ";
+                        break;
                     default:
                         throw (new ObjectStoreException("Invalid QueryExpression operation: "
                                     + nodeE.getOperation()));
@@ -2284,6 +2288,35 @@ public final class SqlGenerator
                 case QueryFunction.STDDEV:
                     buffer.append("STDDEV(");
                     queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.CEIL:
+                    buffer.append("CEIL(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.FLOOR:
+                    buffer.append("FLOOR(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.ROUND:
+                    buffer.append("ROUND(");
+                    queryEvaluableToString(buffer, nodeF.getParam(), q, state);
+                    buffer.append(", ");
+                    queryEvaluableToString(buffer, nodeF.getParam2(), q, state);
+                    buffer.append(")");
+                    break;
+                case QueryFunction.WIDTH_BUCKET:
+                    WidthBucketFunction wbf = (WidthBucketFunction) nodeF;
+                    buffer.append("WIDTH_BUCKET(");
+                    queryEvaluableToString(buffer, wbf.getParam(), q, state);
+                    buffer.append(", ");
+                    queryEvaluableToString(buffer, wbf.getMinParam(), q, state);
+                    buffer.append(", ");
+                    queryEvaluableToString(buffer, wbf.getMaxParam(), q, state);
+                    buffer.append(", ");
+                    queryEvaluableToString(buffer, wbf.getBinsParam(), q, state);
                     buffer.append(")");
                     break;
                 default:
@@ -2479,7 +2512,13 @@ public final class SqlGenerator
                         }
                     }
                 } else {
-                    queryEvaluableToString(buffer, (QueryEvaluable) node, q, state);
+                    // DON'T NEED TO RE-EVALUATE FNS WE ARE ORDERING BY.
+                    if (q.getSelect().contains(node) && node instanceof QueryFunction) {
+                        String alias = q.getAliases().get(node);
+                        buffer.append(alias);
+                    } else {
+                        queryEvaluableToString(buffer, (QueryEvaluable) node, q, state);
+                    }
                     if (!seen.contains(buffer.toString())) {
                         retval.append(needComma ? ", " : " ORDER BY ");
                         needComma = true;
@@ -2522,7 +2561,7 @@ public final class SqlGenerator
     }
 
     /**
-     * Internal representation of the State of the query as it is build up.
+     * Internal representation of the State of the query as it is built up.
      * @author Matthew
      *
      */

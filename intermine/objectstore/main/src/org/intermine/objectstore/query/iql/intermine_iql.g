@@ -231,6 +231,8 @@ safe_function:
             | "stddev" OPEN_PAREN! abstract_value CLOSE_PAREN!
             | "greatest" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
             | "least" OPEN_PAREN! abstract_value COMMA! abstract_value CLOSE_PAREN!
+            | "ceil" OPEN_PAREN! abstract_value CLOSE_PAREN!
+            | "floor" OPEN_PAREN! abstract_value CLOSE_PAREN!
         )
         { #safe_function = #([SAFE_FUNCTION, "SAFE_FUNCTION"], #safe_function); }
     ;
