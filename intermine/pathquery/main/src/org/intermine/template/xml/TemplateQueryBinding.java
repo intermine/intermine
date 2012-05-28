@@ -56,6 +56,12 @@ public class TemplateQueryBinding extends PathQueryBinding
      * @param version the version number of the XML format
      */
     public void doMarshal(TemplateQuery template, XMLStreamWriter writer, int version) {
+        if (template == null) {
+            throw new NullPointerException("template must not be null");
+        }
+        if (writer == null) {
+            throw new NullPointerException("writer must not be null");
+        }
         try {
             writer.writeCharacters("\n");
             writer.writeStartElement("template");
