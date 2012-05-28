@@ -10,11 +10,11 @@ package org.intermine.objectstore.query.iql;
  *
  */
 
-import junit.framework.Test;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+
+import junit.framework.Test;
 
 import org.intermine.objectstore.query.Query;
 import org.intermine.testing.OneTimeTestCase;
@@ -202,8 +202,9 @@ public class IqlQueryParserTest extends IqlQueryTestCase
     }
 
     public void testSafeFunctions() throws Exception {
-        Query q = IqlQueryParser.parse(new IqlQuery("select count(*) as a, sum(Company.vatNumber + 3) as b, avg(Company.vatNumber) as c, min(Company.vatNumber) as d, substr('flibble', 3, max(Company.vatNumber)) as e from Company", "org.intermine.model.testmodel"));
-        assertEquals("SELECT COUNT(*) AS a, SUM(Company.vatNumber + 3) AS b, AVG(Company.vatNumber) AS c, MIN(Company.vatNumber) AS d, SUBSTR('flibble', 3, MAX(Company.vatNumber)) AS e FROM org.intermine.model.testmodel.Company AS Company", q.toString());
+        Query q = IqlQueryParser.parse(new IqlQuery("select count(*) as a, sum(Company.vatNumber + 3) as b, avg(Company.vatNumber) as c, min(Company.vatNumber) as d, substr('flibble', 3, max(Company.vatNumber)) as e, Company.vatNumber % 10 as f, ceil(Broke.interestRate) as g, floor(Broke.interestRate) as h from Company, Broke", "org.intermine.model.testmodel"));
+        assertEquals("SELECT COUNT(*) AS a, SUM(Company.vatNumber + 3) AS b, AVG(Company.vatNumber) AS c, MIN(Company.vatNumber) AS d, SUBSTR('flibble', 3, MAX(Company.vatNumber)) AS e, Company.vatNumber % 10 AS f, CEIL(Broke.interestRate) AS g, FLOOR(Broke.interestRate) AS h FROM org.intermine.model.testmodel.Company AS Company, org.intermine.model.testmodel.Broke AS Broke", q.toString());
+
     }
 
     public void testInvalidSafeFunctions() throws Exception {

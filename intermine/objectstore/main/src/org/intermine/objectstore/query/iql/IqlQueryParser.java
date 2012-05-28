@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import antlr.collections.AST;
-
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ClassConstraint;
@@ -58,6 +56,8 @@ import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SubqueryConstraint;
 import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.UnknownTypeValue;
+
+import antlr.collections.AST;
 
 /**
  * Parser for the InterMine dialect of OQL (IQL)
@@ -875,6 +875,9 @@ public final class IqlQueryParser
                 case IqlTokenTypes.DIVIDE:
                     type = QueryExpression.DIVIDE;
                     break;
+                case IqlTokenTypes.PERCENT:
+                    type = QueryExpression.MODULO;
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown AST node: " + ast.getText() + " ["
                             + ast.getType() + "]");
@@ -958,6 +961,12 @@ public final class IqlQueryParser
                     break;
                 case IqlTokenTypes.LITERAL_stddev:
                     type = QueryFunction.STDDEV;
+                    break;
+                case IqlTokenTypes.LITERAL_ceil:
+                    type = QueryFunction.CEIL;
+                    break;
+                case IqlTokenTypes.LITERAL_floor:
+                    type = QueryFunction.FLOOR;
                     break;
                 case IqlTokenTypes.LITERAL_greatest:
                     type = -6;
