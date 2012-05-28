@@ -33,13 +33,19 @@ public class JSONSummaryProcessor extends JSONResultProcessor {
 		public JSONObject next() {
 			List<ResultElement> row = it.next();
 			Map<String, Object> dict = new HashMap<String, Object>();
-			// 4 = numeric, 2 = string...
-			if (row.size() == 4) {
+			// 4 = numeric, 2 = string, 7 = numeric with histogram...
+			if (row.size() >= 4) {
 				dict.put("min", row.get(0).getField());
 				dict.put("max", row.get(1).getField());
 				dict.put("average", row.get(2).getField());
 				dict.put("stdev", row.get(3).getField());
-			} else if (row.size() == 2) {
+			}
+			if (row.size() == 7) {
+			    dict.put("buckets", row.get(4).getField());
+			    dict.put("bucket", row.get(5).getField());
+			    dict.put("count", row.get(6).getField());
+			}
+			if (row.size() == 2) {
 				dict.put("item", row.get(0).getField());
 				dict.put("count", row.get(1).getField());
 			}
