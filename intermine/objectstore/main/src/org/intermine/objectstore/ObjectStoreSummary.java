@@ -81,7 +81,7 @@ public class ObjectStoreSummary
     public static final int DEFAULT_MAX_VALUES = 200;
 
     /**
-     * Construct a summary from by runnung queries in the ObjectStore.
+     * Construct a summary from by running queries in the ObjectStore.
      *
      * @param os the objectstore
      * @param configuration the configuration for summarization
