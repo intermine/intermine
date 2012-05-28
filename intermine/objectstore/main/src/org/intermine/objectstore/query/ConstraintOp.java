@@ -10,8 +10,8 @@ package org.intermine.objectstore.query;
  *
  */
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operations used in building constraints.
@@ -24,10 +24,14 @@ public final class ConstraintOp
     private static List<ConstraintOp> values = new ArrayList<ConstraintOp>();
     private final String name;
 
-    /** Require that the two arguments are equal */
+    /** Require that the two arguments are equal, regardless of case for strings */
     public static final ConstraintOp EQUALS = new ConstraintOp("=");
-    /** Require that the two arguments are not equal */
+    /** Require that the two arguments are exactly equal */
+    public static final ConstraintOp EXACT_MATCH = new ConstraintOp("==");
+    /** Require that the two arguments are not equal, ignoring case for strings */
     public static final ConstraintOp NOT_EQUALS = new ConstraintOp("!=");
+    /** Require that the two arguments are not equal */
+    public static final ConstraintOp STRICT_NOT_EQUALS = new ConstraintOp("!==");
     /** Require that the first argument is less than the second */
     public static final ConstraintOp LESS_THAN = new ConstraintOp("<");
     /** Require that the first argument is less than or equal to the second */
@@ -130,8 +134,12 @@ public final class ConstraintOp
     public ConstraintOp negate() {
         if (this == EQUALS) {
             return NOT_EQUALS;
+        } else if (this == EXACT_MATCH) {
+            return STRICT_NOT_EQUALS;
         } else if (this == NOT_EQUALS) {
             return EQUALS;
+        } else if (this == STRICT_NOT_EQUALS) {
+            return EXACT_MATCH;
         } else if (this == LESS_THAN) {
             return GREATER_THAN_EQUALS;
         } else if (this == GREATER_THAN_EQUALS) {
@@ -164,6 +172,10 @@ public final class ConstraintOp
             return NOR;
         } else if (this == NOR) {
             return OR;
+        } else if (this == ONE_OF) {
+            return NONE_OF;
+        } else if (this == NONE_OF) {
+            return ONE_OF;
         }
         throw new IllegalArgumentException("Unknown op");
     }
