@@ -512,7 +512,9 @@ NOT TO BE USED FOR A BUILD
 
         <!-- UNSPLITTED -->
         <source name="modencode-metadata" type="chado-db" dump="true">
+            <!--
             <property name="organisms" value="7227 6239"/>
+            -->
             <property name="dataSourceName" value="modENCODE"/>
             <property name="dataSetTitle" value="modENCODE submission"/>
             <property name="source.db.name" value="modencode-metadata"/>
