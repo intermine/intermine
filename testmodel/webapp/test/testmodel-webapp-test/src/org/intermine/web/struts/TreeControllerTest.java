@@ -11,20 +11,15 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.struts.tiles.ComponentContext;
-import org.intermine.api.profile.Profile;
 import org.intermine.metadata.Model;
-import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.TreeNode;
 
-import servletunit.struts.MockStrutsTestCase;
-
-public class TreeControllerTest extends MockStrutsTestCase
+public class TreeControllerTest extends WebappTestCase
 {
     public TreeControllerTest(String arg1) {
         super(arg1);
@@ -47,11 +42,7 @@ public class TreeControllerTest extends MockStrutsTestCase
         openClasses.add(pkg + "Thing");
         getSession().setAttribute("openClasses", openClasses);
         getRequest().setAttribute("rootClass", pkg + "Thing");
-        //necessary to work-round struts test case not invoking our SessionListener
-        getSession().setAttribute(Constants.PROFILE,
-                                  new Profile(null, null, null, null,
-                                              new HashMap(), new HashMap(), new HashMap(), true));
-
+       
         actionPerform();
         verifyNoActionErrors();
         List structure = new ArrayList();
