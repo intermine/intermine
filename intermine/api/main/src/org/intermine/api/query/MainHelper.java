@@ -34,6 +34,7 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -48,10 +49,12 @@ import org.intermine.objectstore.query.FromElement;
 import org.intermine.objectstore.query.OrderDescending;
 import org.intermine.objectstore.query.PathExpressionField;
 import org.intermine.objectstore.query.Query;
+import org.intermine.objectstore.query.QueryCast;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCloner;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
@@ -65,6 +68,7 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.WidthBucketFunction;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.OrderElement;
@@ -80,7 +84,6 @@ import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.PropertiesUtil;
 import org.intermine.util.TypeUtil;
@@ -94,6 +97,9 @@ import org.intermine.util.Util;
  */
 public final class MainHelper
 {
+    private static final QueryValue ONE = new QueryValue(1);
+    private static final QueryValue FIVE = new QueryValue(5);
+
     private MainHelper() {
     }
 
@@ -689,8 +695,20 @@ public final class MainHelper
      */
     private static SimpleConstraint makeQueryStringConstraint(QueryField qf,
             PathConstraintAttribute c) {
-        QueryExpression qe = new QueryExpression(QueryExpression.LOWER, qf);
-        String lowerCaseValue = Util.wildcardUserToSql(c.getValue().toLowerCase());
+        QueryEvaluable qe;
+        String value;
+        ConstraintOp op = c.getOp();
+
+        // Perform case insensitive matches, unless asked specifically not to.
+        if (ConstraintOp.EXACT_MATCH.equals(op) || ConstraintOp.STRICT_NOT_EQUALS.equals(op)) {
+            qe = qf;
+            value = c.getValue();
+            op = (ConstraintOp.EXACT_MATCH.equals(op))
+                    ? ConstraintOp.EQUALS: ConstraintOp.NOT_EQUALS;
+        } else {
+            qe = new QueryExpression(QueryExpression.LOWER, qf);
+            value = Util.wildcardUserToSql(c.getValue().toLowerCase());
+        }
 
         // notes:
         //   - we always turn EQUALS into a MATCHES(LIKE) constraint and rely on Postgres
@@ -699,16 +717,15 @@ public final class MainHelper
         //     normal equals.  for example 'Dpse\GA10108' needs to be 'Dpse\\GA10108' for equals
         //     but 'Dpse\\\\GA10108' (and hence "Dpse\\\\\\\\GA10108" as a Java string because
         //     backslash must be quoted with a backslash)
-        if (ConstraintOp.EQUALS.equals(c.getOp())) {
-            return new SimpleConstraint(qe, ConstraintOp.MATCHES, new QueryValue(lowerCaseValue));
-        } else if (ConstraintOp.NOT_EQUALS.equals(c.getOp())) {
-            return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH,
-                    new QueryValue(lowerCaseValue));
-        } else if (ConstraintOp.CONTAINS.equals(c.getOp())) {
+        if (ConstraintOp.EQUALS.equals(op)) {
+            return new SimpleConstraint(qe, ConstraintOp.MATCHES, new QueryValue(value));
+        } else if (ConstraintOp.NOT_EQUALS.equals(op)) {
+            return new SimpleConstraint(qe, ConstraintOp.DOES_NOT_MATCH, new QueryValue(value));
+        } else if (ConstraintOp.CONTAINS.equals(op)) {
             return new SimpleConstraint(qe, ConstraintOp.MATCHES,
-                    new QueryValue("%" + lowerCaseValue + "%"));
+                    new QueryValue("%" + value + "%"));
         } else {
-            return new SimpleConstraint(qe, c.getOp(), new QueryValue(lowerCaseValue));
+            return new SimpleConstraint(qe, op, new QueryValue(value));
         }
     }
 
@@ -1014,7 +1031,8 @@ public final class MainHelper
                     // Ignore it - we are searching for a working branch of the query
                 }
             }
-            throw new IllegalArgumentException("Cannot find path in query", e);
+            throw new IllegalArgumentException(
+                    "Cannot find path (" + summaryPath + ") in query", e);
         }
 
         Query q = new Query();
@@ -1033,18 +1051,9 @@ public final class MainHelper
                 || (summaryType == Float.class) || (summaryType == Double.class)
                 || (summaryType == BigDecimal.class)
                 && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
-            QueryNode min = new QueryFunction(qf, QueryFunction.MIN);
-            QueryNode max = new QueryFunction(qf, QueryFunction.MAX);
-            QueryNode avg = new QueryFunction(qf, QueryFunction.AVERAGE);
-            QueryNode stddev = new QueryFunction(qf, QueryFunction.STDDEV);
-            q.addToSelect(min);
-            q.addToSelect(max);
-            q.addToSelect(avg);
-            q.addToSelect(stddev);
-            pathToQueryNode.put("Minimum", min);
-            pathToQueryNode.put("Maximum", max);
-            pathToQueryNode.put("Average", avg);
-            pathToQueryNode.put("Standard Deviation", stddev);
+
+            return getHistogram(subQ, qf, pathToQueryNode);
+
         } else if ((summaryType == String.class) || (summaryType == Boolean.class)
                 || (summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
@@ -1061,6 +1070,145 @@ public final class MainHelper
             // Probably Date
             throw new IllegalArgumentException("Cannot summarise this column");
         }
+        return q;
+    }
+
+    /**
+     * Produce a histogram query for a numerical column.
+     * 
+     * In addition to the bucket number and the count for each bucket, each row also includes
+     * the general statistics previously supplied for backwards compatibility.
+     * 
+     * BASIC IDEA:
+     * <pre>
+     * select bq.max, bq.min, sum(bq.c) as total, bq.bucket, from (
+     *     select count(*) as c,
+     *            q1.value as val,
+     *            width_bucket(q1.value, q2.min, (q2.max * 1.01), 10) as bucket,
+     *            q2.max as max,
+     *            q2.min as min
+     *     from (select v.value from values as v) as vals,
+     *          (select max(v.value) as max, min(v.value) as min from values as v) as stats
+     *     group by vals.value, stats.min, stats.max order by bucket, vals.value
+     * ) as bq 
+     * group by bq.bucket, bq.max, bq.min
+     * order by bq.bucket;
+     * </pre>
+     *  
+     * @param subq The source of the data.
+     * @param qf The field that contains the numerical information we are interested in.
+     * @param pathToQueryNode The map to update with names of columns.
+     * @return A query that when run will return a result set where each row has a bin number
+     *         where 1 <= binNumber <= configuredMaxNoOfBins and a number of items in the data
+     *         set that belong in the given bin.
+     */
+    private static Query getHistogram(
+            Query source,
+            QueryField qf,
+            Map<String, QuerySelectable> pathToQueryNode) {
+
+        // Inner 1
+        Query vq = new Query();
+        vq.addFrom(source);
+        vq.addToSelect(qf);
+        vq.setDistinct(false);
+
+        // Inner 2
+        Query statsq = new Query();
+        statsq.addFrom(source);
+        QueryFunction min = new QueryFunction(qf, QueryFunction.MIN);
+        QueryFunction max = new QueryFunction(qf, QueryFunction.MAX);
+        QueryFunction avg = new QueryFunction(qf, QueryFunction.AVERAGE);
+        QueryFunction stddev = new QueryFunction(qf, QueryFunction.STDDEV);
+        QueryEvaluable bins = new QueryValue(SummaryConfig.getNumberOfBins());
+
+        Class<?> summaryType = qf.getType();
+        if (summaryType == Long.class || summaryType == Integer.class) {
+            bins = new QueryExpression(
+                bins, QueryExpression.LEAST,
+                new QueryExpression(max, QueryExpression.SUBTRACT, min)
+            );
+        }
+
+        statsq.addToSelect(min);
+        statsq.addToSelect(max);
+        statsq.addToSelect(avg);
+        statsq.addToSelect(stddev);
+        statsq.addToSelect(bins);
+
+        // Inner 3
+        Query bucketq = new Query();
+        bucketq.setDistinct(false);
+        QueryFunction count = new QueryFunction();
+        QueryField val = new QueryField(vq, qf);
+        QueryField maxval = new QueryField(statsq, max);
+        QueryField minval = new QueryField(statsq, min);
+        QueryField meanval = new QueryField(statsq, avg);
+        QueryField devval = new QueryField(statsq, stddev);
+        QueryExpression upperBound = new QueryExpression(
+                new QueryCast(maxval, BigDecimal.class),
+                QueryExpression.MULTIPLY,
+                new QueryCast(new QueryValue(new Double(1.01)), BigDecimal.class));
+        QueryField noOfBuckets = new QueryField(statsq, bins);
+
+        QueryFunction bucket = new WidthBucketFunction(val, minval, upperBound, noOfBuckets);
+        bucketq.addFrom(vq);
+        bucketq.addFrom(statsq);
+        bucketq.addToSelect(count);
+        bucketq.addToSelect(val);
+        bucketq.addToSelect(maxval);
+        bucketq.addToSelect(minval);
+        bucketq.addToSelect(meanval);
+        bucketq.addToSelect(devval);
+        bucketq.addToSelect(bucket);
+        bucketq.addToSelect(noOfBuckets);
+        
+        bucketq.addToGroupBy(val);
+        bucketq.addToGroupBy(maxval);
+        bucketq.addToGroupBy(minval);
+        bucketq.addToGroupBy(meanval);
+        bucketq.addToGroupBy(devval);
+        bucketq.addToGroupBy(noOfBuckets);
+        bucketq.addToOrderBy(bucket);
+        bucketq.addToOrderBy(val);
+
+        // Outer
+        Query q = new Query();
+        QueryField bmax = new QueryField(bucketq, maxval);
+        QueryField bmin = new QueryField(bucketq, minval);
+        QueryField bmean = new QueryField(bucketq, meanval);
+        QueryField bdev = new QueryField(bucketq, devval);
+        QueryField bbucket = new QueryField(bucketq, bucket);
+        QueryFunction bucketTotal = new QueryFunction(
+                new QueryField(bucketq, count), QueryFunction.SUM);
+        QueryField buckets = new QueryField(bucketq, noOfBuckets);
+        q.addFrom(bucketq);
+
+        q.addToSelect(bmin);
+        q.addToSelect(bmax);
+        q.addToSelect(bmean);
+        q.addToSelect(bdev);
+        q.addToSelect(buckets);
+        q.addToSelect(bbucket);
+        q.addToSelect(bucketTotal);
+
+        q.addToGroupBy(bmin);
+        q.addToGroupBy(bmax);
+        q.addToGroupBy(bmean);
+        q.addToGroupBy(bdev);
+        q.addToGroupBy(bbucket);
+        q.addToGroupBy(buckets);
+
+        q.addToOrderBy(bbucket);
+
+        pathToQueryNode.put("Minimum", bmin);
+        pathToQueryNode.put("Maximum", bmax);
+        pathToQueryNode.put("Average", bmean);
+        pathToQueryNode.put("Standard Deviation", bdev);
+        pathToQueryNode.put("Buckets", bucketTotal);
+        pathToQueryNode.put("Bucket", bbucket);
+        pathToQueryNode.put("Occurances", bucketTotal);
+
         return q;
     }
 
@@ -1105,6 +1253,15 @@ public final class MainHelper
          */
         public static boolean summariseAsOccurrences(String fieldName) {
             return config.contains(fieldName);
+        }
+
+        /**
+         * Returns the number of bins to split a histogram into.
+         * @return The number of bins.
+         */
+        public static Integer getNumberOfBins() {
+            return Integer.valueOf(
+                    PropertiesUtil.getProperties().getProperty("querySummary.no-of-bins", "20"));
         }
     }
 
