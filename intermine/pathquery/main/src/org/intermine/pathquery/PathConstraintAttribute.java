@@ -28,7 +28,8 @@ public class PathConstraintAttribute extends PathConstraint
                 ConstraintOp.DOES_NOT_MATCH, ConstraintOp.EQUALS, ConstraintOp.GREATER_THAN,
                 ConstraintOp.GREATER_THAN_EQUALS, ConstraintOp.LESS_THAN,
                 ConstraintOp.LESS_THAN_EQUALS, ConstraintOp.MATCHES, ConstraintOp.NOT_EQUALS,
-                ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN));
+                ConstraintOp.CONTAINS, ConstraintOp.DOES_NOT_CONTAIN, ConstraintOp.EXACT_MATCH,
+                ConstraintOp.STRICT_NOT_EQUALS));
     private String value;
 
     /**
