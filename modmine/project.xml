@@ -657,6 +657,14 @@
                                 value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
         </source>
 	-->
+    <source name="entrez-organism" type="entrez-organism">
+      <!-- second run for the other worms. test with only this one.
+           this source finds the taxon ids in the objectstore, retrieves
+           species name and genus from Entrez into an InterMine format XML
+           file, loads that file into a target items DB, then into the final
+           objectstore -->
+      <property name="src.data.file" location="build/organisms.xml"/>
+    </source>
 
         <!-- Flyscore on modENCODE -->
         <source name="fly-expression-score" type="fly-expression-score">
