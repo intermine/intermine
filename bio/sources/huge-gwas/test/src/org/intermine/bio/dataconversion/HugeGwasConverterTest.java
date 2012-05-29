@@ -17,7 +17,13 @@ import java.util.HashMap;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
+/**
+ * @author Richard Smith
+ * @author Fengyuan Hu
+ *
+ */
 public class HugeGwasConverterTest extends ItemsTestCase
 {
     private HugeGwasConverter converter;
@@ -29,24 +35,29 @@ public class HugeGwasConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new HugeGwasConverter(itemWriter,
                 Model.getInstanceByName("genomic"));
     }
 
     public void testProcess() throws Exception {
-        File srcFile1 = new File(getClass().getClassLoader().getResource("New_IDs_to_Old_IDs-Genes.tsv").toURI());
-        converter.setCurrentFile(srcFile1);
-        converter.process(new FileReader(srcFile1));
+        File srcFile = new File(getClass().getClassLoader().getResource("HUGE-GWAS.txt").toURI());
+        converter.setCurrentFile(srcFile);
+        converter.process(new FileReader(srcFile));
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "anopheles-ids_tgt.xml");
+        // writeItemsFile(itemWriter.getItems(), "huge-gwas_tgt.xml");
 
-        assertEquals(readItemSet("AnophelesIdentifiersConverterTest.xml"), itemWriter.getItems());
+        assertEquals(readItemSet("HugeGwasConverterTest.xml"), itemWriter.getItems());
     }
 
     public void testParseSnp() throws Exception {
         assertEquals("rs10048146", converter.parseSnp("rs10048146(16q24.1)"));
         assertEquals("rs10048146", converter.parseSnp("rs10048146"));
+    }
+
+    public void testParsePValue() throws Exception {
+        assertEquals(0.0, converter.parsePValue("5x10-324"));
+        assertEquals(2E-6, converter.parsePValue("2x10-6"));
     }
 }

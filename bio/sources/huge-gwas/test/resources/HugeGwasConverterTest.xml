@@ -1,0 +1,282 @@
+<items>
+<item id="7_1" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="T"/>
+<attribute name="pValue" value="1.0E-20"/>
+<attribute name="phenotype" value="Upper aerodigestive tract cancers"/>
+<attribute name="riskAlleleFreqInControls" value="0.94"/>
+<reference name="SNP" ref_id="8_1"/>
+<reference name="study" ref_id="9_1"/>
+<collection name="associatedGenes"><reference ref_id="3_1"/></collection>
+</item>
+<item id="7_3" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="G"/>
+<attribute name="pValue" value="9.0E-17"/>
+<attribute name="phenotype" value="Upper aerodigestive tract cancers"/>
+<reference name="SNP" ref_id="8_3"/>
+<reference name="study" ref_id="9_1"/>
+<collection name="associatedGenes"><reference ref_id="3_3"/></collection>
+</item>
+<item id="7_9" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="A"/>
+<attribute name="pValue" value="2.0E-6"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.26"/>
+<reference name="SNP" ref_id="8_9"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_10"/></collection>
+</item>
+<item id="8_9" class="SNP">
+<attribute name="primaryIdentifier" value="rs4236644"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="HuGE Navigator"/>
+</item>
+<item id="8_7" class="SNP">
+<attribute name="primaryIdentifier" value="rs1986655"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_9" class="Gene">
+<attribute name="symbol" value="SLCO1A2"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_5" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="T"/>
+<attribute name="pValue" value="5.0E-7"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.03"/>
+<reference name="SNP" ref_id="8_5"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_5"/></collection>
+</item>
+<item id="7_4" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="T"/>
+<attribute name="pValue" value="8.0E-7"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.02"/>
+<reference name="SNP" ref_id="8_4"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_4"/></collection>
+</item>
+<item id="7_2" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="C"/>
+<attribute name="pValue" value="3.0E-7"/>
+<attribute name="phenotype" value="Upper aerodigestive tract cancers"/>
+<reference name="SNP" ref_id="8_2"/>
+<reference name="study" ref_id="9_1"/>
+<collection name="associatedGenes"><reference ref_id="3_2"/></collection>
+</item>
+<item id="6_2" class="Publication">
+<attribute name="pubMedId" value="19414484"/>
+</item>
+<item id="8_10" class="SNP">
+<attribute name="primaryIdentifier" value="rs4773330"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_2" class="GWAS">
+<attribute name="firstAuthor" value="Johnson"/>
+<attribute name="initialSample" value="9,264 individuals"/>
+<attribute name="name" value="Serum bilirubin levels"/>
+<attribute name="replicateSample" value="No replicate"/>
+<attribute name="year" value="2009"/>
+<reference name="publication" ref_id="6_2"/>
+</item>
+<item id="3_7" class="Gene">
+<attribute name="symbol" value="SLCO1B1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_10" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="A"/>
+<attribute name="pValue" value="8.0E-6"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.12"/>
+<reference name="SNP" ref_id="8_10"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_11"/></collection>
+</item>
+<item id="8_5" class="SNP">
+<attribute name="primaryIdentifier" value="rs12714207"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_12" class="Gene">
+<attribute name="symbol" value="UGT1A1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="5_2" class="SOTerm">
+<attribute name="name" value="SNP"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_8" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="C"/>
+<attribute name="pValue" value="7.0E-13"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.15"/>
+<reference name="SNP" ref_id="8_8"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_7"/><reference ref_id="3_8"/><reference ref_id="3_9"/></collection>
+</item>
+<item id="8_6" class="SNP">
+<attribute name="primaryIdentifier" value="rs16928809"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_5" class="Gene">
+<attribute name="symbol" value="KRCC1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="HuGE GWAS Integrator"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="3_2" class="Gene">
+<attribute name="symbol" value="ADH1C"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_8" class="SNP">
+<attribute name="primaryIdentifier" value="rs4149056"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_6" class="Gene">
+<attribute name="symbol" value="SLC22A18"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_1" class="GWAS">
+<attribute name="firstAuthor" value="McKay"/>
+<attribute name="initialSample" value="2,091 European ancestry cases, 8,334 European ancestry controls"/>
+<attribute name="name" value="Upper aerodigestive tract cancers"/>
+<attribute name="replicateSample" value="8,744 European ancestry cases, 11,982 European ancestry controls"/>
+<attribute name="year" value="2011"/>
+<reference name="publication" ref_id="6_1"/>
+</item>
+<item id="3_4" class="Gene">
+<attribute name="symbol" value="HIST1H2BC"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_11" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="T"/>
+<attribute name="pValue" value="0.0"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.32"/>
+<reference name="SNP" ref_id="8_11"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_12"/></collection>
+</item>
+<item id="7_6" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="A"/>
+<attribute name="pValue" value="1.0E-7"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.09"/>
+<reference name="SNP" ref_id="8_6"/>
+<reference name="study" ref_id="9_2"/>
+<collection name="associatedGenes"><reference ref_id="3_6"/></collection>
+</item>
+<item id="7_7" class="GWASResult">
+<attribute name="associatedVariantRiskAllele" value="A"/>
+<attribute name="pValue" value="2.0E-6"/>
+<attribute name="phenotype" value="Serum bilirubin levels"/>
+<attribute name="riskAlleleFreqInControls" value="0.17"/>
+<reference name="SNP" ref_id="8_7"/>
+<reference name="study" ref_id="9_2"/>
+</item>
+<item id="8_2" class="SNP">
+<attribute name="primaryIdentifier" value="rs1789924"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="3_10" class="Gene">
+<attribute name="symbol" value="SEMA3C"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="Publication">
+<attribute name="pubMedId" value="21437268"/>
+</item>
+<item id="8_3" class="SNP">
+<attribute name="primaryIdentifier" value="rs971074"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_11" class="Gene">
+<attribute name="symbol" value="ARHGEF7"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_1" class="SNP">
+<attribute name="primaryIdentifier" value="rs1229984"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="symbol" value="ADH1B"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_4" class="SNP">
+<attribute name="primaryIdentifier" value="rs12206204"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_8" class="Gene">
+<attribute name="symbol" value="LST-3TM12"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="8_11" class="SNP">
+<attribute name="primaryIdentifier" value="rs6742078"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_3" class="Gene">
+<attribute name="symbol" value="ADH7"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

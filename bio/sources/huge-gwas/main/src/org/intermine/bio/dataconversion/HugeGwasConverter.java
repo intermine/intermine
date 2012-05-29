@@ -69,6 +69,7 @@ public class HugeGwasConverter extends BioFileConverter
 
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
+            LOG.info("Line: " + line);
 
             if (line[0].startsWith(headerStart)) {
                 doneHeader = true;
