@@ -582,6 +582,7 @@
                                  startClass="SNP"
                                  startClassDisplay="primaryIdentifier"
                                  enrich="GWASResults.study.name"
+                                 enrichIdentifier="GWASResults.study.publication.pubMedId"
                                  constraints="organism.name=[list],primaryIdentifier != null"
                                  typeClass="org.intermine.model.bio.SNP"
                                  views="primaryIdentifier, organism.name,
