@@ -474,13 +474,11 @@
     <source name="worm-development-ontology" type="worm-development-ontology" dump="true">
         <property name="src.data.file" location="/micklem/data/wormbase/worm-development-ontology/current/worm_development.obo"/>
     </source>
+<!-- moved (during build!) after waterstonpiano because of other worms
     <source name="entrez-organism" type="entrez-organism">
-      <!-- this source finds the taxon ids in the objectstore, retrieves
-           species name and genus from Entrez into an InterMine format XML
-           file, loads that file into a target items DB, then into the final
-           objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
+    -->
     <source name="modmine-static" type="intermine-items-xml-file">
         <property name="src.data.file" location="resources/projects.xml"/>
     </source>
@@ -658,8 +656,7 @@
         </source>
 	-->
     <source name="entrez-organism" type="entrez-organism">
-      <!-- second run for the other worms. test with only this one.
-           this source finds the taxon ids in the objectstore, retrieves
+      <!-- this source finds the taxon ids in the objectstore, retrieves
            species name and genus from Entrez into an InterMine format XML
            file, loads that file into a target items DB, then into the final
            objectstore -->
