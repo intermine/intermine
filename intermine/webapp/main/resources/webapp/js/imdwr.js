@@ -91,8 +91,8 @@ function saveBagDescription(bagName){
     AjaxServices.saveBagDescription(bagName,textarea, function(str){
                                         document.getElementById('bagDescriptionDiv').innerHTML = str;
                                     });
-    Element.toggle('bagDescriptionTextarea');
-    Element.toggle('bagDescriptionDiv');
+    jQuery('textarea#textarea').toggle();
+    jQuery('div#bagDescriptionDiv').toggle();
 }
 
 function roundToSignificantDecimal(n) {

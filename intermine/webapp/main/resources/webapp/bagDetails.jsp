@@ -123,9 +123,6 @@
 
 
 
-<html:form action="/modifyBagDetailsAction">
-<html:hidden property="bagName" value="${bag.name}"/>
-
 <div id="tool_bar_item_display" style="display:none;width:100px" class="tool_bar_item">
     <html:link anchor="relatedTemplates" action="bagDetails?bagName=${bag.name}">Related templates</html:link><br/>
     <html:link anchor="widgets" action="bagDetails?bagName=${bag.name}">Related widgets</html:link>
@@ -149,6 +146,8 @@
 </div>
 
 <div id="tool_bar_item_edit" style="display:none;width:300px" class="tool_bar_item">
+        <html:form action="/modifyBagDetailsAction">
+      <html:hidden property="bagName" value="${bag.name}"/>
   <%-- add selected to bag --%>
   <fmt:message key="bagDetails.addRecords"/>:<br/>
    <c:choose>
@@ -175,6 +174,7 @@
     <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove" disabled="true" />
     <hr>
   <a href="javascript:hideMenu('tool_bar_item_edit')" ><fmt:message key="confirm.cancel"/></a>
+  </html:form>
 </div>
 
 </TD>
@@ -279,21 +279,26 @@
     <!-- closing toolbar div -->
 
     <div id="convertList" class="listtoolbox" align="left">
+      <html:form action="/modifyBagDetailsAction">
+      <html:hidden property="bagName" value="${bag.name}"/>
         <tiles:insert name="convertBag.tile">
-            <tiles:put name="bag" beanName="bag" />
-            <tiles:put name="idname" value="cp" />
-            <tiles:put name="orientation" value="h" />
+          <tiles:put name="bag" beanName="bag" />
+          <tiles:put name="idname" value="cp" />
+          <tiles:put name="orientation" value="h" />
         </tiles:insert>
+      </html:form>
 </c:if>
-    </html:form>
 <c:if test="${!invalid}">
 
 
     <%-- BagDisplayers --%>
+      <html:form action="/modifyBagDetailsAction">
+      <html:hidden property="bagName" value="${bag.name}"/>
         <tiles:insert page="/bagDisplayers.jsp">
         <tiles:put name="bag" beanName="bag"/>
         <tiles:put name="showOnLeft" value="false"/>
         </tiles:insert>
+      </html:form>
 
     </div>
 
