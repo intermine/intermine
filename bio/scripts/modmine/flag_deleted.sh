@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 # default usage: flag_deleted.sh
+#             or flag_deletd.sh -P project
 #
 # sc
 
-#ARKDIR=/micklem/releases/modmine
 DATADIR=/micklem/data/modmine/subs/chado
 LOGDIR=$DATADIR/logs
 
@@ -15,7 +15,7 @@ INFILE=$DATADIR/all.dead
 DBHOST=modfast
 DBUSER=modmine
 
-#PRO="karpen"
+#PRO="henikoff"
 PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
 
 progname=$0
@@ -128,7 +128,7 @@ echo
 
 echo "Using file: "
 echo "`ls -oh $INFILE`"
-echo "to flag deleted submission on $DBHOST for projects: $PRO."
+echo "to flag deleted submission on $DBHOST for projects: $PRO"
 echo 
 interact "Flagging deleted subs"
 if [ "$DOIT" != "n" ]
