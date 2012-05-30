@@ -63,7 +63,7 @@
                <td>Protein domains</td>
                <td><a href="http://www.ebi.ac.uk/interpro/">InterPro</a></td>
                <td>Human, Mouse</td>
-               <td>19th January 2012</td>
+               <td>March 2012</td>
        </tr>
        <tr>
                <td>Gene Ontology</td>
@@ -87,7 +87,7 @@
                <td>Protein localisation</td>
                <td><a href="http://www.proteinatlas.org/">Human Protein Atlas (HPA)</a></td>
                <td>Human</td>
-               <td>(v. 9.0) Nov 2011</td>
+               <td>(v.9.0) Nov 2011</td>
        </tr>
        <tr>
                <td>Gene expression</td>
