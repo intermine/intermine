@@ -11,7 +11,6 @@ package org.intermine.api;
  */
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -122,7 +121,7 @@ public class InterMineAPITestCase extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
-        SingletonResults res = os.executeSingleton(q);
+        SingletonResults res = os.executeSingleton(q, 100000, false, false, true);
         ObjectStoreWriter osw = os.getNewWriter();
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
