@@ -569,7 +569,7 @@ public abstract class WebService
         switch (format) {
         // HTML is a special case
             case HTML_FORMAT:
-                output = new StreamedOutput(out, new PlainFormatter(), separator);
+                output = new MemoryOutput();
                 ResponseUtil.setHTMLContentType(response);
                 break;
             case XML_FORMAT:
@@ -598,7 +598,10 @@ public abstract class WebService
                 break;
             case TEXT_FORMAT:
                 output = new StreamedOutput(out, new PlainFormatter(), separator);
-                filename = "result.txt";
+                if (filename == null) {
+                    filename = "result.txt";
+                }
+                filename += getExtension();
                 if (isUncompressed()) {
                     ResponseUtil.setPlainTextHeader(response, filename);
                 }
@@ -703,7 +706,7 @@ public abstract class WebService
      * @return The default file name for this service. (default = "result.tsv")
      */
     protected String getDefaultFileName() {
-        return "result.tsv";
+        return "result";
     }
 
     /**
