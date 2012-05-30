@@ -31,6 +31,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Tests for PrecomputeTemplatesTask.
@@ -53,16 +54,19 @@ public class PrecomputeTemplatesTaskTest extends TestCase
     public void testPrecomputeTemplate() throws Exception {
         InputStream webProps = PrecomputeTemplatesTask.class
             .getClassLoader().getResourceAsStream("WEB-INF/web.properties");
-        Properties properties = new Properties();
-        properties.load(webProps);
+        Properties properties = PropertiesUtil.getProperties(); //new Properties();
+        
+        //properties.load(webProps);
         String user = properties.getProperty("superuser.account");
 
         PrecomputeTemplatesTask task = new PrecomputeTemplatesTask();
         task.setAlias("os.unittest");
         task.setUserProfileAlias("osw.userprofile-test");
+        task.setMinRows(1);
         task.setUsername(user);
 
         ObjectStore os = ObjectStoreFactory.getObjectStore("os.unittest");
+        task.execute();
         Map templates = task.getPrecomputeTemplateQueries();
         TemplateQuery template = (TemplateQuery) templates.get("employeesOverACertainAgeFromDepartmentA");
 
@@ -93,6 +97,6 @@ public class PrecomputeTemplatesTaskTest extends TestCase
         List expIndexes = new ArrayList(Arrays.asList(new Object[] {qcEmp, qcDept, qfAge, qfName}));
         assertEquals(expIndexes.toString(), indexes.toString());
 
-        task.precompute(os, actualQ, indexes, "template");
+        task.precompute(actualQ, indexes, "template");
     }
 }
