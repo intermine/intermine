@@ -213,7 +213,7 @@ done
 IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
-#SOURCES=chado-db-wormbase-c_elegans,modmine-static,modencode-metadata
+#SOURCES=chado-db-wormbase-c_elegans,wormbase-c_elegans-chromosome-fasta,modmine-static,modencode-metadata
 SOURCES=modmine-static,modencode-metadata
 #SOURCES=modencode-metadata,worm-network
 fi
@@ -710,12 +710,31 @@ awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
 awk '{print $1}' $DATADIR/superseded.table >> $DATADIR/all.dead
 
 # do the deprecations file
-grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $3","$1 }' | grep -v unknown > $DATADIR/depr
-grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $4","$1 }' >> $DATADIR/depr
+
+# TODO: double true field (see 2801 and 2812)
+# get the list of deprecated entries with their replacement
+
+# this invert the order (so new one is first)
+grep released $DATADIR/ftplist | grep true |
+awk '$2 == "true" {p=""; c=split($3, s, ","); for(n=c; n>=1; --n) p=p ", " s[n]; print p ", " $1;}' |
+grep -v unknown | cut -c 3- > $DATADIR/depr
+
+grep released $DATADIR/ftplist | grep true |
+awk '$3 == "true" {p=""; c=split($4, s, ","); for(n=c; n>=1; --n) p=p ", " s[n]; print p ", " $1;}' |
+cut -c 3- >> $DATADIR/depr
+
 grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $5","$1 }' >> $DATADIR/depr
 
-mv $DATADIR/deprecations $FTPARK/dep.`date "+%y%m%d"`
-sort -u $DATADIR/depr > $DATADIR/deprecations
+mv $DATADIR/all.depr $FTPARK/depr.`date "+%y%m%d"`
+sort -u $DATADIR/depr > $DATADIR/depr.su
+
+$SCRIPTDIR/dep.py < $DATADIR/depr.su > $DATADIR/all.depr
+rm $DATADIR/depr
+
+# old version
+#grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $3","$1 }' | grep -v unknown > $DATADIR/depr
+#grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $4","$1 }' >> $DATADIR/depr
+#grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $5","$1 }' >> $DATADIR/depr
 
 fi
 

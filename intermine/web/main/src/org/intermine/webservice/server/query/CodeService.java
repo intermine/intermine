@@ -54,6 +54,35 @@ public class CodeService extends AbstractQueryService
         super(im);
     }
 
+    @Override
+    protected int getDefaultFormat() {
+        return TEXT_FORMAT;
+    }
+
+    @Override
+    protected String getDefaultFileName() {
+        return "query";
+    }
+
+    @Override
+    protected String getExtension() {
+        String extension = super.getExtension();
+        String lang = request.getParameter("lang");
+        if ("perl".equals(lang) || "pl".equals(lang)) {
+            return ".pl" + extension;
+        } else if ("java".equals(lang)) {
+            return ".java" + extension;
+        } else if ("python".equals(lang) || "py".equals(lang)) {
+            return ".py" + extension;
+        } else if ("javascript".equals(lang) || "js".equals(lang)) {
+            return ".js" + extension;
+        } else if ("ruby".equals(lang) || "rb".equals(lang)) {
+            return ".rb" + extension;
+        } else {
+            throw new BadRequestException("Unknown code generation language: " + lang);
+        }
+    }
+
     private WebserviceCodeGenerator getCodeGenerator(String lang) {
         lang = StringUtils.lowerCase(lang);
 
@@ -76,8 +105,9 @@ public class CodeService extends AbstractQueryService
     protected void execute() {
 
         Profile profile = permission.getProfile();
-        // Ref to OrthologueLinkController and OrthologueLinkManager
+        response.setHeader("Content-Disposition", "attachment");
 
+        // Ref to OrthologueLinkController and OrthologueLinkManager
         String serviceBaseURL = new URLGenerator(request).getPermanentBaseURL();
         // set in project properties
         String projectTitle = webProperties.getProperty("project.title");

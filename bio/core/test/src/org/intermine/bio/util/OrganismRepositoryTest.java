@@ -65,4 +65,16 @@ public class OrganismRepositoryTest extends TestCase
         assertNotNull(or.getOrganismDataByTaxon(4932));
         assertNotNull(or.getOrganismDataByTaxon(559292));
     }
+
+    public void testUniProt() {
+        OrganismRepository or = OrganismRepository.getOrganismRepository();
+        assertNotNull(or.getOrganismDataByUniprot("DANRE"));
+        assertNotNull(or.getOrganismDataByUniprot("HUMAN"));
+        assertNull(or.getOrganismDataByUniprot("UNICORN"));
+
+        OrganismData o = or.getOrganismDataByUniprot("MOUSE");
+        assertEquals("M. musculus", o.getShortName());
+
+
+    }
 }

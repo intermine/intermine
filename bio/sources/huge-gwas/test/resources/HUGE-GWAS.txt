@@ -1,0 +1,17 @@
+Database: GWAS Integrator in www.hugenavigator.net
+Data generated time: 10-12-2011
+Number of GWAS hits: 6271
+
+rs Number(region location)       Gene    Gene/Region     Trait   First Author    Journal         Published Year          PubMed ID       Sample Size (Initial/Replicate)         Risk Allele [Prevalence in control]     OR/Beta [95% CI]        p-Value         platform
+
+rs1229984(4q23)	ADH1B	4q23	Upper aerodigestive tract cancers	McKay	PLoS Genet	2011	21437268	2,091 European ancestry cases, 8,334 European ancestry controls/8,744 European ancestry cases, 11,982 European ancestry controls	rs1229984-T[0.94]	1.56[[1.41-1.69]]	1x10-20	Illumina [294,620]
+rs1789924(4q23)	ADH1C	4q23	Upper aerodigestive tract cancers	McKay	PLoS Genet	2011	21437268	2,091 European ancestry cases, 8,334 European ancestry controls/8,744 European ancestry cases, 11,982 European ancestry controls	rs1789924-C[NR]	1.12[[1.07-1.17]]	3x10-7	Illumina [294,620]
+rs971074(4q23)	ADH7	4q23	Upper aerodigestive tract cancers	McKay	PLoS Genet	2011	21437268	2,091 European ancestry cases, 8,334 European ancestry controls/8,744 European ancestry cases, 11,982 European ancestry controls	rs971074-G[NR]	1.33[[1.25-1.43]]	9x10-17	Illumina [294,620]
+rs12206204(6p22.1)	HIST1H2BC	6p22.1	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs12206204-T[0.02]	0.18[[0.10-0.26] umol/l increase in log(tbil)]	8x10-7	Affymetrix & Illumina [2,555,103] (imputed)
+rs12714207(2p11.2)	KRCC1	2p11.2	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs12714207-T[0.03]	0.03[[0.01-0.05] umol/l decrease in log(tbil)]	5x10-7	Affymetrix & Illumina [2,555,103] (imputed)
+rs16928809(11p15.4)	SLC22A18	11p15.4	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs16928809-A[0.09]	0.06[[0.04-0.08] umol/l increase in log(tbil)]	1x10-7	Affymetrix & Illumina [2,555,103] (imputed)
+rs1986655(4q28.1)	Intergenic	4q28.1	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs1986655-A[0.17]	0.02[[0.00-0.04] umol/l decrease in log(tbil)]	2x10-6	Affymetrix & Illumina [2,555,103] (imputed)
+rs4149056(12p12.1)	SLCO1B1, LST-3TM12, SLCO1A2	12p12.1	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs4149056-C[0.15]	0.05[[0.03-0.07] umol/l increase in log(tbil)]	7x10-13	Affymetrix & Illumina [2,555,103] (imputed)
+rs4236644(7q21.11)	SEMA3C	7q21.11	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs4236644-A[0.26]	0.02[[0.00-0.04] umol/l decrease in log(tbil)]	2x10-6	Affymetrix & Illumina [2,555,103] (imputed)
+rs4773330(13q34)	ARHGEF7	13q34	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs4773330-A[0.12]	0.04[[0.02-0.06] umol/l decrease in log(tbil)]	8x10-6	Affymetrix & Illumina [2,555,103] (imputed)
+rs6742078(2q37.1)	UGT1A1	2q37.1	Serum bilirubin levels	Johnson	Hum Mol Genet	2009	19414484	9,264 individuals/NR	rs6742078-T[0.32]	0.23[[0.21-0.25] umol/l increase in log(tbil)]	5x10-324	Affymetrix & Illumina [2,555,103] (imputed)
