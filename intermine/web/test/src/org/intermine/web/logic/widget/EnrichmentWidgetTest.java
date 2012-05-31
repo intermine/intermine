@@ -62,7 +62,7 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         }
     }
 
-    public void testProcess() {
+/*    public void testProcess() {
         try {
             ldr = new EnrichmentWidgetImplLdr(bag, os,
                 (EnrichmentWidgetConfig) config, filter);
@@ -107,19 +107,19 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         return exportResults;
     }
 
-    /**
+    *//**
      * Returns the pathConstraint based on the enrichmentIdentifier will be applied on the pathQUery
      * @return the pathConstraint generated
-     */
+     *//*
     public String getPathConstraint() {
         return pathConstraint;
     }
 
-    /**
+    *//**
      * Returns the pathquery based on the views set in config file and the bag constraint
      * Executed when the user selects any item in the matches column in the enrichment widget.
      * @return the query generated
-     */
+     *//*
     public PathQuery getPathQuery() {
         PathQuery q = createPathQueryView(os, config);
         // bag constraint
@@ -160,12 +160,12 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         return q;
     }
 
-    /**
+    *//**
      * Returns the pathquery based on the view set in config file in the startClassDisplay
      * and the bag constraint
      * Executed when the user click on the matches column in the enrichment widget.
      * @return the query generated
-     */
+     *//*
     public PathQuery getPathQueryForMatches() {
         Model model = os.getModel();
         PathQuery pathQuery = new PathQuery(model);
@@ -211,7 +211,7 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
             }
         }
         return pathQuery;
-    }
+    }*/
 
     public void testCreatePathQueryView() {
         PathQuery pathQuery = new PathQuery(os.getModel());
