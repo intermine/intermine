@@ -2,7 +2,6 @@ log_dir: "/micklem/data/download_logs"
 data_dir: "/micklem/data"
 
 default_sources:
-  - "AffyProbes"
   - "BioGRID"
   - "EnsemblCompara"
   - "FlyAnatomyOntology"
@@ -17,6 +16,7 @@ default_sources:
   - "InterProGO"
   - "MGIIdentifiers"
   - "NCBIGene"
+  - "Panther"
   - "PDB"
   - "PubMed"
   - "Reactome"

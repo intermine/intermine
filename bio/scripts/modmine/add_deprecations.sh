@@ -45,10 +45,12 @@ EOF
 
 echo
 
-while getopts ":b" opt; do
+while getopts ":bP:m:f:" opt; do
 	case $opt in
 	b )  echo "- BATCH mode" ; INTERACT=n;;
-	m )  DBHOST=$OPTARG; echo "- Using db host $DBHOST";;
+    P )  PRO=$OPTARG; echo "- Using SINGLE project $PRO";;
+    m )  DBHOST=$OPTARG; echo "- Using db host $DBHOST";;
+    f )  INFILE=$OPTARG; echo "- Using file with deprecated id $f";;
 	h )  usage ;;
 	\?)  usage ;;
 	esac
@@ -74,14 +76,23 @@ fi
 
 
 function build_file {
-# TODO: need to unify the first field (see 2675,2878 plus already dead 2801 and 2812)
+    # note: usually run in automine
+# TODO: double true field (see 2801 and 2812)
 # get the list of deprecated entries with their replacement
 
-grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $3","$1 }' | grep -v unknown > $DATADIR/depr
-grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $4","$1 }' >> $DATADIR/depr
+#grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $3","$1 }' | grep -v unknown > $DATADIR/depr
+# this invert the order (so new one is first)
+grep released $DATADIR/ftplist | grep true |
+awk '$2 == "true" {p=""; c=split($3, s, ","); for(n=c; n>=1; --n) p=p ", " s[n]; print p ", " $1;}' |
+grep -v unknown | cut -c 3- > $DATADIR/depr
+
+#grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $4","$1 }' >> $DATADIR/depr
+grep released $DATADIR/ftplist | grep true |
+awk '$3 == "true" {p=""; c=split($4, s, ","); for(n=c; n>=1; --n) p=p ", " s[n]; print p ", " $1;}' |
+cut -c 3- >> $DATADIR/depr
 grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $5","$1 }' >> $DATADIR/depr
 
-mv $DATADIR/deprecations $FTPARK/dep.`date "+%y%m%d"`
+#mv $DATADIR/deprecations $FTPARK/dep.`date "+%y%m%d"`
 sort -u $DATADIR/depr > $DATADIR/deprecations
 
 #awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
@@ -168,7 +179,7 @@ echo
 
 echo "Using file: "
 echo "`ls -oh $INFILE`"
-echo "to add/update replace field in submission on $DBHOST for projects: $PRO."
+echo "to add/update replace field in submission on $DBHOST for projects: $PRO"
 echo 
 interact "Adding deprecated/superseded subs "
 if [ "$DOIT" != "n" ]

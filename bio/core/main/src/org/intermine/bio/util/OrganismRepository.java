@@ -36,6 +36,7 @@ public final class OrganismRepository
     private Map<String, OrganismData> shortNameMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
     private Map<Integer, OrganismData> strainMap = new HashMap<Integer, OrganismData>();
+    private static Map<String, OrganismData> uniprotToTaxon = new HashMap<String, OrganismData>();
 
     private static final String PROP_FILE = "organism_config.properties";
     private static final String PREFIX = "taxon";
@@ -45,10 +46,11 @@ public final class OrganismRepository
     private static final String SPECIES = "species";
     private static final String STRAINS = "strains";
     private static final String ENSEMBL = "ensemblPrefix";
+    private static final String UNIPROT = "uniprot";
 
     private static final String REGULAR_EXPRESSION =
         PREFIX + "\\.(\\d+)\\.(" + SPECIES + "|" + GENUS + "|" + ABBREVIATION + "|" + STRAINS
-        + "|" + ENSEMBL + ")";
+        + "|" + ENSEMBL + "|" + UNIPROT + ")";
 
     private OrganismRepository() {
       //disable external instantiation
@@ -104,6 +106,9 @@ public final class OrganismRepository
                             }
                         } else if (fieldName.equals(ENSEMBL)) {
                             od.setEnsemblPrefix(attributeValue);
+                        } else if (fieldName.equals(UNIPROT)) {
+                            od.setUniprot(attributeValue);
+                            uniprotToTaxon.put(attributeValue, od);
                         } else {
                             if (fieldName.equals(SPECIES)) {
                                 od.setSpecies(attributeValue);
@@ -128,7 +133,10 @@ public final class OrganismRepository
 
             for (OrganismData od: or.taxonMap.values()) {
                 or.genusSpeciesMap.put(new MultiKey(od.getGenus(), od.getSpecies()), od);
-                or.shortNameMap.put(od.getShortName(), od);
+                // we have some organisms from uniprot that don't have a short name
+                if (od.getShortName() != null) {
+                    or.shortNameMap.put(od.getShortName(), od);
+                }
             }
         }
 
@@ -202,6 +210,16 @@ public final class OrganismRepository
     public OrganismData getOrganismDataByGenusSpecies(String genus, String species) {
         MultiKey key = new MultiKey(genus, species);
         return genusSpeciesMap.get(key);
+    }
+
+    /**
+     * Look up OrganismData objects by Uniprot abbreviation, eg HUMAN or DROME.
+     * Returns null if there is no OrganismData in this OrganismRepository that matches.
+     * @param abbreviation the UniProt abbreviation, eg. HUMAN or DROME
+     * @return the OrganismData
+     */
+    public OrganismData getOrganismDataByUniprot(String abbreviation) {
+        return uniprotToTaxon.get(abbreviation);
     }
 
     /**
