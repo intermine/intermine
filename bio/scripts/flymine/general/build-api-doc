@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# export INIT=/software/noarch/local/init
-# . $INIT/bash/common.bashrc
-
 . /home/flymine/svn/trunk/bio/scripts/flymine/init/bash/common.bashrc
 
 LOGFILE="/home/flymine/logs/build-api-doc-`date +%Y-%m-%d`.log"
