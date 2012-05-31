@@ -2513,7 +2513,11 @@ public final class SqlGenerator
                     }
                 } else {
                     // DON'T NEED TO RE-EVALUATE FNS WE ARE ORDERING BY.
-                    if (q.getSelect().contains(node) && node instanceof QueryFunction) {
+                    if (q.getSelect().contains(node)
+                            && node instanceof QueryFunction
+                            // HACK!!! TODO: work out why this was producing screwed up
+                            // precompute queries.
+                            && ((QueryFunction) node).getOperation() != QueryFunction.COUNT) {
                         String alias = q.getAliases().get(node);
                         buffer.append(alias);
                     } else {
