@@ -22,12 +22,10 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.CacheMap;
 
@@ -150,13 +148,8 @@ public abstract class QueryExecutor
         if (filterTerm == null || filterTerm.isEmpty()) {
             return summariseQuery(pq, summaryPath);
         }
-        int uniqValues = uniqueColumnValues(pq, summaryPath);
-        if (uniqValues > summaryBatchSize) {
-            return os.execute(makeSummaryQuery(pq, summaryPath, filterTerm), summaryBatchSize,
-                    true, true, true);
-        } else {
-            return summariseQuery(pq, summaryPath);
-        }
+        return os.execute(makeSummaryQuery(pq, summaryPath, filterTerm), summaryBatchSize,
+                true, true, true);
     }
 
     /**
