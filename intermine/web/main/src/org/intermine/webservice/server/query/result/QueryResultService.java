@@ -74,6 +74,7 @@ public class QueryResultService extends AbstractQueryService
 
     /** Batch size to use **/
     private static final int BATCH_SIZE = 5000;
+    private Map<String, Object> attributes = new HashMap<String, Object>();;
 
     /**
      * Constructor
@@ -134,7 +135,7 @@ public class QueryResultService extends AbstractQueryService
      * @param size The size of this set of results
      */
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
-        Map<String, Object> attributes = new HashMap<String, Object>();
+        
         if (formatIsJSON()) {
             // These attributes are always needed
             attributes.put(JSONResultFormatter.KEY_MODEL_NAME, pq.getModel().getName());
@@ -355,6 +356,9 @@ public class QueryResultService extends AbstractQueryService
                 try {
                     String filterTerm = request.getParameter("filterTerm");
                     Results r = executor.summariseQuery(pathQuery, summaryPath, filterTerm);
+                    if (StringUtils.isNotBlank(filterTerm)) {
+                        attributes.put("filteredCount", r.size());
+                    }
                     it = new ResultsIterator(r, firstResult, maxResults, filterTerm);
                 } catch (ObjectStoreException e) {
                     throw new ServiceException("Problem getting summary.", e);
