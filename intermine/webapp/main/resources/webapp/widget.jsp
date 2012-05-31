@@ -33,9 +33,7 @@
                     "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/model.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/service.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
                     "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
@@ -73,9 +71,7 @@
                     "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/model.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/service.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
                     "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
@@ -113,9 +109,7 @@
                     "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/model.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/service.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
                     "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
                     "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
