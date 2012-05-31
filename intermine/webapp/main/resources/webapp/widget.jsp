@@ -29,18 +29,18 @@
                 },
                 resultsCb: function(pq) {
                     var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/bootstrap.css\" rel=\"stylesheet\">" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/jquery-1.7.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/underscore-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/backbone.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/model.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/service.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/query.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/deps.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/imtables.js\"></scr"+"ipt>" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/tables.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/css/flick/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
+                    "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/model.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/service.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
+                    "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">" +
                     "<script type=\"text/javascript\">$(function() { " +
                         "var pq = " + JSON.stringify(pq) + ";" +
                         "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
@@ -69,18 +69,18 @@
                 },
                 resultsCb: function(pq) {
                     var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/bootstrap.css\" rel=\"stylesheet\">" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/jquery-1.7.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/underscore-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/backbone.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/model.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/service.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/query.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/deps.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/imtables.js\"></scr"+"ipt>" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/tables.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/css/flick/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
+                    "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/model.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/service.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
+                    "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">" +
                     "<script type=\"text/javascript\">$(function() { " +
                         "var pq = " + JSON.stringify(pq) + ";" +
                         "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
@@ -109,18 +109,18 @@
                 },
                 resultsCb: function(pq) {
                     var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/bootstrap.css\" rel=\"stylesheet\">" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/jquery-1.7.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/underscore-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/backbone.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/model.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/service.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/lib/imjs/src/query.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/deps.js\"></scr"+"ipt>" +
-                    "<script src=\"http://alexkalderimis.github.com/im-tables/js/imtables.js\"></scr"+"ipt>" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/css/tables.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/css/flick/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://alexkalderimis.github.com/im-tables/lib/google-code-prettify/prettify.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
+                    "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/model.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/service.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/query.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
+                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
+                    "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
+                    "<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">" +
                     "<script type=\"text/javascript\">$(function() { " +
                         "var pq = " + JSON.stringify(pq) + ";" +
                         "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
