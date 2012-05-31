@@ -182,9 +182,8 @@
     </source>
     
     <source name="flybase-expression" type="flybase-expression">
-      <property name="src.data.dir" location="/micklem/data/modMine_flyRNAseq"/>
-      <property name="src.data.dir.includes" value="HTD_modENCODE_BinData_2010-10-05.txt"/>
-      <property name="flybaseExpressionLevelsFile" location="/micklem/data/modMine_flyRNAseq/BinLOOKUP_modENCODE_FlyAtlas.txt"/>
+      <property name="src.data.dir" location="/micklem/data/modMine_flyRNAseq/current"/>
+      <property name="flybaseExpressionLevelsFile" location="/micklem/data/BinLOOKUP_modENCODE_FlyAtlas.txt"/>
     </source>
 
     <source name="flyreg" type="flyreg">
