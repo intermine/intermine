@@ -52,6 +52,7 @@ import org.intermine.webservice.server.output.JSONObjectFormatter;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowFormatter;
 import org.intermine.webservice.server.output.JSONTableFormatter;
+import org.intermine.webservice.server.output.MemoryOutput;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
