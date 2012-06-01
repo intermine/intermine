@@ -2096,7 +2096,7 @@ Widgets = (function() {
 
   Widgets.name = 'Widgets';
 
-  Widgets.prototype.VERSION = '1.2.0';
+  Widgets.prototype.VERSION = '1.2.1';
 
   Widgets.prototype.wait = true;
 
@@ -2125,13 +2125,7 @@ Widgets = (function() {
       path: "https://www.google.com/jsapi",
       type: "js"
     }, {
-      path: "http://cdn.intermine.org/js/intermine/imjs/latest/model.js",
-      type: "js"
-    }, {
-      path: "http://cdn.intermine.org/js/intermine/imjs/latest/query.js",
-      type: "js"
-    }, {
-      path: "http://cdn.intermine.org/js/intermine/imjs/latest/service.js",
+      path: "http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js",
       type: "js"
     }
   ];
