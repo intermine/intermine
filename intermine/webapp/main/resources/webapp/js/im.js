@@ -1,11 +1,18 @@
-if (typeof intermine == "undefined") {
-    intermine = {};
-}
-if (typeof __ == "undefined") {
-    __ = function(x) {return _(x).chain()};
-}
+"use strict";
 
-_.extend(intermine, (function() {
+(function(exports, IS_NODE) {
+
+    var _;
+    if (IS_NODE) {
+        _ = require('underscore')._;
+    } else {
+        _ = exports._;
+        if (typeof exports.intermine == 'undefined') {
+            exports.intermine = {};
+        }
+        exports = intermine;
+    }
+
     var List = function(properties, service) {
 
         _(this).extend(properties);
@@ -19,9 +26,10 @@ _.extend(intermine, (function() {
             return t.substr(t.indexOf(":") + 1);
         };
 
-        this.folders = __(this.tags).filter(isFolder)
-                                    .map(getFolderName)
-                                    .value();
+        this.folders = _(this.tags).chain()
+                                   .filter(isFolder)
+                                   .map(getFolderName)
+                                   .value();
         
         this.hasTag = function(t) {
             return _(this.tags).include(t);
@@ -48,18 +56,23 @@ _.extend(intermine, (function() {
         };
     };
 
-    return {"List": List};
-})());
+    exports.List = List;
+}).call(this, typeof exports === 'undefined' ? this : exports, typeof exports != 'undefined');
         
-if (typeof intermine == "undefined") {
-    intermine = {};
-}
+"use strict";
 
-if (typeof __ == "undefined") {
-    __ = function(x) {return _(x).chain()};
-}
+(function(exports, IS_NODE) {
 
-_.extend(intermine, (function() {
+    var _;
+    if (IS_NODE) {
+        _ = require('underscore')._;
+    } else {
+        _ = exports._;
+        if (typeof exports.intermine === 'undefined') {
+            exports.intermine = {};
+        }
+        exports = exports.intermine;
+    } 
 
     var PathInfo = function(info) {
         _(this).extend(info);
@@ -220,7 +233,6 @@ _.extend(intermine, (function() {
     Model.prototype.getPathInfo = function(path, subclasses) {
         var self = this;
         subclasses = subclasses || {};
-        console.log(path, subclasses);
         var pathInfo = {};
         var parts = path.split(".");
         var cd = this.classes[parts.shift()];
@@ -342,23 +354,36 @@ _.extend(intermine, (function() {
     Model.INTEGRAL_TYPES = ["int", "Integer"]
     Model.BOOLEAN_TYPES = ["boolean", "Boolean"];
 
-    return {"Model": Model};
-})());
+    exports.Model = Model;
+}).call(this, typeof exports === 'undefined' ? this : exports, typeof exports != 'undefined');
 
-if (typeof intermine == "undefined") {
-    intermine = {};
-}
-if (typeof __ == "undefined") {
-    __ = function(x) {return _(x).chain()};
-}
-if (typeof console == "undefined") {
-    console = {log: function() {}}
-}
+"use strict";
 
-_.extend(intermine, (function() {
+(function(exports, IS_NODE) {
+
+    var clone;
+    var toQueryString;
+    var _;
+
+    if (IS_NODE) {
+        _ = require('underscore')._;
+        clone = require('clone');
+        toQueryString = require('querystring').stringify;
+    } else {
+        clone = function(o) {return jQuery.extend(true, {}, o);};
+        toQueryString = function(req) { return jQuery.param(req); };
+        _ = exports._;
+        if (typeof exports.intermine == 'undefined') {
+            exports.intermine = {};
+        }
+        exports = exports.intermine;
+    }
+
+    if (typeof console == 'undefined') {
+        console = {log: function() {}}
+    }
 
     var Query = function(properties, service) {
-        
         var adjustPath, constructor;
 
         var JOIN_STYLES = ["INNER", "OUTER"];
@@ -475,7 +500,7 @@ _.extend(intermine, (function() {
                 return _(f).bind(this)
             }));
             unwanted = _.flatten([_(unwanted).map(mapFn)]);
-            
+
             this.sortOrder = _(this.sortOrder).filter(function(so) {return !_(unwanted).include(so.path);});
 
             this.views = _(this.views).difference(unwanted);
@@ -516,9 +541,10 @@ _.extend(intermine, (function() {
         this.addToSelect = function(views) {
             var self = this;
             views = _(views).isString() ? [views] : views || [];
-            var toAdd  = __(views).map(_(adjustPath).bind(this))
-                     .map(_(expandStar).bind(this))
-                     .value();
+            var toAdd  = _(views).chain()
+                                .map(_(adjustPath).bind(this))
+                                .map(_(expandStar).bind(this))
+                                .value();
 
             _.chain([toAdd]).flatten().each(function(p) { self.views.push(p) });
             this.trigger("add:view", toAdd);
@@ -558,14 +584,12 @@ _.extend(intermine, (function() {
             var ret = [root];
             var others = [];
             if (cd && depth > 0) {
-                with (_) {
-                    others = flatten(map(cd.fields, function(r) {
-                        var p = root + "." + r.name;
-                        var pi = that.getPathInfo(p);
-                        var cls = pi.getEndClass();
-                        return that._getPaths(p, cls, depth - 1);
-                    }));
-                }
+                others = _.flatten(_.map(cd.fields, function(r) {
+                    var p = root + "." + r.name;
+                    var pi = that.getPathInfo(p);
+                    var cls = pi.getEndClass();
+                    return that._getPaths(p, cls, depth - 1);
+                }));
             } 
             return ret.concat(others);
         };
@@ -640,15 +664,15 @@ _.extend(intermine, (function() {
                 var cd = this.model.getCdForPath(pathStem);
                 if (/\.\*$/.test(path)) {
                     if (cd && this.summaryFields[cd.name]) {
-                        return __(this.summaryFields[cd.name])
-                                .reject(this.hasView)
+                        return _(this.summaryFields[cd.name]).chain()
+                                .reject(_(this.hasView).bind(this))
                                 .map(_.compose(expand, decapitate))
                                 .value();
                     }
                 } 
                 if (/\.\*\*$/.test(path)) {
                     var str = function(a) {return "." + a.name};
-                    return __(_(expandStar).bind(this)(pathStem + ".*"))
+                    return _(_(expandStar).bind(this)(pathStem + ".*")).chain()
                             .union(_(cd.attributes).map(_.compose(expand, str)))
                             .unique()
                             .value();
@@ -731,6 +755,13 @@ _.extend(intermine, (function() {
         };
 
         this.summarise = function(path, limit, cont) {
+            return this.filterSummary(path, "", limit, cont);
+        };
+
+        // To be considerate.
+        this.summarize = this.summarise;
+
+        this.filterSummary = function(path, term, limit, cont) {
             if (_.isFunction(limit) && !cont) {
                 cont = limit;
                 limit = null;
@@ -745,10 +776,11 @@ _.extend(intermine, (function() {
             if (limit) {
                 req.size = limit;
             }
+            if (term) {
+                req.filterTerm = term;
+            }
             return this.service.makeRequest("query/results", req, function(data) {cont(data.results, data.uniqueValues)});
         };
-
-        this.summarize = this.summarise;
 
         this._get_data_fetcher = function(serv_fn) { 
             return function(page, cb) {
@@ -764,17 +796,19 @@ _.extend(intermine, (function() {
             };
         };
 
+        this.rowByRow = this._get_data_fetcher('rowByRow');
+        this.recordByRecord = this._get_data_fetcher('recordByRecord');
         this.records = this._get_data_fetcher("records");
         this.rows = this._get_data_fetcher("rows");
         this.table = this._get_data_fetcher("table");
 
         this.clone = function(cloneEvents) {
             // Not the fastest, but it does make isolated clones.
-            var clone = jQuery.extend(true, {}, this);
+            var cloned =clone(this);
             if (!cloneEvents) {
-                clone._callbacks = {};
+                cloned._callbacks = {};
             }
-            return clone;
+            return cloned;
         };
 
         this.next = function() {
@@ -817,15 +851,13 @@ _.extend(intermine, (function() {
 
         var parseSortOrder = function(input, adjuster) {
             var so = input;
-            with (_) {
-                if (isString(input)) {
-                    so = {path: input, direction: "ASC"};
-                } else if (! input.path) {
-                    var k = keys(input)[0];
-                    var v = values(input)[0];
-                    so = {path: k, direction: v};
-                } 
-            }
+            if (_.isString(input)) {
+                so = {path: input, direction: "ASC"};
+            } else if (! input.path) {
+                var k = _.keys(input)[0];
+                var v = _.values(input)[0];
+                so = {path: k, direction: v};
+            } 
             so.path = adjuster(so.path);
             so.direction = so.direction.toUpperCase();
             return so;
@@ -987,23 +1019,27 @@ _.extend(intermine, (function() {
         };
 
         this.getConstraintXML = function() {
-            var xml = "";
-            __(this.constraints).filter(function(c) {return c.type != null}).each(function(c) {
-                xml += '<constraint path="' + c.path + '" type="' + c.type + '"/>';
-            });
-            __(this.constraints).filter(function(c) {return c.type == null}).each(function(c) {
-                xml += '<constraint path="' + c.path + '" op="' + _.escape(c.op) + '"';
-                if (c.value) {
-                    xml += ' value="' + _.escape(c.value) + '"';
-                }
-                if (c.values) {
-                    xml += '>';
-                    _(c.values).each(function(v) {xml += '<value>' + _.escape(v) + '</value>'});
-                    xml += '</constraint>';
-                } else {
-                    xml += '/>';
-                }
-            });
+            var xml = _(this.constraints).chain()
+              .filter(function(c) {return c.type != null})
+              .map(function(c) {return '<constraint path="' + c.path + '" type="' + c.type + '"/>'})
+              .value().join('');
+            xml += _(this.constraints).chain()
+                .filter(function(c) {return c.type == null})
+                .map(function(c) {
+                    var ret = '<constraint path="' + c.path + '" op="' + _.escape(c.op) + '"';
+                    if (c.value) {
+                        ret += ' value="' + _.escape(c.value) + '"';
+                    }
+                    if (c.values) {
+                        ret += '>';
+                        _(c.values).each(function(v) {ret += '<value>' + _.escape(v) + '</value>'});
+                        ret += '</constraint>';
+                    } else {
+                        ret += '/>';
+                    }
+                    return ret;
+                })
+                .value().join('');
             return xml;
         };
 
@@ -1055,7 +1091,7 @@ _.extend(intermine, (function() {
             if (this.service && this.service.token) {
                 req.token = this.service.token;
             }
-            return this.service.root + "query/results?" + jQuery.param(req);
+            return this.service.root + "query/results?" + toQueryString(req);
         };
 
         var cls = this;
@@ -1075,7 +1111,7 @@ _.extend(intermine, (function() {
                 if (this.service.token) {
                     req.token = this.service.token;
                 }
-                return this.service.root + "query/results/" + f + "?" + jQuery.param(req);
+                return this.service.root + "query/results/" + f + "?" + toQueryString(req);
             };
         });
 
@@ -1119,7 +1155,7 @@ _.extend(intermine, (function() {
             if (this.service && this.service.token) {
                 req.token = this.service.token;
             }
-            return this.service.root + "query/code?" + jQuery.param(req);
+            return this.service.root + "query/code?" + toQueryString(req);
         };
 
         constructor(properties || {}, service);
@@ -1135,40 +1171,68 @@ _.extend(intermine, (function() {
     Query.LIST_OPS = ["IN", "NOT IN"];
     Query.REFERENCE_OPS = _.union(Query.TERNARY_OPS, Query.LOOP_OPS, Query.LIST_OPS);
 
-    return {"Query": Query};
-})());
-if (typeof intermine == "undefined") {
-    intermine = {};
-}
+    exports.Query = Query;
+}).call(this, typeof exports === 'undefined' ? this : exports, typeof exports != 'undefined');
+"use strict";
 
-if (typeof __ == "undefined") {
-    __ = function(x) {return _(x).chain()};
-}
+(function(exports, IS_NODE) {
 
-_.extend(intermine, (function() {
+    var Model, Query, List, _, Deferred;
+    if (IS_NODE) {
+        _ = require('underscore')._;
+        Deferred = require('jquery-deferred').Deferred;
+        var http     = require('http');
+        var URL      = require('url');
+        var qs       = require('querystring');
+        Model        = require('./model').Model;
+        Query        = require('./query').Query;
+        List         = require('./lists').List;
+        var EventEmitter = require('events').EventEmitter;
+        var BufferedResponse = require('buffered-response').BufferedResponse;
+    } else {
+        _ = exports._;
+        Deferred = exports.jQuery.Deferred;
+        if (typeof exports.intermine === 'undefined') {
+            exports.intermine = {};
+        }
+        exports = exports.intermine;
+    } 
+
+    var to_query_string = IS_NODE ? qs.stringify : jQuery.param;
 
     var MODELS = {};
     var SUMMARY_FIELDS = {};
     var slice = Array.prototype.slice;
+    var DEFAULT_PROTOCOL = "http://";
+    var VERSION_PATH = "version";
+    var TEMPLATES_PATH = "templates";
+    var LISTS_PATH = "lists";
+    var MODEL_PATH = "model";
+    var SUMMARYFIELDS_PATH = "summaryfields";
+    var QUERY_RESULTS_PATH = "query/results";
+    var QUICKSEARCH_PATH = "search";
+    var WIDGETS_PATH = "widgets";
+    var ENRICHMENT_PATH = "list/enrichment";
+    var WITH_OBJ_PATH = "listswithobject";
+    var LIST_OPERATION_PATHS = {
+        merge: "lists/union",
+        intersect: "lists/intersect",
+        diff: "lists/diff"
+    };
 
     var Service = function(properties) {
-        var DEFAULT_PROTOCOL = "http://";
-        var VERSION_PATH = "version";
-        var TEMPLATES_PATH = "templates";
-        var LISTS_PATH = "lists";
-        var MODEL_PATH = "model";
-        var SUMMARYFIELDS_PATH = "summaryfields";
-        var QUERY_RESULTS_PATH = "query/results";
-        var QUICKSEARCH_PATH = "search";
-        var WIDGETS_PATH = "widgets";
-        var ENRICHMENT_PATH = "list/enrichment";
-        var WITH_OBJ_PATH = "listswithobject";
 
-        var LIST_OPERATION_PATHS = {
-            merge: "lists/union",
-            intersect: "lists/intersect",
-            diff: "lists/diff"
-        };
+        List = List || intermine.List;
+
+        if (typeof Model === 'undefined' && intermine) {
+            Model = intermine.Model;
+        }
+        if (typeof Query === 'undefined' && intermine) {
+            Query = intermine.Query;
+        }
+        if (typeof Query === 'undefined' && intermine) {
+            List = intermine.List;
+        }
 
         var getResulteriser = function(cb) { return function(data) {
             cb = cb || function() {};
@@ -1177,18 +1241,19 @@ _.extend(intermine, (function() {
 
         var getFormat = function(def) {
             var format = def || "json";
-            if (!jQuery.support.cors) {
+            if (!(IS_NODE || jQuery.support.cors)) {
                 format = format.replace("json", "jsonp");
             }
             return format;
         };
 
         /**
-         * Performs a get request for data against a url. 
-         * This method makes use of jsonp where available.
-         */
-        this.makeRequest = function(path, data, cb, method) {
-            var url = this.root + path;
+        * Performs a get request for data against a url. 
+        * This method makes use of jsonp where available.
+        */
+        this.makeRequest = function(path, data, cb, method, itemByItem) {
+            var url   = this.root + path;
+            var errorCB = function() {};
             data = data || {};
             cb = cb || function() {};
             if (this.token) {
@@ -1196,30 +1261,150 @@ _.extend(intermine, (function() {
             }
             var dataType = "json";
             data.format = getFormat(data.format);
-            if (!jQuery.support.cors) {
+
+            if (_(cb).isArray()) {
+                errorCB = cb[1];
+                cb = cb[0];
+            }
+
+            if (!(IS_NODE || jQuery.support.cors)) {
                 data.method = method;
                 method = false; 
                 url += "?callback=?";
                 dataType = "jsonp";
                 console.log("No CORS support: going for jsonp");
+            } else if (IS_NODE && !method) {
+                method = "GET";
             }
 
             if (method) {
                 if (method === "DELETE") {
                     // grumble grumble struts grumble grumble...
-                    url += "?" + jQuery.param(data);
+                    url += "?" + to_query_string(data);
                 }
-                return jQuery.ajax({
+                return this.doReq({
                     data: data,
                     dataType: "json",
                     success: cb,
+                    error: errorCB,
                     url: url,
                     type: method
-                });
+                }, itemByItem);
             } else {
                 return jQuery.getJSON(url, data, cb);
             }
         };
+
+        if (IS_NODE) {
+            this.rowByRow = function(q, page, cbs) {
+                // Allow calling as rows(q, cb)
+                if (_(cbs).isUndefined() && _(page).isFunction()) {
+                    cbs = page;
+                    page = {};
+                }
+                page = page || {};
+                var req = _(page).extend({query: q.toXML()});
+                return this.makeRequest(QUERY_RESULTS_PATH, req, cbs, 'POST', true);
+            };
+
+            this.recordByRecord = function(q, page, cbs) {
+                // Allow calling as records(q, cb)
+                if (_(cbs).isUndefined() && _(page).isFunction()) {
+                    cbs = page;
+                    page = {};
+                }
+                page = page || {};
+                var req = _(page).extend({query: q.toXML(), format: "jsonobjects"});
+                return this.makeRequest(QUERY_RESULTS_PATH, req, cbs, 'POST', true);
+            };
+
+            var PESKY_COMMA = /,\s*$/;
+
+            var __doIterableReq = function(ret, opts) { return function(res) {
+                 var iter, containerBuffer = "";
+                 var char0 = (opts.data.format === 'json') ? '[' : '{';
+                 var charZ = (opts.data.format === 'json') ? ']' : '}';
+                 iter = new BufferedResponse(res, 'utf8')
+                    .map(function(line, idx) {
+                        try {
+                          var parsed = JSON.parse(line.replace(PESKY_COMMA, ''));
+                          return parsed;
+                        } catch(e) {
+                          containerBuffer += line;
+                          var lastChar = line[line.length - 1];
+                          if (idx > 0 && (lastChar === ',' || (lastChar === char0 && line[0] === charZ))) {
+                              iter.emit('error', e, line); // should have parsed.
+                          }
+                          return undefined;
+                        }
+                    })
+                   .filter(function(item) {return (!!item)})
+                   .each(opts.success)
+                   .error(opts.error)
+                   .done(function() {
+                     try {
+                         var container = JSON.parse(containerBuffer);
+                         if (container.error) {
+                             ret.reject(container.error);
+                             iter.emit('error', container.error);
+                         }
+                     } catch (e) {
+                         ret.reject(e, containerBuffer);
+                         iter.emit('error', containerBuffer);
+                     }
+                   });
+                ret.resolve(iter);
+            }};
+            var __doSingletonResult = function(ret, opts) { return function(res) {
+                 var contentBuffer = "";
+                 ret.then(opts.success);
+                 res.on('data', function(chunk) {contentBuffer += chunk});
+                 res.on('end', function() {
+                     var parsed;
+                     try {
+                         parsed = JSON.parse(contentBuffer);
+                         if (parsed.error) {
+                             ret.reject(parsed.error, parsed.status);
+                         } else {
+                             ret.resolve(parsed);
+                         }
+                     } catch(e) {
+                         ret.reject(e, contentBuffer);
+                     }
+                 });
+            }};
+
+            this.doReq = function(opts, resultByResult) {
+                var ret = new Deferred().fail(opts.error);
+                var postdata = to_query_string(opts.data);
+                var url = URL.parse(opts.url, true);
+                url.method = opts.type;
+                url.port = url.port || 80;
+                url.headers = {'User-Agent': 'node-http/imjs'};
+                if (url.method === 'GET' && _(opts.data).size()) {
+                    url.path += "?" + postdata;
+                } else if (url.method === 'POST') {
+                    url.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    url.headers['Content-Length'] = postdata.length;
+                }
+                var req = http.request(url, (resultByResult) ?
+                    __doIterableReq(ret, opts) : __doSingletonResult(ret, opts));
+
+                req.on('error', function(e) {
+                    ret.reject(e);
+                });
+
+                if (url.method === 'POST') {
+                    req.write(postdata);
+                }
+                req.end();
+                return ret;
+            };
+        } else {
+            this.doReq = function(opts) {
+                return jQuery.ajax(opts);
+            }
+        }
 
         this.widgets = function(cb) {
             cb = cb || _.identity;
@@ -1259,9 +1444,9 @@ _.extend(intermine, (function() {
         this.count = function(q, cont) {
             var req = {
                 query: q.toXML(),
-                format: jQuery.support.cors ? "jsoncount" : "jsonpcount"
+                format: (IS_NODE || jQuery.support.cors) ? "jsoncount" : "jsonpcount"
             };
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             this.makeRequest(QUERY_RESULTS_PATH, req, function(data) {
                 cont(data.count);
                 promise.resolve(data.count);
@@ -1280,7 +1465,7 @@ _.extend(intermine, (function() {
         this.whoami = function(cb) {
             cb = cb || function() {};
             var self = this;
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             self.fetchVersion(function(v) {
                 if (v < 9) {
                     var msg = "The who-am-i service requires version 9, this is only version " + v;
@@ -1309,8 +1494,8 @@ _.extend(intermine, (function() {
                 page = {};
             }
             page = page || {};
-            var req = _(page).extend({query: q.toXML(), format: jQuery.support.cors ? "jsonobjects" : "jsonpobjects"});
-            return this.makeRequest(QUERY_RESULTS_PATH, req, getResulteriser(cb));
+            var req = _(page).extend({query: q.toXML(), format: (IS_NODE || jQuery.support.cors) ? "jsonobjects" : "jsonpobjects"});
+            return this.makeRequest(QUERY_RESULTS_PATH, req, getResulteriser(cb), 'POST');
         };
 
         this.rows = function(q, page, cb) {
@@ -1321,7 +1506,7 @@ _.extend(intermine, (function() {
             }
             page = page || {};
             var req = _(page).extend({query: q.toXML()});
-            return this.makeRequest(QUERY_RESULTS_PATH, req, getResulteriser(cb));
+            return this.makeRequest(QUERY_RESULTS_PATH, req, getResulteriser(cb), 'POST');
         };
 
         var constructor = _.bind(function(properties) {
@@ -1343,7 +1528,7 @@ _.extend(intermine, (function() {
 
         this.fetchVersion = function(cb) {
             var self = this;
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             if (typeof this.version === "undefined") {
                 this.makeRequest(VERSION_PATH, null, function(data) {
                     this.version = data.version;
@@ -1357,7 +1542,7 @@ _.extend(intermine, (function() {
         };
 
         this.fetchTemplates = function(cb) {
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             this.makeRequest(TEMPLATES_PATH, null, function(data) {
                 cb(data.templates);
                 promise.resolve(data.templates);
@@ -1367,9 +1552,9 @@ _.extend(intermine, (function() {
 
         this.fetchLists = function(cb) {
             var self = this;
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             this.makeRequest(LISTS_PATH, null, function(data) {
-                var lists = _(data.lists).map(function (l) {return new intermine.List(l, self)});
+                var lists = _(data.lists).map(function (l) {return new List(l, self)});
                 cb(lists);
                 promise.resolve(lists);
             }).fail(promise.reject);
@@ -1379,7 +1564,7 @@ _.extend(intermine, (function() {
         this.combineLists = function(operation) {
             var self = this;
             return function(options, cb) {
-                var promise = jQuery.Deferred();
+                var promise = Deferred();
                 var path = LIST_OPERATION_PATHS[operation];
                 var params = {
                     name: options.name,
@@ -1405,7 +1590,7 @@ _.extend(intermine, (function() {
 
         this.fetchModel = function(cb) {
             var self = this;
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             if (MODELS[self.root]) {
                 self.model = MODELS[self.root];
             }
@@ -1414,8 +1599,8 @@ _.extend(intermine, (function() {
                 promise.resolve(self.model);
             } else {
                 this.makeRequest(MODEL_PATH, null, function(data) {
-                    if (intermine.Model) {
-                        self.model = new intermine.Model(data.model);
+                    if (Model) {
+                        self.model = new Model(data.model);
                     } else {
                         self.model = data.model;
                     }
@@ -1429,7 +1614,7 @@ _.extend(intermine, (function() {
 
         this.fetchSummaryFields = function(cb) {
             var self = this;
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             if (SUMMARY_FIELDS[self.root]) {
                 self.summaryFields = SUMMARY_FIELDS[self.root];
             }
@@ -1448,19 +1633,19 @@ _.extend(intermine, (function() {
         };
 
         /**
-         * Fetch lists containing an item.
-         *
-         * @param options Options should contain: 
-         *  - either:
-         *    * id: The internal id of the object in question
-         *  - or: 
-         *    * publicId: An identifier
-         *    * type: The type of object (eg. "Gene")
-         *    * extraValue: (optional) A domain to help resolve the object (eg an organism for a gene).
-         *
-         *  @param cb function of the type: [List] -> ()
-         *  @return A promise
-         */
+        * Fetch lists containing an item.
+        *
+        * @param options Options should contain: 
+        *  - either:
+        *    * id: The internal id of the object in question
+        *  - or: 
+        *    * publicId: An identifier
+        *    * type: The type of object (eg. "Gene")
+        *    * extraValue: (optional) A domain to help resolve the object (eg an organism for a gene).
+        *
+        *  @param cb function of the type: [List] -> ()
+        *  @return A promise
+        */
         this.fetchListsContaining = function(opts, cb) {
             cb = cb || function() {};
             return this.makeRequest(WITH_OBJ_PATH, opts, function(data) {cb(data.lists)});
@@ -1469,11 +1654,11 @@ _.extend(intermine, (function() {
 
         this.query = function(options, cb) {
             var service = this;
-            var promise = jQuery.Deferred();
+            var promise = Deferred();
             service.fetchModel(function(m) {
                 service.fetchSummaryFields(function(sfs) {
                     _.defaults(options, {model: m, summaryFields: sfs});
-                    var q = new intermine.Query(options, service);
+                    var q = new Query(options, service);
                     cb(q);
                     promise.resolve(q);
                 }).fail(promise.reject);
@@ -1484,7 +1669,12 @@ _.extend(intermine, (function() {
         constructor(properties || {});
     };
 
-    return {"Service": Service};
-})());
+    exports.Service = Service;
+    if (IS_NODE) {
+        exports.Model = Model;
+        exports.Query = Query;
+        exports.List = List;
+    }
+}).call(this, typeof exports === 'undefined' ? this : exports, typeof exports != 'undefined');
 
         
