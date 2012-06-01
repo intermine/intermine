@@ -7,7 +7,7 @@
  * Copyright 2012, Alex Kalderimis
  * Released under the LGPL license.
  * 
- * Built at Fri Jun 01 2012 10:12:29 GMT+0100 (BST)
+ * Built at Fri Jun 01 2012 11:31:24 GMT+0100 (BST)
 */
 
 
@@ -777,13 +777,25 @@
           page.size = 0;
         }
         if (page.size && (page.end() < this.cache.lowerBound)) {
-          page.size = this.cache.lowerBound - page.start;
+          if ((this.cache.lowerBound - page.end()) > (page.size * 10)) {
+            this.cache = {};
+            page.size *= 2;
+            return page;
+          } else {
+            page.size = this.cache.lowerBound - page.start;
+          }
         }
         if (this.cache.upperBound < page.start) {
-          if (page.size !== 0) {
-            page.size += page.start - this.cache.lowerBound;
+          if ((page.start - this.cache.upperBound) > (page.size * 10)) {
+            this.cache = {};
+            page.size *= 2;
+            page.start = Math.max(0, page.start - (size * this._pipe_factor));
+            return page;
           }
-          page.start = this.cache.lowerBound;
+          if (page.size !== 0) {
+            page.size += page.start - this.cache.upperBound;
+          }
+          page.start = this.cache.upperBound;
         }
         return page;
       };
@@ -792,7 +804,7 @@
         var merged, rows;
         if (!this.cache.lastResult) {
           this.cache.lastResult = result;
-          this.cache.lowerBound = page.start;
+          this.cache.lowerBound = result.start;
           return this.cache.upperBound = page.end();
         } else {
           rows = result.results;
@@ -937,39 +949,41 @@
             currentPageButton.hide();
             return pageSelector.parent().show();
           });
-          $scrollwrapper = $(_this.horizontalScroller).insertBefore(telem);
-          scrollbar = _this.$('.scroll-bar');
-          currentPos = 0;
-          scrollbar.draggable({
-            axis: "x",
-            containment: "parent",
-            stop: function(event, ui) {
-              scrollbar.removeClass("scrolling");
-              scrollbar.tooltip("hide");
-              return _this.table.goTo(currentPos);
-            },
-            start: function() {
-              return $(this).addClass("scrolling");
-            },
-            drag: function(event, ui) {
-              var left, total;
-              scrollbar.tooltip("show");
-              left = ui.position.left;
-              total = ui.helper.closest('.scroll-bar-wrap').width();
-              return currentPos = _this.cache.lastResult.iTotalRecords * left / total;
-            }
-          });
-          scrollbar.css({
-            position: "absolute"
-          }).parent().css({
-            position: "relative"
-          });
-          scrollbar.tooltip({
-            trigger: "manual",
-            title: function() {
-              return "" + ((currentPos + 1).toFixed()) + " ... " + ((currentPos + _this.table.pageSize).toFixed());
-            }
-          });
+          if (_this.bar === 'horizontal') {
+            $scrollwrapper = $(_this.horizontalScroller).insertBefore(telem);
+            scrollbar = _this.$('.scroll-bar');
+            currentPos = 0;
+            scrollbar.draggable({
+              axis: "x",
+              containment: "parent",
+              stop: function(event, ui) {
+                scrollbar.removeClass("scrolling");
+                scrollbar.tooltip("hide");
+                return _this.table.goTo(currentPos);
+              },
+              start: function() {
+                return $(this).addClass("scrolling");
+              },
+              drag: function(event, ui) {
+                var left, total;
+                scrollbar.tooltip("show");
+                left = ui.position.left;
+                total = ui.helper.closest('.scroll-bar-wrap').width();
+                return currentPos = _this.cache.lastResult.iTotalRecords * left / total;
+              }
+            });
+            scrollbar.css({
+              position: "absolute"
+            }).parent().css({
+              position: "relative"
+            });
+            scrollbar.tooltip({
+              trigger: "manual",
+              title: function() {
+                return "" + ((currentPos + 1).toFixed()) + " ... " + ((currentPos + _this.table.pageSize).toFixed());
+              }
+            });
+          }
           _this.table = new ResultsTable(_this.query, _this.getRowData);
           _this.table.setElement(telem);
           if (_this.pageSize != null) {
@@ -3037,6 +3051,7 @@
         this.query = query;
         this.queryEvents = queryEvents;
         this.tableProperties = tableProperties;
+        console.log(this.tableProperties);
         if ((_ref = this.events) == null) {
           this.events = {};
         }
