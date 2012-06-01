@@ -2472,6 +2472,8 @@ $.widget("ui.draggable", $.ui.mouse, {
 		this.offsetParent = this.helper.offsetParent();
 		var po = this.offsetParent.offset();
 
+        var isOffsetParentFound = (this.offsetParent != null && this.offsetParent[0] != null);
+
 		// This is a special case where we need to modify a offset calculated on start, since the following happened:
 		// 1. The position of the helper is absolute, so it's position is calculated based on the next positioned parent
 		// 2. The actual offset parent is a child of the scroll parent, and the scroll parent isn't the document, which means that
@@ -2482,8 +2484,12 @@ $.widget("ui.draggable", $.ui.mouse, {
 		}
 
 		if((this.offsetParent[0] == document.body) //This needs to be actually done for all browsers, since pageX/pageY includes this information
-		|| (this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() == 'html' && $.browser.msie)) //Ugly IE fix
+		|| (isOffsetParentFound && this.offsetParent[0].tagName && this.offsetParent[0].tagName.toLowerCase() == 'html' && $.browser.msie)) //Ugly IE fix
 			po = { top: 0, left: 0 };
+
+        if (po == null) {
+            po = {top: 0, left: 0};
+        }
 
 		return {
 			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"),10) || 0),

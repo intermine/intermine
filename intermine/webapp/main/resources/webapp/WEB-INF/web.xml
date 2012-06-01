@@ -826,6 +826,22 @@
         <minVersion>9</minVersion>
       </metadata>
    </servlet-mapping>
+   
+      <!-- NEW IN VERSION 10 -->
+      
+   <servlet>
+     <servlet-name>ws-id-resolver</servlet-name>
+     <servlet-class>org.intermine.webservice.server.idresolution.IdResolutionServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+     <servlet-name>ws-id-resolver</servlet-name>
+     <url-pattern>/service/ids/*</url-pattern>
+      <metadata>
+        <name>ID Resolution</name>
+        <minVersion>10</minVersion>
+      </metadata>
+   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
