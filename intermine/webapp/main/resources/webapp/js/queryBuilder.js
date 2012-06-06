@@ -21,10 +21,10 @@ function initConstraint(selectedConstraint) {
             var constraintOpIndex = parseInt(attribute5.val());
             console.log(constraintOpIndex);
             switch (constraintOpIndex) {
-                case 6:
-                case 7:
-                case 10:
-                case 18:
+                case 8:
+                case 9:
+                case 12:
+                case 20:
                     var attribute8 = jQuery('#attribute8');
                     if (attribute8.exists()) attribute8.css('display', 'inline').val('');
                     
@@ -35,8 +35,8 @@ function initConstraint(selectedConstraint) {
                     if (multiValue.exists()) multiValue.hide();
                     
                     break;
-                case 21:
-                case 22:
+                case 23:
+                case 24:
                     var attribute7 = jQuery('#attribute7');
                     if (attribute7.exists()) attribute7.hide();
 
