@@ -38,7 +38,10 @@
            dataType: 'html',
            data: 'method=ajaxShowDisplayer&name=${displayer.displayerName}&id=${reportObject.id}',
            success: function(html) {
-             jQuery('#${displayerWrapper}').hide().html(html).fadeIn().removeClass('collection-table');
+             var wrapper = jQuery('#${displayerWrapper}');
+             wrapper.hide();
+             wrapper.html(html);
+             wrapper.fadeIn().removeClass('collection-table');
            },
            error: function(jXHR, textStatus) {
              throw new Error('Failed to load Displayer "' + ${displayer.displayerName} + '", ' + textStatus);

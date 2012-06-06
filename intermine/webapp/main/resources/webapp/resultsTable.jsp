@@ -33,17 +33,28 @@
 <script>
 (function() {
     intermine.css.headerIcon = "fm-header-icon";
-    var query = ${QUERY.json};
+    <c:choose>
+        <c:when test="${not empty QUERY.json}">
+            var query = ${QUERY.json};
+        </c:when>
+        <c:otherwise>
+            var query = ''; // QUERY.json is empty
+        </c:otherwise>
+    </c:choose>
     var service = new intermine.Service({
         "root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
         "token": "${PROFILE.dayToken}"
     });
 
-    jQuery(function() {
-        var view = new intermine.query.results.CompactView(service, query, {}, {pageSize: ${pageSize}});
-        view.$el.appendTo('#${tableContainerId}');
-        view.render();
-    });
+    if (query.length > 0) {
+        jQuery(function() {
+            var view = new intermine.query.results.CompactView(service, query, {}, {pageSize: ${pageSize}});
+            view.$el.appendTo('#${tableContainerId}');
+            view.render();
+        });
+    } else {
+        jQuery('#${tableContainerId}').html('<p>Query has not been specified, failing...</p>');
+    }
 })();
 </script>
 
