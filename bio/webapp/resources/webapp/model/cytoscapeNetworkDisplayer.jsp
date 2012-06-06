@@ -168,7 +168,7 @@
 <div id="cwinlinetable" class="collection-table nowrap nomargin">
   <h3>Interactions</h3>
   <div style="overflow-x:auto;">
-    <c:if test='${not empty cytoscapeNetworkPagedResults}'>
+    <c:if test='${not empty cytoscapeNetworkPagedResults.exactSize}'>
       <tiles:insert name="resultsTable.tile">
            <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
            <tiles:put name="currentPage" value="objectDetails" />
