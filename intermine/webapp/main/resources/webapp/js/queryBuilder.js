@@ -11,41 +11,63 @@ function initConstraint(selectedConstraint) {
         //attribute8 attribute value
         //attribute7 options
         //LIKE or NOT LIKE or CONTAINS or LOOKUP
-        if(document.getElementById("multiValueAttribute"))
-            document.getElementById("multiValueAttribute").value = "";
-        if (document.getElementById("attribute5")) {
-            var constraintOpIndex = document.getElementById("attribute5").value;
-            if (constraintOpIndex == '6' || constraintOpIndex == '7'
-                || constraintOpIndex == '10' || constraintOpIndex == '18') {
-                document.getElementById("attribute8").style.display = 'inline';
-                document.getElementById("attribute8").value = '';
-                if (document.getElementById("attribute7"))
-                    document.getElementById("attribute7").style.display = 'none';
-                if (document.getElementById("multiValue"))
-                    document.getElementById("multiValue").style.display = 'none';
-              } // IN or NOT IN
-            else if (constraintOpIndex == '21' || constraintOpIndex == '22') {
-                if (document.getElementById("multiValue"))
-                    document.getElementById("multiValue").style.display = 'inline';
-                document.getElementById("multiValue").selectedIndex='-1';
-                if(document.getElementById("attribute8"))
-                    document.getElementById("attribute8").style.display = 'none';
-                if (document.getElementById("attribute7"))
-                      document.getElementById("attribute7").style.display = 'none';
-              } else {
-                if (document.getElementById("attribute7")) {
-                    document.getElementById("attribute7").style.display = 'inline';
-                    if (document.getElementById("attribute8").style != undefined)
-                        document.getElementById("attribute8").style.display = 'none';
-                    if (document.getElementById("attribute7") != undefined)
-                        document.getElementById("attribute8").value = document.getElementById("attribute7").options[0].value;
-                } else {
-                    if (document.getElementById("attribute8").style != undefined)
-                        document.getElementById("attribute8").style.display = 'inline';
-                }
-                 if (document.getElementById("multiValue"))
-                   document.getElementById("multiValue").style.display = 'none';
-              }
+        var multiValueAttribute = jQuery('#multiValueAttribute');
+        if (multiValueAttribute.exists()) {
+            multiValueAttribute.val('');
+        }
+
+        var attribute5 = jQuery('#attribute5');
+        if (attribute5.exists()) {
+            var constraintOpIndex = parseInt(attribute5.val());
+            console.log(constraintOpIndex);
+            switch (constraintOpIndex) {
+                case 6:
+                case 7:
+                case 10:
+                case 18:
+                    var attribute8 = jQuery('#attribute8');
+                    if (attribute8.exists()) attribute8.css('display', 'inline').val('');
+                    
+                    var attribute7 = jQuery('#attribute7');
+                    if (attribute7.exists()) attribute7.hide();
+
+                    var multiValue = jQuery('#multiValue');
+                    if (multiValue.exists()) multiValue.hide();
+                    
+                    break;
+                case 21:
+                case 22:
+                    var attribute7 = jQuery('#attribute7');
+                    if (attribute7.exists()) attribute7.hide();
+
+                    var attribute8 = jQuery('#attribute8');
+                    if (attribute8.exists()) attribute8.hide();
+
+                    var multiValue = jQuery('#multiValue');
+                    if (multiValue.exists()) {
+                        multiValue.css('display', 'inline');
+                        multiValue.attr('selectedIndex', -1);
+                    }
+
+                    break;
+                default:
+                    var attribute7 = jQuery('#attribute7');
+                    if (attribute7.exists()) {
+                        attribute7.css('display', 'inline');
+
+                        var attribute8 = jQuery('#attribute8');
+                        if (attribute8.exists()) {
+                            attribute8.hide();
+                            attribute8.val(attribute7.find('option').first().text());
+                        }
+                    } else {
+                        var attribute8 = jQuery('#attribute8');
+                        if (attribute8.exists()) attribute8.css('display', 'inline');
+                    }
+
+                    var multiValue = jQuery('#multiValue');
+                    if (multiValue.exists()) multiValue.hide();
+            }
         }
     }
 
