@@ -127,3 +127,12 @@ div.template.table div.templateDetails { margin:0 !important; width:100%; }
 
 div.orthologues a { white-space:nowrap; }
 div.orthologues a:not(:first-child) { margin-left:10px; }
+
+/* widgets */
+#toggle-widgets { margin:0 0 10px 10px; }
+#toggle-widgets ol { padding:0; }
+#toggle-widgets ol li { float:left; margin:2px 15px 2px 0; }
+#toggle-widgets ol li a { background: url("../images/icons/toggle-collapse-16.png") no-repeat left;
+    border:none; padding: 2px 2px 2px 16px; cursor:pointer; }
+#toggle-widgets ol li a.inactive { background: url("../images/icons/toggle-expand-16.png") no-repeat left;
+    font-weight: bold; }
