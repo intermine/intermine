@@ -322,22 +322,38 @@
 <div class="heading" style="clear:both;margin-top:15px">
      <a id="widgets">Widgets displaying properties of '${bag.name}'</a> &nbsp;
 </div>
-<script language="javascript">
-  function toggleWidget(widgetid) {
-    var w = jQuery('#' + widgetid + '-widget');
-    w.toggle();
-    AjaxServices.saveToggleState(widgetid, w.is(":visible"));
-  }
-</script>
 
-<p id="toggleWidgets">Click to select widgets you would like to display:
-  <ol class="widgetList">
+<div id="toggle-widgets">
+  <p>Click to select widgets you would like to display:</p>
+  <ol>
   <c:forEach items="${widgets}" var="widget">
-    <li><a title="toggle widget" onclick="toggleWidget('${widget.id}')">${widget.title}</a></li>
+    <li><a href="#" title="toggle widget" data-widget="${widget.id}">${widget.title}</a></li>
   </c:forEach>
   </ol>
-</p>
-<div style="clear:both"></div>
+  <div style="clear:both"></div>
+</div>
+
+<script language="javascript">
+  (function() {
+    jQuery('#toggle-widgets ol li').each(function(index) {
+      jQuery(this).find('a').click(function(e) {
+        // Toggle us.
+        var link = jQuery(e.target);
+        link.toggleClass('inactive');
+
+        // Toggle widget.
+        var widgetId = link.attr('data-widget');
+        var w = jQuery('#' + widgetId + '-widget');
+        w.toggle();
+
+        // Save.
+        AjaxServices.saveToggleState(widgetId, w.is(":visible"));
+
+        e.preventDefault();
+      });
+    });
+  })();
+</script>
 
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
