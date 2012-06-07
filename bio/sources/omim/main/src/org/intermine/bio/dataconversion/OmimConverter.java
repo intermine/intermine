@@ -171,6 +171,10 @@ public class OmimConverter extends BioDirectoryConverter
 
         int lineCount = 0;
         int resolvedCount = 0;
+
+        /**
+         * a class to represent CountPair
+         */
         class CountPair
         {
             protected int resolved = 0;
