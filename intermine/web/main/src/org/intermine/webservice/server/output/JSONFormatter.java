@@ -185,7 +185,7 @@ public class JSONFormatter extends Formatter {
 
         sb.append("\"wasSuccessful\":");
         if (errorCode != Output.SC_OK) {
-            sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJavaScript(errorMessage) + "\"");
+            sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJava(errorMessage) + "\"");
         } else {
             sb.append("true,\"error\":null");
         }
