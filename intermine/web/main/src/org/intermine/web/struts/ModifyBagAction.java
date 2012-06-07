@@ -127,10 +127,11 @@ public class ModifyBagAction extends InterMineAction
                 return;
             }
 
-            String newBagName;
+            String newBagName = "";
             if (newNameTextBox != null) {
                 newBagName = NameUtil.validateName(allBags.keySet(), newNameTextBox);
-            } else {
+            }
+            if (newNameTextBox == null || newBagName.isEmpty()) {
                 newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
             }
 
