@@ -600,14 +600,20 @@ public class Profile
      * @throws ObjectStoreException if problems storing
      */
     public void updateTemplate(String oldName, ApiTemplate template) throws ObjectStoreException {
-        if (!savedTemplates.containsKey(oldName)) {
+        if (oldName == null) {
+            throw new IllegalArgumentException("oldName may not be null");
+        }
+        ApiTemplate old = savedTemplates.get(oldName);
+        if (old == null) {
             throw new IllegalArgumentException("Attempting to rename a template that doesn't"
                     + " exist: " + oldName);
         }
 
         savedTemplates.remove(oldName);
+
         saveTemplate(template.getName(), template);
         if (!oldName.equals(template.getName())) {
+            searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
         }
     }
