@@ -71,7 +71,7 @@ public class CreateTemplateAction extends InterMineAction
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
-        TemplateQuery template = (TemplateQuery) SessionMethods.getQuery(session);
+        ApiTemplate template = new ApiTemplate((TemplateQuery) SessionMethods.getQuery(session));
         String prevTemplateName = (String) session.getAttribute(Constants.PREV_TEMPLATE_NAME);
 
         boolean seenProblem = false;
@@ -173,20 +173,20 @@ public class CreateTemplateAction extends InterMineAction
 
         recordMessage(new ActionMessage(key, template.getName()), request);
 
-        ApiTemplate toSave = new ApiTemplate(template);
+        //ApiTemplate toSave = new ApiTemplate(template);
         if (isNewTemplate) {
-            profile.saveTemplate(template.getName(), toSave);
+            profile.saveTemplate(template.getName(), template);
         } else {
             String oldTemplateName = (prevTemplateName != null)
                 ? prevTemplateName : template.getName();
-            profile.updateTemplate(oldTemplateName, toSave);
+            profile.updateTemplate(oldTemplateName, template);
             im.getTrackerDelegate().updateTemplateName(oldTemplateName, template.getName());
         }
 
         session.removeAttribute(Constants.NEW_TEMPLATE);
         session.removeAttribute(Constants.PREV_TEMPLATE_NAME);
 
-        SessionMethods.loadQuery(toSave, request.getSession(), response);
+        SessionMethods.loadQuery(template, request.getSession(), response);
         if ("SAVE".equals(tsf.getActionType())) {
             return mapping.findForward("query");
         } else {
