@@ -38,7 +38,7 @@
             var query = ${QUERY.json};
         </c:when>
         <c:otherwise>
-            var query = ''; // QUERY.json is empty
+            var query = {}; // QUERY.json is empty
         </c:otherwise>
     </c:choose>
     var service = new intermine.Service({
@@ -46,7 +46,7 @@
         "token": "${PROFILE.dayToken}"
     });
 
-    if (query.length > 0) {
+    if (query && query.select.length > 0) {
         jQuery(function() {
             var view = new intermine.query.results.CompactView(service, query, {}, {pageSize: ${pageSize}});
             view.$el.appendTo('#${tableContainerId}');
