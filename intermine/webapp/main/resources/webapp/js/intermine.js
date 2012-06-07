@@ -293,7 +293,7 @@ im.timestampFormat = function() {
     var timestamp = parseInt(jQuery(this).text());
     // convert to Date and shift from current timezone in minutes
     if (timestamp) { // parse was successful.
-      var d = new Date(timestamp - offset);
+      var d = new Date(timestamp + offset);
       // format
       var formattedTime = d.getFullYear() + "-" +
         pad(d.getMonth() + 1) + "-" +
