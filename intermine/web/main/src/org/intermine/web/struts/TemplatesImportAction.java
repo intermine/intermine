@@ -81,7 +81,8 @@ public class TemplatesImportAction extends InterMineAction
                 if (!templateName.equals(updatedName)) {
                     apiTemplate = renameTemplate(updatedName, apiTemplate);
                 }
-                if (validateLookupConstraints(template)) {
+                if (template.validateLookupConstraints() &&
+                    !template.getEditableConstraints().isEmpty()) {
                     profile.saveTemplate(apiTemplate.getName(), apiTemplate);
                     imported++;
                 } else {
@@ -107,21 +108,5 @@ public class TemplatesImportAction extends InterMineAction
         ApiTemplate newTemplate = template.clone();
         newTemplate.setName(newName);
         return newTemplate;
-    }
-
-    /**
-     * Verify templates don't contain non-editable lookup constraints
-     * @param template to validate
-     * @return true id the tempalte is valid
-     */
-    private boolean validateLookupConstraints(TemplateQuery template) {
-        Map<PathConstraint, String> pathConstraints = template.getConstraints();
-        for (PathConstraint constraint : pathConstraints.keySet()) {
-            if (constraint instanceof PathConstraintLookup
-                && !template.getEditableConstraints().contains(constraint)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

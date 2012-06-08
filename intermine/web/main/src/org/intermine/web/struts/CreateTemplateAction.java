@@ -140,24 +140,14 @@ public class CreateTemplateAction extends InterMineAction
             }
         }
 
-        boolean foundEditableConstraint = false;
-        boolean foundNonEditableLookup = false;
-        for (PathConstraint c : template.getConstraints().keySet()) {
-            if (template.isEditable(c)) {
-                foundEditableConstraint = true;
-            } else if (c instanceof PathConstraintLookup) {
-                foundNonEditableLookup = true;
-            }
-        }
-
         // template must have at least one editable constrain
-        if (!foundEditableConstraint) {
+        if (template.getEditableConstraints().isEmpty()) {
             recordError(new ActionMessage("errors.createtemplate.noconstraints"), request);
             seenProblem = true;
         }
 
         // template cannot have non-editable LOOKUP constraints
-        if (foundNonEditableLookup) {
+        if (!template.validateLookupConstraints()) {
             recordError(new ActionMessage("errors.createtemplate.noneditablelookup"), request);
             seenProblem = true;
         }

@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.intermine.pathquery.PathConstraint;
+import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
@@ -606,5 +607,21 @@ public class TemplateQuery extends PathQuery
     @Override
     public int hashCode() {
         return this.toXml().hashCode();
+    }
+
+    /**
+     * Verify templates don't contain non-editable lookup constraints
+     * @param template to validate
+     * @return true id the tempalte is valid
+     */
+    public boolean validateLookupConstraints() {
+        Map<PathConstraint, String> pathConstraints = getConstraints();
+        for (PathConstraint constraint : pathConstraints.keySet()) {
+            if (constraint instanceof PathConstraintLookup
+                && !editableConstraints.contains(constraint)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
