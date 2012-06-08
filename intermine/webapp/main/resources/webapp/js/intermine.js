@@ -274,8 +274,7 @@ im.getCookie = function(key) {
 // format system timestamps from the client's perspective, add 1 to the month and format the time like on bagUploadConfirm
 // sadly, so that sorters work, we can show nice dates (for now) as a 'title' only
 im.timestampFormat = function() {
-  var offset = new Date().getTimezoneOffset() * 60 * 1000,
-      pad = function(value) {return (value < 10) ? "0" + value : value;};
+  var pad = function(value) { return (value < 10) ? "0" + value : value; };
 
   // locales
   Date.locale = {
@@ -293,7 +292,7 @@ im.timestampFormat = function() {
     var timestamp = parseInt(jQuery(this).text());
     // convert to Date and shift from current timezone in minutes
     if (timestamp) { // parse was successful.
-      var d = new Date(timestamp + offset);
+      var d = new Date(timestamp);
       // format
       var formattedTime = d.getFullYear() + "-" +
         pad(d.getMonth() + 1) + "-" +

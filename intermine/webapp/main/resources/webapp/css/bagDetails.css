@@ -133,6 +133,6 @@ div.orthologues a:not(:first-child) { margin-left:10px; }
 #toggle-widgets ol { padding:0; }
 #toggle-widgets ol li { float:left; margin:2px 15px 2px 0; }
 #toggle-widgets ol li a { background: url("../images/icons/toggle-collapse-16.png") no-repeat left;
-    border:none; padding: 2px 2px 2px 16px; cursor:pointer; }
+    border:none; padding: 2px 2px 2px 16px; cursor:pointer; font-weight:normal; }
 #toggle-widgets ol li a.inactive { background: url("../images/icons/toggle-expand-16.png") no-repeat left;
-    font-weight: bold; }
+    font-weight: normal; }
