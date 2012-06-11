@@ -2,14 +2,17 @@
 <classpath>
 	<classpathentry kind="src" path="main/src"/>
 	<classpathentry kind="src" path="test/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
-	<classpathentry kind="lib" path="test/resources"/>
-	<classpathentry kind="lib" path="main/resources"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-integrate-test"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-objectstore-test"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-core-main"/>
+	<classpathentry exported="true" kind="lib" path="test/resources"/>
+	<classpathentry exported="true" kind="lib" path="main/resources"/>
+	<classpathentry exported="true" kind="lib" path="/bio-testall-dbmodel/build/main"/>
+	<classpathentry exported="true" kind="lib" path="/bio-testall-dbmodel/build/model"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry exported="true" kind="lib" path="test/lib/mockrunner.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
