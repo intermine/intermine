@@ -12,7 +12,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/intermine-web"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bio-tools-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
-	<classpathentry kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jcommon-1.0.10.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/jfreechart-1.0.13.jar"/>
