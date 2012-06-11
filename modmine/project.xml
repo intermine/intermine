@@ -117,7 +117,7 @@
       <property name="biopax.curated" value="false"/>
     </source>
     <source name="reactome-curated" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/reactome/curated"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/curated/current"/>
       <property name="biopax.organisms" value="7227 6239"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="FlyReactome data set"/>
