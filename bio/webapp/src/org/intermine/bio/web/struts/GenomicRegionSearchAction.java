@@ -56,8 +56,8 @@ public class GenomicRegionSearchAction extends InterMineAction
         String organism = (String) grsForm.get("organism");
 
         if ("".equals(organism)) {
-            // TODO No action message
-            return mapping.findForward("genomicRegionSearch");
+            recordError(new ActionMessage("genomicRegionSearch.organismEmpty"), request);
+            return mapping.findForward("genomicRegionSearchOptions");
         }
 
         String spanUUIDString = UUID.randomUUID().toString(); // Generate UUID
@@ -70,7 +70,7 @@ public class GenomicRegionSearchAction extends InterMineAction
         ActionMessage actmsg = grsService.parseGenomicRegionSearchForm(grsForm);
         if (actmsg != null) {
             recordError(actmsg, request);
-            return mapping.findForward("genomicRegionSearch");
+            return mapping.findForward("genomicRegionSearchOptions");
         }
 
         // LiftOver
@@ -151,8 +151,8 @@ public class GenomicRegionSearchAction extends InterMineAction
 
             if (resultMap.get("error").size() == grsService.getConstraint()
                     .getGenomicRegionList().size()) { // all genomic regions are invalid
-                request.setAttribute("invalidGenomicRegions", "true");
-                return mapping.findForward("genomicRegionSearchResults");
+                recordError(new ActionMessage("genomicRegionSearch.allRegionInvalid"), request);
+                return mapping.findForward("genomicRegionSearchOptions");
             } else {
                 grsService.getConstraint().setGenomicRegionList(resultMap.get("pass"));
             }
