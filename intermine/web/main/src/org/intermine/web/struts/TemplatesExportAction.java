@@ -85,7 +85,7 @@ public class TemplatesExportAction extends TemplateAction
         }
         xml = XmlUtil.indentXmlSimple(xml);
 
-        response.setContentType("text/plain");
+        response.setContentType("text/plain; charset=utf-8");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
 
         PrintStream out = new PrintStream(response.getOutputStream());

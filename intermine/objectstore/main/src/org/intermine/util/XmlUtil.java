@@ -48,7 +48,7 @@ public final class XmlUtil
     public static String indentXmlSimple(String xmlString) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         int indent = 0;
-        char[] bytes = xmlString.toCharArray();
+        byte[] bytes = xmlString.getBytes();
         int i = 0;
         while (i < bytes.length) {
             if (bytes[i] == '<' && bytes[i + 1] == '/') {
