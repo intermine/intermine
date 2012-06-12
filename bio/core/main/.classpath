@@ -5,11 +5,11 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
-	<classpathentry exported="true" kind="lib" path="lib/biojava-1.4cvs.jar"/>
 	<classpathentry exported="true" kind="lib" path="resources"/>
 	<classpathentry kind="lib" path="lib/bbop.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/bbop/src"/>
 	<classpathentry kind="lib" path="lib/obo.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/obo/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry exported="true" kind="lib" path="lib/biojava-1.7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
