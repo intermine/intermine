@@ -24,7 +24,6 @@
     var span_uuid_string = "${spanUUIDString}";
     var gbrowse_image_url = "${GBROWSE_IMAGE_URL}";
     var gbrowse_base_url = "${GBROWSE_BASE_URL}";
-    var invalid_genomic_regions = "${invalidGenomicRegions}";
     var export_chromosome_segment = "${WEB_PROPERTIES['genomicRegionSearch.exportChromosomeSegment']}";
 </script>
 <script type="text/javascript" src="model/genomic_region_search/${resultsJavascript}.js"></script>
