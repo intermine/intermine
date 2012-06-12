@@ -5,47 +5,37 @@
     var current_page_no = 1;
     var spanResultWaitingIntervalId = "";
 
-    //jQuery(function(){
-    //        jQuery('ul.sf-menu').superfish();
-    //    });
-
     jQuery(document).ready(function(){
+       init();
 
-       if (invalid_genomic_regions == "true") {
-           jQuery("#resultDiv").addClass("altmessage").html("<br>All genomic regions are invalid. <a href=\"/" + webapp_path + "/genomicRegionSearch.do\">Start a new search?</a><br>");
-       } else {
-            init();
+       // polling
+       jQuery.PeriodicalUpdater("genomicRegionSearchAjax.do", {
+           method: 'post',         // method; get or post
+           data: {spanUUIDString: span_uuid_string, getProgress: "true"}, // array of values to be passed to the page - e.g. {name: "John", greeting: "hello"}
+           minTimeout: 500,          // starting value for the timeout in milliseconds
+           maxTimeout: 5000,       // maximum length of time between requests
+           multiplier: 2,          // if set to 2, timerInterval will double each time the response hasn't changed (up to maxTimeout)
+           type: 'text',           // response type - text, xml, json, etc.  See $.ajax config options
+           maxCalls: 0,            // maximum number of calls. 0 = no limit.
+           autoStop: 50            // automatically stop requests after this many returns of the same data. 0 = disabled.
+        }, function(data) {
+           finishedQueryCount = parseInt(data);
+           if (finishedQueryCount < span_query_total_count) {
+               var percentage = Math.floor(100 * finishedQueryCount / span_query_total_count);
+               jQuery("#progressbar").progressBar(percentage);
+               jQuery("#progressbar_status").html(finishedQueryCount + "/" + span_query_total_count);
+           } else { // all queries finished
+               is_all_queries_finished = true;
+               jQuery("#progressbar_div").hide();
+               displayJBrowse();
+                 enableExportAll();
+                 updatePageNavBarAfterQueryFinish(current_page_no, current_page_size);
+           }
+        });
 
-            // polling
-            jQuery.PeriodicalUpdater("genomicRegionSearchAjax.do", {
-                method: 'post',         // method; get or post
-                data: {spanUUIDString: span_uuid_string, getProgress: "true"}, // array of values to be passed to the page - e.g. {name: "John", greeting: "hello"}
-                minTimeout: 500,          // starting value for the timeout in milliseconds
-                maxTimeout: 5000,       // maximum length of time between requests
-                multiplier: 2,          // if set to 2, timerInterval will double each time the response hasn't changed (up to maxTimeout)
-                type: 'text',           // response type - text, xml, json, etc.  See $.ajax config options
-                maxCalls: 0,            // maximum number of calls. 0 = no limit.
-                autoStop: 50            // automatically stop requests after this many returns of the same data. 0 = disabled.
-             }, function(data) {
-                finishedQueryCount = parseInt(data);
-                if (finishedQueryCount < span_query_total_count) {
-                    var percentage = Math.floor(100 * finishedQueryCount / span_query_total_count);
-                    jQuery("#progressbar").progressBar(percentage);
-                    jQuery("#progressbar_status").html(finishedQueryCount + "/" + span_query_total_count);
-                } else { // all queries finished
-                    is_all_queries_finished = true;
-                    jQuery("#progressbar_div").hide();
-                    displayJBrowse();
-                      enableExportAll();
-                      updatePageNavBarAfterQueryFinish(current_page_no, current_page_size);
-                }
-             });
-
-            // Start to load the first 10 results
-            loadResultData(current_page_size, current_page_no);
-       }
-
-   });
+       // Start to load the first 10 results
+       loadResultData(current_page_size, current_page_no);
+    });
 
     function init() {
 
