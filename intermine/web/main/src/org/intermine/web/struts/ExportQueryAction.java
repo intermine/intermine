@@ -99,7 +99,7 @@ public class ExportQueryAction extends InterMineAction
             return null;
         }
 
-        response.setContentType("text/plain; charset=us-ascii");
+        response.setContentType("text/plain; charset=utf-8");
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         String format;
