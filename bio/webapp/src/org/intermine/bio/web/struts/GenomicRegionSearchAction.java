@@ -56,7 +56,7 @@ public class GenomicRegionSearchAction extends InterMineAction
         String organism = (String) grsForm.get("organism");
 
         if ("".equals(organism)) {
-        	recordError(new ActionMessage("genomicRegionSearch.organismEmpty"), request);
+            recordError(new ActionMessage("genomicRegionSearch.organismEmpty"), request);
             return mapping.findForward("genomicRegionSearchOptions");
         }
 
