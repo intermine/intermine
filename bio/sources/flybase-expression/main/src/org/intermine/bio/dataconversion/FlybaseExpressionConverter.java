@@ -108,17 +108,18 @@ public class FlybaseExpressionConverter extends BioFileConverter
 
             if (line.length < 5) {
                 LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
+                System.out.println("test " + line.length);
                 continue;
             }
 
-            String fbgn = line[2];	// FBgn0000003
-            String stage = line[4];	// embryo_02-04hr
+            String fbgn = line[0];	// FBgn0000003
+            String stage = line[3];	// embryo_02-04hr
 
             Item result = createItem("RNASeqResult");
             result.setAttribute("stage", stage);
 
-            if (line.length > 5) {
-                String rpkm = line[5];	// 6825 - OPTIONAL
+            if (line.length > 4) {
+                String rpkm = line[4];	// 6825 - OPTIONAL
                 if (StringUtils.isNotEmpty(rpkm)) {
                     try {
                         Integer.valueOf(rpkm);
@@ -128,8 +129,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
                     }
                 }
             }
-            if (line.length > 7) {
-                String levelIdentifier = line[7];	// ME_07 - OPTIONAL
+            if (line.length > 5) {
+                String levelIdentifier = line[5];	// ME_07 - OPTIONAL
                 String levelName = terms.get(levelIdentifier);
                 if (StringUtils.isNotEmpty(levelName)) {
                     result.setAttribute("expressionLevel", levelName);
@@ -161,7 +162,7 @@ public class FlybaseExpressionConverter extends BioFileConverter
                 continue;
             }
 
-            String identifier = line[2];	// ME_01
+            String identifier = line[1];	// 09
             String name = line[3];	// No expression
 
             terms.put(identifier, name);

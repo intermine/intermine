@@ -1,9 +1,8 @@
 #!/bin/sh
 
-export INIT=/software/noarch/local/init
-. $INIT/bash/common.bashrc
+. /home/flymine/svn/trunk/bio/scripts/flymine/init/bash/common.bashrc
 
-LOGFILE="/home/interminedoc/logs/build-api-doc-`date +%Y-%m-%d`.log"
+LOGFILE="/home/flymine/logs/build-api-doc-`date +%Y-%m-%d`.log"
 
 (cd ~/svn/trunk
 svn up
@@ -17,8 +16,8 @@ ant clean
 ant
 chmod -R a+rX build/javadoc/
 if test "`find build/javadoc | wc -l`" -gt "1000" ; then
-    rsync -avc --delete build/javadoc/ flymine@www.flymine.org:/var/www/html/api/
+    rsync -avc --delete build/javadoc/ flymine@web0:/var/www/html/api/
 else
-    echo "Error with API documentation - see log file $LOGFILE for details" | mail -s "API Documentation failed" interminedoc@flymine.org
+    echo "Error with API documentation - see log file $LOGFILE for details" | mail -s "API Documentation failed" fh293@cam.ac.uk
 fi
 ) >>$LOGFILE 2>&1
