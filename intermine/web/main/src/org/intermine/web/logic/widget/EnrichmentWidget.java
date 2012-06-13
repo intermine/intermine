@@ -301,7 +301,7 @@ public class EnrichmentWidget extends Widget
     }
 
     /**
-     * Returns the pathquery based on the view set in config file in the startClassDisplay
+     * Returns the pathquery based on the startClassDisplay, constraintsForView set in config file
      * and the bag constraint
      * Executed when the user click on the matches column in the enrichment widget.
      * @return the query generated
