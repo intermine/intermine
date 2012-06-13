@@ -112,8 +112,13 @@ public class FlybaseExpressionConverter extends BioFileConverter
                 continue;
             }
 
-            String fbgn = line[0];	// FBgn0000003
-            String stage = line[3];	// embryo_02-04hr
+            final String fbgn = line[0];	// FBgn0000003
+            final String source = line[2]; //modENCODE_mRNA-Seq_U
+            final String stage = line[3];	// embryo_02-04hr
+
+            if (!source.startsWith("modENCODE")) {
+                return;
+            }
 
             Item result = createItem("RNASeqResult");
             result.setAttribute("stage", stage);
