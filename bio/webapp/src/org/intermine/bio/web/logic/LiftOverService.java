@@ -123,13 +123,17 @@ public class LiftOverService
                 for (int i = 0; i < unmappedArray.length(); i++) {
                     String coord = (String) unmappedArray.get(i);
                     coord.trim();
-                    GenomicRegion gr = new GenomicRegion();
-                    gr.setOrganism(org);
-                    gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
-                    gr.setChr(coord.split("\t")[0].trim());
-                    gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
-                    gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
-                    unmappedList.add(gr);
+                    // TODO lose information about why the regions not lifted
+                    // e.g. "#Partially deleted in new\n"
+                    if (!coord.startsWith("#")) {
+                        GenomicRegion gr = new GenomicRegion();
+                        gr.setOrganism(org);
+                        gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
+                        gr.setChr(coord.split("\t")[0].trim());
+                        gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
+                        gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
+                        unmappedList.add(gr);
+                    }
                 }
 
                 liftedGenomicRegionMap.put("lifedGenomicRegions", liftedList);
