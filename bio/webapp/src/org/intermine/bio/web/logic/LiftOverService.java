@@ -48,6 +48,25 @@ public class LiftOverService
         ORGANISM_COMMON_NAME_MAP = Collections.unmodifiableMap(tempMap);
     }
 
+    private static final Map<String, String> HUMAN_GENOME_BUILD_MAP;
+    static {
+        Map<String, String> tempMap = new HashMap<String, String>();
+        tempMap.put("GRCh37", "hg19");
+        tempMap.put("NCBI36", "hg18");
+        tempMap.put("NCBI35", "hg17");
+        tempMap.put("NCBI34", "hg16");
+        HUMAN_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
+    }
+
+    private static final Map<String, String> MOUSE_GENOME_BUILD_MAP;
+    static {
+        Map<String, String> tempMap = new HashMap<String, String>();
+        tempMap.put("GRCm38", "mm10");
+        tempMap.put("NCBIM37", "mm9");
+        tempMap.put("NCBIM36", "mm8");
+        MOUSE_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
+    }
+
     /**
      * Send a HTTP POST request to liftOver service.
      *
@@ -123,13 +142,17 @@ public class LiftOverService
                 for (int i = 0; i < unmappedArray.length(); i++) {
                     String coord = (String) unmappedArray.get(i);
                     coord.trim();
-                    GenomicRegion gr = new GenomicRegion();
-                    gr.setOrganism(org);
-                    gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
-                    gr.setChr(coord.split("\t")[0].trim());
-                    gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
-                    gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
-                    unmappedList.add(gr);
+                    // TODO lose information about why the regions not lifted
+                    // e.g. "#Partially deleted in new\n"
+                    if (!coord.startsWith("#")) {
+                        GenomicRegion gr = new GenomicRegion();
+                        gr.setOrganism(org);
+                        gr.setExtendedRegionSize(grsc.getExtendedRegionSize());
+                        gr.setChr(coord.split("\t")[0].trim());
+                        gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
+                        gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
+                        unmappedList.add(gr);
+                    }
                 }
 
                 liftedGenomicRegionMap.put("lifedGenomicRegions", liftedList);
