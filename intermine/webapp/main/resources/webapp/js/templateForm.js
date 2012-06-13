@@ -8,10 +8,14 @@ function clickUseBag(index) {
   if (document.getElementById("attributeOptions("+index+")")) {
     document.getElementById("attributeOptions("+index+")").disabled=useBag;
   }
-  // if attributeValues is a radio button
-  if (document.getElementById("attributeValues("+index+")")[0]) {
-    document.getElementById("attributeValues("+index+")")[0].disabled=useBag;
-    document.getElementById("attributeValues("+index+")")[1].disabled=useBag;
+
+  var attributeValuesElements = document.getElementsByName("attributeValues("+index+")");
+  //if attributeValues is a radio button
+  if(attributeValuesElements[0].type == 'radio') {
+    attributeValuesElements[0].disabled=useBag;
+    attributeValuesElements[1].disabled=useBag;
+  } else {
+     document.getElementById("attributeValues("+index+")").disabled=useBag;
   }
   if (document.getElementById("multiValues("+index+")")) {
     document.getElementById("multiValues("+index+")").disabled=useBag;
@@ -19,7 +23,7 @@ function clickUseBag(index) {
   if (document.getElementById("extraValues("+index+")")) {
     document.getElementById("extraValues("+index+")").disabled=useBag;
   }
-  document.getElementById("attributeValues("+index+")").disabled=useBag;
+
   document.getElementById("bag("+index+")").disabled=!useBag;
   document.getElementById("bagOp("+index+")").disabled=!useBag;
 }
