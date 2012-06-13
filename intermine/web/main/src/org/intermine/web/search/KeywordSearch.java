@@ -1567,7 +1567,8 @@ public final class KeywordSearch
         String[] bits = s.split(" ");
         for (String b : bits) {
             // booleans have to stay UPPER
-            if ("OR".equals(b) || "AND".equals(b) || "NOT".equals(b)) {
+            if ("OR".equalsIgnoreCase(b) || "AND".equalsIgnoreCase(b)
+                    || "NOT".equalsIgnoreCase(b)) {
                 sb.append(b + " ");
             } else {
                 sb.append(b.toLowerCase() + " ");
