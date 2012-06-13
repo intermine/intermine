@@ -62,7 +62,11 @@ function renameElement(name, type, index){
             }
         }
         // reload so that new "IDs" based on the name match
-        window.location.reload();
+        if (str.indexOf('<i>') != -1) {
+            setTimeout(function() {window.location.reload();}, 1000);
+        } else {
+        	window.location.reload();
+        }
     });
 }
 

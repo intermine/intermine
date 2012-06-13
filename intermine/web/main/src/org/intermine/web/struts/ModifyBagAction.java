@@ -130,8 +130,13 @@ public class ModifyBagAction extends InterMineAction
             String newBagName = "";
             if (newNameTextBox != null) {
                 newBagName = NameUtil.validateName(allBags.keySet(), newNameTextBox);
+                if (newBagName.isEmpty()) {
+                    recordError(new ActionMessage("bag.createdlists.notvalidname",
+                                  newNameTextBox), request);
+                    return;
+                }
             }
-            if (newNameTextBox == null || newBagName.isEmpty()) {
+            if (newNameTextBox == null) {
                 newBagName = NameUtil.generateNewName(allBags.keySet(), selectedBagName);
             }
 

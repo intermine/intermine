@@ -248,7 +248,7 @@ public class AjaxServices
             }
             // TODO get error text from properties file
             if (!NameUtil.isValidName(newName)) {
-                return NameUtil.INVALID_NAME_MSG;
+                return "<i>" + NameUtil.INVALID_NAME_MSG + "</i>";
             }
             if ("history".equals(type)) {
                 if (profile.getHistory().get(name) == null) {
