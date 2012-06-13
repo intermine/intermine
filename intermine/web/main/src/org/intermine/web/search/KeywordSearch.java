@@ -1569,7 +1569,7 @@ public final class KeywordSearch
             // booleans have to stay UPPER
             if ("OR".equalsIgnoreCase(b) || "AND".equalsIgnoreCase(b)
                     || "NOT".equalsIgnoreCase(b)) {
-                sb.append(b + " ");
+                sb.append(b.toUpperCase() + " ");
             } else {
                 sb.append(b.toLowerCase() + " ");
             }
