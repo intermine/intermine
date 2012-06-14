@@ -48,6 +48,25 @@ public class LiftOverService
         ORGANISM_COMMON_NAME_MAP = Collections.unmodifiableMap(tempMap);
     }
 
+    private static final Map<String, String> HUMAN_GENOME_BUILD_MAP;
+    static {
+        Map<String, String> tempMap = new HashMap<String, String>();
+        tempMap.put("GRCh37", "hg19");
+        tempMap.put("NCBI36", "hg18");
+        tempMap.put("NCBI35", "hg17");
+        tempMap.put("NCBI34", "hg16");
+        HUMAN_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
+    }
+
+    private static final Map<String, String> MOUSE_GENOME_BUILD_MAP;
+    static {
+        Map<String, String> tempMap = new HashMap<String, String>();
+        tempMap.put("GRCm38", "mm10");
+        tempMap.put("NCBIM37", "mm9");
+        tempMap.put("NCBIM36", "mm8");
+        MOUSE_GENOME_BUILD_MAP = Collections.unmodifiableMap(tempMap);
+    }
+
     /**
      * Send a HTTP POST request to liftOver service.
      *
