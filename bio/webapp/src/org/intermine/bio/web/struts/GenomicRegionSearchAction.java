@@ -10,6 +10,7 @@ package org.intermine.bio.web.struts;
  *
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -32,6 +33,8 @@ import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.query.Query;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.InterMineAction;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * For genomic region search.
@@ -109,21 +112,68 @@ public class GenomicRegionSearchAction extends InterMineAction
                     && !genomeVersionSource.equals(genomeVersionTarget)) {
 
                 LiftOverService los = new LiftOverService();
-                Map<String, List<GenomicRegion>> liftedGenomicRegionMap = los.doLiftOver(
+                String liftOverResponse = los.doLiftOver(
                         grsService.getConstraint(), organism, genomeVersionSource,
                         genomeVersionTarget, liftOverServiceUrl);
 
-                // TODO verbose
-                if (liftedGenomicRegionMap == null) {
-                    // 1.service unavailable
-                    // 2.fail to convert
+                // parse the response in json
+                List<GenomicRegion> liftedList = new ArrayList<GenomicRegion>();
+                StringBuffer unmapped = new StringBuffer();
+                try {
+                    JSONObject json = new JSONObject(liftOverResponse);
+
+                    JSONArray liftedArray = json.getJSONArray("coords");
+                    JSONArray unmappedArray = json.getJSONArray("unmapped");
+
+                    for (int i = 0; i < liftedArray.length(); i++) {
+                        String coord = (String) liftedArray.get(i);
+                        coord.trim();
+                        GenomicRegion gr = new GenomicRegion();
+                        gr.setOrganism(organism);
+                        gr.setExtendedRegionSize(grsService.getConstraint()
+                                .getExtendedRegionSize());
+                        gr.setChr(coord.split("\t")[0].trim());
+                        gr.setStart(Integer.valueOf(coord.split("\t")[1].trim()));
+                        gr.setEnd(Integer.valueOf(coord.split("\t")[2].trim()));
+                        liftedList.add(gr);
+                    }
+
+                    for (int i = 0; i < unmappedArray.length(); i++) {
+                        String info = (String) unmappedArray.get(i);
+                        info.trim();
+                        if (info.startsWith("#")) { // e.g. "#Partially deleted in new\n"
+                            unmapped.append(info.subSequence(1, info.length() - 1))
+                                    .append(" - ");
+                        } else {
+                            String chr = info.split("\t")[0].trim();
+                            String start = info.split("\t")[1].trim();
+                            String end = info.split("\t")[2].trim();
+                            unmapped.append(chr + ":" + start + ".." + end)
+                                    .append("<br>");
+                        }
+                    }
+
+                    if (!unmapped.toString().isEmpty()) {
+                        request.setAttribute(
+                                "liftOverStatus",
+                                "Genomic region cannot be lifted:<br>"
+                                + unmapped.toString().substring(
+                                        0,
+                                        unmapped.toString()
+                                                .lastIndexOf("<br>")));
+                    } else {
+                        request.setAttribute(
+                                "liftOverStatus", "All coordinates are lifted");
+                    }
+
+                    grsService.getConstraint().setGenomicRegionList(liftedList);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                     request.setAttribute(
                             "liftOverStatus",
-                            "<i>liftOver service is temporarily inaccessible, "
-                            + "genomic region coordinates are not converted</i>");
-                } else {
-                    grsService.getConstraint().setGenomicRegionList(
-                            liftedGenomicRegionMap.get("lifedGenomicRegions"));
+                            "<i>Genomic region coordinates are not lifted. " +
+                            "liftOver service error, please contact system admin</i>");
                 }
             }
         }
