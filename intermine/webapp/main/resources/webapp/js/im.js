@@ -68,13 +68,11 @@
 
   root.take = function(n) {
     return function(xs) {
-      return exports.fold(xs)([])(function(a, x) {
-        if ((n != null) && a.length >= n) {
-          return a;
-        } else {
-          return a.concat([x]);
-        }
-      });
+      if (n != null) {
+        return xs.slice(0, (n - 1) + 1 || 9e9);
+      } else {
+        return xs;
+      }
     };
   };
 
@@ -156,11 +154,13 @@
 
 (function(exports, IS_NODE) {
 
-    var _;
+    var _, Deferred;
     if (IS_NODE) {
         _ = require('underscore')._;
+        Deferred = require('jquery-deferred').Deferred;
     } else {
         _ = exports._;
+        Deferred = exports.jQuery.Deferred;
         if (typeof exports.intermine === 'undefined') {
             exports.intermine = {};
         }
@@ -216,6 +216,42 @@
         }
     };
 
+    var _displayNameCache = {};
+
+    PathInfo.prototype.getDisplayName = function(cb) {
+        var wrapped, self = this;
+        var cacheKey = this.toString() + ":" + _.map(this.subclasses, function(v, k) {return k + "=" + v}).join(';');
+        var displayName;
+        if (_displayNameCache[cacheKey] != null) {
+            promise = new Deferred();
+            displayName = _displayNameCache[cacheKey];
+            if (cb != null) {
+                cb(displayName);
+            }
+            promise.resolve(displayName);
+            return promise;
+        }
+            this.displayName = _displayNameCache[cacheKey];
+        if (cb == null) {
+            wrapped = function() {};
+        } else {
+            wrapped = function(resp) {
+                self.displayName = resp.display;
+                _displayNameCache[cacheKey] = resp.display;
+                cb(resp.display);
+            };
+        }
+        if (this.model.service == null) {
+            throw new Error("Cannot fetch display name: no service");
+        }
+        var params = {format: 'json'};
+        _.each(this.subclasses, function(v, k) {
+            params[k] = v;
+        });
+        var slashPath = _.reduce(this.descriptors, function(a, d) { return a + "/" + d.name }, "/" + this.root.name);
+        return this.model.service.makeRequest('model' + slashPath, params, wrapped);
+    };
+
     PathInfo.prototype.getChildNodes = function() {
         var cls, flds, childNodes, i, l;
         childNodes = [];
@@ -230,10 +266,14 @@
         return childNodes;
     };
 
-    PathInfo.prototype.toPathString = function() {
+
+    var pistr = function() {
         var str = this.root.name;
         return _(this.descriptors).reduce(function(a, b) {return a + "." + b.name}, this.root.name);
     };
+
+    PathInfo.prototype.toPathString = pistr;
+    PathInfo.prototype.toString = pistr;
 
     PathInfo.prototype.isAttribute = function() {
         if (this.isRoot()) {
@@ -242,11 +282,20 @@
         return this.end && !this.end.referencedType;
     };
 
+
     PathInfo.prototype.isClass = function() {
         if (this.isRoot()) {
             return true;
         }
         return this.end && this.end.referencedType;
+    };
+
+    PathInfo.prototype.isReference = function() {
+        return this.end && this.end.referencedType;
+    };
+
+    PathInfo.prototype.isCollection = function() {
+        return this.end && this.end.isCollection;
     };
 
     PathInfo.prototype.containsCollection = function() {
@@ -328,26 +377,42 @@
         * @param subclasses An object mapping path {Str} -> type {Str}
         */
     Model.prototype.getPathInfo = function(path, subclasses) {
-        var self = this;
+        var cacheKey, pathInfo, parts, cd, keyPath, ret, self = this;
         subclasses = subclasses || {};
-        var pathInfo = {};
-        var parts = path.split(".");
-        var cd = this.classes[parts.shift()];
-        var keyPath = cd.name;
+        cacheKey = path + _.map(subclasses, function(v,k) {return k+"="+v; }).join(':');
+        if (this.__pathinfos == null) {
+            this.__pathinfos = {};
+        }
+        if (this.__pathinfos[cacheKey] != null) {
+            return this.__pathinfos[cacheKey];
+        }
+        pathInfo = {};
+        parts = path.split(".");
+        cd = this.classes[parts.shift()];
+        keyPath = cd.name;
         pathInfo.root = cd;
         pathInfo.model = this;
         pathInfo.descriptors = _(parts).map(function(fieldName) {
             var fields = _({}).extend(cd.attributes, cd.references, cd.collections);
             if (!fields[fieldName]) {
                 cd = self.classes[subclasses[keyPath]];
-                fields = _({}).extend(cd.attributes, cd.references, cd.collections);
+                try {
+                    fields = _({}).extend(cd.attributes, cd.references, cd.collections);
+                } catch (e) {
+                    throw new Error("Could not resolve " + path);
+                }
             }
             keyPath += "." + fieldName;
             var fd = fields[fieldName];
             cd = fd.referencedType ? self.classes[fd.referencedType] : null;
             return fd;
         });
-        return new PathInfo(pathInfo);
+        pathInfo.subclasses = subclasses;
+
+        ret = new PathInfo(pathInfo);
+        this.__pathinfos[cacheKey] = ret;
+        return ret;
+
     };
 
 
@@ -647,20 +712,29 @@
                  ret.then(opts.success);
                  res.on('data', function(chunk) {contentBuffer += chunk});
                  res.on('end', function() {
-                     var parsed;
-                     try {
-                         parsed = JSON.parse(contentBuffer);
-                         if (parsed.error) {
-                             var error = new Error("When running " + JSON.stringify(opts.data) + ": " + parsed.error);
-                             ret.reject(error, parsed.status);
+                     if (opts.data.format.match(/json/)) {
+                        var parsed;
+                        try {
+                            parsed = JSON.parse(contentBuffer);
+                            if (parsed.error) {
+                                var error = new Error("When running " + JSON.stringify(opts.data) + ": " + parsed.error);
+                                ret.reject(error, parsed.status);
+                            } else {
+                                ret.resolve(parsed);
+                            }
+                        } catch(e) {
+                            ret.reject(new Error("Could not parse buffer (" + contentBuffer + "): " + e));
+                        }
+                     } else {
+                         var e;
+                         if (e = contentBuffer.match(/\[Error\] (\d+)(.*)/m)) {
+                             ret.reject(new Error(e[2], e[1]));
                          } else {
-                             ret.resolve(parsed);
+                             ret.resolve(contentBuffer);
                          }
-                     } catch(e) {
-                         ret.reject(new Error(e), contentBuffer);
                      }
                  });
-            }};
+            }}
 
             this.doReq = function(opts, resultByResult) {
                 var ret = new Deferred().fail(opts.error);
@@ -683,6 +757,9 @@
                 });
 
                 if (url.method === 'POST') {
+                    if (this.DEBUG) {
+                        console.log("Writing data to " + url.host + "/" + url.path + ": " + postdata);
+                    }
                     req.write(postdata);
                 }
                 req.end();
@@ -830,6 +907,18 @@
             return this.makeRequest(QUERY_RESULTS_PATH, req, getResulteriser(cb), 'POST');
         };
 
+        this.tableRows = function(q, page, cb) {
+            // Allow calling as records(q, cb)
+            if (_(cb).isUndefined() && _(page).isFunction()) {
+                cb = page;
+                page = {};
+            }
+            page = page || {};
+            var req = _(page).extend({query: q.toXML(), format: "json"});
+            return this.makeRequest(QUERY_RESULTS_PATH + "/tablerows", req, getResulteriser(cb), 'POST');
+        };
+
+
         var constructor = _.bind(function(properties) {
             var root = properties.root;
             if (root && !/^https?:\/\//i.test(root)) {
@@ -851,6 +940,8 @@
             }
             this.root = root;
             this.token = properties.token
+            this.DEBUG = properties.debug || false;
+            this.help = properties.help || 'no.help.available@dev.null'
 
             _.bindAll(this, "fetchVersion", "rows", "records", "fetchTemplates", "fetchLists", 
                 "count", "makeRequest", "fetchModel", "fetchSummaryFields", "combineLists", 
@@ -939,6 +1030,7 @@
                     } else {
                         self.model = data.model;
                     }
+                    self.model.service = self;
                     MODELS[self.root] = self.model;
                     cb(self.model);
                     promise.resolve(self.model);
@@ -1925,7 +2017,7 @@
       if (format == null) {
         format = 'tab';
       }
-      if (__indexOf.call(Query.prototype.BIO_FORMATS, format) >= 0) {
+      if (__indexOf.call(Query.BIO_FORMATS, format) >= 0) {
         return this["get" + (format.toUpperCase()) + "URI"]();
       }
       req = {
@@ -1946,14 +2038,15 @@
       toRun.views = take(n)(olds.map(function(v) {
         return _this.getPathInfo(v).getParent();
       }).filter(function(p) {
-        return _.any(types(function(t) {
+        return _.any(types, function(t) {
           return p.isa(t);
-        }));
+        });
       }).map(function(p) {
         return p.append('primaryIdentifier').toPathString();
       }));
       return {
-        query: toRun.toXML()
+        query: toRun.toXML(),
+        format: 'text'
       };
     };
 
@@ -2021,7 +2114,7 @@
     };
   };
 
-  _ref3 = ['rowByRow', 'eachRow', 'recordByRecord', 'eachRecord', 'records', 'rows', 'table'];
+  _ref3 = ['rowByRow', 'eachRow', 'recordByRecord', 'eachRecord', 'records', 'rows', 'table', 'tableRows'];
   for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
     mth = _ref3[_j];
     Query.prototype[mth] = _get_data_fetcher(mth);

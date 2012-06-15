@@ -7,7 +7,7 @@
  * Copyright 2012, Alex Kalderimis
  * Released under the LGPL license.
  * 
- * Built at Fri Jun 01 2012 13:45:03 GMT+0100 (BST)
+ * Built at Fri Jun 15 2012 17:31:41 GMT+0100 (BST)
 */
 
 
@@ -362,8 +362,6 @@
       __extends(ResultsTable, _super);
 
       function ResultsTable() {
-        this.showColumnSummary = __bind(this.showColumnSummary, this);
-
         this.addColumnHeaders = __bind(this.addColumnHeaders, this);
 
         this.handleError = __bind(this.handleError, this);
@@ -371,6 +369,11 @@
         this.appendRows = __bind(this.appendRows, this);
         return ResultsTable.__super__.constructor.apply(this, arguments);
       }
+
+      ResultsTable.nextDirections = {
+        ASC: "DESC",
+        DESC: "ASC"
+      };
 
       ResultsTable.prototype.className = "im-results-table table table-striped table-bordered";
 
@@ -399,6 +402,7 @@
         this.getData = getData;
         this.minimisedCols = {};
         return this.query.on("set:sortorder", function(oes) {
+          _this.lastAction = 'resort';
           return _this.fill();
         });
       };
@@ -483,115 +487,208 @@
         return tr.appendTo(this.el);
       };
 
-      ResultsTable.prototype.errorTempl = _.template("<div class=\"alert alert-error\">\n    <h2>Error</h2>\n    <p><%- error %>\n</div>");
+      ResultsTable.prototype.errorTempl = _.template("<div class=\"alert alert-error\">\n    <h2>Oops!</h2>\n    <p><i><%- error %></i></p>\n</div>");
 
-      ResultsTable.prototype.handleError = function(err) {
-        return this.$el.append(this.errorTempl({
+      ResultsTable.prototype.handleError = function(err, time) {
+        var btn, mailto, notice, p;
+        notice = $(this.errorTempl({
           error: err
         }));
+        if (time != null) {
+          notice.append("<p>Time: " + time + "</p>");
+        }
+        notice.append("<p>\n    This is most likely related to the query that was just run. If you have\n    time, please send us an email with details of this query to help us diagnose and\n    fix this bug.\n</p>");
+        btn = $('<button class="btn btn-error">');
+        notice.append(btn);
+        p = $('<p style="display:none" class="well">');
+        btn.text('show query');
+        p.text(this.query.toXML());
+        btn.click(function() {
+          return p.slideToggle();
+        });
+        mailto = this.query.service.help + "?" + $.param({
+          subject: "Error running embedded table query",
+          body: "We encountered an error running a query from an\nembedded result table.\n\npage:       " + window.location + "\nservice:    " + this.query.service.root + "\nerror:      " + err + "\ndate-stamp: " + time + "\nquery:      " + (this.query.toXML())
+        }, true);
+        mailto = mailto.replace(/\+/g, '%20');
+        notice.append("<a class=\"btn btn-primary pull-right\" href=\"mailto:" + mailto + "\">\n    Email the help-desk\n</a>");
+        notice.append(p);
+        return this.$el.append(notice);
       };
 
       ResultsTable.prototype.columnHeaderTempl = function(ctx) {
         return _.template("<th title=\"<%- title %>\">\n    <div class=\"navbar\">\n        <div class=\"im-th-buttons\">\n            <% if (sortable) { %>\n                <div class=\"im-th-button im-col-sort-indicator\" title=\"sort this column\">\n                    <i class=\"icon-resize-vertical " + intermine.css.headerIcon + "\"></i>\n                </div>\n            <% }; %>\n            <div class=\"im-th-button im-col-remover\" title=\"remove this column\" data-view=\"<%= view %>\">\n                <i class=\"" + intermine.css.headerIconRemove + " " + intermine.css.headerIcon + "\"></i>\n            </div>\n            <div class=\"im-th-button im-col-minumaximiser\" title=\"Hide column\" data-col-idx=\"<%= i %>\">\n                <i class=\"" + intermine.css.headerIconHide + " " + intermine.css.headerIcon + "\"></i>\n            </div>\n            <div class=\"dropdown im-summary\">\n                <div class=\"im-th-button summary-img dropdown-toggle\" title=\"column summary\"\n                    data-toggle=\"dropdown\" data-col-idx=\"<%= i %>\" >\n                    <i class=\"" + intermine.css.headerIconSummary + " " + intermine.css.headerIcon + "\"></i>\n                </div>\n                <div class=\"dropdown-menu\">\n                    <div>Could not ititialise the column summary.</div>\n                </div>\n            </div>\n        </div>\n        <span class=\"im-col-title\"><%- title %></span>\n    </div>\n</th>", ctx);
       };
 
+      ResultsTable.prototype.buildColumnHeader = function(view, i, title, tr) {
+        var cmd, cmds, direction, expandAll, minumaximiser, path, q, setDirectionClass, sortButton, sortable, th,
+          _this = this;
+        q = this.query;
+        direction = q.getSortDirection(view);
+        sortable = !q.isOuterJoined(view);
+        th = $(this.columnHeaderTempl({
+          title: title,
+          i: i,
+          view: view,
+          sortable: sortable
+        }));
+        tr.append(th);
+        th.find('.im-th-button').tooltip({
+          placement: "left"
+        });
+        sortButton = th.find('.icon-resize-vertical');
+        setDirectionClass = function(d) {
+          sortButton.addClass("icon-resize-vertical");
+          sortButton.removeClass("icon-arrow-up icon-arrow-down");
+          switch (d) {
+            case 'ASC':
+              return sortButton.toggleClass("icon-resize-vertical icon-arrow-up");
+            case 'DESC':
+              return sortButton.toggleClass("icon-resize-vertical icon-arrow-down");
+          }
+        };
+        setDirectionClass(direction);
+        this.query.on("set:sortorder", function() {
+          var sd;
+          sd = q.getSortDirection(view);
+          if (sd) {
+            return setDirectionClass(sd);
+          }
+        });
+        direction = ResultsTable.nextDirections[direction] || "ASC";
+        sortButton.click(function(e) {
+          var $elem;
+          $elem = $(this);
+          q.orderBy([
+            {
+              path: view,
+              direction: direction
+            }
+          ]);
+          tr.find('.im-col-sort-indicator i').removeClass("icon-arrow-up icon-arrow-down");
+          tr.find('.im-col-sort-indicator i').addClass("icon-resize-vertical");
+          switch (direction) {
+            case "ASC":
+              sortButton.toggleClass("icon-resize-vertical icon-arrow-up");
+              break;
+            case "DESC":
+              sortButton.toggleClass("icon-resize-vertical icon-arrow-down");
+          }
+          return direction = ResultsTable.nextDirections[direction];
+        });
+        minumaximiser = th.find('.im-col-minumaximiser');
+        minumaximiser.click(function(e) {
+          var isMinimised;
+          minumaximiser.find('i').toggleClass("icon-minus-sign icon-plus-sign");
+          isMinimised = _this.minimisedCols[i] = !_this.minimisedCols[i];
+          th.find('.im-col-title').toggle(!isMinimised);
+          return _this.fill();
+        });
+        path = q.getPathInfo(view);
+        if (path.isAttribute()) {
+          return th.find('.summary-img').click(this.showColumnSummary(path)).dropdown();
+        } else {
+          th.find('.summary-img').click(this.showOuterJoinedColumnSummaries(path)).dropdown();
+          expandAll = $("<div class=\"im-th-button\" title=\"Expand/Collapse all subtables\">\n    <i class=\"icon-th-list icon-white\"></i>\n</div>");
+          expandAll.tooltip({
+            placement: 'left'
+          });
+          th.find('.im-th-buttons').prepend(expandAll);
+          cmds = ['expand', 'collapse'];
+          cmd = 0;
+          this.query.on('subtable:expanded', function(node) {
+            if (node.toString().match(path.toString())) {
+              return cmd = 1;
+            }
+          });
+          this.query.on('subtable:collapsed', function(node) {
+            if (node.toString().match(path.toString())) {
+              return cmd = 0;
+            }
+          });
+          return expandAll.click(function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            _this.query.trigger("" + cmds[cmd] + ":subtables", path);
+            cmd = (cmd + 1) % 2;
+            return console.log(cmd);
+          });
+        }
+      };
+
       ResultsTable.prototype.addColumnHeaders = function(result) {
-        var i, nextDirections, q, thead, tr, view, _fn, _i, _len, _ref,
+        var i, promise, q, thead, titles, tr, view, views, _fn, _i, _len,
           _this = this;
         thead = $("<thead>");
         tr = $("<tr>");
         thead.append(tr);
-        nextDirections = {
-          ASC: "DESC",
-          DESC: "ASC"
-        };
         q = this.query;
-        _ref = q.views;
-        _fn = function(view, i) {
-          var direction, minumaximiser, setDirectionClass, sortButton, sortable, th, title;
-          title = result.columnHeaders[i].split(' > ').slice(1).join(" > ");
-          direction = q.getSortDirection(view);
-          sortable = !q.isOuterJoined(view);
-          th = $(_this.columnHeaderTempl({
-            title: title,
-            i: i,
-            view: view,
-            sortable: sortable
-          }));
-          tr.append(th);
-          th.find('.im-th-button').tooltip({
-            placement: "left"
+        if (result.results.length && _.has(result.results[0][0], 'column')) {
+          views = result.results[0].map(function(row) {
+            return row.column;
           });
-          sortButton = th.find('.icon-resize-vertical');
-          setDirectionClass = function(d) {
-            sortButton.addClass("icon-resize-vertical");
-            sortButton.removeClass("icon-arrow-up icon-arrow-down");
-            switch (d) {
-              case 'ASC':
-                return sortButton.toggleClass("icon-resize-vertical icon-arrow-up");
-              case 'DESC':
-                return sortButton.toggleClass("icon-resize-vertical icon-arrow-down");
-            }
-          };
-          setDirectionClass(direction);
-          q.on("set:sortorder", function() {
-            var sd;
-            sd = q.getSortDirection(view);
-            if (sd) {
-              return setDirectionClass(sd);
-            }
-          });
-          direction = nextDirections[direction] || "ASC";
-          sortButton.click(function(e) {
-            var $elem;
-            $elem = $(this);
-            q.orderBy([
-              {
-                path: view,
-                direction: direction
+          promise = new $.Deferred();
+          titles = {};
+          _.each(views, function(v) {
+            return q.getPathInfo(v).getDisplayName(function(name) {
+              titles[v] = name;
+              if (_.size(titles) === views.length) {
+                return promise.resolve(titles);
               }
-            ]);
-            tr.find('.im-col-sort-indicator i').removeClass("icon-arrow-up icon-arrow-down");
-            tr.find('.im-col-sort-indicator i').addClass("icon-resize-vertical");
-            switch (direction) {
-              case "ASC":
-                sortButton.toggleClass("icon-resize-vertical icon-arrow-up");
-                break;
-              case "DESC":
-                sortButton.toggleClass("icon-resize-vertical icon-arrow-down");
+            });
+          });
+          promise.done(function(titles) {
+            var i, v, _i, _len, _results;
+            _results = [];
+            for (i = _i = 0, _len = views.length; _i < _len; i = ++_i) {
+              v = views[i];
+              _results.push(_this.buildColumnHeader(v, i, titles[v], tr));
             }
-            return direction = nextDirections[direction];
+            return _results;
           });
-          minumaximiser = th.find('.im-col-minumaximiser');
-          return minumaximiser.click(function(e) {
-            var isMinimised;
-            minumaximiser.find('i').toggleClass("icon-minus-sign icon-plus-sign");
-            isMinimised = _this.minimisedCols[i] = !_this.minimisedCols[i];
-            th.find('.im-col-title').toggle(!isMinimised);
-            return _this.fill();
-          });
-        };
-        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-          view = _ref[i];
-          _fn(view, i);
+        } else {
+          views = q.views;
+          _fn = function(view, i) {
+            var title;
+            title = result.columnHeaders[i].split(' > ').slice(1).join(" > ");
+            return _this.buildColumnHeader(view, i, title, tr);
+          };
+          for (i = _i = 0, _len = views.length; _i < _len; i = ++_i) {
+            view = views[i];
+            _fn(view, i);
+          }
         }
-        tr.find('.summary-img').click(this.showColumnSummary).dropdown();
         return thead.appendTo(this.el);
       };
 
-      ResultsTable.prototype.showColumnSummary = function(e) {
-        var $el, i, summ, view;
-        $el = jQuery(e.target).closest('.summary-img');
-        i = $el.data("col-idx");
-        view = this.query.views[i];
-        if (!view) {
-          e.stopPropagation();
-          e.preventDefault();
-        } else if (!$el.parent().hasClass("open")) {
-          summ = new intermine.query.results.DropDownColumnSummary(view, this.query);
-          $el.siblings('.dropdown-menu').html(summ.render().el);
-        }
-        return false;
+      ResultsTable.prototype.showOuterJoinedColumnSummaries = function(path) {
+        var _this = this;
+        return function(e) {
+          var $el, summ;
+          $el = jQuery(e.target).closest('.summary-img');
+          if (!$el.parent().hasClass('open')) {
+            summ = new intermine.query.results.OuterJoinDropDown(path, _this.query);
+            $el.siblings('.dropdown-menu').html(summ.render().el);
+          }
+          return false;
+        };
+      };
+
+      ResultsTable.prototype.showColumnSummary = function(path) {
+        var _this = this;
+        return function(e) {
+          var $el, summ, view;
+          $el = jQuery(e.target).closest('.summary-img');
+          view = path.toString();
+          if (!view) {
+            e.stopPropagation();
+            e.preventDefault();
+          } else if (!$el.parent().hasClass("open")) {
+            summ = new intermine.query.results.DropDownColumnSummary(view, _this.query);
+            $el.siblings('.dropdown-menu').html(summ.render().el);
+          }
+          return false;
+        };
       };
 
       return ResultsTable;
@@ -606,13 +703,13 @@
 
         this.removeColumn = __bind(this.removeColumn, this);
 
-        this.showColumnSummary = __bind(this.showColumnSummary, this);
-
         this.removeOverlay = __bind(this.removeOverlay, this);
 
         this.overlayTable = __bind(this.overlayTable, this);
 
         this.getRowData = __bind(this.getRowData, this);
+
+        this.showError = __bind(this.showError, this);
 
         this.refresh = __bind(this.refresh, this);
 
@@ -696,6 +793,16 @@
         }
       };
 
+      Table.prototype.showError = function(resp) {
+        var data, _ref, _ref1;
+        try {
+          data = JSON.parse(resp.responseText);
+          return (_ref = this.table) != null ? _ref.handleError(data.error, data.executionTime) : void 0;
+        } catch (err) {
+          return (_ref1 = this.table) != null ? _ref1.handleError("Internal error", new Date().toString()) : void 0;
+        }
+      };
+
       Table.prototype.getRowData = function(start, size) {
         var end, freshness, isOutOfRange, isStale, page, promise, req,
           _this = this;
@@ -712,7 +819,7 @@
         if (isStale || isOutOfRange) {
           page = this.getPage(start, size);
           this.overlayTable();
-          req = this.query.table(page, function(rows, resultSet) {
+          req = this.query[this.fetchMethod](page, function(rows, resultSet) {
             _this.addRowsToCache(page, resultSet);
             return _this.cache.freshness = freshness;
           });
@@ -834,7 +941,7 @@
       };
 
       Table.prototype.serveResultsFromCache = function(start, size) {
-        var base, fields, result, v,
+        var base, fields, makeCell, result, v,
           _this = this;
         base = this.query.service.root.replace(/\/service\/?$/, "");
         result = jQuery.extend(true, {}, this.cache.lastResult);
@@ -851,16 +958,50 @@
           }
           return _results;
         }).call(this);
+        makeCell = function(obj) {
+          var args, field, model, node, _base, _name;
+          if (_.has(obj, 'rows')) {
+            return new intermine.results.table.SubTable(_this.query, makeCell, obj);
+          } else {
+            node = _this.query.getPathInfo(obj.column).getParent();
+            field = obj.column.replace(/^.*\./, '');
+            model = obj.id != null ? (_base = _this.itemModels)[_name = obj.id] || (_base[_name] = new intermine.model.IMObject(_this.query, obj, field, base)) : !(obj["class"] != null) ? new intermine.model.NullObject(_this.query, field) : new intermine.model.FPObject(_this.query, obj, field, node.getType().name);
+            model.merge(obj, field);
+            args = {
+              model: model,
+              node: node,
+              field: field
+            };
+            args.query = _this.query;
+            return new intermine.results.table.Cell(args);
+          }
+        };
         result.rows = result.results.map(function(row) {
           return row.map(function(cell, idx) {
-            var cv, field, imo, _base, _name;
-            cv = cell.id ? (field = fields[idx], imo = (_base = _this.itemModels)[_name = cell.id] || (_base[_name] = new intermine.model.IMObject(_this.query, cell, field[1], base)), imo.merge(cell, field[1]), new intermine.results.table.Cell({
-              model: imo,
-              node: field[0],
-              field: field[1],
-              query: _this.query
-            })) : new intermine.results.table.NullCell();
-            return cv;
+            var field, imo, _base, _name;
+            if (_.has(cell, 'column')) {
+              return makeCell(cell);
+            } else if ((cell != null ? cell.id : void 0) != null) {
+              field = fields[idx];
+              imo = (_base = _this.itemModels)[_name = cell.id] || (_base[_name] = new intermine.model.IMObject(_this.query, cell, field[1], base));
+              imo.merge(cell, field[1]);
+              return new intermine.results.table.Cell({
+                model: imo,
+                node: field[0],
+                field: field[1],
+                query: _this.query
+              });
+            } else if ((cell != null ? cell.value : void 0) != null) {
+              return new intermine.results.table.Cell({
+                model: new intermine.model.FPObject(_this.query, cell, field[1]),
+                query: _this.query,
+                field: field[1]
+              });
+            } else {
+              return new intermine.results.table.NullCell({
+                query: _this.query
+              });
+            }
           });
         });
         return result;
@@ -875,41 +1016,34 @@
       };
 
       Table.prototype.render = function() {
-        var path, setupParams, tel;
+        var tel;
         this.$el.empty();
         this.$el.append("<div class=\"im-table-summary\"></div>");
         tel = this.make("table", this.tableAttrs);
         this.$el.append(tel);
-        jQuery(tel).append("<div class=\"progress progress-striped active progress-info\">\n    <h2>Building table</h2>\n    <div class=\"bar\" style=\"width: 100%\"></div>\n</div>");
-        path = "query/results";
-        setupParams = {
-          format: "jsontable",
-          query: this.query.toXML(),
-          token: this.query.service.token
+        jQuery(tel).append("<h2>Building table</h2>\n<div class=\"progress progress-striped active progress-info\">\n    <div class=\"bar\" style=\"width: 100%\"></div>\n</div>");
+        return this.query.service.fetchVersion(this.doRender(tel)).fail(this.onSetupError(tel));
+      };
+
+      Table.prototype.doRender = function(tel) {
+        var _this = this;
+        return function(version) {
+          var path, setupParams;
+          _this.fetchMethod = version >= 10 ? 'tableRows' : 'table';
+          path = "query/results";
+          setupParams = {
+            format: "jsontable",
+            query: _this.query.toXML(),
+            token: _this.query.service.token
+          };
+          _this.$el.appendTo(_this.$parent);
+          _this.query.service.makeRequest(path, setupParams, _this.onSetupSuccess(tel), "POST").fail(_this.onSetupError(tel));
+          return _this;
         };
-        this.$el.appendTo(this.$parent);
-        this.query.service.makeRequest(path, setupParams, this.onSetupSuccess(tel), "POST").fail(this.onSetupError(tel));
-        return this;
       };
 
       Table.prototype.events = {
-        'click .summary-img': 'showColumnSummary',
         'click .im-col-remover': 'removeColumn'
-      };
-
-      Table.prototype.showColumnSummary = function(e) {
-        var $el, i, summ, view;
-        $el = jQuery(e.target).closest('.summary-img');
-        i = $el.data("col-idx");
-        view = this.query.views[i];
-        if (!view) {
-          e.stopPropagation();
-          e.preventDefault();
-        } else if (!$el.parent().hasClass("open")) {
-          summ = new intermine.query.results.DropDownColumnSummary(view, this.query);
-          $el.siblings('.dropdown-menu').html(summ.render().el);
-        }
-        return false;
       };
 
       Table.prototype.removeColumn = function(e) {
@@ -1140,7 +1274,57 @@
   });
 
   scope("intermine.query.results", function(exporting) {
-    var DropDownColumnSummary, SummaryHeading;
+    var DropDownColumnSummary, OuterJoinDropDown, SummaryHeading;
+    exporting(OuterJoinDropDown = (function(_super) {
+
+      __extends(OuterJoinDropDown, _super);
+
+      function OuterJoinDropDown() {
+        return OuterJoinDropDown.__super__.constructor.apply(this, arguments);
+      }
+
+      OuterJoinDropDown.prototype.className = "im-summary-selector";
+
+      OuterJoinDropDown.prototype.tagName = 'ul';
+
+      OuterJoinDropDown.prototype.initialize = function(path, query) {
+        this.path = path;
+        this.query = query;
+      };
+
+      OuterJoinDropDown.prototype.render = function() {
+        var v, _i, _len, _ref,
+          _this = this;
+        console.log(this.path);
+        _ref = this.query.views;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          v = _ref[_i];
+          if (v.match(this.path.toString())) {
+            (function(v) {
+              var li;
+              console.log("" + v + ".match(" + (_this.path.toString()) + ") -> " + (v.match(_this.path.toString())));
+              li = $("<li class=\"im-outer-joined-path\"><a href=\"#\"></a></li>");
+              _this.$el.append(li);
+              _this.query.getPathInfo(v).getDisplayName(function(name) {
+                return li.find('a').text(name);
+              });
+              return li.click(function(e) {
+                var summ;
+                e.stopPropagation();
+                e.preventDefault();
+                summ = new intermine.query.results.DropDownColumnSummary(v, _this.query);
+                _this.$el.parent().html(summ.render().el);
+                return _this.remove();
+              });
+            })(v);
+          }
+        }
+        return this;
+      };
+
+      return OuterJoinDropDown;
+
+    })(Backbone.View));
     exporting(DropDownColumnSummary = (function(_super) {
 
       __extends(DropDownColumnSummary, _super);
@@ -1191,13 +1375,13 @@
             };
             available = filteredTotal != null ? filteredTotal : total;
             _this.$('.im-item-available').text(nts(available));
-            _this.$('.im-item-got').text(got === available ? 'All' : nts(got));
+            _this.$('.im-item-got').text(got === available ? 'All' : "" + (nts(got)) + " of");
             return _this.$('.im-item-total').text(filteredTotal != null ? "(filtered from " + (nts(total)) + ")" : "");
           }
         });
       };
 
-      SummaryHeading.prototype.template = _.template("<h3>\n    <span class=\"im-item-got\"></span>\n    of\n    <span class=\"im-item-available\"></span>\n    <span class=\"im-type-name\"></span>\n    <span class=\"im-attr-name\"></span>\n    <span class=\"im-item-total\"></span>\n</h3>");
+      SummaryHeading.prototype.template = _.template("<h3>\n    <span class=\"im-item-got\"></span>\n    <span class=\"im-item-available\"></span>\n    <span class=\"im-type-name\"></span>\n    <span class=\"im-attr-name\"></span>\n    <span class=\"im-item-total\"></span>\n</h3>");
 
       SummaryHeading.prototype.render = function() {
         var attr, s, type,
@@ -2682,9 +2866,144 @@
   });
 
   scope("intermine.results.table", function(exporting) {
-    var CELL_HTML, Cell, HIDDEN_FIELDS, NullCell;
+    var CELL_HTML, Cell, HIDDEN_FIELDS, NullCell, SubTable;
     CELL_HTML = _.template("<input class=\"list-chooser\" type=\"checkbox\" style=\"display: none\" data-obj-id=\"<%= id %>\" \n    <% if (selected) { %>checked <% }; %>\n    data-obj-type=\"<%= type %>\">\n<% if (value == null) { %>\n<span class=\"null-value\">no value</span>\n<% } else { %>\n    <a class=\"im-cell-link\" href=\"<%= base %><%= url %>\"><%= value %></a>\n<% } %>\n<% if (field == 'url') { %>\n    <a class=\"im-cell-link external\" href=\"<%= value %>\"><i class=\"icon-globe\"></i>link</a>\n<% } %>");
     HIDDEN_FIELDS = ["class", "objectId"];
+    exporting(SubTable = (function(_super) {
+
+      __extends(SubTable, _super);
+
+      function SubTable() {
+        return SubTable.__super__.constructor.apply(this, arguments);
+      }
+
+      SubTable.prototype.tagName = "td";
+
+      SubTable.prototype.className = "im-result-subtable";
+
+      SubTable.prototype.initialize = function(query, cellify, subtable) {
+        var _this = this;
+        this.query = query;
+        this.cellify = cellify;
+        this.rows = subtable.rows;
+        this.view = subtable.view;
+        this.column = this.query.getPathInfo(subtable.column);
+        this.query.on('expand:subtables', function(path) {
+          if (path.toString() === _this.column.toString()) {
+            return _this.$('.im-subtable').slideDown();
+          }
+        });
+        return this.query.on('collapse:subtables', function(path) {
+          if (path.toString() === _this.column.toString()) {
+            return _this.$('.im-subtable').slideUp();
+          }
+        });
+      };
+
+      SubTable.prototype.getSummaryText = function() {
+        if (this.column.isCollection()) {
+          return "" + this.rows.length + " " + (this.column.getType().name) + "s";
+        } else {
+          if (this.rows.length === 0) {
+            return "No " + (this.column.getType().name);
+          } else {
+            return "" + this.rows[0][0].value + " (" + (this.rows[0].slice(1).map(function(c) {
+              return c.value;
+            }).join(', ')) + ")";
+          }
+        }
+      };
+
+      SubTable.prototype.render = function() {
+        var colRoot, colStr, icon, row, summary, t, v, _fn, _fn1, _i, _j, _len, _len1, _ref, _ref1,
+          _this = this;
+        icon = this.rows.length > 0 ? '<i class=icon-th-list></i>' : '<i class=icon-non-existent></i>';
+        summary = $("<span>" + icon + "&nbsp;" + (this.getSummaryText()) + "</span>");
+        summary.addClass('im-subtable-summary').appendTo(this.$el);
+        t = $('<table><thead><tr></tr></thead><tbody></tbody></table>');
+        colRoot = this.column.getType().name;
+        colStr = this.column.toString();
+        if (this.rows.length > 0) {
+          _ref = this.view;
+          _fn = function(v) {
+            var path, th;
+            th = $('<th>');
+            path = _this.query.getPathInfo(v);
+            _this.column.getDisplayName(function(colName) {
+              return path.getDisplayName(function(pathName) {
+                if (pathName.match(colName)) {
+                  return th.text(pathName.replace(colName, '').replace(/^\s*>?\s*/, ''));
+                } else {
+                  return th.text(pathName.replace(/^[^>]*\s*>\s*/, ''));
+                }
+              });
+            });
+            return t.children('thead').children('tr').append(th);
+          };
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            v = _ref[_i];
+            _fn(v);
+          }
+          _ref1 = this.rows;
+          _fn1 = function(t, row) {
+            var cell, tr, w, _fn2, _k, _len2;
+            tr = $('<tr>');
+            w = _this.$el.width() / _this.view.length;
+            _fn2 = function(tr, cell) {
+              return tr.append((_this.cellify(cell)).render().setWidth(w).el);
+            };
+            for (_k = 0, _len2 = row.length; _k < _len2; _k++) {
+              cell = row[_k];
+              _fn2(tr, cell);
+            }
+            t.children('tbody').append(tr);
+            return null;
+          };
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            row = _ref1[_j];
+            _fn1(t, row);
+          }
+        }
+        t.addClass('im-subtable table table-condensed table-striped');
+        this.$el.append(t);
+        summary.css({
+          cursor: 'pointer'
+        }).click(function(e) {
+          console.log(t);
+          e.stopPropagation();
+          if (t.is(':visible')) {
+            _this.query.trigger('subtable:collapsed', _this.column);
+          } else {
+            _this.query.trigger('subtable:expanded', _this.column);
+          }
+          return t.slideToggle();
+        });
+        return this;
+      };
+
+      SubTable.prototype.getUnits = function() {
+        if (this.rows.length = 0) {
+          return this.view.length;
+        } else {
+          return _.reduce(this.rows[0], (function(a, item) {
+            return a + (item.view != null ? item.view.length : 1);
+          }), 0);
+        }
+      };
+
+      SubTable.prototype.setWidth = function(w) {
+        this.$el.css({
+          width: (w * this.view.length) + "px"
+        });
+        this.$('.im-cell-link').css({
+          "max-width": ((w * this.view.length) - 5) + "px"
+        });
+        return this;
+      };
+
+      return SubTable;
+
+    })(Backbone.View));
     exporting(Cell = (function(_super) {
 
       __extends(Cell, _super);
@@ -2696,6 +3015,10 @@
       Cell.prototype.tagName = "td";
 
       Cell.prototype.className = "im-result-field";
+
+      Cell.prototype.getUnits = function() {
+        return 1;
+      };
 
       Cell.prototype.events = {
         'click': 'activateChooser'
@@ -2715,7 +3038,9 @@
           });
         });
         this.options.query.on("start:list-creation", function() {
-          return _this.$('input').show();
+          if (_this.model.get("selectable")) {
+            return _this.$('input').show();
+          }
         });
         this.options.query.on("stop:list-creation", function() {
           _this.$('input').hide();
@@ -2723,7 +3048,8 @@
           return _this.model.set("selected", false);
         });
         this.options.query.on("start:highlight:node", function(node) {
-          if (_this.options.node.toPathString() === node.toPathString()) {
+          var _ref;
+          if (((_ref = _this.options.node) != null ? _ref.toPathString() : void 0) === node.toPathString()) {
             return _this.$el.addClass("im-highlight");
           }
         });
@@ -2732,20 +3058,13 @@
         });
       };
 
-      Cell.prototype.render = function() {
-        var cellLink, content, html, id, s, type;
-        html = CELL_HTML(_.extend({}, this.model.toJSON(), {
-          value: this.model.get(this.options.field),
-          field: this.options.field
-        }));
-        this.$el.append(html).toggleClass({
-          active: this.model.get("selected")
-        });
-        type = this.model.get("type");
-        id = this.model.get("id");
-        s = this.options.query.service;
+      Cell.prototype.setupPreviewOverlay = function() {
+        var cellLink, content, id, s, type;
         content = $("<table class=\"im-item-details table table-condensed table-bordered\">\n<colgroup>\n    <col class=\"im-item-field\"/>\n    <col class=\"im-item-value\"/>\n</colgroup>\n</table>");
-        cellLink = this.$el.find('.im-cell-link').first().popover({
+        type = this.model.get('type');
+        id = this.model.get('id');
+        s = this.options.query.service;
+        return cellLink = this.$el.find('.im-cell-link').first().popover({
           placement: function() {
             var table;
             table = cellLink.closest("table");
@@ -2815,6 +3134,23 @@
             return content;
           }
         });
+      };
+
+      Cell.prototype.render = function() {
+        var html, id, s, type;
+        html = CELL_HTML(_.extend({}, this.model.toJSON(), {
+          value: this.model.get(this.options.field),
+          field: this.options.field
+        }));
+        this.$el.append(html).toggleClass({
+          active: this.model.get("selected")
+        });
+        type = this.model.get("type");
+        id = this.model.get("id");
+        s = this.options.query.service;
+        if (id != null) {
+          this.setupPreviewOverlay();
+        }
         return this;
       };
 
@@ -2849,8 +3185,10 @@
         return NullCell.__super__.constructor.apply(this, arguments);
       }
 
+      NullCell.prototype.setupPreviewOverlay = function() {};
+
       NullCell.prototype.initialize = function() {
-        return this.model = new Backbone.Model({
+        this.model = new Backbone.Model({
           selected: false,
           selectable: false,
           value: null,
@@ -2859,6 +3197,7 @@
           base: null,
           type: null
         });
+        return NullCell.__super__.initialize.call(this);
       };
 
       return NullCell;
@@ -2994,8 +3333,8 @@
   });
 
   scope("intermine.model", function(exporting) {
-    var IMObject;
-    return exporting(IMObject = (function(_super) {
+    var FPObject, IMObject, NullObject;
+    exporting(IMObject = (function(_super) {
 
       __extends(IMObject, _super);
 
@@ -3036,6 +3375,47 @@
       };
 
       return IMObject;
+
+    })(Backbone.Model));
+    exporting(NullObject = (function(_super) {
+
+      __extends(NullObject, _super);
+
+      function NullObject() {
+        return NullObject.__super__.constructor.apply(this, arguments);
+      }
+
+      NullObject.prototype.initialize = function(query, field, type) {
+        this.attributes = {};
+        this.set(field, null);
+        this.set('id', null);
+        this.set('type', type);
+        this.set('selected', false);
+        return this.set('selectable', false);
+      };
+
+      NullObject.prototype.merge = function() {};
+
+      return NullObject;
+
+    })(IMObject));
+    return exporting(FPObject = (function(_super) {
+
+      __extends(FPObject, _super);
+
+      function FPObject() {
+        return FPObject.__super__.constructor.apply(this, arguments);
+      }
+
+      FPObject.prototype.initialize = function(query, obj, field) {
+        obj.type = obj["class"];
+        obj[field] = obj.value;
+        obj.selected = false;
+        obj.selectable = false;
+        return this.attributes = obj;
+      };
+
+      return FPObject;
 
     })(Backbone.Model));
   });
@@ -3145,7 +3525,60 @@
   });
 
   scope("intermine.query.results.table", function(exporting) {
-    var ColumnOrderer;
+    var ColumnOrderer, OuterJoinGroup;
+    OuterJoinGroup = (function(_super) {
+
+      __extends(OuterJoinGroup, _super);
+
+      function OuterJoinGroup() {
+        return OuterJoinGroup.__super__.constructor.apply(this, arguments);
+      }
+
+      OuterJoinGroup.prototype.tagName = 'li';
+
+      OuterJoinGroup.prototype.className = 'im-reorderable breadcrumb';
+
+      OuterJoinGroup.prototype.initialize = function(query, ojg, views, indices) {
+        this.query = query;
+        this.ojg = ojg;
+        this.views = views;
+        this.indices = indices;
+      };
+
+      OuterJoinGroup.prototype.render = function() {
+        var h4, ul, v, _fn, _i, _len, _ref,
+          _this = this;
+        this.$el.append('<i class=icon-move></i>');
+        h4 = $('<h4>');
+        this.$el.append(h4);
+        this.ojg.getDisplayName(function(name) {
+          return h4.text(name);
+        });
+        this.$el.data('indices', this.indices);
+        this.$el.data('path', this.ojg.toString());
+        ul = $('<ul>');
+        _ref = this.views;
+        _fn = function(v) {
+          var li;
+          li = $('<li class="im-outer-joined-path">');
+          ul.append(li);
+          return _this.query.getPathInfo(v).getDisplayName(function(name) {
+            return _this.ojg.getDisplayName(function(ojname) {
+              return li.text(name.replace(ojname, '').replace(/^\s*>?\s*/, ''));
+            });
+          });
+        };
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          v = _ref[_i];
+          _fn(v);
+        }
+        this.$el.append(ul);
+        return this;
+      };
+
+      return OuterJoinGroup;
+
+    })(Backbone.View);
     return exporting(ColumnOrderer = (function(_super) {
 
       __extends(ColumnOrderer, _super);
@@ -3162,7 +3595,7 @@
 
       ColumnOrderer.prototype.template = _.template("<a class=\"btn btn-large im-reorderer\">\n    <i class=\"icon-move\"></i>\n    Manage Columns\n</a>\n<div class=\"modal fade im-col-order-dialog\">\n    <div class=\"modal-header\">\n        <a class=\"close\" data-dismiss=\"modal\">close</a>\n        <h3>Manage Columns</a>\n    </div>\n    <div class=\"modal-body\">\n        <ul class=\"nav nav-tabs\">\n            <li class=\"active\"><a data-target=\".im-reordering\" data-toggle=\"tab\">Re-Order Columns</a></li>\n            <li><a data-target=\".im-sorting\" data-toggle=\"tab\">Re-Sort Columns</a></li>\n        </ul>\n        <div class=\"tab-content\">\n            <div class=\"tab-pane fade im-reordering active in\">\n                <ul class=\"im-reordering-container well\"></ul>\n            </div>\n            <div class=\"tab-pane fade im-sorting\">\n                <ul class=\"im-sorting-container well\"></ul>\n                <ul class=\"im-sorting-container-possibilities well\"></ul>\n            </div>\n        </div>\n    </div>\n    <div class=\"modal-footer\">\n        <a class=\"btn btn-cancel\">\n            Cancel\n        </a>\n        <a class=\"btn pull-right btn-primary\">\n            Apply\n        </a>\n    </div>\n</div>");
 
-      ColumnOrderer.prototype.viewTemplate = _.template("<li class=\"im-reorderable breadcrumb\" data-col-idx=\"<%= idx %>\" data-path=\"<%- path %>\">\n    <i class=\"icon-move\"></i>\n    <%- displayName %>\n</li>");
+      ColumnOrderer.prototype.viewTemplate = _.template("<li class=\"im-reorderable breadcrumb\" data-col-idx=\"<%= idx %>\" data-path=\"<%- path %>\">\n    <i class=\"icon-move\"></i>\n    <h4 class=\"im-display-name\"><%- displayName %></span>\n</li>");
 
       ColumnOrderer.prototype.render = function() {
         var colContainer,
@@ -3199,18 +3632,70 @@
       };
 
       ColumnOrderer.prototype.initOrdering = function() {
-        var colContainer, i, moveableView, v, _i, _len, _ref;
+        var colContainer, i, processed, v, _fn, _i, _len, _ref,
+          _this = this;
         colContainer = this.$('.im-reordering-container');
         colContainer.empty();
+        processed = {};
         _ref = this.query.views;
+        _fn = function(v, i) {
+          var indices, moveableView, oj, pi, vandi, views, x;
+          if (_this.query.isOuterJoined(v)) {
+            pi = _this.query.getPathInfo(v);
+            oj = _this.query.joins[pi.toString()] === 'OUTER' ? pi : null;
+            while (!(pi != null ? pi.isRoot() : void 0)) {
+              pi = pi.getParent();
+              oj = _this.query.joins[pi.toString()] === 'OUTER' ? pi : oj;
+            }
+            if (!processed[oj.toString()]) {
+              vandi = (function() {
+                var _j, _len1, _ref1, _results;
+                _ref1 = this.query.views;
+                _results = [];
+                for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+                  v = _ref1[i];
+                  if (v.match(oj.toString())) {
+                    _results.push([v, i]);
+                  }
+                }
+                return _results;
+              }).call(_this);
+              views = (function() {
+                var _j, _len1, _results;
+                _results = [];
+                for (_j = 0, _len1 = vandi.length; _j < _len1; _j++) {
+                  x = vandi[_j];
+                  _results.push(x[0]);
+                }
+                return _results;
+              })();
+              indices = (function() {
+                var _j, _len1, _results;
+                _results = [];
+                for (_j = 0, _len1 = vandi.length; _j < _len1; _j++) {
+                  x = vandi[_j];
+                  _results.push(x[1]);
+                }
+                return _results;
+              })();
+              moveableView = new OuterJoinGroup(_this.query, oj, views, indices).render().el;
+              processed[oj.toString()] = true;
+            }
+          } else {
+            moveableView = $(_this.viewTemplate({
+              idx: i,
+              displayName: v,
+              path: v
+            }));
+            _this.query.getPathInfo(v).getDisplayName(function(name) {
+              return moveableView.find('.im-display-name').text(name);
+            });
+          }
+          return colContainer.append(moveableView);
+        };
         for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
           v = _ref[i];
-          moveableView = $(this.viewTemplate({
-            idx: i,
-            displayName: v,
-            path: v
-          }));
-          colContainer.append(moveableView);
+          _fn(v, i);
         }
         return colContainer;
       };
@@ -3286,7 +3771,7 @@
         _ref1 = this.query.views;
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           v = _ref1[_j];
-          if (!this.query.getSortDirection(v)) {
+          if (!this.query.getSortDirection(v) && !this.query.isOuterJoined(v)) {
             possibilities.append(this.possibleSortOptionTemplate({
               path: v
             }));
@@ -3295,13 +3780,15 @@
         _ref2 = this.query.getQueryNodes();
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           n = _ref2[_k];
-          _ref3 = n.getChildNodes();
-          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-            cn = _ref3[_l];
-            if (cn.isAttribute() && (_ref4 = cn.toPathString(), __indexOf.call(this.query.views, _ref4) < 0)) {
-              possibilities.append(this.possibleSortOptionTemplate({
-                path: cn.toPathString()
-              }));
+          if (!this.query.isOuterJoined(n.toPathString())) {
+            _ref3 = n.getChildNodes();
+            for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+              cn = _ref3[_l];
+              if (cn.isAttribute() && (_ref4 = cn.toPathString(), __indexOf.call(this.query.views, _ref4) < 0)) {
+                possibilities.append(this.possibleSortOptionTemplate({
+                  path: cn.toPathString()
+                }));
+              }
             }
           }
         }
@@ -3342,13 +3829,29 @@
       };
 
       ColumnOrderer.prototype.changeOrder = function(e) {
-        var lis, newView;
+        var lis, newViews, p, paths, pi, v, _i, _j, _len, _len1, _ref;
         lis = this.$('.im-reordering-container li');
-        newView = lis.map(function(i, e) {
+        paths = lis.map(function(i, e) {
           return $(e).data('path');
         }).get();
+        newViews = [];
+        for (_i = 0, _len = paths.length; _i < _len; _i++) {
+          p = paths[_i];
+          pi = this.query.getPathInfo(p);
+          if (pi.isAttribute()) {
+            newViews.push(p);
+          } else {
+            _ref = this.query.views;
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              v = _ref[_j];
+              if (v.match(p)) {
+                newViews.push(v);
+              }
+            }
+          }
+        }
         this.$('.modal').modal('hide');
-        return this.query.select(newView);
+        return this.query.select(newViews);
       };
 
       ColumnOrderer.prototype.changeSorting = function(e) {
