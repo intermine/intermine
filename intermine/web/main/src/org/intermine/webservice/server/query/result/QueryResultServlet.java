@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.webservice.server.WebService;
 
 
 
@@ -53,7 +54,15 @@ public class QueryResultServlet extends HttpServlet
         // Service has always new data and fields in executor are initialized
         // according new data
         // and not remember fields initialized according previous request data
+        String pathInfo = request.getPathInfo();
         final InterMineAPI im = InterMineContext.getInterMineAPI();
-        new QueryResultService(im).service(request, response);
+        WebService ws;
+        if (pathInfo != null && pathInfo.endsWith("tablerows")) {
+            ws = new TableRowService(im);
+        } else {
+            ws = new QueryResultService(im);
+        }
+        
+        ws.service(request, response);
     }
 }
