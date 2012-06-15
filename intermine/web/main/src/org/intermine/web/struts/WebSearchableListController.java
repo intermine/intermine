@@ -33,7 +33,6 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager.CaseInsensitiveComparator;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
@@ -43,9 +42,9 @@ import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.SearchResults;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
+import org.intermine.api.template.TemplateManager;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.query.ObjectStoreBag;
-import org.intermine.api.template.TemplateManager;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -269,7 +268,9 @@ public class WebSearchableListController extends TilesAction
                 && !mostPopulareTemplateNames.contains(templateName2)) {
                 WebSearchable ws1 = filteredWebSearchables.get(templateName1);
                 WebSearchable ws2 = filteredWebSearchables.get(templateName2);
-                if (ws1.getTitle().equals(ws2.getTitle())) {
+                String t1 = ws1.getTitle();
+                String t2 = ws2.getTitle();
+                if (t1 == null || t2 == null || t1.equals(t2)) {
                     return ws1.getName().compareTo(ws2.getName());
                 } else {
                     return ws1.getTitle().compareTo(ws2.getTitle());
