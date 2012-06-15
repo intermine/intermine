@@ -30,6 +30,7 @@
 
 <!-- DWR mapping -->
 <!-- ================================================================================= -->
+
   <servlet>
   <servlet-name>dwr-invoker</servlet-name>
   <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
@@ -75,6 +76,11 @@
 <!-- ================================================================================= -->
 <!-- Intermine Web Service mapping -->
 <!-- ================================================================================= -->
+
+
+  <!--@MODEL_INCLUDE@-->
+
+  
   <servlet>
   <servlet-name>ws-query-results</servlet-name>
   <servlet-class>org.intermine.webservice.server.query.result.QueryResultServlet</servlet-class>
@@ -86,7 +92,7 @@
 
   <servlet-mapping>
   <servlet-name>ws-query-results</servlet-name>
-  <url-pattern>/service/query/results</url-pattern>
+  <url-pattern>/service/query/results/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -972,5 +978,4 @@
     </jsp-property-group>
   </jsp-config>
 
-  <!--@MODEL_INCLUDE@-->
 </web-app>
