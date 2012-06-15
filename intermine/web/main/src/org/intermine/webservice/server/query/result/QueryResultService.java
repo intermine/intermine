@@ -73,8 +73,8 @@ public class QueryResultService extends AbstractQueryService
 {
 
     /** Batch size to use **/
-    private static final int BATCH_SIZE = 5000;
-    private Map<String, Object> attributes = new HashMap<String, Object>();;
+    public static final int BATCH_SIZE = 5000;
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
      * Constructor
@@ -126,7 +126,7 @@ public class QueryResultService extends AbstractQueryService
         String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
         return linkGen.getMineResultsPath(xml);
     }
-
+    
     /**
      * Set the header attributes of the output based on the values of the PathQuery
      *
