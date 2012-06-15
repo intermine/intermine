@@ -104,7 +104,8 @@ public class ModelService extends WebService
      */
     @Override
     protected void execute() {
-        Model model = this.im.getModel();
+        final Model model = this.im.getModel();
+        final WebConfig config = InterMineContext.getWebConfig();
         if (formatIsJSON()) {
             ResponseUtil.setJSONHeader(response, FILE_BASE_NAME + ".json");
             Map<String, Object> attributes = new HashMap<String, Object>();
@@ -124,6 +125,7 @@ public class ModelService extends WebService
                 Map<String, String> kvPairs = new HashMap<String, String>();
                 kvPairs.put("name", getNodeName(node));
                 kvPairs.put("id", node.toStringNoConstraints());
+                kvPairs.put("display", WebUtil.formatPath(node, config));
                 kvPairs.put("type", "class");
                 attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
                 attributes.put(JSONFormatter.KEY_INTRO, "\"fields\":[");
