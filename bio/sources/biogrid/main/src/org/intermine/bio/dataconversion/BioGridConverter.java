@@ -588,6 +588,7 @@ public class BioGridConverter extends BioFileConverter
             if (StringUtils.isNotEmpty(biogridID)) {
                 Item xref = createItem("CrossReference");
                 xref.setAttribute("identifier", biogridID);
+                xref.setReference("subject", item);
                 store(xref);
                 return xref;
             }
