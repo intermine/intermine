@@ -45,7 +45,7 @@ import org.intermine.pathquery.PathQuery;
 public class PathQueryExecutor extends QueryExecutor
 {
 
-    private static final int DEFAULT_BATCH_SIZE = 5000;
+    public static final int DEFAULT_BATCH_SIZE = 5000;
     private static final long MAX_WAIT_TIME = 2000;
     private int batchSize = DEFAULT_BATCH_SIZE;
 
