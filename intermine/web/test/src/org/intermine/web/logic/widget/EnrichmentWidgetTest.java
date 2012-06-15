@@ -11,22 +11,13 @@ package org.intermine.web.logic.widget;
  */
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStore;
-import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.Query;
-import org.intermine.objectstore.query.Results;
-import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
@@ -36,20 +27,25 @@ import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
-import junit.framework.TestCase;
-
 public class EnrichmentWidgetTest extends WidgetConfigTestCase
 {
+    private static Logger LOG = Logger.getLogger(EnrichmentWidgetTest.class);
+    
     private EnrichmentWidget widget;
     private String MAX = "1.0";
     private String CORRECTION = "Bonferroni";
     
-    
+    private InterMineBag bag;
+    private WidgetConfig config;
+    private String filter;
+    private EnrichmentResults results;
+
     public void setUp() throws Exception {
         super.setUp();
-        WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
+        config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         InterMineBag employeeList = createEmployeeList();
-        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, employeeList, os, "", MAX, CORRECTION);
+        bag = employeeList;
+        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, os, "", MAX, CORRECTION);
     }
 
     public void testValidateBagType() throws Exception {
@@ -62,27 +58,15 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         }
     }
 
-/*    public void testProcess() {
-        try {
-            ldr = new EnrichmentWidgetImplLdr(bag, os,
-                (EnrichmentWidgetConfig) config, filter);
-            EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
-            Double maxValue = Double.parseDouble(max);
-            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection);
-            setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
-        } catch (ObjectStoreException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (NumberFormatException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            LOG.error(e.getMessage(), e);
-        }
+    public void testProcess() throws Exception {
+        EnrichmentWidgetImplLdr ldr 
+            = new EnrichmentWidgetImplLdr(bag, os, (EnrichmentWidgetConfig) config, filter);
+        EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
+        Double maxValue = Double.parseDouble(MAX);
+        results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION);
+        List<List<Object>> exportResults = getResults();
+
+        assertEquals(10, exportResults.size());
     }
 
     public boolean getHasResults() {
@@ -107,21 +91,13 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         return exportResults;
     }
 
-    *//**
-     * Returns the pathConstraint based on the enrichmentIdentifier will be applied on the pathQUery
-     * @return the pathConstraint generated
-     *//*
-    public String getPathConstraint() {
-        return pathConstraint;
-    }
-
-    *//**
+    /**
      * Returns the pathquery based on the views set in config file and the bag constraint
      * Executed when the user selects any item in the matches column in the enrichment widget.
      * @return the query generated
-     *//*
+     */
     public PathQuery getPathQuery() {
-        PathQuery q = createPathQueryView(os, config);
+        PathQuery q = createPathQueryView();
         // bag constraint
         q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
         //constraints for view (bdgp_enrichment)
@@ -153,19 +129,18 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
                 enrichIdentifier = enrichPath;
             }
         }
-        pathConstraint = enrichIdentifier;
         if (subClassContraint) {
             q.addConstraint(Constraints.type(subClassPath, subClassType));
         }
         return q;
     }
 
-    *//**
+    /**
      * Returns the pathquery based on the view set in config file in the startClassDisplay
      * and the bag constraint
      * Executed when the user click on the matches column in the enrichment widget.
      * @return the query generated
-     *//*
+     */
     public PathQuery getPathQueryForMatches() {
         Model model = os.getModel();
         PathQuery pathQuery = new PathQuery(model);
@@ -211,13 +186,18 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
             }
         }
         return pathQuery;
-    }*/
+    }
 
-    public void testCreatePathQueryView() {
+    private PathQuery createPathQueryView() {
         PathQuery pathQuery = new PathQuery(os.getModel());
         pathQuery.addView("Employee.name");
         pathQuery.addView("Employee.age");
         pathQuery.addView("Employee.department.name");
+        return pathQuery;
+    }
+
+    public void testCreatePathQueryView() {
+        PathQuery pathQuery = createPathQueryView();
         assertEquals(pathQuery, widget.createPathQueryView(os,
                 webConfig.getWidgets().get(("contractor_enrichment"))));
     }
