@@ -200,14 +200,13 @@ public final class PortalHelper
      * links, as it will include the internal id, which is liable to change between releases.
      */
     public static String generateReportPath(ResultElement elem) {
-        String url = null;
+        String url;
         StringBuilder sb = new StringBuilder();
         sb.append("/").append(INTERNAL_REPORT_PAGE).append("?id=");
-        sb.append(elem.getId().toString());
+        sb.append(String.valueOf(elem.getId()));
         url = sb.toString();
         return url;
     }
-
 
     /**
      * Get the base url for this web-app. This includes the host and context path fragment.
