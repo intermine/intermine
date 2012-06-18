@@ -55,3 +55,74 @@
   <servlet-name>bed-query</servlet-name>
   <url-pattern>/service/query/results/bed</url-pattern>
 </servlet-mapping>
+
+<servlet>
+  <servlet-name>genomic-region-to-list</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionSearchServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-to-list</servlet-name>
+  <url-pattern>/service/regions/list</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>genomic-region-to-gff3</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionGFF3Servlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-to-gff3</servlet-name>
+  <url-pattern>/service/regions/gff3</url-pattern>
+</servlet-mapping>
+
+
+<servlet>
+  <servlet-name>genomic-region-to-fasta</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionFastaServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-to-fasta</servlet-name>
+  <url-pattern>/service/regions/fasta</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>genomic-region-to-bed</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionBedServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-to-bed</servlet-name>
+  <url-pattern>/service/regions/bed</url-pattern>
+</servlet-mapping>
+
+<servlet>
+  <servlet-name>genomic-region-sequence-export</servlet-name>
+  <servlet-class>org.intermine.bio.webservice.GenomicRegionSequenceExportServlet</servlet-class>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>genomic-region-sequence-export</servlet-name>
+  <url-pattern>/service/regions/sequence</url-pattern>
+</servlet-mapping>
