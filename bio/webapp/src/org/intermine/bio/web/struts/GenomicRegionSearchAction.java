@@ -166,8 +166,9 @@ public class GenomicRegionSearchAction extends InterMineAction
                                 "liftOverStatus", "All coordinates are lifted");
                     }
 
-                    grsService.getConstraint().setGenomicRegionList(liftedList);
-
+                    if (!liftedList.isEmpty()) {
+                        grsService.getConstraint().setGenomicRegionList(liftedList);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     request.setAttribute(

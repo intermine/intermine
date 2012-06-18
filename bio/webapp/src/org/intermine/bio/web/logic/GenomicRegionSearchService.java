@@ -581,15 +581,20 @@ public class GenomicRegionSearchService
             aSpan.setExtendedRegionSize(grsc.getExtendedRegionSize());
 
             // Use regular expression to validate user's input:
-            String ddotsRegex = "^[^:]+: ?\\d+\\.{2}\\d+$"; // "chr:start..end" - [^:]+:\d+\.{2,}\d+
-            String ddotstagRegex = "^[^:]+: ?\\d+\\.{2}\\d+: ?\\d+$"; // "chr:start..end:tag"
-            String tabRegex = "^[^\\t\\s]+\\t\\d+\\t\\d+"; // "chr:start-end" - [^:]+:\d+\-\d+
+            // "chr:start..end" - [^:]+:\d+\.{2,}\d+
+            String ddotsRegex = "^[^:]+: ?\\d+(,\\d+)*\\.{2}\\d+(,\\d+)*$";
+            // "chr:start..end:tag"
+            String ddotstagRegex = "^[^:]+: ?\\d+(,\\d+)*\\.{2}\\d+(,\\d+)*: ?\\d+$";
+            // "chr:start-end" - [^:]+:\d+\-\d+
+            String tabRegex = "^[^\\t\\s]+\\t\\d+(,\\d+)*\\t\\d+(,\\d+)*";
             // "chr(tab)start(tab)end" - [^\t]+\t\d+\t\d+
-            String dashRegex = "^[^:]+: ?\\d+\\-\\d+$";
-            String snpRegex = "^[^:]+: ?\\d+$"; // "chr:singlePosition" - [^:]+:[\d]+$
+            String dashRegex = "^[^:]+: ?\\d+(,\\d+)*\\-\\d+(,\\d+)*$";
+            // "chr:singlePosition" - [^:]+:[\d]+$
+            String snpRegex = "^[^:]+: ?\\d+(,\\d+)*$";
             String emptyLine = "^\\s*$";
 
             if (Pattern.matches(ddotsRegex, spanStr)) {
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String[] spanItems = (spanStr.split(":"))[1].split("\\..");
                 String start = spanItems[0].trim();
@@ -600,6 +605,7 @@ public class GenomicRegionSearchService
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else if (Pattern.matches(ddotstagRegex, spanStr)) {
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String[] spanItems = (spanStr.split(":"))[1].split("\\..");
                 String start = spanItems[0].trim();
@@ -611,6 +617,7 @@ public class GenomicRegionSearchService
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
                 aSpan.setTag(Integer.valueOf((spanStr.split(":"))[2]));
             } else if (Pattern.matches(tabRegex, spanStr)) {
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 String[] spanItems = spanStr.split("\t");
                 aSpan.setChr(spanItems[0]);
                 if ("isInterBaseCoordinate".equals(dataFormat)) {
@@ -620,6 +627,7 @@ public class GenomicRegionSearchService
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[2]));
             } else if (Pattern.matches(dashRegex, spanStr)) {
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String[] spanItems = (spanStr.split(":"))[1].split("-");
                 String start = spanItems[0].trim();
@@ -630,6 +638,7 @@ public class GenomicRegionSearchService
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else if (Pattern.matches(snpRegex, spanStr)) {
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String start = (spanStr.split(":"))[1].trim();
                 if ("isInterBaseCoordinate".equals(dataFormat)) {
