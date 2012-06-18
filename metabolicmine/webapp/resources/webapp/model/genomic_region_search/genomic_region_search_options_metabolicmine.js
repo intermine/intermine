@@ -224,12 +224,21 @@
 
          if (jQuery("#pasteInput").val() != "") {
                // Regex validation
+               /*
                var ddotsRegex = /^[^:]+: ?\d+\.\.\d+$/;
                var tabRegex = /^[^\t]+\t\d+\t\d+/;
                var dashRegex = /^[^:]+: ?\d+\-\d+$/;
                var snpRegex = /^[^:]+: ?\d+$/;
                var emptyLine = /^\s*$/;
                var ddotstagRegex = /^[^:]+: ?\d+\.\.\d+: ?\d+$/;
+               */
+
+               var ddotsRegex = /^[^:\t\s]+: ?\d+(,\d+)*\.\.\d+(,\d+)*$/;
+               var tabRegex = /^[^\t\s]+(\t\d+(,\d+)*){2}/; // this will match the line start with
+               var dashRegex = /^[^:\t\s]+: ?\d+(,\d+)*\-\d+(,\d+)*$/;
+               var snpRegex = /^[^:\t\s]+: ?\d+(,\d+)*$/;
+               var emptyLine = /^\s*$/;
+               var ddotstagRegex = /^[^:]+: ?\d+(,\d+)*\.\.\d+(,\d+)*: ?\d+$/;
 
                var spanArray = jQuery.trim(jQuery("#pasteInput").val()).split("\n");
                var lineNum;
@@ -242,6 +251,30 @@
                  if (!spanArray[i].match(ddotsRegex) && !spanArray[i].match(ddotstagRegex) && !spanArray[i].match(tabRegex) && !spanArray[i].match(dashRegex) && !spanArray[i].match(snpRegex) && !spanArray[i].match(emptyLine)) {
                      alert(spanArray[i] + " doesn't match any supported format...");
                      return false;
+                 }
+                 if (spanArray[i].match(ddotsRegex)) {
+                     var start = parseInt(spanArray[i].split(":")[1].split("..")[0].replace(/\,/g,''));
+                     var end = parseInt(spanArray[i].split(":")[1].split("..")[1].replace(/\,/g,''));
+                     if (start > end) {
+                         alert("start coordinate is after end coordinate (start > end) at " + spanArray[i]);
+                         return false;
+                     }
+                 }
+                 if (spanArray[i].match(tabRegex)) {
+                     var start = parseInt(spanArray[i].split("\t")[1].replace(/\,/g,''));
+                     var end = parseInt(spanArray[i].split("\t")[2].replace(/\,/g,''));
+                     if (start > end) {
+                         alert("start coordinate is after end coordinate (start > end) at " + spanArray[i]);
+                         return false;
+                     }
+                 }
+                 if (spanArray[i].match(dashRegex)) {
+                     var start = parseInt(spanArray[i].split(":")[1].split("-")[0].replace(/\,/g,''));
+                     var end = parseInt(spanArray[i].split(":")[1].split("-")[1].replace(/\,/g,''));
+                     if (start > end) {
+                         alert("start coordinate is after end coordinate (start > end) at " + spanArray[i]);
+                         return false;
+                     }
                  }
                }
 
