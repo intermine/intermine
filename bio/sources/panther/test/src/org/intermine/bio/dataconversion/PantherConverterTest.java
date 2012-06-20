@@ -12,13 +12,13 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class PantherConverterTest extends ItemsTestCase
 {
@@ -32,12 +32,13 @@ public class PantherConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new PantherConverter(itemWriter, model);
     }
 
     public void testProcess() throws Exception {
-        File srcFile = new File(getClass().getClassLoader().getResource("RefGenomeOrthologs.txt").toURI());
+        File srcFile = new File(getClass().getClassLoader().
+                getResource("RefGenomeOrthologs.txt").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
 
@@ -46,7 +47,7 @@ public class PantherConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "panther-tgt-items.xml");
 
-        Set expected = readItemSet("PantherConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("PantherConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }
