@@ -219,7 +219,8 @@ public class PantherConverter extends BioFileConverter
             homologue.addToCollection("evidence", getEvidence());
             homologue.setAttribute("type", TYPES.get(type));
             homologue.addToCollection("crossReferences",
-                    createCrossReference(homologue.getIdentifier(), pantherId, "Panther",true));
+                createCrossReference(homologue.getIdentifier(), pantherId,
+                        DATA_SOURCE_NAME, true));
             store(homologue);
         }
 
