@@ -122,7 +122,7 @@
                 <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="graphType" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="extraAttributeClass" type="xsd:string"></xsd:attribute>
-                <xsd:attribute name="bagPath" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="listPath" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="categoryPath" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="seriesPath" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="seriesValues" type="xsd:string"></xsd:attribute>

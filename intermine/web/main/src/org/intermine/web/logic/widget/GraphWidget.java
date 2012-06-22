@@ -142,8 +142,8 @@ public class GraphWidget extends Widget
         PathQuery q = createPathQueryView(os, config);
 
         // bag constraint
-        if (((GraphWidgetConfig) config).isBagPathSet()) {
-            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getBagPath(),
+        if (((GraphWidgetConfig) config).isListPathSet()) {
+            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getListPath(),
                                            bag.getName()));
         } else {
             q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
@@ -179,8 +179,8 @@ public class GraphWidget extends Widget
         }
 
         // bag constraint
-        if (((GraphWidgetConfig) config).isBagPathSet()) {
-            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getBagPath(),
+        if (((GraphWidgetConfig) config).isListPathSet()) {
+            q.addConstraint(Constraints.in(((GraphWidgetConfig) config).getListPath(),
                                            bag.getName()));
         } else {
             q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
