@@ -115,7 +115,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
 
             QueryClass qc = null;
             //we use bag path only if we don't start from Gene...
-            String bagPath = config.getBagPath();
+            String bagPath = config.getListPath();
             String path = bagPath.split("\\.")[1];
             try {
                 QueryObjectReference qor = null;

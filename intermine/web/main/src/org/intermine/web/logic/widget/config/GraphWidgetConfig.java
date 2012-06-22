@@ -32,7 +32,7 @@ public class GraphWidgetConfig extends WidgetConfig
     private String rangeLabel;
     private String graphType;
     private String bagType;
-    private String bagPath;
+    private String listPath;
     private String categoryPath;
     private String seriesPath;
     private String seriesValues;
@@ -124,16 +124,16 @@ public class GraphWidgetConfig extends WidgetConfig
         this.bagType = bagType;
     }
 
-    public String getBagPath() {
-        return bagPath;
+    public String getListPath() {
+        return listPath;
     }
 
-    public void setBagPath(String bagPath) {
-        this.bagPath = bagPath;
+    public void setListPath(String bagPath) {
+        this.listPath = bagPath;
     }
 
-    public boolean isBagPathSet() {
-        if (bagPath != null && !"".equals(bagPath)) {
+    public boolean isListPathSet() {
+        if (listPath != null && !"".equals(listPath)) {
             return true;
         }
         return false;
