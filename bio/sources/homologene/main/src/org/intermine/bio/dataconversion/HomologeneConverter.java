@@ -72,7 +72,7 @@ public class HomologeneConverter extends BioFileConverter
      *
      * @param taxonIds a space-separated list of taxonIds
      */
-    public void setOrganisms(String taxonIds) {
+    public void setHomologeneOrganisms(String taxonIds) {
         this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
         LOG.info("Setting list of organisms to " + taxonIds);
     }
@@ -83,7 +83,7 @@ public class HomologeneConverter extends BioFileConverter
      *
      * @param homologues a space-separated list of taxonIds
      */
-//    public void setHomologues(String homologues) {
+//    public void setHomologeneHomologues(String homologues) {
 //        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
 //        LOG.info("Setting list of homologues to " + homologues);
 //    }
