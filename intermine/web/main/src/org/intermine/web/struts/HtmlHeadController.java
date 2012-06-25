@@ -130,8 +130,12 @@ public class HtmlHeadController extends TilesAction
         String userTrackingMessage = (String) SessionMethods.getWebProperties(
                 request.getSession().getServletContext()).get(
                 "google.analytics.message");
-        request.setAttribute("userTrackingMessage", userTrackingMessage);
-        request.setAttribute("userTracking", canWeUserTrack(request));
+        if (userTrackingMessage != null) {
+            request.setAttribute("userTrackingMessage", userTrackingMessage);
+            request.setAttribute("userTracking", canWeUserTrack(request));
+        } else {
+        	request.setAttribute("userTracking", 1);
+        }
 
         return null;
     }
