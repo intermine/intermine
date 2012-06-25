@@ -108,8 +108,8 @@
         </c:otherwise>
         </c:choose>
         <c:choose>
-                <c:when test="${fn:length(displayUserName) > 25}">
-                  <c:out value="${fn:substring(displayUserName,0,25)}"/>&hellip;
+                <c:when test="${fn:length(displayUserName) > 17}">
+                  <c:out value="${fn:substring(displayUserName,0,17)}"/>&hellip;
                 </c:when>
                 <c:otherwise>
                   <c:out value="${displayUserName}"/>
