@@ -78,6 +78,8 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
             String zfinId = line[0];
             String ensemblId = line[1];
 
+            LOG.info("zfinId: " + zfinId + "\n" + "ensemblId: " + ensemblId);
+
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
             resolver.addSynonyms(taxonId, ensemblId, Collections.singleton(ensemblId));
         }
