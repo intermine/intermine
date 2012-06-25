@@ -136,7 +136,9 @@ public class PantherConverter extends BioFileConverter
         }
         String identifier = parseIdentifier(ident);
 
+        LOG.info("identifier previous : " + identifier);
         identifier = resolveGene(taxonId, identifier);
+        LOG.info("identifier after : " + identifier);
         if (identifier == null) {
             return null;
         }
@@ -312,13 +314,13 @@ public class PantherConverter extends BioFileConverter
                 return identifier;
             }
             int resCount = fishResolver.countResolutions(taxonId, identifier);
-            LOG.info(identifier + " Resolution count: " + resCount);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve fish gene to one identifier, ignoring gene: "
                          + identifier + " count: " + resCount + " ZDB-GENE: "
                          + fishResolver.resolveId(taxonId, identifier));
                 return null;
             }
+            LOG.info("To resolve: " + identifier);
             return fishResolver.resolveId(taxonId, identifier).iterator().next();
         }
         return identifier;
