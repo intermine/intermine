@@ -638,7 +638,9 @@ public abstract class WebService
                 output = makeXMLOutput(out, separator);
                 break;
             case TSV_FORMAT:
-                output = new StreamedOutput(out, new TabFormatter(), separator);
+                output = new StreamedOutput(out,
+                        new TabFormatter(StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
+                        separator);
                 filename = "result.tsv";
                 if (isUncompressed()) {
                     ResponseUtil.setTabHeader(response, filename);
