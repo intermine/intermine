@@ -312,6 +312,7 @@ public class PantherConverter extends BioFileConverter
                 return identifier;
             }
             int resCount = fishResolver.countResolutions(taxonId, identifier);
+            LOG.info(identifier + " Resolution count: " + resCount);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve fish gene to one identifier, ignoring gene: "
                          + identifier + " count: " + resCount + " ZDB-GENE: "
