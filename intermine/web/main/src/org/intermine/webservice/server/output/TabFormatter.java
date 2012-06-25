@@ -24,4 +24,12 @@ public class TabFormatter extends FlatFileFormatter
     public TabFormatter() {
         setRowFormatter(new RowFormatterImpl("\t", true));
     }
+
+    /**
+     * Construct, specifying whether or not to quote.
+     * @param quoted Whether or not to quote each field.
+     */
+    public TabFormatter(boolean quoted) {
+        setRowFormatter(new RowFormatterImpl("\t", quoted));
+    }
 }
