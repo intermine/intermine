@@ -81,7 +81,7 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
             LOG.info("zfinId: " + zfinId + "\n" + "ensemblId: " + ensemblId);
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
-            resolver.addSynonyms(taxonId, ensemblId, Collections.singleton(ensemblId));
+            resolver.addSynonyms(taxonId, zfinId, Collections.singleton(ensemblId));
         }
         return resolver;
     }
