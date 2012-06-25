@@ -58,7 +58,7 @@ public class AvailableListsService extends WebService
      * @return The lists that are available.
      */
     protected Collection<InterMineBag> getLists() {
-        ListManager listManager = new ListManager(im, permission.getProfile());
+        ListManager listManager = new ListManager(im, getPermission().getProfile());
         return listManager.getLists();
     }
 
@@ -91,11 +91,11 @@ public class AvailableListsService extends WebService
                 return new FlatListFormatter();
             }
             case (WebService.JSON_FORMAT): {
-                Profile profile = permission.getProfile();
+                Profile profile = getPermission().getProfile();
                 return new JSONListFormatter(im, profile, jsDates);
             }
             case (WebService.JSONP_FORMAT): {
-                Profile profile = permission.getProfile();
+                Profile profile = getPermission().getProfile();
                 return new JSONListFormatter(im, profile, jsDates);
             }
             default: {

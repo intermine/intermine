@@ -164,9 +164,8 @@ public abstract class WebService
     private static final String COMPRESS = "compress";
     private static final String GZIP = "gzip";
     private static final String ZIP = "zip";
-    private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
+
     private static final Logger LOG = Logger.getLogger(WebService.class);
-    private static final String FORWARD_PATH = "/webservice/table.jsp";
     private static final String AUTHENTICATION_FIELD_NAME = "Authorization";
     private static final String AUTH_TOKEN_PARAM_KEY = "token";
     private static final Profile ANON_PROFILE = new AnonProfile();
@@ -176,17 +175,81 @@ public abstract class WebService
      */
     private static final String WS_HEADERS_PREFIX = "ws.response.header";
     private static final String BOTS = "ws.robots";
+    private static final String WEB_SERVICE_DISABLED_PROPERTY = "webservice.disabled";
 
+    /**
+     * The servlet request.
+     */
     protected HttpServletRequest request;
+
+    /**
+     * The servlet response.
+     */
     protected HttpServletResponse response;
+
+    /**
+     * The response to the outside world.
+     */
     protected Output output;
-    protected InterMineAPI im;
 
-    protected ApiPermission permission = ProfileManager
-            .getDefaultPermission(ANON_PROFILE);
-
+    /**
+     * The configuration object.
+     */
+    protected final InterMineAPI im;
+    
     /** The properties this mine was configured with **/
     protected final Properties webProperties = InterMineContext.getWebProperties();
+
+    private ApiPermission permission = ProfileManager.getDefaultPermission(ANON_PROFILE);
+    private boolean initialised = false;
+    private String propertyNameSpace = null;
+
+
+    /**
+     * Return the permission object representing the authorisation state of the request. This
+     * is guaranteed to not be null. 
+     * @return A permission object, from which a service may inspect the level of authorisation,
+     *          and retrieve details about whom the request is authorised for.
+     */
+    protected ApiPermission getPermission() {
+        if (permission == null) {
+            throw new IllegalStateException("There should always be a valid permission object");
+        }
+        return permission;
+    }
+
+    /**
+     * Set the default name-space for configuration property look-ups.
+     *
+     * If a value is set, it must be provided before any actions are taken. This means this 
+     * property must be set before the execute method is called.
+     * @param namespace The name space to use (eg: "some.namespace"). May not be null.
+     */
+    protected void setNameSpace(String namespace) {
+        if (namespace == null || namespace.endsWith(".")) {
+            throw new IllegalArgumentException("Namespace must be a non-null string, and may " +
+                    "not terminate in a period. Value was: " + namespace);
+        }
+        if (initialised) {
+            throw new IllegalStateException("Name space must be set prior to, or as part of, " +
+                    "initialisation.");
+        }
+        
+        propertyNameSpace = namespace;
+    }
+    
+    /**
+     * Get a configuration property by name.
+     * @param name The name of the property to retrieve.
+     * @return A configuration value.
+     */
+    protected String getProperty(String name) {
+        if (StringUtils.contains(name, '.')) {
+            return webProperties.getProperty(name);
+        }
+        return webProperties.getProperty(propertyNameSpace == null
+                ? name : propertyNameSpace  + "." + name);
+    }
 
     /**
      * Construct the web service with the InterMine API object that gives access
@@ -228,6 +291,7 @@ public abstract class WebService
                 checkEnabled();
                 authenticate();
                 initState();
+                initialised = true;
                 validateState();
                 execute();
             } catch (Throwable t) {
@@ -903,9 +967,9 @@ public abstract class WebService
     protected abstract void execute() throws Exception;
 
     /**
-     * @return true if request specified user name and password
+     * @return true if this request has been authenticated to a specific existing user.
      */
     public boolean isAuthenticated() {
-        return permission != null;
+        return getPermission().getProfile() != ANON_PROFILE;
     }
 }

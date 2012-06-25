@@ -64,7 +64,7 @@ public class TemplateToListService extends QueryToListService
             throw new BadRequestException("new view string is blank");
         }
 
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
 
         TemplateResultInput input = new TemplateResultRequestParser(request).getInput();
         TemplateQuery template = templateManager.getUserOrGlobalTemplate(profile, input.getName());

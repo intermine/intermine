@@ -104,7 +104,7 @@ public class CodeService extends AbstractQueryService
     @Override
     protected void execute() {
 
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
         response.setHeader("Content-Disposition", "attachment");
 
         // Ref to OrthologueLinkController and OrthologueLinkManager

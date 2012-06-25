@@ -83,7 +83,7 @@ public class ListsService extends AvailableListsService
             }
         }
 
-        return new ListManager(im, permission.getProfile())
+        return new ListManager(im, getPermission().getProfile())
                 .getListsContaining(objectId);
     }
 
@@ -113,7 +113,7 @@ public class ListsService extends AvailableListsService
                 input.getPublicId(), input.getExtraValue()));
         pathQuery.addViews(getViewAccordingClasskeys(request, input.getType()));
 
-        final Profile profile = permission.getProfile();
+        final Profile profile = getPermission().getProfile();
         final PathQueryExecutor executor = im.getPathQueryExecutor(profile);
         final Iterator<? extends List<ResultElement>> it = executor.execute(pathQuery);
         if (it.hasNext()) {

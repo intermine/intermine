@@ -55,7 +55,7 @@ public class ListTagRemovalService extends ListTagService
         Set<String> tagset = new HashSet<String>(Arrays.asList(tags));
 
         BagManager bagManager = im.getBagManager();
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
         Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {

@@ -32,7 +32,7 @@ public abstract class CommutativeOperationService extends ListOperationService
 
     @Override
     protected ListInput getInput(HttpServletRequest request) {
-        return new CommutativeOperationInput(request, bagManager, permission.getProfile());
+        return new CommutativeOperationInput(request, bagManager, getPermission().getProfile());
     }
 
     @Override

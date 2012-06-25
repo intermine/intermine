@@ -36,7 +36,7 @@ public abstract class WidgetService extends JSONService
     }
 
     protected InterMineBag retrieveBag(String bagName) {
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
         InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, bagName);
         if (imBag == null) {
             throw new BadRequestException("You do not have access to a bag named" + bagName);

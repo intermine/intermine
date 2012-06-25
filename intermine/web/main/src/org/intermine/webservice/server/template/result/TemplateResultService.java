@@ -65,12 +65,8 @@ public class TemplateResultService extends QueryResultService
         TemplateManager templateManager = this.im.getTemplateManager();
         TemplateResultInput input = getInput();
         TemplateQuery template;
-        if (isAuthenticated()) {
-            Profile profile = permission.getProfile();
-            template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
-        } else {
-            template = templateManager.getGlobalTemplate(input.getName());
-        }
+        Profile profile = getPermission().getProfile();
+        template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         if (template == null) {
             throw new ResourceNotFoundException(
                     "There is no public template called '" + input.getName() + "' in this mine.");

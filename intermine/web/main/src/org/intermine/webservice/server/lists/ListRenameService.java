@@ -44,9 +44,9 @@ public class ListRenameService extends AuthenticatedListService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
 
-        ListRenameInput input = new ListRenameInput(request, bagManager, permission.getProfile());
+        ListRenameInput input = new ListRenameInput(request, bagManager, profile);
 
         output.setHeaderAttributes(getHeaderAttributes());
 

@@ -22,7 +22,7 @@ public class TokenService extends JSONService {
     @Override
     protected void execute() throws Exception {
         final ProfileManager pm = im.getProfileManager();
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
 
         String token = pm.generate24hrKey(profile);
         output.addResultItem(Arrays.asList("\"" + token + "\""));
