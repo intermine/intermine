@@ -482,8 +482,7 @@ public class TableWidgetLdr extends WidgetLdr
     public PathQuery createPathQuery() {
         PathQuery q = new PathQuery(model);
         String[] views = config.getViews().split("\\s*,\\s*");
-        String typeClass = config.getTypeClass();
-        String prefix = typeClass.substring(typeClass.lastIndexOf(".") + 1);
+        String prefix = config.getTypeClass();
         for (String view : views) {
             if (!view.startsWith(prefix)) {
                 view = prefix  + "." + view;

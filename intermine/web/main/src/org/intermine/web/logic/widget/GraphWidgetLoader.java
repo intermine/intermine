@@ -89,8 +89,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         }
 
         QueryField idQueryField = null;
-        if (config.getTypeClass().equals(model.getPackageName() + "."
-                                        + config.getStartClass())) {
+        if (config.getTypeClass().equals(config.getStartClass())) {
             idQueryField = new QueryField(startClass, "id");
             if (!GraphWidgetActionType.EXPECTED.equals(action)) {
                 cs.addConstraint(new BagConstraint(idQueryField, ConstraintOp.IN,
