@@ -6,6 +6,12 @@
 
 <!-- htmlHead.jsp -->
 
+<script src="http://mistok.herokuapp.com/js/mistok.js"></script>
+<script>
+    Mistok.key = '3e4b-c065-cf95';
+    Mistok.server = 'http://mistok.herokuapp.com';
+</script>
+
 <tiles:importAttribute name="htmlPageTitle" ignore="true"/>
 <tiles:importAttribute name="pageName" ignore="true"/>
 
