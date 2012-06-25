@@ -33,7 +33,9 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(ZfinGeneIdResolverFactory.class);
     private final String clsName = "gene";
-    private final String propName = "resolver.zfin.file"; // set in .intermine/MINE.properties
+    // set in .intermine/MINE.properties
+    // e.g. resolver.zfin.file=/micklem/data/zfin/identifiers/zebrafishGeneToEnsdarg.txt
+    private final String propName = "resolver.zfin.file";
     private final String taxonId = "7955";
 
     /**
@@ -77,8 +79,6 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
             String[] line = (String[]) lineIter.next();
             String zfinId = line[0];
             String ensemblId = line[1];
-
-            LOG.info("zfinId: " + zfinId + "\n" + "ensemblId: " + ensemblId);
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
             resolver.addSynonyms(taxonId, zfinId, Collections.singleton(ensemblId));

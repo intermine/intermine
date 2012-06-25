@@ -136,9 +136,7 @@ public class PantherConverter extends BioFileConverter
         }
         String identifier = parseIdentifier(ident);
 
-        LOG.info("identifier previous : " + identifier);
         identifier = resolveGene(taxonId, identifier);
-        LOG.info("identifier after : " + identifier);
         if (identifier == null) {
             return null;
         }
@@ -320,7 +318,6 @@ public class PantherConverter extends BioFileConverter
                          + fishResolver.resolveId(taxonId, identifier));
                 return null;
             }
-            LOG.info("To resolve: " + identifier);
             return fishResolver.resolveId(taxonId, identifier).iterator().next();
         }
         return identifier;
