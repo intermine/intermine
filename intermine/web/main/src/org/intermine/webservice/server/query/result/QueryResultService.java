@@ -35,6 +35,7 @@ import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.webservice.server.ColumnHeaderStyle;
 import org.intermine.webservice.server.WebService;
@@ -142,7 +143,7 @@ public class QueryResultService extends AbstractQueryService
             attributes.put(JSONResultFormatter.KEY_VIEWS, pq.getView());
 
             attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS,
-                    WebUtil.formatPathQueryView(pq, request));
+                    WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
             attributes.put("start", String.valueOf(start));
             try {
                 attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, pq.getRootClass());
