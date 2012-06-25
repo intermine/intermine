@@ -419,6 +419,20 @@ public class WebConfig
     }
 
     /**
+     * Return the type associated to the simpleClassname
+     * @param simpleClassName
+     * @return
+     */
+    private Type getType(String simpleClassName) {
+        for (String type : types.keySet()) {
+            if (type.endsWith("." + simpleClassName)) {
+                return types.get(type);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Validate the content (the paths) in the widget config
      * @param model the model used to validate the paths
      * @return the message containing the errors or an empty String
@@ -443,7 +457,8 @@ public class WebConfig
             //verify typeClass
             String typeClass = widget.getTypeClass();
             if (typeClass != null && !"".equals(typeClass)) {
-                if (!model.getClassNames().contains(widget.getTypeClass())) {
+                if (!model.getClassNames().contains(model.getPackageName() + "."
+                                                    + widget.getTypeClass())) {
                     validationMessage = validationMessage.append("The attribute typeClass for the "
                                         + "widget " + widgetId + " is not in the model.");
                 }
@@ -513,8 +528,7 @@ public class WebConfig
     }
 
     /**
-     * Add a type to the WebConfig Map.  Use className as the key of the Map if fieldName of the
-     * Type is null, otherwise use the class name, a space, and the field name.
+     * Add a type to the WebConfig Map.
      *
      * @param type the Type to add
      */
@@ -579,7 +593,7 @@ public class WebConfig
             widgets.put(widget.getId(), widget);
             final String[] widgetTypes = widget.getTypeClass().split(",");
             for (final String widgetType: widgetTypes) {
-                final Type type = types.get(widgetType);
+                final Type type = getType(widgetType);
                 if (type == null) {
                     final String msg = "Invalid web config. " + widgetType + " is not a valid "
                         + "class. Please correct the entry in the webconfig-model.xml for the "

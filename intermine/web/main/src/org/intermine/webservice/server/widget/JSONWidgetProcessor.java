@@ -45,7 +45,7 @@ public class JSONWidgetProcessor extends WidgetProcessorImpl
     private List<String> getClasses(String tc) {
         List<String> ret = new LinkedList<String>();
         for (String s: StringUtils.split(tc, ",")) {
-            ret.add(s.substring(s.lastIndexOf('.') + 1));
+            ret.add(s);
         }
         return ret;
     }

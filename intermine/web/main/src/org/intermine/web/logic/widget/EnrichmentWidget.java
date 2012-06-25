@@ -81,7 +81,7 @@ public class EnrichmentWidget extends Widget
      */
     private void validateBagType() {
         String typeClass = config.getTypeClass();
-        if (!typeClass.equals(os.getModel().getPackageName() + "." + bag.getType())) {
+        if (!typeClass.equals(bag.getType())) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \""
                     + config.getId() + "\" with type " + bag.getType());
         }
