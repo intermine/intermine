@@ -135,6 +135,12 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 <script type="text/javascript" src="<html:rewrite page='/js/${pageName}.js'/>"/></script>
 </c:if>
 
+<script src="http://mistok.herokuapp.com/js/mistok.js"></script>
+<script>
+    Mistok.key = 'C1A2-20D5-3CCB';
+    Mistok.server = 'http://mistok.herokuapp.com';
+</script>
+
 <meta content="${WEB_PROPERTIES['meta.keywords']}" name="keywords"/>
 <meta content="${WEB_PROPERTIES['meta.description']}" name="description"/>
 <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type"/>
