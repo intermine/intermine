@@ -137,7 +137,7 @@ public class ListUploadService extends ListMakerService
      * @return A parsed representation of the parameters.
      */
     protected ListInput getInput(final HttpServletRequest request, final BagManager bagManager) {
-        return new ListCreationInput(request, bagManager, permission.getProfile());
+        return new ListCreationInput(request, bagManager, getPermission().getProfile());
     }
 
     @Override

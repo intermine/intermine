@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
@@ -35,6 +36,15 @@ public abstract class ListMakerService extends AuthenticatedListService
      */
     public ListMakerService(final InterMineAPI api) {
         super(api);
+    }
+    
+    @Override
+    protected void validateState() {
+        super.validateState();
+        if (!getPermission().isRW()) {
+            throw new ServiceForbiddenException("This request has not been authenticated with " +
+                    "RW permission");
+        }
     }
 
     @Override
@@ -66,7 +76,7 @@ public abstract class ListMakerService extends AuthenticatedListService
 
     @Override
     protected void execute() throws Exception {
-        final Profile profile = permission.getProfile();
+        final Profile profile = getPermission().getProfile();
         final ListInput input = getInput(request);
 
         addOutputInfo(LIST_NAME_KEY, input.getListName());

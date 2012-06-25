@@ -50,7 +50,7 @@ public class TableRowService extends QueryResultService
     @Override
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
         try {
-            Profile p = permission.getProfile();
+            Profile p = getPermission().getProfile();
             Query q = MainHelper.makeQuery(pq, p.getCurrentSavedBags(),
                     new HashMap(), im.getBagQueryRunner(), new HashMap());
             ObjectStore os = im.getObjectStore();
@@ -67,7 +67,7 @@ public class TableRowService extends QueryResultService
             int maxResults, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
         ObjectStore os = im.getObjectStore();
-        Profile p = permission.getProfile();
+        Profile p = getPermission().getProfile();
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query q;
         try {

@@ -65,7 +65,7 @@ public class AvailableTemplatesService extends WebService
         Map<String, ApiTemplate> templates;
         boolean includeBroken = Boolean.parseBoolean(request.getParameter("includeBroken"));
         if (isAuthenticated()) {
-            Profile profile = permission.getProfile();
+            Profile profile = getPermission().getProfile();
             templates = (includeBroken)
                             ? templateManager.getUserAndGlobalTemplates(profile)
                             : templateManager.getWorkingTemplates(profile);

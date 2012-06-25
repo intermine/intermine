@@ -27,6 +27,7 @@ import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 /**
  * A service to enable templates to be uploaded programmatically.
@@ -57,6 +58,13 @@ public class TemplateUploadService extends WebService
     public TemplateUploadService(InterMineAPI im) {
         super(im);
     }
+    
+    @Override
+    protected void validateState() {
+        if (!getPermission().isRW()) {
+            throw new ServiceForbiddenException("This request does not have RW permission.");
+        }
+    }
 
     @Override
     protected void execute() throws Exception {
@@ -67,7 +75,7 @@ public class TemplateUploadService extends WebService
         if (templatesXML == null || "".equals(templatesXML)) {
             throw new ServiceException("No template XML data." + USAGE);
         }
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
 
         int version = getVersion(request);
         Reader r = new StringReader(templatesXML);

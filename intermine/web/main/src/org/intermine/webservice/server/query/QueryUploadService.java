@@ -74,7 +74,7 @@ public class QueryUploadService extends WebService
         if (queriesXML == null || "".equals(queriesXML)) {
             throw new BadRequestException("No XML data." + USAGE);
         }
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
         BagManager bagManager = this.im.getBagManager();
 
         Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);

@@ -72,12 +72,15 @@ public class QueryToListService extends AbstractQueryService
             throw new ServiceForbiddenException("All requests to list operation services must"
                     + " be authenticated.");
         }
+        if (!getPermission().isRW()) {
+            throw new ServiceForbiddenException("This request does not have RW permission");
+        }
     }
 
     @Override
     protected void execute() throws Exception {
 
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
 
         String name = request.getParameter(NAME_PARAM);
         String description = request.getParameter(DESC_PARAM);

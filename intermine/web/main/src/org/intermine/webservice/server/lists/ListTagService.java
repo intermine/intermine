@@ -57,7 +57,7 @@ public class ListTagService extends AbstractListService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
         String listName = request.getParameter("name");
 
         Set<String> tags;

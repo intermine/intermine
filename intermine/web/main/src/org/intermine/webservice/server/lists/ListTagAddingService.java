@@ -52,7 +52,7 @@ public class ListTagAddingService extends ListTagService
             throw new BadRequestException("No tags supplied");
         }
         BagManager bagManager = im.getBagManager();
-        Profile profile = permission.getProfile();
+        Profile profile = getPermission().getProfile();
         Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {
@@ -69,7 +69,7 @@ public class ListTagAddingService extends ListTagService
         }
 
 
-        List<Tag> allTags = bagManager.getTagsForBag(list, permission.getProfile());
+        List<Tag> allTags = bagManager.getTagsForBag(list, getPermission().getProfile());
         List<String> tagNames = (List<String>) collect(allTags, invokerTransformer("getTagName"));
         output.addResultItem(tagNames);
     }

@@ -10,7 +10,9 @@ package org.intermine.webservice.server.core;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
@@ -18,6 +20,8 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.metadata.Model;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * A Service that has specialisations for supplying JSON.
@@ -67,6 +71,35 @@ public abstract class JSONService extends WebService
      */
     protected void addOutputInfo(String key, String value) {
         kvPairs.put(key, value);
+    }
+    
+    /**
+     * Output a map of names and values as a JSON object.
+     * @param mapping the mapping of things to output.
+     * @param hasMore Whether there is more to come, and thus a comma is required.
+     */
+    protected void addResultItem(Map<String, Object> mapping, boolean hasMore) {
+        JSONObject jo = new JSONObject(mapping);
+        addResultItemInternal(jo, hasMore);
+    }
+    
+    /**
+     * Output a list of objects as a JSON array.
+     * @param listing The list of things to output.
+     * @param hasMore Whether there is more to come, and thus a comma is required.
+     */
+    protected void addResultItem(List<Object> listing, boolean hasMore) {
+        JSONArray ja = new JSONArray(listing);
+        addResultItemInternal(ja, hasMore);
+    }
+    
+    private void addResultItemInternal(Object obj, boolean hasMore) {
+        List<String> outputStrings = new ArrayList<String>();
+        outputStrings.add(String.valueOf(obj));
+        if (hasMore) {
+            outputStrings.add(""); // Dummy value used to get a comma printed.
+        }
+        output.addResultItem(outputStrings);
     }
 
     @Override
