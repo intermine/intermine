@@ -136,7 +136,7 @@ public class TableRowService extends QueryResultService
                 ResultElement re = new ResultElement(a.getObject(), a.getColumn(), isKeyField);
                 link = PortalHelper.generateReportPath(re);
             }
-            cell.put(CELL_KEY_URL, null);
+            cell.put(CELL_KEY_URL, link);
             return cell;
         }
 
