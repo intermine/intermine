@@ -108,7 +108,7 @@ public class RgdIdentifiersConverter extends BioFileConverter
                 gene.setAttribute("name", name);
             }
             if (!StringUtils.isBlank(description)) {
-                gene.setAttribute("summary", description);
+                gene.setAttribute("description", description);
             }
             if (!StringUtils.isBlank(entrez)) {
                 gene.setAttribute("ncbiGeneNumber", entrez);
