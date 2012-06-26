@@ -3,6 +3,6 @@
 
 <classes>
    <class name="Gene" is-interface="true">
-     <attribute name="summary" type="java.lang.String"/>
+     <attribute name="description" type="java.lang.String"/>
    </class>
 </classes>

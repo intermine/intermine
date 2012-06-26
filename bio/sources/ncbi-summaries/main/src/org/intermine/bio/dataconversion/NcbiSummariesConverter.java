@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -21,7 +20,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
 
 /**
  * Read file generated from NCBI web service that includes Entrez gene ids with text summaries from
@@ -50,19 +48,20 @@ public class NcbiSummariesConverter extends BioFileConverter
     @Override
     public void process(Reader reader) throws Exception {
         // Data has format:
-        // id | summary
+        // id | description
+        @SuppressWarnings("rawtypes")
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         int count = 0;
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             try {
                 String entrez = line[0];
-                String summary = line[1];
-                LOG.error("summary " + count++ + " " + summary);
-                if (!StringUtils.isBlank(summary)) {
+                String description = line[1];
+                LOG.error("description " + count++ + " " + description);
+                if (!StringUtils.isBlank(description)) {
                     Item gene = createItem("Gene");
                     gene.setAttribute("ncbiGeneNumber", entrez);
-                    gene.setAttribute("summary", summary);
+                    gene.setAttribute("description", description);
                     gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
                     store(gene);
                 }
