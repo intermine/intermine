@@ -151,7 +151,7 @@ div#filter_tool_bar {
 
 .widget {
     max-height:400px;width: 450px;padding:15px;
-    text-align: center; background-color: #F5F0FF;}
+    text-align: center;}
 
 .widget p {
     font-size:10px;	}
@@ -361,7 +361,6 @@ div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { 
 div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
 
 /* embeddable results tables - bootstrap modify */
-.bootstrap a, .bootstrap a:hover { color:#5C0075; }
 .bootstrap .btn-primary {
   background-color: #5bb75b;
   *background-color: #51a351;
@@ -392,16 +391,17 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .bootstrap .btn-group.open .btn-primary.dropdown-toggle {
   background-color: #51a351;
 }
-.bootstrap .navbar { color:#000; }
-.bootstrap .table-striped tbody tr:nth-child(odd) td,
-.bootstrap .table-striped tbody tr:nth-child(odd) th { background-color:#FFF; }
-.bootstrap .table-striped tbody tr:nth-child(even) td,
-.bootstrap .table-striped tbody tr:nth-child(even) th { background-color:#FCFAFD; }
-.bootstrap .table-bordered th,
-.bootstrap .table-bordered td { border-color:#DCC8E2; }
-.bootstrap .dropdown-menu li > a:hover,
-.bootstrap .dropdown-menu .active > a,
-.bootstrap .dropdown-menu .active > a:hover { background:#5C0075; }
+.bootstrap a, .bootstrap a:hover { color:#5C0075; }
+.im-query-display.bootstrap .navbar { color:#000; }
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(odd) td,
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(odd) th { background-color:#FFF; }
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(even) td,
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(even) th { background-color:#FCFAFD; }
+.im-query-display.bootstrap .table-bordered th,
+.im-query-display.bootstrap .table-bordered td { border-color:#DCC8E2; }
+.im-query-display.bootstrap .dropdown-menu li > a:hover,
+.im-query-display.bootstrap .dropdown-menu .active > a,
+.im-query-display.bootstrap .dropdown-menu .active > a:hover { background:#5C0075; }
 .popover-title { background-color:#F4EEF7; }
 .popover-content .table-bordered,
 .popover-content .table-bordered .table td { border-color:#DCC8E2; }

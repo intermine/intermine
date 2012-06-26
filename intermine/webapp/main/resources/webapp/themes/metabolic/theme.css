@@ -21,10 +21,11 @@
 .tb_button{border:1px solid #CACACA;}
 .tb_button:hover{border-bottom:1px solid #000;border-right:1px solid #000;margin-right:0;}
 .tb_button_active{border:1px solid #000;}
-.widget{background-color:#F5F0FF;max-height:400px;text-align:center;width:450px;padding:15px;}
+.widget{max-height:400px;padding:15px;}
+div.bagDetails-page div.widget { width:455px; }
 .widget p{font-size:10px;}
 .widget_slide{margin-top:10px;max-height:350px;overflow:auto;overflow-x:none;overflow-y:auto;}
-.widgetcontainer{background:#FFF url(gray_grad.png) repeat-x top;border:1px solid #888;}
+.widgetcontainer{border:1px solid #888;}
 a,h1,h2,h3,h1 a,h1 a:visited,label,ul#nav a:hover,ul#nav li#mymine a:hover{color:#333;}
 body{background:#FFF url(top-gradient.jpg) repeat-x top;}
 div#filter_tool_bar{background-color:#FFF;border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;}
@@ -310,7 +311,59 @@ h3.goog { background:#F5F5F5; border-top-color:#1F7492; color:#1F7492; text-shad
 
 /* embeddable widgets */
 div.bagDetails-page div.widget { border-color:#1F7492; } /* div.basic-table a.link */
-div.bagDetails-page div.widget h3 { color:#1F7492; } /* div.basic-table a.link */
+div.bagDetails-page div.widget h3 { color:#1F7492; background:whiteSmoke; } /* div.basic-table a.link */
 div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#E6F7FE; } /* div.collection-of-collections div.collection-table h3 */
 div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#EFFAFE; } /* div.collection-table table tbody tr.odd td */
 div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
+
+/* embeddable results tables - bootstrap modify */
+.bootstrap .btn-primary {
+  background-color: #5bb75b;
+  *background-color: #51a351;
+  background-image: -ms-linear-gradient(top, #62c462, #51a351);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#62c462), to(#51a351));
+  background-image: -webkit-linear-gradient(top, #62c462, #51a351);
+  background-image: -o-linear-gradient(top, #62c462, #51a351);
+  background-image: -moz-linear-gradient(top, #62c462, #51a351);
+  background-image: linear-gradient(top, #62c462, #51a351);
+  background-repeat: repeat-x;
+  border-color: #51a351 #51a351 #387038;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#62c462', endColorstr='#51a351', GradientType=0);
+  filter: progid:dximagetransform.microsoft.gradient(enabled=false);
+}
+.bootstrap .btn-primary:hover,
+.bootstrap .btn-primary:active,
+.bootstrap .btn-primary.active,
+.bootstrap .btn-primary.disabled,
+.bootstrap .btn-primary[disabled] {
+  background-color: #51a351;
+  *background-color: #499249;
+}
+.bootstrap .btn-primary:active,
+.bootstrap .btn-primary.active {
+  background-color: #408140 \9;
+}
+.bootstrap .btn-group.open .btn-primary.dropdown-toggle {
+  background-color: #51a351;
+}
+.bootstrap a, .bootstrap a:hover { color:#1F7492; }
+.im-query-display.bootstrap .navbar { color:#000; }
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(odd) td,
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(odd) th { background-color:#FFF; }
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(even) td,
+.im-query-display.bootstrap .table-striped tbody tr:nth-child(even) th { background-color:#EFFAFE; }
+.im-query-display.bootstrap .table-bordered th,
+.im-query-display.bootstrap .table-bordered td { border-color:#E6F7FE; }
+.im-query-display.bootstrap .dropdown-menu li > a:hover,
+.im-query-display.bootstrap .dropdown-menu .active > a,
+.im-query-display.bootstrap .dropdown-menu .active > a:hover { background:#1F7492; }
+.popover-title { background-color:#F5F5F5; }
+.popover-content .table-bordered,
+.popover-content .table-bordered .table td { border-color:#E6F7FE; }
+.popover-content .im-item-field { background:#EFFAFE; }
+.im-table-container .table tbody > tr td.im-highlight,
+.im-table-container table.table tbody tr td.active { background:#FFF3D3; }
+.im-table-container .table tbody > tr td.im-highlight a { color:#1F7492; }
+.table td.im-highlight a { font-weight:normal; }
+.im-table-container .active { background:#FFF; color:#000; }
