@@ -1,7 +1,7 @@
 <items>
 <item id="3_4" class="Gene">
 <attribute name="ncbiGeneNumber" value="10"/>
-<attribute name="summary" value="This gene encodes an enzyme that functions to both activate and deactivate arylamine and hydrazine drugs and carcinogens. Polymorphisms in this gene are responsible for the N-acetylation polymorphism in which human populations segregate into rapid, intermediate, and slow acetylator phenotypes. Polymorphisms in this gene are also associated with higher incidences of cancer and drug toxicity. A second arylamine N-acetyltransferase gene (NAT1) is located near this gene (NAT2). [provided by RefSeq, Jul 2008]"/>
+<attribute name="description" value="This gene encodes an enzyme that functions to both activate and deactivate arylamine and hydrazine drugs and carcinogens. Polymorphisms in this gene are responsible for the N-acetylation polymorphism in which human populations segregate into rapid, intermediate, and slow acetylator phenotypes. Polymorphisms in this gene are also associated with higher incidences of cancer and drug toxicity. A second arylamine N-acetyltransferase gene (NAT1) is located near this gene (NAT2). [provided by RefSeq, Jul 2008]"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -12,7 +12,7 @@
 </item>
 <item id="3_3" class="Gene">
 <attribute name="ncbiGeneNumber" value="9"/>
-<attribute name="summary" value="This gene is one of two arylamine N-acetyltransferase (NAT) genes in the human genome, and is orthologous to the mouse and rat Nat2 genes. The enzyme encoded by this gene catalyzes the transfer of an acetyl group from acetyl-CoA to various arylamine and hydrazine substrates. This enzyme helps metabolize drugs and other xenobiotics, and functions in folate catabolism. Multiple transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Aug 2011]"/>
+<attribute name="description" value="This gene is one of two arylamine N-acetyltransferase (NAT) genes in the human genome, and is orthologous to the mouse and rat Nat2 genes. The enzyme encoded by this gene catalyzes the transfer of an acetyl group from acetyl-CoA to various arylamine and hydrazine substrates. This enzyme helps metabolize drugs and other xenobiotics, and functions in folate catabolism. Multiple transcript variants encoding different isoforms have been found for this gene. [provided by RefSeq, Aug 2011]"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -28,7 +28,7 @@
 </item>
 <item id="3_1" class="Gene">
 <attribute name="ncbiGeneNumber" value="1"/>
-<attribute name="summary" value="The V0 domain consists of five different subunits: a, c, c', c&quot;, and d."/>
+<attribute name="description" value="The V0 domain consists of five different subunits: a, c, c', c&quot;, and d."/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -38,7 +38,7 @@
 </item>
 <item id="3_2" class="Gene">
 <attribute name="ncbiGeneNumber" value="2"/>
-<attribute name="summary" value="Alpha-2-macroglobulin is a protease inhibitor and cytokine transporter. It inhibits many proteases, including trypsin, thrombin and collagenase. A2M is implicated in Alzheimer disease (AD) due to its ability to mediate the clearance and degradation of A-beta, the major component of beta-amyloid deposits. [provided by RefSeq, Jul 2008]"/>
+<attribute name="description" value="Alpha-2-macroglobulin is a protease inhibitor and cytokine transporter. It inhibits many proteases, including trypsin, thrombin and collagenase. A2M is implicated in Alzheimer disease (AD) due to its ability to mediate the clearance and degradation of A-beta, the major component of beta-amyloid deposits. [provided by RefSeq, Jul 2008]"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
@@ -48,7 +48,7 @@
 </item>
 <item id="3_5" class="Gene">
 <attribute name="ncbiGeneNumber" value="12"/>
-<attribute name="summary" value="The protein encoded by this gene is a plasma protease inhibitor and member of the serine protease inhibitor class. Polymorphisms in this protein appear to be tissue specific and influence protease targeting. Variations in this protein's sequence have been implicated in Alzheimer's disease, and deficiency of this protein has been associated with liver disease. Mutations have been identified in patients with Parkinson disease and chronic obstructive pulmonary disease. [provided by RefSeq, Jul 2008]"/>
+<attribute name="description" value="The protein encoded by this gene is a plasma protease inhibitor and member of the serine protease inhibitor class. Polymorphisms in this protein appear to be tissue specific and influence protease targeting. Variations in this protein's sequence have been implicated in Alzheimer's disease, and deficiency of this protein has been associated with liver disease. Mutations have been identified in patients with Parkinson disease and chronic obstructive pulmonary disease. [provided by RefSeq, Jul 2008]"/>
 <reference name="organism" ref_id="4_1"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
