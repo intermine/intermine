@@ -8,7 +8,7 @@
 
 <script src="http://mistok.herokuapp.com/js/mistok.js"></script>
 <script>
-    Mistok.key = '3e4b-c065-cf95';
+    Mistok.key = '46c1-aa06-2d17';
     Mistok.server = 'http://mistok.herokuapp.com';
 </script>
 
