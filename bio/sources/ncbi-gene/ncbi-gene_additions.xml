@@ -3,7 +3,7 @@
 
 <classes>
    <class name="Gene" is-interface="true">
-     <attribute name="mapLocation" type="java.lang.String"/>
+     <attribute name="cytoLocation" type="java.lang.String"/>
    </class>
 
    <class name="NcRNA" is-interface="true">

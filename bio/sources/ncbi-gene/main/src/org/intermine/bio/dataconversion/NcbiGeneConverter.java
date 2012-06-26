@@ -167,7 +167,7 @@ public class NcbiGeneConverter extends BioFileConverter
 
                     // MAP LOCATION
 //                    if (record.mapLocation != null) {
-//                        ncRNA.setAttribute("mapLocation", record.mapLocation);
+//                        ncRNA.setAttribute("cytoLocation", record.mapLocation);
 //                    }
                     store(ncRNA);
                 } else if ("tRNA".equals(record.geneType)
@@ -250,7 +250,8 @@ public class NcbiGeneConverter extends BioFileConverter
 
                     // MAP LOCATION
                     if (record.mapLocation != null) {
-                        gene.setAttribute("mapLocation", record.mapLocation);
+                        // consistent model across all mines
+                        gene.setAttribute("cytoLocation", record.mapLocation);
                     }
                     store(gene);
                 }
