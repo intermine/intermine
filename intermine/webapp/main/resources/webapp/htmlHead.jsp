@@ -31,12 +31,6 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     request.setAttribute("pageJS","true");
 }
 %>
-<c:if test="${pageCSS == 'true'}">
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
-</c:if>
-
-<c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.7.js'/>"></script>
 <script type="text/javascript" src="<html:rewrite page='/js/intermine.js'/>"></script>
@@ -49,17 +43,16 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 
     <!-- Ideally these imports should live in resultsTable.jsp - but I cannot get them to only import once -->
     <c:set var="jsLib" value="${WEB_PROPERTIES['ws.imtables.provider']}"/>
-    <link type="text/css" rel="stylesheet" href="${jsLib}/css/bootstrap.css"></link>
-    <link type="text/css" rel="stylesheet" href="${jsLib}/lib/css/flick/jquery-ui-1.8.19.custom.css"></link>
-    <link type="text/css" rel="stylesheet" href="${jsLib}/lib/google-code-prettify/prettify.css"></link>
-    <link type="text/css" rel="stylesheet" href="${jsLib}/css/tables.css"></link>
-    <link type="text/css" rel="stylesheet" href="${jsLib}/css/flymine.css"></link>
+    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/css/bootstrap/2.0.4-prefixed/css/bootstrap.min.css"></link>
+    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css"></link>
+    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css"></link>
+    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css"></link>
 
-    <script src="${jsLib}/lib/underscore-min.js"></script>
-    <script src="${jsLib}/lib/backbone.js"></script>
-    <script src="js/im.js"></script>
-    <script src="${jsLib}/js/deps.js"></script>
-    <script src="${jsLib}/js/imtables.js"></script>
+    <script src="http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js"></script>
+    <script src="http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js"></script>
+    <script src="http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js"></script>
+    <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js"></script>
+    <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js"></script>
   <c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
     <!--
     <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
@@ -160,4 +153,11 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     </c:otherwise>
   </c:choose>
 </title>
+
+<c:if test="${pageCSS == 'true'}">
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
+</c:if>
+
+<c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 <!-- /htmlHead.jsp -->
