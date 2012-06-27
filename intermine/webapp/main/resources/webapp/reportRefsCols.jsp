@@ -16,10 +16,11 @@
 <tiles:importAttribute name="placement" />
 <tiles:importAttribute name="showTitle" ignore="true" />
 
-<c:set var="spaceChar" value=" "/>
-<c:set var="placement" value="${fn:replace(placement, spaceChar, '')}" />
-
 <c:if test="${!empty placementRefsAndCollections[placement]}">
+
+
+  <c:set var="spaceChar" value=" "/>
+  <c:set var="aspectPlacement" value="${fn:replace(placement, spaceChar, '')}" />
 
   <c:if test="${!empty showTitle && fn:length(placementRefsAndCollections[placement]) > 0}">
     <a name="miscellaneous"><h2>${showTitle}</h2></a>
@@ -32,9 +33,9 @@
     <c:set var="fieldDisplayName"
         value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
 
-    <c:set var="placementAndField" value="${placement}_${fieldName}" />
+    <c:set var="placementAndField" value="${aspectPlacement}_${fieldName}" />
         <%-- ############# --%>
-        <div id="${fn:replace(placement, ":", "_")}${fieldName}_table" class="collection-table">
+        <div id="${fn:replace(aspectPlacement, ":", "_")}${fieldName}_table" class="collection-table">
         <a name="${fieldName}" class="anchor"></a>
         <h3>
           <c:if test="${IS_SUPERUSER}">
@@ -53,8 +54,8 @@
         <%-- ############# --%>
     <c:choose>
       <c:when test="${collection.size > 0}">
-          <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}">
-          <div id="coll_${fn:replace(placement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
+          <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}">
+          <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
 
             <c:set var="inlineResultsTable" value="${collection.table}"/>
 
@@ -63,7 +64,7 @@
               <tiles:put name="object" beanName="object" />
               <tiles:put name="fieldName" value="${fieldName}" />
             </tiles:insert>
-            <script type="text/javascript">trimTable('#coll_${fn:replace(placement, ":", "_")}${fieldName}_inner');</script>
+            <script type="text/javascript">trimTable('#coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner');</script>
           </div>
 
           <div class="show-in-table" style="display:none;">
@@ -78,7 +79,7 @@
       </c:when>
       <c:otherwise>
         <script type="text/javascript">
-          jQuery("#${fn:replace(placement, ":", "_")}${fieldName}_table.collection-table").addClass('gray');
+          jQuery("#${fn:replace(aspectPlacement, ":", "_")}${fieldName}_table.collection-table").addClass('gray');
         </script>
       </c:otherwise>
     </c:choose>
