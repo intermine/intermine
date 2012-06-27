@@ -10,12 +10,15 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
@@ -56,7 +59,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         } else {
             //calculate for the bag
             int totalInBagWithLocation = addActual(categorySeriesMap);
-            Map<String, Long> categoryMapInDB = new HashMap<String, Long>();
+            LinkedHashMap<String, Long> categoryMapInDB = new LinkedHashMap<String, Long>();
             // calculate for genes in database
             int totalInDBWithLocation = addExpected(categoryMapInDB);
             buildCategorySeriesMapForActualExpectedCriteria(categorySeriesMap, categoryMapInDB,
@@ -148,6 +151,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         if (!GraphWidgetActionType.TOTAL.equals(action)) {
             query.setDistinct(false);
             query.addToSelect(idQueryField);
+            query.addToOrderBy(idQueryField);
             query.addToGroupBy(idQueryField);
             Query subQ = query;
             Query mainQuery = new Query();
@@ -267,8 +271,9 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
             headerRow.add(seriesLabel);
         }
         resultTable.add(headerRow);
-
-        for (String category : categorySeriesMap.keySet()) {
+        ArrayList<String> categories = new ArrayList<String>(categorySeriesMap.keySet());
+        Collections.sort(categories);
+        for (String category : categories) {
             dataRow = new LinkedList<Object>();
             dataRow.add(category);
             long[] seriesCounts = categorySeriesMap.get(category);
