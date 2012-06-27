@@ -484,7 +484,7 @@
       <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
       <fieldconfig fieldExpr="gene.symbol" label="Gene" />
       <fieldconfig fieldExpr="phenotype"/>
-      <fieldconfig fieldExpr="rnaiScreen.reagentId"/>
+      <fieldconfig fieldExpr="rnaiScreen.reagentId" label="Reagent ID"/>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="conditions"/>
       <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" label="PubMed ID"/>
