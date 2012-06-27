@@ -16,7 +16,7 @@
 <tiles:importAttribute name="placement" />
 <tiles:importAttribute name="showTitle" ignore="true" />
 
-<c:set var="spaceChar" value="\s"/>
+<c:set var="spaceChar" value="\\s"/>
 <c:set var="placement" value="${fn:replace(placement, spaceChar, '_')}" />
 
 <c:if test="${!empty placementRefsAndCollections[placement]}">
