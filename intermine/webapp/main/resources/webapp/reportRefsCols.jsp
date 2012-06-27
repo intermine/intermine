@@ -23,7 +23,8 @@
 
   <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
-    <c:set var="fieldName" value="${fn:replace(entry.key, '\\s', '_')}" />
+    <c:set var="spaceChar" value="\\s"/>
+    <c:set var="fieldName" value="${fn:replace(entry.key, spaceChar, '_')}" />
     <c:set var="pathString" value="${object.classDescriptor.unqualifiedName}.${fieldName}"/>
     <c:set var="fieldDisplayName"
         value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
