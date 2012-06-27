@@ -1350,8 +1350,8 @@
     }
 
     Query.prototype.removeFromSelect = function(unwanted) {
-      var mapFn, so, uw;
-      unwanted = _.isString() ? [unwanted] : unwanted || [];
+      var mapFn, so, uw, v;
+      unwanted = _.isString(unwanted) ? [unwanted] : unwanted || [];
       mapFn = _.compose(this.expandStar, this.adjustPath);
       unwanted = _.flatten((function() {
         var _i, _len, _results;
@@ -1363,18 +1363,29 @@
         return _results;
       })());
       this.sortOrder = (function() {
-        var _i, _len, _ref2, _results;
+        var _i, _len, _ref2, _ref3, _results;
         _ref2 = this.sortOrder;
         _results = [];
         for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
           so = _ref2[_i];
-          if (!_.include(unwanted, so.path)) {
+          if (!(_ref3 = so.path, __indexOf.call(unwanted, _ref3) >= 0)) {
             _results.push(so);
           }
         }
         return _results;
       }).call(this);
-      this.views = _.difference(this.views, unwanted);
+      this.views = (function() {
+        var _i, _len, _ref2, _results;
+        _ref2 = this.views;
+        _results = [];
+        for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+          v = _ref2[_i];
+          if (!(__indexOf.call(unwanted, v) >= 0)) {
+            _results.push(v);
+          }
+        }
+        return _results;
+      }).call(this);
       this.trigger('remove:view', unwanted);
       return this.trigger('change:views', this.views);
     };

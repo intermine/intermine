@@ -7,7 +7,7 @@
  * Copyright 2012, Alex Kalderimis
  * Released under the LGPL license.
  * 
- * Built at Fri Jun 15 2012 17:31:41 GMT+0100 (BST)
+ * Built at Wed Jun 27 2012 13:57:37 GMT+0100 (BST)
 */
 
 
@@ -15,8 +15,8 @@
   var $, root, scope, stope,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   if (!Array.prototype.filter) {
     Array.prototype.filter = function(test) {
@@ -93,7 +93,7 @@
   };
 
   scope("intermine.query", function(exporting) {
-    var CONSTRAINT_ADDER_HTML, ConstraintAdder, PATH_HIGHLIGHTER, PATH_LEN_SORTER, PATH_MATCHER, pathLen, pos;
+    var Attribute, CONSTRAINT_ADDER_HTML, ConstraintAdder, PATH_HIGHLIGHTER, PATH_LEN_SORTER, PATH_MATCHER, PathChooser, Reference, pathLen, pos;
     pos = function(substr) {
       return _.memoize(function(str) {
         return str.toLowerCase().indexOf(substr);
@@ -147,11 +147,316 @@
       return item.replace(/>/g, "strong>");
     });
     CONSTRAINT_ADDER_HTML = "<input type=\"text\" placeholder=\"Add a new filter\" class=\"im-constraint-adder span9\">\n<button disabled class=\"btn span2\" type=\"submit\">\n    Filter\n</button>";
+    Attribute = (function(_super) {
+
+      __extends(Attribute, _super);
+
+      function Attribute() {
+        return Attribute.__super__.constructor.apply(this, arguments);
+      }
+
+      Attribute.prototype.tagName = 'li';
+
+      Attribute.prototype.events = {
+        'click a': 'handleClick'
+      };
+
+      Attribute.prototype.handleClick = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        return this.evts.trigger('chosen', this.path);
+      };
+
+      Attribute.prototype.initialize = function(query, path, depth, evts) {
+        var _this = this;
+        this.query = query;
+        this.path = path;
+        this.depth = depth;
+        this.evts = evts;
+        this.evts.on('remove', function() {
+          return _this.remove();
+        });
+        return this.evts.on('filter:paths', function(terms) {
+          var lastMatch, matches, t, _i, _len;
+          terms = (function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = terms.length; _i < _len; _i++) {
+              t = terms[_i];
+              if (t) {
+                _results.push(new RegExp(t, 'i'));
+              }
+            }
+            return _results;
+          })();
+          if (terms.length) {
+            matches = 0;
+            lastMatch = null;
+            for (_i = 0, _len = terms.length; _i < _len; _i++) {
+              t = terms[_i];
+              if (t.test(_this.path.toString()) || t.test(_this.displayName)) {
+                matches += 1;
+                lastMatch = t;
+              }
+            }
+            return _this.matches(matches, terms, lastMatch);
+          } else {
+            return _this.$el.show();
+          }
+        });
+      };
+
+      Attribute.prototype.template = _.template("<a href=\"#\" title=\"<%- path %> (<%- type %>)\"><span><%- name %></span></a>");
+
+      Attribute.prototype.matches = function(matches, terms) {
+        var _this = this;
+        if (matches === terms.length) {
+          this.evts.trigger('matched', this.path.toString());
+          this.path.getDisplayName(function(name) {
+            var hl, matchesOnPath, term, _i, _len;
+            hl = _this.depth > 0 ? name.replace(/^.*>\s*/, '') : name;
+            for (_i = 0, _len = terms.length; _i < _len; _i++) {
+              term = terms[_i];
+              hl = hl.replace(term, function(match) {
+                return "<strong>" + match + "</strong>";
+              });
+            }
+            matchesOnPath = _.any(terms, function(t) {
+              return !!_this.path.end.name.match(t);
+            });
+            return _this.$('a span').html(hl.match(/strong/) || !matchesOnPath ? hl : "<strong>" + hl + "</strong>");
+          });
+        }
+        return this.$el.toggle(!!(matches === terms.length));
+      };
+
+      Attribute.prototype.render = function() {
+        var disabled, _ref,
+          _this = this;
+        disabled = (_ref = this.path.toString(), __indexOf.call(this.query.views, _ref) >= 0);
+        if (disabled) {
+          this.$el.addClass('disabled');
+        }
+        this.path.getDisplayName(function(name) {
+          var a;
+          _this.displayName = name;
+          if (_this.depth !== 0) {
+            name = name.replace(/^.*\s*>/, '');
+          }
+          a = $(_this.template({
+            name: name,
+            path: _this.path,
+            type: _this.path.getType()
+          }));
+          a.appendTo(_this.el);
+          return _this.addedLiContent(a);
+        });
+        return this;
+      };
+
+      Attribute.prototype.addedLiContent = function(a) {
+        return a.tooltip({
+          placement: 'bottom'
+        }).appendTo(this.el);
+      };
+
+      return Attribute;
+
+    })(Backbone.View);
+    Reference = (function(_super) {
+
+      __extends(Reference, _super);
+
+      function Reference() {
+        return Reference.__super__.constructor.apply(this, arguments);
+      }
+
+      Reference.prototype.initialize = function(query, path, depth, evts) {
+        var _this = this;
+        this.query = query;
+        this.path = path;
+        this.depth = depth;
+        this.evts = evts;
+        Reference.__super__.initialize.call(this, this.query, this.path, this.depth, this.evts);
+        this.evts.on('filter:paths', function(terms) {
+          return _this.$el.hide();
+        });
+        return this.evts.on('matched', function(path) {
+          if (path.match(_this.path.toString())) {
+            _this.$el.show();
+            if (!_this.$el.is('.open')) {
+              return _this.openSubFinder();
+            }
+          }
+        });
+      };
+
+      Reference.prototype.remove = function() {
+        var _ref;
+        if ((_ref = this.subfinder) != null) {
+          _ref.remove();
+        }
+        return Reference.__super__.remove.call(this);
+      };
+
+      Reference.prototype.openSubFinder = function() {
+        this.subfinder = new PathChooser(this.query, this.path, this.depth + 1, this.evts);
+        this.$el.append(this.subfinder.render().el);
+        return this.$el.addClass('open');
+      };
+
+      Reference.prototype.template = _.template("<a href=\"#\"><i class=\"icon-chevron-right\"></i> <span><%- name %></span></a>");
+
+      Reference.prototype.iconClasses = "icon-chevron-right icon-chevron-down";
+
+      Reference.prototype.addedLiContent = function(a) {
+        var i,
+          _this = this;
+        if (_.any(this.query.views, function(v) {
+          return v.match(_this.path.toString());
+        })) {
+          this.openSubFinder();
+        }
+        return i = a.find('i').click(function(e) {
+          i.toggleClass(_this.iconClasses);
+          if (_this.$el.is('.open')) {
+            return _this.$el.removeClass('open').children('ul').remove();
+          } else {
+            return _this.openSubFinder();
+          }
+        });
+      };
+
+      return Reference;
+
+    })(Attribute);
+    PathChooser = (function(_super) {
+
+      __extends(PathChooser, _super);
+
+      function PathChooser() {
+        this.searchFor = __bind(this.searchFor, this);
+        return PathChooser.__super__.constructor.apply(this, arguments);
+      }
+
+      PathChooser.prototype.tagName = 'ul';
+
+      PathChooser.prototype.dropDownClasses = 'typeahead dropdown-menu';
+
+      PathChooser.prototype.searchFor = function(terms) {
+        var m, matches, p, _i, _len, _results;
+        this.evts.trigger('filter:paths', terms);
+        matches = (function() {
+          var _i, _len, _ref, _results,
+            _this = this;
+          _ref = this.query.getPossiblePaths(3);
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            p = _ref[_i];
+            if (_.all(terms, function(t) {
+              return p.match(new RegExp(t, 'i'));
+            })) {
+              _results.push(p);
+            }
+          }
+          return _results;
+        }).call(this);
+        _results = [];
+        for (_i = 0, _len = matches.length; _i < _len; _i++) {
+          m = matches[_i];
+          _results.push(this.evts.trigger('matched', m, terms));
+        }
+        return _results;
+      };
+
+      PathChooser.prototype.initialize = function(query, path, depth, events) {
+        var attr, cd, coll, name, ref, toPath,
+          _this = this;
+        this.query = query;
+        this.path = path;
+        this.depth = depth;
+        this.evts = this.depth === 0 ? _.extend({}, Backbone.Events) : events;
+        cd = this.path.getEndClass();
+        toPath = function(f) {
+          return _this.path.append(f);
+        };
+        this.attributes = (function() {
+          var _ref, _results;
+          _ref = cd.attributes;
+          _results = [];
+          for (name in _ref) {
+            attr = _ref[name];
+            _results.push(toPath(attr));
+          }
+          return _results;
+        })();
+        this.references = (function() {
+          var _ref, _results;
+          _ref = cd.references;
+          _results = [];
+          for (name in _ref) {
+            ref = _ref[name];
+            _results.push(toPath(ref));
+          }
+          return _results;
+        })();
+        this.collections = (function() {
+          var _ref, _results;
+          _ref = cd.collections;
+          _results = [];
+          for (name in _ref) {
+            coll = _ref[name];
+            _results.push(toPath(coll));
+          }
+          return _results;
+        })();
+        if (this.depth === 0) {
+          return this.evts.on('chosen', events);
+        }
+      };
+
+      PathChooser.DIVIDER = "<li class=\"divider\"></li>";
+
+      PathChooser.prototype.render = function() {
+        var apath, cd, cpath, currentView, rpath, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
+        cd = this.path.getEndClass();
+        currentView = this.query.views;
+        _ref = this.attributes;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          apath = _ref[_i];
+          this.$el.append(new Attribute(this.query, apath, this.depth, this.evts).render().el);
+        }
+        this.$el.append(PathChooser.DIVIDER);
+        _ref1 = this.references;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          rpath = _ref1[_j];
+          this.$el.append(new Reference(this.query, rpath, this.depth, this.evts).render().el);
+        }
+        _ref2 = this.collections;
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          cpath = _ref2[_k];
+          this.$el.append(new Reference(this.query, cpath, this.depth, this.evts).render().el);
+        }
+        if (this.depth === 0) {
+          this.$el.addClass(this.dropDownClasses);
+        }
+        this.$el.show();
+        return this;
+      };
+
+      return PathChooser;
+
+    })(Backbone.View);
     return exporting(ConstraintAdder = (function(_super) {
 
       __extends(ConstraintAdder, _super);
 
       function ConstraintAdder() {
+        this.filterOptions = __bind(this.filterOptions, this);
+
+        this.showTree = __bind(this.showTree, this);
+
+        this.handleChoice = __bind(this.handleChoice, this);
         return ConstraintAdder.__super__.constructor.apply(this, arguments);
       }
 
@@ -162,40 +467,27 @@
       ConstraintAdder.prototype.initialize = function(query) {
         var _this = this;
         this.query = query;
-        this.initPaths();
         return this.query.on("cancel:add-constraint", function() {
           _this.$('input').show();
           return _this.$('button[type="submit"]').show();
         });
       };
 
-      ConstraintAdder.prototype.initPaths = function() {
-        var depth;
-        return this.paths = this.query.getPossiblePaths(depth = 3);
-      };
-
       ConstraintAdder.prototype.events = {
-        'submit': 'handleSubmission',
-        'focus input': 'activateSearch',
-        'blur input': 'leaveSearch',
-        'click': 'handleClick'
+        'submit': 'handleSubmission'
       };
 
       ConstraintAdder.prototype.handleKeyup = function(e) {
-        return $(e.target).next().attr({
+        return $('.btn-primary').attr({
           disabled: false
         });
-      };
-
-      ConstraintAdder.prototype.activateSearch = function(e) {
-        return $(e.target).val(this.query.root).keyup();
       };
 
       ConstraintAdder.prototype.leaveSearch = function(e) {
         var emptySearchBox;
         emptySearchBox = function() {
-          $(e.target).val("");
-          return $(e.target).next().attr({
+          $('input').val('');
+          return $('.btn-primary').attr({
             disabled: true
           });
         };
@@ -204,7 +496,9 @@
 
       ConstraintAdder.prototype.handleClick = function(e) {
         e.preventDefault();
-        e.stopPropagation();
+        if (!$(e.target).is('button')) {
+          e.stopPropagation();
+        }
         if ($(e.target).is('button[type="submit"]')) {
           return this.handleSubmission(e);
         }
@@ -223,20 +517,96 @@
         return ac.render().$el.appendTo(this.el);
       };
 
-      ConstraintAdder.prototype.initTypeahead = function() {
-        this.$('input').keyup(this.handleKeyup).typeahead({
-          source: this.paths,
-          items: 15,
-          sorter: PATH_LEN_SORTER,
-          matcher: PATH_MATCHER,
-          highlighter: PATH_HIGHLIGHTER
+      ConstraintAdder.prototype.handleChoice = function(path) {
+        this.$('input').val(path.toString());
+        return this.$('.btn-primary').attr({
+          disabled: false
         });
-        return this;
       };
 
+      ConstraintAdder.prototype.showTree = function(e) {
+        var pathFinder;
+        e.stopPropagation();
+        e.preventDefault();
+        if (this.$pathfinder) {
+          this.$pathfinder.remove();
+          return this.$pathfinder = null;
+        } else {
+          root = this.query.getPathInfo(this.query.root);
+          pathFinder = new PathChooser(this.query, root, 0, this.handleChoice);
+          pathFinder.render().$el.appendTo(this.el).show();
+          pathFinder.$el.css({
+            top: this.$el.height()
+          });
+          return this.$pathfinder = pathFinder;
+        }
+      };
+
+      ConstraintAdder.prototype.showOptions = function() {};
+
+      ConstraintAdder.prototype.filterOptions = function(e) {
+        var terms, thisTime, val, _ref, _ref1;
+        if (this.filterLock) {
+          return false;
+        }
+        this.filterLock = true;
+        if (this.$pathfinder == null) {
+          this.showTree(e);
+        }
+        val = (_ref = this.$('input').val()) != null ? _ref.replace(/\s+$/g, '').replace(/^\s+/g, '') : void 0;
+        if (val != null) {
+          this.$('.btn-primary').attr({
+            disabled: false
+          });
+        }
+        if ((val != null) && val.length >= 3) {
+          thisTime = new Date().getTime();
+          if ((!(this.lastSearch != null)) || ((this.lastSearch.time + 1000 < thisTime) && (this.lastSearch.term !== val))) {
+            if (this.lastSearch != null) {
+              this.$pathfinder.remove();
+              this.$pathfinder = null;
+              this.showTree(e);
+            }
+            console.log("Searching for " + val + " at " + thisTime);
+            this.lastSearch = {
+              time: thisTime,
+              term: val
+            };
+            terms = (val != null ? val.split(/\s+/) : void 0) || [];
+            if ((_ref1 = this.$pathfinder) != null) {
+              _ref1.searchFor(terms);
+            }
+          } else {
+            console.log("No search needed at " + thisTime);
+          }
+        }
+        return this.filterLock = false;
+      };
+
+      ConstraintAdder.prototype.inputPlaceholder = "Add a column...";
+
       ConstraintAdder.prototype.render = function() {
-        this.$el.append(CONSTRAINT_ADDER_HTML);
-        return this.initTypeahead();
+        var approver, browser, input;
+        input = this.make("input", {
+          type: "text",
+          placeholder: this.inputPlaceholder
+        });
+        this.$el.append(input);
+        browser = $(this.make('button', {
+          type: "button",
+          "class": "btn"
+        }, "Browse"));
+        approver = $(this.make('button', {
+          type: "button",
+          "class": "btn btn-primary",
+          disabled: true
+        }, "Add"));
+        this.$el.append(browser);
+        this.$el.append(approver);
+        approver.click(this.handleSubmission);
+        browser.click(this.showTree);
+        this.$('input').click(this.showOptions).keyup(this.filterOptions);
+        return this;
       };
 
       return ConstraintAdder;
@@ -313,7 +683,7 @@
         return ToolBar.__super__.constructor.apply(this, arguments);
       }
 
-      ToolBar.prototype.className = "im-query-actionbar";
+      ToolBar.prototype.className = "im-query-actionbar row-fluid";
 
       ToolBar.prototype.initialize = function(query) {
         this.query = query;
@@ -323,7 +693,6 @@
         var actions;
         actions = new intermine.query.actions.ActionBar(this.query);
         actions.render().$el.appendTo(this.el);
-        this.$el.append(" <div style=\"clear: both;\"></div> ");
         return this;
       };
 
@@ -1047,12 +1416,25 @@
       };
 
       Table.prototype.removeColumn = function(e) {
-        var $el, view;
+        var $el, unwanted, v, view;
         e.stopPropagation();
+        e.preventDefault();
         $el = jQuery(e.target).closest('.im-col-remover');
         $el.tooltip("hide");
         view = $el.data("view");
-        this.query.removeFromSelect(view);
+        unwanted = (function() {
+          var _i, _len, _ref, _results;
+          _ref = this.query.views;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            v = _ref[_i];
+            if (v.match(view)) {
+              _results.push(v);
+            }
+          }
+          return _results;
+        }).call(this);
+        this.query.removeFromSelect(unwanted);
         return false;
       };
 
@@ -1720,7 +2102,7 @@
         return ColumnAdder.__super__.constructor.apply(this, arguments);
       }
 
-      ColumnAdder.prototype.className = "form node-adder row-fluid";
+      ColumnAdder.prototype.className = "form node-adder input-append";
 
       ColumnAdder.prototype.handleSubmission = function(e) {
         var newPath;
@@ -1728,17 +2110,6 @@
         e.stopPropagation();
         newPath = this.$('input').val();
         return this.query.addToSelect(newPath);
-      };
-
-      ColumnAdder.prototype.render = function() {
-        var input;
-        input = this.make("input", {
-          type: "text",
-          "class": "span12",
-          placeholder: "Add a column..."
-        });
-        this.$el.append(input);
-        return this.initTypeahead();
       };
 
       return ColumnAdder;
@@ -1926,7 +2297,7 @@
         return Actions.__super__.constructor.apply(this, arguments);
       }
 
-      Actions.prototype.className = "im-query-actions";
+      Actions.prototype.className = "im-query-actions row-fluid";
 
       Actions.prototype.tagName = "ul";
 
@@ -1938,13 +2309,15 @@
         return [ListManager, CodeGenerator, Exporters];
       };
 
+      Actions.prototype.extraClass = "im-action";
+
       Actions.prototype.render = function() {
         var action, cls, _i, _len, _ref;
         _ref = this.actionClasses();
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           cls = _ref[_i];
           action = new cls(this.query);
-          action.render().$el.addClass("im-action").appendTo(this.el);
+          action.render().$el.addClass(this.extraClass).appendTo(this.el);
         }
         return this;
       };
@@ -1959,6 +2332,8 @@
       function ActionBar() {
         return ActionBar.__super__.constructor.apply(this, arguments);
       }
+
+      ActionBar.prototype.extraClass = "im-action";
 
       ActionBar.prototype.actionClasses = function() {
         return [intermine.query.columns.ColumnAdder, ListManager, CodeGenerator, Exporters];
@@ -2927,14 +3302,19 @@
           _ref = this.view;
           _fn = function(v) {
             var path, th;
-            th = $('<th>');
+            th = $("<th>\n    <i class=\"" + intermine.css.headerIconRemove + "\"></i>\n    <span></span>\n</th>");
+            th.find('i').click(function(e) {
+              return _this.query.removeFromSelect(v);
+            });
             path = _this.query.getPathInfo(v);
             _this.column.getDisplayName(function(colName) {
+              var span;
+              span = th.find('span');
               return path.getDisplayName(function(pathName) {
                 if (pathName.match(colName)) {
-                  return th.text(pathName.replace(colName, '').replace(/^\s*>?\s*/, ''));
+                  return span.text(pathName.replace(colName, '').replace(/^\s*>?\s*/, ''));
                 } else {
-                  return th.text(pathName.replace(/^[^>]*\s*>\s*/, ''));
+                  return span.text(pathName.replace(/^[^>]*\s*>\s*/, ''));
                 }
               });
             });
