@@ -481,10 +481,12 @@
 
   <class className="org.intermine.model.bio.RNAiResult">
     <fields>
+      <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
+      <fieldconfig fieldExpr="gene.symbol" label="Gene" />
       <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="rnaiScreen.reagentId"/>
       <fieldconfig fieldExpr="score"/>
       <fieldconfig fieldExpr="conditions"/>
-      <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
       <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" label="PubMed ID"/>
     </fields>
   </class>
