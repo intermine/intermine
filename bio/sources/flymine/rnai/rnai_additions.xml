@@ -9,13 +9,13 @@
     <attribute name="assay" type="java.lang.String"/>
     <attribute name="method" type="java.lang.String"/>
     <attribute name="scoreType" type="java.lang.String"/>
-    <attribute name="reagent" type="java.lang.String"/>
-    <attribute name="reagentId" type="java.lang.String"/>
+    <attribute name="reagentType" type="java.lang.String"/>
     <attribute name="scoreCutoff" type="java.lang.String"/>
     <reference name="publication" referenced-type="Publication"/>
     <collection name="rnaiResults" referenced-type="RNAiResult" reverse-reference="rnaiScreen"/>
   </class>
   <class name="RNAiResult" is-interface="true">
+    <attribute name="reagentId" type="java.lang.String"/>
     <attribute name="score" type="java.lang.String"/>
     <attribute name="phenotype" type="java.lang.String"/>
     <attribute name="conditions" type="java.lang.String"/>
