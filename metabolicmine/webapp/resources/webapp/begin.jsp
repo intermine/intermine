@@ -545,6 +545,7 @@
         <span>|</span>
         <a href="http://blog.metabolicmine.org/about">About</a>
         <span>|</span>
+        <a href="http://intermine.org/wiki/PrivacyPolicy">Privacy Policy</a>
         <br />
         <a href="http://www.intermine.org">InterMine</a>
         <span>|</span>
@@ -553,6 +554,8 @@
         <a href="http://www.modmine.org">modMine</a>
         <span>|</span>
         <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
+        <span>|</span>
+        <a href="http://yeastmine.yeastgenome.org/yeastmine">YeastMine</a>
 
         <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
     </div>
