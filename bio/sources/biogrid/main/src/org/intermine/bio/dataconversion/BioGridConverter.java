@@ -482,7 +482,7 @@ public class BioGridConverter extends BioFileConverter
                 interaction.setAttribute("name", interactionName);
                 interaction.setAttribute("shortName", interactionName);
                 interaction.setReference("experiment", h.eh.experimentRefId);
-                LOG.info("interaction >>> " + interaction);
+
                 key = interactionName + " " + h.eh.experimentRefId + " " + ih.role;
                 if (interactions.contains(key)) {
                     // TODO BioGRID now contains protein and genetic interactions thus creating
