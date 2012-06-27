@@ -15,6 +15,10 @@
 <tiles:importAttribute name="object" />
 <tiles:importAttribute name="placement" />
 <tiles:importAttribute name="showTitle" ignore="true" />
+
+<c:set var="spaceChar" value="\ "/>
+<c:set var="placement" value="${fn:replace(placement, spaceChar, '_')}" />
+
 <c:if test="${!empty placementRefsAndCollections[placement]}">
 
   <c:if test="${!empty showTitle && fn:length(placementRefsAndCollections[placement]) > 0}">
@@ -23,7 +27,6 @@
 
   <c:forEach items="${placementRefsAndCollections[placement]}" var="entry">
     <c:set var="collection" value="${entry.value}" />
-    <c:set var="spaceChar" value="\ "/>
     <c:set var="fieldName" value="${fn:replace(entry.key, spaceChar, '_')}" />
     <c:set var="pathString" value="${object.classDescriptor.unqualifiedName}.${fieldName}"/>
     <c:set var="fieldDisplayName"
