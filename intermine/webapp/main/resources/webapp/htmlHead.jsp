@@ -53,8 +53,8 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js"></script>
 
     <!-- Currently serving from local -->
-    <script src="/js/imtables.js"></script>
-    <script src="/js/im.js"></script>
+    <script src="<html:rewrite page='/js/imtables.js'/>"></script>
+    <script src="<html:rewrite page='/js/im.js'/>"></script>
 
     <!--
     <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js"></script>
