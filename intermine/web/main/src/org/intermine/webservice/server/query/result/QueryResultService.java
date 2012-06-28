@@ -26,6 +26,7 @@ import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.BagNotFound;
 import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
@@ -44,6 +45,7 @@ import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.core.CountProcessor;
 import org.intermine.webservice.server.core.ResultProcessor;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
@@ -156,8 +158,10 @@ public class QueryResultService extends AbstractQueryService
                 int count;
                 try {
                     count = executor.uniqueColumnValues(pq, summaryPath);
+                } catch (BagNotFound e) {
+                    throw new BadRequestException(e.getMessage());
                 } catch (ObjectStoreException e) {
-                    throw new ServiceException("Problem getting unique column value count.", e);
+                    throw new InternalErrorException("Problem getting unique column value count.", e);
                 }
                 attributes.put("uniqueValues", count);
             }
