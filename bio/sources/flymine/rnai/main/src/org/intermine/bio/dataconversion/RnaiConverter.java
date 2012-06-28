@@ -98,7 +98,7 @@ public class RnaiConverter extends BioFileConverter
         } else if ("Method".equals(key)) {
             screen.setAttribute("method", value);
         } else if ("Reagent Type".equals(key)) {
-            screen.setAttribute("reagent", value);
+            screen.setAttribute("reagentType", value);
         } else if ("Score Type".equals(key)) {
             screen.setAttribute("scoreType", value);
         } else if ("Cutoff".equals(key)) {
@@ -132,12 +132,13 @@ public class RnaiConverter extends BioFileConverter
 
         String phenotype = line[6];
         String conditions = line[7];
-        if (StringUtils.isNotEmpty(reagentId)) {
-            screen.setAttribute("reagentId", reagentId);
-        }
+
         storeScreen(screenId);
 
         Item result = createItem("RNAiResult");
+        if (StringUtils.isNotEmpty(reagentId)) {
+            result.setAttribute("reagentId", reagentId);
+        }
         if (StringUtils.isNotEmpty(phenotype)) {
             result.setAttribute("phenotype", phenotype);
         }

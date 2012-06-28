@@ -12,27 +12,39 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
-
+/**
+ * NcbiSummariesConverterTest
+ * @author rns
+ *
+ */
 public class NcbiSummariesConverterTest extends ItemsTestCase
 {
+    /**
+     *
+     * @param arg arg
+     */
     public NcbiSummariesConverterTest(String arg) {
         super(arg);
     }
 
+    /**
+     * Test Process
+     * @throws Exception e
+     */
     public void testProcess() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
-        BioFileConverter converter = new NcbiSummariesConverter(itemWriter,
-                                                                   Model.getInstanceByName("genomic"));
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
+        BioFileConverter converter =
+            new NcbiSummariesConverter(itemWriter, Model.getInstanceByName("genomic"));
 
-        File srcFile = new File(getClass().getClassLoader().getResource("gene_summaries.txt").toURI());
+        File srcFile = new File(getClass().getClassLoader().
+                getResource("gene_summaries.txt").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
 
