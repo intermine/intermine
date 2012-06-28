@@ -394,8 +394,7 @@ public final class MainHelper
                         PathConstraintBag pcb = (PathConstraintBag) constraint;
                         InterMineBag bag = savedBags.get(pcb.getBag());
                         if (bag == null) {
-                            throw new ObjectStoreException("A bag (" + pcb.getBag()
-                                    + ") used by this query does not exist");
+                            throw new BagNotFound(pcb.getBag());
                         }
                         codeToConstraint.put(code, new BagConstraint((QueryNode) field, pcb.getOp(),
                                     bag.getOsb()));
