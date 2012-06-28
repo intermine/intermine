@@ -12,6 +12,7 @@ import org.apache.commons.collections.functors.InvokerTransformer;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.query.BagNotFound;
 import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
@@ -30,6 +31,7 @@ import org.intermine.webservice.server.core.Page;
 import org.intermine.webservice.server.core.SubTable;
 import org.intermine.webservice.server.core.TableCell;
 import org.intermine.webservice.server.core.TableRowIterator;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.json.JSONArray;
 
@@ -56,6 +58,8 @@ public class TableRowService extends QueryResultService
             ObjectStore os = im.getObjectStore();
             int count = os.count(q, new HashMap());
             attributes.put("iTotalRecords", count);
+        } catch (BagNotFound e) {
+            throw new BadRequestException(e.getMessage());
         } catch (ObjectStoreException e) {
             throw new InternalErrorException("Error counting rows.", e);
         }
