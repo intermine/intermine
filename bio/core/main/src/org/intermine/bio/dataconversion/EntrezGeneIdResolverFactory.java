@@ -34,7 +34,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
     private final String clsName = "gene";
-    private final String propName = "resolver.entrez.file";
+    private final String propName = "resolver.entrez.file"; // set in .intermine/MINE.properties
     private final String taxonId = "9606";
 
     /**
