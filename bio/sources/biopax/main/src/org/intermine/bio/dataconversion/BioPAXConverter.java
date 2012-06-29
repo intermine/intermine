@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -140,6 +142,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L2);
         Model model = jenaIOHandler.convertFromOWL(new FileInputStream(getCurrentFile()));
         Set<pathway> pathwaySet = model.getObjects(pathway.class);
+
         for (pathway pathwayObj : pathwaySet) {
             try {
                 pathwayRefId = getPathway(pathwayObj);
@@ -190,10 +193,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         dataSourceRefId = datasource.getIdentifier();
     }
 
-    /**
-     * @param title name of dataset
-     * @throws ObjectStoreException if storing datasource fails
-     */
     public void setBiopaxDatasetname(String title)
         throws ObjectStoreException {
         dataset = createItem("DataSet");
@@ -353,29 +352,44 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      */
     private String getTaxonId() {
 
+        int taxonId;
+
         File file = getCurrentFile();
         String filename = file.getName();
-        String[] bits = filename.split(" ");
 
-        // bad filename eg `Human immunodeficiency virus 1.owl`,
-        // expecting "Drosophila melanogaster.owl"
-        if (bits.length != 2) {
-            String msg = "Bad filename:  '" + filename + "'.  Expecting filename in the format "
-                + "'Drosophila melanogaster.owl'";
-            LOG.error(msg);
-            return null;
+        Pattern taxonIdPattern = Pattern.compile("^\\d+$");
+        Matcher m = taxonIdPattern.matcher(filename.split("\\.")[0]);
+        OrganismData od;
+
+        if (m.find()) {
+            // Good file name: 83333.owl
+            taxonId = Integer.valueOf(filename.split("\\.")[0]);
+        } else {
+            String[] bits = filename.split(" ");
+
+            // bad filename eg `Human immunodeficiency virus 1.owl`,
+            // expecting "Drosophila melanogaster.owl"
+            if (bits.length != 2) {
+                String msg = "Bad filename:  '" + filename + "'.  Expecting filename in the format "
+                    + "'Drosophila melanogaster.owl'";
+                LOG.error(msg);
+                return null;
+            }
+
+            String genus = bits[0];
+            String species = bits[1].split("\\.")[0];
+            String organismName = genus + " " + species;
+
+            // Caution: organism.xml data should be read in/integrated to data first
+            od = or.getOrganismDataByGenusSpecies(genus, species);
+            if (od == null) {
+                LOG.error("No data for " + organismName + ".  Please add to repository.");
+                return null;
+            }
+
+            taxonId = od.getTaxonId();
         }
 
-        String genus = bits[0];
-        String species = bits[1].split("\\.")[0];
-        String organismName = genus + " " + species;
-        OrganismData od = or.getOrganismDataByGenusSpecies(genus, species);
-        if (od == null) {
-            LOG.error("No data for " + organismName + ".  Please add to repository.");
-            return null;
-        }
-
-        int taxonId = od.getTaxonId();
         String taxonIdString = String.valueOf(taxonId);
 
         // only process the taxonids set in the project XML file - if any
