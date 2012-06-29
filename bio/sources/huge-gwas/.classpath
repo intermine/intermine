@@ -11,5 +11,8 @@
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
+	<classpathentry kind="lib" path="test/build/classes"/>
+	<classpathentry kind="lib" path="main/build/classes"/>
+	<classpathentry kind="lib" path="/bio-core-main/build/classes"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
