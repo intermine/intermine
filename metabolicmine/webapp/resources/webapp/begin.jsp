@@ -527,7 +527,7 @@
         <span>|</span>
         <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
 
-        <p>&copy; 2010 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
+        <p>&copy; 2012 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
     </div>
     <div class="column last">
          <a href="http://www.cam.ac.uk/" title="University of Cambridge">
