@@ -11,19 +11,14 @@ package org.intermine.webservice.server.output;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.ResultElement;
-import org.intermine.model.InterMineObject;
 import org.intermine.pathquery.Path;
-import org.intermine.web.logic.PortalHelper;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 /**
  * @author Alexis Kalderimis
@@ -35,11 +30,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
     private final ExportResultsIterator subIter;
     private final List<Path> viewPaths = new ArrayList<Path>();
     private final InterMineAPI im;
-
-    private static final String CELL_KEY_URL = "url";
-    private static final String CELL_KEY_VALUE = "value";
-    private static final String CELL_KEY_CLASS = "class";
-    private static final String CELL_KEY_ID = "id";
+    private final TableCellFormatter tableCellFormatter;
 
     /**
      * Constructor
@@ -49,6 +40,7 @@ public class JSONRowIterator implements Iterator<JSONArray>
     public JSONRowIterator(ExportResultsIterator it, InterMineAPI im) {
         this.subIter = it;
         this.im = im;
+        this.tableCellFormatter = new TableCellFormatter(im);
         init();
     }
 
@@ -61,40 +53,13 @@ public class JSONRowIterator implements Iterator<JSONArray>
         return subIter.hasNext();
     }
 
-    /**
-     * Get the JSONObject that represents each cell in the results row
-     * @param cell The result element with the data
-     * @return A JSONObject
-     */
-    protected JSONObject makeCell(ResultElement cell) {
-        Map<String, Object> mapping = new HashMap<String, Object>();
-        if (cell == null || cell.getId() == null) {
-            mapping.put(CELL_KEY_URL, null);
-            mapping.put(CELL_KEY_VALUE, null);
-        } else {
-            String link = null;
-            if (im.getLinkRedirector() != null) {
-                link = im.getLinkRedirector().generateLink(im, (InterMineObject) cell.getObject());
-            }
-            if (link == null) {
-                link = PortalHelper.generateReportPath(cell);
-            }
-            mapping.put(CELL_KEY_URL, link);
-            mapping.put(CELL_KEY_CLASS, cell.getType());
-            mapping.put(CELL_KEY_ID, cell.getId());
-            mapping.put(CELL_KEY_VALUE, cell.getField());
-        }
-        JSONObject ret = new JSONObject(mapping);
-        return ret;
-    }
-
     @Override
     public JSONArray next() {
         List<ResultElement> row = subIter.next();
         List<Object> jsonRow = new ArrayList<Object>();
         for (int i = 0; i < row.size(); i++) {
             ResultElement re = row.get(i);
-            jsonRow.add(makeCell(re));
+            jsonRow.add(tableCellFormatter.toJSON(re));
         }
         JSONArray next = new JSONArray(jsonRow);
         return next;
