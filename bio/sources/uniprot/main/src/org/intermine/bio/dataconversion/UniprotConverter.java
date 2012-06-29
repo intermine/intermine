@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -581,7 +582,7 @@ public class UniprotConverter extends BioDirectoryConverter
                     && !uniprotEntry.isDuplicate()) {
 
                 if (!loadFragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
-                    return null;
+                    return Collections.emptySet();
                 }
 
                 setDataSet(uniprotEntry.getDatasetRefId());
@@ -666,7 +667,7 @@ public class UniprotConverter extends BioDirectoryConverter
             for (Map.Entry<Integer, List<String>> e : commentEvidence.entrySet()) {
                 Integer intermineObjectId = e.getKey();
                 List<String> evidenceCodes = e.getValue();
-                List<String> pubRefIds = new ArrayList();
+                List<String> pubRefIds = new ArrayList<String>();
                 for (String code : evidenceCodes) {
                     String pubRefId = uniprotEntry.getPubRefId(code);
                     if (pubRefId != null) {
