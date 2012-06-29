@@ -11,6 +11,7 @@ package org.intermine.bio.web.logic;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -396,6 +397,34 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             orgTaxonIdMap.put(orgName, orgTaxonId);
         }
         return orgTaxonIdMap;
+    }
+
+    /**
+     * query chromosome locations by a list of sequence features, return region string as
+     * chr:start..end
+     *
+     * @param features list of SequenceFeature
+     * @param im the InterMineAPI
+     * @param profile Profile
+     */
+    public static void getRegionStringFromSequenceFeatureList(Collection<SequenceFeature> features,
+            InterMineAPI im, Profile profile) {
+
+        // TODO
+    }
+
+    /**
+     * query chromosome locations by a ready-to-use pathquery, return region string as
+     * chr:start..end
+     *
+     * @param query pathquery
+     * @param im the InterMineAPI
+     * @param profile Profile
+     */
+    public static void getRegionStringFromPathQuery(PathQuery query,InterMineAPI im,
+            Profile profile) {
+
+        //TODO
     }
 }
 
