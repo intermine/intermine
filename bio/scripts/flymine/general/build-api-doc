@@ -1,17 +1,17 @@
 #!/bin/sh
 
-. /home/flymine/svn/trunk/bio/scripts/flymine/init/bash/common.bashrc
+. /home/fh293/svn/dev/bio/scripts/flymine/init/bash/common.bashrc
 
-LOGFILE="/home/flymine/logs/build-api-doc-`date +%Y-%m-%d`.log"
+LOGFILE="/home/fh293/logs/build-api-doc-`date +%Y-%m-%d`.log"
 
-(cd ~/svn/trunk
+(cd ~/svn/dev
 svn up
 
-cd ~/svn/trunk/bio/test-all/dbmodel
+cd ~/svn/dev/bio/test-all/dbmodel
 ant clean-all
 ant build-db
 
-cd ~/svn/trunk/imbuild/javadoc
+cd ~/svn/dev/imbuild/javadoc
 ant clean
 ant
 chmod -R a+rX build/javadoc/
