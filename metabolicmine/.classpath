@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="dbmodel/build/gen/src"/>
+	<classpathentry kind="src" path="webapp/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/bio-webapp"/>
+	<classpathentry kind="output" path="dbmodel/build/classes"/>
+</classpath>

@@ -148,6 +148,19 @@
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml" />
     </source>
+
+<!--
+    <source name="panther" type="panther">
+          <property name="src.data.dir" location="/micklem/data/panther/current"/>
+          <property name="panther.organisms" value="7955"/>
+        </source>
+
+    <source name="homologene" type="homologene">
+          <property name="src.data.dir" location="/micklem/data/homologene/current"/>
+          <property name="homologene.organisms" value="9606 10090"/>
+    </source>
+-->
+
   </sources>
 
   <post-processing>
