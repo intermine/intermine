@@ -1,5 +1,5 @@
 <project name="huge-gwas" default="default" basedir=".">
   <description>build, test, package huge-gwas</description>
   
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
 </project>
