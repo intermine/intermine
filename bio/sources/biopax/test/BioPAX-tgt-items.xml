@@ -1,0 +1,9 @@
+<items>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Reactome"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+</items>
