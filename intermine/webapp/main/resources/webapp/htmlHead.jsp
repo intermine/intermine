@@ -52,14 +52,8 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     <script src="http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js"></script>
     <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js"></script>
 
-    <!-- Currently serving from local -->
-    <script src="<html:rewrite page='/js/imtables.js'/>"></script>
-    <script src="<html:rewrite page='/js/im.js'/>"></script>
-
-    <!--
     <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js"></script>
     <script src="http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js"></script>
-    -->
   <c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
     <!--
     <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
