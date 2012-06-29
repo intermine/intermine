@@ -18,7 +18,7 @@
 
   <c:set var="nr" value="<%=filesSize%>" />
   <c:choose>
-  <c:when test="${nr > 20}">
+  <c:when test="${nr > 30}">
   <br></br>
     <a href="${WEB_PROPERTIES['ftp.prefix']}/${dccId}/extracted"
       title="Access the submission ${nr} files" class="value extlink"">
