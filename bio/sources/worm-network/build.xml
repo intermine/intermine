@@ -1,5 +1,0 @@
-<project name="worm-network" default="default" basedir=".">
-  <description>build, test, package worm-network</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

@@ -18,7 +18,9 @@ use constant {
 };
 
 use constant ORGANISMS => {
-    '7227' => 'Drosophila melanogaster',
+    
+    # change to a specific organism
+    '83333' => 'Escherichia coli K-12',
 };
 
 sub BUILD {

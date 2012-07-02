@@ -58,7 +58,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      *
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
-     * @throws ObjectStoreException if something goes wrong
+     * @throws ObjectStoreException os
      */
     public FlyExpressionScoreConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
@@ -327,6 +327,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      * @param score the expression score
      * @return an Item representing the FlyExpressionScore
      */
+    @SuppressWarnings("unused")
     private Item createFlyExpressionScore(String score) throws ObjectStoreException {
         Item flyexpressionscore = createItem("FlyExpressionScore");
         flyexpressionscore.setAttribute("score", score);
@@ -393,10 +394,12 @@ public class FlyExpressionScoreConverter extends BioFileConverter
      *
      * @param dccid the submission id
      * @return an Item representing the Submission
+     * @throws ObjectStoreException os
      */
-    private Item createSubmission(String dccid) throws ObjectStoreException {
+    @SuppressWarnings("unused")
+    private Item createSubmission(String dCCid) throws ObjectStoreException {
         Item submission = createItem("Submission");
-        submission.setAttribute("DCCid", dccid);
+        submission.setAttribute("DCCid", dCCid);
         store(submission);
 
         return submission;
@@ -405,7 +408,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
     /**
      * Create and store a Submission item on the first time called.
      *
-     * @throws ObjectStoreException if something goes wrong
+     * @throws ObjectStoreException os
      */
     protected void createSubmissionItem() throws ObjectStoreException {
         sub = createItem("Submission");
@@ -416,7 +419,7 @@ public class FlyExpressionScoreConverter extends BioFileConverter
     /**
      * Create and store a organism item on the first time called.
      *
-     * @throws ObjectStoreException if something goes wrong
+     * @throws ObjectStoreException os
      */
     protected void createOrganismItem() throws ObjectStoreException {
         org = createItem("Organism");

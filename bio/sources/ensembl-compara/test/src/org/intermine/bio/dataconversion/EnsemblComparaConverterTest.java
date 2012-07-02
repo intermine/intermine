@@ -20,30 +20,47 @@ import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
+/**
+ * Test class for EnsemblComparaConverter
+ * @author InterMine
+ */
 public class EnsemblComparaConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
     EnsemblComparaConverter converter;
     MockItemWriter itemWriter;
-    private String TEST_FILE = "7227_9606";
+    private static final String TEST_FILE = "7227_9606";
 
+    /**
+     * Constructor
+     * @param arg argument
+     */
     public EnsemblComparaConverterTest(String arg) {
         super(arg);
     }
 
+    /**
+     * @throws Exception e
+     */
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new EnsemblComparaConverter(itemWriter, model);
         MockIdResolverFactory flyResolverFactory = new MockIdResolverFactory("Gene");
-        flyResolverFactory.addResolverEntry("7227", "FBgn0013672", Collections.singleton("FBgn0013672"));
-        flyResolverFactory.addResolverEntry("7227", "FBgn0010412", Collections.singleton("FBgn0010412"));
+        flyResolverFactory.addResolverEntry("7227", "FBgn0013672",
+                Collections.singleton("FBgn0013672"));
+        flyResolverFactory.addResolverEntry("7227", "FBgn0010412",
+                Collections.singleton("FBgn0010412"));
         converter.flyResolverFactory = flyResolverFactory;
         DoNothingIdResolverFactory humanResolverFactory = new DoNothingIdResolverFactory("Gene");
         converter.humanResolverFactory = humanResolverFactory;
     }
 
+    /**
+     * @throws Exception e
+     */
     public void testProcess() throws Exception {
 
         ClassLoader loader = getClass().getClassLoader();
@@ -59,7 +76,8 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "ensembl-compara-tgt-items.xml");
 
-        Set expected = readItemSet("EnsemblComparaConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected =
+            readItemSet("EnsemblComparaConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }
