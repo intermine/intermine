@@ -1,5 +1,0 @@
-<project name="tf-mrna-network" default="default" basedir=".">
-  <description>build, test, package tf-mrna-network</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

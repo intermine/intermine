@@ -1,0 +1,4 @@
+<project name="ecoli-gff-tasks" default="default" basedir=".">
+  <description>build ecoli-gff tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

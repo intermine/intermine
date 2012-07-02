@@ -1,0 +1,5 @@
+<project name="ecoli-gff" default="default" basedir=".">
+  <description>build, test, package ecoli-gff</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

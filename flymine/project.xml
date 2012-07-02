@@ -120,7 +120,7 @@
 
 -->
     <source name="ensembl" type="ensembl">
-     <property name="src.data.dir" location="/micklem/data/ensembl/current"/>
+     <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
 
