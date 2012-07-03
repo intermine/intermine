@@ -30,7 +30,7 @@
         <h2><p>Genes</p></h2></td>
     <td> <i>Drosophila</i> </td>
     <td> Genome annotation for D. melanogaster (R5.43), D. ananassae (R1.3), D. erecta (R1.3), D. grimshawi (R1.3), D. mojavensis (R1.3), D. persimilis (R1.3), D. pseudoobscura (R2.26), D. sechellia (R1.3), D. simulans (R1.3), D. virilis (R1.2), D. willistoni (R1.3) and D. yakuba (R1.3).</td>
-    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_01</td>
+    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_03</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new" class="extlink">PubMed: 17099233</a></td>
     <td> <html:link action="/dataCategories" anchor="note1" title="${note1}">#1</html:link></td>
   </tr>
@@ -55,7 +55,7 @@
     <td rowspan="3"  class="leftcol"><p><h2>Homology</h2></p></td>
     <td><i>Drosophila</i></td>
     <td>Orthologues and paralogues between the 12 <i>Drosophila</i> genomes.</td>
-    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_01</td>
+    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_03</td>
     <td>Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233 " target="_new" class="extlink">PubMed: 17099233</a></td>
     <td> &nbsp; </td>
   </tr>
@@ -102,7 +102,7 @@
         <p><i>S. cerevisiae</i></p>
     </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_01</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_03</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new" class="extlink">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -114,7 +114,7 @@
         <p><i>C. elegans</i></p>
     </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2012_01)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2012_03)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new" class="extlink">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -225,7 +225,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Genome-wide RNA_seq Expression Data: raw data produced by modENCODE analysed by FlyBase</td>
-    <td> <a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_01</td>
+    <td> <a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_03</td>
     <td> Gelbart and Emmert - 2010<a href="http://flybase.org/reports/FBrf0212041.html" target="_new" class="extlink">FlyBase Report</a></td>
     <td> &nbsp;</td>
   </tr>
