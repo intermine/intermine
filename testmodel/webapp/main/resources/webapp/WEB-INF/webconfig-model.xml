@@ -126,7 +126,7 @@
                  startClass="Employee"
                  startClassDisplay="name"
                  enrich="department.company.contractors.name"
-                 typeClass="org.intermine.model.testmodel.Employee"
+                 typeClass="Employee"
                  views="name, age, department.name"/>
      </widgets>
 

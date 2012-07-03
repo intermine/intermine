@@ -48,7 +48,7 @@
 
     if (query && query.select.length > 0) {
         jQuery(function() {
-            var view = new intermine.query.results.CompactView(service, query, {}, {pageSize: ${pageSize}});
+            var view = new intermine.query.results.CompactView(service, query, LIST_EVENTS, {pageSize: ${pageSize}});
             view.$el.appendTo('#${tableContainerId}');
             view.render();
         });

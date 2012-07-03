@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.config.ClassKeyHelper;
+import org.intermine.api.results.ResultCell;
 import org.intermine.api.results.ResultElement;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
@@ -199,7 +200,7 @@ public final class PortalHelper
      * The generated path is not suitable for permanent
      * links, as it will include the internal id, which is liable to change between releases.
      */
-    public static String generateReportPath(ResultElement elem) {
+    public static String generateReportPath(ResultCell elem) {
         String url;
         StringBuilder sb = new StringBuilder();
         sb.append("/").append(INTERNAL_REPORT_PAGE).append("?id=");

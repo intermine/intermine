@@ -947,8 +947,12 @@ ol#news a {
     padding-left: 34px;
 }
 
-.messages a, .errors a, .topBar.lookupWarn a, .topBar.lookupError a, .topBar.lookupReport a {
+.messages > a, .errors > a, .topBar.lookupWarn > a, .topBar.lookupError > a, .topBar.lookupReport > a {
     float: right;
+}
+
+.topBar p span {
+	margin-right: 1em;
 }
 
 #error_msg, #msg, #lookup_msg {
@@ -1627,6 +1631,22 @@ table.summary.results td {
 
 /* Previously hard-coded colour in high-lighted search results */
 .im-highlighted-search-term: { background-color: #ffff77; }
+
+.im-query-display .im-th-button {
+	color: #049;
+}
+
+.dropdown.open > .im-th-button {
+	background: #ccc;
+}
+
+.im-query-display div.im-constraints h3 {
+	background: transparent;
+}
+
+.im-con-summary li {
+	margin-left: 1em;
+}
 
 /* widgets */
 div.bagDetails-page ol.widgetList { margin-bottom:20px; }

@@ -3,6 +3,7 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
 <!-- htmlHead.jsp -->
 
@@ -17,9 +18,7 @@
 
 <link href="${WEB_PROPERTIES['project.rss']}" rel="alternate" type="application/rss+xml" title="${WEB_PROPERTIES['project.title']} | News" />
 
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/inlineTagEditor.css'/>"/>
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/resultstables.css'/>" />
+<im:headResources section="all"/>
 
 <%
 /* In Safari, loading a css that doesnt exist causes weirdness */
@@ -32,75 +31,21 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 }
 %>
 
-<script type="text/javascript" src="<html:rewrite page='/js/jquery-1.7.js'/>"></script>
-<script type="text/javascript" src="<html:rewrite page='/js/intermine.js'/>"></script>
-
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery.qtip-1.0.0-rc3.min.js'/>"></script>
-    <script type="text/javascript" src="<html:rewrite page='/js/raphael.js'/>"></script>
-    <script type="text/javascript" src="<html:rewrite page='/js/jsphylosvg.js'/>"></script>
-
-    <!-- Ideally these imports should live in resultsTable.jsp - but I cannot get them to only import once -->
-    <c:set var="jsLib" value="${WEB_PROPERTIES['ws.imtables.provider']}"/>
-    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/css/bootstrap/2.0.4-prefixed/css/bootstrap.min.css"></link>
-    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css"></link>
-    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css"></link>
-    <link type="text/css" rel="stylesheet" href="http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css"></link>
-
-    <script src="http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js"></script>
-    <script src="http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js"></script>
-    <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js"></script>
-
-    <script src="http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js"></script>
-    <script src="http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js"></script>
-  <c:if test="${WEB_PROPERTIES['jbrowse'] == 'true'}">
-    <!--
-    <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dijit/themes/tundra/tundra.css"></link>
-        <link rel="stylesheet" type="text/css" href="/jbrowse/jslib/dojo/resources/dojo.css"></link>
-        <link rel="stylesheet" type="text/css" href="/jbrowse/genome.css"></link>
-
-        <script type="text/javascript" src="/jbrowse/jslib/dojo/dojo.js" djConfig="isDebug: false"></script>
-        <script type="text/javascript" src="/jbrowse/jslib/dojo/jbrowse_dojo.js" ></script>
-
-    <script type="text/javascript" src="/jbrowse/js/Browser.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/Util.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/NCList.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/LazyPatricia.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/LazyArray.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/Track.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/SequenceTrack.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/Layout.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/FeatureTrack.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/UITracks.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/ImageTrack.js"></script>
-        <script type="text/javascript" src="/jbrowse/js/GenomeView.js"></script>
-        <script type="text/javascript" src="/jbrowse/data/refSeqs.js"></script>
-        <script type="text/javascript" src="/jbrowse/data/trackInfo.js"></script>
-    -->
+    <im:headResources section="results"/>
   </c:if>
-  </c:if>
-
-<!--
-  <c:if test="${pageName == 'begin'}">
-    <script type="text/javascript" src="<html:rewrite page='/js/jQuery.roundCorners-1.1.1.js'/>"></script>
-    <script type="text/javascript" src="<html:rewrite page='/js/excanvas.js'/>"></script>
-  </c:if>
--->
 
   <c:if test="${pageName == 'results' || pageName == 'query' || pageName == 'templates' || pageName == 'bagDetails' || pageName == 'bag' || pageName == 'mymine'}">
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery.boxy.js'/>"></script>
-    <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/boxy.css'/>"/>
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery.dimensions.min.js'/>"></script>
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery.center.js'/>"></script>
-    <c:if test="${pageName == 'bagDetails'}">
-      <script type="text/javascript" src="<html:rewrite page='/js/textarea-resize.js'/>"></script>
-    </c:if>
+    <im:headResources section="query"/>  
+  </c:if>
+  
+  <c:if test="${pageName == 'bagDetails'}">
+      <im:headResources section="bagDetails"/>
   </c:if>
 
   <c:if test="${pageName == 'query' || pageName == 'exportOptions'}">
-    <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/jquery-ui-1.7.2.custom.css'/>"/>
-    <script type="text/javascript" src="<html:rewrite page='/js/jquery-ui-1.7.2.custom.min.js'/>"></script>
+    <im:headResources section="query|export"/>
   </c:if>
 
   <script type="text/javascript">
@@ -112,27 +57,13 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
    <script type="text/javascript" src="<html:rewrite page='/js/prototype.js'/>"></script>
   </c:if>
 </c:if>
-  <script type="text/javascript" src="<html:rewrite page='/dwr/interface/AjaxServices.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/dwr/interface/TrackAjaxServices.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/dwr/engine.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/dwr/util.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/imdwr.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/jquery-syntax/jquery.syntax.js'/>"></script>
-  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/js/jquery-syntax/jquery.syntax.layout.list.css'/>">
-  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/js/jquery-syntax/jquery.syntax.core.css'/>">
 
-  <script type="text/javascript" src="<html:rewrite page='/js/inlineTagEditor.js'/>"></script>
-
-  <script type="text/javascript" src="<html:rewrite page='/js/date.js'/>"></script>
-  <script type="text/javascript" src="<html:rewrite page='/js/tagSelect.js'/>"></script>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <!--[if lt IE 7.]>
     <script defer type="text/javascript" src="pngfix.js"></script>
   <![endif]-->
 
 <c:if test="${pageJS == 'true'}">
-<script type="text/javascript" src="<html:rewrite page='/js/${pageName}.js'/>"/></script>
+  <script type="text/javascript" src="<html:rewrite page='/js/${pageName}.js'/>"/></script>
 </c:if>
 
 <meta content="${WEB_PROPERTIES['meta.keywords']}" name="keywords"/>
@@ -155,8 +86,12 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
   </c:choose>
 </title>
 
+
+<!-- this is here because it needs to be higher priority than anything else imported -->
+<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/webapp.css'/>"/>
+
 <c:if test="${pageCSS == 'true'}">
-<link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
+  <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/${pageName}.css'/>"/>
 </c:if>
 
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
