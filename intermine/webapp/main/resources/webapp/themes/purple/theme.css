@@ -410,3 +410,4 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .im-table-container table.table tbody tr td.active { background:#FFF3D3; }
 .table td.im-highlight a { font-weight:normal; }
 .im-table-container .active { background:#FFF; color:#000; }
+.dropdown.open > .im-th-button { background: transparent; }
