@@ -14,16 +14,12 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.BagNotFound;
 import org.intermine.api.query.MainHelper;
-import org.intermine.api.results.ResultElement;
-import org.intermine.metadata.FieldDescriptor;
-import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.PortalHelper;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.core.Either;
 import org.intermine.webservice.server.core.EitherVisitor;
@@ -33,6 +29,7 @@ import org.intermine.webservice.server.core.TableCell;
 import org.intermine.webservice.server.core.TableRowIterator;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.output.TableCellFormatter;
 import org.json.JSONArray;
 
 public class TableRowService extends QueryResultService
@@ -81,9 +78,9 @@ public class TableRowService extends QueryResultService
             throw new InternalErrorException("Could not run query", e);
         }
         Results results = os.execute(q, QueryResultService.BATCH_SIZE, true, false, false);
+        Page page = new Page(firstResult, (maxResults == 0) ? null : maxResults);
         
-        TableRowIterator iter = new TableRowIterator(pathQuery, results,
-                pathToQueryNode, new Page(firstResult, (maxResults == 0) ? null : maxResults));
+        TableRowIterator iter = new TableRowIterator(pathQuery, results, pathToQueryNode, page, im);
         
         final Processor processor = new Processor(im);
         
@@ -103,45 +100,19 @@ public class TableRowService extends QueryResultService
     
     private static final class Processor extends EitherVisitor<TableCell, SubTable, Map<String, Object>>
     {
-        private static final String CELL_KEY_URL = "url";
-        private static final String CELL_KEY_VALUE = "value";
-        private static final String CELL_KEY_CLASS = "class";
-        private static final String CELL_KEY_ID = "id";
         private static final String CELL_KEY_COLUMN = "column";
         private static final String CELL_KEY_VIEW = "view";
         private static final String CELL_KEY_ROWS = "rows";
-        
-        private final InterMineAPI im;
-        
+
+        private TableCellFormatter tableCellFormatter;
+
         Processor(InterMineAPI im) {
-            this.im = im;
+            this.tableCellFormatter = new TableCellFormatter(im);
         }
-        
+
         @Override
         public Map<String, Object> visitLeft(TableCell a) {
-            Map<String, Object> cell = new HashMap<String, Object>();
-            cell.put(CELL_KEY_VALUE, a.getValue());
-            cell.put(CELL_KEY_ID, a.getId());
-            cell.put(CELL_KEY_CLASS, a.getType());
-            cell.put(CELL_KEY_COLUMN, a.getColumn().toStringNoConstraints());
-            String link;
-            if (im.getLinkRedirector() != null && a.getObject() instanceof InterMineObject) {
-                link = im.getLinkRedirector().generateLink(im, (InterMineObject) a.getObject());
-            } else {
-                // Convert to ResultElement which the portal helper understands.
-                // TODO: unify TableCell and ResultElement!!
-                List<FieldDescriptor> keyFields = im.getClassKeys().get(a.getType());
-                boolean isKeyField; 
-                if (keyFields == null) {
-                    isKeyField = false;
-                } else {
-                    isKeyField = keyFields.contains(a.getColumn().getEndFieldDescriptor());
-                }
-                ResultElement re = new ResultElement(a.getObject(), a.getColumn(), isKeyField);
-                link = PortalHelper.generateReportPath(re);
-            }
-            cell.put(CELL_KEY_URL, link);
-            return cell;
+            return tableCellFormatter.toMap(a);
         }
 
         @Override

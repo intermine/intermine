@@ -17,7 +17,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
@@ -25,6 +27,8 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
+import org.intermine.util.TypeUtil;
 import org.intermine.webservice.server.core.Either.Left;
 import org.intermine.webservice.server.core.Either.Right;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -61,6 +65,7 @@ public class TableRowIterator
     private final List<Set<Path>> nodesForThisCell = new ArrayList<Set<Path>>();
     private final List<List<Path>> pathsForThisCell = new ArrayList<List<Path>>();
     private final Page page;
+    private final InterMineAPI im;
 
     private Iterator<Object> osIter;
     private Path root;
@@ -70,11 +75,13 @@ public class TableRowIterator
             PathQuery pathQuery,
             Results results,
             Map<String, QuerySelectable> nodeForPath,
-            Page page) {
+            Page page,
+            InterMineAPI im) {
         this.page = page;
         this.pathQuery = pathQuery;
         this.results = results;
         this.nodeForPath = nodeForPath;
+        this.im = im;
         try {
             init();
         } catch (PathException e) {
@@ -296,7 +303,13 @@ public class TableRowIterator
         } else if (o instanceof FastPathObject) {
             FastPathObject fpo = (FastPathObject) o;
             for (Path p: views) {
-                currentRow.add(new Left(new TableCell(fpo, p)));
+                String cls = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(o.getClass()));
+                List<FieldDescriptor> keyFields = im.getClassKeys().get(cls);
+                boolean isKeyField = false;
+                if (keyFields != null) {
+                    isKeyField = keyFields.contains(p.getEndFieldDescriptor());
+                }
+                currentRow.add(new Left(new TableCell(fpo, p, isKeyField)));
             }
         } else {
             throw new RuntimeException(String.format(
@@ -385,7 +398,7 @@ public class TableRowIterator
         if (counter == 0) { // Unused, we can iterate directly.
             return this;
         } else {
-            return new TableRowIterator(pathQuery, results, nodeForPath, page);
+            return new TableRowIterator(pathQuery, results, nodeForPath, page, im);
         }
     }
 
