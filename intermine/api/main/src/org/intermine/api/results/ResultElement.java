@@ -24,7 +24,7 @@ import org.intermine.util.Util;
  *
  * @author Xavier Watkins
  */
-public class ResultElement implements Serializable
+public class ResultElement implements Serializable, ResultCell
 {
     private static final long serialVersionUID = 1L;
     protected Object field;
