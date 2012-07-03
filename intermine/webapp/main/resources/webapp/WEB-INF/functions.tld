@@ -53,4 +53,10 @@
   <function-signature>java.lang.String formatPathDescription( java.lang.String, org.intermine.pathquery.PathQuery, org.intermine.web.logic.config.WebConfig )</function-signature>
 </function>
 
+<function>
+  <name>getHeadResources</name>
+  <function-class>org.intermine.web.logic.WebUtil</function-class>
+  <function-signature>java.util.List getHeadResources( java.lang.String )</function-signature>
+ </function>
+
 </taglib>
