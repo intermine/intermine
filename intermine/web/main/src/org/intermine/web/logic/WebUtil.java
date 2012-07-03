@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +37,12 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.PropertiesUtil;
 import org.intermine.util.StringUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.Type;
@@ -179,6 +182,66 @@ public abstract class WebUtil
             return new String[0];
         }
         return StringUtil.split(prop, ":");
+    }
+    
+    public final static class HeadResource {
+        private final String type;
+        private final String url;
+        private final String key;
+
+        private HeadResource(String key, String type, String url) {
+            this.key = key;
+            this.type = type;
+            this.url = url;
+        }
+
+        public String getKey() {
+            return key;
+        }
+        
+        public String getType() {
+            return type;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+        
+        public boolean getIsRelative() {
+            return url.startsWith("/");
+        }
+        
+        @Override
+        public String toString() {
+            return String.format("HeadResouce [type = %s, url = %s]", type, url);
+        }
+    }
+    
+    /**
+     * Returns the resources for a particular section of the head element.
+     * 
+     * @param section The section this resource belongs in.
+     * 
+     * @return A list of page resources, which are the urls for these resources. 
+     */
+    public static List<HeadResource> getHeadResources(String section) {
+        Properties webProperties = InterMineContext.getWebProperties();
+        List<HeadResource> ret = new ArrayList<HeadResource>();
+        for (String type: new String[]{ "css", "js" }) {
+            String key = String.format("head.%s.%s", type, section);
+            Properties matches = PropertiesUtil.getPropertiesStartingWith(key, webProperties);
+            Set<Object> keys = new TreeSet<Object>(matches.keySet());
+            for (Object o: keys) {
+                String propName = String.valueOf(o);
+                String value = matches.getProperty(propName);
+                if (!(value.startsWith("/") || value.startsWith("http"))) {
+                    value = String.format("/%s/%s", type, value);
+                }
+                HeadResource resource = new HeadResource(propName, type, value);
+                ret.add(resource);
+            }
+        }
+        return ret;
     }
 
     /**
