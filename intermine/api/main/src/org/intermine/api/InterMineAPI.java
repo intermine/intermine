@@ -221,6 +221,8 @@ public class InterMineAPI
 
     /**
      * @return the linkRedirector
+     * The Link-Redirector generates links to objects within the database. If an external redirect
+     * has been configured, then a non-null string will be generated.
      */
     public LinkRedirectManager getLinkRedirector() {
         return linkRedirector;
