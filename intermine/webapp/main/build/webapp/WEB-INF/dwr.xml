@@ -1,0 +1,19 @@
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.org/dwr//dwr20.dtd">
+
+<dwr>
+  <allow>
+    <create creator="new" javascript="JDate">
+      <param name="class" value="java.util.Date"/>
+    </create>
+    <create creator="new"  javascript="AjaxServices" class="org.intermine.dwr.AjaxServices">
+      <!--<include method="getName"/>-->
+    </create>
+    <create creator="new"  javascript="TrackAjaxServices" class="org.intermine.dwr.TrackAjaxServices">
+      <!--<include method="getName"/>-->
+    </create>
+    <convert converter="bean" match="org.intermine.dwr.AjaxServices"/>
+    <convert converter="bean" match="org.intermine.web.logic.results.*"/>
+    <convert converter="bean" match="org.intermine.web.logic.widget.*"/>
+    <convert converter="bean" match="org.intermine.dwr.TrackAjaxServices"/>
+  </allow>
+</dwr>
