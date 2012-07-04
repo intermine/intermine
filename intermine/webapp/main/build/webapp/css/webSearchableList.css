@@ -1,0 +1,95 @@
+
+div.wsListContainer{
+	margin:10px 0px 10px 0px;
+	background-color:white;}
+
+div.wsListSpinner{
+	padding-top:10px;
+	text-align:center;background-color:white;}
+
+.wsListElement {
+   margin-bottom:5px; padding-top:5px; padding-bottom:5px;
+   border-bottom: #F5F0FF solid 1px;}
+
+.wsListDescription {
+	margin-left:15px;
+	font-style: italic;}
+
+.wsList {
+	padding:0px;}
+
+.wsLine {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px;}
+
+.wsLine_act {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px; background:#CEE7FF;}
+
+.wsLine_my {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px; background: #D9D2E0 url('../images/my_tr.png') no-repeat bottom left;}
+
+.wsLine_my_act {
+	padding:10px;
+	border-bottom: #F5F0FF solid 1px;background: #CCC url('../images/my_tr.png') no-repeat bottom left;}
+
+div.wsLine p.description, div.wsLine div.description
+,.wsLine_act p.description,.wsLine_act div.description
+,.wsLine_my p.description,.wsLine_my div.description
+,.wsLine_my_act p.description,.wsLine_my_act div.description{
+	margin:5px 5px 5px 30px;padding:0px;
+	font-style:italic;}
+
+div.wsLine p.description a{
+	font-style: normal; font-size: small;}
+
+.aspectSelect {
+  padding:0px; 
+  margin:0px;
+  font-size: small;
+  vertical-align: middle;
+}
+
+div.filterBar {
+	padding: 10px;
+	margin:10px 0px 0 0px;
+	font-weight: bold;}
+	
+.templateTitle {
+  padding: 4px;}	
+
+.templateDescription {
+  margin-top: 5px;padding: 4px;
+  font-style: italic; font-size: 90%;}
+
+div#filter_tool_bar {
+    text-align: right;
+    clear:both;
+    background-color:#FFF;
+    padding:5px 10px; 
+}
+
+ul#actions_menu, ul#actions_menu li {
+    list-style: none;
+    float:left;
+    margin:0;
+}
+
+ul#actions_menu {
+    background-color:#FFF;
+    vertical-align:bottom;
+}
+
+ul#actions_menu li {
+    vertical-align:bottom;
+    margin-right:10px;
+    color:#049;
+}
+
+ul#actions_menu li img {
+   margin-right:5px;
+   height:12px;
+}
+ul#actions_menu li checkbox {
+}

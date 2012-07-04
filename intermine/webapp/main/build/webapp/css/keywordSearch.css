@@ -1,0 +1,116 @@
+.keywordSearch {
+   margin-left:auto;
+   margin-right:auto;
+   text-align:center;
+}
+
+.keywordSearch p {
+   font-size:0.9em;
+}
+
+.keywordSearchBox {
+   border:2px solid #192F39;
+   font-size:1.2em;
+   width:400px;
+}
+
+.keywordSearch form {
+   margin: 1em auto;
+}
+
+.keywordSearch .examples {
+   margin-top: 1em;
+   margin-right:auto;
+   margin-bottom: 1em;
+   margin-left:auto;
+   text-align:left;
+   width: 425px;
+}
+
+.keywordSearch .examples li {
+  font-size: 0.9em;
+  text-align: left;
+  margin-left: 0px;
+}
+
+.keywordSearchIndex {
+    background: #927F97;
+    border: 1px solid #C1DAD7;
+    color: #fff;
+    margin: 10px auto;
+    overflow: hidden;
+    width: 60%;
+}
+
+.keywordSearchIndexColumn {
+  float: left;
+  margin: 5px;
+}
+
+.keywordSearchResults {
+  text-align: center;
+}
+
+.keywordSearchResults table {
+  margin: 1em 0px;
+  text-align: left;
+  width: 100%;
+}
+
+.keywordSearchResult .objectKeys {
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.keywordSearchResult .objectKeys span.objectKey {
+    margin-right: 1em;
+}
+
+.keywordSearchResult .objectFieldName {
+    font-style: italic;
+}
+
+.keywordSearchResults .facets {
+  background: #927F97;
+  border: 1px solid #C1DAD7;
+  color: #fff;
+  float: left;
+  margin-top: 1em;
+  padding: 0 0.5em;
+  text-align: left;
+  width: 220px;
+}
+
+.keywordSearchResults ol {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.keywordSearchResults ol li {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.facetHeader {
+  font-weight: bold;
+    margin: 0.5em 0 0.25em 0;
+    text-decoration: underline;
+}
+
+.facetContents {
+    margin-bottom: 0.5em;
+}
+
+.facetMoreLink {
+  border-bottom: 1px dashed #fff;
+  text-align: right;
+}
+
+.keywordSearchResults .facets a {
+    color: #fff;
+}
+
+.keywordSearchResults .resultTableContainer {
+    margin-left: 250px;
+}

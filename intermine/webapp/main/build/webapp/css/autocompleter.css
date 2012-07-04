@@ -1,0 +1,39 @@
+    div.auto_complete {
+      position: absolute;
+      background: white;
+      visibility: hidden;
+    }
+    div.auto_complete ul{
+      width:100%;    
+      height: 150px;
+      list-style-type: none;
+      border:1px solid #888;
+      margin: 0;
+      padding: 0;
+      overflow-y: scroll;
+      overflow-x: visible;
+    }
+    div.auto_complete ul li {
+      margin:0;
+      padding:0;
+    }
+    
+    input.more_results {
+    	background-color:#b2cdbf;
+    	width:100%;
+    	color:#4c4d6b;
+    	border:1px solid #888;
+    	font-family:'Times New Roman',Times,serif;
+    	text-align: right;
+    }
+
+    div.error_auto_complete {
+      position: absolute;
+      visibility: hidden;
+      background: white;
+      border:1px solid #888;   
+          
+      margin: 0;
+      padding: 0;
+      color: red;
+    }    

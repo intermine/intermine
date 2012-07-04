@@ -1,0 +1,34 @@
+//	This file is part of the "jQuery.Syntax" project, and is licensed under the GNU AGPLv3.
+//	Copyright 2010 Samuel Williams. All rights reserved.
+//	See <jquery.syntax.js> for licensing details.
+
+@import "_layout"
+
+.syntax-container
+  table.syntax
+    border-collapse: collapse
+    background-color: $background-primary
+    border: 1px solid $border-primary
+    padding: 0 !important
+    margin: 0 !important
+    width: 100%
+
+    tr.alt td.source
+      background-color: lighten($background-primary, 2%)
+  
+    td.source
+      padding: 0 0.4em 0
+      color: $code-primary
+      +pre-wrap
+      
+    td.number
+      padding: 0 0.4em 0
+      user-select: none
+      -moz-user-select: none
+      -webkit-user-select: none
+      border-right: 1px solid #aaa
+      text-align: right
+      width: 2.5em
+      color: darken($background-primary, 35%)
+      background-color: darken($background-primary, 5%)
+  

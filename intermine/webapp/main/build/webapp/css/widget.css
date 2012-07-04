@@ -1,0 +1,110 @@
+div.widgetcontainer{
+   width:450px;
+   height:500px;
+   margin: 10px;
+   text-align:center;
+   float:left;
+   padding-top: 10px;
+   padding-right: 10px;
+   padding-bottom: 50px;
+   padding-left: 10px;
+}
+
+div.widgetcontainer p{
+   font-size:0.9em;
+   margin:10px 0 5px 0;
+   text-align:justify;
+}
+
+div.widgetcontainer h3{
+    text-align:left;
+}
+
+div.widgetdatawait{
+    padding-top:150px;
+}
+
+div.widgetdata{
+    clear:left;
+    padding:0px;
+    height:360px;
+    width:450px;
+}
+
+div.widgetdataoverflow{
+    clear:left;
+    padding:0px;
+    height:360px;
+    width:450px;
+    overflow: auto;
+    overflow-y:auto;
+}
+
+div.widgetdata table {
+    border-collapse:collapse;
+    margin:0px;
+    padding:0px;
+}
+div.widgetdata tbody td {
+    text-align:left;
+    padding:5px;
+    border-bottom:1px solid #CCC;
+}
+div.widgetdata thead th{
+    background-color:#CCC;
+    padding:5px;
+}
+
+div.widgetdataoverflow table {
+    border-collapse:collapse;
+    margin:0px;
+    padding:0px;
+}
+div.widgetdataoverflow tbody td {
+    text-align:left;
+    padding:5px;
+    border-bottom:1px solid #CCC;
+}
+div.widgetdataoverflow thead th{
+    background-color:#CCC;
+    padding:5px;
+}
+
+
+
+div.widgetcontainer fieldset {
+    text-align:right;
+    margin:0 0 5px 0;
+    padding:0 0.5em 0 0;
+    border:1px solid #BFBAB0;
+}
+
+div.widgetcontainer fieldset legend {
+    font-size:0.9em;
+    margin-left:1em;
+}
+
+div.widgetcontainer select {
+    font-size:0.9em;
+}
+
+div.widget_tool_bar_div {
+}
+
+ul.widget_button_bar {
+    float:left;
+    border-bottom:1px solid #CCC;
+    margin-bottom:5px;
+}
+ul.widget_button_bar li {
+    float:left;
+}
+span.widget_tool_bar_button, span.widget_tool_bar_button:visited {
+    cursor: pointer;
+    color: #004499;
+}
+span.widget_tool_bar_button:hover {
+    cursor: pointer;
+    color: white;
+    background-color: #004499;
+}

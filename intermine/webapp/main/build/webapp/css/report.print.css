@@ -1,0 +1,20 @@
+/* switch off stuff */
+#headercontainer, #navtrail, img.tinyQuestionMark, img.fasta, div.box.sidebar, #share, li.show-more,
+#menu-target, #toc-menu-wrap, #fixed-menu, p.toggle, p.in_table, h3.templateTitle img, #cwhead,
+#interactions-wrap, #contactFormDivButton, #funding-footer, div.menu-wrap {
+  display:none !important;
+}
+
+/* make tables look (more) like tables */
+table td { border:1px solid #CECECE; padding:1px 3px; }
+table thead { font-weight:bold; }
+
+/* make it look better */
+html, body { font-family:Helvetica,Arial,sans-serif; font-size:12px; }
+div { text-align:left !important; }
+a, a:visited { text-decoration:none; color:blue; }
+
+/* specific */
+div.right { float:right; }
+ul.items li span { font-weight:bold; }
+div.box.grid_9, div.box.grid_10 { width:100%; }
