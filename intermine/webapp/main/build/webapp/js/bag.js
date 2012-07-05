@@ -1,1 +1,0 @@
-jQuery(function(){jQuery(".wsLine_my").click(function(e){var src=e.target||e.srcElement;if(src.nodeType==3){src=src.parentNode;}var tn=src.tagName;if(tn=="INPUT"||tn=="IMG"||tn=="A"){return true;}var $line=jQuery(this);var $input=$line.find("input");$input.attr("checked",!$input.attr("checked"));return false;});});
