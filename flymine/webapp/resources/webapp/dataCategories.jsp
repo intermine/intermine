@@ -259,7 +259,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Enhancers</td>
-    <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase</a> - Version FB2012_01</td>
+    <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase</a> - Version FB2012_03</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new" class="extlink">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -268,7 +268,7 @@
     <td rowspan="2" class="leftcol"><p> <h2>Phenotypes</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> Alleles and phenotypes</td>
-    <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase</a> - Version FB2012_01</td>
+    <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase</a> - Version FB2012_03</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new" class="extlink">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -318,7 +318,7 @@
     <td rowspan="5" class="leftcol"><p><h2>Resources</h2></p></td>
     <td> <i>D. melanogaster</i> </td>
     <td> <a href="http://www.drosdel.org.uk" target="_new" class="extlink">DrosDel</a> artificial deletions</td>
-    <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase </a> - Version FB2012_01</td>
+    <td> <a href="http://www.flybase.org" target="_new" class="extlink">FlyBase </a> - Version FB2012_03</td>
     <td> Ryder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15238529" target="_new" class="extlink">PubMed: 15238529</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -326,7 +326,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Insertions (including DrosDel and Exelixis) </td>
-    <td> <a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_01</td>
+    <td> <a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_03</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new" class="extlink">PubMed: 17099233</a></td>
     <td>&nbsp;</td>
   </tr>
@@ -359,7 +359,7 @@
     <td rowspan="2" class="leftcol"><p><h2>Publications</h2></p></td>
     <td> <i>Drosophila</i> </td>
     <td> Gene versus publications</td>
-    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_01</td>
+    <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_03</td>
     <td> Crosby et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17099233" target="_new" class="extlink">PubMed: 17099233</a></td>
     <td> &nbsp;</td>
   </tr>
