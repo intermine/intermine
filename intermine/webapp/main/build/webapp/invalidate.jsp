@@ -1,2 +1,0 @@
-<% session.invalidate(); %>
-Session Invalidated!
