@@ -288,59 +288,9 @@
   </c:choose>
 
   <div id="ListArea">
-  <script type="text/javascript">if (!showTable) jQuery("#ListArea").hide();</script>
 
     <%-- list table --%>
     <div id="results" class="box grid_12">
-
-      <%-- find in list & toolbox --%>
-      <div class="toolbox">
-        <div class="tool">
-          <h5>Find in list</h5>
-          <html:form styleId="findInListForm" action="/findInList">
-            <input type="text" name="textToFind" id="textToFind"/>
-            <input type="hidden" name="bagName" value="${bag.name}"/>
-            <html:submit>Go</html:submit>
-          </html:form>
-        </div>
-        <html:form action="/modifyBagDetailsAction" styleId="bagDetailsForm">
-          <html:hidden property="bagName" value="${bag.name}"/>
-          <div class="tool">
-            <h5>Add records to another list</h5>
-            <c:choose>
-              <c:when test="${!empty PROFILE.savedBags && fn:length(PROFILE.savedBags) > 1}">
-                <html:select property="existingBagName">
-                  <c:forEach items="${PROFILE.savedBags}" var="entry">
-                    <c:if test="${param.bagName != entry.key}">
-                      <html:option value="${entry.key}">${entry.key} [${entry.value.type}]</html:option>
-                    </c:if>
-                  </c:forEach>
-                </html:select>
-                <input type="submit" name="addToBag" id="addToBag" value="Add" />
-                  <script type="text/javascript" charset="utf-8">
-                    jQuery('#addToBag').attr('disabled','disabled');
-                  </script>
-              </c:when>
-              <c:otherwise>
-                <em>Login to add records to another list.</em>
-              </c:otherwise>
-            </c:choose>
-          </div>
-          <div class="tool">
-            <h5>Remove records from results</h5>
-            <input type="submit" name="removeFromBag" id="removeFromBag" value="Remove selected from list" disabled="true" />
-          </div>
-        </html:form>
-      </div>
-
-      <div class="pagination">
-        <tiles:insert name="paging.tile">
-          <tiles:put name="resultsTable" beanName="pagedResults" />
-            <tiles:put name="currentPage" value="bagDetails" />
-            <tiles:put name="bag" beanName="bag" />
-        </tiles:insert>
-      </div>
-      <div class="clear"></div>
 
     <div id="list-table" class="collection-table nowrap results">
       <div style="overflow-x:auto;">
@@ -350,14 +300,6 @@
               <tiles:put name="bagName" value="${bag.name}" />
               <tiles:put name="highlightId" value="${highlightId}"/>
           </tiles:insert>
-        </div>
-        <div class="toggle">
-          <a class="less" title="Hide the list">Hide the list</a>
-        </div>
-
-        <div class="selected">
-          <span class="desc">Selected:</span>
-          <span id="selectedIdFields"></span>
         </div>
       </div>
     </div>
@@ -369,116 +311,6 @@
   <div class="clear"></div>
 
   <div class="grid_8">
-
-      <%-- preview table will be populated by JS here --%>
-    <div id="preview-table" class="box grid_12 last collection-table nowrap nomargin results">
-      <script type="text/javascript">if (showTable) jQuery("#preview-table").hide();</script>
-      <div class="gradient-wrap">
-          <table>
-            <tbody></tbody>
-          </table>
-          <div class="gradient"></div>
-        </div>
-        <div class="toggle">
-          <a class="more" title="Show the results list">Show the list</a>
-        </div>
-      </div>
-
-        <script type="text/javascript">
-          (function() {
-            <%-- give me the columns in the table in order --%>
-            var columns = Array();
-            jQuery("#list-table table thead th").each(function(index) {
-              columns.push(jQuery(this).attr('title'));
-            });
-
-            <%-- add the "first" two columns --%>
-            var previewColumns = Array();
-            previewColumns.push(columns[0]);
-            previewColumns.push(columns[1]);
-
-            var limit = 3;
-            jQuery("#list-table table tbody tr").each(function(index) {
-              limit--;
-              var sourceTr = this;
-              <%-- copy over the relevant row columns --%>
-              jQuery('<tr/>', {
-                'html': function() {
-                  var tr = this;
-                      jQuery.each(previewColumns, function(index, value) {
-                        jQuery('<td/>', {
-                          'text': function() {
-                            // shift by 1 as first column is the checkbox
-                            var column = jQuery(sourceTr).find("td:eq("+(columns.indexOf(value))+")");
-                            if (column.find('a').exists()) {
-                              return column.find('a').text();
-                            }
-                            return column.text();
-                          }
-                        }).appendTo(tr);
-                      });
-                }
-              }).appendTo("#preview-table table tbody");
-
-              if (limit <= 0) return false;
-            });
-
-          // will show/hide the results table and toolbox & change the link appropriately (text, ico)
-          function toggleResults() {
-          if (jQuery('#preview-table:visible').length > 0) {
-            // show the full list, hide preview table
-            jQuery('#preview-table').hide();
-              jQuery('#ListArea').slideDown().scrollTo('slow', 'linear', -25);
-          } else {
-            // hide the full list, show preview table
-            jQuery('#ListArea').slideUp();
-            jQuery('#preview-table').show();
-            jQuery('#ListCategory').scrollTo('slow', 'linear', -15);
-          }
-          }
-
-          // shuffle "selected" around:
-          jQuery("#results b").not("table.results b").remove();
-          var s = jQuery.trim(jQuery("#results span#selectedIdFields").first().html());
-          jQuery("#results span#selectedIdFields").first().remove();
-          jQuery("#results span#selectedIdFields").html(s);
-
-          if (s.length == 0) { // hide when we have not selected anything before reload
-            jQuery('#results div.selected span.desc').hide();
-          }
-
-          // monitor checkboxes for changes
-          jQuery('#results input').each(function(index) {
-            jQuery(this).click(function() {
-              if (jQuery('#results div.selected span.desc').is(':visible')) {
-                if (jQuery('#results div.selected #selectedIdFields').html().length == 0) {
-                    jQuery('#results div.selected span.desc').hide();
-                    window.location.hash = '';
-                }
-              } else {
-                if (jQuery('#results div.selected #selectedIdFields').html().length > 0) {
-                    jQuery('#results div.selected span.desc').show();
-                }
-                // append a param so that we keep table expanded upon reload
-                window.location.hash = 'hasHighlighted';
-              }
-            });
-          });
-
-          // apply highlight class to rows that were selected before reload
-          jQuery('#results input:checked').each(function(index) {
-            jQuery(this).parent().parent().find('td').not('th td').addClass('highlightCell');
-          });
-
-          // toggler events
-          jQuery('#preview-table').click(function() {
-            toggleResults();
-          });
-          jQuery('#list-table div.toggle a.less').click(function() {
-          toggleResults();
-        });
-          })();
-        </script>
 
       <%-- convert to a different type & orthologues --%>
       <div class="box grid_6" id="convertList">
