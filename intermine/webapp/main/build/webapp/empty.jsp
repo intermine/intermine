@@ -1,3 +1,0 @@
-<!-- empty.jsp -->
-<!-- /empty.jsp -->
-
