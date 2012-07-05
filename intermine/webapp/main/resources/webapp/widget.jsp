@@ -34,9 +34,8 @@
                         dialogue.render().$el.appendTo('#${widgetId}-widget');
                         dialogue.openDialogue();
 
-                        query.on('list-update:success', function(list) {
-                            window.LIST_EVENTS['list-creation:success'](list.title);
-                        });
+                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
+                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
                     });
                 },
                 resultsCb: function(pq) {
@@ -84,9 +83,8 @@
                         dialogue.render().$el.appendTo('#${widgetId}-widget');
                         dialogue.openDialogue();
 
-                        query.on('list-update:success', function(list) {
-                            window.LIST_EVENTS['list-creation:success'](list.title);
-                        });
+                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
+                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
                     });
                 },
                 resultsCb: function(pq) {
@@ -134,9 +132,8 @@
                         dialogue.render().$el.appendTo('#${widgetId}-widget');
                         dialogue.openDialogue();
 
-                        query.on('list-update:success', function(list) {
-                            window.LIST_EVENTS['list-creation:success'](list.title);
-                        });
+                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
+                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
                     });
                 },
                 resultsCb: function(pq) {
