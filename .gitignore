@@ -625,6 +625,7 @@
 # /flymine/dbmodel/
 /flymine/dbmodel/build
 /flymine/dbmodel/dist
+/flymine/dbmodel/bin
 /flymine/dbmodel/intermine.log*
 /flymine/dbmodel/velocity.log*
 
