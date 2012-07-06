@@ -29,6 +29,12 @@ public final class Constants
     public static final String WEB_PROPERTIES = "WEB_PROPERTIES";
 
     /**
+     * Attribute used to store origin information about properties in
+     * the context of this web application.
+     */
+    public static final String PROPERTIES_ORIGINS = "PROPERTIES_ORIGINS";
+
+    /**
      * ServletContext attribute, List of category names.
      */
     public static final String CATEGORIES = "CATEGORIES";

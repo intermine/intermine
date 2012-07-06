@@ -1,0 +1,16 @@
+ul.property-origins {
+    margin: 0.2em;
+}
+
+.add-property {
+    margin-bottom: 3em;
+}
+
+ul.property-origins li {
+    list-style-type: none;
+    display: inline-block;
+}
+
+.edit-property {
+    display: none;
+}

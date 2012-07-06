@@ -958,6 +958,30 @@ public final class SessionMethods
     }
 
     /**
+     * Sets the origins of the web properties on the servlet context.
+     *
+     * @param servletContext The context of the web application.
+     * @param origins A map tracing the origin of each property.
+     */
+    public static void setPropertiesOrigins(
+            ServletContext servletContext,
+            Map<String, List<String>> origins ) {
+        servletContext.setAttribute(Constants.PROPERTIES_ORIGINS, origins);
+    }
+
+    /**
+     * Gets the origins map from the servlet context.
+     *
+     * @param session An HTTP session for this web application.
+     *
+     * @return A map from each property to its origins.
+     */
+    public static Map<String, List<String>> getPropertiesOrigins(
+            HttpSession session) {
+        return (Map<String, List<String>>) session.getServletContext().getAttribute(Constants.PROPERTIES_ORIGINS);
+    }
+
+    /**
      * Returns the PathQuery on the session.
      *
      * @param session a HttpSession object
