@@ -27,6 +27,17 @@
                 matchCb: function(id, type) {
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
                 },
+                listCb: function(pq) {
+                    var service = new intermine.Service({'root': window.service, 'token': "${token}"});
+                    service.query(pq, function(query) {
+                        var dialogue = new intermine.query.actions.ListCreator(query);
+                        dialogue.render().$el.appendTo('#${widgetId}-widget');
+                        dialogue.openDialogue();
+
+                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
+                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
+                    });
+                },
                 resultsCb: function(pq) {
                     var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
                     "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
@@ -65,6 +76,17 @@
                 matchCb: function(id, type) {
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
                 },
+                listCb: function(pq) {
+                    var service = new intermine.Service({'root': window.service, 'token': "${token}"});
+                    service.query(pq, function(query) {
+                        var dialogue = new intermine.query.actions.ListCreator(query);
+                        dialogue.render().$el.appendTo('#${widgetId}-widget');
+                        dialogue.openDialogue();
+
+                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
+                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
+                    });
+                },
                 resultsCb: function(pq) {
                     var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
                     "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
@@ -102,6 +124,17 @@
             var callbacks = {
                 matchCb: function(id, type) {
                     window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
+                },
+                listCb: function(pq) {
+                    var service = new intermine.Service({'root': window.service, 'token': "${token}"});
+                    service.query(pq, function(query) {
+                        var dialogue = new intermine.query.actions.ListCreator(query);
+                        dialogue.render().$el.appendTo('#${widgetId}-widget');
+                        dialogue.openDialogue();
+
+                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
+                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
+                    });
                 },
                 resultsCb: function(pq) {
                     var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
