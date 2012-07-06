@@ -33,19 +33,17 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
+
 /**
  * Load disease data from OMIM and relationship to genes, publications and SNPs.
  * @author Richard Smith
  */
 public class OmimConverter extends BioDirectoryConverter
 {
-
-    private static final Logger LOG = Logger.getLogger(OmimConverter.class);
-
+    //
     private static final String DATASET_TITLE = "OMIM diseases";
     private static final String DATA_SOURCE_NAME = "Online Mendelian Inheritance in Man";
     private static final String HUMAN_TAXON = "9606";
-
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, Item> diseases = new HashMap<String, Item>();
@@ -56,6 +54,8 @@ public class OmimConverter extends BioDirectoryConverter
     private static final String OMIM_TXT_FILE = "omim.txt";
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
+
+    private static final Logger LOG = Logger.getLogger(OmimConverter.class);
 
     /**
      * Constructor
