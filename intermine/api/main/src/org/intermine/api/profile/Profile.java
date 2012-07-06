@@ -207,6 +207,14 @@ public class Profile
     public boolean isSuperuser() {
         return isSuperUser;
     }
+    
+    /**
+     * Alias of isSuperUser() for jsp purposes.
+     * @return The same value as isSuperUser().
+     */
+    public boolean getSuperuser() {
+    	return isSuperuser();
+    }
 
     /**
      * Get the value of userId

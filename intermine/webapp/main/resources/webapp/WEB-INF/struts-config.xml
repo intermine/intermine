@@ -32,6 +32,7 @@
     <form-bean name="widgetForm" type="org.intermine.web.struts.WidgetForm"/>
     <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
     <form-bean name="passwordResetForm" type="org.intermine.web.struts.PasswordResetForm"/>
+    <form-bean name="editPropertyForm" type="org.intermine.web.struts.EditPropertiesForm"/>
     <!-- don't (re)move this - it's used for importing any model-specific forms -->
     <!--@MODEL_FORM_INCLUDE@-->
   </form-beans>
@@ -307,6 +308,7 @@
       <forward name="bags" path="bag.page"/>
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
+    
     <action path="/bagUploadConfirm" name="bagUploadConfirmForm" type="org.intermine.web.struts.BagUploadConfirmAction" validate="false" input="error" parameter="action">
       <forward name="back" path="bag.page"/>
       <forward name="error" path="bagUploadConfirm.page"/>
@@ -351,11 +353,15 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
       <forward name="api" redirect="true" path="/api.do?subtab=java"/>
     </action>
-
+    <action path="/showProperties" forward="showProperties.page">
+    </action>
+	<action path="/editProperty" name="editPropertyForm" type="org.intermine.web.struts.EditPropertiesAction" input="showProperties">
+		<forward name="failure" redirect="true" path="/begin.do"/>
+		<forward name="success" path="/showProperties.do"/>
+	</action>
     <action path="/wsCodeGen" type="org.intermine.web.struts.WebserviceCodeGenAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>
-
     <action path="/labelListing" type="org.intermine.web.struts.LabelsSummaryAction">
       <forward name="begin" redirect="true" path="/begin.do"/>
     </action>

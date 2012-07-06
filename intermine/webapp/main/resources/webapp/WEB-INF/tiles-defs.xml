@@ -37,6 +37,10 @@
     <put name="body" value="api.tile"/>
     <put name="pageName" value="api"/>
   </definition>
+  <definition name="showProperties.page" extends="layout.template">
+  	<put name="body" value="showProperties.tile"/>
+  	<put name="pageName" value="properties"/>
+  </definition>
   <definition name="begin.page" extends="layout.template">
     <put name="body" value="begin.tile"/>
     <put name="pageName" value="begin"/>
@@ -177,6 +181,7 @@
   </definition>
   <definition name="templateProblems.tile" path="/templateProblems.jsp" controllerUrl="/initTemplateProblems.do"/>
 
+  <definition name="showProperties.tile" path="/showProperties.jsp"/>
   <definition name="reportTemplateTable.tile" path="/reportTemplateTable.jsp"
               controllerUrl="/initReportTemplateTable.do"/>
   <definition name="queryBuilder.tile" path="/queryBuilder.jsp" controllerUrl="/initQueryBuilder.do"/>
