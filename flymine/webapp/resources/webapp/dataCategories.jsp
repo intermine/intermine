@@ -102,7 +102,7 @@
         <p><i>S. cerevisiae</i></p>
     </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_01</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_03</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new" class="extlink">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -114,7 +114,7 @@
         <p><i>C. elegans</i></p>
     </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2012_01)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2012_03)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new" class="extlink">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
