@@ -306,10 +306,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * Query the information of all feature types and their according so terms.
      *
      * @param im - the InterMineAPI
+     * @param classDescrs map of feature class/type to description
      * @return featureTypeToSOTermMap -
      *         a HashMap with featureType as key and its SO info accordingly as value
      */
-    public static Map<String, List<String>> getFeatureAndSOInfo(InterMineAPI im) {
+    public static Map<String, List<String>> getFeatureAndSOInfo(
+            InterMineAPI im, Map<String, String> classDescrs) {
 
         Map<String, List<String>> featureTypeToSOTermMap = new HashMap<String, List<String>>();
 
@@ -322,12 +324,12 @@ public class GenomicRegionSearchQueryRunner implements Runnable
         QueryField qfFeatureClass = new QueryField(qcFeature, "class");
 //        QueryField qfSOId = new QueryField(qcSOTerm, "identifier");
         QueryField qfSOName = new QueryField(qcSOTerm, "name");
-        QueryField qfSODescription = new QueryField(qcSOTerm, "description");
+//        QueryField qfSODescription = new QueryField(qcSOTerm, "description");
 
         q.addToSelect(qfFeatureClass);
 //        q.addToSelect(qfSOId);
         q.addToSelect(qfSOName);
-        q.addToSelect(qfSODescription);
+//        q.addToSelect(qfSODescription);
 
         q.addFrom(qcFeature);
         q.addFrom(qcSOTerm);
@@ -349,11 +351,17 @@ public class GenomicRegionSearchQueryRunner implements Runnable
             @SuppressWarnings("rawtypes")
             String ft = ((Class) row.get(0)).getSimpleName();
             String soName = (String) row.get(1);
-            String soDes = (String) row.get(2);
+//            String soDes = (String) row.get(2);
 
-            if (soDes == null) {
-                soDes = "description not avaliable";
-            }
+//            if (soDes == null) {
+//                soDes = "description not avaliable";
+//            }
+
+            String soDes = (classDescrs.get(ft) == null) ? "description not avaliable"
+                    : classDescrs.get(ft);
+
+            soDes = soDes.replaceAll("'", "&apos;");
+            soDes = soDes.replaceAll("\"", "&quot;");
 
             soInfo.add(soName);
             soInfo.add(soDes);
@@ -421,7 +429,7 @@ public class GenomicRegionSearchQueryRunner implements Runnable
      * @param im the InterMineAPI
      * @param profile Profile
      */
-    public static void getRegionStringFromPathQuery(PathQuery query,InterMineAPI im,
+    public static void getRegionStringFromPathQuery(PathQuery query, InterMineAPI im,
             Profile profile) {
 
         //TODO
