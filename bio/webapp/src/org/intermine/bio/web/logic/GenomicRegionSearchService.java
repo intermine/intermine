@@ -83,7 +83,6 @@ public class GenomicRegionSearchService
     private Properties webProperties = null;
     private Profile profile = null;
     private WebConfig webConfig = null;
-    private Map<String, String> classDescrs = null;
     private static String orgFeatureJSONString = "";
     private static final String GENOMIC_REGION_SEARCH_OPTIONS_DEFAULT =
         "genomic_region_search_options_default";
@@ -109,7 +108,6 @@ public class GenomicRegionSearchService
      * To set globally used variables.
      * @param request HttpServletRequest
      */
-    @SuppressWarnings("unchecked")
     public void init (HttpServletRequest request) {
         this.webProperties = SessionMethods.getWebProperties(
                 request.getSession().getServletContext());
@@ -118,8 +116,6 @@ public class GenomicRegionSearchService
         this.profile = SessionMethods.getProfile(request.getSession());
         this.model = this.interMineAPI.getModel();
         this.objectStore = this.interMineAPI.getObjectStore();
-        this.classDescrs = (Map<String, String>) request.getSession()
-                .getServletContext().getAttribute("classDescriptions");
     }
 
     /**
@@ -191,7 +187,8 @@ public class GenomicRegionSearchService
         }
 
         if ("".equals(orgFeatureJSONString)) {
-            return prepareWebData(orgList, excludedFeatureTypeList);
+            orgFeatureJSONString = prepareWebData(orgList, excludedFeatureTypeList);
+            return orgFeatureJSONString;
         } else {
             return orgFeatureJSONString;
         }
@@ -331,7 +328,7 @@ public class GenomicRegionSearchService
         //       was called. Replace "\" in java -> "\\\\"
 
         String preDataStr = jo.toString();
-//        preDataStr = preDataStr.replaceAll("'", "\\\\'");
+        preDataStr = preDataStr.replaceAll("'", "\\\\'");
 
         return preDataStr;
     }
@@ -597,7 +594,7 @@ public class GenomicRegionSearchService
             String emptyLine = "^\\s*$";
 
             if (Pattern.matches(ddotsRegex, spanStr)) {
-                spanStr = spanStr.contains(",") ? spanStr.replaceAll(",", "") : spanStr;
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String[] spanItems = (spanStr.split(":"))[1].split("\\..");
                 String start = spanItems[0].trim();
@@ -608,7 +605,7 @@ public class GenomicRegionSearchService
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else if (Pattern.matches(ddotstagRegex, spanStr)) {
-                spanStr = spanStr.contains(",") ? spanStr.replaceAll(",", "") : spanStr;
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String[] spanItems = (spanStr.split(":"))[1].split("\\..");
                 String start = spanItems[0].trim();
@@ -620,7 +617,7 @@ public class GenomicRegionSearchService
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
                 aSpan.setTag(Integer.valueOf((spanStr.split(":"))[2]));
             } else if (Pattern.matches(tabRegex, spanStr)) {
-                spanStr = spanStr.contains(",") ? spanStr.replaceAll(",", "") : spanStr;
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 String[] spanItems = spanStr.split("\t");
                 aSpan.setChr(spanItems[0]);
                 if ("isInterBaseCoordinate".equals(dataFormat)) {
@@ -630,7 +627,7 @@ public class GenomicRegionSearchService
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[2]));
             } else if (Pattern.matches(dashRegex, spanStr)) {
-                spanStr = spanStr.contains(",") ? spanStr.replaceAll(",", "") : spanStr;
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String[] spanItems = (spanStr.split(":"))[1].split("-");
                 String start = spanItems[0].trim();
@@ -641,7 +638,7 @@ public class GenomicRegionSearchService
                 }
                 aSpan.setEnd(Integer.valueOf(spanItems[1]));
             } else if (Pattern.matches(snpRegex, spanStr)) {
-                spanStr = spanStr.contains(",") ? spanStr.replaceAll(",", "") : spanStr;
+                spanStr = spanStr.contains(",")? spanStr.replaceAll(",", "") : spanStr;
                 aSpan.setChr((spanStr.split(":"))[0]);
                 String start = (spanStr.split(":"))[1].trim();
                 if ("isInterBaseCoordinate".equals(dataFormat)) {
@@ -701,7 +698,7 @@ public class GenomicRegionSearchService
 
         if (featureTypeToSOTermMap == null) {
             featureTypeToSOTermMap = GenomicRegionSearchQueryRunner
-                    .getFeatureAndSOInfo(interMineAPI, classDescrs);
+                    .getFeatureAndSOInfo(interMineAPI);
 
             if (!(featureTypesInOrgs.size() == featureTypeToSOTermMap.size() && featureTypesInOrgs
                     .containsAll(featureTypeToSOTermMap.keySet()))) {
@@ -713,16 +710,10 @@ public class GenomicRegionSearchService
                         newFeatureTypeToSOTermMap.put(ft,
                                 featureTypeToSOTermMap.get(ft));
                     } else {
-                        List<String> ftInfo = new ArrayList<String>();
-                        ftInfo.add(ft);
-
-                        String des = (classDescrs.get(ft) == null) ? "description not avaliable"
-                                : classDescrs.get(ft);
-
-                        des = des.replaceAll("'", "&apos;");
-                        des = des.replaceAll("\"", "&quot;");
-                        ftInfo.add(des);
-                        newFeatureTypeToSOTermMap.put(ft, ftInfo);
+                        List<String> des = new ArrayList<String>();
+                        des.add(ft);
+                        des.add("description not avaliable");
+                        newFeatureTypeToSOTermMap.put(ft, des);
                     }
                 }
 
@@ -1124,7 +1115,7 @@ public class GenomicRegionSearchService
                         firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
                     }
 
-//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
+                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
                     sb.append("<tr><td valign='top' rowspan='" + length + "'>");
 
@@ -1219,7 +1210,7 @@ public class GenomicRegionSearchService
 
                     sb.append("</a></td><td>" + firstSoTerm
                             + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                            + firstSoTerm + ": " + firstSoTermDes.replaceAll("&apos;", "\\\\'")
+                            + firstSoTerm + ": " + firstSoTermDes
                             + "';document.getElementById('ctxHelpDiv').style.display='';"
                             + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
                             + "\"><img class=\"tinyQuestionMark\" "
@@ -1244,7 +1235,7 @@ public class GenomicRegionSearchService
                             soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
                         }
 
-//                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
+                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
                         String location = chr + ":" + start + ".." + end;
 
@@ -1271,7 +1262,7 @@ public class GenomicRegionSearchService
                         sb.append("</a></td><td>"
                                 + soTerm
                                 + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                                + soTerm + ": " + soTermDes
                                 + "';document.getElementById('ctxHelpDiv').style.display='';"
                                 + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
                                 + "\"><img class=\"tinyQuestionMark\" "
@@ -1292,7 +1283,7 @@ public class GenomicRegionSearchService
                         firstSoTermDes = featureTypeToSOTermMap.get(firstFeatureType).get(1);
                     }
 
-//                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
+                    firstSoTermDes = firstSoTermDes.replaceAll("'", "\\\\'");
 
                     // row span is smaller than the feature size
                     int totalDupCount = 0;
@@ -1378,7 +1369,7 @@ public class GenomicRegionSearchService
                     sb.append("<td colspan='3'><b>" + firstRecordCount + "</b> "
                             + firstSoTerm
                             + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                            + firstSoTerm + ": " + firstSoTermDes.replaceAll("&apos;", "\\\\'")
+                            + firstSoTerm + ": " + firstSoTermDes
                             + "';document.getElementById('ctxHelpDiv').style.display='';"
                             + "window.scrollTo(0, 0);return false\" title=\"" + firstSoTermDes
                             + "\"><img class=\"tinyQuestionMark\" "
@@ -1411,14 +1402,14 @@ public class GenomicRegionSearchService
                                 soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
                             }
 
-//                            soTermDes = soTermDes.replaceAll("'", "\\\\'");
+                            soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
                             int recordCount = aboveCutOffFeatureTypeMap.get(featureType);
 
                             sb.append("<tr><td colspan='3'><b>" + recordCount + "</b> "
                                 + soTerm
                                 + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                                + soTerm + ": " + soTermDes
                                 + "';document.getElementById('ctxHelpDiv').style.display='';"
                                 + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
                                 + "\"><img class=\"tinyQuestionMark\" "
@@ -1449,7 +1440,7 @@ public class GenomicRegionSearchService
                             soTermDes = featureTypeToSOTermMap.get(featureType).get(1);
                         }
 
-//                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
+                        soTermDes = soTermDes.replaceAll("'", "\\\\'");
 
                         String location = chr + ":" + start + ".." + end;
 
@@ -1477,7 +1468,7 @@ public class GenomicRegionSearchService
                             sb.append("</a></td><td>"
                                 + soTerm
                                 + "<a onclick=\"document.getElementById('ctxHelpTxt').innerHTML='"
-                                + soTerm + ": " + soTermDes.replaceAll("&apos;", "\\\\'")
+                                + soTerm + ": " + soTermDes
                                 + "';document.getElementById('ctxHelpDiv').style.display='';"
                                 + "window.scrollTo(0, 0);return false\" title=\"" + soTermDes
                                 + "\"><img class=\"tinyQuestionMark\" "
