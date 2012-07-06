@@ -30,8 +30,10 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -470,9 +472,37 @@ public class InitialiserPlugin implements PlugIn
     }
 
     /**
+     * Update the origins and lastState maps if there are any new properties in the
+     * current state, or if any of the properties we know about has a new value.
+     *
+     * @param lastState The way things looked last time we were here.
+     * @param origins The places things come from.
+     * @param currentSource What to record if a property has just appeared or changed.
+     * @param currentState The way things look now.
+     */
+    private void updateOrigins(
+            Map<String, String> lastState,
+            Map<String, List<String>> origins,
+            String currentSource,
+            Properties currentState ) {
+        for (Entry<Object, Object> pair: currentState.entrySet()) {
+            if (!origins.containsKey(pair.getKey())) {
+                origins.put(String.valueOf(pair.getKey()), new ArrayList<String>());
+            }
+            if (!lastState.containsKey(pair.getKey())
+                    || !lastState.get(pair.getKey()).equals(pair.getValue())) {
+                origins.get(pair.getKey()).add(currentSource);
+            }
+            lastState.put((String) pair.getKey(), (String) pair.getValue());
+        }
+    }
+
+    /**
      * Read in the webapp configuration properties
      */
     private Properties loadWebProperties(ServletContext servletContext) {
+        Map<String, String> lastState = new HashMap<String, String>();
+        Map<String, List<String>> origins = new TreeMap<String, List<String>>();
         Properties webProperties = new Properties();
         InputStream globalPropertiesStream =
             servletContext.getResourceAsStream("/WEB-INF/global.web.properties");
@@ -483,6 +513,7 @@ public class InitialiserPlugin implements PlugIn
             blockingErrorKeys.put("errors.init.globalweb", null);
             return webProperties;
         }
+        updateOrigins(lastState, origins, "/WEB-INF/global.web.properties", webProperties);
 
         LOG.info("Looking for extra property files");
         Pattern pattern = Pattern.compile(
@@ -501,6 +532,7 @@ public class InitialiserPlugin implements PlugIn
                 blockingErrorKeys.put("errors.init.globalweb", null);
                 return webProperties;
             }
+            updateOrigins(lastState, origins, resource, webProperties);
         }
 
         // Load these last, as they always take precedence.
@@ -516,7 +548,9 @@ public class InitialiserPlugin implements PlugIn
                 blockingErrorKeys.put("errors.init.webproperties", null);
                 return webProperties;
             }
+            updateOrigins(lastState, origins, "/WEB-INF/web.properties", webProperties);
         }
+        SessionMethods.setPropertiesOrigins(servletContext, origins);
         SessionMethods.setWebProperties(servletContext, webProperties);
         return webProperties;
     }
