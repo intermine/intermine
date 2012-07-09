@@ -1,6 +1,0 @@
-#!/bin/bash
-scriptdir=$(dirname $0)
-cd $scriptdir
-mvn install
-cp $scriptdir/installer/target/installer-1.0-SNAPSHOT-jar-with-dependencies.jar $scriptdir/bin/MineManager.jar
-echo "[INFO: MineManager installed to $scriptdir/bin/MineManager.jar]"
