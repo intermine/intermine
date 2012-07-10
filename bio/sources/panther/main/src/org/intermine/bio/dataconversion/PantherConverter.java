@@ -12,10 +12,12 @@ package org.intermine.bio.dataconversion;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -41,8 +43,6 @@ public class PantherConverter extends BioFileConverter
     private static final String PROP_FILE = "panther_config.properties";
     private static final String DATASET_TITLE = "Panther data set";
     private static final String DATA_SOURCE_NAME = "Panther";
-    private static final String EVIDENCE_CODE_ABBR = "AA";
-    private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
     private static final Logger LOG = Logger.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -57,6 +57,20 @@ public class PantherConverter extends BioFileConverter
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
     private OrganismRepository or;
     private Set<String> databasesNamesToPrepend = new HashSet<String>();
+
+    private static final String EVIDENCE_CODE_ABBR = "AA";
+    private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
+    // PANTHER publication pubmed ids, refer to http://www.pantherdb.org/publications.jsp
+    private static ArrayList<String> PUBLICATIONS = new ArrayList<String>() {
+        private static final long serialVersionUID = 1L;
+    {
+        add("12520017");
+        add("20015972");
+        add("16912992");
+        add("19597783");
+        add("20534164");
+        add("15492219");
+    }};
 
     /**
      * Constructor
@@ -267,25 +281,39 @@ public class PantherConverter extends BioFileConverter
         throws ObjectStoreException {
 
         if (evidenceRefId == null) {
-            Item item = createItem("OrthologueEvidenceCode");
-            item.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
-            item.setAttribute("name", EVIDENCE_CODE_NAME);
+            Item eviCode = createItem("OrthologueEvidenceCode");
+            eviCode.setAttribute("abbreviation", EVIDENCE_CODE_ABBR);
+            eviCode.setAttribute("name", EVIDENCE_CODE_NAME);
             try {
-                store(item);
+                store(eviCode);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
-            String refId = item.getIdentifier();
+            String eviCodeRefId = eviCode.getIdentifier();
 
-            item = createItem("OrthologueEvidence");
-            item.setReference("evidenceCode", refId);
+            List<String> pubRefIds = new ArrayList<String>();
+            for (String pubmed : PUBLICATIONS) {
+                Item pub = createItem("Publication");
+                pub.setAttribute("pubMedId", pubmed);
+                String pubRefId = pub.getIdentifier();
+                pubRefIds.add(pubRefId);
+                try {
+                    store(pub);
+                } catch (ObjectStoreException e) {
+                    throw new ObjectStoreException(e);
+                }
+            }
+
+            Item evidence = createItem("OrthologueEvidence");
+            evidence.setReference("evidenceCode", eviCodeRefId);
+            evidence.setCollection("publications", pubRefIds);
             try {
-                store(item);
+                store(evidence);
             } catch (ObjectStoreException e) {
                 throw new ObjectStoreException(e);
             }
 
-            evidenceRefId = item.getIdentifier();
+            evidenceRefId = evidence.getIdentifier();
         }
         return evidenceRefId;
     }
