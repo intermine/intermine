@@ -358,9 +358,11 @@ public class QueryResultService extends AbstractQueryService
             Iterator<List<ResultElement>> it;
             String summaryPath = request.getParameter("summaryPath");
             if (!StringUtils.isBlank(summaryPath)) {
+            	Integer uniqs = (Integer) attributes.get("uniqueValues");
+            	boolean occurancesOnly = (uniqs == null) || (uniqs < 2);
                 try {
                     String filterTerm = request.getParameter("filterTerm");
-                    Results r = executor.summariseQuery(pathQuery, summaryPath, filterTerm);
+                    Results r = executor.summariseQuery(pathQuery, summaryPath, filterTerm, occurancesOnly);
                     if (StringUtils.isNotBlank(filterTerm)) {
                         attributes.put("filteredCount", r.size());
                     }
