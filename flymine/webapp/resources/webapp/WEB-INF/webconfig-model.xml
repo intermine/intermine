@@ -947,7 +947,7 @@
                                  views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/>
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
-                         description="Counts of orthologues in other organisms for the genes in this list."
+                         description="Counts of orthologues for the genes in this list."
                          displayFields="name"
                          exportField="primaryIdentifier"
                          typeClass="Gene"
