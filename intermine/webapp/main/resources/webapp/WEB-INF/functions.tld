@@ -58,5 +58,22 @@
   <function-class>org.intermine.web.logic.WebUtil</function-class>
   <function-signature>java.util.List getHeadResources( java.lang.String )</function-signature>
  </function>
+ 
+ <function>
+ 	<name>populateTemplateWithBag</name>
+ 	<function-class>org.intermine.api.template.TemplatePopulator</function-class>
+ 	<function-signature>
+ 		org.intermine.template.TemplateQuery populateTemplateWithBag(org.intermine.template.TemplateQuery, org.intermine.api.profile.InterMineBag )
+ 	</function-signature>
+  </function>	
+
+ <function>
+ 	<name>populateTemplateWithObject</name>
+ 	<function-class>org.intermine.api.template.TemplatePopulator</function-class>
+ 	<function-signature>
+ 		org.intermine.template.TemplateQuery populateTemplateWithObject(org.intermine.template.TemplateQuery, org.intermine.model.InterMineObject )
+ 	</function-signature>
+  </function>	
+
 
 </taglib>

@@ -49,7 +49,6 @@
   </c:choose>
   <h3>
   <div class="right"></div>
-  <c:if test="${ templateType != 'aspect' }"><div class="loading-spinner"></div></c:if>
   <img src="images/icons/templates-16.png" />
 
   <c:choose>
