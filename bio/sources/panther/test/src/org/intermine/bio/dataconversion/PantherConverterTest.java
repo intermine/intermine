@@ -45,7 +45,7 @@ public class PantherConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "panther-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "panther-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("PantherConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
