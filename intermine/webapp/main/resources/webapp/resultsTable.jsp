@@ -9,11 +9,15 @@
 
 <html:xhtml/>
 
-<%-- Required for displaying the contents of invalid bags --%>
 <tiles:importAttribute name="invalid" ignore="true"/>
 <tiles:importAttribute name="bag" ignore="true"/>
 <tiles:importAttribute name="cssClass" ignore="true"/>
 <tiles:importAttribute name="pageSize" ignore="true"/>
+<tiles:importAttribute name="query" ignore="true"/>
+
+<c:if test="${empty query}">
+    <c:set var="query" value="${QUERY}"/>
+</c:if>
 
 <c:if test="${empty pageSize}">
     <c:set var="pageSize" value="25"/>
@@ -34,21 +38,17 @@
 (function() {
     intermine.css.headerIcon = "fm-header-icon";
     <c:choose>
-        <c:when test="${not empty QUERY.json}">
-            var query = ${QUERY.json};
+        <c:when test="${not empty query.json}">
+            var query = ${query.json};
         </c:when>
         <c:otherwise>
             var query = {}; // QUERY.json is empty
         </c:otherwise>
     </c:choose>
-    var service = new intermine.Service({
-        "root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
-        "token": "${PROFILE.dayToken}"
-    });
 
     if (query && query.select.length > 0) {
         jQuery(function() {
-            var view = new intermine.query.results.CompactView(service, query, LIST_EVENTS, {pageSize: ${pageSize}});
+            var view = new intermine.query.results.CompactView($SERVICE, query, LIST_EVENTS, {pageSize: ${pageSize}});
             view.$el.appendTo('#${tableContainerId}');
             view.render();
         });
