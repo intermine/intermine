@@ -1038,6 +1038,8 @@
 /intermine/webservice/client/main/client-dist
 /intermine/webservice/client/main/dist
 /intermine/webservice/client/main/bin
+/intermine/webservice/client/download
+/intermine/webservice/client/download
 
 # /intermine/webservice/client/samples/
 /intermine/webservice/client/samples/bin
