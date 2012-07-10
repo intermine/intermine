@@ -16,10 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Path;
+import org.intermine.pathquery.PathException;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
@@ -34,6 +36,8 @@ import org.json.JSONObject;
  */
 public class SummaryService extends WebService
 {
+
+	private final static Logger LOG = Logger.getLogger(SummaryService.class);
 
     /**
      * Constructor
@@ -60,11 +64,15 @@ public class SummaryService extends WebService
             List<String> summaryFields = new ArrayList<String>();
             if (!"org.intermine.model.InterMineObject".equals(cd.getName())) {
                 for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
-                    Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
-                    if (p.endIsAttribute() && (!p.containsReferences() || refsAllowed)
-                            && fc.getShowInSummary()) {
-                        summaryFields.add(p.getNoConstraintsString());
-                    }
+                	try {
+			            Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
+			            if (p.endIsAttribute() && (!p.containsReferences() || refsAllowed)
+			                    && fc.getShowInSummary()) {
+			                summaryFields.add(p.getNoConstraintsString());
+			            }
+                	} catch (PathException e) {
+                		LOG.warn("Web config contains a bad path!", e);
+                	}
                 }
                 summaryFieldsForCd.put(cd.getUnqualifiedName(), summaryFields);
             }
