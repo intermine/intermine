@@ -943,7 +943,19 @@
     <filter-name>ExpireHeader</filter-name>
     <url-pattern>*.css</url-pattern>
   </filter-mapping>
-
+  
+  <filter>
+  	<filter-name>ReleaseEtags</filter-name>
+  	<filter-class>org.intermine.web.filters.ReleaseEtagFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>ReleaseEtags</filter-name>
+  	<servlet-name>ws-model</servlet-name>
+  	<dispatcher>REQUEST</dispatcher>
+  	<dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  
  <filter>
   <filter-name>CompressingFilter</filter-name>
   <filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
