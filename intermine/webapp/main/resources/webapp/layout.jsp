@@ -103,6 +103,15 @@ jQuery(document).ready(function() {
   jQuery("p#contactUsLink").toggle();
   });
 
+if (intermine != null && intermine.Service != null) {
+    // Set up the service, if required.
+    $SERVICE = new intermine.Service({
+        "root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
+        "token": "${PROFILE.dayToken}",
+        "help": "${WEB_PROPERTIES['feedback.destination']}"
+    });
+}
+
 $MODEL_TRANSLATION_TABLE = {
     <c:forEach var="cd" items="${INTERMINE_API.model.classDescriptors}" varStatus="cdStat">
         "${cd.unqualifiedName}": {

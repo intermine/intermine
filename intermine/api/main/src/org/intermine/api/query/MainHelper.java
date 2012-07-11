@@ -853,10 +853,16 @@ public final class MainHelper
      * @return the generated summary query
      * @throws ObjectStoreException if there is a problem creating the query
      */
-    public static Query makeSummaryQuery(PathQuery pathQuery, Map<String, InterMineBag> savedBags,
-            Map<String, QuerySelectable> pathToQueryNode, String summaryPath, ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys, BagQueryConfig bagQueryConfig,
-            ProfileManager pm) throws ObjectStoreException {
+    public static Query makeSummaryQuery(
+    		PathQuery pathQuery,
+    		Map<String, InterMineBag> savedBags,
+            Map<String, QuerySelectable> pathToQueryNode,
+            String summaryPath,
+            ObjectStore os,
+            Map<String, List<FieldDescriptor>> classKeys,
+            BagQueryConfig bagQueryConfig,
+            ProfileManager pm,
+            boolean occurancesOnly) throws ObjectStoreException {
         TemplateManager templateManager = new TemplateManager(pm.getSuperuserProfile(),
                 os.getModel());
         BagQueryRunner bagQueryRunner = null;
@@ -864,9 +870,9 @@ public final class MainHelper
             bagQueryRunner = new BagQueryRunner(os, classKeys, bagQueryConfig, templateManager);
         }
         return MainHelper.makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode,
-                bagQueryRunner);
+                bagQueryRunner, occurancesOnly);
     }
-
+    
     /**
      * Generate a query from a PathQuery, to summarise a particular column of results.
      *
@@ -878,9 +884,36 @@ public final class MainHelper
      * @return the generated summary query
      * @throws ObjectStoreException if there is a problem creating the query
      */
-    public static Query makeSummaryQuery(PathQuery pathQuery, String summaryPath,
-            Map<String, InterMineBag> savedBags, Map<String, QuerySelectable> pathToQueryNode,
-            BagQueryRunner bagQueryRunner) throws ObjectStoreException {
+    public static Query makeSummaryQuery(
+    		PathQuery pathQuery,
+    		String summaryPath,
+            Map<String, InterMineBag> savedBags,
+            Map<String, QuerySelectable> pathToQueryNode,
+            BagQueryRunner bagQueryRunner)
+            throws ObjectStoreException {
+    	return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode, bagQueryRunner, false);
+    }
+
+    /**
+     * Generate a query from a PathQuery, to summarise a particular column of results.
+     *
+     * @param pathQuery the PathQuery
+     * @param summaryPath a String path of the column to summarise
+     * @param savedBags the current saved bags map
+     * @param pathToQueryNode Map, into which columns to display will be placed
+     * @param bagQueryRunner a BagQueryRunner to execute bag queries
+     * @param occurancesOnly Force summary to take form of item summary if true.
+     * @return the generated summary query
+     * @throws ObjectStoreException if there is a problem creating the query
+     */
+    public static Query makeSummaryQuery(
+    		PathQuery pathQuery,
+    		String summaryPath,
+            Map<String, InterMineBag> savedBags,
+            Map<String, QuerySelectable> pathToQueryNode,
+            BagQueryRunner bagQueryRunner,
+            boolean occurancesOnly)
+            throws ObjectStoreException {
         Map<String, QuerySelectable> origPathToQueryNode = new HashMap<String, QuerySelectable>();
         Query subQ = null;
         subQ = makeQuery(pathQuery, savedBags, origPathToQueryNode, bagQueryRunner, null);
@@ -900,12 +933,16 @@ public final class MainHelper
             subQ.addToSelect(selectEntry.getValue(), selectEntry.getKey());
         }
         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, subQ, oldSelect,
-                pathToQueryNode);
+                pathToQueryNode, occurancesOnly);
     }
 
-    private static Query recursiveMakeSummaryQuery(Map<String, QuerySelectable>
-            origPathToQueryNode, String summaryPath, Query subQ, Set<QuerySelectable> oldSelect,
-            Map<String, QuerySelectable> pathToQueryNode) {
+    private static Query recursiveMakeSummaryQuery(
+    		Map<String, QuerySelectable>
+            origPathToQueryNode,
+            String summaryPath,
+            Query subQ, Set<QuerySelectable> oldSelect,
+            Map<String, QuerySelectable> pathToQueryNode,
+            boolean occurancesOnly) {
         QueryField qf = (QueryField) origPathToQueryNode.get(summaryPath);
         try {
             if ((qf == null) || (!subQ.getFrom().contains(qf.getFromElement()))) {
@@ -994,7 +1031,7 @@ public final class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qope.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet<QuerySelectable>(qope.getSelect()), pathToQueryNode);
+                                new HashSet<QuerySelectable>(qope.getSelect()), pathToQueryNode, occurancesOnly);
                     } else if (qs instanceof QueryCollectionPathExpression) {
                         QueryCollectionPathExpression qcpe = (QueryCollectionPathExpression) qs;
                         QueryClass firstQc = qcpe.getDefaultClass();
@@ -1024,7 +1061,7 @@ public final class MainHelper
                             QueryHelper.addAndConstraint(tempSubQ, qcpe.getConstraint());
                         }
                         return recursiveMakeSummaryQuery(origPathToQueryNode, summaryPath, tempSubQ,
-                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode);
+                                new HashSet<QuerySelectable>(qcpe.getSelect()), pathToQueryNode, occurancesOnly);
                     }
                 } catch (IllegalArgumentException e2) {
                     // Ignore it - we are searching for a working branch of the query
@@ -1045,14 +1082,8 @@ public final class MainHelper
         String className = DynamicUtil.getFriendlyName(((QueryClass) origQf.getFromElement())
                 .getType());
 
-        if ((summaryType == Long.class) || (summaryType == Integer.class)
-                || (summaryType == Short.class) || (summaryType == Byte.class)
-                || (summaryType == Float.class) || (summaryType == Double.class)
-                || (summaryType == BigDecimal.class)
-                && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
-
+        if (!occurancesOnly && isNumeric(summaryType) && (!SummaryConfig.summariseAsOccurrences(className + "." + fieldName))) {
             return getHistogram(subQ, qf, pathToQueryNode);
-
         } else if ((summaryType == String.class) || (summaryType == Boolean.class)
                 || (summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
@@ -1070,6 +1101,13 @@ public final class MainHelper
             throw new IllegalArgumentException("Cannot summarise this column");
         }
         return q;
+    }
+    
+    private static boolean isNumeric(Class<?> summaryType) {
+    	return (summaryType == Long.class) || (summaryType == Integer.class)
+                || (summaryType == Short.class) || (summaryType == Byte.class)
+                || (summaryType == Float.class) || (summaryType == Double.class)
+                || (summaryType == BigDecimal.class);
     }
 
     /**
