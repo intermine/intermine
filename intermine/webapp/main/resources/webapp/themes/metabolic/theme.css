@@ -362,8 +362,8 @@ div.bagDetails-page div.widget table.table-striped tbody tr:hover td { backgroun
 .popover-content .table-bordered,
 .popover-content .table-bordered .table td { border-color:#E6F7FE; }
 .popover-content .im-item-field { background:#EFFAFE; }
-.im-table-container .table tbody > tr td.im-highlight,
-.im-table-container table.table tbody tr td.active { background:#FFF3D3; }
-.im-table-container .table tbody > tr td.im-highlight a { color:#1F7492; }
-.table td.im-highlight a { font-weight:normal; }
+.im-query-display.bootstrap .table-striped tbody tr td.im-highlight,
+.im-query-display.bootstrap .table-striped tbody tr td.active { background-color:#FFF3D3 !important; }
+.table td.im-highlight a { font-weight:normal; color:#1F7492; }
 .im-table-container .active { background:#FFF; color:#000; }
+.dropdown.open > .im-th-button { background:#FFF; }
