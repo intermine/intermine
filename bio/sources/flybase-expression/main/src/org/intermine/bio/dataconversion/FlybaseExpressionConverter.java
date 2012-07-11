@@ -102,13 +102,11 @@ public class FlybaseExpressionConverter extends BioFileConverter
         } catch (Exception e) {
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
-
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
 
             if (line.length < 5) {
                 LOG.error("Couldn't process line.  Expected 8 cols, but was " + line.length);
-                System.out.println("test " + line.length);
                 continue;
             }
 
@@ -117,7 +115,7 @@ public class FlybaseExpressionConverter extends BioFileConverter
             final String stage = line[3];	// embryo_02-04hr
 
             if (!source.startsWith("modENCODE")) {
-                return;
+                continue;
             }
 
             Item result = createItem("RNASeqResult");
