@@ -1294,6 +1294,14 @@ public class AjaxServices
         LOG.info("Called addTag(). tagName:" + tagName + " taggedObject:"
                 + taggedObject + " type: " + type);
 
+        if (StringUtils.isBlank(tagName)) {
+        	LOG.error("Adding tag failed");
+        	return "tag must not be blank";
+        }
+        if (StringUtils.isBlank(taggedObject)) {
+        	LOG.error("Adding tag failed");
+        	return "object to tag must not be blank";
+        }
         try {
             final HttpServletRequest request = getRequest();
             final Profile profile = getProfile(request);

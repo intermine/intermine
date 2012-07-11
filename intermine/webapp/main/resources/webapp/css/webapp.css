@@ -531,8 +531,16 @@ div#navtrail a:link, div#navtrail a:visited {
 }
 
 .tag {
+	display: inline-block;
     white-space: nowrap;
     color: #444;
+    margin-right: 1em;
+    padding: 0.3em;
+    border: 1px solid #ddd;
+}
+
+.tag a {
+	margin-left: 0.5em;
 }
 
 .helpnote {

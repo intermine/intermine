@@ -25,6 +25,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.StorableBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.Taggable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.CollectionDescriptor;
@@ -58,8 +59,11 @@ public class InlineTagEditorController extends TilesAction
 
         String tagged = null;
         String type = null;
-
-        if (taggable instanceof FieldDescriptor) {
+        
+        if (taggable instanceof Taggable) {
+        	tagged = ((Taggable) taggable).getName();
+            type = ((Taggable) taggable).getTagType();	
+        } else if (taggable instanceof FieldDescriptor) {
             FieldDescriptor fd = (FieldDescriptor) taggable;
             tagged = fd.getClassDescriptor().getUnqualifiedName() + "." + fd.getName();
             if (taggable instanceof CollectionDescriptor) {
@@ -69,18 +73,13 @@ public class InlineTagEditorController extends TilesAction
             } else {
                 type = "attribute";
             }
-        } else if (taggable instanceof TemplateQuery) {
-            type = TagTypes.TEMPLATE;
-            tagged = ((TemplateQuery) taggable).getName();
         } else if (taggable instanceof ClassDescriptor) {
+        	tagged = ((ClassDescriptor) taggable).getName();
             type = TagTypes.CLASS;
-            tagged = ((ClassDescriptor) taggable).getName();
-        } else if (taggable instanceof StorableBag) {
-            type = TagTypes.BAG;
-            tagged = ((StorableBag) taggable).getName();
-        }
+        } 
 
-        request.setAttribute("editorId", createUniqueEditorId(tagged));
+        request.setAttribute("editorId", createUniqueEditorId());
+        request.setAttribute("taggableIdentifer", tagged);
         request.setAttribute("type", type);
 
         Set<String> currentTags;
@@ -99,7 +98,7 @@ public class InlineTagEditorController extends TilesAction
         return null;
     }
 
-    private String createUniqueEditorId(String tagged) {
-        return tagged + "@" + counter++;
+    private String createUniqueEditorId() {
+        return "inline-tag-editor-" + counter++;
     }
 }

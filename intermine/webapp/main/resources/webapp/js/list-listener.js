@@ -1,26 +1,7 @@
 (function($, Backbone) {
-    var ListNotification = Backbone.View.extend( {
-        tagName: 'div',
-        className: 'im-list-event-notification topBar',
-        events: {
-            'click a.closer': 'close'
-        },
-        close: function() {
-            var self = this;
-            this.$el.hide('slow', function() {self.remove()});
-        },
-        render: function() {
-            this.$el.append('<a class="closer" href="#">Hide</a>');
-            this.$el.append('<p><span><b>' + this.title + '</b></span></p>');
-            
-            this.appendContent();
-            return this;
-        }
-    } );
-
-    var SuccessNotification = ListNotification.extend( {
+    
+    var SuccessNotification = Notification.extend( {
         className: "im-list-event-notification topBar messages",
-        title: 'Success:',
         appendContent: function() {
             if (this.options.change == null) {
                 this.notifyOfCreation();
@@ -47,21 +28,13 @@
         }
     } );
 
-    var FailureNotification = ListNotification.extend( {
-        className: "im-list-event-notification topBar errors",
-        title: 'Oops!',
-        appendContent: function() {
-            this.$el.append(this.options.message);
-        }
-    } );
-
     var failuriser = function(msg) {
         var notification = new FailureNotification({message: msg});
-        notification.render().$el.prependTo('#pagecontentmax');
+        notification.render();
     };
     var successifier = function(list, change) {
         var notification = new SuccessNotification({list: list, change: change});
-        notification.render().$el.prependTo('#pagecontentmax');
+        notification.render();
     };
 
     this.LIST_EVENTS = {

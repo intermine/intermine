@@ -17,8 +17,10 @@
   <div>
 </c:if>
 <%-- editorId is id specific for each InlineTagEditor - used for creating unique javascript ids --%>
+<%-- The hidden input stores the name of the element we are referring to --%>
+<form><input type="hidden" id="taggable-${editorId}" value="${taggableIdentifer}"></form>
 <span id="tags-${editorId}" style="${!show?'display:none':''}">
-  <span id="currentTags-${editorId}">
+  <span id="currentTags-${editorId}" class="current-tags">
     <tiles:insert page="/currentTags.jsp"></tiles:insert>
   </span>
   <span id="addLink-${editorId}">

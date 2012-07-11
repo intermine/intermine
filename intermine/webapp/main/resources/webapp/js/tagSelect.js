@@ -1,6 +1,8 @@
 function refreshTagSelect(selectId, type) {
   var select = document.getElementById(selectId);
-  displayTagSelect(getSelectTitle(select), selectId, type);
+  if (select != null) {
+	  displayTagSelect(getSelectTitle(select), selectId, type);
+  }
 }
 
 function callOnChangeFunction(selectId, onChangeFunction) {
@@ -17,7 +19,7 @@ function displayTagSelect(title, selectId, type) {
 }
 
 function getSelectTitle(select) {
-  if (select.length != 0 && select[0].value == "") {
+  if (select != null && select.length != 0 && select[0].value == "") {
     return select[0].text;
   } else {
     return title = "";
