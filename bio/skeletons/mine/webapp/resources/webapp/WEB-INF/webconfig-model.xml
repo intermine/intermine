@@ -232,7 +232,7 @@
                       filterLabel="Organism"
                       filters="organism.name=[list]"
                       startClass="Gene"
-                      typeClass="org.intermine.model.bio.Gene"
+                      typeClass="Gene"
                       categoryPath="chromosome.primaryIdentifier"
                       seriesLabels="Actual,Expected"
                       seriesPath="ActualExpectedCriteria"
