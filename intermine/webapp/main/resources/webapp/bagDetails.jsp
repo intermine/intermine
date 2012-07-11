@@ -38,7 +38,7 @@
 <c:choose>
 <c:when test="${!empty bag}">
 <div class="heading results">
-  <img src="images/icons/lists-64.png" alt="lists icon"/>
+  <img src="images/icons/lists-64.png" alt="lists icon" style="width:32px" />
   <h1>
       <fmt:message key="bagDetails.title"/>
       <span style="font-size:0.9em;font-weight:normal">
@@ -46,41 +46,6 @@
           (${bag.size}&nbsp;<c:out value="${imf:formatPathStr(bag.type, INTERMINE_API, WEBCONFIG)}s"/>)
       </span>
   </h1>
-  <div id="tool_bar_div">
-      <c:choose>
-        <c:when test="${invalid}">
-            <html:form action="/triageBag">
-                <html:hidden property="pageName" value="MyMine"/>
-                <html:hidden name="newBagName" property="newBagName" value="__DUMMY-VALUE__"/>
-                <html:hidden property="selectedBags" value="${bag.name}"/>
-                <html:submit property="listsButton" value="delete" styleClass="bagDetailsAction"/>
-                <html:submit property="listsButton" value="export"styleClass="bagDetailsAction"/>
-            </html:form>
-        </c:when>
-        <c:otherwise>
-        <ul id="button_bar">
-          <li id="tool_bar_li_export"class="tb_button">
-            <img src="images/export.png" width="13" height="13" alt="Export this list">
-            <html:link linkName="#">Export</html:link>
-          </li>
-          <c:if test="${myBag == 'true'}">
-            <li id="tool_bar_li_edit"class="tb_button">
-              <img src="images/edit.png" width="13" height="13" alt="Edit my list">
-              <html:link linkName="#">Edit</html:link>
-            </li>
-         </c:if>
-        </ul>
-        <html:form action="/findInList">
-            <input type="text" name="textToFind" id="textToFind"/>
-            <input type="hidden" name="bagName" value="${bag.name}"/>
-            <html:submit>
-                <fmt:message key="bagDetails.findInList"/>
-            </html:submit>
-        </html:form>
-        </c:otherwise>
-      </c:choose>
-  </div>
-  <div style="clear:both;"></div>
 </div>
 
 <table cellspacing="0" width="100%">

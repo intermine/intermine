@@ -47,6 +47,7 @@
 /bio/skeletons/mine/pbuild.log
 
 # /bio/skeletons/mine/dbmodel/
+/bio/skeletons/mine/dbmodel/src
 /bio/skeletons/mine/dbmodel/build
 /bio/skeletons/mine/dbmodel/dist
 /bio/skeletons/mine/dbmodel/intermine.log*
@@ -66,6 +67,9 @@
 # /bio/skeletons/mine/postprocess/main/
 /bio/skeletons/mine/postprocess/main/build
 /bio/skeletons/mine/postprocess/main/dist
+
+# /bio/skeletons/mine/webapp/
+/bio/skeletons/mine/webapp/src
 
 # /bio/skeletons/source/
 /bio/skeletons/source/build
@@ -1038,6 +1042,8 @@
 /intermine/webservice/client/main/client-dist
 /intermine/webservice/client/main/dist
 /intermine/webservice/client/main/bin
+/intermine/webservice/client/download
+/intermine/webservice/client/download
 
 # /intermine/webservice/client/samples/
 /intermine/webservice/client/samples/bin
