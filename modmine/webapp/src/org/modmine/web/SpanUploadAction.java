@@ -232,8 +232,7 @@ public class SpanUploadAction extends InterMineAction
         }
 
         // Query chromosome info to validate span
-        Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner
-                .runSpanValidationQuery(im);
+        Map<String, List<ChromosomeInfo>> chrInfoMap = SpanOverlapQueryRunner.getChrInfo(im);
 
         // Chromesome starts with "chr" - UCSC formats
         for (GenomicRegion aSpan : spanList) {
