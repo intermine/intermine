@@ -25,7 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.bio.web.model.CytoscapeNetworkEdgeData;
 import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.metadata.Model;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
@@ -74,6 +77,8 @@ public class SpanOverlapQueryRunner implements Runnable
     private String orgName = null;
     private InterMineAPI im = null;
     private HttpServletRequest request = null;
+
+    private static Map<String, List<ChromosomeInfo>> chrInfoMap = null;
 
     /**
      * Constructor
@@ -348,14 +353,20 @@ public class SpanOverlapQueryRunner implements Runnable
      * For each span, its chromosome must match the chrPID and range must not go beyond the length.
      *
      * @param im - the InterMineAPI
-     * @return chrInfoMap - a HashMap with rgName as key and its chrInfo accordingly as value
+     * @return chrInfoMap - a HashMap with orgName as key and its chrInfo accordingly as value
      */
-    public static Map<String, List<ChromosomeInfo>> runSpanValidationQuery(InterMineAPI im) {
+    public static synchronized Map<String, List<ChromosomeInfo>> getChrInfo(InterMineAPI im) {
+        if (chrInfoMap == null) {
+            runSpanValidationQuery(im);
+        }
+        return chrInfoMap;
+    }
+
+    private static void runSpanValidationQuery(InterMineAPI im) {
 
         // a Map contains orgName and its chrInfo accordingly
         // e.g. <D.Melanogaster, (D.Melanogaster, X, 5000)...>
-        Map<String, List<ChromosomeInfo>> chrInfoMap =
-            new HashMap<String, List<ChromosomeInfo>>();
+        chrInfoMap = new HashMap<String, List<ChromosomeInfo>>();
 
         try {
             Query q = new Query();
@@ -432,8 +443,6 @@ public class SpanOverlapQueryRunner implements Runnable
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return chrInfoMap;
     }
 
     private LinkedHashMap<String, LinkedHashSet<GBrowseTrackInfo>> getSubGbrowseTrack(
