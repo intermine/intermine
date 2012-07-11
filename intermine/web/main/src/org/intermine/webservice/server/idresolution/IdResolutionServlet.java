@@ -25,6 +25,7 @@ public class IdResolutionServlet extends HttpServlet
         WebService ws;
         log.info(pathInfo);
         int slashIndex = pathInfo.indexOf('/');
+        // Either called as GET /ids/UID/status or GET /ids/UID/result
         if (slashIndex > 0) {
             InterMineAPI im = InterMineContext.getInterMineAPI();
             String jobId = pathInfo.substring(0, slashIndex);
