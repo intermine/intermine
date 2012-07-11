@@ -50,6 +50,7 @@ public class JobResultsService extends JSONService
                 ServiceException se;
                 if (job.getStatus() == JobStatus.ERROR) {
                     se = new ServiceException("Job failed: " +  job.getError().getMessage());
+                    this.addOutputInfo("message", job.getError().getMessage());
                 } else {
                     se = new ServiceException("Job not ready");
                 }
