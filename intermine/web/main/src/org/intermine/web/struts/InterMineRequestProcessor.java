@@ -173,6 +173,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      *
      * {@inheritDoc}
      */
+    @SuppressWarnings("rawtypes")
     protected void processForwardConfig(HttpServletRequest request, HttpServletResponse response,
             ForwardConfig forward) throws java.io.IOException, javax.servlet.ServletException {
         ForwardConfig forwardConfig = forward;
