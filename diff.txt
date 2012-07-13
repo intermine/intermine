@@ -1,0 +1,22 @@
+diff --git a/.gitignore b/.gitignore
+index 85e81f3..cb8383a 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -47,6 +47,7 @@
+ /bio/skeletons/mine/pbuild.log
+ 
+ # /bio/skeletons/mine/dbmodel/
++/bio/skeletons/mine/dbmodel/src
+ /bio/skeletons/mine/dbmodel/build
+ /bio/skeletons/mine/dbmodel/dist
+ /bio/skeletons/mine/dbmodel/intermine.log*
+@@ -67,6 +68,9 @@
+ /bio/skeletons/mine/postprocess/main/build
+ /bio/skeletons/mine/postprocess/main/dist
+ 
++# /bio/skeletons/mine/webapp/
++/bio/skeletons/mine/webapp/src
++
+ # /bio/skeletons/source/
+ /bio/skeletons/source/build
+ 
