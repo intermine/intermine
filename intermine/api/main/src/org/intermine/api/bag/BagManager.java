@@ -240,6 +240,19 @@ public class BagManager
     }
 
     /**
+     * Get the bags this user has access to, as long as they are current.
+     */
+    public Map<String, InterMineBag> getCurrentBags(Profile profile) {
+        Map<String, InterMineBag> ret = getUserAndGlobalBags(profile);
+        for (InterMineBag bag: ret.values()) {
+            if (!bag.isCurrent()) {
+                ret.remove(bag.getName());
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Order a map of bags by im:order:n tag
      * @param bags unordered
      * @return an ordered Map of InterMineBags
