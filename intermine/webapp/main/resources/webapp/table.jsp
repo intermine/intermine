@@ -18,8 +18,6 @@
 
 <div class="results collection-table nowrap nomargin">
   <tiles:insert name="resultsTable.tile">
-     <tiles:put name="pagedResults" beanName="resultsTable" />
-     <tiles:put name="currentPage" value="results" />
   </tiles:insert>
 </div>
 
