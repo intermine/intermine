@@ -1026,6 +1026,7 @@
 # /intermine/webapp/main/
 /intermine/webapp/main/dist
 /intermine/webapp/main/bin
+/intermine/webapp/main/build
 
 # /intermine/webapp/main/resources/webapp/images/
 /intermine/webapp/main/resources/webapp/images/.xvpics
