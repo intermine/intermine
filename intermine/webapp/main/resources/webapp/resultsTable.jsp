@@ -58,4 +58,9 @@
 })();
 </script>
 
+<c:if test="${! empty query.title}">
+    <c:set var="templateQuery" value="${query}"/>
+    <tiles:insert template="templateTitle.jsp"/>
+</c:if>
+
 <div id="${tableContainerId}" class="${cssClass}"></div>
