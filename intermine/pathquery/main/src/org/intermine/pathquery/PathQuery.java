@@ -742,6 +742,10 @@ public class PathQuery implements Cloneable
         return retval;
     }
 
+    public synchronized Map<PathConstraint, String> getRelevantConstraints() {
+        return getConstraints(); // Simple alias. All constraints are relevant.
+    }
+
     /**
      * Returns the PathConstraint associated with a given code.
      *
@@ -2212,6 +2216,36 @@ public class PathQuery implements Cloneable
         return this.toXml(PathQuery.USERPROFILE_VERSION);
     }
 
+    protected void addJsonProperty(StringBuffer sb, String key, Object value) {
+        if (value != null) {
+            if (!sb.toString().endsWith("{")) {
+                sb.append(",");
+            }
+            sb.append(formatKVPair(key, value));
+        }
+    }
+
+    protected String formatKVPair(String key, Object value) {
+        if (value instanceof List) {
+            StringBuffer sb = new StringBuffer("[");
+            boolean needsSep = false;
+            for (Object obj: (List<?>) value) {
+                if (needsSep) {
+                    sb.append(",");
+                }
+                sb.append("\"" + StringEscapeUtils.escapeJava(obj.toString()) + "\"");
+                needsSep = true;
+            }
+            sb.append("]");
+            return "\"" + key + "\":" + sb.toString();
+        } else if (value instanceof String) {
+            String newValue = StringEscapeUtils.escapeJava((String) value);
+            return "\"" + key + "\":\""  + newValue + "\"";
+        }
+        throw new IllegalArgumentException(value + " must be either String or a list of strings");
+    }
+
+
     /**
      * toJson synonym for JSPs.
      *
@@ -2221,25 +2255,36 @@ public class PathQuery implements Cloneable
         return toJson();
     }
 
+    protected Map<String, Object> getHeadAttributes() {
+        Map<String, Object> ret = new LinkedHashMap<String, Object>();
+        ret.put("title", getTitle());
+        ret.put("description", getDescription());
+        ret.put("select", getView());
+
+        // LOGIC - only if there is some. Just logic = A is dumb.
+        String constraintLogic = getConstraintLogic();
+        if (constraintLogic != null && constraintLogic.length() > 1) { 
+            ret.put("constraintLogic", constraintLogic);
+        }
+
+        return ret;
+    }
+
     /**
      * Convert this PathQuery to a JSON serialisation.
      *
      * @return This query as json.
      */
     public synchronized String toJson() {
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer("{");
 
-        sb.append("{\"model\":{\"name\":\"" + model.getName() + "\"},");
+        sb.append(String.format("\"model\":{\"name\":\"%s\"}",
+                    model.getName()));
 
-        // VIEW
-        sb.append("\"select\":[");
-        for (Iterator<String> it = getView().iterator(); it.hasNext();) {
-            sb.append("\"" + it.next() + "\"");
-            if (it.hasNext()){
-                sb.append(",");
-            }
+        for (Entry<String, Object> attr: getHeadAttributes().entrySet()) {
+            addJsonProperty(sb, attr.getKey(), attr.getValue());
         }
-        sb.append("]");
+
 
         // SORT ORDER
         List<OrderElement> order = getOrderBy();
@@ -2255,11 +2300,6 @@ public class PathQuery implements Cloneable
             sb.append("]");
         }
 
-        // LOGIC
-        String constraintLogic = getConstraintLogic();
-        if (constraintLogic != null && constraintLogic.length() > 1) { // "A" is pretty pointless
-            sb.append(",\"constraintLogic\":\"" + constraintLogic + "\"");
-        }
 
         // JOINS
         Map<String, OuterJoinStatus> ojs = getOuterJoinStatus();
@@ -2281,12 +2321,13 @@ public class PathQuery implements Cloneable
         }
 
         // CONSTRAINTS
-        Map<PathConstraint, String> constraints = getConstraints();
-        if (!constraints.isEmpty()) {
+        Map<PathConstraint, String> cons = getRelevantConstraints();
+        if (!cons.isEmpty()) {
             sb.append(",\"where\":[");
-            for (Iterator<Entry<PathConstraint, String>> it = constraints.entrySet().iterator();
-                it.hasNext();) {
+            Iterator<Entry<PathConstraint, String>> it = cons.entrySet().iterator();
+            while (it.hasNext()) {
                 Entry<PathConstraint, String> pair = it.next();
+                
                 sb.append(constraintToJson(pair.getKey(), pair.getValue()));
                 if (it.hasNext()) {
                     sb.append(",");
