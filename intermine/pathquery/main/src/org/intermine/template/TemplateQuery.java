@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -507,8 +508,27 @@ public class TemplateQuery extends PathQuery
         return res;
     }
 
+    public synchronized Map<PathConstraint, String> getRelevantConstraints() {
+        Map<PathConstraint, String> retVal
+            = new LinkedHashMap<PathConstraint, String>(getConstraints());
+        for (PathConstraint con: getConstraints().keySet()) {
+            if (getSwitchOffAbility(con) == SwitchOffAbility.OFF) {
+                retVal.remove(con);
+            }
+        }
+        return retVal;
+    }
+
+    protected Map<String, Object> getHeadAttributes() {
+        Map<String, Object> retVal = super.getHeadAttributes();
+        retVal.put("name", getName());
+        retVal.put("comment", getComment());
+        return retVal;
+    }
+
     /**
      * Returns a JSON string representation of the template query.
+     * TODO: !! fix confusion between toJson and toJSON !!
      * @return A string representation of the template query.
      */
     public synchronized String toJSON() {
@@ -544,36 +564,6 @@ public class TemplateQuery extends PathQuery
         sb.append("}");
         return sb.toString();
     }
-
-    private void addJsonProperty(StringBuffer sb, String key, Object value) {
-        if (value != null) {
-            if (!sb.toString().endsWith("{")) {
-                sb.append(",");
-            }
-            sb.append(formatKVPair(key, value));
-        }
-    }
-
-    private String formatKVPair(String key, Object value) {
-        if (value instanceof List) {
-            StringBuffer sb = new StringBuffer("[");
-            boolean needsSep = false;
-            for (Object obj: (List<?>) value) {
-                if (needsSep) {
-                    sb.append(",");
-                }
-                sb.append("\"" + StringEscapeUtils.escapeJava(obj.toString()) + "\"");
-                needsSep = true;
-            }
-            sb.append("]");
-            return "\"" + key + "\":" + sb.toString();
-        } else if (value instanceof String) {
-            String newValue = StringEscapeUtils.escapeJava((String) value);
-            return "\"" + key + "\":\""  + newValue + "\"";
-        }
-        throw new IllegalArgumentException(value + " must be either String or a list of strings");
-    }
-
     /**
      * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
      * the query history.
