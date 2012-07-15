@@ -42,17 +42,10 @@
 <div class="body" align="center">
 <im:boxarea titleImage="templates-64.png" stylename="plainbox" fixedWidth="90%">
 <html:form action="/templateAction">
-    <%-- template title --%>
-    <h2 class="templateTitle">
-        <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
-        <tiles:insert name="setFavourite.tile">
-            <tiles:put name="name" value="${templateQuery.name}"/>
-            <tiles:put name="type" value="template"/>
-        </tiles:insert>
-    </h2>
 
-    <%-- description --%>
-    <div class="templateDescription">${templateQuery.description}</div>
+    <tiles:insert template="templateTitle.jsp">
+    </tiles:insert>
+
     <div class="templateFormContainer">
     <ol class="templateForm" id="constraintList">
         <%-- constraint list --%>
