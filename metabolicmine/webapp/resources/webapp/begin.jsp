@@ -321,21 +321,14 @@
                 </script>
 
                 <p>Enter a gene, protein, SNP or other identifier [eg.
-                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
-                  href="keywordSearchResults.do?searchTerm=PPARG"><strong>PPARG</strong></a>,
-                <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"
-                  href="keywordSearchResults.do?searchTerm=Insulin"><strong>Insulin</strong></a>,
-                <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"
-                  href="keywordSearchResults.do?searchTerm=rs876498"><strong>rs876498</strong></a>].
+                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"><strong>PPARG</strong></a>,
+                <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"><strong>Insulin</strong></a>,
+                <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"><strong>rs876498</strong></a>].
                 <br />Alternatively, search for disease, keywords or publications [eg.
-                <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"
-                  href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
-                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
-                  href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
-                <a onclick="preFillInput('13658959');return false;" title="Search for PMID"
-                  href="keywordSearchResults.do?searchTerm=13658959"><strong>PMID</strong></a>,
-               <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"
-                  href="keywordSearchResults.do?searchTerm=Sanger+F"><strong>Author</strong></a>]</p>
+                <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"><strong>Diabetes</strong></a>,
+                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"><strong>GWAS</strong></a>,
+                <a onclick="preFillInput('13658959');return false;" title="Search for PMID"><strong>PMID</strong></a>,
+                <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"><strong>Author</strong></a>]</p>
 
                 <form id="mainSearchForm" action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
                     <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
