@@ -295,15 +295,26 @@ public class GenomicRegionSearchService
             for (String className : e.getValue()) {
                 Map<String, String> featureTypeAndDespMap = new LinkedHashMap<String, String>();
 
-                String soTermDes = "description not avaliable";
-                List<String> soInfo = featureTypeToSOTermMap.get(className);
+//                String soTermDes = "description not avaliable";
+//                List<String> soInfo = featureTypeToSOTermMap.get(className);
+//
+//                if (soInfo != null) {
+//                    soTermDes = featureTypeToSOTermMap.get(className).get(1);
+//                }
 
-                if (soInfo != null) {
-                    soTermDes = featureTypeToSOTermMap.get(className).get(1);
+                String des = "description not avaliable";
+                if (featureTypeToSOTermMap.containsKey(className)) {
+                    des = featureTypeToSOTermMap.get(className).get(1);
+                } else {
+                    des = (classDescrs.get(className) == null) ? "description not avaliable"
+                            : classDescrs.get(className);
+
+                    des = des.replaceAll("'", "&apos;");
+                    des = des.replaceAll("\"", "&quot;");
                 }
 
                 featureTypeAndDespMap.put("featureType", className);
-                featureTypeAndDespMap.put("description", soTermDes);
+                featureTypeAndDespMap.put("description", des);
                 featureTypeAndDespMapList.add(featureTypeAndDespMap);
             }
             mft.put("features", featureTypeAndDespMapList);
