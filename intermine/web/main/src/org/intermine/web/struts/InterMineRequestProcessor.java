@@ -173,6 +173,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
      *
      * {@inheritDoc}
      */
+    @SuppressWarnings("rawtypes")
     protected void processForwardConfig(HttpServletRequest request, HttpServletResponse response,
             ForwardConfig forward) throws java.io.IOException, javax.servlet.ServletException {
         ForwardConfig forwardConfig = forward;
@@ -215,5 +216,5 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
 
     private final Set<String> bots = Collections.unmodifiableSet(new HashSet<String>(
                 Arrays.asList("slurp", "bot", "spider", "crawl",
-                    "scooter", "ezooms", "archiver", "eventbox", "docomo", "nutch")));
+                    "scooter", "ezooms", "archiver", "eventbox", "docomo", "nutch", "grabber")));
 }
