@@ -1,7 +1,7 @@
 <project type="bio">
   <property name="target.model" value="genomic" />
   <property name="source.location" location="../bio/sources/" />
-  <property name="source.location" location="../bio/sources/metabolicmine" />
+  <property name="source.location" location="../bio/sources/humanmine" />
   <property name="common.os.prefix" value="common" />
   <property name="intermine.properties.file" value="metabolicmine.properties" />
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
