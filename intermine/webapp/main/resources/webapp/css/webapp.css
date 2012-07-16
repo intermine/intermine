@@ -588,7 +588,7 @@ div#navtrail a:link, div#navtrail a:visited {
     color: white;
 }
 
-.body h3 {
+.body h3:not(.popover-title) {
     margin-top: 10px;
 }
 
