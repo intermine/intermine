@@ -226,6 +226,7 @@ public abstract class WebUtil
      */
     public static List<HeadResource> getHeadResources(String section) {
         Properties webProperties = InterMineContext.getWebProperties();
+        String cdnLocation = webProperties.getProperty("head.cdn.location");
         List<HeadResource> ret = new ArrayList<HeadResource>();
         for (String type: new String[]{ "css", "js" }) {
             String key = String.format("head.%s.%s", type, section);
@@ -234,11 +235,17 @@ public abstract class WebUtil
             for (Object o: keys) {
                 String propName = String.valueOf(o);
                 String value = matches.getProperty(propName);
-                if (!(value.startsWith("/") || value.startsWith("http"))) {
-                    value = String.format("/%s/%s", type, value);
+                if (StringUtils.isBlank(value)) {
+                    LOG.warn("Head resource configured with blank value: skipping " + propName);
+                } else {
+                    if (value.startsWith("CDN")) {
+                        value = value.replace("CDN", cdnLocation);
+                    } else if (!(value.startsWith("/") || value.startsWith("http"))) {
+                        value = String.format("/%s/%s", type, value);
+                    }
+                    HeadResource resource = new HeadResource(propName, type, value);
+                    ret.add(resource);
                 }
-                HeadResource resource = new HeadResource(propName, type, value);
-                ret.add(resource);
             }
         }
         return ret;
