@@ -38,9 +38,11 @@
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
+<!--
     <source name="ensembl-hgnc" type="ensembl-hgnc">
      <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
     </source> 
+-->
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
