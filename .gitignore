@@ -10,24 +10,6 @@ executeLog*
 *.pyc
 *.class
 
-# /bio/sources/flymine/bdgp-insitu/test/
-/bio/sources/flymine/bdgp-insitu/test/bdgp_tgt.xml
-
-# bio/sources/panther/test/
-bio/sources/panther/test/panther-tgt-items.xml
-
-# /bio/test-all/
-/bio/test-all/flybase-ids_tgt.xml
-/bio/test-all/flybase-gene-names_tgt.xml
-/bio/test-all/diseaseregion_items.xml
-/bio/test-all/Drosophila_melanogaster_chr_1.gff
-/bio/test-all/flybase_cds_tgt.xml
-/bio/test-all/Drosophila_melanogaster_chr_1.fa
-/bio/test-all/affy-probes-tgt-items.xml
-/bio/test-all/flyatlas-tgt-items.xml
-/bio/test-all/OMIM_test.xml
-/bio/test-all/tmp
-
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png
 /intermine/objectstore/main/src.dot
@@ -168,21 +150,9 @@ bio/sources/panther/test/panther-tgt-items.xml
 # /intermine/scripts/
 /intermine/scripts/_Inline
 
-# /intermine/web/main/
-/intermine/web/main/files
-/intermine/web/main/allclasses-frame.html
-/intermine/web/main/index.html
-/intermine/web/main/overview-frame.html
-/intermine/web/main/stylesheet.css
-
 # /intermine/web/test/src/org/intermine/webservice/server/output/
 /intermine/web/test/src/org/intermine/webservice/server/output/RowResultProcessorBenchmark.java
 /intermine/web/test/src/org/intermine/webservice/server/output/FilterBenchmarkTest.java
-
-# /intermine/webapp/main/
-/intermine/webapp/main/dist
-/intermine/webapp/main/bin
-/intermine/webapp/main/build
 
 # /intermine/webapp/main/resources/webapp/images/
 /intermine/webapp/main/resources/webapp/images/.xvpics
