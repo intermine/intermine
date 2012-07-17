@@ -38,9 +38,11 @@
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
+<!--
     <source name="ensembl-hgnc" type="ensembl-hgnc">
      <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
     </source> 
+-->
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
@@ -101,7 +103,7 @@
 
     <source name="panther" type="panther">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
-      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 7165"/>
     </source>
 
 <!--
@@ -158,12 +160,12 @@
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
-<!--
+
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
     </source>
--->
+
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>

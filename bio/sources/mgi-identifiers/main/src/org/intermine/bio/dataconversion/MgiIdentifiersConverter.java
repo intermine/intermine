@@ -56,13 +56,6 @@ public class MgiIdentifiersConverter extends BioFileConverter
         store(organism);
 
         Set<String> identifiers = new HashSet<String>();
-        Set<String> seenEnsembl = new HashSet<String>();
-        Set<String> seenEntrez = new HashSet<String>();
-
-        Set<String> duplicateEntrez = new HashSet<String>();
-        Set<String> duplicateEnsembl = new HashSet<String>();
-
-        Set<GeneRecord> records = new HashSet<GeneRecord>();
 
         // Read all lines into gene records
         while (lineIter.hasNext()) {
@@ -97,93 +90,26 @@ public class MgiIdentifiersConverter extends BioFileConverter
             } else {
                 identifiers.add(identifier);
                 identifiers.add(symbol);
-
-                if (!entrez.equals(NULL_STRING)) {
-                    if (seenEntrez.contains(entrez)) {
-                        duplicateEntrez.add(entrez);
-                    }
-                    seenEntrez.add(entrez);
-                }
-
-                if (!ensembl.equals(NULL_STRING)) {
-                    if (seenEnsembl.contains(ensembl)) {
-                        duplicateEnsembl.add(ensembl);
-                    }
-                    seenEnsembl.add(ensembl);
-                }
-                records.add(new GeneRecord(identifier, symbol, name, entrez, ensembl));
             }
-        }
-        if (!duplicateEnsembl.isEmpty()) {
-            LOG.warn("Found " + duplicateEnsembl.size() + " duplicate ensembl ids, not using "
-                    + " duplicates for primaryIdentifier: " + duplicateEnsembl);
-        }
 
-        if (!duplicateEntrez.isEmpty()) {
-            LOG.warn("Found " + duplicateEntrez.size() + " duplicate entrez ids, not using "
-                    + " duplicates for ncbiGeneNumber: " + duplicateEntrez);
-        }
-
-        // store genes and synonyms, avoid setting duplicate ensembl and entrez ids
-        for (GeneRecord record : records) {
-            Set<Item> synonyms = new HashSet<Item>();
             Item gene = createItem("Gene");
             gene.setReference("organism", organism);
-            if (!NULL_STRING.equals(record.identifier)) {
-                gene.setAttribute("secondaryIdentifier", record.identifier);
+            if (!NULL_STRING.equals(identifier)) {
+                gene.setAttribute("primaryIdentifier", identifier);
             }
-            if (!NULL_STRING.equals(record.symbol)) {
-                gene.setAttribute("symbol", record.symbol);
+            if (!NULL_STRING.equals(symbol)) {
+                gene.setAttribute("symbol", symbol);
             }
-            if (!NULL_STRING.equals(record.name)) {
-                gene.setAttribute("name", record.name);
+            if (!NULL_STRING.equals(name)) {
+                gene.setAttribute("name", name);
             }
-
-            if (!NULL_STRING.equals(record.entrez)) {
-                if (!duplicateEntrez.contains(record.entrez)) {
-                    gene.setAttribute("ncbiGeneNumber", record.entrez);
-                } else {
-                    Item syn = createSynonym(gene, record.entrez, false);
-                    if (syn != null) {
-                        synonyms.add(syn);
-                    } else {
-                        throw new RuntimeException("duplicate id " + record.entrez
-                                + " for gene " + record.identifier);
-                    }
-                }
+            if (!NULL_STRING.equals(entrez)) {
+                createCrossReference(gene.getIdentifier(), entrez, "NCBI", true);
             }
-            if (!NULL_STRING.equals(record.ensembl)) {
-                if (!duplicateEnsembl.contains(record.ensembl)) {
-                    gene.setAttribute("primaryIdentifier", record.ensembl);
-                } else {
-                    Item syn = createSynonym(gene, record.ensembl, false);
-                    if (syn != null) {
-                        synonyms.add(syn);
-                    } else {
-                        throw new RuntimeException("duplicate id " + record.ensembl
-                                + " for gene " + record.identifier);
-                    }
-                }
+            if (!NULL_STRING.equals(ensembl)) {
+                createCrossReference(gene.getIdentifier(), ensembl, "Ensembl", true);
             }
             store(gene);
-            for (Item item : synonyms) {
-                store(item);
-            }
-        }
-    }
-
-    private class GeneRecord
-    {
-        protected String identifier, symbol, name, entrez, ensembl;
-
-        public GeneRecord(String identifier, String symbol, String name, String entrez,
-                String ensembl) {
-            this.identifier = identifier;
-            this.symbol = symbol;
-            this.name = name;
-            this.entrez = entrez;
-            this.ensembl = ensembl;
-
         }
     }
 }

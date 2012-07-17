@@ -96,7 +96,7 @@ public class ProfileManager
                 superuser = superuserProfile.getUsername();
             }
         } catch (ObjectStoreException e) {
-            throw new RuntimeException("Unable to load user profile", e);
+            throw new RuntimeException("Unable to load super user profile", e);
         }
 
         try {
