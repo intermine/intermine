@@ -146,7 +146,7 @@ public class PathQueryExecutor extends QueryExecutor
     private Query makeQuery(PathQuery pathQuery, Map<String, BagQueryResult> pathToBagQueryResult,
             Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
 
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> allBags = bagManager.getCurrentBags(profile);
 
         Query q = MainHelper.makeQuery(pathQuery, allBags, pathToQueryNode, bagQueryRunner,
                 pathToBagQueryResult);

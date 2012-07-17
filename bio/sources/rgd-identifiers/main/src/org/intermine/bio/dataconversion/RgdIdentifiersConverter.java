@@ -57,7 +57,7 @@ public class RgdIdentifiersConverter extends BioFileConverter
      */
     public void process(Reader reader) throws Exception {
 
-        Set<String> seenEnsembls = new HashSet<String>();
+
         Set<String> duplicateEnsembls = new HashSet<String>();
         Map<String, Integer> storedGeneIds = new HashMap<String, Integer>();
         Map<String, String> geneEnsemblIds = new HashMap<String, String>();
@@ -83,25 +83,12 @@ public class RgdIdentifiersConverter extends BioFileConverter
 
             Item gene = createItem("Gene");
             gene.setReference("organism", getOrganism(RAT_TAXON));
-            gene.setAttribute("secondaryIdentifier", "RGD:" + rgdId);
+            gene.setAttribute("primaryIdentifier", "RGD:" + rgdId);
             gene.setAttribute("symbol", symbol);
 
             Set<String> ensemblIds = parseEnsemblIds(ensembl);
             for (String ensemblId : ensemblIds) {
-                if (seenEnsembls.contains(ensemblId)) {
-                    duplicateEnsembls.add(ensemblId);
-                } else {
-                    seenEnsembls.add(ensemblId);
-                }
-            }
-            // if there was exactly one ensemblId we may be able to set primaryIdentifier
-            if (ensemblIds.size() == 1) {
-                geneEnsemblIds.put(gene.getIdentifier(), ensemblIds.iterator().next());
-            } else {
-                // if more than one we have to create synonyms
-                for (String ensemblId : ensemblIds) {
-                    createSynonym(gene.getIdentifier(), ensemblId, true);
-                }
+                createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl", true);
             }
 
             if (!StringUtils.isBlank(name)) {
@@ -112,6 +99,7 @@ public class RgdIdentifiersConverter extends BioFileConverter
             }
             if (!StringUtils.isBlank(entrez)) {
                 gene.setAttribute("ncbiGeneNumber", entrez);
+                createCrossReference(gene.getIdentifier(), entrez, "NCBI", true);
             }
 
             Integer storedGeneId = store(gene);

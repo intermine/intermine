@@ -14,16 +14,17 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-import org.intermine.xml.full.ReferenceList;
 
 /**
  * DataConverter to parse BDGP insitu data file into Items.
@@ -44,11 +45,19 @@ public class BDGPInsituConverter extends BioFileConverter
     protected Item orgDrosophila;
     private Item pub;
     private String[] stages;
-    private String[] stageDescriptions;
-//    private Set<String> badTerms;
     protected IdResolverFactory resolverFactory;
     private static final String TAXON_ID = "7227";
     private Item ontology = null;
+
+    static final String[] STAGE_LABELS; static {
+        STAGE_LABELS = new String[7];
+        STAGE_LABELS[1] = "stage 1-3";
+        STAGE_LABELS[2] = "stage 4-6";
+        STAGE_LABELS[3] = "stage 7-8";
+        STAGE_LABELS[4] = "stage 9-10";
+        STAGE_LABELS[5] = "stage 11-12";
+        STAGE_LABELS[6] = "stage 13-16";
+    }
 
     /**
      * Construct a new instance of BDGPInsituConverter.
@@ -68,9 +77,7 @@ public class BDGPInsituConverter extends BioFileConverter
         pub.setAttribute("pubMedId", "17645804");
         store(pub);
 
-        stages = getStages();
-        stageDescriptions = getStageDescriptions();
-//        badTerms = getBadTerms();
+        setStages();
 
         ontology = createItem("Ontology");
         ontology.setAttribute("name", "ImaGO");
@@ -111,6 +118,16 @@ public class BDGPInsituConverter extends BioFileConverter
             String resultKey = geneCG + stage;
             Item result = getResult(resultKey, gene.getIdentifier(), pub.getIdentifier(), stage);
 
+            Integer stageNumber = null;
+            try {
+                stageNumber = new Integer(stage);
+            } catch (NumberFormatException e) {
+                // bad line in file, just keep going
+                continue;
+            }
+            result.setAttribute("stageRange", STAGE_LABELS[stageNumber.intValue()]
+                                                                + " (BDGP in situ)");
+
             if (lineBits.length > 2) {
                 String image = lineBits[2];
                 if (StringUtils.isNotEmpty(image)) {
@@ -123,14 +140,15 @@ public class BDGPInsituConverter extends BioFileConverter
                 if (termItem != null) {
                     result.addToCollection("mRNAExpressionTerms", termItem);
                 }
-                if (term.equalsIgnoreCase("no staining")) {
+                if ("no staining".equals(term)) {
                     result.setAttribute("expressed", "false");
                 }
             }
         }
 
         for (Item result: results.values()) {
-            if (result.getCollection("mRNAExpressionTerms").getRefIds().isEmpty()) {
+            if (!result.hasCollection("mRNAExpressionTerms")
+                    || result.getCollection("mRNAExpressionTerms").getRefIds().isEmpty()) {
                 result.setAttribute("expressed", "false");
             }
         }
@@ -155,61 +173,41 @@ public class BDGPInsituConverter extends BioFileConverter
         result.setAttribute("expressed", "true");
         result.setReference("gene", geneId);
         result.setReference("publication", pubId);
-        setTheStage(result, stage);
-        result.setCollection("images", new ArrayList<String>());
-        result.setCollection("mRNAExpressionTerms", new ArrayList<String>());
+        result.setCollection("stages", getStages(stage));
+//        result.setCollection("images", new ArrayList<String>());
+//        result.setCollection("mRNAExpressionTerms", new ArrayList<String>());
         results.put(key, result);
         return result;
     }
 
-    private void setTheStage(Item result, String stage) {
-
-        ReferenceList stagesColl = new ReferenceList("stages", new ArrayList<String>());
-
-        Integer stageNumber = null;
-        try {
-            stageNumber = new Integer(stage);
-        } catch (NumberFormatException e) {
-            // bad line in file, just keep going
-            return;
+    private List<String> getStages(String stage) {
+        List<String> stagesColl = new ArrayList<String>();
+        if ("1".equals(stage)) {
+            stagesColl.add(stages[1]);
+            stagesColl.add(stages[2]);
+            stagesColl.add(stages[3]);
+        } else if ("2".equals(stage)) {
+            stagesColl.add(stages[4]);
+            stagesColl.add(stages[5]);
+            stagesColl.add(stages[6]);
+        } else if ("3".equals(stage)) {
+            stagesColl.add(stages[7]);
+            stagesColl.add(stages[8]);
+        } else if ("4".equals(stage)) {
+            stagesColl.add(stages[9]);
+            stagesColl.add(stages[10]);
+        } else if ("5".equals(stage)) {
+            stagesColl.add(stages[11]);
+            stagesColl.add(stages[12]);
+        } else if ("6".equals(stage)) {
+            stagesColl.add(stages[13]);
+            stagesColl.add(stages[14]);
+            stagesColl.add(stages[15]);
+            stagesColl.add(stages[16]);
+        } else {
+            throw new BuildException("bad stage value " + stage);
         }
-
-        result.setAttribute("stageRange", stageDescriptions[stageNumber.intValue()]
-                                                            + " (BDGP in situ)");
-        switch (stageNumber.intValue()) {
-            case 1:
-                stagesColl.addRefId(stages[1]);
-                stagesColl.addRefId(stages[2]);
-                stagesColl.addRefId(stages[3]);
-                break;
-            case 2:
-                stagesColl.addRefId(stages[4]);
-                stagesColl.addRefId(stages[5]);
-                stagesColl.addRefId(stages[6]);
-                break;
-            case 3:
-                stagesColl.addRefId(stages[7]);
-                stagesColl.addRefId(stages[8]);
-                break;
-            case 4:
-                stagesColl.addRefId(stages[9]);
-                stagesColl.addRefId(stages[10]);
-                break;
-            case 5:
-                stagesColl.addRefId(stages[11]);
-                stagesColl.addRefId(stages[12]);
-                break;
-            case 6:
-                stagesColl.addRefId(stages[13]);
-                stagesColl.addRefId(stages[14]);
-                stagesColl.addRefId(stages[15]);
-                stagesColl.addRefId(stages[16]);
-                break;
-            default:
-                throw new IllegalArgumentException("bad stage value " + stageNumber.intValue());
-        }
-
-        result.addCollection(stagesColl);
+        return stagesColl;
     }
 
     private Item getTerm(String name) throws ObjectStoreException {
@@ -258,31 +256,18 @@ public class BDGPInsituConverter extends BioFileConverter
         }
     }
 
-    private String[] getStageDescriptions() {
-        String[] stageLabels = new String[7];
-        stageLabels[0] = "";
-        stageLabels[1] = "stage 1-3";
-        stageLabels[2] = "stage 4-6";
-        stageLabels[3] = "stage 7-8";
-        stageLabels[4] = "stage 9-10";
-        stageLabels[5] = "stage 11-12";
-        stageLabels[6] = "stage 13-16";
-        return stageLabels;
-    }
-
-    private String[] getStages() throws ObjectStoreException {
-        String[] stageItems = new String[17];
+    private void setStages() throws ObjectStoreException {
         Item item = createItem("Ontology");
         item.setAttribute("name", "Fly Development");
         store(item);
+        stages = new String[17];
         for (int i = 1; i <= 16; i++) {
             Item stage = createItem("DevelopmentTerm");
             stage.setAttribute("name", "embryonic stage " + i);
             stage.setReference("ontology", item);
-            stageItems[i] = stage.getIdentifier();
+            stages[i] = stage.getIdentifier();
             store(stage);
         }
-        return stageItems;
     }
 
     private boolean isValidTerm(String name) {
