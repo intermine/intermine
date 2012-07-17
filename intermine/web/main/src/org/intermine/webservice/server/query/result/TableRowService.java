@@ -50,7 +50,7 @@ public class TableRowService extends QueryResultService
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
         try {
             Profile p = getPermission().getProfile();
-            Query q = MainHelper.makeQuery(pq, p.getCurrentSavedBags(),
+            Query q = MainHelper.makeQuery(pq, im.getBagManager().getCurrentBags(p),
                     new HashMap(), im.getBagQueryRunner(), new HashMap());
             ObjectStore os = im.getObjectStore();
             int count = os.count(q, new HashMap());
@@ -72,7 +72,7 @@ public class TableRowService extends QueryResultService
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query q;
         try {
-            q = MainHelper.makeQuery(pathQuery, p.getCurrentSavedBags(),
+            q = MainHelper.makeQuery(pathQuery, im.getBagManager().getCurrentBags(p),
                     pathToQueryNode, im.getBagQueryRunner(), new HashMap());
         } catch (ObjectStoreException e) {
             throw new InternalErrorException("Could not run query", e);
