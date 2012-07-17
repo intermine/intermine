@@ -107,7 +107,7 @@ public class MgiIdentifiersConverter extends BioFileConverter
                 createCrossReference(gene.getIdentifier(), entrez, "NCBI", true);
             }
             if (!NULL_STRING.equals(ensembl)) {
-                createCrossReference(gene.getIdentifier(), entrez, "Ensembl", true);
+                createCrossReference(gene.getIdentifier(), ensembl, "Ensembl", true);
             }
             store(gene);
         }
