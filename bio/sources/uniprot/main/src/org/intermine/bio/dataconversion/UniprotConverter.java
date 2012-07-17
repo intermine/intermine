@@ -79,6 +79,7 @@ public class UniprotConverter extends BioDirectoryConverter
     protected IdResolverFactory flyResolverFactory;
     private String datasourceRefId = null;
     private OrganismRepository or;
+    private static final Map<String, String> GENE_PREFIXES = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -90,6 +91,10 @@ public class UniprotConverter extends BioDirectoryConverter
         // only construct factory here so can be replaced by mock factory in tests
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
         or = OrganismRepository.getOrganismRepository();
+    }
+
+    static {
+        GENE_PREFIXES.put("10116", "RGD:");
     }
 
     /**
@@ -894,6 +899,10 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (StringUtils.isEmpty(identifier)) {
                     continue;
                 }
+                if (GENE_PREFIXES.containsKey(taxId)) {
+                    // Prepend RGD:
+                    identifier = GENE_PREFIXES.get(taxId) + identifier;
+                }
                 gene = getGene(protein, uniprotEntry, identifier, taxId,
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
@@ -902,7 +911,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             }
 
-            if (!hasMultipleGenes && gene != null) {
+            if (gene != null && !hasMultipleGenes) {
                 Set<String> geneFields = getOtherFields(taxId);
                 for (String geneField : geneFields) {
                     geneIdentifiers = getGeneIdentifiers(uniprotEntry, geneField);
@@ -965,6 +974,8 @@ public class UniprotConverter extends BioDirectoryConverter
             } else {
                 LOG.error("error processing config for organism " + taxId);
             }
+
+
             return geneIdentifiers;
         }
 
