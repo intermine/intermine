@@ -146,6 +146,9 @@ public class NcbiGeneConverter extends BioFileConverter
                         }
                     }
                     store(ncRNA);
+                    for (String synonym : record.synonyms) {
+                        createSynonym(ncRNA, synonym, true);
+                    }
                 } else if ("tRNA".equals(record.geneType)
                         || "protein-coding".equals(record.geneType)
                         || "miscRNA".equals(record.geneType)
@@ -202,6 +205,10 @@ public class NcbiGeneConverter extends BioFileConverter
                         gene.setAttribute("mapLocation", record.mapLocation);
                     }
                     store(gene);
+
+                    for (String synonym : record.synonyms) {
+                        createSynonym(gene, synonym, true);
+                    }
                 }
             }
         }
