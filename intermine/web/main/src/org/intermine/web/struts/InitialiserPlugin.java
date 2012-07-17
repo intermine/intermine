@@ -192,7 +192,7 @@ public class InitialiserPlugin implements PlugIn
                 //verify superuser setted in the db matches with the user in the properties file
                 final Profile superProfile = im.getProfileManager().getSuperuserProfile();
                 if (!superProfile.getUsername()
-                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account"))) {
+                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
                     blockingErrorKeys.put("errors.init.superuser", null);
                 }
                 // index global webSearchables
@@ -490,10 +490,10 @@ public class InitialiserPlugin implements PlugIn
                 origins.put(String.valueOf(pair.getKey()), new ArrayList<String>());
             }
             if (!lastState.containsKey(pair.getKey())
-                    || !lastState.get(pair.getKey()).equals(pair.getValue())) {
+                    || !lastState.get(pair.getKey()).equals(((String) pair.getValue()).trim())) {
                 origins.get(pair.getKey()).add(currentSource);
             }
-            lastState.put((String) pair.getKey(), (String) pair.getValue());
+            lastState.put((String) pair.getKey(), ((String) pair.getValue()).trim());
         }
     }
 
@@ -551,8 +551,17 @@ public class InitialiserPlugin implements PlugIn
             updateOrigins(lastState, origins, "/WEB-INF/web.properties", webProperties);
         }
         SessionMethods.setPropertiesOrigins(servletContext, origins);
-        SessionMethods.setWebProperties(servletContext, webProperties);
-        return webProperties;
+        Properties trimProperties = trimProperties(webProperties);
+        SessionMethods.setWebProperties(servletContext, trimProperties);
+        return trimProperties;
+    }
+
+    private Properties trimProperties(Properties webProperties) {
+        Properties trimProperties = new Properties();
+        for (Entry<Object, Object> property: webProperties.entrySet()) {
+            trimProperties.put(property.getKey(), ((String) property.getValue()).trim());
+        }
+        return trimProperties;
     }
 
     private void loadOpenIDProviders(ServletContext context) {
