@@ -93,7 +93,7 @@
       <property name="infoFile" location="/micklem/data/pubmed/current/gene_info" />
     </source>
     <source name="omim" type="omim">
-      <property name="src.data.dir" location="/micklem/data/metabolic/omim/test" />
+      <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
     </source>
     <source name="ensembl-mouse" type="ensembl" dump="true">
       <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core" />
