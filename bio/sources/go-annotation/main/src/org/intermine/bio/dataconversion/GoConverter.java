@@ -219,10 +219,11 @@ public class GoConverter extends BioFileConverter
             // create unique key for go annotation
             GoTermToGene key = new GoTermToGene(productId, goId, qualifier);
 
-            String dataSourceCode = array[14];
+            String dataSourceCode = array[14]; // e.g. GDB, where uniprot collect the data from
+            String dataSource = array[0]; // e.g. UniProtKB, where the goa file comes from
             Item organism = newOrganism(taxonId);
-            String productIdentifier = newProduct(productId, type, organism, dataSourceCode, true,
-                    null);
+            String productIdentifier = newProduct(productId, type, organism,
+                    dataSource, dataSourceCode, true, null);
 
             // null if resolver could not resolve an identifier
             if (productIdentifier != null) {
@@ -235,13 +236,15 @@ public class GoConverter extends BioFileConverter
 
                 // new evidence
                 if (allEvidenceForAnnotation == null) {
-                    String goTermIdentifier = newGoTerm(goId, dataSourceCode);
+                    String goTermIdentifier = newGoTerm(goId, dataSource, dataSourceCode);
                     Evidence evidence = new Evidence(strEvidence, pubRefId);
                     allEvidenceForAnnotation = new LinkedHashSet<Evidence>();
                     allEvidenceForAnnotation.add(evidence);
                     goTermGeneToEvidence.put(key, allEvidenceForAnnotation);
-                    Integer storedAnnotationId = createGoAnnotation(productIdentifier, type,
-                            goTermIdentifier, organism, qualifier, withText, dataSourceCode);
+                    Integer storedAnnotationId = createGoAnnotation(
+                            productIdentifier, type, goTermIdentifier,
+                            organism, qualifier, withText, dataSource,
+                            dataSourceCode);
                     evidence.setStoredAnnotationId(storedAnnotationId);
                 } else {
                     boolean seenEvidenceCode = false;
@@ -309,7 +312,7 @@ public class GoConverter extends BioFileConverter
 
     private Integer createGoAnnotation(String productIdentifier, String productType,
             String termIdentifier, Item organism, String qualifier, String withText,
-            String dataSourceCode)
+            String dataSource, String dataSourceCode)
         throws ObjectStoreException {
         Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
@@ -322,13 +325,13 @@ public class GoConverter extends BioFileConverter
         // with objects
         if (!StringUtils.isEmpty(withText)) {
             goAnnotation.setAttribute("withText", withText);
-            List<String> with = createWithObjects(withText, organism, dataSourceCode);
+            List<String> with = createWithObjects(withText, organism, dataSource, dataSourceCode);
             if (!with.isEmpty()) {
                 goAnnotation.addCollection(new ReferenceList("with", with));
             }
         }
 
-        goAnnotation.addToCollection("dataSets", getDataset(dataSourceCode));
+        goAnnotation.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
 
         if ("gene".equals(productType)) {
             addProductCollection(productIdentifier, goAnnotation.getIdentifier());
@@ -353,11 +356,13 @@ public class GoConverter extends BioFileConverter
      *
      * @param withText string from the gene_association entry
      * @param organism organism to reference
+     * @param dataSource the name of goa file source
      * @param dataSourceCode short code to describe data source
      * @throws ObjectStoreException if problem when storing
      * @return a list of Items
      */
-    protected List<String> createWithObjects(String withText, Item organism, String dataSourceCode)
+    protected List<String> createWithObjects(String withText, Item organism,
+            String dataSource, String dataSourceCode)
         throws ObjectStoreException {
 
         List<String> withProductList = new ArrayList<String>();
@@ -378,17 +383,18 @@ public class GoConverter extends BioFileConverter
                         // also FlyBase may be from a different Drosophila species
                         if ("UniProt".equals(prefix)) {
                             productIdentifier = newProduct(value, className,
-                                                        organism, dataSourceCode, false, null);
+                                    organism, dataSource, dataSourceCode,
+                                    false, null);
                         } else if ("FB".equals(prefix)) {
                             // if organism is D. melanogaster then create with gene
                             // TODO could still be wrong as the FBgn could be a different species
                             if ("7227".equals(organism.getAttribute("taxonId").getValue())) {
                                 productIdentifier = newProduct(value, className, organism,
-                                        dataSourceCode, true, "primaryIdentifier");
+                                        dataSource, dataSourceCode, true, "primaryIdentifier");
                             }
                         } else {
                             productIdentifier = newProduct(value, className, organism,
-                                    dataSourceCode, true, null);
+                                    dataSource, dataSourceCode, true, null);
                         }
                         if (productIdentifier != null) {
                             withProductList.add(productIdentifier);
@@ -405,8 +411,9 @@ public class GoConverter extends BioFileConverter
         return withProductList;
     }
 
-    private String newProduct(String identifier, String type, Item organism, String dataSourceCode,
-            boolean createOrganism, String field) throws ObjectStoreException {
+    private String newProduct(String identifier, String type, Item organism,
+            String dataSource, String dataSourceCode, boolean createOrganism,
+            String field) throws ObjectStoreException {
         String idField = field;
         String accession = identifier;
         String clsName = null;
@@ -481,7 +488,7 @@ public class GoConverter extends BioFileConverter
         }
         product.setAttribute(idField, accession);
 
-        String dataSetIdentifier = getDataset(dataSourceCode);
+        String dataSetIdentifier = getDataset(dataSource, dataSourceCode);
         product.addToCollection("dataSets", dataSetIdentifier);
 
         Integer storedProductId = store(product);
@@ -523,7 +530,8 @@ public class GoConverter extends BioFileConverter
         return goId;
     }
 
-    private String newGoTerm(String identifier, String dataSourceCode) throws ObjectStoreException {
+    private String newGoTerm(String identifier, String dataSource,
+            String dataSourceCode) throws ObjectStoreException {
 
         String goId = resolveTerm(identifier);
 
@@ -535,7 +543,7 @@ public class GoConverter extends BioFileConverter
         if (goTermIdentifier == null) {
             Item item = createItem(termClassName);
             item.setAttribute("identifier", goId);
-            item.addToCollection("dataSets", getDataset(dataSourceCode));
+            item.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
             store(item);
 
             goTermIdentifier = item.getIdentifier();
@@ -553,7 +561,7 @@ public class GoConverter extends BioFileConverter
         }
     }
 
-    private String getDataSourceName(String sourceCode) {
+    private String getDataSourceCodeName(String sourceCode) {
         String title = sourceCode;
 
         // re-write some codes to better data source names
@@ -579,15 +587,24 @@ public class GoConverter extends BioFileConverter
         return title;
     }
 
-    private String getDataset(String code)
+    private String getDataSourceName(String dataSource) {
+        if ("UniProtKB".equals(dataSource)) {
+            return "UniProt";
+        } else if ("FB".equals(dataSource)) {
+            return "FlyBase";
+        }
+        return dataSource;
+    }
+
+    private String getDataset(String dataSource, String code)
         throws ObjectStoreException {
         String dataSetIdentifier = dataSets.get(code);
         if (dataSetIdentifier == null) {
-            String dataSourceName = getDataSourceName(code);
+            String dataSourceName = getDataSourceCodeName(code);
             String title = "GO Annotation from " + dataSourceName;
             Item item = createItem("DataSet");
             item.setAttribute("name", title);
-            item.setReference("dataSource", getDataSource(dataSourceName));
+            item.setReference("dataSource", getDataSource(getDataSourceName(dataSource)));
             dataSetIdentifier = item.getIdentifier();
             dataSets.put(code, dataSetIdentifier);
             store(item);
