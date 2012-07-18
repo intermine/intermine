@@ -922,6 +922,10 @@ public class UniprotConverter extends BioDirectoryConverter
                         if (StringUtils.isEmpty(geneIdentifier)) {
                             continue;
                         }
+                        if (GENE_PREFIXES.containsKey(taxId)) {
+                            // Prepend RGD:
+                            geneIdentifier = GENE_PREFIXES.get(taxId) + geneIdentifier;
+                        }
                         gene.setAttribute(geneField, geneIdentifier);
                     }
                 }
