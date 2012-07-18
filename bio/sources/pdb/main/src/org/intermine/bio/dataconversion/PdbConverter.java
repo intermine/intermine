@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.biojava.bio.structure.Structure;
 import org.biojava.bio.structure.io.PDBFileParser;
 import org.intermine.dataconversion.ItemWriter;
@@ -119,18 +120,15 @@ public class PdbConverter extends BioDirectoryConverter
     private void processPDBFile(File file, String taxonId)
         throws Exception {
         Item proteinStructure = createItem("ProteinStructure");
-
         PDBFileParser pdbfileparser = new PDBFileParser();
         Reader reader = new FileReader(file);
         PdbBufferedReader pdbBuffReader = new PdbBufferedReader(reader);
         Structure structure = pdbfileparser.parsePDBFile(pdbBuffReader);
-        String atm = structure.toPDB();
-
         String idCode = (String) structure.getHeader().get("idCode");
         if (StringUtils.isNotEmpty(idCode)) {
             proteinStructure.setAttribute("identifier", idCode);
         } else {
-            throw new RuntimeException("No value for title in structure: " + idCode);
+            throw new BuildException("No value for title in structure: " + idCode);
         }
 
         List<String> dbrefs = pdbBuffReader.getDbrefs();
@@ -160,8 +158,11 @@ public class PdbConverter extends BioDirectoryConverter
             proteinStructure.setAttribute("resolution",
                                           Float.toString(resolutionFloat.floatValue()));
         }
-
-        proteinStructure.setAttribute("atm", atm);
+        try {
+            proteinStructure.setAttribute("atm", structure.toPDB());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            LOG.error("Failed to process structure " + idCode);
+        }
         store(proteinStructure);
     }
 
