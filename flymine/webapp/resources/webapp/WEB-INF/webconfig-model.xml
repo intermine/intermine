@@ -638,7 +638,7 @@
                      jspName="model/homologueDisplayer.jsp"
                      replacesFields="homologues"
                      placement="Homology"
-                     parameters="{'dataSets': ['TreeFam data set', 'KEGG orthologues data set']}"
+                     parameters="{'dataSets': ['Panther data set']}"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.JMOLDisplayer"
