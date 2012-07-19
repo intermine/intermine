@@ -44,6 +44,9 @@ public class FlybaseExpressionConverterTest extends ItemsTestCase
         converter.setFlybaseExpressionLevelsFile(srcFile);
 
         srcFile = new File(getClass().getClassLoader().getResource("HTD_modENCODE_BinData_2010-10-05.txt").toURI());
+        File stages = new File(getClass().getClassLoader().getResource("stages.txt").toURI());
+        converter.setFlybaseStagesFile(stages);
+
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
         converter.close();

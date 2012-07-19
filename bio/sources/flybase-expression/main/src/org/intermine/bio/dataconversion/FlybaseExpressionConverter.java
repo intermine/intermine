@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,10 +20,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.dataconversion.BioFileConverter;
-import org.intermine.bio.dataconversion.FlyBaseIdResolverFactory;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverFactory;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -44,12 +39,13 @@ public class FlybaseExpressionConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "modENCODE";
     protected IdResolverFactory resolverFactory;
     protected IdResolver resolver;
-    private File flybaseExpressionLevelsFile;
+    private File flybaseExpressionLevelsFile, stagesFile;
     private Item organism;
-
+    private static final String PREFIX = "me_mRNA_";
     private static final String TAXON_ID = "7227";
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
+    private Map<String, Stage> stages = new HashMap<String, Stage>();
 
     /**
      * Constructor
@@ -75,11 +71,19 @@ public class FlybaseExpressionConverter extends BioFileConverter
      *
      * The "ME_O1" is used in the scores file to represent the expression level.
      * @param flybaseExpressionLevelsFile data file
-     *
-     * @param expressionLevelsFile screen input file
      */
     public void setFlybaseExpressionLevelsFile(File flybaseExpressionLevelsFile) {
         this.flybaseExpressionLevelsFile = flybaseExpressionLevelsFile;
+    }
+
+    /**
+     * Set stages file. This file contains the stage value plus Rachel's human readable
+     * translation.  Each stage has a category too.
+     *
+     * @param stagesFile screen input file
+     */
+    public void setFlybaseStagesFile(File stagesFile) {
+        this.stagesFile = stagesFile;
     }
 
     /**
@@ -87,11 +91,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-        try {
-            processTermFile(new FileReader(flybaseExpressionLevelsFile));
-        } catch (IOException err) {
-            throw new RuntimeException("error reading expressionLevelsFile", err);
-        }
+        processTermFile(new FileReader(flybaseExpressionLevelsFile));
+        processStages(new FileReader(stagesFile));
         processScoreFile(reader);
     }
 
@@ -117,9 +118,8 @@ public class FlybaseExpressionConverter extends BioFileConverter
             if (!source.startsWith("modENCODE")) {
                 continue;
             }
-
             Item result = createItem("RNASeqResult");
-            result.setAttribute("stage", stage);
+            result.setAttribute("stage", replaceStage(stage));
 
             if (line.length > 4) {
                 String rpkm = line[4];	// 6825 - OPTIONAL
@@ -148,6 +148,42 @@ public class FlybaseExpressionConverter extends BioFileConverter
         }
     }
 
+    private String replaceStage(String identifier) {
+        Stage stage = stages.get(identifier);
+        String name = null;
+        if (stage != null) {
+            name = stage.name;
+        } else {
+            // if we have no human readable equivalent, just chop off the prefix
+            name = identifier.substring(PREFIX.length(), identifier.length());
+        }
+        return name;
+    }
+
+    private void processStages(Reader reader) {
+        Iterator<?> tsvIter;
+        try {
+            tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        } catch (Exception e) {
+            throw new BuildException("cannot parse file: " + getCurrentFile(), e);
+        }
+
+        while (tsvIter.hasNext()) {
+            String[] line = (String[]) tsvIter.next();
+
+            if (line.length != 3) {
+                LOG.error("Couldn't process line.  Expected 3 cols, but was " + line.length);
+                continue;
+            }
+
+            String category = line[0].trim();
+            String identifier = line[1].trim();
+            String name = line[2].trim();
+
+            Stage stage = new Stage(name, category);
+            stages.put(identifier, stage);
+        }
+    }
 
     private void processTermFile(Reader reader) {
         Iterator<?> tsvIter;
@@ -196,5 +232,15 @@ public class FlybaseExpressionConverter extends BioFileConverter
             return fbgn;
         }
         return null;
+    }
+
+    class Stage {
+        protected String name;
+        protected String category;
+
+        public Stage(String name, String category) {
+            this.name = name;
+            this.category = category;
+        }
     }
 }

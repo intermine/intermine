@@ -1,0 +1,104 @@
+Development	mE_mRNA_em0-2hr	embryo 00-02hr
+Development	mE_mRNA_em2-4hr	embryo 02-04hr
+Development	mE_mRNA_em4-6hr	embryo 04-06hr
+Development	mE_mRNA_em6-8hr	embryo 06-08hr
+Development	mE_mRNA_em8-10hr	embryo 08-10hr
+Development	mE_mRNA_em10-12hr	embryo 10-12hr
+Development	mE_mRNA_em12-14hr	embryo 12-14hr
+Development	mE_mRNA_em14-16hr	embryo 14-16hr
+Development	mE_mRNA_em16-18hr	embryo 16-18hr
+Development	mE_mRNA_em18-20hr	embryo 18-20hr
+Development	mE_mRNA_em20-22hr	embryo 20-22hr
+Development	mE_mRNA_em22-24hr	embryo 22-24hr
+Development	mE_mRNA_L1	larva L1
+Development	mE_mRNA_L2	larva L2
+Development	mE_mRNA_L3_12hr	larva L3 12hr old
+Development	mE_mRNA_L3_PS1-2	larva L3 puffstage 1-2
+Development	mE_mRNA_L3_PS3-6	larva L3 puffstage 3-6
+Development	mE_mRNA_L3_PS7-9	larva L3 puffstage 7-9
+Development	mE_mRNA_WPP	white prepupae new
+Development	mE_mRNA_P5	P5
+Development	mE_mRNA_P6	P6
+Development	mE_mRNA_P8	P8
+Development	mE_mRNA_P9-10	P9-10
+Development	mE_mRNA_P15	P15
+Development	mE_mRNA_AdF_Ecl_1days	adult female 01day
+Development	mE_mRNA_AdF_Ecl_5days	adult female 05day
+Development	mE_mRNA_AdF_Ecl_30days	adult female 30day
+Development	mE_mRNA_AdM_Ecl_1days	adult male 01day
+Development	mE_mRNA_AdM_Ecl_5days	adult male 05day
+Development	mE_mRNA_AdM_Ecl_30days	adult male 30day
+Anatomy	mE_mRNA_A_MateF_1d_head	A MateF 1d head
+Anatomy	mE_mRNA_A_MateF_4d_ovary	A MateF 4d ovary
+Anatomy	mE_mRNA_A_MateM_1d_head	A MateM 1d head
+Anatomy	mE_mRNA_A_VirF_1d_head	A VirF 1d head
+Anatomy	mE_mRNA_A_VirF_4d_head	A VirF 4d head
+Anatomy	mE_mRNA_A_MateF_20d_head	A MateF 20d head
+Anatomy	mE_mRNA_A_MateF_4d_head	A MateF 4d head
+Anatomy	mE_mRNA_A_MateM_20d_head	A MateM 20d head
+Anatomy	mE_mRNA_A_MateM_4d_acc_gland	A MateM 4d acc gland
+Anatomy	mE_mRNA_A_MateM_4d_head	A MateM 4d head
+Anatomy	mE_mRNA_A_MateM_4d_testis	A MateM 4d testis
+Anatomy	mE_mRNA_A_1d_carcass	A 1d carcass
+Anatomy	mE_mRNA_A_1d_dig_sys	A 1d dig sys
+Anatomy	mE_mRNA_A_20d_carcass	A 20d carcass
+Anatomy	mE_mRNA_A_20d_dig_sys	A 20d dig sys
+Anatomy	mE_mRNA_A_4d_carcass	A 4d carcass
+Anatomy	mE_mRNA_A_4d_dig_sys	A 4d dig sys
+Anatomy	mE_mRNA_P8_CNS	P8 CNS
+Anatomy	mE_mRNA_L3_CNS	L3 CNS
+Anatomy	mE_mRNA_L3_Wand_carcass	L3 Wand carcass
+Anatomy	mE_mRNA_L3_Wand_dig_sys	L3 Wand dig sys
+Anatomy	mE_mRNA_L3_Wand_fat	L3 Wand fat
+Anatomy	mE_mRNA_L3_Wand_imag_disc	L3 Wand imag disc
+Anatomy	mE_mRNA_L3_Wand_saliv	L3 Wand saliv
+Anatomy	mE_mRNA_A_VirF_20d_head	A VirF 20d head
+Anatomy	mE_mRNA_A_VirF_4d_ovary	A VirF 4d ovary
+Anatomy	mE_mRNA_WPP_fat	WPP fat
+Anatomy	mE_mRNA_WPP_saliv	WPP saliv
+Anatomy	mE_mRNA_P8_fat	P8 fat
+Cell Lines	mE_mRNA_CME-W2_cells	wing disc CME-W2
+Cell Lines	mE_mRNA_GM2_cells	embryonic GM2
+Cell Lines	mE_mRNA_mbn2_cells	tumorous blood cells mbn2
+Cell Lines	mE_mRNA_BG2-c2_cells	CNS ML-DmBG2-c2
+Cell Lines	mE_mRNA_D20-c5_cells	antennal disc ML-DmD20-c5
+Cell Lines	mE_mRNA_S3_cells	embryonic S3
+Cell Lines	mE_mRNA_1182-4H_cells	embryonic 1182-4H
+Cell Lines	mE_mRNA_CME_L1_cells	leg disc CME L1
+Cell Lines	mE_mRNA_Kc167_cells	embryonic Kc167
+Cell Lines	mE_mRNA_BG1-c1_cells	CNS ML-DmBG1-c1
+Cell Lines	mE_mRNA_D11_cells	eye-antennal disc ML-DmD11
+Cell Lines	mE_mRNA_D16-c3_cells	wing disc ML-DmD16-c3
+Cell Lines	mE_mRNA_D17-c3_cells	haltere disc ML-DmD17-c3
+Cell Lines	mE_mRNA_D21_cells	wing disc ML-DmD21
+Cell Lines	mE_mRNA_D32_cells	wing disc ML-DmD32
+Cell Lines	mE_mRNA_D4-c1_cells	mixed discs ML-DmD4-c1
+Cell Lines	mE_mRNA_D8_cells	wing disc ML-DmD8
+Cell Lines	mE_mRNA_D9_cells	wing disc ML-DmD9
+Cell Lines	mE_mRNA_S1_cells	embryonic S1
+Cell Lines	mE_mRNA_S2R+_cells	Schneider line 2 S2R+
+Cell Lines	mE_mRNA_Sg4_cells	Schneider line 2 Sg4
+Cell Lines	mE_mRNA_OSS_cells	ovary OSS
+Cell Lines	mE_mRNA_fGS_cells	ovary fGS/OSS
+Cell Lines	mE_mRNA_OSC_cells	ovary OSC
+Treatments	mE_mRNA_A_4d_Cold1	4-day Adult, cold 1
+Treatments	mE_mRNA_A_4d_Cold2	4-day Adult, cold 2
+Treatments	mE_mRNA_L3_Cu_0.5mM	larva L3, Cu 0.5mM
+Treatments	mE_mRNA_L3_late_Zn_5mM	larva L3 late, Zn 5mM
+Treatments	mE_mRNA_A_4d_Cu_15mM	4-day Adult, Cu 15mM
+Treatments	mE_mRNA_A_4d_Zn_4.5mM	4-day Adult, Zn 4.5mM
+Treatments	mE_mRNA_A_4d_Caffeine_25mg/ml	4-day Adult, Caffeine 25mg/ml
+Treatments	mE_mRNA_A_4d_Caffeine_2.5mg/ml	4-day Adult, Caffeine 2.5mg/ml
+Treatments	mE_mRNA_L3_Caffeine_1.5mg/ml	larva L3, Caffeine 1.5mg/ml
+Treatments	mE_mRNA_A_4d_Cd_0.1M	4-day Adult, Cd 0.1M
+Treatments	mE_mRNA_A_4d_Cd_0.05M	4-day Adult, Cd 0.05M
+Treatments	mE_mRNA_L3_Cd_12h	larva L3, Cd 12hr
+Treatments	mE_mRNA_L3_Cd_6hr	larva L3, Cd 6hr
+Treatments	mE_mRNA_A_4d_Paraquat_5mM	4-day Adult, Paraquat 5mM
+Treatments	mE_mRNA_A_4d_Paraquat_10mM	4-day Adult, Paraquat 10mM
+Treatments	mE_mRNA_L3_Rotenone_8ug	larva L3, Rotenone 8μg
+Treatments	mE_mRNA_L3_Rotenone_2ug	larva L3, Rotenone 2μg
+Treatments	mE_mRNA_L3_EtOH_10	larva L3, EtOH 10
+Treatments	mE_mRNA_L3_EtOH_5	larva L3, EtOH 5
+Treatments	mE_mRNA_L3_EtOH_2.5	larva L3, EtOH 2.5
+Treatments	mE_mRNA_A_4d_Heatshock	4-day Adult, heatshock
