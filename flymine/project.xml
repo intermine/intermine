@@ -189,6 +189,7 @@
     <source name="flybase-expression" type="flybase-expression">
       <property name="src.data.dir" location="/micklem/data/modMine_flyRNAseq/current"/>
       <property name="flybaseExpressionLevelsFile" location="/micklem/data/modMine_flyRNAseq/BinLOOKUP_modENCODE_FlyAtlas.txt"/>
+      <property name="flybaseStagesFile" location="/micklem/data/modMine_flyRNAseq/stages.txt"/>
     </source>
 
     <source name="flyreg" type="flyreg">
