@@ -92,8 +92,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * Set the organism to load
      * @param taxonId the organism to load
      */
-    public void setOrganism(Integer taxonId) {
-        this.taxonId = taxonId;
+    public void setOrganism(String taxonId) {
+        this.taxonId = Integer.valueOf(taxonId);
     }
 
     /**
