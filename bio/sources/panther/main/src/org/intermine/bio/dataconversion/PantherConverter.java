@@ -52,6 +52,8 @@ public class PantherConverter extends BioFileConverter
     private IdResolver flyResolver;
     protected IdResolverFactory fishResolverFactory;
     private IdResolver fishResolver;
+    protected IdResolverFactory entrezGeneIdResolverFactory;
+    private IdResolver peopleResolver;
     private static String evidenceRefId = null;
     private static final Map<String, String> TYPES = new HashMap<String, String>();
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
@@ -84,6 +86,7 @@ public class PantherConverter extends BioFileConverter
         readConfig();
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
         fishResolverFactory = new ZfinGeneIdResolverFactory();
+        entrezGeneIdResolverFactory = new EntrezGeneIdResolverFactory();
         or = OrganismRepository.getOrganismRepository();
     }
 
@@ -203,17 +206,16 @@ public class PantherConverter extends BioFileConverter
             if (StringUtils.isEmpty(gene1IdentifierString[0])
                     || StringUtils.isEmpty(gene2IdentifierString[0])) {
                 // blank line
+
                 continue;
             }
 
             String taxonId1 = getTaxon(gene1IdentifierString[0]);
             String taxonId2 = getTaxon(gene2IdentifierString[0]);
-
             if (!isValid(taxonId1, taxonId2)) {
                 // not an organism of interest, skip
                 continue;
             }
-
             String type = bits[2];
             String pantherId = bits[4];
 
@@ -347,6 +349,20 @@ public class PantherConverter extends BioFileConverter
                 return null;
             }
             return fishResolver.resolveId(taxonId, identifier).iterator().next();
+        } else if (taxonId.equals("9606")) {
+            peopleResolver = entrezGeneIdResolverFactory.getIdResolver(false);
+            if (peopleResolver == null) {
+                // no id resolver available, so return the original identifier
+                return identifier;
+            }
+            int resCount = peopleResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve human gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " : "
+                         + peopleResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            return peopleResolver.resolveId(taxonId, identifier).iterator().next();
         }
         return identifier;
     }

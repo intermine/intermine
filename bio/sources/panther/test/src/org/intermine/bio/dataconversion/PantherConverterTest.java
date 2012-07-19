@@ -40,12 +40,13 @@ public class PantherConverterTest extends ItemsTestCase
         File srcFile = new File(getClass().getClassLoader().
                 getResource("RefGenomeOrthologs.txt").toURI());
         converter.setCurrentFile(srcFile);
+        converter.setPantherOrganisms("9606 10116 7227 10090");
         converter.process(new FileReader(srcFile));
 
         converter.close();
 
         // uncomment to write out a new target items file
-        // writeItemsFile(itemWriter.getItems(), "panther-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "panther-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("PantherConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
