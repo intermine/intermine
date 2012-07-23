@@ -224,7 +224,7 @@
 <td> &nbsp;</td>
 </tr>
 <tr>
---!>
+-->
 
 <td> <i>D. melanogaster</i>, <i>C. elegans</i> </td>
 <td> Pathway information and the genes involved in them, inferred through orthologues from Human curated pathways</td>
