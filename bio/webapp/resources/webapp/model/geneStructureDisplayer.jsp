@@ -28,56 +28,61 @@
     Gene models
   </p>
 
-  <c:if test="${!empty gene.transcripts}">
-    <div class="switchers">
-      <a href="#" id="transcripts" class="switcher">Transcripts</a>: ${fn:length(gene.transcripts)}&nbsp;
-      <c:if test="${settings.hasExons}">
-        <c:set var="count" value="0" />
-        <c:forEach items="${geneModels}" var="geneModel">
-          <c:set var="count" value="${fn:length(geneModel.exons) + count}" />
-        </c:forEach>
-        <c:if test="${count > 0}">
-          <a href="#" id="exons" class="switcher">Exons</a>: ${count}&nbsp;
+  <c:choose>
+    <c:when test="${!empty gene.transcripts}">
+      <div class="switchers">
+        <a href="#" id="transcripts" class="switcher">Transcripts</a>: ${fn:length(gene.transcripts)}&nbsp;
+        <c:if test="${settings.hasExons}">
+          <c:set var="count" value="0" />
+          <c:forEach items="${geneModels}" var="geneModel">
+            <c:set var="count" value="${fn:length(geneModel.exons) + count}" />
+          </c:forEach>
+          <c:if test="${count > 0}">
+            <a href="#" id="exons" class="switcher">Exons</a>: ${count}&nbsp;
+          </c:if>
         </c:if>
-      </c:if>
-      <c:if test="${settings.hasIntrons}">
-        <c:set var="count" value="0" />
-        <c:forEach items="${geneModels}" var="geneModel">
-          <c:set var="count" value="${fn:length(geneModel.introns) + count}" />
-        </c:forEach>
-        <c:if test="${count > 0}">
-          <a href="#" id="introns" class="switcher">Introns</a>: ${count}&nbsp;
+        <c:if test="${settings.hasIntrons}">
+          <c:set var="count" value="0" />
+          <c:forEach items="${geneModels}" var="geneModel">
+            <c:set var="count" value="${fn:length(geneModel.introns) + count}" />
+          </c:forEach>
+          <c:if test="${count > 0}">
+            <a href="#" id="introns" class="switcher">Introns</a>: ${count}&nbsp;
+          </c:if>
         </c:if>
-      </c:if>
-      <c:if test="${settings.hasFivePrimeUTRs}">
-        <c:set var="count" value="0" />
-        <c:forEach items="${geneModels}" var="geneModel">
-          <c:set var="count" value="${fn:length(geneModel.fivePrimeUTR) + count}" />
-        </c:forEach>
-        <c:if test="${count > 0}">
-          <a href="#" id="fiveprimeutrs" class="switcher">5' UTR</a>: ${count}&nbsp;
+        <c:if test="${settings.hasFivePrimeUTRs}">
+          <c:set var="count" value="0" />
+          <c:forEach items="${geneModels}" var="geneModel">
+            <c:set var="count" value="${fn:length(geneModel.fivePrimeUTR) + count}" />
+          </c:forEach>
+          <c:if test="${count > 0}">
+            <a href="#" id="fiveprimeutrs" class="switcher">5' UTR</a>: ${count}&nbsp;
+          </c:if>
         </c:if>
-      </c:if>
-      <c:if test="${settings.hasThreePrimeUTRs}">
-        <c:set var="count" value="0" />
-        <c:forEach items="${geneModels}" var="geneModel">
-          <c:set var="count" value="${fn:length(geneModel.threePrimeUTR) + count}" />
-        </c:forEach>
-        <c:if test="${count > 0}">
-          <a href="#" id="threeprimeutrs" class="switcher">3' UTR</a>: ${count}&nbsp;
+        <c:if test="${settings.hasThreePrimeUTRs}">
+          <c:set var="count" value="0" />
+          <c:forEach items="${geneModels}" var="geneModel">
+            <c:set var="count" value="${fn:length(geneModel.threePrimeUTR) + count}" />
+          </c:forEach>
+          <c:if test="${count > 0}">
+            <a href="#" id="threeprimeutrs" class="switcher">3' UTR</a>: ${count}&nbsp;
+          </c:if>
         </c:if>
-      </c:if>
-      <c:if test="${settings.hasCDSs}">
-        <c:set var="count" value="0" />
-        <c:forEach items="${geneModels}" var="geneModel">
-          <c:set var="count" value="${fn:length(geneModel.CDSs) + count}" />
-        </c:forEach>
-        <c:if test="${count > 0}">
-          <a href="#" id="cdss" class="switcher">CDSs</a>: ${count}&nbsp;
+        <c:if test="${settings.hasCDSs}">
+          <c:set var="count" value="0" />
+          <c:forEach items="${geneModels}" var="geneModel">
+            <c:set var="count" value="${fn:length(geneModel.CDSs) + count}" />
+          </c:forEach>
+          <c:if test="${count > 0}">
+            <a href="#" id="cdss" class="switcher">CDSs</a>: ${count}&nbsp;
+          </c:if>
         </c:if>
-      </c:if>
-    </div>
-  </c:if>
+      </div>
+    </c:when>
+    <c:otherwise>
+      <p style="font-style:italic;">No results</p>
+    </c:otherwise>
+  </c:choose>
   <script type="text/javascript">
     jQuery("#gene-structure-displayer div.switchers a").click(function(e) {
       jQuery("#gene-structure-displayer div.collection-table").toggle();
