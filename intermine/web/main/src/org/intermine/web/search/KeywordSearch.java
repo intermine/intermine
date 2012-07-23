@@ -944,7 +944,7 @@ public final class KeywordSearch
 
                 for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                     String key = (String) entry.getKey();
-                    String value = (String) entry.getValue();
+                    String value = ((String) entry.getValue()).trim();
 
                     if ("index.ignore".equals(key) && !StringUtils.isBlank(value)) {
                         String[] ignoreClassNames = value.split("\\s+");

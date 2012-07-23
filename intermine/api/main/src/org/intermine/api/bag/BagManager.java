@@ -12,6 +12,7 @@ package org.intermine.api.bag;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -226,17 +227,34 @@ public class BagManager
      */
     public Map<String, InterMineBag> getUserAndGlobalBags(Profile profile) {
         // add global bags first, any user bags with same name take precedence
-        Map<String, InterMineBag> allBags = new HashMap<String, InterMineBag>();
+        Map<String, InterMineBag> allBags = Collections.synchronizedSortedMap(
+                new TreeMap<String, InterMineBag>());
 
         allBags.putAll(getGlobalBags());
         if (profile != null) {
             Map<String, InterMineBag> savedBags = profile.getSavedBags();
-            synchronized (savedBags) {
-                allBags.putAll(savedBags);
-            }
+            allBags.putAll(savedBags);
         }
 
         return allBags;
+    }
+
+    /**
+     * Get the bags this user has access to, as long as they are current.
+     */
+    public Map<String, InterMineBag> getCurrentBags(Profile profile) {
+        Map<String, InterMineBag> ret = Collections.synchronizedSortedMap(
+                new TreeMap<String, InterMineBag>(getUserAndGlobalBags(profile)));
+        synchronized(ret) {
+            Iterator<InterMineBag> bags = ret.values().iterator();
+            while (bags.hasNext()) {
+                InterMineBag bag = bags.next();
+                if (!bag.isCurrent()) {
+                    bags.remove();
+                }
+            }
+        }
+        return ret;
     }
 
     /**
