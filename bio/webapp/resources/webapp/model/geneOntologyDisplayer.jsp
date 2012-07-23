@@ -17,45 +17,52 @@
   </c:when>
   <c:otherwise>
 
-    <table>
-    <c:forEach items="${goTerms}" var="parentEntry">
-      <c:set var="parentTerm" value="${parentEntry.key}" />
-        <thead>
-        	<tr><th colspan="2">${parentTerm}</th></tr>
-        </thead>
-        <tbody>
-	      <tr>
-	        <c:choose>
-	          <c:when test="${empty parentEntry.value}">
-	            <tr>
-	              <td class="smallnote" colspan="2"><i>No terms in this category.</i></td>
-	            </tr>
-	          </c:when>
-	          <c:otherwise>
-	            <c:forEach items="${parentEntry.value}" var="entry">
-	              <tr>
-	                <td>
-	                  <c:set var="term" value="${entry.key}" />
-	                  <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${term.id}" title="${term.description}">
-	                  <c:out value="${term.name}"/>
-	                  </html:link>&nbsp;<im:helplink text="${term.description}"/>
-	                </td>
-	                <td>
-	                  <c:set var="evidence" value="${entry.value}" />
-		              <c:forEach items="${entry.value}" var="evidence">
-		                <c:out value="${evidence}"/><c:if test="${!empty codes[evidence] }">&nbsp;<im:helplink text="${codes[evidence]}"/>
-		                </c:if>
-		                &nbsp;
-		              </c:forEach>
-	                </td>
-	              </tr>
-	            </c:forEach>
-	          </c:otherwise>
-	        </c:choose>
-	      </tr>
-        </tbody>
-    </c:forEach>
-    </table>
+  	<c:choose>
+	  	<c:when test="${!empty goTerms}">
+		    <table>
+		    <c:forEach items="${goTerms}" var="parentEntry">
+		      <c:set var="parentTerm" value="${parentEntry.key}" />
+		        <thead>
+		        	<tr><th colspan="2">${parentTerm}</th></tr>
+		        </thead>
+		        <tbody>
+			      <tr>
+			        <c:choose>
+			          <c:when test="${empty parentEntry.value}">
+			            <tr>
+			              <td class="smallnote" colspan="2"><i>No terms in this category.</i></td>
+			            </tr>
+			          </c:when>
+			          <c:otherwise>
+			            <c:forEach items="${parentEntry.value}" var="entry">
+			              <tr>
+			                <td>
+			                  <c:set var="term" value="${entry.key}" />
+			                  <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${term.id}" title="${term.description}">
+			                  <c:out value="${term.name}"/>
+			                  </html:link>&nbsp;<im:helplink text="${term.description}"/>
+			                </td>
+			                <td>
+			                  <c:set var="evidence" value="${entry.value}" />
+				              <c:forEach items="${entry.value}" var="evidence">
+				                <c:out value="${evidence}"/><c:if test="${!empty codes[evidence] }">&nbsp;<im:helplink text="${codes[evidence]}"/>
+				                </c:if>
+				                &nbsp;
+				              </c:forEach>
+			                </td>
+			              </tr>
+			            </c:forEach>
+			          </c:otherwise>
+			        </c:choose>
+			      </tr>
+		        </tbody>
+		    </c:forEach>
+		    </table>
+		</c:when>
+		<c:otherwise>
+			<p style="font-style:italic;">No results</p>
+		</c:otherwise>
+	</c:choose>
 
   </c:otherwise>
 </c:choose>
