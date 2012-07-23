@@ -1,7 +1,7 @@
 html, body {
     color: #000000;background-color:#FFF; font-size:14px; font-family:arial, sans-serif; }
 
-a,
+a:not(.btn),
 a:visited,
 a:link { color:#11728B !important; }
 
@@ -444,3 +444,9 @@ div.bagDetails-page div.widget h3 { color:#000; } /* div.basic-table a.link */
 div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#F0F0F0; } /* div.collection-of-collections div.collection-table h3 */
 div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#EFEFEF; } /* div.collection-table table tbody tr.odd td */
 div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
+
+/* results tables */
+.bootstrap .table th,
+.bootstrap .table td,
+.popover-content .table td { padding:2px; }
+.bootstrap ul.dropdown-menu a:hover { color:#FFF !important; }
