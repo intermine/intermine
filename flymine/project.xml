@@ -100,28 +100,25 @@
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
-
+<!--
     <source name="panther" type="panther">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955 7165"/>
     </source>
 
-<!--
+
     <source name="ensembl-compara" type="ensembl-compara">
       <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
       <property name="ensemblcompara.organisms" value="7227"/>
       <property name="ensemblcompara.homologues" value="6239 9606 10090 10116"/>
     </source>
-
+-->
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 7165"/>
-      <property name="treefam.homologues" value="9606 10090 10116 7955 6239 4932"/>
-    </source>
-
--->
+      <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
+     </source>
     <source name="ensembl" type="ensembl">
      <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
