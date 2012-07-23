@@ -1,5 +1,5 @@
 html, body {
-    color: #000000;background-color:#FFF; font-family:arial, sans-serif; }
+    color: #000000;background-color:#FFF; font-size:14px; font-family:arial, sans-serif; }
 
 a,
 a:visited,
@@ -66,7 +66,7 @@ body.stretched #headercontainer {
 --------------------------*/
 
 .plainbox {
-    border:1px solid #BFBFBF;
+  border:1px solid #BFBFBF;
   background:#F0F0F0;
   padding:10px;}
 
@@ -83,10 +83,8 @@ body.stretched #headercontainer {
   color:#FFF !important; position:relative; }
 #menucontainer a { color:#FFF !important; }
 
-#yeast-logo { background:url("yeast-logo.png") no-repeat top left; width:175px; height:27px; }
+#yeast-logo { background:url("yeast-logo.jpeg") no-repeat top left; width:180px; height:58px; }
 #header h1, #header h1 a:link, #header h1 a:visited { margin-top:9px; }
-
-#header p { color:#1F1F20 !important; margin:32px 0 0 10px; }
 
 #menucontainer ul#nav li#mymine a span {
   background-image: url("homepage/person-ico.png");
@@ -260,7 +258,7 @@ table.dbsources td.leftcol {
 
 /* keyword search results */
 .keywordSearchResults .resultTableContainer table.dbsources { border-left: 1px solid #DFDFDF; }
-  .keywordSearchResults .resultTableContainer table.dbsources th { background:#d2cef7; color:#000; font-size:13px; padding:2px 8px; }
+  .keywordSearchResults .resultTableContainer table.dbsources th { background:#d9e2f8; color:#000; font-size:13px; padding:2px 8px; }
   .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult { color:#000; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult td { line-height:12px; }
     .keywordSearchResults .resultTableContainer table.dbsources tr.keywordSearchResult div { margin:0; }
@@ -275,7 +273,7 @@ table.dbsources td.leftcol {
 
 div.keywordSearch div.examples h4 { color:#333; }
 
-div.keywordSearch div.form { background:#d2cef7; border:0; }
+div.keywordSearch div.form { background:#d9e2f8; border:0; }
 
 /* keyword search results relevancy */
 div.resultTableContainer td.relevance div.full { color:#ff0000; }
@@ -321,7 +319,7 @@ table#genomic-region-results-table td { border-color:silver; }
 
 /* widgets */
 div.widgetcontainer div.widgetdataoverflow table tbody tr:nth-child(2n) td { background:#EFEFEF; }
-div.widgetdataoverflow thead th { background:#D2CEF7 !important; }
+div.widgetdataoverflow thead th { background:#D9E2F8 !important; }
 
 /* bagUploadConfirm */
 #pagecontentcontainer.bagUploadConfirm-page table.inlineResultsTable a { color:#000; }
@@ -336,10 +334,10 @@ div.widgetdataoverflow thead th { background:#D2CEF7 !important; }
 
 /* report page */
 #pagecontentcontainer.report-page #header_wrap { background-color:#FFF; }
-#pagecontentcontainer.report-page #object_header h1.title span { color:#000; }
+#pagecontentcontainer.report-page #object_header h1.title span { color:#696599; }
 #pagecontentcontainer.report-page #object_header div.box h3 { background:#F0E3F7; }
-#pagecontentcontainer.report-page #object_header div.list.box span { color:#000; }
-#pagecontentcontainer.report-page #fixed-menu { background:#000; }
+#pagecontentcontainer.report-page #object_header div.list.box span { color:#696599; }
+#pagecontentcontainer.report-page #fixed-menu { background:#696599; }
 #pagecontentcontainer.report-page #toc-menu-wrap { background:#FFF; }
 #pagecontentcontainer.report-page #fixed-menu span,
 #pagecontentcontainer.report-page #toc-menu-wrap span { color:#FFF; }
@@ -382,7 +380,7 @@ div.collection-table div.right a:hover,
 div.collection-table div.right a:visited { color:#000; }
 div.collection-table table { border-color:#F0F0F0; }
 div.collection-table thead th,
-div.collection-table thead td { background:#D2CEF7; border-color:#F0F0F0; }
+div.collection-table thead td { background:#D9E2F8; border-color:#F0F0F0; }
 div.collection-table table tbody tr td { border-top-color:silver; }
 div.collection-table table tbody tr:nth-child(2n) td,
 div.collection-table table tbody tr.odd td { background:#EFEFEF; }
