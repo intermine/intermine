@@ -13,7 +13,7 @@
 
 <html:xhtml/>
 
-<!-- templateTitle.jsp --!>
+<!-- templateTitle.jsp -->
 <h2 class="templateTitle">
     <c:out value="${fn:replace(templateQuery.title,'-->','&nbsp;<img src=\"images/icons/green-arrow-24.png\" style=\"vertical-align:middle\">&nbsp;')}" escapeXml="false"/>
     <tiles:insert name="setFavourite.tile">
@@ -25,4 +25,4 @@
 <%-- description --%>
 <div class="templateDescription">${templateQuery.description}</div>
 
-<!-- /templateTitle.jsp --!>
+<!-- /templateTitle.jsp -->
