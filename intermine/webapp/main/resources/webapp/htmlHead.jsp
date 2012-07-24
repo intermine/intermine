@@ -25,6 +25,8 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
 }
 %>
 
+<!-- page: ${pageName} -->
+
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">
     <im:headResources section="results"/>
