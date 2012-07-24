@@ -74,21 +74,18 @@ public class WebserviceJavaScriptCodeGenerator implements WebserviceCodeGenerato
 
     private String getImports(WebserviceCodeGenInfo wsCodeGenInfo) {
         StringBuffer sb = new StringBuffer();
-        String lib = wsCodeGenInfo.getResultsTablesLib();
-        sb.append("<link type=\"text/css\" rel=\"stylesheet\" href=\"" + lib + 
-                "/css/bootstrap.css\"></link>\n");
-        sb.append("<link type=\"text/css\" rel=\"stylesheet\" href=\"" + lib + 
-                "/css/tables.css\"></link>\n");
-        sb.append("<link type=\"text/css\" rel=\"stylesheet\" href=\"" + lib + 
-                "/lib/css/flick/jquery-ui-1.8.19.custom.css\"></link>\n");
-        sb.append("<link type=\"text/css\" rel=\"stylesheet\" href=\"" + lib 
-                + "/lib/google-code-prettify/prettify.css\"></link>\n");
-        sb.append("<script src=\"" + lib + "/lib/jquery-1.7.js\"></script>\n");
-        sb.append("<script src=\"" + lib + "/lib/underscore-min.js\"></script>\n");
-        sb.append("<script src=\"" + lib + "/lib/backbone.js\"></script>\n");
-        sb.append("<script src=\"" + wsCodeGenInfo.getBaseUrl() + "/js/im.js\"></script>\n");
-        sb.append("<script src=\"" + lib + "/js/deps.js\"></script>\n");
-        sb.append("<script src=\"" + lib + "/js/imtables.js\"></script>\n");
+        
+        sb.append("<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">");
+        sb.append("<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>");
+        sb.append("<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>");
+        sb.append("<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>");
+        sb.append("<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>");
+        sb.append("<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>");
+        sb.append("<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>");
+        sb.append("<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">");
+        sb.append("<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">");
+        sb.append("<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">");
+
         return sb.toString();
     }
 
