@@ -538,37 +538,6 @@
     </div>
 </div>
 
-<div id="footer">
-    <div class="column">
-        <a href="#" onclick="showContactForm();return false;">Contact Us</a>
-        <span>|</span>
-        <a href="http://blog.metabolicmine.org/faq">FAQ</a>
-        <span>|</span>
-        <a href="http://blog.metabolicmine.org/about">About</a>
-        <span>|</span>
-        <a href="http://intermine.org/wiki/PrivacyPolicy">Privacy Policy</a>
-        <br />
-        <a href="http://www.intermine.org">InterMine</a>
-        <span>|</span>
-        <a href="http://www.flymine.org">FlyMine</a>
-        <span>|</span>
-        <a href="http://www.modmine.org">modMine</a>
-        <span>|</span>
-        <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
-        <span>|</span>
-        <a href="http://yeastmine.yeastgenome.org/yeastmine">YeastMine</a>
-
-        <p>&copy; 2012 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
-    </div>
-    <div class="column last">
-         <a href="http://www.cam.ac.uk/" title="University of Cambridge">
-          <img src="themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
-        </a>
-    </div>
-
-    <div style="clear:both;"></div>
-</div>
-
 <script type="text/javascript">
 
     // 'open up' the first tab
