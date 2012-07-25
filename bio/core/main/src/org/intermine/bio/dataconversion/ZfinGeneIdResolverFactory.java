@@ -33,7 +33,8 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(ZfinGeneIdResolverFactory.class);
     private final String clsName = "gene";
-    // set in .intermine/MINE.properties
+
+    // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/zfin/identifiers/zebrafishGeneToEnsdarg.txt
     private final String propName = "resolver.zfin.file";
     private final String taxonId = "7955";
