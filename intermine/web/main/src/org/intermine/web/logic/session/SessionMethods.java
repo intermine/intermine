@@ -529,8 +529,6 @@ public final class SessionMethods
                                     profile.getHistory().keySet());
                             executor.setQueryInfo(pathQuery, pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
-                            recordMessage(messages.getMessage("saveQuery.message", queryName),
-                                          session);
                         }
 
                         // pause because we don't want to remove the monitor from the
