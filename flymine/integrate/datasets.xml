@@ -112,7 +112,7 @@
         <reference name="dataSource" ref_id="110"/>
     </item>
 
-
+<!--
     <item id="150" class="" implements="DataSource">
         <attribute name="name" value="Kenji Mizuguchi"/>
         <attribute name="description" value="Kenji Mizuguchi's group at the Department of Biochemistry"/>
@@ -124,7 +124,7 @@
         <attribute name="url" value="http://www-cryst.bioc.cam.ac.uk/~kenji/NEW/research.htm"/>
         <reference name="dataSource" ref_id="150"/>
     </item>
-
+-->
     <item id="160" class="" implements="DataSource">
         <attribute name="name" value="ArrayExpress"/>
         <attribute name="description" value="Public repository for microarray data"/>
@@ -154,13 +154,13 @@
         <attribute name="description" value="ProDom is a comprehensive set of protein domain families automatically generated from the SWISS-PROT and TrEMBL sequence databases"/>
         <attribute name="url" value="http://prodom.prabi.fr/"/>
     </item>
-
+<!--
     <item id="190" class="" implements="DataSource">
         <attribute name="name" value="PANTHER"/>
         <attribute name="description" value="The PANTHER (Protein ANalysis THrough Evolutionary Relationships) Classification System was designed to classify proteins (and their genes) in order to facilitate high-throughput analysis. Proteins have been classified according to families and subfamilies, molecular functions, biological processes, pathways."/>
         <attribute name="url" value="http://www.pantherdb.org/"/>
     </item>
-
+-->
     <item id="210" class="" implements="DataSource">
         <attribute name="name" value="Ensembl"/>
         <attribute name="description" value="The Ensembl eukaryotic genome annotation database"/>
