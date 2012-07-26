@@ -1662,12 +1662,13 @@ div.bagDetails-page div.widget { width:460px; height:auto; max-height:none !impo
     margin:0 10px 20px 10px; text-align:left; border-width:1px; border-style:solid; }
 
 /* footer links, logo and stuff */
-a.cambridge-logo { float:right; }
+div.bottom-footer { margin:0 auto; width:940px; margin-top:20px; }
+div.bottom-footer a.cambridge-logo { float:right; }
 
-ul.footer-links, p.footer-copy { list-style-type:none; display:block; float:left; width:450px; font-size:11px; margin:0;
+div.bottom-footer ul.footer-links,
+div.bottom-footer p.footer-copy { list-style-type:none; display:block; float:left; width:450px; font-size:11px; margin:0;
         margin-bottom:10px; }
-ul.footer-links li { display:block; float:left; margin:0; }
-ul.footer-links li:not(:last-child) { margin-right:5px; }
-ul.footer-links li:not(:last-child):after { content:'|'; color:#E2E1E6; display:block; float:right; margin-left:5px; }
-ul.footer-links li a { text-decoration:none; }
-
+div.bottom-footer ul.footer-links li { display:block; float:left; margin:0; }
+div.bottom-footer ul.footer-links li:not(:last-child) { margin-right:5px; }
+div.bottom-footer ul.footer-links li:not(:last-child):after { content:'|'; color:#E2E1E6; display:block; float:right; margin-left:5px; }
+div.bottom-footer ul.footer-links li a { text-decoration:none; text-transform:capitalize; }
