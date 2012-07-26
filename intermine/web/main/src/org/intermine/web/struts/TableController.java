@@ -214,7 +214,7 @@ public class TableController extends TilesAction
         }
 
         request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
-        request.setAttribute("pathQuery", pt.getWebTable().getPathQuery());
+        request.setAttribute("query", pt.getWebTable().getPathQuery());
         request.setAttribute("table", table);
 
         Map<Path, String> pathNames = new HashMap<Path, String> ();
