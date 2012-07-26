@@ -24,6 +24,7 @@ import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.pathquery.ConstraintValueParser;
 import org.intermine.pathquery.Path;
 import org.json.JSONObject;
@@ -265,6 +266,8 @@ public class JSONResultsIterator implements Iterator<JSONObject>
         Object newValue;
         if (cell.getField() instanceof Date) {
             newValue = ConstraintValueParser.ISO_DATE_FORMAT.format(cell.getField());
+        } else if (cell.getField() instanceof ClobAccess) {
+        	newValue = cell.getField().toString();
         } else {
             newValue = cell.getField();
         }
