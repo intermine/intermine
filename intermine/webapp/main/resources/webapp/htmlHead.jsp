@@ -7,12 +7,6 @@
 
 <!-- htmlHead.jsp -->
 
-<script src="http://mistok.herokuapp.com/js/mistok.js"></script>
-<script>
-    Mistok.key = '46c1-aa06-2d17';
-    Mistok.server = 'http://mistok.herokuapp.com';
-</script>
-
 <tiles:importAttribute name="htmlPageTitle" ignore="true"/>
 <tiles:importAttribute name="pageName" ignore="true"/>
 
@@ -30,6 +24,8 @@ if(new java.io.File(application.getRealPath("js")+"/"+pageName+".js").exists()) 
     request.setAttribute("pageJS","true");
 }
 %>
+
+<!-- page: ${pageName} -->
 
 <c:if test="${pageName != 'begin'}">
   <c:if test="${pageName == 'results' || pageName == 'bagDetails' || pageName == 'report'}">

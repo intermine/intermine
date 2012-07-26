@@ -1,4 +1,3 @@
-
 <project name="genomic-test-dbmodel" default="default" basedir=".">
 
   <description>represents the production objectstore and the model therein</description>
@@ -22,7 +21,7 @@
     <merge-additions file="bio/test-all/dbmodel/build/model/so_additions.xml"/>
     <merge-additions file="bio/core/genomic_additions.xml"/>
     <merge-additions file="bio/sources/ensembl-snp-db/ensembl-snp-db_additions.xml"/>
-    <merge-additions file="bio/sources/metabolicmine/huge-gwas/huge-gwas_additions.xml"/>
+    <merge-additions file="bio/sources/humanmine/huge-gwas/huge-gwas_additions.xml"/>
     <merge-additions file="bio/sources/psi/psi_additions.xml"/>
     <merge-additions file="bio/sources/flymine/rnai/rnai_additions.xml"/>
     <merge-additions file="bio/sources/go/go_additions.xml"/>
