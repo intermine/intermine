@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.dataconversion.BioFileConverter;
@@ -34,6 +35,8 @@ import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
+ * HomoloGene data converter, to use symbol and organism to identify a gene
+ *
  * @author Fengyuan Hu
  */
 public class HomologeneConverter extends BioFileConverter
@@ -56,6 +59,8 @@ public class HomologeneConverter extends BioFileConverter
     private Properties props = new Properties();
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
+
+    private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
 
     /**
      * Constructor
@@ -242,12 +247,18 @@ public class HomologeneConverter extends BioFileConverter
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
 
-        Item item = createItem("Gene");
-        item.setAttribute(identifierType, symbol);
-        item.setReference("organism", getOrganism(taxonId));
-        store(item);
-
-        return item.getIdentifier();
+        // TODO add id resolver here
+        // To avoid duplicated record, use symbol and taxonId as MultiKey
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, symbol));
+        if (refId == null) {
+            Item item = createItem("Gene");
+            item.setAttribute(identifierType, symbol);
+            item.setReference("organism", getOrganism(taxonId));
+            refId = item.getIdentifier();
+            identifiersToGenes.put(new MultiKey(taxonId, symbol), refId);
+            store(item);
+        }
+        return refId;
     }
 
     private String getEvidence() throws ObjectStoreException {

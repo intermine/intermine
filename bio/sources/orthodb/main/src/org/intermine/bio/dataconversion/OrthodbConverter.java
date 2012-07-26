@@ -59,6 +59,8 @@ public class OrthodbConverter extends BioFileConverter
     private static String evidenceRefId = null;
     private OrganismRepository or;
 
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -102,7 +104,7 @@ public class OrthodbConverter extends BioFileConverter
             1) Level
             2) OG_ID - OrthoDB group id
             3) Protein_ID
-            4) Gene_ID
+            4) Gene_ID, e.g. FBgn0162343(fly), ENSMUSG00000027919(mouse)
             5) Organism - full name
             6) UniProt_ACC
             7) UniProt_Description
@@ -250,12 +252,17 @@ public class OrthodbConverter extends BioFileConverter
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
 
-        Item item = createItem("Gene");
-        item.setAttribute(identifierType, geneId);
-        item.setReference("organism", getOrganism(taxonId));
-        store(item);
-
-        return item.getIdentifier();
+        // geneId is unique
+        String refId = identifiersToGenes.get(geneId);
+        if (refId == null) {
+            Item item = createItem("Gene");
+            item.setAttribute(identifierType, geneId);
+            item.setReference("organism", getOrganism(taxonId));
+            refId = item.getIdentifier();
+            identifiersToGenes.put(geneId, refId);
+            store(item);
+        }
+        return refId;
     }
 
     private String getTaxon(String name) {
