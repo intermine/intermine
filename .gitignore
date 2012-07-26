@@ -150,6 +150,20 @@ executeLog*
 # /intermine/scripts/
 /intermine/scripts/_Inline
 
+# testmodel
+/testmodel/test/properties
+/testmodel/webapp/test/properties
+
+# /intermine/web/main/
+/intermine/web/main/files
+/intermine/web/main/allclasses-frame.html
+/intermine/web/main/index.html
+/intermine/web/main/overview-frame.html
+/intermine/web/main/stylesheet.css
+
+# /intermine/web/test
+/intermine/web/test/properties
+
 # /intermine/web/test/src/org/intermine/webservice/server/output/
 /intermine/web/test/src/org/intermine/webservice/server/output/RowResultProcessorBenchmark.java
 /intermine/web/test/src/org/intermine/webservice/server/output/FilterBenchmarkTest.java
