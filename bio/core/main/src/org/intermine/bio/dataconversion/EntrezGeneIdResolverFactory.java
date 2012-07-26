@@ -49,7 +49,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         if (StringUtils.isBlank(fileName)) {
             String message = "Entrez gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
-            throw new IllegalArgumentException(message);
+            LOG.warn(message);
+            return null;
         }
 
         IdResolver resolver;
