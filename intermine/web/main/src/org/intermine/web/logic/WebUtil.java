@@ -229,7 +229,7 @@ public abstract class WebUtil
         String cdnLocation = webProperties.getProperty("head.cdn.location");
         List<HeadResource> ret = new ArrayList<HeadResource>();
         for (String type: new String[]{ "css", "js" }) {
-            String key = String.format("head.%s.%s", type, section);
+            String key = String.format("head.%s.%s.", type, section);
             Properties matches = PropertiesUtil.getPropertiesStartingWith(key, webProperties);
             Set<Object> keys = new TreeSet<Object>(matches.keySet());
             for (Object o: keys) {

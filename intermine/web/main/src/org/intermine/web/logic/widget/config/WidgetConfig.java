@@ -166,6 +166,9 @@ public abstract class WidgetConfig
                     filterValuesFromDB.append(org.toString() + ",");
                 }
             }
+            if (filterValuesFromDB.length() == 0) {
+                return null;
+            }
             return filterValuesFromDB.substring(0, filterValuesFromDB.length() - 1);
         }
     }

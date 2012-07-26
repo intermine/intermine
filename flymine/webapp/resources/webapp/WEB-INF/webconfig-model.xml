@@ -622,12 +622,6 @@
                      placement="Function"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
-                     jspName="model/gbrowseDisplayer.jsp"
-                     replacesFields=""
-                     placement="Genes"
-                     types="SequenceFeature"/>
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
                      replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
