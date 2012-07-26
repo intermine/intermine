@@ -38,7 +38,7 @@ public class TreefamConverterTest extends ItemsTestCase
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
-        converter.resolverFactory = resolverFactory;
+        converter.flyResolverFactory = resolverFactory;
 
 
         super.setUp();
