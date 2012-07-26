@@ -7,6 +7,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.results.ResultCell;
 import org.intermine.model.InterMineObject;
+import org.intermine.objectstore.query.ClobAccess;
 import org.intermine.web.logic.PortalHelper;
 import org.json.JSONObject;
 
@@ -46,7 +47,12 @@ public class TableCellFormatter
             mapping.put(CELL_KEY_CLASS, cell.getType());
             mapping.put(CELL_KEY_ID, cell.getId());
             mapping.put(CELL_KEY_COLUMN, cell.getPath().toStringNoConstraints());
-            mapping.put(CELL_KEY_VALUE, cell.getField());
+            Object raw = cell.getField();
+            
+            // Important that CLOBs go in as strings, to prevent infinite recursions
+            // by moronic JSON libraries... - place other edge cases here.
+            Object cooked = (raw != null && raw instanceof ClobAccess) ? raw.toString() : raw;
+            mapping.put(CELL_KEY_VALUE, cooked);
         }
         return mapping;
     }
