@@ -271,7 +271,7 @@ public class ObjectStoreSummary
     public ObjectStoreSummary(Properties properties) {
         for (Map.Entry<Object, Object> entry: properties.entrySet()) {
             String key = (String) entry.getKey();
-            String value = (String) entry.getValue();
+            String value = ((String) entry.getValue()).trim();
             if (key.endsWith(CLASS_COUNTS_SUFFIX)) {
                 String className = key.substring(0, key.lastIndexOf("."));
                 classCountsMap.put(className, Integer.valueOf(value));

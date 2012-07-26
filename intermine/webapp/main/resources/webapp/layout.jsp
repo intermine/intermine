@@ -126,6 +126,15 @@ $MODEL_TRANSLATION_TABLE = {
     </c:forEach>
 };
 
+<c:if test="${! empty WEB_PROPERTIES['constraint.default.value']}">
+if (typeof intermine != 'undefined') {
+    intermine.scope('intermine.conbuilder.messages', {
+        "ValuePlaceholder": "${WEB_PROPERTIES['constraint.default.value']}",
+        "ExtraPlaceholder": "${WEB_PROPERTIES['constraint.default.extra-value']}"
+    }, true);
+}
+</c:if>
+
 </script>
 
       <%-- Render messages --%>

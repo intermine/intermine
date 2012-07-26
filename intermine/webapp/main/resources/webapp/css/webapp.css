@@ -588,7 +588,7 @@ div#navtrail a:link, div#navtrail a:visited {
     color: white;
 }
 
-.body h3 {
+.body h3:not(.popover-title) {
     margin-top: 10px;
 }
 
@@ -1670,3 +1670,4 @@ ul.footer-links li { display:block; float:left; margin:0; }
 ul.footer-links li:not(:last-child) { margin-right:5px; }
 ul.footer-links li:not(:last-child):after { content:'|'; color:#E2E1E6; display:block; float:right; margin-left:5px; }
 ul.footer-links li a { text-decoration:none; }
+
