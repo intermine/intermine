@@ -372,9 +372,6 @@
       <c:set var="webserviceLink" value="javascript:;"/>
     </c:if>
     <td>
-      <a href="${webserviceLink}" title="Results from template queries can be embedded in other web pages">< embed results /></a>
-    </td>
-    <td>
       <c:set var="permalink" value="permalink"/>
       <c:if test="${!empty builder && builder=='yes'}">
         <c:set var="permalink" value="permalinkpreview"/>
