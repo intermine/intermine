@@ -1,7 +1,11 @@
 package org.intermine.webservice.server.core;
 
+import java.io.StringReader;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 
 public class Queries
 {
@@ -12,12 +16,16 @@ public class Queries
 
     private Queries() {
     }
+    
+    public static PathQuery getPathQuery(String key) {
+    	return PathQueryBinding.unmarshalPathQuery(new StringReader(getXML(key)), PathQuery.USERPROFILE_VERSION);
+    }
 
-    public static String getString(String key) {
+    public static String getXML(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            return '!' + key + '!';
+            throw new RuntimeException(e);
         }
     }
 }

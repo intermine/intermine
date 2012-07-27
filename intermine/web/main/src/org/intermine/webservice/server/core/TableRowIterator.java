@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
@@ -60,8 +61,8 @@ public class TableRowIterator
     private final Results results;
     private final Map<String, QuerySelectable> nodeForPath;
     private final List<Path> paths = new ArrayList<Path>();
-    private final Map<Path, Integer> columnForView = new HashMap<Path, Integer>();
-    private final Map<Path, List<Path>> rowTemplates = new HashMap<Path, List<Path>>();
+    protected final Map<Path, Integer> columnForView = new HashMap<Path, Integer>();
+    protected final Map<Path, List<Path>> rowTemplates = new HashMap<Path, List<Path>>(); // For debugging...
     private final List<Set<Path>> nodesForThisCell = new ArrayList<Set<Path>>();
     private final List<List<Path>> pathsForThisCell = new ArrayList<List<Path>>();
     private final Page page;
@@ -81,7 +82,7 @@ public class TableRowIterator
         this.pathQuery = pathQuery;
         this.results = results;
         this.nodeForPath = nodeForPath;
-        this.im = im;
+        this.im = im; // Watch out, may be null!
         try {
             init();
         } catch (PathException e) {
@@ -129,6 +130,7 @@ public class TableRowIterator
     private void initColumnForView() throws PathException {
         int colNo = 0;
         for (QuerySelectable selected: results.getQuery().getSelect()) {
+        	
             for (Path p: paths) {
 
                 Path parent = p.getPrefix();
@@ -218,42 +220,65 @@ public class TableRowIterator
     private void initRowTemplates() throws PathException {
         rowTemplates.put(root, new ArrayList<Path>());
         for (Path p: paths) {
-            Path node = p.getPrefix();
-            if (!rowTemplates.containsKey(node) && node.endIsCollection()) {
-                rowTemplates.put(node, new ArrayList<Path>());
+        	String ojg = pathQuery.getOuterJoinGroup(p.getNoConstraintsString());
+            Path node = pathQuery.makePath(ojg);
+            
+            if (!rowTemplates.containsKey(node)) {
+            	rowTemplates.put(node, new ArrayList<Path>());
+//            	if ( node.endIsCollection()) {
+//            		rowTemplates.put(node, new ArrayList<Path>());
+//            	} else if (node.endIsReference() && pathQuery.isPathCompletelyInner(node.getPrefix().getNoConstraintsString())) {
+//            		System.out.println("REFERENCE: " + node);
+//                	rowTemplates.put(node, new ArrayList<Path>());
+//            	}
             }
+            rowTemplates.get(node).add(p);
             if (!columnForView.containsKey(node)) {
                 columnForView.put(node, columnForView.get(p));
             }
-        }
-        for (Path p: paths) {
-            String ojg = pathQuery.getOuterJoinGroup(p.getNoConstraintsString());
-            Path ojgPath = pathQuery.makePath(ojg);
-            if (ojgPath.isRootPath()) {
-                rowTemplates.get(ojgPath).add(p);
-            } else {
-                // Find the closest node and add it there.
-                while (!rowTemplates.containsKey(ojgPath)) {
-                    ojgPath = ojgPath.getPrefix();
-                }
-                rowTemplates.get(ojgPath).add(p);
-                // Now find a place to add the group path.
-                if (!ojgPath.isRootPath()) {
-                    Path groupOfGroup =
-                        pathQuery.makePath(pathQuery.getOuterJoinGroup(ojgPath.getPrefix().getNoConstraintsString()));
-                    while (!rowTemplates.containsKey(groupOfGroup)) {
-                        if (groupOfGroup.isRootPath()) {
-                            break;
-                        }
-                        groupOfGroup = groupOfGroup.getPrefix();
-                    }
-                    List<Path> rowTemplate = rowTemplates.get(groupOfGroup);
-                    if (!rowTemplate.contains(ojgPath)) {
-                        rowTemplate.add(ojgPath);
-                    }
-                }
+            if (!root.equals(node)) {
+            	Path nodeParent = node.getPrefix();
+            	String nodeGroup = pathQuery.getOuterJoinGroup(nodeParent.getNoConstraintsString());
+            	
+            	Path ngp = pathQuery.makePath(nodeGroup);
+            	List<Path> ngpPaths = rowTemplates.get(ngp);
+            	if (ngpPaths == null) {
+            		ngpPaths = new ArrayList<Path>();
+            		rowTemplates.put(ngp, ngpPaths);
+            	}
+            	if (!ngpPaths.contains(node)) {
+            		ngpPaths.add(node);
+            	}
             }
         }
+//        for (Path p: paths) {
+//            String ojg = pathQuery.getOuterJoinGroup(p.getNoConstraintsString());
+//            Path ojgPath = pathQuery.makePath(ojg);
+//            if (ojgPath.isRootPath()) {
+//                rowTemplates.get(ojgPath).add(p);
+//            } else {
+//                // Find the closest node and add it there.
+//                while (!rowTemplates.containsKey(ojgPath)) {
+//                    ojgPath = ojgPath.getPrefix();
+//                }
+//                rowTemplates.get(ojgPath).add(p);
+//                // Now find a place to add the group path.
+//                if (!ojgPath.isRootPath()) {
+//                    Path groupOfGroup =
+//                        pathQuery.makePath(pathQuery.getOuterJoinGroup(ojgPath.getPrefix().getNoConstraintsString()));
+//                    while (!rowTemplates.containsKey(groupOfGroup)) {
+//                        if (groupOfGroup.isRootPath()) {
+//                            break;
+//                        }
+//                        groupOfGroup = groupOfGroup.getPrefix();
+//                    }
+//                    List<Path> rowTemplate = rowTemplates.get(groupOfGroup);
+//                    if (!rowTemplate.contains(ojgPath)) {
+//                    	rowTemplate.add(ojgPath);
+//                    }
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -270,25 +295,79 @@ public class TableRowIterator
         List<Path> rowTemplate = rowTemplates.get(root);
         for (Path p: rowTemplate) {
             int idx = columnForView.get(p);
-            if (skipList.contains(idx)) {
-                continue;
-            }
+            //if (skipList.contains(idx)) {
+            //    continue;
+            //}
             Object o = row.get(idx);
+            
             if (p.endIsAttribute()) {
-                if (nodesForThisCell.get(idx).size() > 1) {
-                    List<List<Object>> rows = (List<List<Object>>) o;
-                    data.add(new Right(makeSubTable(rows, p.getPrefix(), pathsForThisCell.get(idx))));
-                    skipList.add(idx);
-                } else {
-                    makeCells(data, o, Arrays.asList(p));
-                }
+            	makeCells(data, o, Arrays.asList(p));
             } else {
-                List<List<Object>> rows = (List<List<Object>>) o;
-                data.add(new Right(makeSubTable(rows, p, rowTemplates.get(p))));
+            	if (p.endIsReference()) {
+            		processReference(row, data, o, rowTemplates.get(p), p);
+            	} else {
+            		processCollection(row, data, o, rowTemplates.get(p), p);
+            	}
+//                if (nodesForThisCell.get(idx).size() > 1) {
+//                    List<List<Object>> rows = (List<List<Object>>) o;
+//                    data.add(new Right(makeSubTable(rows, p.getPrefix(), pathsForThisCell.get(idx))));
+//                    //skipList.add(idx);
+//                } else {
+//	                List<List<Object>> rows = (List<List<Object>>) o;
+//	                data.add(new Right(makeSubTable(rows, p, rowTemplates.get(p))));
+//                }
             }
         }
         counter++;
         return data;
+    }
+    
+    private void processReference(
+    		List<Object> osRow,
+    		List<Either<TableCell, SubTable>> data,
+            Object o,
+            List<Path> views,
+            Path referencePath) {
+    	if (o instanceof List) {
+    		processCollection(osRow, data, o, views, referencePath);
+    	} else if (allAreAttributes(views)) {
+    		makeCells(data, o, views);
+    	} else {
+			for (int i = 0; i < views.size(); i++) {
+				Path p = views.get(i);
+				Object o2 = o;
+				if (osRow != null) {
+					o2 = osRow.get(columnForView.get(p));
+				}
+				
+	    		if (p.endIsAttribute()) {
+	    			makeCells(data, o2, Arrays.asList(p));
+	    		} else if (p.endIsReference()) {
+	    			processReference(osRow, data, o2, rowTemplates.get(p), p);
+	    		} else {
+	    			processCollection(osRow, data, o2, rowTemplates.get(p), p);
+	    		}
+	    	}
+    	}
+    }
+    
+    private boolean allAreAttributes(Collection<Path> paths) {
+    	for (Path p: paths) {
+    		if (!p.endIsAttribute()) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    private void processCollection(
+    		List<Object> osRow,
+    		List<Either<TableCell, SubTable>> data,
+    		Object o,
+    		List<Path> views,
+    		Path collectionPath) {
+    	List<List<Object>> subRows = (List<List<Object>>) o;
+    	data.add(new Right(makeSubTable(subRows, collectionPath, rowTemplates.get(collectionPath))));
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -303,13 +382,15 @@ public class TableRowIterator
         } else if (o instanceof FastPathObject) {
             FastPathObject fpo = (FastPathObject) o;
             for (Path p: views) {
-                String cls = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(o.getClass()));
-                List<FieldDescriptor> keyFields = im.getClassKeys().get(cls);
-                boolean isKeyField = false;
-                if (keyFields != null) {
-                    isKeyField = keyFields.contains(p.getEndFieldDescriptor());
-                }
-                currentRow.add(new Left(new TableCell(fpo, p, isKeyField)));
+	            String cls = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(o.getClass()));
+	            boolean isKeyField = false;
+	            if (im != null) {
+	                List<FieldDescriptor> keyFields = im.getClassKeys().get(cls);
+	                if (keyFields != null) {
+	                    isKeyField = keyFields.contains(p.getEndFieldDescriptor());
+	                }
+	            }
+	            currentRow.add(new Left(new TableCell(fpo, p, isKeyField)));
             }
         } else {
             throw new RuntimeException(String.format(
@@ -336,25 +417,50 @@ public class TableRowIterator
         for (int i = 0; i < groupedColumns.size(); i++) {
             columnIndices.add(new Integer(i));
         }
+        
+        // Required if the columns are reversed within the outer-join groups (aka. the devil's tables).
         // Get the indices in the order we want to select them from the row.
+        /*
         Collections.sort(columnIndices, new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
                 Integer depth1 = new Integer(groupedColumns.get(o1).get(0).getElements().size());
+                boolean isAttr1 = groupedColumns.get(o1).get(0).endIsAttribute();
                 Integer depth2 = new Integer(groupedColumns.get(o2).get(0).getElements().size());
+                boolean isAttr2 = groupedColumns.get(o2).get(0).endIsAttribute();
+                if (isAttr1 ^ isAttr2) {
+	            	if (isAttr1) {
+	                	return 1;
+	                } else if (isAttr1) {
+	                	return -1;
+	                }
+                }
                 return depth1.compareTo(depth2);
+                
             }
         });
+        
         // Get the paths in an order that matches the indices.
         Collections.sort(groupedColumns, new Comparator<List<Path>>() {
             @Override
            public int compare(List<Path> o1, List<Path> o2) {
                 // Give groups based around shorter paths precedence.
                 Integer length1 = new Integer(o1.get(0).getElements().size());
+                boolean isAttr1 = o1.get(0).endIsAttribute();
                 Integer length2 = new Integer(o2.get(0).getElements().size());
+                boolean isAttr2 = o2.get(0).endIsAttribute();
+                if (isAttr1 ^ isAttr2) {
+	            	if (isAttr1) {
+	                	return 1;
+	                } else if (isAttr1) {
+	                	return -1;
+	                }
+                }
                 return length1.compareTo(length2);
             }
         });
+        */
+        
         List<Entry<Integer, List<Path>>> ret = new LinkedList<Entry<Integer, List<Path>>>();
         for (Integer index: columnIndices) {
             ret.add(new Pair<Integer, List<Path>>(index, groupedColumns.get(index)));
@@ -362,29 +468,63 @@ public class TableRowIterator
         return ret;
     }
     
+    private List<Path> refsToEnd(List<Path> columns) {
+    	List<Path> ret = new ArrayList<Path>();
+    	Queue<Path> refs = new LinkedList<Path>(); 
+    	for (Path p: columns) {
+    		if (p.endIsAttribute()) {
+    			ret.add(p);
+    		} else {
+    			refs.add(p);
+    		}
+    	}
+    	while (!refs.isEmpty()) {
+    		ret.add(refs.remove());
+    	}
+    	return ret;
+    }
+    
     private SubTable makeSubTable(
             List<List<Object>> rows,
             Path nodePath,
             List<Path> columns) {
         List<List<Either<TableCell, SubTable>>> data = new ArrayList<List<Either<TableCell, SubTable>>>();
+        
+        columns = refsToEnd(columns);
         List<Entry<Integer, List<Path>>> indicesToPaths = groupColumns(columns);
+        
+        List<Path> subtablePaths = new ArrayList<Path>();
+        boolean doneOneRow = false;
         for (List<Object> row: rows) {
             List<Either<TableCell, SubTable>> subTableRow = new ArrayList<Either<TableCell, SubTable>>();
             for (Entry<Integer, List<Path>> idxAndPaths: indicesToPaths) {
                 Object o = row.get(idxAndPaths.getKey());
+                
                 List<Path> paths = idxAndPaths.getValue();
+                if (paths.size() == 1 && paths.get(0).endIsReference()) {
+                	Path refPath = paths.get(0);
+                	paths = rowTemplates.get(refPath);
+                }
+                
                 if (o instanceof List) {
                     List<List<Object>> subrows = (List<List<Object>>) o;
                     Path subNodePath = paths.get(0);
                     List<Path> subcols = rowTemplates.get(subNodePath);
                     subTableRow.add(new Right(makeSubTable(subrows, subNodePath, subcols)));
+                    if (!doneOneRow) {
+                    	subtablePaths.add(subNodePath);
+                    }
                 } else {
                     makeCells(subTableRow, o, paths);
+                    if (!doneOneRow) {
+                    	subtablePaths.addAll(paths);
+                    }
                 }
             }
             data.add(subTableRow);
+            doneOneRow = true;
         }
-        return new SubTable(nodePath, columns, data);
+        return new SubTable(nodePath, subtablePaths, data);
     }
 
 
