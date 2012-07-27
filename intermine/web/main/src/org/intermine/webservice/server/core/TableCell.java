@@ -36,7 +36,9 @@ public final class TableCell implements ResultCell
         try {
             return fpo.getFieldValue(column.getEndFieldDescriptor().getName());
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error retrieving field value.", e);
+            throw new RuntimeException("Error retrieving field value for " + column, e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Error retrieving field value for " + column, e);
         }
     };
     

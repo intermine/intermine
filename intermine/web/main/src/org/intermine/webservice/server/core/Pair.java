@@ -41,4 +41,9 @@ public final class Pair<A, B> implements Entry<A, B>
     public B setValue(B value) {
         throw new UnsupportedOperationException("Pairs are final");
     } 
+    
+    @Override
+    public String toString() {
+    	return String.format("org.intermine.webservice.core.Pair(%s => %s)", a, b);
+    }
 }

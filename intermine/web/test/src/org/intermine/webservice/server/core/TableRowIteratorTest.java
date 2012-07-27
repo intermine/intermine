@@ -41,6 +41,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TableRowIteratorTest
@@ -257,7 +258,7 @@ public class TableRowIteratorTest
 
         @Override
         public Void visitLeft(TableCell a) {
-            System.out.printf(spacer + "%s: %s\n", a.getPath().getEndFieldDescriptor().getName(), a.getField());
+            System.out.printf(spacer + "%s: %s\n", a.getPath(), a.getField());
             return null;
         }
 
@@ -278,17 +279,20 @@ public class TableRowIteratorTest
         
     };
 
-    @Test
-    public void problemQueryA() throws ObjectStoreException {
-        String xml = Queries.getString("TableRowIteratorTest.ungroupedOJG");
-        PathQuery pq = PathQueryBinding.unmarshalPathQuery(new StringReader(xml), PathQuery.USERPROFILE_VERSION);
+    /*
+     * This test is to test the ability to deal with ungrouped OJGs. At present this 
+     * is best prohibited.
+     */
+    @Ignore 
+    public void ungroupedOJG() throws ObjectStoreException {
+    	PathQuery pq = Queries.getPathQuery("TableRowIteratorTest.ungroupedOJG");
         
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
         Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
 
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
@@ -323,7 +327,7 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
 
         EitherVisitor<TableCell, SubTable, Void> printer = new IndentingPrinter(4);
         while(iter.hasNext()) {
@@ -349,7 +353,7 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
         
         List<Either<TableCell, SubTable>> row = iter.next();
         String[] values = new String[] {
@@ -392,7 +396,50 @@ public class TableRowIteratorTest
         
     };
     
-    @Test public void allOuterJoinedReferences() throws ObjectStoreException {
+    @Test public void someOuterJoinedReferences() throws ObjectStoreException {
+        PathQuery pq = new PathQuery(osw.getModel());
+        pq.addViews(
+                "Employee.name",
+                "Employee.department.name",
+                "Employee.department.manager.name",
+                "Employee.department.company.name",
+                "Employee.department.company.vatNumber",
+                "Employee.fullTime",
+                "Employee.address.address");
+        //pq.setOuterJoinStatus("Employee.department", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Employee.department.manager", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Employee.address", OuterJoinStatus.OUTER);
+        
+        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+
+        Results res = osw.execute(q, 1000, true, false, true);
+        System.out.println(res);
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 10), null);
+        System.out.println(p2qn);
+        System.out.println(iter.columnForView);
+        System.out.println(iter.rowTemplates);
+        int c = 0, i = 1;
+        while (iter.hasNext()) {
+        	System.out.println("ROW " + i++);
+            List<Either<TableCell, SubTable>> row = iter.next();
+            //System.out.println();
+            for (Either<TableCell, SubTable> ro: row) {
+                c += ro.accept(printer.and(deepCounter)); //printer.and(deepCounter));
+            }
+            System.out.println();
+        }
+        
+         /* 
+          * 7 fields in 10 rows
+         */
+        assertEquals(70, c);
+    }
+    
+    
+    
+    @Test public void nestedOuterJoinedReferences() throws ObjectStoreException {
         PathQuery pq = new PathQuery(osw.getModel());
         pq.addViews(
                 "Employee.name",
@@ -411,14 +458,20 @@ public class TableRowIteratorTest
         Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
 
         Results res = osw.execute(q, 1000, true, false, true);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 10));
-        int c = 0;
+        System.out.println(res);
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 10), null);
+        System.out.println(p2qn);
+        System.out.println(iter.columnForView);
+        System.out.println(iter.rowTemplates);
+        int c = 0, i = 1;
         while (iter.hasNext()) {
+        	System.out.println("ROW " + i++);
             List<Either<TableCell, SubTable>> row = iter.next();
             //System.out.println();
             for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(deepCounter); //printer.and(deepCounter));
+                c += ro.accept(printer.and(deepCounter)); //printer.and(deepCounter));
             }
+            System.out.println();
         }
         
          /* 
@@ -446,7 +499,7 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 6));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 6), null);
         int c = 0;
         while (iter.hasNext()) {
             List<Either<TableCell, SubTable>> row = iter.next();
@@ -477,7 +530,13 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+
+        System.out.println(p2qn);
+        System.out.println(iter.columnForView);
+        System.out.println(iter.rowTemplates);
+        
+        System.out.println(res.get(0));
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
             for (Either<TableCell, SubTable> ro: row) {
@@ -498,6 +557,10 @@ public class TableRowIteratorTest
         assertEquals(84, c);
     }
     
+    /* 
+     * Currently the returned subtables are not in the same sequence as the 
+     * view - this may or may not need correcting.
+     */
     @Test public void refsFirst() throws ObjectStoreException {
         
         PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
@@ -520,7 +583,7 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
             for (Either<TableCell, SubTable> ro: row) {
@@ -547,9 +610,9 @@ public class TableRowIteratorTest
 
         pq.addViews(
             "Company.departments.name",
-            "Company.departments.employees.address.address",
             "Company.departments.employees.name",
             "Company.departments.employees.age",
+            "Company.departments.employees.address.address",
             "Company.secretarys.name");
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
@@ -561,7 +624,8 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3));
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
             for (Either<TableCell, SubTable> ro: row) {
@@ -578,5 +642,83 @@ public class TableRowIteratorTest
          * times 3 companies.
          */
         assertEquals(78, c);
+    }
+    
+    
+    @Test public void noTopLevelReversed() throws ObjectStoreException {
+        
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+
+        pq.addViews(
+            "Company.departments.name",
+            "Company.departments.employees.address.address",
+            "Company.departments.employees.name",
+            "Company.departments.employees.age",
+            "Company.secretarys.name");
+        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Company.departments.employees.address", OuterJoinStatus.OUTER);
+        pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER); //$NON-NLS-1$
+
+        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+
+        Results res = osw.execute(q, 1000, true, false, true);
+        System.out.println(res);
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        
+        int c = 0;
+        for (List<Either<TableCell, SubTable>> row: iter) {
+            for (Either<TableCell, SubTable> ro: row) {
+                c += ro.accept(printer.and(deepCounter));
+            }
+        }
+       
+         /* Per company:
+         *  - 2 departments
+         *    - 1 name
+         *    - 3.5 employees per department (every second has a manager)
+         *      - 3 fields per employee.
+         *  - 3 secretary names
+         * times 3 companies.
+         */
+        assertEquals(78, c);
+    }
+    
+    /* Tests an outer join reference on an inner join collection. */
+    @Test
+    public void ticket2936() throws ObjectStoreException {
+    	runQuery("ticket2936", 12);
+    }
+    
+    /* Tests an inner join references on an outer join reference. */
+    @Test
+    public void innerRefOnOuterRef() throws ObjectStoreException {
+    	runQuery("itWasWorking", 12);
+    }
+    
+    private void runQuery(String name, int expected) throws ObjectStoreException {
+    	PathQuery pq = Queries.getPathQuery("TableRowIteratorTest." + name);
+		
+        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
+
+        Results res = osw.execute(q, 1000, true, false, true);
+        
+        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        
+        System.out.println(p2qn);
+        System.out.println(iter.columnForView);
+        System.out.println(iter.rowTemplates);
+        System.out.println("EXAMPLE ROW: " + res.get(0));
+        
+        int c = 0;
+        for (List<Either<TableCell, SubTable>> row: iter) {
+            for (Either<TableCell, SubTable> ro: row) {
+                c += ro.accept(printer.and(deepCounter));
+            }
+        }
+		
+        assertEquals(expected, c);
     }
 }
