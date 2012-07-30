@@ -532,7 +532,7 @@ public class TableRowIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         //puts("EXAMPLE ROW: " + res.get(0));
-        return new TableRowIterator(pq, res, p2qn, page, null);
+        return new TableRowIterator(pq, q, res, p2qn, page, null);
     }
 
     private void runQuery(String name, int expected, Page page) throws ObjectStoreException {

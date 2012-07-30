@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.query.PathExpressionField;
+import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
@@ -36,10 +38,34 @@ public class TableRowIterator implements
         Iterator<List<Either<TableCell, SubTable>>>,
         Iterable<List<Either<TableCell, SubTable>>> {
 
+    /** Apache Log4J Logger **/
+    private final static Logger LOG = Logger.getLogger(TableRowIterator.class);
+
     /* Initialisation variables */
+
+    /** The path-query as provided by the user. **/
     private final PathQuery pathQuery;
+
+    /**
+     * Object-store version of this query
+     * You may well ask "Why not just read the query from the results parameter
+     * via {@link Results#getQuery()}?" Indeed, that would make a lot of sense, and
+     * was the initial approach - but:
+     * <ul>
+     *   <li>The {@link TableRowIterator#determineLevels(DisjointRecursiveList, Map)} routine
+     *       requires equivalence testing between QueryClasses and other QuerySelectables, and they 
+     *       only allow object identity testing.</li>
+     *   <li>The query object returned from {@link Results#getQuery()} is the <em>original</em> query
+     *       used, and not the same as the one passed to {@link ObjectStore#execute()} if the query hits
+     *       the results cache.</li>
+     *   <li>Welcome to the world of leaky abstractions!</li>
+     *   <li>Also, in other news, the world sucks.</li>
+     * </ul>
+     * **/ 
+    private final Query query;
+    /** The results returned from the object-store. MAY BE FROM CACHE **/
     private final Results results;
-    private final Map<String, QuerySelectable> nodeForPath;
+    private final Map<String, QuerySelectable> nodeForPath = new HashMap<String, QuerySelectable>();
     private final List<Path> paths = new ArrayList<Path>();
     private final Page page;
     private final InterMineAPI im; // May be null.
@@ -99,14 +125,16 @@ public class TableRowIterator implements
      */
     public TableRowIterator(
             PathQuery pathQuery,
+            Query query,
             Results results,
             Map<String, QuerySelectable> nodeForPath,
             Page page,
             InterMineAPI im) {
         this.page = page;
+        this.query = query;
         this.pathQuery = pathQuery;
         this.results = results;
-        this.nodeForPath = nodeForPath;
+        this.nodeForPath.putAll(nodeForPath);
         this.im = im; // Watch out, may be null!
         
         try {
@@ -134,9 +162,10 @@ public class TableRowIterator implements
         ColumnConversionInput cci = new ColumnConversionInput();
         cci.paths = paths;
         cci.pathToQueryNode = nodeForPath;
-        cci.select = new ArrayList<QuerySelectable>(results.getQuery().getSelect());
+        cci.select = new ArrayList<QuerySelectable>(query.getSelect());
 
         resultsShape = determineResultShape(cci);
+        LOG.info(resultsShape);
         levels = getLevelMap(resultsShape);
         levels.put(resultsShape, root);
 
@@ -321,9 +350,11 @@ public class TableRowIterator implements
             if (!pathsAtThisLevel.isEmpty()) {
                 Path oneOfThisLevel = pathsAtThisLevel.iterator().next();
                 retVal = getOJG(oneOfThisLevel);
-            } else {
+            } else if (!pathsBelowThisLevel.isEmpty()){
                 Path oneBelowThisLevel = pathsBelowThisLevel.iterator().next();
                 retVal = getOJG(oneBelowThisLevel.getPrefix());
+            } else {
+                throw new RuntimeException("no paths found in this shape: " + shape);
             }
             // Make sure we get the sub-table's OJG.
             while (!(retVal.endIsCollection() || retVal.isRootPath())) {
@@ -388,7 +419,7 @@ public class TableRowIterator implements
                 }
                 retval.addList(determineResultShape(cci.getNextLevelInput(subSelect)));
             } else {
-                List<Path> fieldsForObject = new LinkedList<Path>();
+                final List<Path> fieldsForObject = new LinkedList<Path>();
                 for (Path path : cci.paths) {
                     Path parent = path.getPrefix();
                     QuerySelectable selectableForPath = cci.pathToQueryNode.get(parent.toStringNoConstraints());
@@ -396,9 +427,13 @@ public class TableRowIterator implements
                         selectableForPath = ((QueryCollectionPathExpression) selectableForPath)
                             .getDefaultClass();
                     }
+                    LOG.info(String.format("Path(%s) => %s(%s) is %s(%s)?", path, selectableForPath.getClass(), selectableForPath, qs.getClass(), qs));
                     if (qs.equals(selectableForPath)) {
                         fieldsForObject.add(path);
                     }
+                }
+                if (fieldsForObject.isEmpty()) {
+                    LOG.error("Couldn't find any paths for " + qs + " from amongst " + cci.paths);
                 }
                 retval.addNode(fieldsForObject);
             }
@@ -409,7 +444,7 @@ public class TableRowIterator implements
     @Override
     public Iterator<List<Either<TableCell, SubTable>>> iterator() {
         // Return a new iterator reset to the beginning of the results set.
-        return new TableRowIterator(pathQuery, results, nodeForPath, page, im);
+        return new TableRowIterator(pathQuery, query, results, nodeForPath, page, im);
     }
 
     @Override
