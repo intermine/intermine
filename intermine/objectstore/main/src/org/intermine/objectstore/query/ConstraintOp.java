@@ -83,6 +83,12 @@ public final class ConstraintOp
     public static final ConstraintOp ONE_OF = new ConstraintOp("ONE OF");
     /** Require that the first argument is not one of a list of values */
     public static final ConstraintOp NONE_OF = new ConstraintOp("NONE OF");
+    
+    /** Require that the first argument lie entirely within the second. **/
+	public static final ConstraintOp WITHIN = new ConstraintOp("WITHIN");
+	
+	/** Require that no part of the first argument lie within the second. **/
+	public static final ConstraintOp OUTSIDE = new ConstraintOp("OUTSIDE");
 
     private ConstraintOp(String name) {
         this.name = name;
@@ -176,6 +182,10 @@ public final class ConstraintOp
             return NONE_OF;
         } else if (this == NONE_OF) {
             return ONE_OF;
+        } else if (this == WITHIN) {
+        	return OUTSIDE;
+        } else if (this == OUTSIDE) {
+        	return WITHIN;
         }
         throw new IllegalArgumentException("Unknown op");
     }

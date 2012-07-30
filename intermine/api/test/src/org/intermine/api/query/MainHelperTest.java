@@ -35,6 +35,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.EmploymentPeriod;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -47,11 +48,13 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
@@ -241,6 +244,42 @@ public class MainHelperTest extends TestCase {
         q.addToOrderBy(new QueryField(qc3, "name"));
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap()).toString());
+    }
+    
+    public void testRangeConstraint() throws Exception {
+    	QueryClass qc = new QueryClass(EmploymentPeriod.class);
+    	QueryField start = new QueryField(qc, "start");
+    	QueryField end = new QueryField(qc, "end");
+    	Date queryDate = new Date(1226881234565L);
+    	Date startOfDay = new Date(1226880000000L);
+        Date endOfDay = new Date(1226966400000L);
+        ConstraintSet expWithinCon = new ConstraintSet(ConstraintOp.AND);
+        expWithinCon.addConstraint(
+        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.GREATER_THAN_EQUALS, new QueryValue(startOfDay)));
+        expWithinCon.addConstraint(
+            	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.LESS_THAN, new QueryValue(endOfDay)));
+        
+        ConstraintSet expOutsideCon = new ConstraintSet(ConstraintOp.OR);
+        expOutsideCon.addConstraint(
+        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.LESS_THAN, new QueryValue(startOfDay)));
+        expOutsideCon.addConstraint(
+            	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.GREATER_THAN_EQUALS, new QueryValue(endOfDay)));
+        
+        PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", ConstraintOp.WITHIN, "2008-11-17 .. 2008-11-17");
+        
+        try {
+        	MainHelper.makeRangeConstraint(qc, con);
+        } catch (RuntimeException e) {
+        	assertTrue(e.getMessage().contains("No range constraints are possible"));
+        }
+        
+        MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new EmploymentPeriodHelper());
+        
+        org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(qc, con);
+        assertEquals(expWithinCon, got);
+        
+        got = MainHelper.makeRangeConstraint(qc, new PathConstraintRange("EmploymentPeriod", ConstraintOp.OUTSIDE, "2008-11-17 .. 2008-11-18"));
+        assertEquals(expOutsideCon, got);
     }
 
     public void testMakeQueryDateConstraint() throws Exception {
