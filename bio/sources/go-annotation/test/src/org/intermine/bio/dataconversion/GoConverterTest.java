@@ -43,7 +43,7 @@ public class GoConverterTest extends ItemsTestCase
         Reader goOboReader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
-        writer = new MockItemWriter(new LinkedHashMap());
+        writer = new MockItemWriter(new LinkedHashMap<String, org.intermine.model.fulldata.Item>());
         converter = new GoConverter(writer, model);
         converter.setGaff("2.0");
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
@@ -83,7 +83,7 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        // writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
@@ -99,7 +99,8 @@ public class GoConverterTest extends ItemsTestCase
         expected.add("1_2");
         converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet<String>(converter.createWithObjects(
-                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "FlyBase")));
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",
+                organism, "FlyBase", "FlyBase")));
     }
 
 }

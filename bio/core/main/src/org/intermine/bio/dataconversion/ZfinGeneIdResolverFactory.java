@@ -33,7 +33,8 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(ZfinGeneIdResolverFactory.class);
     private final String clsName = "gene";
-    // set in .intermine/MINE.properties
+
+    // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/zfin/identifiers/zebrafishGeneToEnsdarg.txt
     private final String propName = "resolver.zfin.file";
     private final String taxonId = "7955";
@@ -50,7 +51,8 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
         if (StringUtils.isBlank(fileName)) {
             String message = "ZFIN gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
-            throw new IllegalArgumentException(message);
+            LOG.warn(message);
+            return null;
         }
 
         IdResolver resolver;

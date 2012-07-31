@@ -280,6 +280,7 @@ public class IdResolver
                 }
             }
         }
+        reader.close();
     }
 
     // check that the given taxon id has some data for it

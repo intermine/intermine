@@ -50,7 +50,8 @@ public class HgncIdResolverFactory extends IdResolverFactory
         if (StringUtils.isBlank(fileName)) {
             String message = "HGNC resolver has no file name specified, set " + propName
                 + " to the file location.";
-            throw new IllegalArgumentException(message);
+            LOG.warn(message);
+            return null;
         }
 
         IdResolver resolver;
