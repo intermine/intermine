@@ -76,6 +76,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     private Map<Integer, Integer> strainIds = new HashMap<Integer, Integer>();
     private Map<Integer, String> popIdentifiers = new HashMap<Integer, String>();
 
+    private boolean isEmptyResultSet = false;
+
     private static final Logger LOG = Logger.getLogger(EnsemblSnpDbConverter.class);
     /**
      * Construct a new EnsemblSnpDbConverter.
@@ -166,6 +168,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      */
     public void process(ResultSet res, String chrName) throws Exception {
 
+        // If empty set
+        if (!res.next()) {
+            setEmptyResultSet(true);
+            LOG.info("Empty result for chr " + chrName);
+            return;
+        }
+
         int counter = 0;
         int snpCounter = 0;
         int consequenceCounter = 0;
@@ -183,6 +192,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         // This code is complicated because not all SNPs map to a unique location and often have
         // locations on multiple chromosomes - we're processing one chromosome at a time for faster
         // queries to MySQL.
+        res.previous(); // roll back one position
         while (res.next()) {
             counter++;
 
@@ -490,7 +500,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             Integer storedStrainId = store(strain);
             strainIds.put(strainId, storedStrainId);
             LOG.warn("Read strain: " + strainId);
-            System.out.println("Read strain: " + strainId);
 
             // for each strain query and store genotypes
             processGenotypesForStrain(connection, strainId, strain.getIdentifier());
@@ -598,14 +607,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             if (counter % 100000 == 0) {
                 String message = "Read " + counter + " alleles.";
                 LOG.info(message);
-                System.out.println(message);
             }
 
         }
         String message = "For population " + popId + " snp ref: " + snpReferenceCount + ", no ref: "
             + ignoredCount;
         LOG.info(message);
-        System.out.println(message);
     }
 
     private void processStrainPopulationReferences(Connection connection)
@@ -638,7 +645,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         String query = "SELECT individual_sample_id, population_sample_id"
             + " FROM individual_population";
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -651,7 +657,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " FROM tmp_individual_genotype_single_bp"
             + " WHERE sample_id = " + strainId;
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -664,7 +669,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " FROM individual_genotype_multiple_bp"
             + " WHERE sample_id = " + strainId;
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -678,7 +682,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " WHERE a.sample_id = " + popId
             + " AND a.allele_code_id = ac.allele_code_id";
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -706,12 +709,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     protected String determineType(String alleleStr) {
         String type = null;
 
-        final String VALID_BASES = "ATUGCYRSWKMBDHVN";
+        final String validBases = "ATUGCYRSWKMBDHVN";
 
         alleleStr = alleleStr.toUpperCase();
         if (!StringUtils.isBlank(alleleStr)) {
             // snp if e.g. A/C or A|C
-            if (alleleStr.matches("^[" + VALID_BASES + "]([\\/\\|\\\\][" + VALID_BASES + "])+$")) {
+            if (alleleStr.matches("^[" + validBases + "]([\\/\\|\\\\][" + validBases + "])+$")) {
                 type = "snp";
             } else if ("CNV".equals(alleleStr)) {
                 type = alleleStr.toLowerCase();
@@ -726,16 +729,16 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     type = "het";
                 } else if (alleles.length == 2) {
                     if ((StringUtils.containsOnly(alleles[0],
-                            VALID_BASES) && "-".equals(alleles[1]))
-                            || (StringUtils.containsOnly(alleles[1], VALID_BASES)
+                            validBases) && "-".equals(alleles[1]))
+                            || (StringUtils.containsOnly(alleles[1], validBases)
                                     && "-".equals(alleles[0]))) {
                         type = "in-del";
                     } else if (containsOneOf(alleles[0], "LARGE", "INS", "DEL")
                             || containsOneOf(alleles[1], "LARGE", "INS", "DEL")) {
                         type = "named";
-                    } else if ((StringUtils.containsOnly(alleles[0], VALID_BASES)
+                    } else if ((StringUtils.containsOnly(alleles[0], validBases)
                             && alleles[0].length() > 1)
-                            || (StringUtils.containsOnly(alleles[1], VALID_BASES)
+                            || (StringUtils.containsOnly(alleles[1], validBases)
                                     && alleles[1].length() > 1)) {
                         // AA/GC 2 alleles
                         type = "substitution";
@@ -836,7 +839,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " ORDER BY vf.variation_id";
 
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -854,7 +856,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " ORDER BY vs.variation_id";
 
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -895,7 +896,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " FROM sample s, individual i"
             + " WHERE i.sample_id = s.sample_id";
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -903,13 +903,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
     }
 
     private ResultSet queryPopulations(Connection connection)
-    throws SQLException {
+        throws SQLException {
 
         String query = "SELECT s.sample_id, s.name, s.description"
             + " FROM sample s, population p"
             + " WHERE p.sample_id = s.sample_id";
         LOG.warn(query);
-        System.out.println(query);
 
         Statement stmt = connection.createStatement();
         ResultSet res = stmt.executeQuery(query);
@@ -948,5 +947,21 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             }
         }
         return false;
+    }
+
+    /**
+     * For unit test perpose, when result set is empty, set to true
+     * @return isEmptyResultSet a boolean value
+     */
+    public boolean isEmptyResultSet() {
+        return isEmptyResultSet;
+    }
+
+    /**
+     * For unit test perpose, when result set is empty, set to true
+     * @param isEmptyResultSet a boolean value, default value false
+     */
+    public void setEmptyResultSet(boolean isEmptyResultSet) {
+        this.isEmptyResultSet = isEmptyResultSet;
     }
 }
