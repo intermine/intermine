@@ -20,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
@@ -76,20 +75,6 @@ public class NcbiGeneConverter extends BioFileConverter
                 // gene type - http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/entrezgene/entrezgene.asn
                 if (record.geneType == null) {
                     continue;
-//                } else if ("other".equals(record.geneType)) {
-//
-//                } else if ("unknown".equals(record.geneType)) {
-//
-//                } else if ("snRNA".equals(record.geneType)) {
-//
-//                } else if ("scRNA".equals(record.geneType)) {
-//
-//                } else if ("snoRNA".equals(record.geneType)) {
-//
-//                } else if ("transposon".equals(record.geneType)) {
-//
-//                } else if ("pseudo".equals(record.geneType)) {
-
                 } else if ("ncRNA".equals(record.geneType)) {
 
                     Item ncRNA = createItem("NcRNA");
@@ -144,7 +129,8 @@ public class NcbiGeneConverter extends BioFileConverter
                                         + ncRNA.getAttribute("symbol").getValue());
                                 ncRNA.setAttribute("primaryIdentifier", ensemblId);
                             } else {
-                                createCrossReference(ncRNA, ensemblId, "Ensembl");
+                                createCrossReference(ncRNA.getIdentifier(), ensemblId, "Ensembl",
+                                        true);
                             }
                         } else {
                             // TODO this doesn't check for uniquely mapped ensembl ids, needs to log
@@ -155,21 +141,14 @@ public class NcbiGeneConverter extends BioFileConverter
                                         + record.ensemblIds);
                             }
                             for (String ensemblId : record.ensemblIds) {
-                                createCrossReference(ncRNA, ensemblId, "Ensembl");
+                                createCrossReference(ncRNA.getIdentifier(), ensemblId, "Ensembl", true);
                             }
                         }
                     }
-
-                    // SYNONYMS
+                    store(ncRNA);
                     for (String synonym : record.synonyms) {
                         createSynonym(ncRNA, synonym, true);
                     }
-
-                    // MAP LOCATION
-//                    if (record.mapLocation != null) {
-//                        ncRNA.setAttribute("cytoLocation", record.mapLocation);
-//                    }
-                    store(ncRNA);
                 } else if ("tRNA".equals(record.geneType)
                         || "protein-coding".equals(record.geneType)
                         || "miscRNA".equals(record.geneType)
@@ -177,11 +156,9 @@ public class NcbiGeneConverter extends BioFileConverter
 
                     Item gene = createItem("Gene");
                     gene.setReference("organism", getOrganism(taxonId));
+                    createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
+                    gene.setAttribute("primaryIdentifier", record.entrez);
 
-                    gene.setAttribute("ncbiGeneNumber", record.entrez);
-                    gene.setAttribute("secondaryIdentifier", record.entrez);
-
-                    // SYMBOL
                     if (record.officialSymbol != null) {
                         gene.setAttribute("symbol", record.officialSymbol);
                         // if NCBI symbol is different add it as a synonym
@@ -214,57 +191,26 @@ public class NcbiGeneConverter extends BioFileConverter
                         gene.setAttribute("name", record.defaultName);
                     }
 
-                    // ENSEMBL ID become primaryIdentifier or CrossReference
-                    // TODO this currently doesn't load any Ensembl ids.
                     boolean loadEnsembl = false;
                     if (loadEnsembl) {
-                        if (record.ensemblIds.size() == 1) {
-                            String ensemblId = record.ensemblIds.iterator().next();
-                            if (parser.isUniquelyMappedEnsemblId(taxonId, ensemblId)) {
-                                LOG.info("EnsemblId " + ensemblId
-                                        + " is assigned to multiple genes, "
-                                        + "observed for: " + record.entrez + ", "
-                                        + gene.getAttribute("symbol").getValue());
-                                gene.setAttribute("primaryIdentifier", ensemblId);
-                            } else {
-                                createCrossReference(gene, ensemblId, "Ensembl");
-                            }
-                        } else {
-                            // TODO this doesn't check for uniquely mapped ensembl ids, needs to log
-                            if (record.ensemblIds.size() > 0) {
-                                LOG.info("E2 Gene " + record.entrez + ", "
-                                        + gene.getAttribute("symbol").getValue()
-                                        + " is assigned more than one Ensembl id: "
-                                        + record.ensemblIds);
-                            }
+                        if (record.ensemblIds != null) {
                             for (String ensemblId : record.ensemblIds) {
-                                createCrossReference(gene, ensemblId, "Ensembl");
+                                createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl",
+                                        true);
                             }
                         }
                     }
 
-                    // SYNONYMS
+                    if (record.mapLocation != null) {
+                        gene.setAttribute("mapLocation", record.mapLocation);
+                    }
+                    store(gene);
+
                     for (String synonym : record.synonyms) {
                         createSynonym(gene, synonym, true);
                     }
-
-                    // MAP LOCATION
-                    if (record.mapLocation != null) {
-                        // consistent model across all mines
-                        gene.setAttribute("cytoLocation", record.mapLocation);
-                    }
-                    store(gene);
                 }
             }
         }
-    }
-
-    private void createCrossReference(Item subject, String identifier, String dataSource)
-    throws ObjectStoreException {
-        Item crossRef = createItem("CrossReference");
-        crossRef.setAttribute("identifier", identifier);
-        crossRef.setReference("source", getDataSource(dataSource));
-        crossRef.setReference("subject", subject);
-        store(crossRef);
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -346,7 +346,7 @@ public class OmimConverter extends BioDirectoryConverter
             geneIdentifier = genes.get(entrezGeneNumber);
             if (geneIdentifier == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("ncbiGeneNumber", entrezGeneNumber);
+                gene.setAttribute("primaryIdentifier", entrezGeneNumber);
                 gene.setReference("organism", organism);
                 store(gene);
                 geneIdentifier = gene.getIdentifier();

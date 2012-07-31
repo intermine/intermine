@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -229,7 +229,7 @@ public abstract class WebUtil
         String cdnLocation = webProperties.getProperty("head.cdn.location");
         List<HeadResource> ret = new ArrayList<HeadResource>();
         for (String type: new String[]{ "css", "js" }) {
-            String key = String.format("head.%s.%s", type, section);
+            String key = String.format("head.%s.%s.", type, section);
             Properties matches = PropertiesUtil.getPropertiesStartingWith(key, webProperties);
             Set<Object> keys = new TreeSet<Object>(matches.keySet());
             for (Object o: keys) {
