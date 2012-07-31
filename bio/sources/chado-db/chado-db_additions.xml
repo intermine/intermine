@@ -41,4 +41,16 @@
   <class name="Allele" extends="BioEntity" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="alleles"/>
   </class>
+        <class name="Interaction" is-interface="true">
+              <reference name="gene1" referenced-type="Gene" reverse-reference="interactions" />
+              <reference name="gene2" referenced-type="Gene" />
+              <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
+          </class>
+          <class name="InteractionDetail" is-interface="true">
+              <attribute name="name" type="java.lang.String"/>
+              <attribute name="type" type="java.lang.String"/>
+              <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
+              <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
+              <collection name="dataSets" referenced-type="DataSet"/>
+          </class>
 </classes>
