@@ -18,23 +18,6 @@
     <collection name="mutagens" referenced-type="Mutagen" reverse-reference="alleles"/>
     <collection name="phenotypeAnnotations" referenced-type="PhenotypeAnnotation" reverse-reference="allele"/>
   </class>
-  <class name="InteractionExperiment" is-interface="true">
-   <attribute name="name" type="java.lang.String"/>
-   <reference name="publication" referenced-type="Publication"/>
-   <collection name="interactions" referenced-type="Interaction" reverse-reference="experiment"/>
-  </class>
-  <class name="Interaction" is-interface="true">
-    <attribute name="name" type="java.lang.String"/>
-    <attribute name="shortName" type="java.lang.String"/>
-    <attribute name="interactionType" type="java.lang.String"/>
-    <reference name="gene" referenced-type="Gene" reverse-reference="interactions" />
-    <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
-    <collection name="interactingGenes" referenced-type="Gene"/>
-    <collection name="dataSets" referenced-type="DataSet"/>
-  </class>
-  <class name="Gene" is-interface="true">
-    <collection name="interactions" referenced-type="Interaction" reverse-reference="gene"/>
-  </class>
   <class name="Mutagen" is-interface="true">
     <attribute name="description" type="java.lang.String"/>
     <collection name="alleles" referenced-type="Allele" reverse-reference="mutagens"/>

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
@@ -64,12 +64,8 @@ public class PsiConverter extends BioFileConverter
     private static final String ENSEMBL = "ensembl";
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = null;
-    private Set<String> regionPrimaryIdentifiers = new HashSet<String>();
     private Map<String, String> genes = new HashMap<String, String>();
-    // list of interaction.shortNames.  IntAct has duplicate interaction information in
-    // different files.  if a duplicate interaction is found, just skip it, we already have the
-    // info. See #2136
-    private Set<String> interactions = new HashSet<String>();
+    private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     /**
@@ -174,6 +170,7 @@ public class PsiConverter extends BioFileConverter
             = new HashMap<String, InteractorHolder>();
         // per gene - list of identifiers
         private Map<String, Set<String>> geneIdentifiers = new HashMap<String, Set<String>>();
+
 
         /**
          * {@inheritDoc}
@@ -451,7 +448,6 @@ public class PsiConverter extends BioFileConverter
                 if (holder.isValid) {
                     try {
                         storeAll(holder);
-                        interactions.add(holder.shortName);
                     } catch (ObjectStoreException e) {
                         throw new SAXException(e);
                     }
@@ -461,77 +457,85 @@ public class PsiConverter extends BioFileConverter
             }
         }
 
-        private void storeAll(InteractionHolder interactionHolder) throws ObjectStoreException {
+        private Item getInteraction(String refId, String gene2RefId) throws ObjectStoreException {
+        	MultiKey key = new MultiKey(refId, gene2RefId);
+        	Item interaction = interactions.get(key);
 
-            if (interactions.contains(interactionHolder.shortName)) {
-                // we've already processed this interaction in another file
-                // see #2136
-                return;
-            }
+        	if (interaction == null) {
+        		interaction = createItem("Interaction");
+        		interaction.setReference("gene1", refId);
+        		interaction.setReference("gene2", gene2RefId);
+        		interactions.put(key, interaction);
+        		store(interaction);
+        	}
+        	return interaction;
+        }
 
-            Set<InteractorHolder> interactors = interactionHolder.interactors;
-            for (Iterator<InteractorHolder> iter = interactors.iterator(); iter.hasNext();) {
-                InteractorHolder ih =  iter.next();
-                final String interactionName = buildName(interactors, ih);
-                for (String geneRefId : ih.geneRefIds) {
-                    Item interaction = createItem("Interaction");
-                    String shortName = interactionHolder.shortName;
-                    interaction.setAttribute("shortName", shortName);
-                    interaction.setAttribute("role", ih.role);
-                    interaction.setAttribute("interactionType", INTERACTION_TYPE);
-                    interaction.setAttribute("name", interactionName);
+        private void storeAll(InteractionHolder h) throws ObjectStoreException {
 
-                    if (interactionHolder.confidence != null) {
-                        interaction.setAttribute("confidence",
-                                interactionHolder.confidence.toString());
-                    }
-                    if (interactionHolder.confidenceText != null) {
-                        interaction.setAttribute("confidenceText",
-                                interactionHolder.confidenceText);
-                    }
-                    interaction.setReference("gene", geneRefId);
-                    interaction.setReference("type", interactionHolder.termRefId);
-                    interaction.setReference("experiment",
-                            interactionHolder.eh.experiment.getIdentifier());
+        	// for every gene in interaction store interaction pair
+            for (InteractorHolder gene1Interactor: h.interactors) {
 
-                    setInteractingGenes(interactionHolder, interaction, geneRefId);
-                    processRegions(interactionHolder, interaction, ih, shortName, geneRefId);
-                    store(interaction);
-                }
-            }
+                Set<InteractorHolder> gene2Interactors
+                	= new HashSet<InteractorHolder>(h.interactors);
+                gene2Interactors.remove(gene1Interactor);
 
-            /* store all experiment-related items */
-            ExperimentHolder eh = interactionHolder.eh;
-            if (!eh.isStored) {
-                eh.isStored = true;
-                try {
-                    eh.experiment.setCollection("comments", eh.comments);
-                    store(eh.experiment);
-                } catch (ObjectStoreException e) {
-                    throw new RuntimeException("Couldn't store experiment: ", e);
+            	for (String gene1RefId : gene1Interactor.geneRefIds) {
+            		storeDetails(h, gene1Interactor, gene2Interactors, gene1RefId);
+            	}
+
+                /* store all experiment-related items */
+                ExperimentHolder eh = h.eh;
+                if (!eh.isStored) {
+                	eh.isStored = true;
+                	try {
+                		eh.experiment.setCollection("comments", eh.comments);
+                		store(eh.experiment);
+                	} catch (ObjectStoreException e) {
+                		throw new RuntimeException("Couldn't store experiment: ", e);
+                	}
                 }
             }
         }
 
-        private void setInteractingGenes(InteractionHolder interactionHolder,
-                Item interaction, String geneRefId) {
-            Set<InteractorHolder> interactors = interactionHolder.interactors;
-            List<String> geneRefIds = new ArrayList<String>();
-            for (InteractorHolder ih : interactors) {
-                Set<String> ids = ih.geneRefIds;
-                if (!ids.contains(geneRefId)) {
-                    geneRefIds.addAll(ids);
-                }
-            }
-            interaction.setCollection("interactingGenes", geneRefIds);
+        private void storeDetails(InteractionHolder h, InteractorHolder gene1Interactor,
+        		Set<InteractorHolder> gene2Interactors, String gene1RefId)
+        	throws ObjectStoreException {
+
+        	// interactors can have multiple genes
+        	for (InteractorHolder gene2Interactor : gene2Interactors) {
+
+        		for (String gene2RefId : gene2Interactor.geneRefIds) {
+        			Item interaction = getInteraction(gene1RefId, gene2RefId);
+        			Item interactionDetail =  createItem("InteractionDetail");
+        			String shortName = h.shortName;
+        			interactionDetail.setAttribute("name", shortName);
+        			interactionDetail.setAttribute("role1", gene1Interactor.role);
+        			interactionDetail.setAttribute("role2", gene2Interactor.role);
+        			interactionDetail.setAttribute("type", INTERACTION_TYPE);
+        			if (h.confidence != null) {
+        				interactionDetail.setAttribute("confidence", h.confidence.toString());
+        			}
+        			if (h.confidenceText != null) {
+        				interactionDetail.setAttribute("confidenceText", h.confidenceText);
+        			}
+        			interactionDetail.setReference("relationshipType", h.termRefId);
+        			interactionDetail.setReference("experiment",
+        					h.eh.experiment.getIdentifier());
+        			interactionDetail.setReference("interaction", interaction);
+        			processRegions(h, interactionDetail, gene1Interactor, shortName,
+        					gene1RefId);
+        			store(interactionDetail);
+        		}
+        	}
         }
 
         private void processRegions(InteractionHolder interactionHolder,
-                Item interaction, InteractorHolder ih, String shortName, String geneRefId)
+                Item interactionDetail, InteractorHolder ih, String shortName, String geneRefId)
             throws ObjectStoreException {
             if (ih.isRegionFeature()) {
-                String refId = getRegion(ih, interaction.getIdentifier(), shortName, geneRefId);
-                interaction.addToCollection("interactingRegions", refId);
+                String refId = getRegion(ih, interactionDetail.getIdentifier(), shortName, geneRefId);
+                interactionDetail.addToCollection("interactingRegions", refId);
             }
         }
 
@@ -575,35 +579,6 @@ public class PsiConverter extends BioFileConverter
                 isValid = false;
             }
             return isValid;
-        }
-
-        private String buildName(Set<InteractorHolder> interactors, InteractorHolder ih) {
-            String identifier = ih.identifier;
-            StringBuilder name = new StringBuilder("IntAct:" + identifier);
-            for (InteractorHolder otherInteractors : interactors) {
-                String otherIdentifier = otherInteractors.identifier;
-                if (!otherIdentifier.equals(identifier)) {
-                    name.append("_" + otherIdentifier);
-                }
-            }
-            return name.toString();
-        }
-
-        private String buildRegionIdentifier(InteractorHolder ih, String shortName,
-                                             String identifier) {
-
-            String regionIdentifier = shortName + "_" + identifier;
-            if (ih.start != null && !ih.start.equals("0")) {
-                regionIdentifier += ":" + ih.start;
-                regionIdentifier += "-" + ih.end;
-            }
-
-            int i = 0;
-            while (regionPrimaryIdentifiers.contains(regionIdentifier)) {
-                regionIdentifier += "-" + ++i;
-            }
-            regionPrimaryIdentifiers.add(regionIdentifier);
-            return regionIdentifier;
         }
 
         private void processGene(String taxonId, String intactId)
@@ -768,8 +743,6 @@ public class PsiConverter extends BioFileConverter
             if (refId == null) {
                 Item region = createItem("InteractionRegion");
                 refId = region.getIdentifier();
-
-                region.setAttribute("name", ih.regionName1);
                 region.setReference("gene", geneRefId);
                 region.setReference("ontologyTerm", termId);
                 if (ih.startStatus != null) {
@@ -779,9 +752,6 @@ public class PsiConverter extends BioFileConverter
                     region.setAttribute("endStatus", ih.endStatus);
                 }
                 region.setReference("interaction", interactionRefId);
-
-                String regionIdentifier = buildRegionIdentifier(ih, interactionName, ih.identifier);
-                region.setAttribute("primaryIdentifier", regionIdentifier);
                 regions.put(regionName, refId);
                 if (locationValid(ih)) {
                     Item location = createItem("Location");
@@ -805,7 +775,6 @@ public class PsiConverter extends BioFileConverter
                 throw new RuntimeException("Couldn't store comment: ", e);
             }
             experimentHolder.comments.add(comment.getIdentifier());
-
         }
 
         /**
