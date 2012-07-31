@@ -19,6 +19,8 @@ import org.intermine.model.fulldata.Item;
 import org.intermine.sql.Database;
 import org.intermine.util.FormattedTextParser;
 
+import com.mockrunner.jdbc.StatementResultSetHandler;
+import com.mockrunner.mock.jdbc.MockConnection;
 import com.mockrunner.mock.jdbc.MockResultSet;
 
 /**
@@ -32,7 +34,7 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
     private EnsemblSnpDbConverter converter;
     private MockItemWriter itemWriter;
 
-    private static final int HUMAN = 9606;
+    private static final String HUMAN = "9606";
 
     private List<String> variationHeader =
         new ArrayList<String>(Arrays.asList("variation_feature_id",
@@ -58,6 +60,7 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
 
     private String chr1 = "1"; // fixed
     private String chr2 = "2"; // fixed
+    private String chrMT = "MT"; // fixed
     private String variationRawDataFileNameMultipleRecord = "multiple_record_9606";
     private String variationRawDataFileNameDupConsequence = "dup_consequence_9606";
     private String variationRawDataFileNameMultipleLocationChr1 = "multiple_location_chr_1_9606";
@@ -80,6 +83,16 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
 
     public void tearDown() throws Exception {
         converter.close();
+    }
+
+    /**
+     * Test case: empty result set
+     * @throws Exception e
+     */
+    public void testEmptyResults() throws Exception {
+        converter.setOrganism(HUMAN);
+        converter.process(mockResultSet(variationHeader, null), chrMT);
+        assertEquals(true, converter.isEmptyResultSet());
     }
 
     /**
@@ -214,11 +227,17 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
      */
     public ResultSet mockResultSet(List<String> headers, List<List<Object>> data) throws Exception {
 
-        // validation
+        // empty set (not perfectly represent the case though)
         if (headers == null || data == null) {
-            throw new Exception("null data");
+            MockConnection connection = new MockConnection();
+            StatementResultSetHandler statementHandler = connection
+                    .getStatementResultSetHandler();
+            MockResultSet result = statementHandler.createResultSet();
+            statementHandler.prepareGlobalResultSet(result);
+            return result;
         }
 
+        // validation
         if (headers.size() != data.get(0).size()) {
             throw new Exception("column sizes are not equal");
         }
