@@ -3,6 +3,7 @@
   <class name="Gene" is-interface="true">
     <collection name="alleles" referenced-type="Allele" reverse-reference="gene"/>
     <collection name="clones" referenced-type="CDNAClone" reverse-reference="gene"/>
+    <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>
   </class>
   <class name="Protein" is-interface="true">
     <attribute name="genbankIdentifier" type="java.lang.String"/>
@@ -65,10 +66,5 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="dataSets" referenced-type="DataSet"/>
     </class>
-
-    <class name="Gene" is-interface="true">
-        <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>
-    </class>
-
     <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>
