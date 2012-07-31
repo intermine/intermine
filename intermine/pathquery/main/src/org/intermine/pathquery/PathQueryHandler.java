@@ -214,8 +214,15 @@ public class PathQueryHandler extends DefaultHandler
         }
         if (ConstraintOp.DOES_NOT_CONTAIN.equals(constraintOp)) {
             constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
-        }
-        if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
+        } 
+        
+        if (PathConstraintRange.VALID_OPS.contains(constraintOp) && !values.isEmpty()) {
+        	Collection<String> valuesCollection = new LinkedHashSet<String>();
+            for (String value : values) {
+                valuesCollection.add(value.trim());
+            }
+            return new PathConstraintRange(path, constraintOp, valuesCollection);
+        } else if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
             boolean isLoop = (attrs.get("loopPath") != null);
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
                 try {
@@ -267,6 +274,8 @@ public class PathQueryHandler extends DefaultHandler
                         + " but no bag or ids were provided (from text \""
                         + attrs.get("op") + "\", attributes: " + attrs + ")");
             }
+        
+        	
         } else if (PathConstraintMultiValue.VALID_OPS.contains(constraintOp)) {
             Collection<String> valuesCollection = new LinkedHashSet<String>();
             for (String value : values) {

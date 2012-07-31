@@ -253,19 +253,37 @@ public class MainHelperTest extends TestCase {
     	Date queryDate = new Date(1226881234565L);
     	Date startOfDay = new Date(1226880000000L);
         Date endOfDay = new Date(1226966400000L);
-        ConstraintSet expWithinCon = new ConstraintSet(ConstraintOp.AND);
-        expWithinCon.addConstraint(
-        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.GREATER_THAN_EQUALS, new QueryValue(startOfDay)));
-        expWithinCon.addConstraint(
-            	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.LESS_THAN, new QueryValue(endOfDay)));
+        QueryValue sod = new QueryValue(startOfDay);
+        QueryValue eod = new QueryValue(endOfDay);
         
-        ConstraintSet expOutsideCon = new ConstraintSet(ConstraintOp.OR);
-        expOutsideCon.addConstraint(
-        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.LESS_THAN, new QueryValue(startOfDay)));
-        expOutsideCon.addConstraint(
-            	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.GREATER_THAN_EQUALS, new QueryValue(endOfDay)));
+        ConstraintSet withinExp = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet innerExp = new ConstraintSet(ConstraintOp.AND);
+        innerExp.addConstraint(
+        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.GREATER_THAN_EQUALS, sod));
+        innerExp.addConstraint(
+            	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.LESS_THAN, eod));
+        withinExp.addConstraint(innerExp);
         
-        PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", ConstraintOp.WITHIN, "2008-11-17 .. 2008-11-17");
+        ConstraintSet outsideExp = new ConstraintSet(ConstraintOp.AND);
+        ConstraintSet outsideInner = new ConstraintSet(ConstraintOp.OR);
+        outsideInner.addConstraint(
+        	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.LESS_THAN, sod));
+        outsideInner.addConstraint(
+            new SimpleConstraint((QueryEvaluable) start, ConstraintOp.GREATER_THAN_EQUALS, eod));
+        outsideExp.addConstraint(outsideInner);
+        
+        ConstraintSet overlapsExp = new ConstraintSet(ConstraintOp.OR);
+        ConstraintSet overlapsInner = new ConstraintSet(ConstraintOp.OR);
+        overlapsInner.addConstraint(
+        	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.GREATER_THAN_EQUALS, sod));
+        overlapsInner.addConstraint(
+        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.LESS_THAN, eod));
+        overlapsExp.addConstraint(overlapsInner);
+        
+        List<String> ranges = Arrays.asList("2008-11-17");
+        PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", ConstraintOp.WITHIN, ranges);
+        
+        MainHelper.RangeConfig.reset(); // Call to avoid setup conflict.
         
         try {
         	MainHelper.makeRangeConstraint(qc, con);
@@ -276,10 +294,13 @@ public class MainHelperTest extends TestCase {
         MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new EmploymentPeriodHelper());
         
         org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(qc, con);
-        assertEquals(expWithinCon, got);
+        assertEquals(withinExp, got);
         
-        got = MainHelper.makeRangeConstraint(qc, new PathConstraintRange("EmploymentPeriod", ConstraintOp.OUTSIDE, "2008-11-17 .. 2008-11-18"));
-        assertEquals(expOutsideCon, got);
+        got = MainHelper.makeRangeConstraint(qc, new PathConstraintRange("EmploymentPeriod", ConstraintOp.OUTSIDE, ranges));
+        assertEquals(outsideExp, got);
+        
+        got = MainHelper.makeRangeConstraint(qc, new PathConstraintRange("EmploymentPeriod", ConstraintOp.OVERLAPS, ranges));
+        assertEquals(overlapsExp, got);
     }
 
     public void testMakeQueryDateConstraint() throws Exception {

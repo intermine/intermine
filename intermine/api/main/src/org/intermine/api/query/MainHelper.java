@@ -35,6 +35,8 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.query.range.IntHelper;
+import org.intermine.api.query.range.StringHelper;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -367,9 +369,7 @@ public final class MainHelper
                                         pca.getOp(), new QueryValue(TypeUtil.stringToObject(
                                                 fieldType, pca.getValue()))));
                         }
-                    } else if (constraint instanceof PathConstraintRange) {
-                    	PathConstraintRange pcr = (PathConstraintRange) constraint;
-                    	codeToConstraint.put(code, makeRangeConstraint((QueryNode) field, pcr));
+                    
                     } else if (constraint instanceof PathConstraintNull) {
                         // This is a null constraint. If it is on a class, then we need do nothing,
                         // as the mere presence of the constraint has caused the class to make it
@@ -407,6 +407,9 @@ public final class MainHelper
                         codeToConstraint.put(code, new BagConstraint(new QueryField(
                                         (QueryClass) field, "id"), constraint.getOp(),
                                     ((PathConstraintIds) constraint).getIds()));
+                    } else if (constraint instanceof PathConstraintRange) {
+                    	PathConstraintRange pcr = (PathConstraintRange) constraint;
+                    	codeToConstraint.put(code, makeRangeConstraint((QueryNode) field, pcr));
                     } else if (constraint instanceof PathConstraintMultiValue) {
                         Class<?> fieldType = path.getEndType();
                         if (String.class.equals(fieldType)) {
@@ -1310,12 +1313,17 @@ public final class MainHelper
     	
     	private static void init() {
     		rangeHelpers = new HashMap<Class<?>, RangeHelper>();
+    		// Default basic helpers.
+    		rangeHelpers.put(int.class, new IntHelper());
+    		rangeHelpers.put(Integer.class, new IntHelper());
+    		rangeHelpers.put(String.class, new StringHelper());
+    		
     		Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.");
     		for (String key: props.stringPropertyNames()) {
     			String[] parts = key.split("\\.", 3);
     			if (parts.length != 3) {
     				throw new IllegalStateException(
-    					"Property names must be in the format pathquery.range.${ClassName}, got '" + key + "'"
+    					"Property names must be in the format pathquery.range.${FullyQualifiedClassName}, got '" + key + "'"
     				);
     			}
     			String targetTypeName = parts[2];

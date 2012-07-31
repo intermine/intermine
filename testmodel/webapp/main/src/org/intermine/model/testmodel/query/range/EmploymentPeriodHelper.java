@@ -1,4 +1,4 @@
-package org.intermine.api.query;
+package org.intermine.model.testmodel.query.range;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +9,7 @@ import org.intermine.api.query.range.AbstractHelper;
 import org.intermine.api.query.range.ConstraintOptions;
 import org.intermine.api.query.range.Range;
 import org.intermine.objectstore.query.ConstraintOp;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.util.TypeUtil;
 
 public class EmploymentPeriodHelper extends AbstractHelper {
