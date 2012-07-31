@@ -13,6 +13,7 @@ package org.intermine.pathquery;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -99,6 +100,15 @@ public class PathQueryBindingTest extends TestCase
 
     public void testQueryWithConstraint() throws Exception {
         assertEquals(expected.get("queryWithConstraint").toString(), savedQueries.get("queryWithConstraint").toString());
+    }
+    
+    public void testRangeQuery() throws Exception {
+    	PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+    	pq.addViews("Employee.name");
+    	pq.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN, Arrays.asList("40 .. 50", "55 .. 60")));
+    	pq.addConstraint(new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, Arrays.asList("01-01-2012")));
+    	
+    	assertEquals(pq.toString(), savedQueries.get("rangeQueries").toString());
     }
 
     public void testMarshallings() throws Exception {
