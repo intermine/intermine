@@ -76,21 +76,6 @@
     <td>Ruan et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/18056084 " target="_new" class="extlink">PubMed: 18056084</a></td>
     <td> &nbsp; </td>
   </tr>
-
-  <tr>
-    <td>
-       <p><i>C. elegans</i></p>
-       <p><i>D. melanogaster</i></p>
-       <p><i>D. rerio</i></p>
-       <p><i>H. sapiens</i></p>
-       <p><i>M. musculus</i></p>
-       <p><i>R. norvegicus</i></p>
-    </td>
-     <td>Orthologue relationships between model organisms and <i>Drosophila melanogaster</i></td>
-    <td><a href="http://www.treefam.org" target="_new" class="extlink">TreeFam</a></td>
-    <td></td>
-    <td> &nbsp; </td>
-  </tr>
   <tr>
     <td rowspan="3"  class="leftcol"><p><h2>Proteins</h2></p></td>
     <td>
