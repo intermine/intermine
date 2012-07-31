@@ -321,21 +321,14 @@
                 </script>
 
                 <p>Enter a gene, protein, SNP or other identifier [eg.
-                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"
-                  href="keywordSearchResults.do?searchTerm=PPARG"><strong>PPARG</strong></a>,
-                <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"
-                  href="keywordSearchResults.do?searchTerm=Insulin"><strong>Insulin</strong></a>,
-                <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"
-                  href="keywordSearchResults.do?searchTerm=rs876498"><strong>rs876498</strong></a>].
+                <a onclick="preFillInput('PPARG');return false;" title="Search for PPARG"><strong>PPARG</strong></a>,
+                <a onclick="preFillInput('Insulin');return false;" title="Search for Insulin"><strong>Insulin</strong></a>,
+                <a onclick="preFillInput('rs876498');return false;" title="Search for rs876498"><strong>rs876498</strong></a>].
                 <br />Alternatively, search for disease, keywords or publications [eg.
-                <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"
-                  href="keywordSearchResults.do?searchTerm=Diabetes"><strong>Diabetes</strong></a>,
-                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"
-                  href="keywordSearchResults.do?searchTerm=GWAS"><strong>GWAS</strong></a>,
-                <a onclick="preFillInput('13658959');return false;" title="Search for PMID"
-                  href="keywordSearchResults.do?searchTerm=13658959"><strong>PMID</strong></a>,
-               <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"
-                  href="keywordSearchResults.do?searchTerm=Sanger+F"><strong>Author</strong></a>]</p>
+                <a onclick="preFillInput('Diabetes');return false;" title="Search for Diabetes"><strong>Diabetes</strong></a>,
+                <a onclick="preFillInput('GWAS');return false;" title="Search for GWAS"><strong>GWAS</strong></a>,
+                <a onclick="preFillInput('13658959');return false;" title="Search for PMID"><strong>PMID</strong></a>,
+                <a onclick="preFillInput('Sanger F');return false;" title="Search for Author"><strong>Author</strong></a>]</p>
 
                 <form id="mainSearchForm" action="<c:url value="/keywordSearchResults.do" />" name="search" method="get">
                     <div class="input"><input id="actionsInput" name="searchTerm" class="input" type="text" value="${WEB_PROPERTIES['begin.searchBox.example']}"></div>
@@ -536,37 +529,6 @@
             <div style="clear:both;"></div>
         </div>
     </div>
-</div>
-
-<div id="footer">
-    <div class="column">
-        <a href="#" onclick="showContactForm();return false;">Contact Us</a>
-        <span>|</span>
-        <a href="http://blog.metabolicmine.org/faq">FAQ</a>
-        <span>|</span>
-        <a href="http://blog.metabolicmine.org/about">About</a>
-        <span>|</span>
-        <a href="http://intermine.org/wiki/PrivacyPolicy">Privacy Policy</a>
-        <br />
-        <a href="http://www.intermine.org">InterMine</a>
-        <span>|</span>
-        <a href="http://www.flymine.org">FlyMine</a>
-        <span>|</span>
-        <a href="http://www.modmine.org">modMine</a>
-        <span>|</span>
-        <a href="http://ratmine.mcw.edu/ratmine">RatMine</a>
-        <span>|</span>
-        <a href="http://yeastmine.yeastgenome.org/yeastmine">YeastMine</a>
-
-        <p>&copy; 2012 Department of Genetics, University of Cambridge, Downing Street, Cambridge CB2 3EH, United Kingdom</p>
-    </div>
-    <div class="column last">
-         <a href="http://www.cam.ac.uk/" title="University of Cambridge">
-          <img src="themes/metabolic/icons/cam-text-ico.gif" alt="University of Cambridge" />
-        </a>
-    </div>
-
-    <div style="clear:both;"></div>
 </div>
 
 <script type="text/javascript">

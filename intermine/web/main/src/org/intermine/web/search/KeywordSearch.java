@@ -1,7 +1,7 @@
 package org.intermine.web.search;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -944,7 +944,7 @@ public final class KeywordSearch
 
                 for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                     String key = (String) entry.getKey();
-                    String value = (String) entry.getValue();
+                    String value = ((String) entry.getValue()).trim();
 
                     if ("index.ignore".equals(key) && !StringUtils.isBlank(value)) {
                         String[] ignoreClassNames = value.split("\\s+");

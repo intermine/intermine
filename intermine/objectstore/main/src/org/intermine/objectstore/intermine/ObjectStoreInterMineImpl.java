@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -326,6 +326,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                             MetadataManager.OS_FORMAT_VERSION);
                 } catch (SQLException e) {
                     LOG.warn("Error retrieving database format version number", e);
+                    throw new ObjectStoreException("The table intermine_metadata doesn't exist. Please run build-db");
                 }
                 if (versionString == null) {
                     formatVersion = 0;

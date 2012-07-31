@@ -1,4 +1,4 @@
-FlyMine is an open source project distributed under the GNU Lesser
+InterMine is an open source project distributed under the GNU Lesser
 General Public Licence.
 
 This library is free software; you can redistribute it and/or
@@ -15,7 +15,7 @@ Lesser General Public License for more details.
 The following comment should appear in all source code files:
 
 /* 
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  * 
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,12 +25,12 @@ The following comment should appear in all source code files:
  */
 
 
-FlyMine
+InterMine
 Department of Genetics
 Downing Street
 Cambridge, CB2 3EH, UK
 
-www.flymine.org
+www.intermine.org
 info@flymine.org
 
 

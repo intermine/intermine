@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -38,7 +38,7 @@ public class TreefamConverterTest extends ItemsTestCase
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
         resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
-        converter.resolverFactory = resolverFactory;
+        converter.flyResolverFactory = resolverFactory;
 
 
         super.setUp();

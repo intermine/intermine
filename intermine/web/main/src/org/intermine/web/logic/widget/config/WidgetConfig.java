@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -165,6 +165,9 @@ public abstract class WidgetConfig
                 if (org != null) {
                     filterValuesFromDB.append(org.toString() + ",");
                 }
+            }
+            if (filterValuesFromDB.length() == 0) {
+                return null;
             }
             return filterValuesFromDB.substring(0, filterValuesFromDB.length() - 1);
         }

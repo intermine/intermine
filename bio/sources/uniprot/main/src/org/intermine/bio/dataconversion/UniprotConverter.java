@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -921,6 +921,10 @@ public class UniprotConverter extends BioDirectoryConverter
                     for (String geneIdentifier : geneIdentifiers) {
                         if (StringUtils.isEmpty(geneIdentifier)) {
                             continue;
+                        }
+                        if (GENE_PREFIXES.containsKey(taxId)) {
+                            // Prepend RGD:
+                            geneIdentifier = GENE_PREFIXES.get(taxId) + geneIdentifier;
                         }
                         gene.setAttribute(geneField, geneIdentifier);
                     }
