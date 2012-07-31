@@ -41,16 +41,34 @@
   <class name="Allele" extends="BioEntity" is-interface="true">
     <reference name="gene" referenced-type="Gene" reverse-reference="alleles"/>
   </class>
-        <class name="Interaction" is-interface="true">
-              <reference name="gene1" referenced-type="Gene" reverse-reference="interactions" />
-              <reference name="gene2" referenced-type="Gene" />
-              <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
-          </class>
-          <class name="InteractionDetail" is-interface="true">
-              <attribute name="name" type="java.lang.String"/>
-              <attribute name="type" type="java.lang.String"/>
-              <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
-              <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
-              <collection name="dataSets" referenced-type="DataSet"/>
-          </class>
+    <class name="InteractionExperiment" is-interface="true">
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="description" type="java.lang.String"/>
+        <attribute name="hostOrganism" type="java.lang.String" />
+        <reference name="publication" referenced-type="Publication"/>
+        <collection name="interactions" referenced-type="InteractionDetail" reverse-reference="experiment"/>
+        <collection name="interactionDetectionMethods" referenced-type="InteractionTerm"/>
+    </class>
+    <class name="Interaction" is-interface="true">
+        <reference name="gene1" referenced-type="Gene" reverse-reference="interactions" />
+        <reference name="gene2" referenced-type="Gene" />
+        <collection name="details" referenced-type="InteractionDetail" reverse-reference="interaction"/>
+    </class>
+
+    <class name="InteractionDetail" is-interface="true">
+        <attribute name="role1" type="java.lang.String"/>
+        <attribute name="role2" type="java.lang.String"/>
+        <attribute name="name" type="java.lang.String"/>
+        <attribute name="type" type="java.lang.String"/>
+        <reference name="relationshipType" referenced-type="InteractionTerm"/>
+        <reference name="experiment" referenced-type="InteractionExperiment" reverse-reference="interactions"/>
+        <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
+        <collection name="dataSets" referenced-type="DataSet"/>
+    </class>
+
+    <class name="Gene" is-interface="true">
+        <collection name="interactions" referenced-type="Interaction" reverse-reference="gene1"/>
+    </class>
+
+    <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"/>
 </classes>
