@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2011 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -913,12 +913,27 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
     }
 
+    private String getInteraction(Map<MultiKey, String> interactions, String refId,
+    		String gene2RefId) throws ObjectStoreException {
+    	MultiKey key = new MultiKey(refId, gene2RefId);
+    	String interactionRefId = interactions.get(key);
+    	if (interactionRefId == null) {
+    		Item interaction = getChadoDBConverter().createItem("Interaction");
+    		interaction.setReference("gene1", refId);
+    		interaction.setReference("gene2", gene2RefId);
+    		getChadoDBConverter().store(interaction);
+    		interactionRefId = interaction.getIdentifier();
+    		interactions.put(key, interactionRefId);
+    	}
+    	return refId;
+    }
+
     /**
      * Create Interaction objects.
      */
     private void createInteractions(Connection connection)
         throws SQLException, ObjectStoreException {
-        Set<String> seenInteractions = new HashSet<String>();
+        Map<MultiKey, String> seenInteractions = new HashMap<MultiKey, String>();
         ResultSet res = getInteractionResultSet(connection);
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -928,33 +943,31 @@ public class FlyBaseProcessor extends SequenceProcessor
             FeatureData featureData = getFeatureMap().get(featureId);
             FeatureData otherFeatureData = getFeatureMap().get(otherFeatureId);
 
-            Item interaction = getChadoDBConverter().createItem("Interaction");
-
-            String shortName = "FlyBase" + ":" + featureData.getChadoFeatureUniqueName() + "_"
-                + otherFeatureData.getChadoFeatureUniqueName();
-            int i = 0;
-            String newShortName = shortName;
-            while (seenInteractions.contains(newShortName)) {
-                i++;
-                newShortName = shortName + "-" + i;
-            }
-            seenInteractions.add(newShortName);
-            interaction.setAttribute("shortName", newShortName);
-            interaction.setAttribute("name", newShortName);
-            interaction.setReference("gene", featureData.getItemIdentifier());
-            interaction.addToCollection("interactingGenes", otherFeatureData.getItemIdentifier());
-            interaction.setAttribute("interactionType", "genetic");
-            String publicationItemId = makePublication(pubmedId);
-            String experimentItemIdentifier =
-                makeInteractionExperiment(pubTitle, publicationItemId);
-            interaction.setReference("experiment", experimentItemIdentifier);
+            String name = "FlyBase" + ":" + featureData.getChadoFeatureUniqueName() + "_"
+                    + otherFeatureData.getChadoFeatureUniqueName();
+            String interactionRefId = getInteraction(seenInteractions,
+            		featureData.getItemIdentifier(), otherFeatureData.getItemIdentifier());
             OrganismData od = otherFeatureData.getOrganismData();
             Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
-            interaction.addToCollection("dataSets", dataSetItem);
-            getChadoDBConverter().store(interaction);
+            String publicationItemId = makePublication(pubmedId);
+            createDetail(dataSetItem, pubTitle, publicationItemId, interactionRefId, name);
         }
     }
 
+    private void createDetail(Item dataSetItem, String pubTitle, 
+    		String publicationItemId, String interactionRefId, String name) 
+    	throws SQLException, ObjectStoreException {
+		Item detail = getChadoDBConverter().createItem("InteractionDetail");
+        detail.setAttribute("name", name);
+        detail.setReference("interaction", interactionRefId);
+        detail.setAttribute("type", "genetic");
+        String experimentItemIdentifier =
+            makeInteractionExperiment(pubTitle, publicationItemId);
+        detail.setReference("experiment", experimentItemIdentifier);
+        detail.addToCollection("dataSets", dataSetItem);
+        getChadoDBConverter().store(detail);
+    }
+    
     /**
      * Return the item identifier of the Interaction Item for the given pubmed id, creating the
      * Item if necessary.
