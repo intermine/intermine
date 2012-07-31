@@ -1,0 +1,7 @@
+<project name="mastermine-postprocess" default="default" basedir=".">
+
+  <description>perform post processing for mastermine</description>
+
+  <import file="../../imbuild/postprocess.xml"/>
+
+</project>
