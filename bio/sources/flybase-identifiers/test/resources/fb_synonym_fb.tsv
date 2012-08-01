@@ -1,0 +1,9 @@
+## FlyBase Symbol-Synonym Correspondence Table
+## Generated: Thu Jun 21 13:19:28 2012
+## Using datasource: dbi:Pg:dbname=fb_2012_04_reporting;host=flysql9;port=5432...
+
+##primary_FBid  current_symbol  current_fullname        fullname_synonym(s)     symbol_synonym(s)
+FBtr0000004	Ecol\lacZ[svp-3]RA			lacZ[svp-3]RA
+FBgn0026378	Rep	Rab escort protein	Rab escort protein homolog,rab escort protein	REP,CG8432
+FBgn0117479	Dere\GG25358			dere_GLEANR_9999,GG25358
+FBtp0072584	P{DAFC-34B_1.8kb}			DAFC-34B_1.8kb
