@@ -17,6 +17,7 @@ import java.util.HashMap;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 import org.intermine.xml.full.FullParser;
 
 public class WormBaseIdentifiersConverterTest extends ItemsTestCase
@@ -35,7 +36,7 @@ public class WormBaseIdentifiersConverterTest extends ItemsTestCase
         String input = "WBGene00007167\trbg-3\tB0393.2\t" + ENDL
             + "WBGene00007168\t\tB0393.3\t" + ENDL;
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         BioFileConverter converter = new WormBaseIdentifiersConverter(itemWriter,
                                                                    Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
@@ -47,7 +48,7 @@ public class WormBaseIdentifiersConverterTest extends ItemsTestCase
         assertEquals(readItemSet("WormBaseIdentifiersConverterTest.xml"), itemWriter.getItems());
     }
 
-    protected Collection getExpectedItems() throws Exception {
+    protected Collection<?> getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("WormBaseIdentifiersConverterTest.xml"));
     }
 }
