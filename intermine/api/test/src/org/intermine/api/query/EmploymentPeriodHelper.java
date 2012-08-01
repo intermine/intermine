@@ -24,7 +24,7 @@ public class EmploymentPeriodHelper extends AbstractHelper {
 			"end"
 		);
 	}
-	
+
 	@Override
 	protected Range parseRange(String range) {
 		return new DateRange(range);
@@ -67,6 +67,7 @@ public class EmploymentPeriodHelper extends AbstractHelper {
 	        endOfPeriod.set(Calendar.SECOND, 0);
 	        endOfPeriod.set(Calendar.MILLISECOND, 0);
 	        endOfPeriod.add(Calendar.DATE, 1);
+	        
 	        this.end = endOfPeriod.getTime();
 		}
 		

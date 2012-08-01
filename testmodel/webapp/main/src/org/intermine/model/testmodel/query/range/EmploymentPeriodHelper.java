@@ -61,7 +61,7 @@ public class EmploymentPeriodHelper extends AbstractHelper {
             this.start = startOfPeriod.getTime();
             
             Date endDate = (Date) TypeUtil.stringToObject(Date.class, endStr);
-            Calendar endOfPeriod= GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+            Calendar endOfPeriod = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
             endOfPeriod.setTime(endDate);
             endOfPeriod.set(Calendar.HOUR_OF_DAY, 0);
             endOfPeriod.set(Calendar.MINUTE, 0);
