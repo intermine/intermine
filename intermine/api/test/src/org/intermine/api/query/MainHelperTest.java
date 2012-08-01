@@ -248,37 +248,8 @@ public class MainHelperTest extends TestCase {
     
     public void testRangeConstraint() throws Exception {
     	QueryClass qc = new QueryClass(EmploymentPeriod.class);
-    	QueryField start = new QueryField(qc, "start");
-    	QueryField end = new QueryField(qc, "end");
-    	Date queryDate = new Date(1226881234565L);
-    	Date startOfDay = new Date(1226880000000L);
-        Date endOfDay = new Date(1226966400000L);
-        QueryValue sod = new QueryValue(startOfDay);
-        QueryValue eod = new QueryValue(endOfDay);
-        
-        ConstraintSet withinExp = new ConstraintSet(ConstraintOp.OR);
-        ConstraintSet innerExp = new ConstraintSet(ConstraintOp.AND);
-        innerExp.addConstraint(
-        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.GREATER_THAN_EQUALS, sod));
-        innerExp.addConstraint(
-            	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.LESS_THAN, eod));
-        withinExp.addConstraint(innerExp);
-        
-        ConstraintSet outsideExp = new ConstraintSet(ConstraintOp.AND);
-        ConstraintSet outsideInner = new ConstraintSet(ConstraintOp.OR);
-        outsideInner.addConstraint(
-        	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.LESS_THAN, sod));
-        outsideInner.addConstraint(
-            new SimpleConstraint((QueryEvaluable) start, ConstraintOp.GREATER_THAN_EQUALS, eod));
-        outsideExp.addConstraint(outsideInner);
-        
-        ConstraintSet overlapsExp = new ConstraintSet(ConstraintOp.OR);
-        ConstraintSet overlapsInner = new ConstraintSet(ConstraintOp.OR);
-        overlapsInner.addConstraint(
-        	new SimpleConstraint((QueryEvaluable) end, ConstraintOp.GREATER_THAN_EQUALS, sod));
-        overlapsInner.addConstraint(
-        	new SimpleConstraint((QueryEvaluable) start, ConstraintOp.LESS_THAN, eod));
-        overlapsExp.addConstraint(overlapsInner);
+    	
+        Constraint exp = new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
         
         List<String> ranges = Arrays.asList("2008-11-17");
         PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", ConstraintOp.WITHIN, ranges);
@@ -291,19 +262,25 @@ public class MainHelperTest extends TestCase {
         	assertTrue(e.getMessage().contains("No range constraints are possible"));
         }
         
-        MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new EmploymentPeriodHelper());
+        class DummyHelper implements RangeHelper {
+			@Override
+			public Constraint createConstraint(QueryNode node, PathConstraintRange con) {
+				return new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
+			}
+        }
+        
+        MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
         
         org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(qc, con);
-        assertEquals(withinExp, got);
-        
-        got = MainHelper.makeRangeConstraint(qc, new PathConstraintRange("EmploymentPeriod", ConstraintOp.OUTSIDE, ranges));
-        assertEquals(outsideExp, got);
-        
-        got = MainHelper.makeRangeConstraint(qc, new PathConstraintRange("EmploymentPeriod", ConstraintOp.OVERLAPS, ranges));
-        assertEquals(overlapsExp, got);
+        assertEquals(exp, got);
     }
 
-    public void testMakeQueryDateConstraint() throws Exception {
+    private QueryEvaluable QueryValue(String string) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void testMakeQueryDateConstraint() throws Exception {
         // 11:02:39am Sun Nov 16, 2008
         QueryClass qc = new QueryClass(Types.class);
         QueryField qn = new QueryField(qc, "dateObjType");

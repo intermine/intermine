@@ -64,7 +64,7 @@ public class ConstraintOptions {
 		ConstraintOp newMain = (mainSetOp == AND) ? OR : AND;
 		ConstraintOp newRange = (rangeSetOp == AND) ? OR : AND;
 		ConstraintOp newLeft = leftOp.negate();
-		ConstraintOp newRight = leftOp.negate();
+		ConstraintOp newRight = rightOp.negate();
 		return new ConstraintOptions(
 			newMain, newRange, newLeft, newRight, leftField, rightField
 		);
