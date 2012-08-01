@@ -1,0 +1,20 @@
+S000028864	telomeric_repeat		TEL01L-TR			chromosome 1		1	62	1	C		2003-09-09	2003-09-09	Terminal stretch of telomeric repeats on the left arm of Chromosome I
+S000002143	ORF	Dubious	YAL069W			chromosome 1		1	335	649	W		1996-07-31	1996-07-31	Dubious open reading frame unlikely to encode a protein, based on available experimental and comparative sequence data
+S000031098	CDS					YAL069W		1	335	649	W		1996-07-31	1996-07-31
+S000028866	X_element_combinatorial_repeats		TEL01L-XR			chromosome 1		1	336	63	C		2003-09-09	2003-09-09	Telomeric X element combinatorial Repeat region on the left arm of Chromosome I; contains repeats of the D, C, B and A types, as well as Tbf1p binding sites; formerly called SubTelomeric Repeats
+S000028594	ORF	Dubious	YAL068W-A			chromosome 1		1	538	792	W		2003-07-29	2003-07-29	Dubious open reading frame unlikely to encode a protein; identified by gene-trapping, microarray-based expression analysis, and genome-wide homology searching
+S000031372	CDS					YAL068W-A		1	538	792	W		2003-07-29	2003-07-29
+S000121252	ARS		ARS102		ARSI-1	chromosome 1		1	650	1791			2007-03-07	2007-03-07	Autonomously Replicating Sequence
+S000121251	ARS consensus sequence					ARS109		1	159945	159935	C		2011-02-03	2007-03-07
+S000118986	ARS consensus sequence					ARS109		1	159952	159966	W		2011-02-03	2006-10-02
+S000006788	long_terminal_repeat		YARCdelta3			chromosome 1		1	160237	160105	C		2011-02-03	2000-05-19	Ty1 LTR
+S000006789	long_terminal_repeat		YARCdelta4			chromosome 1		1	160574	160238	C		2011-02-03	2000-05-19	Ty1 LTR
+S000000067	transposable_element_gene		YAR009C		YARCTyB1-1	chromosome 1		1	164187	160597	C		2011-02-03	1996-07-31	Retrotransposon TYA Gag and TYB Pol genes; in YARCTY1-1 TYB is mutant and probably non-functional
+S000037508	CDS					YAR009C		1	164187	160597	C		2011-02-03	1996-07-31
+S000000068	transposable_element_gene		YAR010C		YARCTyA1-1	chromosome 1		1	165866	164544	C		2011-02-03	1996-07-31	Retrotransposon TYA Gag gene co-transcribed with TYB Pol; in YARCTY1-1 TYB is mutant and probably non-functional
+S000030210	CDS					YAR010C		1	165866	164544	C		2011-02-03	1996-07-31
+S000006792	retrotransposon		YARCTy1-1			chromosome 1		1	166162	160238	C		2011-02-03	2000-05-19	Long Terminal Repeat (LTR) retrotransposon of the Copia (Pseudoviridae) group; contains genes TYA Gag and TYB Pol, encoding proteins involved in structure and function of virus-like particles, flanked by two direct repeats; mutated in S288C
+S000006790	long_terminal_repeat		YARCdelta5			chromosome 1		1	166162	165826	C		2011-02-03	2000-05-19	Ty1 LTR
+S000006521	tRNA		tA(UGC)A			chromosome 1	L000003602	1	166267	166339	W		2011-02-03	2000-05-19	Alanine tRNA (tRNA-Ala), predicted by tRNAscan-SE analysis; one of 5 nuclear tRNA genes containing the tDNA-anticodon TGC (mature tRNA may be UGC or may contain modified bases), decodes GCA and probably GCG codons into alanine, one of 16 nuclear tRNAs for alanine
+S000034842	noncoding_exon					tA(UGC)A		1	166267	166339	W		2011-02-03	2000-05-19
+S000003110	ORF	Verified	YGL142C	GPI10		chromosome 7	L000004297	7	238119	236269	C		2011-02-03	1996-07-31	Integral membrane protein involved in glycosylphosphatidylinositol (GPI) anchor synthesis; putative alpha 1,2 mannosyltransferase required for addition of the third mannose onto the GPI core structure; human PIG-Bp is a functional homolog
