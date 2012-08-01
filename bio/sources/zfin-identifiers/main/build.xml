@@ -1,0 +1,4 @@
+<project name="zfin-identifiers-tasks" default="default" basedir=".">
+  <description>build zfin-identifiers tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>

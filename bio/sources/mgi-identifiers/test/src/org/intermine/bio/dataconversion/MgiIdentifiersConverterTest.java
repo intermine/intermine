@@ -12,26 +12,43 @@ package org.intermine.bio.dataconversion;
 
 
 import java.io.StringReader;
-import java.util.Collection;
 import java.util.HashMap;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.FullParser;
+import org.intermine.model.fulldata.Item;
 
+/**
+ * Unit test for MgiIdentifiersConverter
+ * @author intermine
+ *
+ */
 public class MgiIdentifiersConverterTest extends ItemsTestCase
 {
-    private String ENDL = System.getProperty("line.separator");
+    @SuppressWarnings("unused")
+    private static final String ENDL = System.getProperty("line.separator");
 
+    /**
+     * Constructor
+     * @param arg a
+     */
     public MgiIdentifiersConverterTest(String arg) {
         super(arg);
     }
 
+    /**
+     * Setup
+     * @throws Exception e
+     */
     public void setUp() throws Exception {
         super.setUp();
     }
 
+    /**
+     * To test process
+     * @throws Exception e
+     */
     public void testProcess() throws Exception {
         String input = "MGI:12345\t"
                 + "Gene\t"
@@ -50,9 +67,9 @@ public class MgiIdentifiersConverterTest extends ItemsTestCase
                 + "154617138";
 
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         BioFileConverter converter = new MgiIdentifiersConverter(itemWriter,
-                                                                   Model.getInstanceByName("genomic"));
+                Model.getInstanceByName("genomic"));
         converter.process(new StringReader(input));
         converter.close();
 

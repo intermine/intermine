@@ -1,0 +1,4 @@
+<project name="flybase-identifiers-tasks" default="default" basedir=".">
+  <description>build flybase-identifiers tasks</description>
+  <import file="../../../../imbuild/library.xml"/> 
+</project>
