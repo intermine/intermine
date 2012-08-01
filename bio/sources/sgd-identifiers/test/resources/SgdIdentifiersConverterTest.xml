@@ -1,37 +1,52 @@
 <items>
-<item id="2_1" class="DataSet">
-<attribute name="name" value="WormBase genes"/>
-<reference name="dataSource" ref_id="1_1"/>
+<item id="3_20" class="Gene">
+<attribute name="primaryIdentifier" value="S000003110"/>
+<attribute name="symbol" value="GPI10"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_1" class="Organism">
-<attribute name="taxonId" value="6239"/>
+<attribute name="taxonId" value="4932"/>
+</item>
+<item id="3_5" class="Gene">
+<attribute name="primaryIdentifier" value="S000028594"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_14" class="Gene">
+<attribute name="primaryIdentifier" value="S000000068"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="SGD genes"/>
 </item>
 <item id="5_1" class="SOTerm">
 <attribute name="name" value="gene"/>
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_1" class="Gene">
-<attribute name="name" value="rbg-3"/>
-<attribute name="primaryIdentifier" value="WBGene00007167"/>
-<attribute name="secondaryIdentifier" value="B0393.2"/>
-<attribute name="symbol" value="rbg-3"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="3_2" class="Gene">
-<attribute name="primaryIdentifier" value="WBGene00007168"/>
-<attribute name="secondaryIdentifier" value="B0393.3"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="WormBase"/>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="S000002143"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_12" class="Gene">
+<attribute name="primaryIdentifier" value="S000000067"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="SGD"/>
+<reference name="dataSource" ref_id="1_1"/>
 </item>
 </items>

@@ -21,37 +21,37 @@ import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
 
 /**
- * Unit test of FlybaseIdentifiersConverter
+ * Unit test of SgdIdentifiersConverter
  * @author Fengyuan Hu
  */
-public class FlyBaseIdentifiersConverterTest extends ItemsTestCase
+public class SgdIdentifiersConverterTest extends ItemsTestCase
 {
     Model model = Model.getInstanceByName("genomic");
-    FlyBaseIdentifiersConverter converter;
+    SgdIdentifiersConverter converter;
     MockItemWriter itemWriter;
 
-    public FlyBaseIdentifiersConverterTest(String arg) {
+    public SgdIdentifiersConverterTest(String arg) {
         super(arg);
     }
 
     public void setUp() throws Exception {
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
-        converter = new FlyBaseIdentifiersConverter(itemWriter, model);
+        converter = new SgdIdentifiersConverter(itemWriter, model);
     }
 
     public void testProcess() throws Exception {
         File srcFile = new File(getClass().getClassLoader().
-                getResource("fb_synonym_fb.tsv").toURI());
+                getResource("SGD_features.tab").toURI());
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
 
         converter.close();
 
         // uncomment to write out a new target items file
-        // writeItemsFile(itemWriter.getItems(), "flybase-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "sgd-tgt-items.xml");
 
-        Set<org.intermine.xml.full.Item> expected = readItemSet("FlyBaseIdentifiersConverterTest.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("SgdIdentifiersConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }
