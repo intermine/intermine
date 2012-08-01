@@ -245,7 +245,14 @@ public class MainHelperTest extends TestCase {
 
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap()).toString());
     }
-    
+
+    private static class DummyHelper implements RangeHelper {
+        @Override
+        public Constraint createConstraint(QueryNode node, PathConstraintRange con) {
+            return new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
+        }
+    }
+
     public void testRangeConstraint() throws Exception {
     	QueryClass qc = new QueryClass(EmploymentPeriod.class);
     	
@@ -262,23 +269,13 @@ public class MainHelperTest extends TestCase {
         	assertTrue(e.getMessage().contains("No range constraints are possible"));
         }
         
-        class DummyHelper implements RangeHelper {
-			@Override
-			public Constraint createConstraint(QueryNode node, PathConstraintRange con) {
-				return new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
-			}
-        }
+        
         
         MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
         
         org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(qc, con);
         assertEquals(exp, got);
     }
-
-    private QueryEvaluable QueryValue(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	public void testMakeQueryDateConstraint() throws Exception {
         // 11:02:39am Sun Nov 16, 2008
@@ -603,6 +600,15 @@ public class MainHelperTest extends TestCase {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Department.name\" sortOrder=\"Department.name asc\"><constraint path=\"Department.employees\" type=\"CEO\"/></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_ ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
+    }
+    
+    public void testRangeConstraintToSQL() throws Exception {
+        MainHelper.RangeConfig.reset();
+        MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
+
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" sortOrder=\"Employee.name asc\"><constraint path=\"Employee.employmentPeriod\" op=\"WITHIN\"><value>FOO</value></constraint></query>",
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar') ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar')) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
 
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
