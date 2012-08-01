@@ -75,7 +75,7 @@ public abstract class AbstractHelper implements RangeHelper {
 		// by default the same as within, with right and left swapped.
 		return new ConstraintOptions(
 			ConstraintOp.OR,
-			ConstraintOp.OR,
+			ConstraintOp.AND,
 			withinOpts.getLeftOp(),
 			withinOpts.getRightOp(),
 			withinOpts.getRightField(),
