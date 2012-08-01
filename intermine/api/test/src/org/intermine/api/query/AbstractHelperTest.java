@@ -73,13 +73,13 @@ public class AbstractHelperTest {
         ConstraintSet outsideExp = new ConstraintSet(AND);
         
         ConstraintSet outsideInner1 = new ConstraintSet(OR);
-        outsideInner1.addConstraint(new SimpleConstraint(end, ConstraintOp.LESS_THAN, startOf17May2008));
-        outsideInner1.addConstraint(new SimpleConstraint(start, ConstraintOp.GREATER_THAN_EQUALS, endOf17May2008));
+        outsideInner1.addConstraint(new SimpleConstraint(start, ConstraintOp.LESS_THAN, startOf17May2008));
+        outsideInner1.addConstraint(new SimpleConstraint(end, ConstraintOp.GREATER_THAN_EQUALS, endOf17May2008));
         outsideExp.addConstraint(outsideInner1);
         
         ConstraintSet outsideInner2 = new ConstraintSet(OR);
-        outsideInner2.addConstraint(new SimpleConstraint(end, LESS_THAN, startOfJan2012));
-        outsideInner2.addConstraint(new SimpleConstraint(start, GREATER_THAN_EQUALS, endOfJan2012));
+        outsideInner2.addConstraint(new SimpleConstraint(start, LESS_THAN, startOfJan2012));
+        outsideInner2.addConstraint(new SimpleConstraint(end, GREATER_THAN_EQUALS, endOfJan2012));
         outsideExp.addConstraint(outsideInner2);
         
         Constraint got = MainHelper.makeRangeConstraint(empPeriod, new PathConstraintRange("EmploymentPeriod", OUTSIDE, ranges));

@@ -92,7 +92,7 @@ public abstract class AbstractHelper implements RangeHelper {
      * @return The options that define what it means for the constrained object to be OUTSIDE a given set of ranges.
      */
     protected ConstraintOptions getOutsideOptions() {
-        return getWithinOptions().negateAndSwap();
+        return getWithinOptions().negate();
     }
 
     /**

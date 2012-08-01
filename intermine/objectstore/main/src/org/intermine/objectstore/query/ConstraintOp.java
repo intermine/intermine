@@ -87,7 +87,7 @@ public final class ConstraintOp
     /** Require that the first argument lie entirely within the second. **/
 	public static final ConstraintOp WITHIN = new ConstraintOp("WITHIN");
 	
-	/** Require that no part of the first argument lie within the second. **/
+	/** Require that some part of the first argument lie outside the second. **/
 	public static final ConstraintOp OUTSIDE = new ConstraintOp("OUTSIDE");
 
     private ConstraintOp(String name) {
