@@ -6,14 +6,20 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
 
+    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
+      <property name="source.db.name" value="flybase"/>
+      <property name="organisms" value="7227"/>
+      <property name="dataSourceName" value="FlyBase"/>
+      <property name="processors"
+                value="org.intermine.bio.dataconversion.FlyBaseProcessor org.intermine.bio.dataconversion.StockProcessor"/>
+      <property name="converter.class"
+                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
+    </source>
+
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
-<!--
-    <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
-    </source> 
--->
+
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
@@ -41,10 +47,6 @@
     </source>
 
     <source name="entrez-organism" type="entrez-organism">
-      <!-- this source finds the taxon ids in the objectstore, retrieves
-           species name and genus from Entrez into an InterMine format XML
-           file, loads that file into a target items DB, then into the final
-           objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
 
