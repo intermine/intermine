@@ -289,9 +289,8 @@
 
    <class className="org.intermine.model.bio.Interaction">
    <fields>
-     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-     <fieldconfig fieldExpr="shortName"/>
-     <fieldconfig fieldExpr="interactionType"/>
+     <fieldconfig fieldExpr="gene1.symbol"/>
+     <fieldconfig fieldExpr="gene2.symbol"/>
     </fields>
   </class>
 
