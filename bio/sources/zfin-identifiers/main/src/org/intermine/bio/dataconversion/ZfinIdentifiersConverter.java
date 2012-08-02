@@ -11,15 +11,22 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
 /**
+ * Data converter to load ZFIN Identifiers from:
+ * /micklem/data/zfin-identifiers/current/ensembl_1_to_1.txt
  *
  * @author Fengyuan Hu
  */
@@ -31,6 +38,9 @@ public class ZfinIdentifiersConverter extends BioFileConverter
     private static final String GENE_PATTERN = "ZDB-GENE";
     private static final String FISH_TAXON = "7955";
 
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Set<String> crossReferences = new HashSet<String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -41,13 +51,11 @@ public class ZfinIdentifiersConverter extends BioFileConverter
     }
 
     /**
-     *
+     * Read each line from flat file, create genes and cross references.
      *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-
-
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         // data is in format:
@@ -61,22 +69,46 @@ public class ZfinIdentifiersConverter extends BioFileConverter
             }
             String primaryidentifier = line[0];
             String symbol = line[1];
-            String secondaryIdentifier = line[2];
+            String crossReferenceIdentifier = line[2];
 
-            Item gene = createItem("Gene");
-            if (!StringUtils.isEmpty(primaryidentifier)) {
-                gene.setAttribute("primaryIdentifier", primaryidentifier);
+            String refId = identifiersToGenes.get(primaryidentifier);
+            if (refId == null) {
+                Item gene = createItem("Gene");
+                refId = gene.getIdentifier();
 
-                if (!StringUtils.isEmpty(symbol)) {
-                    gene.setAttribute("symbol", symbol);
+                if (!StringUtils.isEmpty(primaryidentifier)) {
+                    gene.setAttribute("primaryIdentifier", primaryidentifier);
+
+                    if (!StringUtils.isEmpty(symbol)) {
+                        gene.setAttribute("symbol", symbol);
+                    }
+                    if (!StringUtils.isEmpty(crossReferenceIdentifier)) {
+                        createCrossReference(refId, crossReferenceIdentifier);
+                    }
                 }
-                if (!StringUtils.isEmpty(secondaryIdentifier)) {
-                    gene.setAttribute("secondaryIdentifier", secondaryIdentifier);
-                }
+
+                gene.setReference("organism", getOrganism(FISH_TAXON));
+
+                identifiersToGenes.put(primaryidentifier, refId);
+                store(gene);
+            } else {
+                createCrossReference(refId, crossReferenceIdentifier);
             }
+        }
+    }
 
-            gene.setReference("organism", getOrganism(FISH_TAXON));
-            store(gene);
+    private void createCrossReference(String geneRefId, String identifier)
+            throws ObjectStoreException {
+        if (!StringUtils.isEmpty(identifier)) {
+            String key = geneRefId + identifier;
+            if (!crossReferences.contains(key)) {
+                Item item = createItem("CrossReference");
+                item.setAttribute("identifier", identifier);
+                item.setReference("subject", geneRefId);
+//                item.setReference("source", getDataSource(dataSource));
+                crossReferences.add(key);
+                store(item);
+            }
         }
     }
 }
