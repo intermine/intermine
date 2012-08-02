@@ -3,11 +3,11 @@
 <attribute name="pubMedId" value="11912189"/>
 </item>
 <item id="6_3" class="Comment">
-<attribute name="text" value="J. Biol. Chem. (0021-9258)"/>
+<attribute name="description" value="J. Biol. Chem. (0021-9258)"/>
 <attribute name="type" value="journal"/>
 </item>
 <item id="6_1" class="Comment">
-<attribute name="text" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
+<attribute name="description" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
 <attribute name="type" value="author-list"/>
 </item>
 <item id="10_2" class="Interaction">
@@ -45,7 +45,7 @@
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="6_2" class="Comment">
-<attribute name="text" value="2002"/>
+<attribute name="description" value="2002"/>
 <attribute name="type" value="publication-year"/>
 </item>
 <item id="10_1" class="Interaction">

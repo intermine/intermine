@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -458,76 +458,76 @@ public class PsiConverter extends BioFileConverter
         }
 
         private Item getInteraction(String refId, String gene2RefId) throws ObjectStoreException {
-        	MultiKey key = new MultiKey(refId, gene2RefId);
-        	Item interaction = interactions.get(key);
+            MultiKey key = new MultiKey(refId, gene2RefId);
+            Item interaction = interactions.get(key);
 
-        	if (interaction == null) {
-        		interaction = createItem("Interaction");
-        		interaction.setReference("gene1", refId);
-        		interaction.setReference("gene2", gene2RefId);
-        		interactions.put(key, interaction);
-        		store(interaction);
-        	}
-        	return interaction;
+            if (interaction == null) {
+                interaction = createItem("Interaction");
+                interaction.setReference("gene1", refId);
+                interaction.setReference("gene2", gene2RefId);
+                interactions.put(key, interaction);
+                store(interaction);
+            }
+            return interaction;
         }
 
         private void storeAll(InteractionHolder h) throws ObjectStoreException {
 
-        	// for every gene in interaction store interaction pair
+            // for every gene in interaction store interaction pair
             for (InteractorHolder gene1Interactor: h.interactors) {
 
                 Set<InteractorHolder> gene2Interactors
-                	= new HashSet<InteractorHolder>(h.interactors);
+                    = new HashSet<InteractorHolder>(h.interactors);
                 gene2Interactors.remove(gene1Interactor);
 
-            	for (String gene1RefId : gene1Interactor.geneRefIds) {
-            		storeDetails(h, gene1Interactor, gene2Interactors, gene1RefId);
-            	}
+                for (String gene1RefId : gene1Interactor.geneRefIds) {
+                    storeDetails(h, gene1Interactor, gene2Interactors, gene1RefId);
+                }
 
                 /* store all experiment-related items */
                 ExperimentHolder eh = h.eh;
                 if (!eh.isStored) {
-                	eh.isStored = true;
-                	try {
-                		eh.experiment.setCollection("comments", eh.comments);
-                		store(eh.experiment);
-                	} catch (ObjectStoreException e) {
-                		throw new RuntimeException("Couldn't store experiment: ", e);
-                	}
+                    eh.isStored = true;
+                    try {
+                        eh.experiment.setCollection("comments", eh.comments);
+                        store(eh.experiment);
+                    } catch (ObjectStoreException e) {
+                        throw new RuntimeException("Couldn't store experiment: ", e);
+                    }
                 }
             }
         }
 
         private void storeDetails(InteractionHolder h, InteractorHolder gene1Interactor,
-        		Set<InteractorHolder> gene2Interactors, String gene1RefId)
-        	throws ObjectStoreException {
+                Set<InteractorHolder> gene2Interactors, String gene1RefId)
+            throws ObjectStoreException {
 
-        	// interactors can have multiple genes
-        	for (InteractorHolder gene2Interactor : gene2Interactors) {
+            // interactors can have multiple genes
+            for (InteractorHolder gene2Interactor : gene2Interactors) {
 
-        		for (String gene2RefId : gene2Interactor.geneRefIds) {
-        			Item interaction = getInteraction(gene1RefId, gene2RefId);
-        			Item interactionDetail =  createItem("InteractionDetail");
-        			String shortName = h.shortName;
-        			interactionDetail.setAttribute("name", shortName);
-        			interactionDetail.setAttribute("role1", gene1Interactor.role);
-        			interactionDetail.setAttribute("role2", gene2Interactor.role);
-        			interactionDetail.setAttribute("type", INTERACTION_TYPE);
-        			if (h.confidence != null) {
-        				interactionDetail.setAttribute("confidence", h.confidence.toString());
-        			}
-        			if (h.confidenceText != null) {
-        				interactionDetail.setAttribute("confidenceText", h.confidenceText);
-        			}
-        			interactionDetail.setReference("relationshipType", h.termRefId);
-        			interactionDetail.setReference("experiment",
-        					h.eh.experiment.getIdentifier());
-        			interactionDetail.setReference("interaction", interaction);
-        			processRegions(h, interactionDetail, gene1Interactor, shortName,
-        					gene1RefId);
-        			store(interactionDetail);
-        		}
-        	}
+                for (String gene2RefId : gene2Interactor.geneRefIds) {
+                    Item interaction = getInteraction(gene1RefId, gene2RefId);
+                    Item interactionDetail =  createItem("InteractionDetail");
+                    String shortName = h.shortName;
+                    interactionDetail.setAttribute("name", shortName);
+                    interactionDetail.setAttribute("role1", gene1Interactor.role);
+                    interactionDetail.setAttribute("role2", gene2Interactor.role);
+                    interactionDetail.setAttribute("type", INTERACTION_TYPE);
+                    if (h.confidence != null) {
+                        interactionDetail.setAttribute("confidence", h.confidence.toString());
+                    }
+                    if (h.confidenceText != null) {
+                        interactionDetail.setAttribute("confidenceText", h.confidenceText);
+                    }
+                    interactionDetail.setReference("relationshipType", h.termRefId);
+                    interactionDetail.setReference("experiment",
+                            h.eh.experiment.getIdentifier());
+                    interactionDetail.setReference("interaction", interaction);
+                    processRegions(h, interactionDetail, gene1Interactor, shortName,
+                            gene1RefId);
+                    store(interactionDetail);
+                }
+            }
         }
 
         private void processRegions(InteractionHolder interactionHolder,
@@ -768,7 +768,7 @@ public class PsiConverter extends BioFileConverter
         }
 
         private void processComment(String s) {
-            comment.setAttribute("text", s);
+            comment.setAttribute("description", s);
             try {
                 store(comment);
             } catch (ObjectStoreException e) {
