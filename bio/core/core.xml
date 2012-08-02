@@ -54,8 +54,8 @@
   </class>
 
   <class name="Gene" extends="SequenceFeature" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <attribute name="ncbiGeneNumber" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="briefDescription" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   </class>
 
