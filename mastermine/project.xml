@@ -14,19 +14,25 @@
       <property name="src.data.dir" location="/micklem/data/zfin-identifiers/current"/>
     </source> 
    
+    <source name="sgd-identifiers" type="sgd-identifiers">
+      <property name="src.data.dir" location="/micklem/data/sgd-identifiers/current"/>
+    </source> 
+    
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
 
-   <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
-     <property name="organisms" value="9606"/>
-    </source>
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
-   <source name="rgd-identifiers" type="rgd-identifiers" dump="true">
+   
+   <source name="rgd-identifiers" type="rgd-identifiers">
       <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current"/>
+    </source>
+   
+   <source name="ncbi-gene" type="ncbi-gene" dump="true">
+     <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
+     <property name="organisms" value="9606"/>
     </source>
 
     <source name="panther" type="panther" dump="true">

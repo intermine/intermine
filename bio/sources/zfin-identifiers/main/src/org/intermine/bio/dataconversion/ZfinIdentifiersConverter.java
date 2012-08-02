@@ -20,7 +20,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
 
@@ -39,7 +38,6 @@ public class ZfinIdentifiersConverter extends BioFileConverter
     private static final String FISH_TAXON = "7955";
 
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
-    private Set<String> crossReferences = new HashSet<String>();
 
     /**
      * Constructor
@@ -83,7 +81,7 @@ public class ZfinIdentifiersConverter extends BioFileConverter
                         gene.setAttribute("symbol", symbol);
                     }
                     if (!StringUtils.isEmpty(crossReferenceIdentifier)) {
-                        createCrossReference(refId, crossReferenceIdentifier);
+                        createCrossReference(refId, crossReferenceIdentifier, "ZFIN", true);
                     }
                 }
 
@@ -92,22 +90,7 @@ public class ZfinIdentifiersConverter extends BioFileConverter
                 identifiersToGenes.put(primaryidentifier, refId);
                 store(gene);
             } else {
-                createCrossReference(refId, crossReferenceIdentifier);
-            }
-        }
-    }
-
-    private void createCrossReference(String geneRefId, String identifier)
-            throws ObjectStoreException {
-        if (!StringUtils.isEmpty(identifier)) {
-            String key = geneRefId + identifier;
-            if (!crossReferences.contains(key)) {
-                Item item = createItem("CrossReference");
-                item.setAttribute("identifier", identifier);
-                item.setReference("subject", geneRefId);
-//                item.setReference("source", getDataSource(dataSource));
-                crossReferences.add(key);
-                store(item);
+                createCrossReference(refId, crossReferenceIdentifier, "ZFIN", true);
             }
         }
     }
