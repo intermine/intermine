@@ -665,7 +665,7 @@
                      jspName="model/publicationAnnotationsDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
-                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
+                     parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence"
                      types="Publication"/>
 
     <!-- currently only works with classes with publications collection -->
@@ -941,18 +941,5 @@
                                 homologues.homologue.organism.shortName,
                                 homologues.type"/>
 
-      <bagtabledisplayer id="interactions" title="Interactions"
-                         pathStrings="Gene.interactions.interactingGenes"
-                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier, name"
-                         exportField="primaryIdentifier"
-                         typeClass="Gene"
-                         columnTitle="Interactions"
-                         views="secondaryIdentifier, symbol, organism.shortName,
-                                interactions.shortName, interactions.type.name,
-                                interactions.role,
-                                interactions.interactingGenes.primaryIdentifier,
-                                interactions.interactingGenes.symbol,
-                                interactions.experiment.name"/>
     </widgets>
 </webconfig>
