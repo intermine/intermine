@@ -50,7 +50,7 @@
     <merge-additions file="bio/sources/protein-atlas/protein-atlas_additions.xml"/>
     <merge-additions file="bio/sources/ncbi-summaries/ncbi-summaries_additions.xml"/>
     <merge-additions file="bio/sources/psi-mi-ontology/psi-mi-ontology_additions.xml"/>
-    <merge-additions file="bio/sources/flybase-expression/flybase-expression_additions.xml"/>
+    <merge-additions file="bio/sources/flymine/flybase-expression/flybase-expression_additions.xml"/>
     <merge-additions file="bio/sources/panther/panther_additions.xml"/>
     <merge-additions file="bio/sources/homologene/homologene_additions.xml"/>
     <merge-additions file="bio/sources/orthodb/orthodb_additions.xml"/>

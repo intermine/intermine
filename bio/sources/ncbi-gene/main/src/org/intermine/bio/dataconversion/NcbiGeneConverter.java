@@ -202,7 +202,7 @@ public class NcbiGeneConverter extends BioFileConverter
                     }
 
                     if (record.mapLocation != null) {
-                        gene.setAttribute("mapLocation", record.mapLocation);
+                        gene.setAttribute("cytoLocation", record.mapLocation);
                     }
                     store(gene);
 
