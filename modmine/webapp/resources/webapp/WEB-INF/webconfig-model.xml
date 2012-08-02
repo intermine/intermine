@@ -760,7 +760,7 @@
                      jspName="model/publicationAnnotationsDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
-                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence,Submission"
+                     parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence,Submission"
                      types="Publication"/>
 
     <!-- currently only works with classes with publications collection -->
@@ -926,16 +926,6 @@
                          exportField="primaryIdentifier"
                          typeClass="org.intermine.model.bio.Gene"
                          columnTitle="Orthologues"/>
-
-      <bagtabledisplayer id="interactions" title="Interactions"
-                         pathStrings="Gene.interactions.interactingGenes"
-                         link="org.intermine.bio.web.widget.InteractionURLQuery"
-                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier"
-                         exportField="primaryIdentifier"
-                         typeClass="org.intermine.model.bio.Gene"
-                         columnTitle="Interactions"
-                         style="height:431px;"/>
 
       <htmldisplayer id="dummy" title="Your Widget Idea Here"
                       description=""
