@@ -458,9 +458,9 @@ public class UniprotConverter extends BioDirectoryConverter
                         String ellipses = "...";
                         String choppedComment = commentText.substring(
                                 0, POSTGRES_INDEX_SIZE - ellipses.length());
-                        item.setAttribute("text", choppedComment + ellipses);
+                        item.setAttribute("description", choppedComment + ellipses);
                     } else {
-                        item.setAttribute("text", commentText);
+                        item.setAttribute("description", commentText);
                     }
                     String refId = item.getIdentifier();
                     try {

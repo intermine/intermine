@@ -27,7 +27,7 @@
   <class name="Chromosome"  extends="SequenceFeature" is-interface="true"/>
 
   <class name="Comment" is-interface="true">
-    <attribute name="text" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
   </class>
 
