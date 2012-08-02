@@ -35,7 +35,6 @@
     <attribute name="identifier" type="java.lang.String"/>
     <reference name="source" referenced-type="DataSource"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="crossReferences" />
-    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <class name="DataSource" is-interface="true">
