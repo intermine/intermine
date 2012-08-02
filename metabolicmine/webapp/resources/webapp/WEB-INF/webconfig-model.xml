@@ -197,16 +197,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Interaction">
-   <fields>
-     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-     <fieldconfig fieldExpr="shortName"/>
-     <fieldconfig fieldExpr="confidenceText"/>
-     <fieldconfig fieldExpr="confidence"/>
-     <fieldconfig fieldExpr="role"/>
-    </fields>
-  </class>
-
   <class className="org.intermine.model.bio.InteractionTerm">
     <fields>
       <fieldconfig fieldExpr="identifier"/>
