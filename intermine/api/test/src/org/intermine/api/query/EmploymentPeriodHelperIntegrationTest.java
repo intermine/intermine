@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -36,8 +37,21 @@ public class EmploymentPeriodHelperIntegrationTest {
 
     private static ObjectStoreWriter osw;
     private static final Logger LOG = Logger.getLogger(EmploymentPeriodHelperIntegrationTest.class);
-    private static final int EMP_COUNT = 1000;
+    protected static final int EMP_COUNT = 1000;
+    
+    protected Collection<String> ranges = Arrays.asList("2010-07-30 .. 2010-09-06");
+    
+    protected Results runQuery(String path, ConstraintOp op, Collection<String> ranges) throws ObjectStoreException {
+        PathQuery pq = new PathQuery(osw.getModel());
+        pq.addViews("Employee.name");
+        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
+        pq.addConstraint(new PathConstraintRange(path, op, ranges));
+        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
 
+        Results res = osw.execute(q, 50000, true, false, true);
+        return res;
+    }
+    
     @BeforeClass
     public static void loadData() throws ObjectStoreException {
         try {
@@ -57,6 +71,10 @@ public class EmploymentPeriodHelperIntegrationTest {
         Calendar then = (Calendar) when.clone();
         then.add(Calendar.MONTH, 1);
         
+        int col0 = (int) 'A';
+        int col1 = (int) 'a';
+        int col2 = (int) 'a';
+        
         try {
             osw.beginTransaction();
             for (int i = 0; i < EMP_COUNT; i++) {
@@ -65,7 +83,21 @@ public class EmploymentPeriodHelperIntegrationTest {
                 e.setName(String.format("temp-employee-%03d", i));
                 e.setAge(made + 20);
                 e.setFullTime(i % 2 == 0);
-                
+
+                e.setEnd(String.format("%s%s%s",
+                    Character.toString((char) col0),
+                    Character.toString((char) col1),
+                    Character.toString((char) col2)));
+                col2++;
+                if (col2 > (int) 'l') {
+                    col2 = (int) 'a';
+                    col1++;
+                }
+                if (col1 > (int) 'l') {
+                    col1 = (int) 'a';
+                    col0++;
+                }
+
                 EmploymentPeriod ep = new EmploymentPeriod();
                 ep.setStart(when.getTime());
                 ep.setEnd(then.getTime());
@@ -150,6 +182,18 @@ public class EmploymentPeriodHelperIntegrationTest {
         MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new EmploymentPeriodHelper());
     }
     
+    protected void showRow(Object o) {
+        List row = (List) o;
+        Employee emp = (Employee) row.get(0);
+        showEmployee(emp);
+        
+    }
+
+    protected void showEmployee(Employee e) {
+        EmploymentPeriod ep = e.getEmploymentPeriod();
+        System.out.printf("%s (%s .. %s)\n", e.getName(), ep.getStart(), ep.getEnd());
+    }
+
     @Test
     public void testSanity() throws ObjectStoreException {
         
@@ -163,26 +207,14 @@ public class EmploymentPeriodHelperIntegrationTest {
         Results res = osw.execute(q, 50000, true, false, true);
         assertEquals(res.size(), EMP_COUNT);
         for (Object row: res) {
-            List<Object> l = (List<Object>) row;
-            Employee emp = (Employee) l.get(0);
-            EmploymentPeriod ep = (EmploymentPeriod) l.get(1);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), ep.getStart(), ep.getEnd());
+            showRow(row);
         }
     }
+
     
     @Test
     public void testWithin() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews("Employee.name");
-        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
-        List<String> ranges = Arrays.asList("2010-07-30 .. 2010-09-06");
-        pq.addConstraint(
-            new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.WITHIN, ranges));
-        
-        Query q = MainHelper.makeQuery(
-                pq, new HashMap(), new HashMap(), null, new HashMap());
-
-        Results res = osw.execute(q, 50000, true, false, true);
+        Results res = runQuery("Employee.employmentPeriod", ConstraintOp.WITHIN, ranges);
         assertEquals(10, res.size());
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
@@ -196,21 +228,11 @@ public class EmploymentPeriodHelperIntegrationTest {
 
     @Test
     public void testOutside() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews("Employee.name");
-        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
-        List<String> ranges = Arrays.asList("2010-07-30 .. 2010-09-06");
-        pq.addConstraint(
-            new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OUTSIDE, ranges));
+        Results res = runQuery("Employee.employmentPeriod", ConstraintOp.OUTSIDE, ranges);
 
-        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
-
-        Results res = osw.execute(q, 50000, true, false, true);
-        
         for (Object row: res) {
-            List<Object> l = (List<Object>) row;
-            Employee emp = (Employee) l.get(0);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStart(), emp.getEmploymentPeriod().getEnd());
+            showRow(row);
+            Employee emp = (Employee) ((List) row).get(0);
             assertTrue(
                 String.format("%s does not start with temp-employee-91", emp.getName()),
                 !emp.getName().startsWith("temp-employee-91")
@@ -222,17 +244,7 @@ public class EmploymentPeriodHelperIntegrationTest {
 
     @Test
     public void testOverlaps() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews("Employee.name");
-        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
-        List<String> ranges = Arrays.asList("2010-07-30 .. 2010-09-06");
-        pq.addConstraint(
-            new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, ranges));
-
-        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
-
-        Results res = osw.execute(q, 50000, true, false, true);
-        
+        Results res = runQuery("Employee.employmentPeriod", ConstraintOp.OVERLAPS, ranges);
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
@@ -246,17 +258,7 @@ public class EmploymentPeriodHelperIntegrationTest {
 
     @Test
     public void testDoesntOverlap() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews("Employee.name");
-        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
-        List<String> ranges = Arrays.asList("2010-07-30 .. 2010-09-06");
-        pq.addConstraint(
-            new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.DOES_NOT_OVERLAP, ranges));
-
-        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
-
-        Results res = osw.execute(q, 50000, true, false, true);
-        
+        Results res = runQuery("Employee.employmentPeriod", ConstraintOp.DOES_NOT_OVERLAP, ranges);
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
@@ -268,17 +270,8 @@ public class EmploymentPeriodHelperIntegrationTest {
     
     @Test
     public void testContains() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews("Employee.name");
-        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
         List<String> ranges = Arrays.asList("2010-07-30");
-        pq.addConstraint(
-            new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.CONTAINS, ranges));
-
-        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
-
-        Results res = osw.execute(q, 50000, true, false, true);
-        
+        Results res = runQuery("Employee.employmentPeriod", ConstraintOp.CONTAINS, ranges);
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
@@ -290,17 +283,8 @@ public class EmploymentPeriodHelperIntegrationTest {
 
     @Test
     public void testDoesntContain() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews("Employee.name");
-        pq.addConstraint(Constraints.eq("Employee.name", "temp*"));
         List<String> ranges = Arrays.asList("2010-07-30");
-        pq.addConstraint(
-            new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.DOES_NOT_CONTAIN, ranges));
-
-        Query q = MainHelper.makeQuery(pq, new HashMap(), new HashMap(), null, new HashMap());
-
-        Results res = osw.execute(q, 50000, true, false, true);
-        
+        Results res = runQuery("Employee.employmentPeriod", ConstraintOp.DOES_NOT_CONTAIN, ranges);
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
