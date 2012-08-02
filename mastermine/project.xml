@@ -6,16 +6,14 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
 
-    <source name="chado-db-flybase-dmel" type="chado-db" dump="true">
-      <property name="source.db.name" value="flybase"/>
-      <property name="organisms" value="7227"/>
-      <property name="dataSourceName" value="FlyBase"/>
-      <property name="processors"
-                value="org.intermine.bio.dataconversion.FlyBaseProcessor org.intermine.bio.dataconversion.StockProcessor"/>
-      <property name="converter.class"
-                value="org.intermine.bio.dataconversion.ChadoDBConverter"/>
-    </source>
-
+    <source name="flybase-identifiers" type="flybase-identifiers">
+      <property name="src.data.dir" location="/micklem/data/flybase-identifiers/current"/>
+    </source>   
+   
+    <source name="zfin-identifiers" type="zfin-identifiers">
+      <property name="src.data.dir" location="/micklem/data/zfin-identifiers/current"/>
+    </source> 
+   
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
