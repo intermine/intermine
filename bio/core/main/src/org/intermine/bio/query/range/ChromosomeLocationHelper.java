@@ -3,10 +3,6 @@ package org.intermine.bio.query.range;
 import java.util.regex.Pattern;
 
 import org.intermine.api.query.RangeHelper;
-import org.intermine.api.query.range.AbstractHelper;
-import org.intermine.api.query.range.ConstraintOptions;
-import org.intermine.api.query.range.Range;
-import org.intermine.model.bio.BioEntity;
 import org.intermine.model.bio.Chromosome;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -20,7 +16,6 @@ import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
-import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
