@@ -191,7 +191,7 @@ public class NcbiGeneConverter extends BioFileConverter
                         gene.setAttribute("name", record.defaultName);
                     }
 
-                    boolean loadEnsembl = false;
+                    boolean loadEnsembl = true; // Load Ensembl id for genes
                     if (loadEnsembl) {
                         if (record.ensemblIds != null) {
                             for (String ensemblId : record.ensemblIds) {
@@ -201,7 +201,9 @@ public class NcbiGeneConverter extends BioFileConverter
                         }
                     }
 
+                    // Remove the test if chado-db converter is not loaded
                     if (record.mapLocation != null) {
+                        // cytoLocation attribute is set in chado-db_additions.xml
                         gene.setAttribute("cytoLocation", record.mapLocation);
                     }
                     store(gene);
