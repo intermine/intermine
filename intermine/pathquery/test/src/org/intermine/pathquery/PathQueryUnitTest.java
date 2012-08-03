@@ -696,6 +696,12 @@ public class PathQueryUnitTest extends TestCase
         q.addConstraint(new PathConstraintMultitype( // No such classes Foo and Bar
                 "Employee", ConstraintOp.ISA, Arrays.asList("Foo", "Bar")));
         assertTrue(!q.isValid());
+        
+        q.clearConstraints();
+        assertTrue(q.isValid());
+        q.addConstraint(new PathConstraintMultitype( // Path is an attribute.
+                "Employee.name", ConstraintOp.ISA, Arrays.asList("Contractor", "Manager")));
+        assertTrue(!q.isValid());
     }
 
     public void testVerifyQuery() throws Exception {
