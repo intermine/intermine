@@ -1650,6 +1650,21 @@ public class PathQuery implements Cloneable
                                 + " must not be on an attribute");
                         continue;
                     }
+                } else if (constraint instanceof PathConstraintMultitype) {
+                    if (path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint + " must be on a class or reference");
+                        continue;
+                    }
+                    for (String typeName: ((PathConstraintMultitype) constraint).getValues()) {
+                        ClassDescriptor cd = model.getClassDescriptorByName(typeName);
+                        if (cd == null) {
+                            problems.add(String.format("Type '%s' named in [%s] is not in the model",
+                                    typeName, constraint));
+                        } else if (!cd.getAllSuperDescriptors().contains(path.getEndClassDescriptor())) {
+                            problems.add(String.format("%s is not a subtype of %s, as required by %s",
+                                    typeName, path.getEndClassDescriptor(), constraint));
+                        }
+                    }
                 } else if (constraint instanceof PathConstraintRange) {
                     // Cannot verify these constraints until we try and make the query in the MainHelper.
                 } else if (constraint instanceof PathConstraintMultiValue) {
