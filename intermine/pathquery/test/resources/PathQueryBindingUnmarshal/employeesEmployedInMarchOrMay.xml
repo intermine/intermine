@@ -1,0 +1,6 @@
+<query model="testmodel" view="Employee.name Employee.age Employee.department.name">
+	<constraint path="Employee.employmentPeriod" op="OVERLAPS">
+		<value>01-03-2012 .. 31-03-2012</value>
+		<value>01-05-2012 .. 31-05-2012</value>
+	</constraint>
+</query>

@@ -30,6 +30,7 @@
         <attribute name="end" type="java.lang.String"/>
         <reference name="department" referenced-type="Department" reverse-reference="employees"/>
         <reference name="departmentThatRejectedMe" referenced-type="Department" reverse-reference="rejectedEmployee"/>
+        <reference name="employmentPeriod" referenced-type="EmploymentPeriod"/>
         <collection name="simpleObjects" referenced-type="SimpleObject" reverse-reference="employee"/>
     </class>
     <class name="Department" extends="RandomInterface" is-interface="false">
@@ -89,6 +90,10 @@
     <class name="SimpleObject" is-interface="false" extends="java.lang.Object">
         <attribute name="name" type="java.lang.String"/>
         <reference name="employee" referenced-type="Employee" reverse-reference="simpleObjects"/>
+    </class>
+    <class name="EmploymentPeriod" is-interface="false">
+        <attribute name="start" type="java.util.Date"/>
+        <attribute name="end" type="java.util.Date"/>
     </class>
     <class name="Range" is-interface="false">
         <attribute name="rangeStart" type="int"/>

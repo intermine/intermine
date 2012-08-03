@@ -164,6 +164,9 @@ executeLog*
 # /intermine/web/test
 /intermine/web/test/properties
 
+# intermine/api/test
+/intermine/api/test/properties
+
 # /intermine/web/test/src/org/intermine/webservice/server/output/
 /intermine/web/test/src/org/intermine/webservice/server/output/RowResultProcessorBenchmark.java
 /intermine/web/test/src/org/intermine/webservice/server/output/FilterBenchmarkTest.java
