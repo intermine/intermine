@@ -3,7 +3,8 @@ package org.intermine.bio.query.range;
 import java.util.regex.Pattern;
 
 import org.intermine.api.query.RangeHelper;
-import org.intermine.model.bio.Chromosome;
+import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
@@ -23,8 +24,22 @@ import org.intermine.pathquery.PathConstraintRange;
 
 public class ChromosomeLocationHelper implements RangeHelper
 {
-    private QueryClass chromosome = new QueryClass(Chromosome.class);
-    private QueryField chrIdField = new QueryField(chromosome, "primaryIdentifier");
+    private final QueryClass chromosome;
+    private final QueryField chrIdField;
+    
+    public ChromosomeLocationHelper() {
+        Model model = Model.getInstanceByName("genomic");
+        if (model == null) {
+            throw new RuntimeException("No genomic model is available");
+        }
+        ClassDescriptor chr = model.getClassDescriptorByName("Chromosome");
+        if (chr == null) {
+            throw new RuntimeException("This genomic model does not contain Chromosomes");
+        }
+        
+        chromosome = new QueryClass(chr.getType());
+        chrIdField = new QueryField(chromosome, "primaryIdentifier");
+    }
     
     @Override
     public Constraint createConstraint(Queryable q, QueryNode n, PathConstraintRange pcr) {
