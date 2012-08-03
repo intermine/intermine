@@ -575,7 +575,15 @@ public final class MainHelper
         }
     }
 
-    private static Constraint makeMultiTypeConstraint(
+    /**
+     * Construct a new multi-type constraint. 
+     * @param model The model to look for types within.
+     * @param field The subject of the constraint.
+     * @param pcmt The constraint itself.
+     * @return A constraint.
+     * @throws ObjectStoreException if the constraint names types that are not in the model.
+     */
+    protected static Constraint makeMultiTypeConstraint(
             Model model,
             QueryNode field,
             PathConstraintMultitype pcmt) throws ObjectStoreException {
@@ -585,7 +593,7 @@ public final class MainHelper
         Set<Class<?>> classes = new HashSet<Class<?>>();
         for (String name: pcmt.getValues()) {
             ClassDescriptor cd = model.getClassDescriptorByName(name);
-            if (cd == null) {
+            if (cd == null) { // PathQueries should take care of this, but you know. 
               throw new ObjectStoreException(
                   String.format("%s is not a class in the %s model", name, model.getName()));
             }
