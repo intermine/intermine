@@ -194,7 +194,9 @@ public class PathQueryBinding
                 }
                 writer.writeAttribute("ids", sb.toString());
             } else if (constraint.getKey() instanceof PathConstraintMultiValue) {
+            	// Includes PathConstraintRange, which is serialised in the exact same manner.
                 writer.writeAttribute("op", "" + constraint.getKey().getOp());
+                
                 for (String value : ((PathConstraintMultiValue) constraint.getKey()).getValues()) {
                     if (!value.equals(value.trim())) {
                         throw new XMLStreamException("Value in MultiValue starts or ends with "

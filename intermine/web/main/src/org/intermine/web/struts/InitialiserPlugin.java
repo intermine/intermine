@@ -56,6 +56,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.UserNotFoundException;
+import org.intermine.api.query.MainHelper;
 import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.tag.TagNames;
@@ -553,6 +554,7 @@ public class InitialiserPlugin implements PlugIn
         SessionMethods.setPropertiesOrigins(servletContext, origins);
         Properties trimProperties = trimProperties(webProperties);
         SessionMethods.setWebProperties(servletContext, trimProperties);
+        MainHelper.loadHelpers(trimProperties);
         return trimProperties;
     }
 

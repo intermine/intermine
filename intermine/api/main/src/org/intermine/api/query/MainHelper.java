@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -34,6 +35,8 @@ import org.intermine.api.bag.BagQueryResult;
 import org.intermine.api.bag.BagQueryRunner;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.query.range.IntHelper;
+import org.intermine.api.query.range.StringHelper;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
@@ -81,6 +84,7 @@ import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
@@ -365,6 +369,7 @@ public final class MainHelper
                                         pca.getOp(), new QueryValue(TypeUtil.stringToObject(
                                                 fieldType, pca.getValue()))));
                         }
+                    
                     } else if (constraint instanceof PathConstraintNull) {
                         // This is a null constraint. If it is on a class, then we need do nothing,
                         // as the mere presence of the constraint has caused the class to make it
@@ -402,6 +407,9 @@ public final class MainHelper
                         codeToConstraint.put(code, new BagConstraint(new QueryField(
                                         (QueryClass) field, "id"), constraint.getOp(),
                                     ((PathConstraintIds) constraint).getIds()));
+                    } else if (constraint instanceof PathConstraintRange) {
+                        PathConstraintRange pcr = (PathConstraintRange) constraint;
+                        codeToConstraint.put(code, makeRangeConstraint(q, (QueryNode) field, pcr));
                     } else if (constraint instanceof PathConstraintMultiValue) {
                         Class<?> fieldType = path.getEndType();
                         if (String.class.equals(fieldType)) {
@@ -732,10 +740,48 @@ public final class MainHelper
     /**
      * Make a SimpleConstraint for the given Date Constraint.  The time stored in the Date will be
      * ignored.  Example webapp constraints and the coresponding object store constraints:
-     * "&lt;= 2008-01-02"  --&gt;  "&gt;= 2008-01-02 23:59:59"
-     * " &gt; 2008-01-02"  --&gt;  " &lt; 2008-01-02 00:00:00"
-     * " &gt; 2008-01-02"  --&gt;   "&gt; 2008-01-02 23:59:59"
-     * "&gt;= 2008-01-02"  --&gt;   "&gt; 2008-01-02 00:00:00".
+     * <table>
+     *     <thead>
+     *       <tr>
+     *         <th>Webapp Version</th>
+     *         <th>ObjectStore Version</th>
+     *      </tr>
+     *  </thead>
+     *  <tbody>
+     *    <tr>
+     *      <td>
+     *          <code>&lt;= 2008-01-02</code>
+     *      </td>
+     *      <td>
+     *          <code>&gt;= 2008-01-02 23:59:59</code>
+     *         </td>
+     *     </tr>
+     *     <tr>
+     *      <td>
+     *          <code>&gt; 2008-01-02</code>
+     *      </td>
+     *      <td>
+     *          <code>&lt; 2008-01-02 00:00:00</code>
+     *         </td>
+     *     </tr>
+     *     <tr>
+     *      <td>
+     *          <code>&gt; 2008-01-02</code>
+     *      </td>
+     *      <td>
+     *          <code>&gt; 2008-01-02 23:59:59</code>
+     *         </td>
+     *     </tr>
+     *     <tr>
+     *      <td>
+     *          <code>&gt;= 2008-01-02</code>
+     *      </td>
+     *      <td>
+     *          <code>&gt; 2008-01-02 00:00:00</code>
+     *         </td>
+     *     </tr>
+     *   </tbody>
+     * </table>
      *
      * @param qf the QueryNode in the new query
      * @param c the webapp constraint
@@ -854,8 +900,8 @@ public final class MainHelper
      * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(
-    		PathQuery pathQuery,
-    		Map<String, InterMineBag> savedBags,
+            PathQuery pathQuery,
+            Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             String summaryPath,
             ObjectStore os,
@@ -885,13 +931,13 @@ public final class MainHelper
      * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(
-    		PathQuery pathQuery,
-    		String summaryPath,
+            PathQuery pathQuery,
+            String summaryPath,
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner)
             throws ObjectStoreException {
-    	return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode, bagQueryRunner, false);
+        return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode, bagQueryRunner, false);
     }
 
     /**
@@ -907,8 +953,8 @@ public final class MainHelper
      * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(
-    		PathQuery pathQuery,
-    		String summaryPath,
+            PathQuery pathQuery,
+            String summaryPath,
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner,
@@ -937,7 +983,7 @@ public final class MainHelper
     }
 
     private static Query recursiveMakeSummaryQuery(
-    		Map<String, QuerySelectable>
+            Map<String, QuerySelectable>
             origPathToQueryNode,
             String summaryPath,
             Query subQ, Set<QuerySelectable> oldSelect,
@@ -1104,7 +1150,7 @@ public final class MainHelper
     }
     
     private static boolean isNumeric(Class<?> summaryType) {
-    	return (summaryType == Long.class) || (summaryType == Integer.class)
+        return (summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
                 || (summaryType == Float.class) || (summaryType == Double.class)
                 || (summaryType == BigDecimal.class);
@@ -1248,6 +1294,80 @@ public final class MainHelper
 
         return q;
     }
+    
+    public static void loadHelpers(Properties props) {
+        RangeConfig.loadHelpers(props);
+    }
+    
+    protected static final class RangeConfig
+    {
+        private RangeConfig() {
+            // Restricted constructor.
+        }
+        
+        protected static Map<Class<?>, RangeHelper> rangeHelpers;
+        
+        static {
+            init();
+        }
+        
+        protected static void reset() {
+            init();
+        }
+        
+        private static void init() {
+            rangeHelpers = new HashMap<Class<?>, RangeHelper>();
+            // Default basic helpers.
+            rangeHelpers.put(int.class, new IntHelper());
+            rangeHelpers.put(Integer.class, new IntHelper());
+            rangeHelpers.put(String.class, new StringHelper());
+            loadHelpers(PropertiesUtil.getProperties());
+        }
+        
+        protected static void loadHelpers(Properties allProps) {
+            Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.", allProps);
+            for (String key: props.stringPropertyNames()) {
+                String[] parts = key.split("\\.", 3);
+                if (parts.length != 3) {
+                    throw new IllegalStateException(
+                        "Property names must be in the format pathquery.range.${FullyQualifiedClassName}, got '" + key + "'"
+                    );
+                }
+                String targetTypeName = parts[2];
+                Class<?> targetType;
+                try {
+                     targetType = Class.forName(targetTypeName);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Cannot find class named in config: '" + key + "'", e);
+                }
+                String helperName = props.getProperty(key);
+                Class<RangeHelper> helperType;
+                try {
+                    helperType = (Class<RangeHelper>) Class.forName(helperName);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Cannot find class named in congfig: '" + helperName + "'");
+                }
+                RangeHelper helper;
+                try {
+                    helper = helperType.newInstance();
+                } catch (InstantiationException e) {
+                    throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
+                }
+                rangeHelpers.put(targetType, helper);
+                LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName() + ")");
+            }
+        }
+        
+        public static boolean hasHelperForType(Class<?> type) {
+            return rangeHelpers.containsKey(type);
+        }
+        
+        public static RangeHelper getHelper(Class<?> type) {
+            return rangeHelpers.get(type);
+        }
+    }
 
     /**
      * Controls access to configuration information on which fields should be summarised as a count
@@ -1300,6 +1420,20 @@ public final class MainHelper
             return Integer.valueOf(
                     PropertiesUtil.getProperties().getProperty("querySummary.no-of-bins", "20"));
         }
+    }
+
+    public static Constraint makeRangeConstraint(
+            Queryable q,
+            QueryNode node,
+            PathConstraintRange con) {
+        Class<?> type = node.getType();
+
+        if (RangeConfig.hasHelperForType(type)) {
+            RangeHelper helper = RangeConfig.getHelper(type);
+            
+            return helper.createConstraint(q, node, con);
+        }
+        throw new RuntimeException("No range constraints are possible for paths of type " + type.getName());
     }
 
 }
