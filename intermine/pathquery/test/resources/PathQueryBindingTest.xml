@@ -27,5 +27,15 @@
   	     sortOrder="Employee.department.name asc Employee.address.address desc"
   />
   <query name="viewOnly" model="testmodel" view="Company.name Company.vatNumber"/>
+  <query name="rangeQueries" model="testmodel" view="Employee.name">
+  	<constraint path="Employee.age" op="WITHIN">
+  		<value>40 .. 50</value>
+  		<value>55 .. 60</value>
+  	</constraint>
+  	<constraint path="Employee.employmentPeriod" op="OVERLAPS">
+  		<value>01-01-2012</value>
+  	</constraint>
+  </query>
+  
 
 </query-list>

@@ -171,6 +171,15 @@ public class PathQueryUnmarshalTest extends  TestCase
         fail("Expected exception, but got: " + pq.toString() );
     }
 
+    public void testRangeConstraint() {
+    	PathQuery pq = createQuery("employeesEmployedInMarchOrMay.xml");
+    	
+    	assertEquals(1, pq.getConstraints().size());
+    	PathConstraint pc = pq.getConstraints().keySet().iterator().next();
+    	assertTrue(pc instanceof PathConstraintRange);
+    	assertEquals(2, ((PathConstraintRange) pc).getValues().size());
+    }
+
     public void testMultipleQueries() {
         String path = "PathQueryBindingUnmarshal/MultipleQueries.xml";
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
@@ -224,6 +233,9 @@ public class PathQueryUnmarshalTest extends  TestCase
     private PathQuery createQuery(String fileName)  {
         String path = "PathQueryBindingUnmarshal/" + fileName;
         InputStream is = getClass().getClassLoader().getResourceAsStream(path);
+        if (is == null) {
+        	throw new RuntimeException("Could not find the required XML file: " + path);
+        }
         Model model = Model.getInstanceByName("testmodel");
         PathQuery ret = PathQueryBinding.unmarshalPathQueries(new InputStreamReader(is), 1).values().iterator().next();
         return ret;

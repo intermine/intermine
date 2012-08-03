@@ -35,6 +35,7 @@ import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.model.testmodel.EmploymentPeriod;
 import org.intermine.model.testmodel.Types;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreFactory;
@@ -47,11 +48,14 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryEvaluable;
 import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathConstraintAttribute;
+import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
@@ -243,7 +247,36 @@ public class MainHelperTest extends TestCase {
         assertEquals(q.toString(), MainHelper.makeQuery(pq, new HashMap(), null, bagQueryRunner, new HashMap()).toString());
     }
 
-    public void testMakeQueryDateConstraint() throws Exception {
+    private static class DummyHelper implements RangeHelper {
+        @Override
+        public Constraint createConstraint(Queryable q, QueryNode node, PathConstraintRange con) {
+            return new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
+        }
+    }
+
+    public void testRangeConstraint() throws Exception {
+    	QueryClass qc = new QueryClass(EmploymentPeriod.class);
+    	
+        Constraint exp = new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
+        
+        List<String> ranges = Arrays.asList("2008-11-17");
+        PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", ConstraintOp.WITHIN, ranges);
+        
+        MainHelper.RangeConfig.reset(); // Call to avoid setup conflict.
+        
+        try {
+        	MainHelper.makeRangeConstraint(null, qc, con);
+        } catch (RuntimeException e) {
+        	assertTrue(e.getMessage().contains("No range constraints are possible"));
+        }
+        
+        MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
+        
+        org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(null, qc, con);
+        assertEquals(exp, got);
+    }
+
+	public void testMakeQueryDateConstraint() throws Exception {
         // 11:02:39am Sun Nov 16, 2008
         QueryClass qc = new QueryClass(Types.class);
         QueryField qn = new QueryField(qc, "dateObjType");
@@ -566,6 +599,15 @@ public class MainHelperTest extends TestCase {
         doQuery("<query name=\"test\" model=\"testmodel\" view=\"Department.name\" sortOrder=\"Department.name asc\"><constraint path=\"Department.employees\" type=\"CEO\"/></query>",
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_ ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Department AS a1_, org.intermine.model.testmodel.CEO AS a2_ WHERE a1_.employees CONTAINS a2_) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
+    }
+    
+    public void testRangeConstraintToSQL() throws Exception {
+        MainHelper.RangeConfig.reset();
+        MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
+
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" sortOrder=\"Employee.name asc\"><constraint path=\"Employee.employmentPeriod\" op=\"WITHIN\"><value>FOO</value></constraint></query>",
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar') ORDER BY a1_.name",
+                "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar')) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
 
     public void doQuery(String web, String iql, String ... summaries) throws Exception {

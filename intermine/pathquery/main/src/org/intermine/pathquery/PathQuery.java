@@ -1650,6 +1650,8 @@ public class PathQuery implements Cloneable
                                 + " must not be on an attribute");
                         continue;
                     }
+                } else if (constraint instanceof PathConstraintRange) {
+                    // Cannot verify these constraints until we try and make the query in the MainHelper.
                 } else if (constraint instanceof PathConstraintMultiValue) {
                     if (!path.endIsAttribute()) {
                         problems.add("Constraint " + constraint + " must be on an attribute");
