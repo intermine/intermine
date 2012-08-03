@@ -408,8 +408,8 @@ public final class MainHelper
                                         (QueryClass) field, "id"), constraint.getOp(),
                                     ((PathConstraintIds) constraint).getIds()));
                     } else if (constraint instanceof PathConstraintRange) {
-                    	PathConstraintRange pcr = (PathConstraintRange) constraint;
-                    	codeToConstraint.put(code, makeRangeConstraint((QueryNode) field, pcr));
+                        PathConstraintRange pcr = (PathConstraintRange) constraint;
+                        codeToConstraint.put(code, makeRangeConstraint(q, (QueryNode) field, pcr));
                     } else if (constraint instanceof PathConstraintMultiValue) {
                         Class<?> fieldType = path.getEndType();
                         if (String.class.equals(fieldType)) {
@@ -741,44 +741,44 @@ public final class MainHelper
      * Make a SimpleConstraint for the given Date Constraint.  The time stored in the Date will be
      * ignored.  Example webapp constraints and the coresponding object store constraints:
      * <table>
-     * 	<thead>
-     * 	  <tr>
-     * 		<th>Webapp Version</th>
-     * 		<th>ObjectStore Version</th>
-     *	  </tr>
+     *     <thead>
+     *       <tr>
+     *         <th>Webapp Version</th>
+     *         <th>ObjectStore Version</th>
+     *      </tr>
      *  </thead>
      *  <tbody>
      *    <tr>
      *      <td>
-     *      	<code>&lt;= 2008-01-02</code>
+     *          <code>&lt;= 2008-01-02</code>
      *      </td>
      *      <td>
-     *      	<code>&gt;= 2008-01-02 23:59:59</code>
-     *     	</td>
+     *          <code>&gt;= 2008-01-02 23:59:59</code>
+     *         </td>
      *     </tr>
      *     <tr>
      *      <td>
-     *      	<code>&gt; 2008-01-02</code>
+     *          <code>&gt; 2008-01-02</code>
      *      </td>
      *      <td>
-     *      	<code>&lt; 2008-01-02 00:00:00</code>
-     *     	</td>
+     *          <code>&lt; 2008-01-02 00:00:00</code>
+     *         </td>
      *     </tr>
      *     <tr>
      *      <td>
-     *      	<code>&gt; 2008-01-02</code>
+     *          <code>&gt; 2008-01-02</code>
      *      </td>
      *      <td>
-     *      	<code>&gt; 2008-01-02 23:59:59</code>
-     *     	</td>
+     *          <code>&gt; 2008-01-02 23:59:59</code>
+     *         </td>
      *     </tr>
      *     <tr>
      *      <td>
-     *      	<code>&gt;= 2008-01-02</code>
+     *          <code>&gt;= 2008-01-02</code>
      *      </td>
      *      <td>
-     *      	<code>&gt; 2008-01-02 00:00:00</code>
-     *     	</td>
+     *          <code>&gt; 2008-01-02 00:00:00</code>
+     *         </td>
      *     </tr>
      *   </tbody>
      * </table>
@@ -900,8 +900,8 @@ public final class MainHelper
      * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(
-    		PathQuery pathQuery,
-    		Map<String, InterMineBag> savedBags,
+            PathQuery pathQuery,
+            Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             String summaryPath,
             ObjectStore os,
@@ -931,13 +931,13 @@ public final class MainHelper
      * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(
-    		PathQuery pathQuery,
-    		String summaryPath,
+            PathQuery pathQuery,
+            String summaryPath,
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner)
             throws ObjectStoreException {
-    	return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode, bagQueryRunner, false);
+        return makeSummaryQuery(pathQuery, summaryPath, savedBags, pathToQueryNode, bagQueryRunner, false);
     }
 
     /**
@@ -953,8 +953,8 @@ public final class MainHelper
      * @throws ObjectStoreException if there is a problem creating the query
      */
     public static Query makeSummaryQuery(
-    		PathQuery pathQuery,
-    		String summaryPath,
+            PathQuery pathQuery,
+            String summaryPath,
             Map<String, InterMineBag> savedBags,
             Map<String, QuerySelectable> pathToQueryNode,
             BagQueryRunner bagQueryRunner,
@@ -983,7 +983,7 @@ public final class MainHelper
     }
 
     private static Query recursiveMakeSummaryQuery(
-    		Map<String, QuerySelectable>
+            Map<String, QuerySelectable>
             origPathToQueryNode,
             String summaryPath,
             Query subQ, Set<QuerySelectable> oldSelect,
@@ -1150,7 +1150,7 @@ public final class MainHelper
     }
     
     private static boolean isNumeric(Class<?> summaryType) {
-    	return (summaryType == Long.class) || (summaryType == Integer.class)
+        return (summaryType == Long.class) || (summaryType == Integer.class)
                 || (summaryType == Short.class) || (summaryType == Byte.class)
                 || (summaryType == Float.class) || (summaryType == Double.class)
                 || (summaryType == BigDecimal.class);
@@ -1295,70 +1295,78 @@ public final class MainHelper
         return q;
     }
     
+    public static void loadHelpers(Properties props) {
+        RangeConfig.loadHelpers(props);
+    }
+    
     protected static final class RangeConfig
     {
-    	private RangeConfig() {
-    		// Restricted constructor.
-    	}
-    	
-    	protected static Map<Class<?>, RangeHelper> rangeHelpers;
-    	
-    	static {
-    		init();
-    	}
-    	
-    	protected static void reset() {
-    		init();
-    	}
-    	
-    	private static void init() {
-    		rangeHelpers = new HashMap<Class<?>, RangeHelper>();
-    		// Default basic helpers.
-    		rangeHelpers.put(int.class, new IntHelper());
-    		rangeHelpers.put(Integer.class, new IntHelper());
-    		rangeHelpers.put(String.class, new StringHelper());
-    		
-    		Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.");
-    		for (String key: props.stringPropertyNames()) {
-    			String[] parts = key.split("\\.", 3);
-    			if (parts.length != 3) {
-    				throw new IllegalStateException(
-    					"Property names must be in the format pathquery.range.${FullyQualifiedClassName}, got '" + key + "'"
-    				);
-    			}
-    			String targetTypeName = parts[2];
-    			Class<?> targetType;
-    			try {
-					 targetType = Class.forName(targetTypeName);
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException("Cannot find class named in config: '" + key + "'", e);
-				}
-    			String helperName = props.getProperty(key);
-    			Class<RangeHelper> helperType;
-    			try {
-					helperType = (Class<RangeHelper>) Class.forName(helperName);
-				} catch (ClassNotFoundException e) {
-					throw new RuntimeException("Cannot find class named in congfig: '" + helperName + "'");
-				}
-    			RangeHelper helper;
-    			try {
-					helper = helperType.newInstance();
-				} catch (InstantiationException e) {
-					throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
-				} catch (IllegalAccessException e) {
-					throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
-				}
-    			rangeHelpers.put(targetType, helper);
-    		}
-    	}
-    	
-    	public static boolean hasHelperForType(Class<?> type) {
-    		return rangeHelpers.containsKey(type);
-    	}
-    	
-    	public static RangeHelper getHelper(Class<?> type) {
-    		return rangeHelpers.get(type);
-    	}
+        private RangeConfig() {
+            // Restricted constructor.
+        }
+        
+        protected static Map<Class<?>, RangeHelper> rangeHelpers;
+        
+        static {
+            init();
+        }
+        
+        protected static void reset() {
+            init();
+        }
+        
+        private static void init() {
+            rangeHelpers = new HashMap<Class<?>, RangeHelper>();
+            // Default basic helpers.
+            rangeHelpers.put(int.class, new IntHelper());
+            rangeHelpers.put(Integer.class, new IntHelper());
+            rangeHelpers.put(String.class, new StringHelper());
+            loadHelpers(PropertiesUtil.getProperties());
+        }
+        
+        protected static void loadHelpers(Properties allProps) {
+            Properties props = PropertiesUtil.getPropertiesStartingWith("pathquery.range.", allProps);
+            for (String key: props.stringPropertyNames()) {
+                String[] parts = key.split("\\.", 3);
+                if (parts.length != 3) {
+                    throw new IllegalStateException(
+                        "Property names must be in the format pathquery.range.${FullyQualifiedClassName}, got '" + key + "'"
+                    );
+                }
+                String targetTypeName = parts[2];
+                Class<?> targetType;
+                try {
+                     targetType = Class.forName(targetTypeName);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Cannot find class named in config: '" + key + "'", e);
+                }
+                String helperName = props.getProperty(key);
+                Class<RangeHelper> helperType;
+                try {
+                    helperType = (Class<RangeHelper>) Class.forName(helperName);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Cannot find class named in congfig: '" + helperName + "'");
+                }
+                RangeHelper helper;
+                try {
+                    helper = helperType.newInstance();
+                } catch (InstantiationException e) {
+                    throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Could not instantiate range helper for '" + key + "'", e);
+                }
+                rangeHelpers.put(targetType, helper);
+                LOG.info("ADDED RANGE HELPER FOR " + targetType + " (" + helperType.getName() + ")");
+            }
+        }
+        
+        public static boolean hasHelperForType(Class<?> type) {
+            return rangeHelpers.containsKey(type);
+        }
+        
+        public static RangeHelper getHelper(Class<?> type) {
+            return rangeHelpers.get(type);
+        }
     }
 
     /**
@@ -1414,16 +1422,18 @@ public final class MainHelper
         }
     }
 
-	public static Constraint makeRangeConstraint(
-			QueryNode node,
-			PathConstraintRange con) {
-		Class<?> type = node.getType();
+    public static Constraint makeRangeConstraint(
+            Queryable q,
+            QueryNode node,
+            PathConstraintRange con) {
+        Class<?> type = node.getType();
 
-		if (RangeConfig.hasHelperForType(type)) {
-			RangeHelper helper = RangeConfig.getHelper(type);
-			return helper.createConstraint(node, con);
-		}
-		throw new RuntimeException("No range constraints are possible for paths of type " + type.getName());
-	}
+        if (RangeConfig.hasHelperForType(type)) {
+            RangeHelper helper = RangeConfig.getHelper(type);
+            
+            return helper.createConstraint(q, node, con);
+        }
+        throw new RuntimeException("No range constraints are possible for paths of type " + type.getName());
+    }
 
 }

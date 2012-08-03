@@ -51,6 +51,7 @@ import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathConstraintAttribute;
@@ -248,7 +249,7 @@ public class MainHelperTest extends TestCase {
 
     private static class DummyHelper implements RangeHelper {
         @Override
-        public Constraint createConstraint(QueryNode node, PathConstraintRange con) {
+        public Constraint createConstraint(Queryable q, QueryNode node, PathConstraintRange con) {
             return new SimpleConstraint(new QueryValue("Foo"), ConstraintOp.EQUALS, new QueryValue("Bar"));
         }
     }
@@ -264,16 +265,14 @@ public class MainHelperTest extends TestCase {
         MainHelper.RangeConfig.reset(); // Call to avoid setup conflict.
         
         try {
-        	MainHelper.makeRangeConstraint(qc, con);
+        	MainHelper.makeRangeConstraint(null, qc, con);
         } catch (RuntimeException e) {
         	assertTrue(e.getMessage().contains("No range constraints are possible"));
         }
         
-        
-        
         MainHelper.RangeConfig.rangeHelpers.put(EmploymentPeriod.class, new DummyHelper());
         
-        org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(qc, con);
+        org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(null, qc, con);
         assertEquals(exp, got);
     }
 
