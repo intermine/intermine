@@ -8,6 +8,7 @@ import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraintRange;
 
@@ -28,7 +29,10 @@ public abstract class AbstractHelper implements RangeHelper {
      * main constraint set in some way, such as adding an extra constraint.
      */
     @Override
-    public Constraint createConstraint(QueryNode node, PathConstraintRange con) {
+    public Constraint createConstraint(
+        Queryable q,
+        QueryNode node,
+        PathConstraintRange con) {
         ConstraintOptions options;
         
         if (con.getOp() == ConstraintOp.WITHIN) {
@@ -48,12 +52,13 @@ public abstract class AbstractHelper implements RangeHelper {
         }
 
         ConstraintSet mainSet = new ConstraintSet(options.getMainSetOp());
-        QueryField qfl = new QueryField((QueryClass) node, options.getLeftField());
-        QueryField qfr = new QueryField((QueryClass) node, options.getRightField());
+        QueryClass qc = (QueryClass) node;
+        QueryField qfl = new QueryField(qc, options.getLeftField());
+        QueryField qfr = new QueryField(qc, options.getRightField());
 
         for (String rangeString: con.getValues()) {
             Range range = parseRange(rangeString);
-            mainSet.addConstraint(makeRangeConstraint(con.getOp(), range, options, qfl, qfr));
+            mainSet.addConstraint(makeRangeConstraint(con.getOp(), range, options, qfl, qfr, qc));
         }
         return mainSet;
     }
@@ -71,7 +76,12 @@ public abstract class AbstractHelper implements RangeHelper {
      * @param right The field to be constrained in the right side constraint.
      * @return A constraint.
      */
-    protected Constraint makeRangeConstraint(ConstraintOp op, Range range, ConstraintOptions options, QueryField left, QueryField right) {
+    protected Constraint makeRangeConstraint(
+            ConstraintOp op, 
+            Range range, 
+            ConstraintOptions options, 
+            QueryField left, QueryField right,
+            QueryClass node) {
         ConstraintSet conSet = new ConstraintSet(options.getRangeSetOp());
         conSet.addConstraint(
             new SimpleConstraint(left, options.getLeftOp(), new QueryValue(range.getStart()))

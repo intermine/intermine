@@ -7,6 +7,7 @@ import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryNode;
 import org.intermine.objectstore.query.QueryValue;
+import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.PathConstraintRange;
 
@@ -25,7 +26,7 @@ public class IntHelper implements RangeHelper {
     private static final ConstraintOp GT = ConstraintOp.GREATER_THAN_EQUALS;
     
     @Override
-    public Constraint createConstraint(QueryNode node, PathConstraintRange con) {
+    public Constraint createConstraint(Queryable q, QueryNode node, PathConstraintRange con) {
         QueryField qf = (QueryField) node;
         ConstraintOp mainSetOp = OR;
         ConstraintOp rangeSetOp = AND;

@@ -62,7 +62,7 @@ public class AbstractHelperTest {
         withinExp.addConstraint(innerExp2);
         
         PathConstraintRange con = new PathConstraintRange("EmploymentPeriod", WITHIN, ranges);
-        org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(empPeriod, con);
+        org.intermine.objectstore.query.Constraint got = MainHelper.makeRangeConstraint(null, empPeriod, con);
         
         assertEquals(withinExp, got);
     }
@@ -82,7 +82,7 @@ public class AbstractHelperTest {
         outsideInner2.addConstraint(new SimpleConstraint(end, GREATER_THAN_EQUALS, endOfJan2012));
         outsideExp.addConstraint(outsideInner2);
         
-        Constraint got = MainHelper.makeRangeConstraint(empPeriod, new PathConstraintRange("EmploymentPeriod", OUTSIDE, ranges));
+        Constraint got = MainHelper.makeRangeConstraint(null, empPeriod, new PathConstraintRange("EmploymentPeriod", OUTSIDE, ranges));
         assertEquals(outsideExp, got);
     }
     
@@ -101,7 +101,7 @@ public class AbstractHelperTest {
         inner2.addConstraint(new SimpleConstraint(start, LESS_THAN, endOfJan2012));
         exp.addConstraint(inner2);
 
-        Constraint got = MainHelper.makeRangeConstraint(empPeriod, new PathConstraintRange("EmploymentPeriod", OVERLAPS, ranges));
+        Constraint got = MainHelper.makeRangeConstraint(null, empPeriod, new PathConstraintRange("EmploymentPeriod", OVERLAPS, ranges));
         assertEquals(exp, got);
     }
 
@@ -120,7 +120,7 @@ public class AbstractHelperTest {
         inner2.addConstraint(new SimpleConstraint(start, GREATER_THAN_EQUALS, endOfJan2012));
         exp.addConstraint(inner2);
 
-        Constraint got = MainHelper.makeRangeConstraint(empPeriod, new PathConstraintRange("EmploymentPeriod", DOES_NOT_OVERLAP, ranges));
+        Constraint got = MainHelper.makeRangeConstraint(null, empPeriod, new PathConstraintRange("EmploymentPeriod", DOES_NOT_OVERLAP, ranges));
         assertEquals(exp, got);
     }
 
@@ -139,7 +139,7 @@ public class AbstractHelperTest {
         inner2.addConstraint(new SimpleConstraint(end, GREATER_THAN_EQUALS, endOfJan2012));
         exp.addConstraint(inner2);
 
-        Constraint got = MainHelper.makeRangeConstraint(empPeriod, new PathConstraintRange("EmploymentPeriod", CONTAINS, ranges));
+        Constraint got = MainHelper.makeRangeConstraint(null, empPeriod, new PathConstraintRange("EmploymentPeriod", CONTAINS, ranges));
         assertEquals(exp, got);
     }
     
@@ -158,7 +158,7 @@ public class AbstractHelperTest {
         inner2.addConstraint(new SimpleConstraint(end, LESS_THAN, endOfJan2012));
         exp.addConstraint(inner2);
 
-        Constraint got = MainHelper.makeRangeConstraint(empPeriod, new PathConstraintRange("EmploymentPeriod", DOES_NOT_CONTAIN, ranges));
+        Constraint got = MainHelper.makeRangeConstraint(null, empPeriod, new PathConstraintRange("EmploymentPeriod", DOES_NOT_CONTAIN, ranges));
         assertEquals(exp, got);
     }
 }
