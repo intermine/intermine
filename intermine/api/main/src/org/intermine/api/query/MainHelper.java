@@ -38,6 +38,7 @@ import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.query.range.IntHelper;
 import org.intermine.api.query.range.StringHelper;
 import org.intermine.api.template.TemplateManager;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -83,6 +84,7 @@ import org.intermine.pathquery.PathConstraintIds;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintMultitype;
 import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
@@ -410,6 +412,9 @@ public final class MainHelper
                     } else if (constraint instanceof PathConstraintRange) {
                         PathConstraintRange pcr = (PathConstraintRange) constraint;
                         codeToConstraint.put(code, makeRangeConstraint(q, (QueryNode) field, pcr));
+                    } else if (constraint instanceof PathConstraintMultitype) {
+                        PathConstraintMultitype pcmt = (PathConstraintMultitype) constraint;
+                        codeToConstraint.put(code, makeMultiTypeConstraint(pathQuery.getModel(), (QueryNode) field, pcmt));
                     } else if (constraint instanceof PathConstraintMultiValue) {
                         Class<?> fieldType = path.getEndType();
                         if (String.class.equals(fieldType)) {
@@ -568,6 +573,34 @@ public final class MainHelper
             throw new ObjectStoreException("PathException while converting PathQuery to ObjectStore"
                     + " Query", e);
         }
+    }
+
+    /**
+     * Construct a new multi-type constraint. 
+     * @param model The model to look for types within.
+     * @param field The subject of the constraint.
+     * @param pcmt The constraint itself.
+     * @return A constraint.
+     * @throws ObjectStoreException if the constraint names types that are not in the model.
+     */
+    protected static Constraint makeMultiTypeConstraint(
+            Model model,
+            QueryNode field,
+            PathConstraintMultitype pcmt) throws ObjectStoreException {
+        QueryField typeClass = new QueryField((QueryClass) field, "class");
+        ConstraintOp op = (pcmt.getOp() == ConstraintOp.ISA)
+                ? ConstraintOp.IN : ConstraintOp.NOT_IN;
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        for (String name: pcmt.getValues()) {
+            ClassDescriptor cd = model.getClassDescriptorByName(name);
+            if (cd == null) { // PathQueries should take care of this, but you know. 
+              throw new ObjectStoreException(
+                  String.format("%s is not a class in the %s model", name, model.getName()));
+            }
+            classes.add(cd.getType());
+        }
+
+        return new BagConstraint(typeClass, op, classes);
     }
 
     private static Map<String, String> makeLoopsMap(Collection<PathConstraintLoop> constraints) {

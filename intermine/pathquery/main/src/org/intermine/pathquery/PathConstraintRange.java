@@ -36,7 +36,7 @@ public class PathConstraintRange extends PathConstraintMultiValue
         
         if (!VALID_OPS.contains(op)) {
             throw new IllegalArgumentException("PathConstraints on ranges must use an op"
-                    + " in the list \"" + VALID_OPS + "\"");
+                    + " in the following list \"" + VALID_OPS + "\"");
         }
         this.op = op;
     }
