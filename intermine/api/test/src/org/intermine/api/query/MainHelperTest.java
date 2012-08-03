@@ -609,6 +609,12 @@ public class MainHelperTest extends TestCase {
                 "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar') ORDER BY a1_.name",
                 "SELECT DISTINCT a1_.a3_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a3_ FROM org.intermine.model.testmodel.Employee AS a1_, org.intermine.model.testmodel.EmploymentPeriod AS a2_ WHERE (a1_.employmentPeriod CONTAINS a2_ AND 'Foo' = 'Bar')) AS a1_ GROUP BY a1_.a3_ ORDER BY COUNT(*) DESC");
     }
+    
+    public void testMultiTypeToSQL() throws Exception {
+        doQuery("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" sortOrder=\"Employee.name asc\"><constraint path=\"Employee\" op=\"ISA\"><value>CEO</value><value>Manager</value></constraint></query>",
+                "SELECT DISTINCT a1_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.class IN ? ORDER BY a1_.name 1: [class org.intermine.model.testmodel.Manager, class org.intermine.model.testmodel.CEO]",
+                "SELECT DISTINCT a1_.a2_ AS a2_, COUNT(*) AS a3_ FROM (SELECT DISTINCT a1_, a1_.name AS a2_ FROM org.intermine.model.testmodel.Employee AS a1_ WHERE a1_.class IN ? 1: [class org.intermine.model.testmodel.Manager, class org.intermine.model.testmodel.CEO]) AS a1_ GROUP BY a1_.a2_ ORDER BY COUNT(*) DESC");
+    }
 
     public void doQuery(String web, String iql, String ... summaries) throws Exception {
         Exception stacktrace = new Exception();

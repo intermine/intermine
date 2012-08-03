@@ -9,7 +9,7 @@
     <constraint path="Company" op="IN" value="bag1"/>
   </query>
   <query name="queryWithConstraint" model="testmodel"
-  		 view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
+           view="Company.name Company.departments.name Company.departments.employees.name Company.departments.employees.title">
     <constraint path="Company.departments.employees" type="CEO"/>
   </query>
   <query name="valuesNeedEscaping" model="testmodel" view="Employee.name">
@@ -24,17 +24,23 @@
       <join path="Employee.address" style="INNER"/>
   </query>
   <query name="hasOrder" model="testmodel" view="Employee.name Employee.department.name Employee.address.address"
-  	     sortOrder="Employee.department.name asc Employee.address.address desc"
+           sortOrder="Employee.department.name asc Employee.address.address desc"
   />
   <query name="viewOnly" model="testmodel" view="Company.name Company.vatNumber"/>
   <query name="rangeQueries" model="testmodel" view="Employee.name">
-  	<constraint path="Employee.age" op="WITHIN">
-  		<value>40 .. 50</value>
-  		<value>55 .. 60</value>
-  	</constraint>
-  	<constraint path="Employee.employmentPeriod" op="OVERLAPS">
-  		<value>01-01-2012</value>
-  	</constraint>
+      <constraint path="Employee.age" op="WITHIN">
+          <value>40 .. 50</value>
+          <value>55 .. 60</value>
+      </constraint>
+      <constraint path="Employee.employmentPeriod" op="OVERLAPS">
+          <value>01-01-2012</value>
+      </constraint>
+  </query>
+  <query name="multitype" model="testmodel" view="Employable.name">
+      <constraint path="Employable" op="ISA">
+          <value>Contractor</value>
+          <value>Manager</value>
+      </constraint>
   </query>
   
 
