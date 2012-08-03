@@ -29,15 +29,16 @@ import org.intermine.util.PropertiesUtil;
  *
  * @author Fengyuan Hu
  */
-public class ZfinGeneIdResolverFactory extends IdResolverFactory
+public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(ZfinGeneIdResolverFactory.class);
+    protected static final Logger LOG = Logger.getLogger(ZfinIdentifiersResolverFactory.class);
     private final String clsName = "gene";
 
     // data file path set in ~/.intermine/MINE.properties
-    // e.g. resolver.zfin.file=/micklem/data/zfin/identifiers/zebrafishGeneToEnsdarg.txt
+    // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/ensembl_1_to_1.txt
     private final String propName = "resolver.zfin.file";
     private final String taxonId = "7955";
+    private static final String GENE_PATTERN = "ZDB-GENE";
 
     /**
      * Build an IdResolver from Entrez Gene gene_info file
@@ -62,10 +63,10 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
             reader = new BufferedReader(fr);
             resolver = createFromFile(reader);
         } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open zfin id mapping file: "
+            throw new IllegalArgumentException("Failed to open ZFIN id mapping file: "
                     + fileName, e);
         } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from zfin id mapping file: "
+            throw new IllegalArgumentException("Error reading from ZFIN id mapping file: "
                     + fileName, e);
         }
 
@@ -75,14 +76,22 @@ public class ZfinGeneIdResolverFactory extends IdResolverFactory
     private IdResolver createFromFile(BufferedReader reader) throws IOException {
         IdResolver resolver = new IdResolver(clsName);
 
-        // ZDB-GENE-id | ENSDARG id
-        Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(reader, '|');
+        // data is in format:
+        // ZDBID  SYMBOL  Ensembl(Zv9)
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
+
+            if (line.length < 3 || line[0].startsWith("#") || !line[0].startsWith(GENE_PATTERN)) {
+                continue;
+            }
+
             String zfinId = line[0];
-            String ensemblId = line[1];
+            String symbol = line[1];
+            String ensemblId = line[2];
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
+            resolver.addSynonyms(taxonId, zfinId, Collections.singleton(symbol));
             resolver.addSynonyms(taxonId, zfinId, Collections.singleton(ensemblId));
         }
         return resolver;

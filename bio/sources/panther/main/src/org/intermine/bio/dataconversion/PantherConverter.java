@@ -85,7 +85,7 @@ public class PantherConverter extends BioFileConverter
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        fishResolverFactory = new ZfinGeneIdResolverFactory();
+        fishResolverFactory = new ZfinIdentifiersResolverFactory();
         entrezGeneIdResolverFactory = new EntrezGeneIdResolverFactory();
         or = OrganismRepository.getOrganismRepository();
     }
@@ -355,6 +355,7 @@ public class PantherConverter extends BioFileConverter
                 // no id resolver available, so return the original identifier
                 return identifier;
             }
+            identifier = identifier.toLowerCase();
             int resCount = peopleResolver.countResolutions(taxonId, identifier);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve human gene to one identifier, ignoring gene: "
@@ -362,7 +363,8 @@ public class PantherConverter extends BioFileConverter
                          + peopleResolver.resolveId(taxonId, identifier));
                 return null;
             }
-            return peopleResolver.resolveId(taxonId, identifier).iterator().next();
+            identifier = peopleResolver.resolveId(taxonId, identifier).iterator().next();
+            return identifier;
         }
         return identifier;
     }

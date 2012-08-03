@@ -98,7 +98,6 @@ public class RgdIdentifiersConverter extends BioFileConverter
                 gene.setAttribute("description", description);
             }
             if (!StringUtils.isBlank(entrez)) {
-                gene.setAttribute("ncbiGeneNumber", entrez);
                 createCrossReference(gene.getIdentifier(), entrez, "NCBI", true);
             }
 

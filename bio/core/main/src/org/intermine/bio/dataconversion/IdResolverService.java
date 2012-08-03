@@ -25,7 +25,7 @@ public class IdResolverService
     private FlyBaseIdResolverFactory flyBaseIdResolverFactory;
     private HgncIdResolverFactory hgncIdResolverFactory;
     private WormBaseChadoIdResolverFactory wormBaseChadoIdResolverFactory;
-    private ZfinGeneIdResolverFactory zfinGeneIdResolverFactory;
+    private ZfinIdentifiersResolverFactory zfinIdentifiersResolverFactory;
 
     // Map from taxonid to factory, refer to MetadataCacheQueryService.java
 

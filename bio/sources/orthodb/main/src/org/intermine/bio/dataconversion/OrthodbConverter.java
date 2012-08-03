@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,6 +62,17 @@ public class OrthodbConverter extends BioFileConverter
 
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
 
+    protected IdResolverFactory flyResolverFactory;
+    private IdResolver flyResolver;
+    protected IdResolverFactory fishResolverFactory;
+    private IdResolver fishResolver;
+    protected IdResolverFactory entrezGeneIdResolverFactory;
+    private IdResolver peopleResolver;
+    protected IdResolverFactory mouseResolverFactory;
+    private IdResolver mouseResolver;
+    protected IdResolverFactory ratResolverFactory;
+    private IdResolver ratResolver;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -69,6 +81,11 @@ public class OrthodbConverter extends BioFileConverter
     public OrthodbConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        fishResolverFactory = new ZfinIdentifiersResolverFactory();
+        entrezGeneIdResolverFactory = new EntrezGeneIdResolverFactory();
+        mouseResolverFactory = new MgiIdentifiersResolverFactory();
+        ratResolverFactory = new RgdIdentifiersResolverFactory();
         or = OrganismRepository.getOrganismRepository();
     }
 
@@ -140,6 +157,7 @@ public class OrthodbConverter extends BioFileConverter
 
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !currentGroup.equals(previousGroup)) {
+                homologueList.removeAll(Collections.singleton(null));
                 if (homologueList.size() >= 2) {
                     processHomologues(homologueList, previousGroup);
                 }
@@ -205,6 +223,10 @@ public class OrthodbConverter extends BioFileConverter
             String taxonId2 = record2.get(0);
             String gene2 = record2.get(1);
 
+            if (gene1 == null || gene2 == null) {
+                return;
+            }
+
             Item homologue = createItem("Homologue");
             homologue.setReference("gene", gene1);
             homologue.setReference("homologue", gene2);
@@ -252,11 +274,33 @@ public class OrthodbConverter extends BioFileConverter
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
 
-        // geneId is unique
+        geneId = resolveGene(taxonId, geneId);
+        if (geneId == null) {
+            return null;
+        }
+
         String refId = identifiersToGenes.get(geneId);
         if (refId == null) {
             Item item = createItem("Gene");
             item.setAttribute(identifierType, geneId);
+
+            {
+            /**
+             * !!! Ugly Code Ahead
+             * OrthoDB use secondaryIdentifier for worm gene, in wormbase-identifiers, gene
+             * WBGene00006756 (ZC416.8, unc-17) and WBGene00000481 (ZC416.8, cha-1) have the same
+             * secondaryIdentifier ZC416.8, but OrthoDB points to cha-1 in term of the protein id
+             * ZC416.8b. To fix the issue, set symbol as another key to filter the duplication.
+             *
+             * For a better fix, load uniprot data, set key to secondaryIdentifier, protein and
+             * organism.
+             */
+
+                if ("ZC416.8".equals(geneId)) {
+                    item.setAttribute("symbol", "cha-1");
+                }
+            }
+
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
             identifiersToGenes.put(geneId, refId);
@@ -345,5 +389,82 @@ public class OrthodbConverter extends BioFileConverter
                 combination(allCombinations, newData, newCombination, length - 1);
             }
         }
+    }
+
+    private String resolveGene(String taxonId, String identifier) {
+        if (taxonId.equals("7227")) { // fly
+            flyResolver = flyResolverFactory.getIdResolver(false);
+            if (flyResolver == null) {
+                // no id resolver available, so return the original identifier
+                return identifier;
+            }
+            int resCount = flyResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " FBgn: "
+                         + flyResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            return flyResolver.resolveId(taxonId, identifier).iterator().next();
+        } else if (taxonId.equals("7955")) { // fish
+            fishResolver = fishResolverFactory.getIdResolver(false);
+            if (fishResolver == null) {
+                // no id resolver available, so return the original identifier
+                return identifier;
+            }
+            int resCount = fishResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve fish gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " ZDB-GENE: "
+                         + fishResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            return fishResolver.resolveId(taxonId, identifier).iterator().next();
+        } else if (taxonId.equals("9606")) { // human
+            peopleResolver = entrezGeneIdResolverFactory.getIdResolver(false);
+            if (peopleResolver == null) {
+                // no id resolver available, so return the original identifier
+                return identifier;
+            }
+            identifier = identifier.toLowerCase();
+            int resCount = peopleResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve human gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " : "
+                         + peopleResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            identifier = peopleResolver.resolveId(taxonId, identifier).iterator().next();
+            return identifier;
+        } else if (taxonId.equals("10090")) { // mouse
+            mouseResolver = mouseResolverFactory.getIdResolver(false);
+            if (mouseResolver == null) {
+                // no id resolver available, so return the original identifier
+                return identifier;
+            }
+            int resCount = mouseResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve mouse gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " : "
+                         + mouseResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            return mouseResolver.resolveId(taxonId, identifier).iterator().next();
+        } else if (taxonId.equals("10116")) { // rat
+            ratResolver = ratResolverFactory.getIdResolver(false);
+            if (ratResolver == null) {
+                // no id resolver available, so return the original identifier
+                return identifier;
+            }
+            int resCount = ratResolver.countResolutions(taxonId, identifier);
+            if (resCount != 1) {
+                LOG.info("RESOLVER: failed to resolve rat gene to one identifier, ignoring gene: "
+                         + identifier + " count: " + resCount + " : "
+                         + ratResolver.resolveId(taxonId, identifier));
+                return null;
+            }
+            return ratResolver.resolveId(taxonId, identifier).iterator().next();
+        }
+        return identifier;
     }
 }

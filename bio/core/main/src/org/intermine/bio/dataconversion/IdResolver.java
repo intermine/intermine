@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Hold data about primary identifiers and synonyms for a particular class in the
@@ -34,6 +35,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class IdResolver
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(IdResolver.class);
+
     private String clsName;
     protected Map<String, Map<String, Set<String>>> orgIdMaps =
         new HashMap<String, Map<String, Set<String>>>();

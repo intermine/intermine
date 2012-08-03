@@ -39,16 +39,16 @@
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
- 
-    <source name="orthodb" type="orthodb" dump="true">
-      <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
-      <property name="orthodb.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
-    </source>  
- 
+    
     <source name="homologene" type="homologene" dump="true">
       <property name="src.data.dir" location="/micklem/data/homologene/current"/>
       <property name="homologene.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
+    
+    <source name="orthodb" type="orthodb" dump="true">
+      <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
+      <property name="orthodb.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
+    </source>  
 
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
