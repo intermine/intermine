@@ -222,6 +222,12 @@ public class PathQueryHandler extends DefaultHandler
                 valuesCollection.add(value.trim());
             }
             return new PathConstraintRange(path, constraintOp, valuesCollection);
+        } else if (PathConstraintMultitype.VALID_OPS.contains(constraintOp) && !values.isEmpty()) {
+            Collection<String> typesCollection = new LinkedHashSet<String>();
+            for (String value : values) {
+                typesCollection.add(value.trim());
+            }
+            return new PathConstraintMultitype(path, constraintOp, typesCollection);
         } else if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
             boolean isLoop = (attrs.get("loopPath") != null);
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {

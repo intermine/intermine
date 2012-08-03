@@ -103,12 +103,20 @@ public class PathQueryBindingTest extends TestCase
     }
     
     public void testRangeQuery() throws Exception {
-    	PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
-    	pq.addViews("Employee.name");
-    	pq.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN, Arrays.asList("40 .. 50", "55 .. 60")));
-    	pq.addConstraint(new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, Arrays.asList("01-01-2012")));
-    	
-    	assertEquals(pq.toString(), savedQueries.get("rangeQueries").toString());
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Employee.name");
+        pq.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN, Arrays.asList("40 .. 50", "55 .. 60")));
+        pq.addConstraint(new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, Arrays.asList("01-01-2012")));
+        
+        assertEquals(pq.toString(), savedQueries.get("rangeQueries").toString());
+    }
+    
+    public void testMultiTypeQuery() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Employable.name");
+        pq.addConstraint(new PathConstraintMultitype("Employable", ConstraintOp.ISA, Arrays.asList("Contractor", "Manager")));
+        
+        assertEquals(pq.toString(), savedQueries.get("multitype").toString());
     }
 
     public void testMarshallings() throws Exception {
