@@ -81,14 +81,21 @@ public final class ConstraintOp
 
     /** Require that the first argument is one of a list a values */
     public static final ConstraintOp ONE_OF = new ConstraintOp("ONE OF");
+
     /** Require that the first argument is not one of a list of values */
     public static final ConstraintOp NONE_OF = new ConstraintOp("NONE OF");
-    
+
     /** Require that the first argument lie entirely within the second. **/
-	public static final ConstraintOp WITHIN = new ConstraintOp("WITHIN");
-	
-	/** Require that some part of the first argument lie outside the second. **/
-	public static final ConstraintOp OUTSIDE = new ConstraintOp("OUTSIDE");
+    public static final ConstraintOp WITHIN = new ConstraintOp("WITHIN");
+
+    /** Require that some part of the first argument lie outside the second. **/
+    public static final ConstraintOp OUTSIDE = new ConstraintOp("OUTSIDE");
+
+    /** Require that the first argument be of the type named by the right argument **/
+    public static final ConstraintOp ISA = new ConstraintOp("ISA");
+
+    /** Require that the first argument be of the type named by the right argument **/
+    public static final ConstraintOp ISNT = new ConstraintOp("ISNT");
 
     private ConstraintOp(String name) {
         this.name = name;
@@ -183,9 +190,13 @@ public final class ConstraintOp
         } else if (this == NONE_OF) {
             return ONE_OF;
         } else if (this == WITHIN) {
-        	return OUTSIDE;
+            return OUTSIDE;
         } else if (this == OUTSIDE) {
-        	return WITHIN;
+            return WITHIN;
+        } else if (this == ISA) {
+            return ISNT;
+        } else if (this == ISNT) {
+            return ISA;
         }
         throw new IllegalArgumentException("Unknown op");
     }
