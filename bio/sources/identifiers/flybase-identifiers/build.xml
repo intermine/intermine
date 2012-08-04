@@ -1,5 +1,5 @@
 <project name="flybase-identifiers" default="default" basedir=".">
   <description>build, test, package flybase-identifiers</description>
   
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
 </project>
