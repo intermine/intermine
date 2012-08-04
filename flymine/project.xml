@@ -2,7 +2,8 @@
   <property name="target.model" value="genomic"/>
   <property name="source.location" location="../bio/sources/"/>
   <property name="source.location" location="../bio/sources/flymine"/>
- <property name="source.location" location="../bio/sources/humanmine"/>
+  <property name="source.location" location="../bio/sources/humanmine"/>
+  <property name="source.location" location="../bio/sources/identifiers" />
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>

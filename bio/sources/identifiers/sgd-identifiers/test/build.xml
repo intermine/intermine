@@ -4,8 +4,8 @@
 
   <description>build and test sources-sgd-identifiers-test</description>
 
-  <import file="../../../../imbuild/tests.xml"/>
-  <import file="../../../../imbuild/task.xml"/>
+  <import file="../../../../../imbuild/tests.xml"/>
+  <import file="../../../../../imbuild/task.xml"/>
 
   <target name="do-test" depends="-init-macrodef-junit">
     <imtestsproj:junit/>

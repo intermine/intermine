@@ -2,7 +2,7 @@
 <project name="wormbase-identifiers" default="default" basedir=".">
   <description>build, test, package wormbase-identifiers</description>
   
-  <import file="../../../imbuild/source.xml"/>
+  <import file="../../../../imbuild/source.xml"/>
   
 </project>
 
