@@ -227,17 +227,24 @@ public class OrthodbConverter extends BioFileConverter
                 return;
             }
 
-            Item homologue = createItem("Homologue");
-            homologue.setReference("gene", gene1);
-            homologue.setReference("homologue", gene2);
-            homologue.addToCollection("evidence", getEvidence());
-            homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
-            homologue.addToCollection(
-                    "crossReferences",
-                    createCrossReference(homologue.getIdentifier(), groupId,
-                            DATA_SOURCE_NAME, true));
-            store(homologue);
+            // Create both way relations
+            createHomologue(gene1, taxonId1, gene2, taxonId2, groupId);
+            createHomologue(gene2, taxonId2, gene1, taxonId1, groupId);
         }
+    }
+
+    private void createHomologue(String gene1, String taxonId1, String gene2,
+            String taxonId2, String groupId) throws ObjectStoreException {
+        Item homologue = createItem("Homologue");
+        homologue.setReference("gene", gene1);
+        homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", getEvidence());
+        homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
+        homologue.addToCollection(
+                "crossReferences",
+                createCrossReference(homologue.getIdentifier(), groupId,
+                        DATA_SOURCE_NAME, true));
+        store(homologue);
     }
 
     // genes (in taxonIDs) are always processed
