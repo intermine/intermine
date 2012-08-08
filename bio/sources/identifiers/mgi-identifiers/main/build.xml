@@ -1,0 +1,4 @@
+<project name="mgi-identifiers-tasks" default="default" basedir=".">
+  <description>build mgi-identifiers tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

@@ -307,7 +307,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     seenLocsForSnp.add(chrName + ":" + chrStart);
 
                     // SOURCE
-                    String source = res.getString("s.name");
+                    String source = res.getString("source_name");
                     currentSnpItem.setReference("source", getSourceIdentifier(source));
 
                     // VALIDATION STATES
@@ -369,7 +369,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                         && currentVariationId.equals(previousVariationId) ? false : true;
                 if (newConsequenceType) {
                     previousTranscriptStableId = currentTranscriptStableId;
-                    String type = res.getString("tv.consequence_types");
+                    String type = res.getString("consequence_types");
                     // Seen one example so far where consequence type is an empty string
                     if (StringUtils.isBlank(type)) {
                         type = "UNKNOWN";
@@ -399,7 +399,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     consequenceCounter++;
                 }
             } else { // transcriptStableId is empty, log it
-                String variationConsequences = res.getString("vf.consequence_type");
+                String variationConsequences = res.getString("consequence_type");
                 Integer consequenceCount = nonTranscriptConsequences.get(variationConsequences);
 
                 if (consequenceCount == null) {
@@ -819,6 +819,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         // Description: The consequence(s) of the variant allele on this transcript
 
 
+        /*
         String query = "SELECT vf.variation_feature_id, vf.variation_name, vf.variation_id,"
             + " vf.allele_string, sr.name,"
             + " vf.map_weight, vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, "
@@ -837,6 +838,34 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             + " AND vf.source_id = s.source_id"
             + " AND sr.name = '" + chrName + "'"
             + " ORDER BY vf.variation_id";
+        */
+
+        /*
+         * NOTE: from Ensembl 67, we start to create precompute tables for
+         * variations in MySQL before hand:
+         *
+         * 1) CREATE TABLE mM_snp_tmp_no_order_chr_all SELECT
+         * vf.variation_feature_id, vf.variation_name, vf.variation_id,
+         * vf.allele_string, sr.name AS seq_region_name, vf.map_weight,
+         * vf.seq_region_start, vf.seq_region_end, vf.seq_region_strand, s.name
+         * AS source_name, vf.validation_status, vf.consequence_type,
+         * tv.cdna_start,tv.consequence_types
+         * ,tv.pep_allele_string,tv.feature_stable_id, tv.sift_prediction,
+         * tv.sift_score, tv.polyphen_prediction, tv.polyphen_score FROM
+         * seq_region sr, source s, variation_feature vf LEFT JOIN
+         * (transcript_variation tv) ON (vf.variation_feature_id =
+         * tv.variation_feature_id AND tv.consequence_types NOT IN
+         * ('5KB_downstream_variant',
+         * '5KB_upstream_variant','500B_downstream_variant','2KB_upstream_variant'))
+         * WHERE vf.seq_region_id = sr.seq_region_id AND vf.source_id =
+         * s.source_id;
+         *
+         * 2) CREATE TABLE mM_snp_tmp_ordered_chr_all SELECT * FROM
+         * mM_snp_tmp_no_order_chr_all ORDER BY seq_region_name, variation_id;
+         */
+        String query = "SELECT *"
+                + " FROM mM_snp_tmp_ordered_chr_all"
+                + " WHERE seq_region_name = '" + chrName + "'";
 
         LOG.warn(query);
 
