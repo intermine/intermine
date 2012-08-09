@@ -155,7 +155,7 @@
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml" />
     </source>
-    <source name="entrez-organism" type="entrez-organism">
+    <source name="entrez-organism" type="entrez-organism" dump="true">
       <property name="src.data.file" location="build/organisms.xml" />
     </source>
 
