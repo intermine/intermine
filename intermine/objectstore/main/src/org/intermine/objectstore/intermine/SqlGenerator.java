@@ -1544,7 +1544,7 @@ public final class SqlGenerator
                                 bagConstraintToString(state, buffer, new BagConstraint(new
                                             QueryField(arg1Qcb), ConstraintOp.IN,
                                             arg1Qcb.getOsb()), q,
-                                        schema, SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                        schema, SAFENESS_UNSAFE); // TODO: Not really unsafe [ 2012-08-06 ajk: what does this comment mean??]
                                 buffer.append(" AND ");
                             } else if (arg1Qcb.getIds() != null) {
                                 BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),

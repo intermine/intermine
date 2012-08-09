@@ -209,6 +209,16 @@ public class PathQueryHandler extends DefaultHandler
         }
 
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
+        if (constraintOp == null) {
+            // Handle any allowed synonyms.
+            String origOp = attrs.get("op");
+            if ("IS EMPTY".equals(origOp)) { // Synonym for IS NULL
+                constraintOp = ConstraintOp.IS_NULL;
+            } else if ("IS NOT EMPTY".equals(origOp)) { // Synonym for IS NOT NULL
+                constraintOp = ConstraintOp.IS_NOT_NULL;
+            }
+        }
+        // TODO: work out if this is pointless busy-work.
         if (ConstraintOp.CONTAINS.equals(constraintOp)) {
             constraintOp = ConstraintOp.CONTAINS;
         }
