@@ -72,6 +72,7 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Queryable;
 import org.intermine.objectstore.query.SimpleConstraint;
+import org.intermine.objectstore.query.SubqueryExistsConstraint;
 import org.intermine.objectstore.query.WidthBucketFunction;
 import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.OrderDirection;
@@ -103,9 +104,6 @@ import org.intermine.util.Util;
  */
 public final class MainHelper
 {
-    private static final QueryValue ONE = new QueryValue(1);
-    private static final QueryValue FIVE = new QueryValue(5);
-
     private MainHelper() {
     }
 
@@ -279,16 +277,27 @@ public final class MainHelper
                                     ((QueryCollectionPathExpression) q).addFrom(qc);
                                 }
                             }
-                            if (path.endIsReference()) {
-                                andCs.addConstraint(new ContainsConstraint(
-                                            new QueryObjectReference(parentQc,
-                                                path.getLastElement()), ConstraintOp.CONTAINS,
-                                            qc));
-                            } else {
-                                andCs.addConstraint(new ContainsConstraint(
-                                            new QueryCollectionReference(parentQc,
-                                                path.getLastElement()), ConstraintOp.CONTAINS,
-                                            qc));
+                            boolean isNull = false;
+                            for (PathConstraint pc: pathQuery.getConstraintsForPath(stringPath)) {
+                                if (pc instanceof PathConstraintNull) {
+                                    if (pc.getOp() == ConstraintOp.IS_NULL) {
+                                        isNull = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!isNull) {
+                                if (path.endIsReference()) {
+                                    andCs.addConstraint(new ContainsConstraint(
+                                                new QueryObjectReference(parentQc,
+                                                    path.getLastElement()), ConstraintOp.CONTAINS,
+                                                qc));
+                                } else {
+                                    andCs.addConstraint(new ContainsConstraint(
+                                                new QueryCollectionReference(parentQc,
+                                                    path.getLastElement()), ConstraintOp.CONTAINS,
+                                                qc));
+                                }
                             }
                             queryBits.put(stringPath, qc);
                         } else {
@@ -376,9 +385,42 @@ public final class MainHelper
                         // This is a null constraint. If it is on a class, then we need do nothing,
                         // as the mere presence of the constraint has caused the class to make it
                         // into the FROM list above.
+                        
+                        // TODO - make IS NULL also work on references and collections.
                         if (path.endIsAttribute()) {
                             codeToConstraint.put(code, new SimpleConstraint((QueryField) field,
                                         constraint.getOp()));
+                        } else if (path.endIsReference()) {
+                            String parent = path.getPrefix().getNoConstraintsString();
+                            QueryClass parentQc = (QueryClass) ((queryBits.get(parent)
+                                        instanceof QueryClass) ? queryBits.get(parent) : null);
+                            QueryObjectReference qr = new QueryObjectReference(parentQc, path.getLastElement());
+                            codeToConstraint.put(code, new ContainsConstraint(qr, constraint.getOp()));
+                        } else if (path.endIsCollection()) {
+                            String parent = path.getPrefix().getNoConstraintsString();
+                            QueryClass parentQC = (QueryClass) ((queryBits.get(parent)
+                                        instanceof QueryClass) ? queryBits.get(parent) : null);
+                            Query subQ = new Query();
+                            QueryCollectionReference qcr = new QueryCollectionReference(
+                                    parentQC, path.getLastElement());
+                            subQ.setDistinct(false);
+                            if (q instanceof Query) {
+                                Query mainQ = (Query) q;
+                                // Manually import the alias from the surrounding query.
+                                subQ.alias(parentQC, ((Query) q).getAliases().get(parentQC));
+                            } else {
+                                subQ.alias(parentQC, "default");
+                            }
+                            
+                            QueryClass pathFrom = new QueryClass(path.getEndType());
+                            subQ.addFrom(pathFrom);
+                            subQ.addToSelect(new QueryValue(1));
+                            subQ.setConstraint(new ContainsConstraint(qcr, ConstraintOp.CONTAINS, pathFrom));
+                            
+                            codeToConstraint.put(code, new SubqueryExistsConstraint(
+                                    ((constraint.getOp() == ConstraintOp.IS_NULL) ? ConstraintOp.DOES_NOT_EXIST : ConstraintOp.EXISTS),
+                                    subQ
+                                ));
                         }
                     } else if (constraint instanceof PathConstraintLoop) {
                         // We need to act if this is not a participating constraint - otherwise

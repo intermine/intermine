@@ -46,8 +46,12 @@ public final class ConstraintOp
     public static final ConstraintOp DOES_NOT_MATCH = new ConstraintOp("NOT LIKE");
     /** Require that the argument is null */
     public static final ConstraintOp IS_NULL = new ConstraintOp("IS NULL");
+    /** Synonym for IS NULL **/
+    public static final ConstraintOp IS_EMPTY = IS_NULL;
     /** Require that the argument is not null */
     public static final ConstraintOp IS_NOT_NULL = new ConstraintOp("IS NOT NULL");
+    /** Synonym for IS NOT NULL **/
+    public static final ConstraintOp IS_NOT_EMPTY = IS_NOT_NULL;
     /** Require that the first argument contains the second */
     public static final ConstraintOp CONTAINS = new ConstraintOp("CONTAINS");
     /** Require that the first argument does not contain the second */
@@ -96,6 +100,12 @@ public final class ConstraintOp
 
     /** Require that the first argument be of the type named by the right argument **/
     public static final ConstraintOp ISNT = new ConstraintOp("ISNT");
+    
+    /** Require that the left argument has at least one of the right argument. **/
+    public static final ConstraintOp HAS = new ConstraintOp("HAS");
+    
+    /** Require that the left argument does not have any of the right argument. **/
+    public static final ConstraintOp DOES_NOT_HAVE = new ConstraintOp("DOES NOT HAVE");
 
     private ConstraintOp(String name) {
         this.name = name;
