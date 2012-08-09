@@ -157,7 +157,6 @@ public class OrthodbConverter extends BioFileConverter
 
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !currentGroup.equals(previousGroup)) {
-                homologueList.removeAll(Collections.singleton(null));
                 if (homologueList.size() >= 2) {
                     processHomologues(homologueList, previousGroup);
                 }
@@ -214,6 +213,7 @@ public class OrthodbConverter extends BioFileConverter
         Vector<Vector<List<String>>> combns = getAllCombinations(data, m);
 
         for (int i=0; i<combns.size(); i++) {
+
             List<String> record1 = combns.elementAt(i).elementAt(0);
             List<String> record2 = combns.elementAt(i).elementAt(1);
 
@@ -224,7 +224,7 @@ public class OrthodbConverter extends BioFileConverter
             String gene2 = record2.get(1);
 
             if (gene1 == null || gene2 == null) {
-                return;
+                continue;
             }
 
             // Create both way relations
