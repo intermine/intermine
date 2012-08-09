@@ -71,6 +71,7 @@
     </c:otherwise>
     </c:choose>
 
+<%-- contextual help is not working...
   <div id="navtrail">
     <p id="contactUsLink" style="display:none;" class="alignleft">
     <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
@@ -83,6 +84,7 @@
     </c:if>
   </c:if>
  </div>
+--%>
 
 <div style="clear: both;"></div>
 
