@@ -1629,13 +1629,14 @@ public class PathQuery implements Cloneable
                                 + " cannot be applied to the root path");
                         continue;
                     }
-                    if (constraint.getOp().equals(ConstraintOp.IS_NULL)) {
-                        if (!path.endIsAttribute()) {
-                            problems.add("Constraint " + constraint
-                                    + " is invalid - can only set IS NULL on an attribute");
-                            continue;
-                        }
-                    }
+                    // TODO - make IS NULL work on references and collections.
+                    //if (constraint.getOp().equals(ConstraintOp.IS_NULL)) {
+                    //    if (!path.endIsAttribute()) {
+                    //        problems.add("Constraint " + constraint
+                    //                + " is invalid - can only set IS NULL on an attribute");
+                    //        continue;
+                    //    }
+                    //}
                 } else if (constraint instanceof PathConstraintBag) {
                     // We do not check that the bag exists here. Call getBagNames() and check
                     // elsewhere.
