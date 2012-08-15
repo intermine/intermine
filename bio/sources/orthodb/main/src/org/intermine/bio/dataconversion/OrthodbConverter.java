@@ -298,13 +298,25 @@ public class OrthodbConverter extends BioFileConverter
              * WBGene00006756 (ZC416.8, unc-17) and WBGene00000481 (ZC416.8, cha-1) have the same
              * secondaryIdentifier ZC416.8, but OrthoDB points to cha-1 in term of the protein id
              * ZC416.8b. To fix the issue, set symbol as another key to filter the duplication.
+             * Same for Y105E8A.7 and B0564.1
              *
              * For a better fix, load uniprot data, set key to secondaryIdentifier, protein and
-             * organism.
+             * organism. But MasterMine tries to not load protein data.
              */
 
                 if ("ZC416.8".equals(geneId)) {
+                    item.removeAttribute(identifierType);
                     item.setAttribute("symbol", "cha-1");
+                }
+
+                if ("Y105E8A.7".equals(geneId)) {
+                    item.removeAttribute(identifierType);
+                    item.setAttribute("symbol", "lev-10");
+                }
+
+                if ("B0564.1".equals(geneId)) {
+                    item.removeAttribute(identifierType);
+                    item.setAttribute("symbol", "exos-4.1");
                 }
             }
 
