@@ -112,7 +112,7 @@ public class Integrate extends Task
         } else {
             Vector<String> bits = StringUtils.split(sourceAttribute, ',');
             for (String bit: bits) {
-                sourceNames.add(bit);
+                sourceNames.add(bit.trim());
             }
         }
 
