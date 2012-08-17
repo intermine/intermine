@@ -22,7 +22,7 @@ fasta_dir = 'pub/current_fasta/' + organism + '/dna/'
 if organism == 'homo_sapiens':
     base = 'Homo_sapiens.GRCh37.'
 elif organism == 'mus_musculus':
-    base = 'Mus_musculus.NCBIM37.'
+    base = 'Mus_musculus.GRCm38.'
     max_chr = 21
 elif organism == 'arabidopsis_thaliana':
     ensembl_ftp = 'ftp://ftp.ensemblgenomes.org/'

@@ -61,9 +61,12 @@
   </sources>
 
   <post-processing>
-
-
-
+    <post-process name="create-references" />
+    <post-process name="do-sources" />
+    <post-process name="create-search-index"/>
+    <post-process name="create-attribute-indexes"/>
+    <post-process name="summarise-objectstore"/>
+    <post-process name="create-autocomplete-index"/>
   </post-processing>
 
 </project>

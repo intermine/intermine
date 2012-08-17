@@ -33,6 +33,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
     private Database db;
     private String soTerm = null, taxonId = null;
+    private String defaultSoTerm = "gene";
 
 
     /**
@@ -41,6 +42,10 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     public FlyBaseIdResolverFactory(String soTerm) {
         this.soTerm = soTerm;
+    }
+
+    public FlyBaseIdResolverFactory() {
+        this.soTerm = defaultSoTerm;
     }
 
 
