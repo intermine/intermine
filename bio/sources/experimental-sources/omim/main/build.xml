@@ -1,6 +1,0 @@
-
-<project name="omim-tasks" default="default" basedir=".">
-  <description>build omim tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>
-
