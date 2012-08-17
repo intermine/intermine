@@ -13,7 +13,7 @@ FTPARK=$DATADIR/ark
 
 INTERACT=y
 DOIT=y
-INFILE=$DATADIR/deprecations
+INFILE=$DATADIR/all.depr
 
 DBHOST=modfast
 DBUSER=modmine
@@ -80,24 +80,22 @@ function build_file {
 # TODO: double true field (see 2801 and 2812)
 # get the list of deprecated entries with their replacement
 
-#grep released $DATADIR/ftplist | grep true | awk '$2 == "true" {print $3","$1 }' | grep -v unknown > $DATADIR/depr
 # this invert the order (so new one is first)
 grep released $DATADIR/ftplist | grep true |
 awk '$2 == "true" {p=""; c=split($3, s, ","); for(n=c; n>=1; --n) p=p ", " s[n]; print p ", " $1;}' |
 grep -v unknown | cut -c 3- > $DATADIR/depr
 
-#grep released $DATADIR/ftplist | grep true | awk '$3 == "true" {print $4","$1 }' >> $DATADIR/depr
 grep released $DATADIR/ftplist | grep true |
 awk '$3 == "true" {p=""; c=split($4, s, ","); for(n=c; n>=1; --n) p=p ", " s[n]; print p ", " $1;}' |
 cut -c 3- >> $DATADIR/depr
+
 grep released $DATADIR/ftplist | grep true | awk '$4 == "true" {print $5","$1 }' >> $DATADIR/depr
 
-#mv $DATADIR/deprecations $FTPARK/dep.`date "+%y%m%d"`
-sort -u $DATADIR/depr > $DATADIR/deprecations
+mv $DATADIR/all.depr $FTPARK/depr.`date "+%y%m%d"`
+sort -u $DATADIR/depr > $DATADIR/depr.su
 
-#awk '{print $1}' $DATADIR/deprecation.table > $DATADIR/all.dead
-#awk '{print $1}' $DATADIR/superseded.table >> $DATADIR/all.dead
-
+$SCRIPTDIR/dep.py < $DATADIR/depr.su > $DATADIR/all.depr
+rm $DATADIR/depr
 }
 
 
