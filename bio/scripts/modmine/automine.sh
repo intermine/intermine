@@ -635,18 +635,18 @@ function doProjectList {
 
 #grep released ftplist | grep false | awk '{print $1, $(NF-2)}' | tr -d ,
 
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i celniker, | awk '{print $1}' > $DATADIR/celniker.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i henikoff, | awk '{print $1}' > $DATADIR/henikoff.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i karpen, | awk '{print $1}' > $DATADIR/karpen.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lai, | awk '{print $1}' > $DATADIR/lai.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i celniker, | awk '{print $1}' | sort > $DATADIR/celniker.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i henikoff, | awk '{print $1}' | sort > $DATADIR/henikoff.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i karpen, | awk '{print $1}' | sort > $DATADIR/karpen.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lai, | awk '{print $1}' | sort > $DATADIR/lai.live
 
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lieb, | awk '{print $1}' > $DATADIR/lieb.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i macalpine, | awk '{print $1}' > $DATADIR/macalpine.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i piano, | awk '{print $1}' > $DATADIR/piano.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i snyder, | awk '{print $1}' > $DATADIR/snyder.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston, | awk '{print $1}' > $DATADIR/waterston.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white, | awk '{print $1}' > $DATADIR/white.live
-grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i oliver, | awk '{print $1}' > $DATADIR/oliver.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i lieb, | awk '{print $1}' | sort > $DATADIR/lieb.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i macalpine, | awk '{print $1}' | sort > $DATADIR/macalpine.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i piano, | awk '{print $1}' | sort > $DATADIR/piano.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i snyder, | awk '{print $1}' | sort > $DATADIR/snyder.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i waterston, | awk '{print $1}' | sort > $DATADIR/waterston.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i white, | awk '{print $1}' | sort > $DATADIR/white.live
+grep released $DATADIR/ftplist | grep false | grep -vw true | grep -i oliver, | awk '{print $1}' | sort > $DATADIR/oliver.live
 
 cat $DATADIR/celniker.live $DATADIR/lai.live > $DATADIR/celnikerlai.live
 cat $DATADIR/waterston.live $DATADIR/piano.live > $DATADIR/waterstonpiano.live
@@ -936,7 +936,13 @@ then
 
 if [ "$FULL" = "y" ]
 then
-interact "Reloading all chadoes. All existing databases in $DBHOST will be rebuilt."
+
+if [ "$CHADOAPPEND" = "n" ]
+then
+echo "     WARNING: All chado databases in $DBHOST will be rebuilt."
+echo "     Use the -a flag to append data in the databases."
+fi
+interact "Loading all chadoes.."
 #loadChadoSubs lai
 #loadChadoSubs piano
 loadChadoSubs henikoff
