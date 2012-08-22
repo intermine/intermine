@@ -114,10 +114,10 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     /**
      * {@inheritDoc}
      */
-    public EnrichmentWidget getWidget(InterMineBag imBag, ObjectStore os,
-                                      List<String> attributes) {
-        return new EnrichmentWidget(this, imBag, os, attributes.get(0), attributes
-                        .get(1), attributes.get(2));
+    public EnrichmentWidget getWidget(InterMineBag imBag, InterMineBag populationBag,
+                                      ObjectStore os, List<String> attributes) {
+        return new EnrichmentWidget(this, imBag, populationBag, os, attributes.get(0),
+                attributes.get(1), attributes.get(2));
     }
 
 }

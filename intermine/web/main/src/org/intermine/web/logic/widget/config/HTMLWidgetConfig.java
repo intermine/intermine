@@ -36,6 +36,7 @@ public class HTMLWidgetConfig extends WidgetConfig
 
     @Override
     public Widget getWidget(@SuppressWarnings("unused") InterMineBag imBag,
+            @SuppressWarnings("unused") InterMineBag populationBag,
             @SuppressWarnings("unused") ObjectStore os,
             @SuppressWarnings("unused") List<String> attributes) {
         return null;

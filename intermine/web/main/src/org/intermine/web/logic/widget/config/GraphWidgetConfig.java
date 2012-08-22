@@ -204,7 +204,7 @@ public class GraphWidgetConfig extends WidgetConfig
     /**
      * {@inheritDoc}
      */
-    public GraphWidget getWidget(InterMineBag imBag, ObjectStore os,
+    public GraphWidget getWidget(InterMineBag imBag, InterMineBag populationBag, ObjectStore os,
                                  List<String> selectedExtraAttribute) {
         return new GraphWidget(this, imBag, os, selectedExtraAttribute.get(0));
     }

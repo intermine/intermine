@@ -176,7 +176,7 @@ public class TableWidgetConfig extends WidgetConfig
     /**
      * {@inheritDoc}
      */
-    public TableWidget getWidget(InterMineBag imBag, ObjectStore os,
+    public TableWidget getWidget(InterMineBag imBag, InterMineBag populationBag, ObjectStore os,
                                  List<String> selectedExtraAttribute) {
         return new TableWidget(this, imBag, os);
     }
