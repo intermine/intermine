@@ -25,6 +25,7 @@ public class WidgetsServiceInput extends WebServiceInput
 {
     private String widgetId;
     private String bagName;
+    private String populationBagName;
     private List<String> extraAttributes = new ArrayList<String>();
 
     /**
@@ -61,18 +62,34 @@ public class WidgetsServiceInput extends WebServiceInput
 
     /**
      * Get the type of the bag
-     * @return the className
+     * @return the bagName
      */
     public String getBagName() {
         return bagName;
     }
 
     /**
-     * Set the type of list
-     * @param className the className to set
+     * Set the bag's name
+     * @param bagName the bagName to set
      */
-    void setBagName(String className) {
-        this.bagName = className;
+    void setBagName(String bagName) {
+        this.bagName = bagName;
+    }
+
+    /**
+     * Get the bag's name for reference population
+     * @return the bagName
+     */
+    public String getPopulationBagName() {
+       return populationBagName;
+    }
+
+    /**
+     * Set the bag's name for reference population
+     * @param populationBagName the bagName to set
+     */
+    public void setPopulationBagName(String populationBagName) {
+        this.populationBagName = populationBagName;
     }
 
 }
