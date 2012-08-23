@@ -47,6 +47,7 @@ public class EnrichmentWidget extends Widget
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
     private int notAnalysed = 0;
     private InterMineBag bag;
+    private InterMineBag populationBag;
     private ObjectStore os;
     private String filter;
     private EnrichmentResults results;
@@ -64,9 +65,11 @@ public class EnrichmentWidget extends Widget
      * @param filter filter to use (ie Ontology)
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
-                            ObjectStore os, String filter, String max, String errorCorrection) {
+                            InterMineBag populationBag, ObjectStore os,
+                            String filter, String max, String errorCorrection) {
         super(config);
         this.bag = interMineBag;
+        this.populationBag = populationBag;
         this.os = os;
         this.errorCorrection = errorCorrection;
         this.max = max;
@@ -93,7 +96,7 @@ public class EnrichmentWidget extends Widget
     @Override
     public void process() {
         try {
-            ldr = new EnrichmentWidgetImplLdr(bag, os,
+            ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
                 (EnrichmentWidgetConfig) config, filter);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
