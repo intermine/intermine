@@ -72,7 +72,6 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -91,7 +90,6 @@ import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -100,15 +98,6 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.widget.EnrichmentWidget;
-import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.HTMLWidget;
-import org.intermine.web.logic.widget.TableWidget;
-import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
-import org.intermine.web.logic.widget.config.GraphWidgetConfig;
-import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
-import org.intermine.web.logic.widget.config.TableWidgetConfig;
-import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -147,11 +136,6 @@ public class AjaxServices
         } catch (Exception e) {
             processException(e);
         }
-    }
-
-    private static void processWidgetException(Exception e, String widgetId) {
-        String msg = "Failed to render widget: " + widgetId;
-        LOG.error(msg, e);
     }
 
     private static void processException(Exception e) {
@@ -976,160 +960,6 @@ public class AjaxServices
         }
     }
 
-    /**
-     * @param widgetId unique id for this widget
-     * @param bagName name of list
-     * @param selectedExtraAttribute extra attribute (like organism)
-     * @return graph widget
-     */
-    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName,
-                                                    String selectedExtraAttribute) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model =  os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                    + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widget: widgets) {
-                if (widget.getId().equals(widgetId)) {
-                    GraphWidgetConfig graphWidgetConf = (GraphWidgetConfig) widget;
-                    graphWidgetConf.setSession(session);
-                    GraphWidget graphWidget = new GraphWidget(graphWidgetConf, imBag, os,
-                                    selectedExtraAttribute);
-                    if (!graphWidget.getResults().isEmpty()) {
-                        return graphWidget;
-                    }
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
-
-    /**
-     * @param widgetId unique id for this widget
-     * @param bagName name of list
-     * @return graph widget
-     */
-    public static HTMLWidget getProcessHTMLWidget(String widgetId, String bagName) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            Model model = im.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-
-            BagManager bagManager = im.getBagManager();
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                            + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widget: widgets) {
-                if (widget.getId().equals(widgetId)) {
-                    HTMLWidgetConfig htmlWidgetConf = (HTMLWidgetConfig) widget;
-                    HTMLWidget htmlWidget = new HTMLWidget(htmlWidgetConf);
-                    return htmlWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param widgetId unique ID for this widget
-     * @param bagName name of list
-     * @return table widget
-     */
-    public static TableWidget getProcessTableWidget(String widgetId, String bagName) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model =  os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                            + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widgetConfig: widgets) {
-                if (widgetConfig.getId().equals(widgetId)) {
-                    TableWidgetConfig tableWidgetConfig = (TableWidgetConfig) widgetConfig;
-                    tableWidgetConfig.setClassKeys(classKeys);
-                    tableWidgetConfig.setWebConfig(webConfig);
-                    TableWidget tableWidget = new TableWidget(tableWidgetConfig, imBag, os);
-                    return tableWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param widgetId unique ID for each widget
-     * @param bagName name of list
-     * @param errorCorrection error correction method to use
-     * @param max maximum value to display
-     * @param filters list of strings used to filter widget results, ie Ontology
-     * @param externalLink link to external datasource
-     * @param externalLinkLabel name of external datasource.
-     * @return enrichment widget
-     */
-    public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
-            String errorCorrection, String max, String filters, String externalLink,
-            String externalLinkLabel) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model = os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                    + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widgetConfig : widgets) {
-                if (widgetConfig.getId().equals(widgetId)) {
-                    EnrichmentWidgetConfig enrichmentWidgetConfig =
-                                                        (EnrichmentWidgetConfig) widgetConfig;
-                    //enrichmentWidgetConfig.setExternalLink(externalLink);
-                    //enrichmentWidgetConfig.setExternalLinkLabel(externalLinkLabel);
-                    EnrichmentWidget enrichmentWidget = new EnrichmentWidget(
-                                    enrichmentWidgetConfig, imBag, os, filters, max,
-                                    errorCorrection);
-                    return enrichmentWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
 
     /**
      * Add an ID to the PagedTable selection

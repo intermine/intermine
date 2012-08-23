@@ -33,6 +33,7 @@ public class WidgetsRequestParser
     private static final String WIDGET_ID = "widget";
 
     private static final String BAG_NAME = "list";
+    private static final String POPULATION_BAG_NAME = "population";
     private static final String FILTER = "filter";
     private static final String MAXP = "maxp";
     private static final String ERROR_CORRECTION = "correction";
@@ -54,6 +55,7 @@ public class WidgetsRequestParser
 
         String widgetId = request.getParameter(WIDGET_ID);
         String bagName = request.getParameter(BAG_NAME);
+        String populationBagName = request.getParameter(POPULATION_BAG_NAME);
         String filter = request.getParameter(FILTER);
         String maxP = request.getParameter(MAXP);
         String errorCorrection = request.getParameter(ERROR_CORRECTION);
@@ -65,6 +67,7 @@ public class WidgetsRequestParser
                 + " but I got these parameters instead: " + request.getParameterMap().keySet());
         }
         ret.setBagName(bagName);
+        ret.setPopulationBagName(populationBagName);
         ret.setWidgetId(widgetId);
         ret.setExtraAttributes(Arrays.asList(filter, maxP, errorCorrection));
 

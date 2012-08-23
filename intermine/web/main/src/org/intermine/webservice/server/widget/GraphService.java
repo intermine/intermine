@@ -78,7 +78,7 @@ public class GraphService extends WidgetService
 
         GraphWidget widget = null;
         try {
-            widget = (GraphWidget) widgetConfig.getWidget(imBag,
+            widget = (GraphWidget) widgetConfig.getWidget(imBag, null,
                     im.getObjectStore(), Arrays.asList(filterSelectedValue));
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find a graph widget called \""
