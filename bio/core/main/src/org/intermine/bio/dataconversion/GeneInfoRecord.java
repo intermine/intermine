@@ -10,7 +10,9 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +34,7 @@ public class GeneInfoRecord
     protected final String mapLocation;
     protected final String geneType;
     protected final Set<String> ensemblIds = new HashSet<String>();
+    protected final Map<String, Set<String>> xrefs = new HashMap<String, Set<String>>();
     protected final Set<String> synonyms = new HashSet<String>();
 
     /**
