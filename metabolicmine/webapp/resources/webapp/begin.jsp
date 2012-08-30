@@ -14,9 +14,11 @@
 <!-- preview div -->
 <div id="ctxHelpDiv" class="preview">
   <div class="topBar info">
-<!--    <div id="ctxHelpTxt" class="preview">You are looking at our latest preview site. Enjoy and <a href="#" onclick="showContactForm();return false;">
-    let us know</a> if events do not turn out as expected. Thank you!</div> -->
-    <div id="ctxHelpTxt" class="preview">Unfortunately, we are experiencing technical difficulties with one of our servers. Please bear with us as we work to fix these issues.</div>
+      <div id="ctxHelpTxt" class="preview">You are looking at our latest preview site. Enjoy and <a href="#" onclick="showContactForm();return false;">
+      let us know</a> if events do not turn out as expected. Thank you!</div>
+  <!--    
+  <div id="ctxHelpTxt" class="preview">Unfortunately, we are experiencing technical difficulties with one of our servers. Please bear with us as we work to fix these issues.</div>
+  --> 
   </div>
 </div>
 

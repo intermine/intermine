@@ -52,7 +52,7 @@
   </tr>
 
   <tr>
-    <td rowspan="3"  class="leftcol"><p><h2>Homology</h2></p></td>
+    <td rowspan="2"  class="leftcol"><p><h2>Homology</h2></p></td>
     <td><i>Drosophila</i></td>
     <td>Orthologues and paralogues between the 12 <i>Drosophila</i> genomes.</td>
     <td><a href="http://www.flybase.org" target="_new" class="extlink">Flybase</a> - Version FB2012_04</td>
