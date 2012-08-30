@@ -94,7 +94,7 @@ public final class BagHelper
 
         BagManager bagManager = im.getBagManager();
 
-        Query q = MainHelper.makeQuery(pathQuery, bagManager.getUserAndGlobalBags(profile), null,
+        Query q = MainHelper.makeQuery(pathQuery, bagManager.getBags(profile), null,
                 im.getBagQueryRunner(), null);
 
         InterMineBag bag = null;
