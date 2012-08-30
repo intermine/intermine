@@ -267,7 +267,7 @@ public class WriteGFFTask extends Task
             incrementCount(objectCounts, feature);
         }
 
-        if (currentChr == null) {
+        if (currentChr == null) { // case of returning no results
             throw new RuntimeException("no chromosomes found");
         }
 

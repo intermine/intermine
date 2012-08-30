@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.intermine.util.FormattedTextParser;
+import org.intermine.util.Util;
 
 
 /**
@@ -59,6 +60,7 @@ public class NcbiGeneInfoParser
                     defaultSymbol, officialName, defaultName, mapLocation, geneType);
 
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
+            record.xrefs.putAll(parseXrefs(xrefs));
 
             if (!"-".equals(synonyms)) {
                 for (String synonym : synonyms.split("\\|")) {
@@ -165,5 +167,19 @@ public class NcbiGeneInfoParser
             }
         }
         return matched;
+    }
+
+    /**
+     * Parse all xref, some gene will have multiple id from same source
+     * e.g. P2RX5 HGNC:8536|MIM:602836|Ensembl:ENSG00000083454|Ensembl:ENSG00000257950|HPRD:09110|Vega:OTTHUMG00000090700|Vega:OTTHUMG00000169623
+     * @param xrefs a "|" separated string
+     * @return a map of xrefs
+     */
+    private Map<String, Set<String>> parseXrefs(String xrefs) {
+        Map<String, Set<String>> xrefMap = new HashMap<String, Set<String>>();
+        for (String xref : xrefs.split("\\|")) {
+            Util.addToSetMap(xrefMap, xref.split(":")[0], xref.split(":")[1]);
+        }
+        return xrefMap;
     }
 }
