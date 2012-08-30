@@ -196,6 +196,10 @@ public class GoConverter extends BioFileConverter
             String qualifier = array[3];
             String strEvidence = array[6];
             String withText = array[7];
+            String annotationExtension = null;
+            if (array.length >= 16) {
+                annotationExtension = array[15];
+            }
             if (StringUtils.isNotEmpty(strEvidence)) {
                 storeEvidenceCode(strEvidence);
             } else {
@@ -244,7 +248,7 @@ public class GoConverter extends BioFileConverter
                     Integer storedAnnotationId = createGoAnnotation(
                             productIdentifier, type, goTermIdentifier,
                             organism, qualifier, withText, dataSource,
-                            dataSourceCode);
+                            dataSourceCode, annotationExtension);
                     evidence.setStoredAnnotationId(storedAnnotationId);
                 } else {
                     boolean seenEvidenceCode = false;
@@ -312,7 +316,7 @@ public class GoConverter extends BioFileConverter
 
     private Integer createGoAnnotation(String productIdentifier, String productType,
             String termIdentifier, Item organism, String qualifier, String withText,
-            String dataSource, String dataSourceCode)
+            String dataSource, String dataSourceCode, String annotationExtension)
         throws ObjectStoreException {
         Item goAnnotation = createItem(annotationClassName);
         goAnnotation.setReference("subject", productIdentifier);
@@ -321,7 +325,9 @@ public class GoConverter extends BioFileConverter
         if (!StringUtils.isEmpty(qualifier)) {
             goAnnotation.setAttribute("qualifier", qualifier);
         }
-
+        if (!StringUtils.isEmpty(annotationExtension)) {
+            goAnnotation.setAttribute("annotationExtension", annotationExtension);
+        }
         // with objects
         if (!StringUtils.isEmpty(withText)) {
             goAnnotation.setAttribute("withText", withText);
