@@ -72,8 +72,9 @@ public class UniprotConverter extends BioDirectoryConverter
 
     private boolean createInterpro = false;
     private boolean creatego = false;
-    private boolean loadFragments = false;
+    private boolean loadfragments = false;
     private boolean allowduplicates = false;
+    private boolean loadtrembl = true;
     private Set<String> taxonIds = null;
 
     protected IdResolverFactory flyResolverFactory;
@@ -131,7 +132,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 if ("uniprot_sprot.xml".equals(filename)) {
                     sortedFiles[0] = file;
                 } else if ("uniprot_trembl.xml".equals(filename)) {
-                    sortedFiles[1] = file;
+                    if (loadtrembl) {
+                        sortedFiles[1] = file;
+                    }
                 }
             }
             processFiles(sortedFiles);
@@ -174,7 +177,7 @@ public class UniprotConverter extends BioDirectoryConverter
      *  [TAXONID]_uniprot_[SOURCE].xml
      *  SOURCE: sprot or trembl
      */
-    private Map<String, File[]> parseFileNames(File[] fileList) {
+    protected Map<String, File[]> parseFileNames(File[] fileList) {
         Map<String, File[]> files = new HashMap<String, File[]>();
         if (fileList == null) {
             return null;
@@ -194,6 +197,11 @@ public class UniprotConverter extends BioDirectoryConverter
                         +  " (" + bits[2] + "), expecting sprot or trembl ");
                 continue;
             }
+
+            if (!loadtrembl && "trembl".equals(source)) {
+                continue;
+            }
+
             int i = ("sprot".equals(source) ? 0 : 1);
             if (!files.containsKey(taxonId)) {
                 File[] sourceFiles = new File[2];
@@ -232,7 +240,19 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     /**
-     * Toggle whether or not to allow duplicate sequences
+     * Toggle whether or not to load trembl data for all given organisms
+     * @param loadtrembl whether or not to load trembl data
+     */
+    public void setLoadtrembl(String loadtrembl) {
+        if ("true".equalsIgnoreCase(loadtrembl)) {
+            this.loadtrembl = true;
+        } else {
+            this.loadtrembl = false;
+        }
+    }
+
+    /**
+     * Toggle whether or not to load trembl data
      * @param allowduplicates whether or not to allow duplicate sequences
      */
     public void setAllowduplicates(String allowduplicates) {
@@ -258,13 +278,13 @@ public class UniprotConverter extends BioDirectoryConverter
     /**
      * Toggle whether or not to load fragments.  default to false.
      *
-     * @param loadFragments if true, will load all proteins even if isFragment = true
+     * @param loadfragments if true, will load all proteins even if isFragment = true
      */
-    public void setLoadfragments(String loadFragments) {
-        if ("true".equalsIgnoreCase(loadFragments)) {
-            this.loadFragments = true;
+    public void setLoadfragments(String loadfragments) {
+        if ("true".equalsIgnoreCase(loadfragments)) {
+            this.loadfragments = true;
         } else {
-            this.loadFragments = false;
+            this.loadfragments = false;
         }
     }
 
@@ -586,7 +606,7 @@ public class UniprotConverter extends BioDirectoryConverter
             if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()
                     && !uniprotEntry.isDuplicate()) {
 
-                if (!loadFragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
+                if (!loadfragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
                     return Collections.emptySet();
                 }
 

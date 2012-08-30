@@ -24,6 +24,7 @@ import org.intermine.util.Util;
 
 /**
  * Parse NCBI Entrez gene_info file and return data structure for each row for later processing.
+ *
  * @author Richard Smith
  *
  */
@@ -45,11 +46,15 @@ public class NcbiGeneInfoParser
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
 
+            if (line[0].startsWith("#")) {
+                continue;
+            }
+
             String taxonId = line[0].trim();
             String entrez = line[1].trim();
             String defaultSymbol = line[2].trim();
             String synonyms = line[4].trim();
-            String xrefs = line[5].trim(); // dbIdentifier
+            String xrefs = line[5].trim(); // db Identifiers
             String mapLocation = line[7].trim();
             String defaultName = line[8].trim();
             String geneType = line[9].trim();
@@ -178,7 +183,9 @@ public class NcbiGeneInfoParser
     private Map<String, Set<String>> parseXrefs(String xrefs) {
         Map<String, Set<String>> xrefMap = new HashMap<String, Set<String>>();
         for (String xref : xrefs.split("\\|")) {
-            Util.addToSetMap(xrefMap, xref.split(":")[0], xref.split(":")[1]);
+            if (!xref.startsWith("-")) {
+                Util.addToSetMap(xrefMap, xref.split(":")[0], xref.split(":")[1]);
+            }
         }
         return xrefMap;
     }

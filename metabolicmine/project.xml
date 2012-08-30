@@ -39,6 +39,7 @@
       <property name="uniprot.organisms" value="9606 10090" />
       <property name="createinterpro" value="true" />
       <property name="src.data.dir" location="/micklem/data/uniprot/current/" />
+      <property name="loadtrembl" value="false"/>
     </source>
 
 <!--
