@@ -122,7 +122,7 @@ public class InterMineRequestProcessor extends TilesRequestProcessor
                 String queryXml = (String) session.getAttribute("ser-query");
                 if (queryXml != null) {
                     BagManager bagManager = im.getBagManager();
-                    Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+                    Map<String, InterMineBag> allBags = bagManager.getBags(profile);
                     PathQuery pq =
                         PathQueryBinding.unmarshalPathQuery(new StringReader(queryXml),
                                 PathQuery.USERPROFILE_VERSION);

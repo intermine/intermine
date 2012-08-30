@@ -53,7 +53,7 @@ public class ListTagAddingService extends ListTagService
         }
         BagManager bagManager = im.getBagManager();
         Profile profile = getPermission().getProfile();
-        Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {
             throw new ResourceNotFoundException(

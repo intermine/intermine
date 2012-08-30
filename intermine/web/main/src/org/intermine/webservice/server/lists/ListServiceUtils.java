@@ -101,7 +101,7 @@ public final class ListServiceUtils
             Profile profile, BagManager manager, Model model,
             String[] listNames) {
         for (String listName: listNames) {
-            InterMineBag bag = manager.getUserOrGlobalBag(profile, listName);
+            InterMineBag bag = manager.getBag(profile, listName);
             if (bag == null) {
                 throw new ServiceForbiddenException(listName + " is not a list you have access to");
             }

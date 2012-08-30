@@ -69,7 +69,7 @@ public class ListManager
                 break;
             }
         }
-        return bagManager.getUserAndGlobalBags(profile).values();
+        return bagManager.getBags(profile).values();
     }
 
     /**

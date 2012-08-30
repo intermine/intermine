@@ -35,7 +35,7 @@ public class GFF3ListService extends GFFQueryService
         InterMineBag list = null;
         if (this.isAuthenticated()) {
             Profile p = SessionMethods.getProfile(request.getSession());
-            list = im.getBagManager().getUserOrGlobalBag(p, listName);
+            list = im.getBagManager().getBag(p, listName);
         } else {
             list = im.getBagManager().getGlobalBag(listName);
         }

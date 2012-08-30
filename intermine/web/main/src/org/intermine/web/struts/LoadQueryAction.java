@@ -67,7 +67,7 @@ public class LoadQueryAction extends DispatchAction
                 PathQuery.USERPROFILE_VERSION);
         BagManager bagManager = im.getBagManager();
 
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
         for (String bagName : query.getBagNames()) {
             if (!allBags.containsKey(bagName)) {
                 throw new RuntimeException("Saved bag (list) '" + bagName + "' not found for "

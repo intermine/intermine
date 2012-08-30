@@ -618,7 +618,7 @@ public class AjaxServices
             TemplateManager templateManager = im.getTemplateManager();
             WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
             int count = 0;
-            InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            InterMineBag  imBag = bagManager.getBag(profile, bagName);
             List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
             PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
@@ -644,7 +644,7 @@ public class AjaxServices
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             final Profile profile = SessionMethods.getProfile(session);
             final BagManager bagManager = im.getBagManager();
-            final InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            final InterMineBag  imBag = bagManager.getBag(profile, bagName);
             final ServletContext servletContext = WebContextFactory.get().getServletContext();
             final WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
             final BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
@@ -1164,7 +1164,7 @@ public class AjaxServices
                 } else {
                     WebSearchable ws = null;
                     if (TagTypes.BAG.equals(type)) {
-                        ws = bm.getUserOrGlobalBag(profile, taggedObject);
+                        ws = bm.getBag(profile, taggedObject);
                     } else if (TagTypes.TEMPLATE.equals(type)) {
                         ws = tm.getUserOrGlobalTemplate(profile, taggedObject);
                     }
@@ -1410,5 +1410,13 @@ public class AjaxServices
         } catch (Exception ex){
             ex.printStackTrace();
         }
+    }
+    
+    public String addUserToShareBag(String user, String bagName) {
+        return "ok";
+    }
+
+    public String deleteUserToShareBag(String user, String bagName) {
+        return "ok";
     }
 }
