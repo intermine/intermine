@@ -49,7 +49,7 @@ public class ListManager
         List<String> ret = new ArrayList<String>();
 
         Collection<InterMineBag> bags
-            = bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
+            = bagManager.getCurrentBagsContainingId(profile, objectId);
 
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());
@@ -87,6 +87,6 @@ public class ListManager
      * @return A collection of lists.
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {
-        return bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
+        return bagManager.getCurrentBagsContainingId(profile, objectId);
     }
 }
