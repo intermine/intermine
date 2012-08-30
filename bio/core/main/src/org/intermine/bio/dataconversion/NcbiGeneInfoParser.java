@@ -55,7 +55,6 @@ public class NcbiGeneInfoParser
 
             String taxonId = line[0].trim();
             if (!taxonIds.contains(taxonId)) {
-                LOG.info("igore taxonId: " + taxonId);
                 continue;
             }
 
