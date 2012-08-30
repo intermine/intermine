@@ -45,7 +45,7 @@ import org.intermine.objectstore.query.Results;
  * A BagManager provides access to all global and/or user bags and methods to fetch them by
  * type, etc.
  * @author Richard Smith
- *
+ * @author dbutano
  */
 public class BagManager
 {
@@ -78,20 +78,14 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getGlobalBags() {
-        return getBagsWithTag(superProfile, TagNames.IM_PUBLIC);
-    }
-
-    /**
-     * Get global bags/lists that have a specific tag
-     * @param tag
-     * @return
-     */
-    public Map<String, InterMineBag> getGlobalBagsWithTag(String tag) {
-        return getBagsWithTag(superProfile, tag);
+        return getUserBagsWithTag(superProfile, TagNames.IM_PUBLIC);
     }
 
     public Map<String, InterMineBag> getGlobalBagsWithTags(List<String> tags) {
-        return getBagsWithTags(superProfile, tags);
+        if (!tags.contains(TagNames.IM_PUBLIC)) {
+            tags.add(TagNames.IM_PUBLIC);
+        }
+        return getUserBagsWithTags(superProfile, tags);
     }
 
     /**
@@ -100,7 +94,7 @@ public class BagManager
      * @param tag the tag to filter
      * @return a map from bag name to bag
      */
-    protected Map<String, InterMineBag> getBagsWithTag(Profile profile, String tag) {
+    protected Map<String, InterMineBag> getUserBagsWithTag(Profile profile, String tag) {
         Map<String, InterMineBag> bagsWithTag = new HashMap<String, InterMineBag>();
 
         for (Map.Entry<String, InterMineBag> entry : profile.getSavedBags().entrySet()) {
@@ -120,7 +114,7 @@ public class BagManager
      * @param tags The tags each bag must have.
      * @return The bags of a profile with all of the required tags.
      */
-    protected Map<String, InterMineBag> getBagsWithTags(Profile profile, List<String> tags) {
+    protected Map<String, InterMineBag> getUserBagsWithTags(Profile profile, List<String> tags) {
         Map<String, InterMineBag> bagsWithTags = new HashMap<String, InterMineBag>();
 
     outer:
@@ -190,7 +184,7 @@ public class BagManager
     }
 
     /**
-     * Return true if there is at least one bag for the given profile in the 'not_current' state.
+     * Return true if there is at least one user bag for the given profile in the 'not_current' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -205,7 +199,7 @@ public class BagManager
     }
 
     /**
-     * Return true if there is at least one bag for the given profile in the 'to_upgrade' state.
+     * Return true if there is at least one user bag for the given profile in the 'to_upgrade' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -225,7 +219,7 @@ public class BagManager
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
-    public Map<String, InterMineBag> getUserAndGlobalBags(Profile profile) {
+    public Map<String, InterMineBag> getBags(Profile profile) {
         // add global bags first, any user bags with same name take precedence
         Map<String, InterMineBag> allBags = Collections.synchronizedSortedMap(
                 new TreeMap<String, InterMineBag>());
@@ -244,7 +238,7 @@ public class BagManager
      */
     public Map<String, InterMineBag> getCurrentBags(Profile profile) {
         Map<String, InterMineBag> ret = Collections.synchronizedSortedMap(
-                new TreeMap<String, InterMineBag>(getUserAndGlobalBags(profile)));
+                new TreeMap<String, InterMineBag>(getBags(profile)));
         synchronized(ret) {
             Iterator<InterMineBag> bags = ret.values().iterator();
             while (bags.hasNext()) {
@@ -294,8 +288,8 @@ public class BagManager
      * @param bagName the name of bag to fetch
      * @return the bag or null if not found
      */
-    public InterMineBag getUserOrGlobalBag(Profile profile, String bagName) {
-        return getUserAndGlobalBags(profile).get(bagName);
+    public InterMineBag getBag(Profile profile, String bagName) {
+        return getBags(profile).get(bagName);
     }
 
     /**
@@ -304,8 +298,8 @@ public class BagManager
      * @param type an unqualified class name
      * @return a map from bag name to bag
      */
-    public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type) {
-        return getUserOrGlobalBagsOfType(profile, type, false);
+    public Map<String, InterMineBag> getBagsOfType(Profile profile, String type) {
+        return getBagsOfType(profile, type, false);
     }
 
     /**
@@ -314,9 +308,9 @@ public class BagManager
      * @param type an unqualified class name
      * @return a map from bag name to bag
      */
-    public Map<String, InterMineBag> getCurrentUserOrGlobalBagsOfType(Profile profile,
-                                                                      String type) {
-        return getUserOrGlobalBagsOfType(profile, type, true);
+    public Map<String, InterMineBag> getCurrentBagsOfType(Profile profile,
+                                                          String type) {
+        return getBagsOfType(profile, type, true);
     }
 
     /**
@@ -326,13 +320,13 @@ public class BagManager
      * @param onlyCurrent if true return only the current bags
      * @return a map from bag name to bag
      */
-    public Map<String, InterMineBag> getUserOrGlobalBagsOfType(Profile profile, String type,
-                                                               boolean onlyCurrent) {
-        return filterBagsByType(getUserAndGlobalBags(profile), type, onlyCurrent);
+    public Map<String, InterMineBag> getBagsOfType(Profile profile, String type,
+                                                   boolean onlyCurrent) {
+        return filterBagsByType(getBags(profile), type, onlyCurrent);
     }
 
     /**
-     * Fetch user bags curent of the specified type or a subclass of the specified type.
+     * Fetch user bags current of the specified type or a subclass of the specified type.
      * @param profile the user to fetch bags for
      * @param type an unqualified class name
      * @return a map from bag name to bag
@@ -393,7 +387,7 @@ public class BagManager
      * @param profile the user to fetch bags from
      * @return bags containing the given id
      */
-    public Collection<InterMineBag> getCurrentUserOrGlobalBagsContainingId(Profile profile,
+    public Collection<InterMineBag> getCurrentBagsContainingId(Profile profile,
                                                                            Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         for (InterMineBag bag: getGlobalBagsContainingId(id)) {

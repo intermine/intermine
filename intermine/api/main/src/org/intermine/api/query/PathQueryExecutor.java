@@ -190,7 +190,7 @@ public class PathQueryExecutor extends QueryExecutor
     private void checkListStatus(PathQuery pq) {
         Set<String> listNames = pq.getBagNames();
         Set<InterMineBag> lists = new HashSet<InterMineBag>();
-        Map<String, InterMineBag> availableBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> availableBags = bagManager.getBags(profile);
         for (String listName : listNames) {
             lists.add(availableBags.get(listName));
         }

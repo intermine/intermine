@@ -133,7 +133,7 @@ public class ImportQueriesForm extends ValidatorForm
         Profile profile = SessionMethods.getProfile(session);
 
         try {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+            Map<String, InterMineBag> allBags = bagManager.getBags(profile);
             if (getQueryMap(allBags).size() == 0) {
                 if (errors == null) {
                     errors = new ActionErrors();
