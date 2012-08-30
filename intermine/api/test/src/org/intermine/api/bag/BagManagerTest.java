@@ -246,7 +246,7 @@ public class BagManagerTest extends InterMineAPITestCase
         Set<InterMineBag> expected = new HashSet<InterMineBag>(Arrays.asList(globalAddressBag));
         try {
             for (int i = 0; i < 1000; i++) { // try and provoke the intermittent exception
-                assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, ADDRESS_ID));
+                assertEquals(expected, bagManager.getCurrentBagsContainingId(testUser, ADDRESS_ID));
             }
         } finally {
             deleteAddress();
@@ -255,7 +255,7 @@ public class BagManagerTest extends InterMineAPITestCase
 
     public void testGetUserOrGlobalBagsContainingIdNoBagsWithId() throws Exception {
         Set<InterMineBag> expected = Collections.EMPTY_SET;
-        assertEquals(expected, bagManager.getCurrentUserOrGlobalBagsContainingId(testUser, DUMMY_ID));
+        assertEquals(expected, bagManager.getCurrentBagsContainingId(testUser, DUMMY_ID));
     }
 
     private Map<String, InterMineBag> createExpected(InterMineBag... bags) {

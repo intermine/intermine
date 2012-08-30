@@ -184,7 +184,7 @@ public class BagManager
     }
 
     /**
-     * Return true if there is at least one bag for the given profile in the 'not_current' state.
+     * Return true if there is at least one user bag for the given profile in the 'not_current' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -199,7 +199,7 @@ public class BagManager
     }
 
     /**
-     * Return true if there is at least one bag for the given profile in the 'to_upgrade' state.
+     * Return true if there is at least one user bag for the given profile in the 'to_upgrade' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -387,7 +387,7 @@ public class BagManager
      * @param profile the user to fetch bags from
      * @return bags containing the given id
      */
-    public Collection<InterMineBag> getCurrentUserOrGlobalBagsContainingId(Profile profile,
+    public Collection<InterMineBag> getCurrentBagsContainingId(Profile profile,
                                                                            Integer id) {
         HashSet<InterMineBag> bagsContainingId = new HashSet<InterMineBag>();
         for (InterMineBag bag: getGlobalBagsContainingId(id)) {
