@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.Util;
 
@@ -30,6 +31,8 @@ import org.intermine.util.Util;
  */
 public class NcbiGeneInfoParser
 {
+    protected static final Logger LOG = Logger.getLogger(NcbiGeneInfoParser.class);
+
     private Map<String, Set<GeneInfoRecord>> recordMap = new HashMap<String, Set<GeneInfoRecord>>();
     private Map<String, Set<String>> duplicateEnsemblIds = new HashMap<String, Set<String>>();
     private Map<String, Set<String>> duplicateSymbols = new HashMap<String, Set<String>>();
@@ -40,7 +43,7 @@ public class NcbiGeneInfoParser
      * @param reader a reader for the gene_info file to be parsed
      * @throws IOException if problems reading file
      */
-    public NcbiGeneInfoParser(Reader reader) throws IOException {
+    public NcbiGeneInfoParser(Reader reader, Set<String> taxonIds) throws IOException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         while (lineIter.hasNext()) {
@@ -51,6 +54,11 @@ public class NcbiGeneInfoParser
             }
 
             String taxonId = line[0].trim();
+            if (!taxonIds.contains(taxonId)) {
+                LOG.info("igore taxonId: " + taxonId);
+                continue;
+            }
+
             String entrez = line[1].trim();
             String defaultSymbol = line[2].trim();
             String synonyms = line[4].trim();
