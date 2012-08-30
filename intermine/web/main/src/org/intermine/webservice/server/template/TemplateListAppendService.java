@@ -51,7 +51,7 @@ public class TemplateListAppendService extends TemplateToListService
         Profile profile) throws ObjectStoreException, PathException {
         Query q = MainHelper.makeQuery(
                 pq,
-                bagManager.getUserAndGlobalBags(profile),
+                bagManager.getBags(profile),
                 new HashMap<String, QuerySelectable>(),
                 im.getBagQueryRunner(),
                 new HashMap<String, BagQueryResult>());

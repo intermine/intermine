@@ -114,7 +114,7 @@ public class ModifyBagAction extends InterMineAction
         String[] selectedBagNames = frm.getSelectedBags();
 
         BagManager bagManager = im.getBagManager();
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
 
         String newNameTextBox = getNewNameTextBox(request, frm.getNewBagName());
 
@@ -194,7 +194,7 @@ public class ModifyBagAction extends InterMineAction
         ModifyBagForm mbf = (ModifyBagForm) form;
 
         BagManager bagManager = im.getBagManager();
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
 
         String[] selectedBagNames = mbf.getSelectedBags();
 
