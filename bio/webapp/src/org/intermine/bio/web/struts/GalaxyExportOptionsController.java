@@ -183,7 +183,7 @@ public class GalaxyExportOptionsController extends TilesAction
             for (PathConstraint constraint : constrains.keySet()) {
                 if (constraint instanceof PathConstraintBag) {
                     String bagName = ((PathConstraintBag) constraint).getBag();
-                    InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
+                    InterMineBag imBag = im.getBagManager().getBag(
                             SessionMethods.getProfile(session), bagName);
 
                     // find the classKeys

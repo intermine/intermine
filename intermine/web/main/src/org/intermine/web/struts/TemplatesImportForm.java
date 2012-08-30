@@ -128,7 +128,7 @@ public class TemplatesImportForm extends ValidatorForm
         }
 
         try {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+            Map<String, InterMineBag> allBags = bagManager.getBags(profile);
             TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
         } catch (Exception err) {
             if (errors == null) {

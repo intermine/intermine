@@ -234,7 +234,7 @@ public class MetadataNode extends Node
         if (isAttribute()) {
             return false;
         } else {
-            return !bagManager.getUserOrGlobalBagsOfType(profile, getType()).isEmpty();
+            return !bagManager.getBagsOfType(profile, getType()).isEmpty();
         }
     }
 

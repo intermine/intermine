@@ -47,7 +47,7 @@ public class ImportQueriesAction extends InterMineAction
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
 
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap(allBags);
