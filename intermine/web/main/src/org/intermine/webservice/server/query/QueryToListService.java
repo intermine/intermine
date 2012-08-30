@@ -185,7 +185,7 @@ public class QueryToListService extends AbstractQueryService
         Query ret;
         try {
             ret = MainHelper.makeQuery(pq,
-                bagManager.getUserAndGlobalBags(profile),
+                bagManager.getBags(profile),
                 new HashMap<String, QuerySelectable>(),
                 im.getBagQueryRunner(),
                 new HashMap<String, BagQueryResult>());

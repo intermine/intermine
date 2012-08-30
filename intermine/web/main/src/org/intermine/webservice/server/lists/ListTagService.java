@@ -73,7 +73,7 @@ public class ListTagService extends AbstractListService
     private Set<String> getTagsForSingleList(String name, Profile profile) {
         BagManager bagManager = im.getBagManager();
 
-        Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getBags(profile);
         InterMineBag list = lists.get(name);
         if (list == null) {
             throw new ResourceNotFoundException(

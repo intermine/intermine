@@ -121,7 +121,7 @@ public class InterMineAPITestCase extends TestCase {
         QueryClass qc = new QueryClass(InterMineObject.class);
         q.addToSelect(qc);
         q.addFrom(qc);
-        SingletonResults res = os.executeSingleton(q, 100000, false, false, true);
+        SingletonResults res = os.executeSingleton(q, 20000, false, false, true);
         ObjectStoreWriter osw = os.getNewWriter();
         Iterator resIter = res.iterator();
         while (resIter.hasNext()) {
