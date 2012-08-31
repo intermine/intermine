@@ -35,8 +35,6 @@
     <collection name="proteins" referenced-type="Protein" reverse-reference="proteinDomains"/>
   </class>
 <class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
-  <attribute name="withText" type="java.lang.String"/>
-  <collection name="with" referenced-type="BioEntity"/>
   <collection name="evidence" referenced-type="GOEvidence"/>
 </class>
 <class name="GOEvidenceCode" is-interface="true">
