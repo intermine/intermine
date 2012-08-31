@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <classes>
 <class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
-  <attribute name="withText" type="java.lang.String"/>
   <attribute name="annotationExtension" type="java.lang.String"/>
   <collection name="evidence" referenced-type="GOEvidence"/>
-  <collection name="with" referenced-type="BioEntity"/>
 </class>
 <class name="Gene" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
@@ -14,7 +12,9 @@
 </class>
 <class name="GOTerm" extends="OntologyTerm" is-interface="true"/>
 <class name="GOEvidence" is-interface="true">
+  <attribute name="withText" type="java.lang.String"/>
   <reference name="code" referenced-type="GOEvidenceCode"/>
   <collection name="publications" referenced-type="Publication"/>
+  <collection name="with" referenced-type="BioEntity"/>
 </class>
 </classes>
