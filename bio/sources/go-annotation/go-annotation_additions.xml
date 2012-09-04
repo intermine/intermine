@@ -17,4 +17,12 @@
   <collection name="publications" referenced-type="Publication"/>
   <collection name="with" referenced-type="BioEntity"/>
 </class>
+  <class name="DatabaseReference" is-interface="true">
+    <attribute name="identifier" type="java.lang.String"/>
+    <reference name="source" referenced-type="DataSource"/>
+    <reference name="subject" referenced-type="Publication" reverse-reference="crossReferences" />
+  </class>
+  <class name="Publication" is-interface="true">
+    <collection name="crossReferences" referenced-type="DatabaseReference" reverse-reference="subject"/>
+  </class>
 </classes>
