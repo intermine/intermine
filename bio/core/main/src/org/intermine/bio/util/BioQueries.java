@@ -122,6 +122,13 @@ public abstract class BioQueries
          * org.intermine.model.bio.Location AS a4_ WHERE (a4_.locatedOn CONTAINS
          * a1_ AND a4_.feature CONTAINS a3_ AND a1_.length IS NOT NULL) ORDER BY
          * a1_.id with indexes [a2_, a3_id, a4_id, a2_, a3_id]
+         *
+         *or equivalently as:
+         *
+         * SELECT a1_.id AS a2_, a3_.id AS a3_id, a4_.id AS a4_id FROM
+         * Chromosome AS a1_, SequenceFeature AS a3_, Location AS a4_ WHERE
+         * a4_.locatedOnId = a1_.id AND a4_.featureId = a3_.id AND a1_.length IS
+         * NOT NULL ORDER BY a1_.id, a3_.id, a4_.id
          */
         Results res = os.execute(q, batchSize, true, true, true);
 

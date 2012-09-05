@@ -126,7 +126,11 @@ public class RnaiConverter extends BioFileConverter
 
     private void processResult(String[] line) throws ObjectStoreException {
         String screenId = line[0];
-        String geneId = getGene(line[2]);
+        String geneId = line[2];    // FBgn
+        if (StringUtils.isEmpty(geneId)) {
+            // some only have entrez IDs and no FBgns.  try both
+            geneId = getGene(line[1]);
+        }
         String reagentId = line[4];
         String score = line[5];
 

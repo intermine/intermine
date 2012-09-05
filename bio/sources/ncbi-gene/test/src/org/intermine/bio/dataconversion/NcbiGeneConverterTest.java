@@ -51,7 +51,7 @@ public class NcbiGeneConverterTest extends ItemsTestCase
      */
     public void testSimpleFiles() throws Exception {
         process("gene_info");
-        assertEquals(28, itemWriter.getItems().size());
+        assertEquals(79, itemWriter.getItems().size());
     }
 
 
@@ -61,7 +61,7 @@ public class NcbiGeneConverterTest extends ItemsTestCase
      */
     public void testGeneCount() throws Exception {
         process("gene_info");
-        assertEquals(9, getGenes().size());
+        assertEquals(10, getGenes().size());
     }
 
     /**
@@ -79,7 +79,10 @@ public class NcbiGeneConverterTest extends ItemsTestCase
         converter.setCurrentFile(geneInfo);
         converter.setOrganisms("34 6239 7227 10090 7237 4932 9606 46245 559292 83333");
         converter.process(new FileReader(geneInfo));
+        converter.close();
+
         storedItems = itemWriter.getItems();
+        // writeItemsFile(storedItems, "ncbigene-tgt-items.xml");
     }
 
     private List<Item> getGenes() {
