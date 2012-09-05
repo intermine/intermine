@@ -10,6 +10,8 @@ client-build/
 executeLog*
 *.pyc
 *.class
+*.iml
+.idea/
 
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png

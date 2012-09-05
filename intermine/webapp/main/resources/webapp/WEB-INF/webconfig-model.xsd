@@ -203,7 +203,7 @@
                       <xsd:complexType>
                         <xsd:simpleContent>
                           <xsd:extension base="xsd:string">
-                            <xsd:attribute type="xsd:string" name="name"/>
+                            <xsd:attribute type="xsd:string" name="title"/>
                             <xsd:attribute type="xsd:string" name="model"/>
                             <xsd:attribute type="xsd:string" name="view"/>
                           </xsd:extension>

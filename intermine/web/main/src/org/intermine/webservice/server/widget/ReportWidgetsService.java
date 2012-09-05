@@ -20,7 +20,10 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.web.context.InterMineContext;
+
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.web.logic.config.ReportWidgetConfig; // ReportWidgetConfig
+
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.widget.GraphWidget;
 import org.intermine.web.logic.widget.config.GraphWidgetConfig;
@@ -42,9 +45,18 @@ public class ReportWidgetsService extends WidgetService
     @SuppressWarnings("deprecation")
     @Override
     protected void execute() throws Exception {
-        WebConfig webConfig = InterMineContext.getWebConfig();
+        // Fetch the config.
+        for (ReportWidgetConfig config : InterMineContext.getWebConfig().getReportWidgetConfigs()) {
+            addOutputInfo("cfg", config.getId());
+        }
 
-        addOutputInfo("key", "value");
+        // Get the request parameters.
+        String id = request.getParameter("id");
+        String callback = request.getParameter("callback");
+
+        // Form the output.
+        addOutputInfo("id", id);
+        addOutputInfo("callback", callback);
     }
 
     @Override
