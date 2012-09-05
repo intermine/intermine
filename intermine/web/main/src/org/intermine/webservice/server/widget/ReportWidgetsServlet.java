@@ -11,43 +11,47 @@ package org.intermine.webservice.server.widget;
  */
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.export.ResponseUtil;
 
+/**
+ * Parse webconfig-model.xml settings for a Report Widget and return it packaged up in JavaScript.
+ * @author radek
+ */
 public class ReportWidgetsServlet extends HttpServlet
 {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}}
      */
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-                    IOException {
-        runService(req, resp);
-    }
-
-    /**
-     * {@inheritDoc}}
-     */
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        runService(req, resp);
+        runService(request, response);
     }
-
+	
     private void runService(HttpServletRequest request, HttpServletResponse response) {
-        // To avoid servlet caching always new service is created -->
-        // Service has always new data and fields in executor are initialized
-        // according new data
-        // and not remember fields initialized according previous request data
-        final InterMineAPI im = InterMineContext.getInterMineAPI();
-        new ReportWidgetsService(im).service(request, response);
+    	// Get request params.
+        String id = request.getParameter("id");
+        String callback = request.getParameter("callback");
+        
+        // Set JavaScript header.
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/javascript");
+
+        // Write the file.
+        try {
+            PrintWriter pw = response.getWriter();
+            pw.write("Hello world");
+        } catch (IOException e) { }
     }
 
 }
