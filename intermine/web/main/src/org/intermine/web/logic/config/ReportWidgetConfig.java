@@ -23,4 +23,14 @@ import org.json.JSONObject;
 public class ReportWidgetConfig
 {
 
+    private String id;
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
 }

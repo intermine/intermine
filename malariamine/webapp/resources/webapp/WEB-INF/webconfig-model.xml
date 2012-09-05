@@ -277,7 +277,7 @@
           </keyValues>
           <pathQueries>
             <pathQuery
-              name="publications"
+              title="publications"
               model="genomic"
               view="Gene.publications.title Gene.publications.year Gene.publications.journal Gene.publications.pubMedId Gene.publications.authors.name"/>
           </pathQueries>
