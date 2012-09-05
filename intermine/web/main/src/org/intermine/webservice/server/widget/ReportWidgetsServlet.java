@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -29,6 +30,9 @@ public class ReportWidgetsServlet extends HttpServlet
 
 	private static final long serialVersionUID = 1L;
 
+	// The arguments to replace.
+	private static final String CALLBACK = "#@+CALLBACK";
+	
     /**
      * {@inheritDoc}}
      */
@@ -54,18 +58,20 @@ public class ReportWidgetsServlet extends HttpServlet
     
     private void runService(HttpServletRequest request, HttpServletResponse response) {
     	// Get request params.
-        String id = request.getParameter("id");
-        String callback = request.getParameter("callback");
+        String paramId = request.getParameter("id");
+        String paramCallback = request.getParameter("callback");
         
         // Set JavaScript header.
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/javascript");
 
-        // Read in the precompiled file.
         String file = "new Error(\"Could not load widget file\");";
         String path = getServletContext().getRealPath("/js/widgets/publications-displayer.js");
         try {
+            // Read in the precompiled file.
 			file = readInFile(path);
+			// Replace the callback.
+			file = file.replaceAll(Pattern.quote(CALLBACK), paramCallback);
 		} catch (IOException e) { }
         
         // Write the file.
