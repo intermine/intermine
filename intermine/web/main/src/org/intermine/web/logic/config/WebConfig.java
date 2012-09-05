@@ -59,8 +59,6 @@ public class WebConfig
     private final Map<String, WidgetConfig> widgets = new HashMap<String, WidgetConfig>();
     private final List<ReportDisplayerConfig> reportDisplayerConfigs =
         new ArrayList<ReportDisplayerConfig>();
-    private final List<ReportWidgetConfig> reportWidgetConfigs =
-        new ArrayList<ReportWidgetConfig>();
 
     /**
      * Parse a WebConfig XML file
@@ -170,10 +168,6 @@ public class WebConfig
         digester.addObjectCreate("webconfig/widgets/bagtabledisplayer", TableWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/bagtabledisplayer");
         digester.addSetNext("webconfig/widgets/bagtabledisplayer", "addWidget");
-
-        digester.addObjectCreate("webconfig/widgets/reportwidget", ReportWidgetConfig.class);
-        digester.addSetProperties("webconfig/widgets/reportwidget");
-        digester.addSetNext("webconfig/widgets/reportwidget", "addReportWidget");
 
         digester.addObjectCreate("webconfig/widgets/htmldisplayer", HTMLWidgetConfig.class);
         digester.addSetProperties("webconfig/widgets/htmldisplayer");
@@ -633,24 +627,6 @@ public class WebConfig
      */
     public List<ReportDisplayerConfig> getReportDisplayerConfigs() {
         return reportDisplayerConfigs;
-    }
-
-    /**
-     * A dummy config for a Report Widget.
-     * @author Radek
-     * @param reportWidgetConfig config for an individual Report Widget
-     */
-    public void addReportWidget(final ReportWidgetConfig reportWidgetConfig) {
-        reportWidgetConfigs.add(reportWidgetConfig);
-    }
-
-    /**
-     * Fetch config for Report Widgets.
-     * @author Radek
-     * @return Report Widget configs
-     */
-    public List<ReportWidgetConfig> getReportWidgetConfigs() {
-        return reportWidgetConfigs;
     }
 
     /**
