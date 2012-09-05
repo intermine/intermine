@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -73,7 +74,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private IdResolver createFromFile(BufferedReader reader) throws IOException {
         IdResolver resolver = new IdResolver(clsName);
 
-        NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader);
+        NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader,
+                new HashSet<String>(Arrays.asList(taxonId)));
         Map<String, Set<GeneInfoRecord>> records = parser.getGeneInfoRecords();
         if (records == null) {
             throw new IllegalArgumentException("Failed to read any records from gene_info file.");

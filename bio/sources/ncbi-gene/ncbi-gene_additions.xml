@@ -7,8 +7,4 @@
      <attribute name="ncbiGeneNumber" type="java.lang.String"/>
    </class>
 
-   <class name="Gene" is-interface="true">
-     <attribute name="ncbiGeneNumber" type="java.lang.String"/>
-   </class>
-
 </classes>
