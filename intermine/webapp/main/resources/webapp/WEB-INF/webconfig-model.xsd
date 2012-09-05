@@ -100,6 +100,7 @@
             <xsd:element name="graphdisplayer" type="graphWidgetType" ></xsd:element>
             <xsd:element name="enrichmentwidgetdisplayer" type="enrichmentWidgetType"></xsd:element>
             <xsd:element name="bagtabledisplayer" type="bagTableWidgetType"></xsd:element>
+            <xsd:element name="reportwidget" type="reportWidgetType"></xsd:element>
         </xsd:choice>
     </xsd:complexType>
 
@@ -155,6 +156,72 @@
                 <xsd:attribute name="columnTitle" type="xsd:string"></xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="reportWidgetType">
+      <xsd:sequence>
+        <xsd:element name="dependencies">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="dependency" maxOccurs="unbounded" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="xsd:string">
+                      <xsd:attribute type="xsd:string" name="name" use="optional"/>
+                      <xsd:attribute type="xsd:anyURI" name="path"/>
+                      <xsd:attribute type="xsd:string" name="type"/>
+                      <xsd:attribute type="xsd:string" name="wait" use="optional"/>
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="config" maxOccurs="1" minOccurs="0">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="keyValues" maxOccurs="1" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="keyValue" maxOccurs="unbounded" minOccurs="0">
+                      <xsd:complexType>
+                        <xsd:simpleContent>
+                          <xsd:extension base="xsd:string">
+                            <xsd:attribute type="xsd:string" name="key"/>
+                            <xsd:attribute type="xsd:string" name="value"/>
+                          </xsd:extension>
+                        </xsd:simpleContent>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="pathQueries" maxOccurs="unbounded" minOccurs="0">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="pathQuery">
+                      <xsd:complexType>
+                        <xsd:simpleContent>
+                          <xsd:extension base="xsd:string">
+                            <xsd:attribute type="xsd:string" name="name"/>
+                            <xsd:attribute type="xsd:string" name="model"/>
+                            <xsd:attribute type="xsd:string" name="view"/>
+                          </xsd:extension>
+                        </xsd:simpleContent>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute type="xsd:string" name="id"/>
+      <xsd:attribute type="xsd:string" name="author"/>
+      <xsd:attribute type="xsd:string" name="title"/>
+      <xsd:attribute type="xsd:string" name="description"/>
+      <xsd:attribute type="xsd:string" name="version"/>
     </xsd:complexType>
 
     <xsd:complexType name="customLinksType">
