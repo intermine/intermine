@@ -10,6 +10,8 @@ package org.intermine.webservice.server.widget;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -17,8 +19,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.web.logic.export.ResponseUtil;
 
 /**
  * Parse webconfig-model.xml settings for a Report Widget and return it packaged up in JavaScript.
@@ -38,6 +38,20 @@ public class ReportWidgetsServlet extends HttpServlet
         runService(request, response);
     }
 	
+    private String readInFile(String path) throws java.io.IOException {
+        StringBuffer fileData = new StringBuffer(1000);
+        BufferedReader reader = new BufferedReader(new FileReader(path));
+        char[] buf = new char[1024];
+        int numRead=0;
+        while((numRead=reader.read(buf)) != -1){
+            String readData = String.valueOf(buf, 0, numRead);
+            fileData.append(readData);
+            buf = new char[1024];
+        }
+        reader.close();
+        return fileData.toString();
+    }
+    
     private void runService(HttpServletRequest request, HttpServletResponse response) {
     	// Get request params.
         String id = request.getParameter("id");
@@ -47,10 +61,17 @@ public class ReportWidgetsServlet extends HttpServlet
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/javascript");
 
+        // Read in the precompiled file.
+        String file = "new Error(\"Could not load widget file\");";
+        String path = getServletContext().getRealPath("/js/widgets/publications-displayer.js");
+        try {
+			file = readInFile(path);
+		} catch (IOException e) { }
+        
         // Write the file.
         try {
             PrintWriter pw = response.getWriter();
-            pw.write("Hello world");
+            pw.write(file);
         } catch (IOException e) { }
     }
 
