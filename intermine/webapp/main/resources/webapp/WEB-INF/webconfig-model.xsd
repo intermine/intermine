@@ -8,6 +8,7 @@
             <xsd:element name="tableExportConfig" type="tableExportConfigType" minOccurs="0" maxOccurs="unbounded"></xsd:element>
             <xsd:element name="reportdisplayers" type="reportDisplayersType" minOccurs="0" maxOccurs="1"></xsd:element>
             <xsd:element name="widgets" type="widgetsType" minOccurs="0" maxOccurs="1"></xsd:element>
+            <xsd:element name="reportwidgets" type="reportWidgetsType" minOccurs="0" maxOccurs="1"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -199,74 +200,53 @@
     
     <xsd:complexType name="reportWidgetsType">
         <xsd:sequence>
-            <xsd:element name="reportwidget" type="reportWidgetType" maxOccurs="unbounded"></xsd:element>
+            <xsd:element name="reportwidget" type="reportWidgetType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     
     <xsd:complexType name="reportWidgetType">
-      <xsd:sequence>
-        <xsd:element name="dependencies">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="dependency" maxOccurs="unbounded" minOccurs="0">
-                <xsd:complexType>
-                  <xsd:simpleContent>
-                    <xsd:extension base="xsd:string">
-                      <xsd:attribute type="xsd:string" name="name" use="optional"/>
-                      <xsd:attribute type="xsd:anyURI" name="path"/>
-                      <xsd:attribute type="xsd:string" name="type"/>
-                      <xsd:attribute type="xsd:string" name="wait" use="optional"/>
-                    </xsd:extension>
-                  </xsd:simpleContent>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-        <xsd:element name="config" maxOccurs="1" minOccurs="0">
-          <xsd:complexType>
-            <xsd:sequence>
-              <xsd:element name="keyValues" maxOccurs="1" minOccurs="0">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="keyValue" maxOccurs="unbounded" minOccurs="0">
-                      <xsd:complexType>
-                        <xsd:simpleContent>
-                          <xsd:extension base="xsd:string">
-                            <xsd:attribute type="xsd:string" name="key"/>
-                            <xsd:attribute type="xsd:string" name="value"/>
-                          </xsd:extension>
-                        </xsd:simpleContent>
-                      </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-              <xsd:element name="pathQueries" maxOccurs="unbounded" minOccurs="0">
-                <xsd:complexType>
-                  <xsd:sequence>
-                    <xsd:element name="pathQuery">
-                      <xsd:complexType>
-                        <xsd:simpleContent>
-                          <xsd:extension base="xsd:string">
-                            <xsd:attribute type="xsd:string" name="title"/>
-                            <xsd:attribute type="xsd:string" name="model"/>
-                            <xsd:attribute type="xsd:string" name="view"/>
-                          </xsd:extension>
-                        </xsd:simpleContent>
-                      </xsd:complexType>
-                    </xsd:element>
-                  </xsd:sequence>
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:sequence>
-          </xsd:complexType>
-        </xsd:element>
-      </xsd:sequence>
-      <xsd:attribute type="xsd:string" name="id"/>
-      <xsd:attribute type="xsd:string" name="author"/>
-      <xsd:attribute type="xsd:string" name="title"/>
-      <xsd:attribute type="xsd:string" name="description"/>
-      <xsd:attribute type="xsd:string" name="version"/>
+	  	<xsd:sequence>
+	        <xsd:element name="dependency" maxOccurs="unbounded" minOccurs="0">
+	          <xsd:complexType>
+	            <xsd:simpleContent>
+	              <xsd:extension base="xsd:string">
+	                <xsd:attribute type="xsd:string" name="name" use="optional"/>
+	                <xsd:attribute type="xsd:anyURI" name="path"/>
+	                <xsd:attribute type="xsd:string" name="type"/>
+	                <xsd:attribute type="xsd:string" name="wait" use="optional"/>
+	              </xsd:extension>
+	            </xsd:simpleContent>
+	          </xsd:complexType>
+	        </xsd:element>
+	
+	        <xsd:element name="keyValue" maxOccurs="unbounded" minOccurs="0">
+	          <xsd:complexType>
+	            <xsd:simpleContent>
+	              <xsd:extension base="xsd:string">
+	                <xsd:attribute type="xsd:string" name="key"/>
+	                <xsd:attribute type="xsd:string" name="value"/>
+	              </xsd:extension>
+	            </xsd:simpleContent>
+	          </xsd:complexType>
+	        </xsd:element>
+	
+	        <xsd:element name="pathQuery" maxOccurs="unbounded" minOccurs="0">
+	          <xsd:complexType>
+	            <xsd:simpleContent>
+	              <xsd:extension base="xsd:string">
+	                <xsd:attribute type="xsd:string" name="title"/>
+	                <xsd:attribute type="xsd:string" name="model"/>
+	                <xsd:attribute type="xsd:string" name="view"/>
+	              </xsd:extension>
+	            </xsd:simpleContent>
+	          </xsd:complexType>
+	        </xsd:element>
+		</xsd:sequence>
+		
+		<xsd:attribute type="xsd:string" name="id"/>
+		<xsd:attribute type="xsd:string" name="author"/>
+		<xsd:attribute type="xsd:string" name="title"/>
+		<xsd:attribute type="xsd:string" name="description"/>
+		<xsd:attribute type="xsd:string" name="version"/>
     </xsd:complexType>
 </xsd:schema>
