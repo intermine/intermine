@@ -14,19 +14,29 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.webservice.server.query.result.XMLValidator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Parse webconfig-model.xml settings for a Report Widget and return it packaged up in JavaScript.
@@ -71,7 +81,8 @@ public class ReportWidgetsServlet extends HttpServlet
         return fileData.toString();
     }
     
-    private void runService(HttpServletRequest request, HttpServletResponse response) {
+    @SuppressWarnings("unchecked")
+	private void runService(HttpServletRequest request, HttpServletResponse response) {
     	// Do we have config?
         if (webConfigModel == null) {
         	webConfigModel = parseXML();
@@ -139,6 +150,21 @@ public class ReportWidgetsServlet extends HttpServlet
 					// Add pathQueries JSONArray?
 					JSONArray pathQueries = getArray(widget, "pathQuery");
 					if (pathQueries != null) {
+						// XML -> JSON -> "You don't like it, change it" XML -> PathQuery -> JSON.
+						//JSONObject pQs = new JSONObject(); 
+						//for(int i = 0 ; i < pathQueries.length() ; i++) {
+							//try {
+								// The query in JSON.
+								//JSONObject p = pathQueries.getJSONObject(i);
+								
+								//PathQuery pQ = PathQueryBinding.unmarshalPathQuery(new StringReader(pX), PathQuery.USERPROFILE_VERSION);
+								//if (pQ.isValid()) {
+									// Save under the `title` key.
+									//pQs.put(p.getString("title"), pQ.toJson());
+								//}
+								
+							//} catch (JSONException e) { }
+						//}
 						try {
 							config.put("pathQueries", pathQueries);
 						} catch (JSONException e) { }
