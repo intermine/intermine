@@ -239,49 +239,50 @@
                       constraints="organism.name=[Organism]"
                       views="primaryIdentifier, symbol, secondaryIdentifier, organism.name, chromosome.primaryIdentifier,
                              chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
-
-      <reportwidget
-        id="publications-displayer"
-        author="Radek"
-        title="Publications for Gene"
-        description="Shows a list of publications for a specific gene"
-        version="0.1.1"
-      >
-        <dependencies>
-          <dependency
-            name="jQuery"
-            path="http://127.0.0.1:1119/js/jquery-min.js"
-            type="js"
-            wait="true"
-          />
-          <dependency
-            name="_"
-            path="http://127.0.0.1:1119/js/underscore-min.js"
-            type="js"
-            wait="true"
-          />
-          <dependency
-            name="Backbone"
-            path="http://127.0.0.1:1119/js/backbone-min.js"
-            type="js"
-          />
-          <dependency
-            path="http://127.0.0.1:1119/js/imjs.js"
-            type="js"
-          />
-        </dependencies>
-        <config>
-          <keyValues>
-            <keyValue key="mine" value="http://beta.flymine.org/beta" />
-            <keyValue key="name" value="Radek" />
-          </keyValues>
-          <pathQueries>
-            <pathQuery
-              title="publications"
-              model="genomic"
-              view="Gene.publications.title Gene.publications.year Gene.publications.journal Gene.publications.pubMedId Gene.publications.authors.name"/>
-          </pathQueries>
-        </config>
-      </reportwidget>
 </widgets>
+<reportwidgets>
+  <reportwidget
+    id="publications-displayer"
+    author="Radek"
+    title="Publications for Gene"
+    description="Shows a list of publications for a specific gene"
+    version="0.1.1"
+  >
+    <dependencies>
+      <dependency
+        name="jQuery"
+        path="http://127.0.0.1:1119/js/jquery-min.js"
+        type="js"
+        wait="true"
+      />
+      <dependency
+        name="_"
+        path="http://127.0.0.1:1119/js/underscore-min.js"
+        type="js"
+        wait="true"
+      />
+      <dependency
+        name="Backbone"
+        path="http://127.0.0.1:1119/js/backbone-min.js"
+        type="js"
+      />
+      <dependency
+        path="http://127.0.0.1:1119/js/imjs.js"
+        type="js"
+      />
+    </dependencies>
+    <config>
+      <keyValues>
+        <keyValue key="mine" value="http://beta.flymine.org/beta" />
+        <keyValue key="name" value="Radek" />
+      </keyValues>
+      <pathQueries>
+        <pathQuery
+          title="publications"
+          model="genomic"
+          view="Gene.publications.title Gene.publications.year Gene.publications.journal Gene.publications.pubMedId Gene.publications.authors.name"/>
+      </pathQueries>
+    </config>
+  </reportwidget>
+</reportwidgets>
 </webconfig>

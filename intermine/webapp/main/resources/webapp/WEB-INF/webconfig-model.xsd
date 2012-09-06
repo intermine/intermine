@@ -100,7 +100,6 @@
             <xsd:element name="graphdisplayer" type="graphWidgetType" ></xsd:element>
             <xsd:element name="enrichmentwidgetdisplayer" type="enrichmentWidgetType"></xsd:element>
             <xsd:element name="bagtabledisplayer" type="bagTableWidgetType"></xsd:element>
-            <xsd:element name="reportwidget" type="reportWidgetType"></xsd:element>
         </xsd:choice>
     </xsd:complexType>
 
@@ -157,6 +156,53 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+    <xsd:complexType name="customLinksType">
+        <xsd:sequence>
+            <xsd:element name="customlink" type="customLinkType"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="customLinkType">
+        <xsd:attribute name="url" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="image" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="inLineListType">
+        <xsd:sequence>
+            <xsd:element name="table" type="inLineTableType" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="inLineTableType">
+        <xsd:attribute name="path" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="showLinksToObjects" type="xsd:boolean"></xsd:attribute>
+        <xsd:attribute name="showInHeader" type="xsd:boolean"></xsd:attribute>
+        <xsd:attribute name="lineLength" type="xsd:int"></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="reportDisplayersType">
+        <xsd:sequence>
+            <xsd:element name="reportdisplayer" type="reportDisplayerType" maxOccurs="unbounded"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="reportDisplayerType">
+        <xsd:attribute name="javaClass" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="jspName" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="replacesFields" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="showImmediately" type="xsd:boolean"></xsd:attribute>
+        <xsd:attribute name="placement" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="types" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="parameters" type="xsd:string"></xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="reportWidgetsType">
+        <xsd:sequence>
+            <xsd:element name="reportwidget" type="reportWidgetType" maxOccurs="unbounded"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
     <xsd:complexType name="reportWidgetType">
       <xsd:sequence>
         <xsd:element name="dependencies">
@@ -222,45 +268,5 @@
       <xsd:attribute type="xsd:string" name="title"/>
       <xsd:attribute type="xsd:string" name="description"/>
       <xsd:attribute type="xsd:string" name="version"/>
-    </xsd:complexType>
-
-    <xsd:complexType name="customLinksType">
-        <xsd:sequence>
-            <xsd:element name="customlink" type="customLinkType"></xsd:element>
-        </xsd:sequence>
-    </xsd:complexType>
-
-    <xsd:complexType name="customLinkType">
-        <xsd:attribute name="url" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="image" type="xsd:string"></xsd:attribute>
-    </xsd:complexType>
-
-    <xsd:complexType name="inLineListType">
-        <xsd:sequence>
-            <xsd:element name="table" type="inLineTableType" minOccurs="1" maxOccurs="unbounded"></xsd:element>
-        </xsd:sequence>
-    </xsd:complexType>
-
-    <xsd:complexType name="inLineTableType">
-        <xsd:attribute name="path" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="showLinksToObjects" type="xsd:boolean"></xsd:attribute>
-        <xsd:attribute name="showInHeader" type="xsd:boolean"></xsd:attribute>
-        <xsd:attribute name="lineLength" type="xsd:int"></xsd:attribute>
-    </xsd:complexType>
-
-    <xsd:complexType name="reportDisplayersType">
-        <xsd:sequence>
-            <xsd:element name="reportdisplayer" type="reportDisplayerType" maxOccurs="unbounded"></xsd:element>
-        </xsd:sequence>
-    </xsd:complexType>
-
-    <xsd:complexType name="reportDisplayerType">
-        <xsd:attribute name="javaClass" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="jspName" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="replacesFields" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="showImmediately" type="xsd:boolean"></xsd:attribute>
-        <xsd:attribute name="placement" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="types" type="xsd:string"></xsd:attribute>
-        <xsd:attribute name="parameters" type="xsd:string"></xsd:attribute>
     </xsd:complexType>
 </xsd:schema>
