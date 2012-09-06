@@ -40,6 +40,7 @@ import org.intermine.web.logic.session.SessionMethods;
 public class UpgradeBagList implements Runnable
 {
     private static final Logger LOG = Logger.getLogger(UpgradeBagList.class);
+    private static final String STATUS = "status";
     private Profile profile;
     private BagQueryRunner bagQueryRunner;
     private HttpSession session;
@@ -69,15 +70,14 @@ public class UpgradeBagList implements Runnable
     private void doUpgrade(Map<String, Map<String, Object>> status) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
-
+            String bagName = bag.getName();
+            
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 Map<String, Object> bagAttributes = new HashMap<String, Object>();
+                bagAttributes.put(STATUS, Constants.UPGRADING_BAG);
+                status.put(bagName, bagAttributes);
 
-                bagAttributes.put("status", Constants.UPGRADING_BAG);
-
-                LOG.info("Start upgrading the bag list " + bag.getName());
-                status.put(bag.getName(), bagAttributes);
-
+                LOG.info("Start upgrading the list " + bagName + ".");
                 BagQueryUpgrade bagQueryUpgrade = new BagQueryUpgrade(bagQueryRunner, bag);
                 BagQueryResult result = bagQueryUpgrade.getBagQueryResult();
                 try {
@@ -88,21 +88,23 @@ public class UpgradeBagList implements Runnable
                         //we set temporary the updateBagValues parameter to true
                         //in this way will update the extra field recently added
                         bag.upgradeOsb(matches.keySet(), true);
-                        bagAttributes.put("status", BagState.CURRENT.toString());
+                        bagAttributes.put(STATUS, BagState.CURRENT.toString());
                         try {
                             bagAttributes.put("size", bag.getSize());
                         } catch (ObjectStoreException e) {
                             // nothing serious happens here...
                         }
-                        status.put(bag.getName(), bagAttributes);
+                        status.put(bagName, bagAttributes);
+                        LOG.info("List " + bagName + " upgraded.");
                     } else {
-                        reportResult(bag.getName(), result);
+                        reportResult(bagName, result);
                         bag.setState(BagState.TO_UPGRADE);
-                        bagAttributes.put("status", BagState.TO_UPGRADE.toString());
-                        status.put(bag.getName(), bagAttributes);
+                        bagAttributes.put(STATUS, BagState.TO_UPGRADE.toString());
+                        status.put(bagName, bagAttributes);
+                        LOG.info("List " + bagName + " has to be upgraded manually.");
                     }
                 } catch (ObjectStoreException ose) {
-                    LOG.warn("Could not upgrade the bags list", ose);
+                    LOG.warn("Could not upgrade the list " + bagName, ose);
                 }
             }
         }
