@@ -43,9 +43,10 @@ public class ReportWidgetsServlet extends HttpServlet
 	private static final String AUTHOR      = "#@+AUTHOR";
 	private static final String DESCRIPTION = "#@+DESCRIPTION";
 	private static final String VERSION     = "#@+VERSION";
+	private static final String CONFIG      = "#@+CONFIG";
 	
 	// The config, serialized from `webconfig-model.xml`
-	private static JSONArray config = null;
+	private static JSONArray webConfigModel = null;
 	
     /**
      * {@inheritDoc}}
@@ -72,8 +73,8 @@ public class ReportWidgetsServlet extends HttpServlet
     
     private void runService(HttpServletRequest request, HttpServletResponse response) {
     	// Do we have config?
-        if (config == null) {
-            config = parseXML();
+        if (webConfigModel == null) {
+        	webConfigModel = parseXML();
         }
     	
     	// Get request params.
@@ -119,6 +120,32 @@ public class ReportWidgetsServlet extends HttpServlet
 						file = file.replaceAll(Pattern.quote(DESCRIPTION), widget.getString("description"));
 						file = file.replaceAll(Pattern.quote(VERSION), widget.getString("version"));
 					} catch (JSONException e) { }
+					
+					// This is where we save the output config.
+					JSONObject config = new JSONObject();
+					
+					// Parse keyValues JSONArray?
+					JSONArray keyValues = getArray(widget, "keyValue");
+					if (keyValues != null) {	
+						for(int i = 0 ; i < keyValues.length() ; i++) {
+							JSONObject o;
+							try {
+								o = keyValues.getJSONObject(i);
+								config.put(o.getString("key"), o.getString("value"));
+							} catch (JSONException e) { }
+						}
+					}
+					
+					// Add pathQueries JSONArray?
+					JSONArray pathQueries = getArray(widget, "pathQuery");
+					if (pathQueries != null) {
+						try {
+							config.put("pathQueries", pathQueries);
+						} catch (JSONException e) { }
+					}
+					
+					// Replace the config in the file with our config.
+					file = file.replaceAll(Pattern.quote(CONFIG), config.toString());
 				}
 				
 				// Write the output.
@@ -127,10 +154,28 @@ public class ReportWidgetsServlet extends HttpServlet
 		}
     }
 
-    private JSONObject getWidgetConfig(String id) {
-		for(int i = 0 ; i < config.length() ; i++) {
+    private JSONArray getArray(JSONObject src, String key) {
+    	JSONArray result = new JSONArray();
+		try {
+			// Is it a single object?
+			JSONObject obj = src.getJSONObject(key);
+			result.put(obj);
+			return result;
+		} catch (JSONException e0) {
 			try {
-				JSONObject widget = config.getJSONObject(i).getJSONObject("reportwidget");
+				// An array maybe?
+				return src.getJSONArray(key);
+			} catch (JSONException e1) { }
+		}
+		return null;
+    }
+    
+    private JSONObject getWidgetConfig(String id) {
+    	if (webConfigModel == null) return null;
+		
+    	for(int i = 0 ; i < webConfigModel.length() ; i++) {
+			try {
+				JSONObject widget = webConfigModel.getJSONObject(i).getJSONObject("reportwidget");
 				if (id.equals(widget.get("id"))) {
 					return widget;
 				}
@@ -139,9 +184,7 @@ public class ReportWidgetsServlet extends HttpServlet
 		return null;
     }
     
-	private JSONArray parseXML() {
-		JSONArray reportWidgets = new JSONArray();
-		
+	private JSONArray parseXML() {		
 		// Read in file.
         String path = getServletContext().getRealPath("/WEB-INF/webconfig-model.xml");
         String file = "";
@@ -154,7 +197,7 @@ public class ReportWidgetsServlet extends HttpServlet
         try {
         	json = XML.toJSONObject(file);
 		} catch (JSONException e) {
-			return reportWidgets;
+			return null;
 		}
 		
 		// Find the relevant section.
@@ -162,23 +205,11 @@ public class ReportWidgetsServlet extends HttpServlet
 		try {
 			webconfig = json.getJSONObject("webconfig");
 		} catch (JSONException e) {
-			return reportWidgets;
+			return null;
 		}
 
-		try {
-			// Is it a single object?
-			JSONObject obj = webconfig.getJSONObject("reportwidgets");
-			reportWidgets.put(obj);
-		} catch (JSONException e0) {
-			try {
-				// An array maybe?
-				reportWidgets = webconfig.getJSONArray("reportwidgets");
-			} catch (JSONException e1) {
-				return reportWidgets;
-			}
-		}	
-		
-		return reportWidgets;
+		// Get only the Report Widgets.
+		return getArray(webconfig, "reportwidgets");
 	}
 
 }
