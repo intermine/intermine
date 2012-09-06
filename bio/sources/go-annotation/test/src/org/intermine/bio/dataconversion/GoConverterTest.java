@@ -74,36 +74,32 @@ public class GoConverterTest extends ItemsTestCase
     public void tearDown() throws Exception {
         goOboFile.delete();
     }
+
     public void testProcess() throws Exception {
-        boolean istrue = true;
-        assertTrue(istrue);
+        Reader reader = new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
+        converter.process(reader);
+        //System.out.println("productWrapperMap: " + converter.productMap.keySet());
+        converter.close();
+
+        // uncomment to write a new target items file
+        // writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+
+        assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
-//    public void testProcess() throws Exception {
-//        Reader reader = new InputStreamReader(
-//                getClass().getClassLoader().getResourceAsStream("GoConverterOboTest_src.txt"));
-//        converter.process(reader);
-//        //System.out.println("productWrapperMap: " + converter.productMap.keySet());
-//        converter.close();
-//
-//        // uncomment to write a new target items file
-//        // writeItemsFile(writer.getItems(), "go-tgt-items.xml");
-//
-//        assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
-//    }
-//
-//
-//    public void testCreateWithObjects() throws Exception {
-//        ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
-//        Item organism = tgtItemFactory.makeItem("3_1", "Organism", "");
-//        organism.setAttribute("taxonId", "7227");
-//
-//        Set<String> expected = new HashSet<String>();
-//        expected.add("1_1");
-//        expected.add("1_2");
-//        converter.initialiseMapsForFile();
-//        assertEquals(expected, new HashSet<String>(converter.createWithObjects(
-//                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",
-//                organism, "FlyBase", "FlyBase")));
-//    }
+
+    public void testCreateWithObjects() throws Exception {
+        ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
+        Item organism = tgtItemFactory.makeItem("3_1", "Organism", "");
+        organism.setAttribute("taxonId", "7227");
+
+        Set<String> expected = new HashSet<String>();
+        expected.add("1_1");
+        expected.add("1_2");
+        converter.initialiseMapsForFile();
+        assertEquals(expected, new HashSet<String>(converter.createWithObjects(
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",
+                organism, "FlyBase", "FlyBase")));
+    }
 
 }
