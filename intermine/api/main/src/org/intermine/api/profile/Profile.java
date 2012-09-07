@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
@@ -539,6 +540,7 @@ public class Profile
             savedInvalidBags.remove(name);
         }
         if (isLoggedIn()) {
+            getSharedBagManager().unshareBagWithAllUsers(name);
             bagToDelete.delete();
         }
 
@@ -645,6 +647,10 @@ public class Profile
         return new TagManagerFactory(manager).getTagManager();
     }
 
+    private SharedBagManager getSharedBagManager() {
+        return SharedBagManager.getInstance(manager);
+    }
+
     /**
      * Return a WebSearchable Map for the given type.
      * @param type the type (from TagTypes)
@@ -719,5 +725,13 @@ public class Profile
         } else {
             return "";
         }
+    }
+
+    /**
+     * Return the shared bags for the profile.
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getSharedBags() {
+        return getSharedBagManager().getSharedBags(this);
     }
 }

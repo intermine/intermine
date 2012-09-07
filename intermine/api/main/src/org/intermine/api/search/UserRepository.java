@@ -20,7 +20,6 @@ import org.intermine.api.profile.Profile;
  */
 public class UserRepository extends SearchRepository
 {
-
     /**
      * Constructor.
      * @param profile The profile of the user whose data we are indexing.
@@ -65,6 +64,7 @@ public class UserRepository extends SearchRepository
     @Override
     protected void populateSearchItems() {
         searchItems.addAll(getProfile().getSavedBags().values());
+        searchItems.addAll(getProfile().getSharedBags().values());
         searchItems.addAll(getProfile().getSavedTemplates().values());
         LOG.info("Populated repository with " + searchItems.size() + " items");
     }
