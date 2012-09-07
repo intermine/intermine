@@ -50,6 +50,7 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
+import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -57,6 +58,8 @@ import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.UserAlreadyShareBagException;
+import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
 import org.intermine.api.search.SearchRepository;
@@ -1407,16 +1410,49 @@ public class AjaxServices
         }
         try {
             PropertyUtils.setSimpleProperty(templateQuery, field, value);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    
-    public String addUserToShareBag(String user, String bagName) {
+
+    public String addUserToShareBag(String userName, String bagName) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        BagManager bagManager = im.getBagManager();
+        if (profile.getUsername().equals(userName)) {
+            return "The user already shares the bag.";
+        }
+        try {
+            bagManager.shareBagWithUser(bagName, userName);
+        } catch (UserNotFoundException e1) {
+            return "User not found.";
+        } catch (BagDoesNotExistException e2) {
+            return "The list does not exist.";
+        } catch (UserAlreadyShareBagException e3) {
+            return "The user already shares the bag.";
+        }
         return "ok";
     }
 
-    public String deleteUserToShareBag(String user, String bagName) {
+    public String deleteUserToShareBag(String userName, String bagName) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        BagManager bagManager = im.getBagManager();
+        try {
+            bagManager.unshareBagWithUser(bagName, userName);
+        } catch (UserNotFoundException unfe) {
+            return "User not found.";
+        } catch (BagDoesNotExistException bnee) {
+            return "Tha list does not exist.";
+        }
         return "ok";
+    }
+
+    public List<String> getUsersSharingBag(String bagName) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        BagManager bagManager = im.getBagManager();
+        return bagManager.getUsersSharingBag(bagName);
     }
 }
