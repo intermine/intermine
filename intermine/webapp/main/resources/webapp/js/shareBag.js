@@ -20,13 +20,17 @@
     };
 
     this.addUser = function(id, bagName) {
+/*      if (failureNotification != null) {
+        //failureNotification.$el.hide('slow', function() {failureNotification.remove()});
+        failureNotification.$el.html('');
+      }*/
       var user = jQuery('#userValue-' + id).val();
       var callBack = function(returnStr) {
         if (returnStr == 'ok') {
           refreshSharingUsers(bagName, id);
           jQuery('#userValue-' + id).val('');
         } else {
-          new FailureNotification({message: returnStr}).render();
+            new FailureNotification({message: returnStr}).render();
         }
       };
       if (user != '') {
