@@ -73,14 +73,24 @@ public class GoPostprocessTest extends XMLTestCase {
     }
 
     public void testPostProcess() throws Exception {
+        deleteAlltheThings();
         setUpData();
         GoPostprocess gp = new GoPostprocess(osw);
         gp.postProcess();
 
-        Gene resGene = (Gene) getFromDb(Gene.class).iterator().next();
+        Set<InterMineObject> genes = getFromDb(Gene.class);
 
-        // Gene should come back with a collection of GO terms
-        assertEquals(2, resGene.getGoAnnotation().size());
+        assertEquals(2, genes.size());
+
+        for (InterMineObject o : genes) {
+            Gene gene = (Gene) o;
+            Set<GOAnnotation> goAnnotations = gene.getGoAnnotation();
+            for (GOAnnotation goa : goAnnotations) {
+                OntologyTerm goterm = goa.getOntologyTerm();
+                assertEquals("FOR " + gene.getName(), goterm.getName());
+            }
+
+        }
     }
 
     public void testMerging() throws Exception {
@@ -100,18 +110,27 @@ public class GoPostprocessTest extends XMLTestCase {
     }
 
 
-    // Store a gene with two protein, each protein has a GO term
+    // Store 2 genes with a protein, each protein has a GO term
     private void setUpData() throws Exception {
-        Gene gene = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        Gene gene1 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        gene1.setName("GENE 1");
+        Gene gene2 = (Gene) DynamicUtil.createObject(Collections.singleton(Gene.class));
+        gene2.setName("GENE 2");
         Protein protein1 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        protein1.addGenes(gene);
+        protein1.addGenes(gene1);
         Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
-        protein2.addGenes(gene);
+        protein2.addGenes(gene2);
 
-        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, protein1, protein2}));
+        List toStore = new ArrayList(Arrays.asList(new Object[] {gene1, gene2, protein1, protein2}));
 
-        toStore.addAll(setUpAnnotations(protein1));
-        toStore.addAll(setUpAnnotations(protein2));
+        OntologyTerm ontologyTerm1 = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
+        ontologyTerm1.setName("FOR GENE 1");
+
+        OntologyTerm ontologyTerm2 = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
+        ontologyTerm2.setName("FOR GENE 2");
+
+        toStore.addAll(setUpAnnotations(protein1, ontologyTerm1));
+        toStore.addAll(setUpAnnotations(protein2, ontologyTerm2));
 
         osw.beginTransaction();
         Iterator i = toStore.iterator();
@@ -121,10 +140,10 @@ public class GoPostprocessTest extends XMLTestCase {
         osw.commitTransaction();
     }
 
-    private List setUpAnnotations(Protein protein) {
+    private List setUpAnnotations(Protein protein, OntologyTerm ontologyTerm) {
         GOAnnotation go = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
         go.setSubject(protein);
-        OntologyTerm ontologyTerm = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
+
         go.setOntologyTerm(ontologyTerm);
         GOEvidence evidence = (GOEvidence) DynamicUtil.createObject(Collections.singleton(GOEvidence.class));
         GOEvidenceCode code = (GOEvidenceCode) DynamicUtil.createObject(Collections.singleton(GOEvidenceCode.class));
