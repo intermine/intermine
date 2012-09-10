@@ -657,7 +657,7 @@ public class DisplayConstraint
      */
     public List<String> getBags() {
         if (ClassKeyHelper.hasKeyFields(classKeys, endCls)
-            && !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)) {
+            /*&& !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)*/) {
             Map<String, InterMineBag> bags =
                 bagManager.getCurrentBagsOfType(profile, endCls);
             if (!bags.isEmpty()) {
