@@ -256,10 +256,11 @@
     <keyValue key="mine" value="http://beta.flymine.org/beta" />
     <keyValue key="name" value="Radek" />
     
-    <pathQuery
-      title="publications"
-      model="genomic"
-      view="Gene.publications.title Gene.publications.year Gene.publications.journal Gene.publications.pubMedId Gene.publications.authors.name" />
+	<pathQuery name="test" model="genomic" view="Gene.secondaryIdentifier Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.name Gene.interactions.type.name Gene.interactions.confidenceText Gene.interactions.dataSets.dataSource.name Gene.interactions.experiment.publication.pubMedId" longDescription="Show all known interactions between two specific genes. (Data Source: IntAct, BioGrid). " sortOrder="Gene.secondaryIdentifier asc" constraintLogic="A and C and B">
+	    <constraint path="Gene.interactions.interactionType" code="B" op="=" value="physical"/>
+	    <constraint path="Gene" code="A" op="LOOKUP" value="wg" extraValue=""/>
+	    <constraint path="Gene.interactions.interactingGenes" code="C" op="LOOKUP" value="CG14487" extraValue=""/>
+	</pathQuery>
   </reportwidget>
 </reportwidgets>
 </webconfig>
