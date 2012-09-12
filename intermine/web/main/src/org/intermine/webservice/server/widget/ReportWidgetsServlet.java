@@ -13,6 +13,8 @@ package org.intermine.webservice.server.widget;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +24,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -121,8 +125,9 @@ public class ReportWidgetsServlet extends HttpServlet
         	// Many dependencies.
         	private JSONArray dependencies = null;
         	// Many PathQueries.
-        	private JSONArray pathQueries = null;
-        	// One PathQuery in XML form.
+        	private JSONObject pathQueries = null;
+        	// One PathQuery.
+        	private String pathQueryName = null;
         	private String pathQuery = null;
         	// Other client config.
         	private JSONObject clientConfig = null;
@@ -156,7 +161,8 @@ public class ReportWidgetsServlet extends HttpServlet
             			try {
             				// Is it a PathQuery or its child?
             				if ("pathQuery".equals(qName) || pathQuery != null) {
-    		                    if (pathQueries == null) pathQueries = new JSONArray();
+    		                    if (pathQueries == null) pathQueries = new JSONObject();
+    		                    
     		                    // Open?
     		                    if (pathQuery == null) {
     		                    	pathQuery = "<query";
@@ -165,9 +171,17 @@ public class ReportWidgetsServlet extends HttpServlet
     		                    }
     		                    
     		                    // Query attributes.
-    		                    for (int i = 0; i < attributes.getLength(); i++) {
+    		                    for (int i = 0; i < attributes.getLength(); i++) {    		                    	
+    		                    	String k = attributes.getLocalName(i);
     		                        String v = attributes.getValue(i);
-    		                        pathQuery += " " + attributes.getLocalName(i) + "=\"" + v + "\"";
+    		                        
+    		                    	// Check for PQ name.
+    		                    	if ("pathQuery".equals(qName) && ("name".equals(k) || "title".equals("k"))) {
+    		                    		pathQueryName = v;
+    		                    	}
+    		                        
+    		                    	// Stringify back.
+    		                        pathQuery += " " + k + "=\"" + v + "\"";
     		                    }
     		                    
     		                    // Close this level.
@@ -243,12 +257,27 @@ public class ReportWidgetsServlet extends HttpServlet
             		clientConfig = null;
             	// Closing a PathQuery or its child?
             	} else if ("pathQuery".equals(qName)) {
+            		// Do we have the PQ name?
+            		if (pathQueryName == null) {
+            			// Exception.
+            		}
+            		
             		// Close us up.
             		pathQuery += "</query>";
+            		
+            		// Convert to PathQuery.
+            		PathQuery pq = PathQueryBinding.unmarshalPathQuery(new StringReader(pathQuery), PathQuery.USERPROFILE_VERSION);
+            		if (!pq.isValid()) {
+            			// Exception.
+            		}
+            		
             		// Save it.
-            		pathQueries.put(pathQuery);
+            		try {
+						pathQueries.put(pathQueryName, new JSONObject(pq.toJson()));
+					} catch (JSONException e) { }
             		// Reset.
-            		pathQuery = null;	
+            		pathQuery = null;
+            		pathQueryName = null;
             	} else if (pathQuery != null) {
             		// Close us up.
             		pathQuery += "</" + qName + ">";            		
