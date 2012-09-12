@@ -69,9 +69,7 @@ public abstract class StorableBag implements WebSearchable
         }
     }
 
-
     protected Integer profileId;
-    protected Set<Integer> bagSharingProfileIds;
     protected Integer savedBagId;
 
     /**
@@ -110,22 +108,13 @@ public abstract class StorableBag implements WebSearchable
     public abstract String getType();
 
     /** @return the id of the profile belonging to the user this list belongs to */
-    protected Integer getProfileId() {
+    public Integer getProfileId() {
         return profileId;
     }
 
     /** @return the id of the saved bag this list represents */
     public Integer getSavedBagId() {
         return savedBagId;
-    }
-    
-
-    public Set<Integer> getSharingProfileIds() {
-        return bagSharingProfileIds;
-    }
-
-    public void setSharingProfileIds(Set<Integer> bagSharingProfileIds) {
-        this.bagSharingProfileIds = bagSharingProfileIds;
     }
 
     /**
