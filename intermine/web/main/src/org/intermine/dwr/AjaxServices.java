@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -109,6 +110,7 @@ import org.json.JSONObject;
  * This class contains the methods called through DWR Ajax
  *
  * @author Xavier Watkins
+ * @author Daniela Butano
  *
  */
 public class AjaxServices
@@ -1424,7 +1426,7 @@ public class AjaxServices
             return "The user already shares the bag.";
         }
         try {
-            bagManager.shareBagWithUser(bagName, userName);
+            bagManager.shareBagWithUser(bagName, profile.getUserId(), userName);
         } catch (UserNotFoundException e1) {
             return "User not found.";
         } catch (BagDoesNotExistException e2) {
@@ -1438,9 +1440,10 @@ public class AjaxServices
     public String deleteUserToShareBag(String userName, String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         try {
-            bagManager.unshareBagWithUser(bagName, userName);
+            bagManager.unshareBagWithUser(bagName, profile.getUserId(), userName);
         } catch (UserNotFoundException unfe) {
             return "User not found.";
         } catch (BagDoesNotExistException bnee) {
@@ -1452,7 +1455,8 @@ public class AjaxServices
     public List<String> getUsersSharingBag(String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
-        return bagManager.getUsersSharingBag(bagName);
+        return bagManager.getUsersSharingBag(bagName, profile.getUserId());
     }
 }

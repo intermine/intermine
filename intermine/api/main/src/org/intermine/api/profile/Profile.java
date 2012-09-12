@@ -48,6 +48,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
  *
  * @author Mark Woodbridge
  * @author Thomas Riley
+ * @author Daniela Butano
  */
 public class Profile
 {
@@ -540,7 +541,7 @@ public class Profile
             savedInvalidBags.remove(name);
         }
         if (isLoggedIn()) {
-            getSharedBagManager().unshareBagWithAllUsers(name);
+            getSharedBagManager().unshareBagWithAllUsers(name, userId);
             bagToDelete.delete();
         }
 

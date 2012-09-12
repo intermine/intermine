@@ -49,7 +49,7 @@ import org.intermine.objectstore.query.Results;
  * A BagManager provides access to all global and/or user bags and methods to fetch them by
  * type, etc.
  * @author Richard Smith
- * @author dbutano
+ * @author Daniela Butano
  */
 public class BagManager
 {
@@ -229,22 +229,22 @@ public class BagManager
         return sharedBagManager.getSharedBags(profile);
     }
 
-    public void shareBagWithUser(String bagName, String userName)
+    public void shareBagWithUser(String bagName, int bagOwnerId, String userName)
         throws UserNotFoundException, BagDoesNotExistException,
         UserAlreadyShareBagException {
-        sharedBagManager.shareBagWithUser(bagName, userName);
+        sharedBagManager.shareBagWithUser(bagName, bagOwnerId, userName);
     }
 
-    public void unshareBagWithUser(String bagName, String userName)
+    public void unshareBagWithUser(String bagName, int bagOwnerId, String userName)
         throws UserNotFoundException, BagDoesNotExistException {
-        sharedBagManager.unshareBagWithUser(bagName, userName);
+        sharedBagManager.unshareBagWithUser(bagName, bagOwnerId, userName);
     }
 
     /**
      * Return the users sharing the list given in input, not the owner
      */
-    public List<String> getUsersSharingBag(String bagName) {
-        return sharedBagManager.getUsersSharingBag(bagName);
+    public List<String> getUsersSharingBag(String bagName, int bagOwnerId) {
+        return sharedBagManager.getUsersSharingBag(bagName, bagOwnerId);
     }
 
     /**
