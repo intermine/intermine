@@ -10,33 +10,25 @@ package org.intermine.webservice.server.widget;
  *
  */
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.lang.StringUtils;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.webservice.server.query.result.XMLValidator;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.XML;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Parse webconfig-model.xml settings for a Report Widget and return it packaged up in JavaScript.
@@ -55,8 +47,9 @@ public class ReportWidgetsServlet extends HttpServlet
 	private static final String VERSION     = "#@+VERSION";
 	private static final String CONFIG      = "#@+CONFIG";
 	
-	// The config, serialized from `webconfig-model.xml`
-	private static JSONArray webConfigModel = null;
+	// The config for all Widgets, serialized from `webconfig-model.xml`
+	private static JSONObject widgetsWebConfig = null;
+	private static String test = null;
 	
     /**
      * {@inheritDoc}}
@@ -66,26 +59,11 @@ public class ReportWidgetsServlet extends HttpServlet
         throws ServletException, IOException {
         runService(request, response);
     }
-	
-    private String readInFile(String path) throws java.io.IOException {
-        StringBuffer fileData = new StringBuffer(1000);
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        char[] buf = new char[1024];
-        int numRead=0;
-        while((numRead=reader.read(buf)) != -1){
-            String readData = String.valueOf(buf, 0, numRead);
-            fileData.append(readData);
-            buf = new char[1024];
-        }
-        reader.close();
-        return fileData.toString();
-    }
     
-    @SuppressWarnings("unchecked")
 	private void runService(HttpServletRequest request, HttpServletResponse response) {
     	// Do we have config?
-        if (webConfigModel == null) {
-        	webConfigModel = parseXML();
+        if (widgetsWebConfig == null) {
+        	parseXML();
         }
     	
     	// Get request params.
@@ -102,140 +80,139 @@ public class ReportWidgetsServlet extends HttpServlet
 			pw = response.getWriter();
 		} catch (IOException e) { }
         
-        // Find our config.
 		if (pw != null) {
-			JSONObject widget = getWidgetConfig(paramId);
-			if (widget == null) {
-				pw.write("new Error(\"Could not load config\")");
-			} else {
-				// Load the assoc file.
-				String file = null;
-				String path = getServletContext().getRealPath("/js/widgets/" + paramId + ".js");
-				
-				try {
-					file = readInFile(path);
-				} catch (IOException e) { }
-				
-				if (file == null) {
-					file = "new Error(\"Could not load widget file\");";
-				} else {
-					// Remove the leading line preventing direct JS file use.
-					String[] arr = file.split("\n");
-					file = StringUtils.join(Arrays.copyOfRange(arr, 2, arr.length), "\n");
-					
-					// Make the simple param replacements.
-					file = file.replaceAll(Pattern.quote(CALLBACK), paramCallback);
-					try {
-						file = file.replaceAll(Pattern.quote(TITLE), widget.getString("title"));
-						file = file.replaceAll(Pattern.quote(AUTHOR), widget.getString("author"));
-						file = file.replaceAll(Pattern.quote(DESCRIPTION), widget.getString("description"));
-						file = file.replaceAll(Pattern.quote(VERSION), widget.getString("version"));
-					} catch (JSONException e) { }
-					
-					// This is where we save the output config.
-					JSONObject config = new JSONObject();
-					
-					// Parse keyValues JSONArray?
-					JSONArray keyValues = getArray(widget, "keyValue");
-					if (keyValues != null) {	
-						for(int i = 0 ; i < keyValues.length() ; i++) {
-							JSONObject o;
-							try {
-								o = keyValues.getJSONObject(i);
-								config.put(o.getString("key"), o.getString("value"));
-							} catch (JSONException e) { }
-						}
-					}
-					
-					// Add pathQueries JSONArray?
-					JSONArray pathQueries = getArray(widget, "pathQuery");
-					if (pathQueries != null) {
-						// XML -> JSON -> "You don't like it, change it" XML -> PathQuery -> JSON.
-						//JSONObject pQs = new JSONObject(); 
-						//for(int i = 0 ; i < pathQueries.length() ; i++) {
-							//try {
-								// The query in JSON.
-								//JSONObject p = pathQueries.getJSONObject(i);
-								
-								//PathQuery pQ = PathQueryBinding.unmarshalPathQuery(new StringReader(pX), PathQuery.USERPROFILE_VERSION);
-								//if (pQ.isValid()) {
-									// Save under the `title` key.
-									//pQs.put(p.getString("title"), pQ.toJson());
-								//}
-								
-							//} catch (JSONException e) { }
-						//}
-						try {
-							config.put("pathQueries", pathQueries);
-						} catch (JSONException e) { }
-					}
-					
-					// Replace the config in the file with our config.
-					file = file.replaceAll(Pattern.quote(CONFIG), config.toString());
-				}
-				
-				// Write the output.
-				pw.write(file);
-			}
+			pw.write(test);
 		}
-    }
-
-    private JSONArray getArray(JSONObject src, String key) {
-    	JSONArray result = new JSONArray();
-		try {
-			// Is it a single object?
-			JSONObject obj = src.getJSONObject(key);
-			result.put(obj);
-			return result;
-		} catch (JSONException e0) {
-			try {
-				// An array maybe?
-				return src.getJSONArray(key);
-			} catch (JSONException e1) { }
-		}
-		return null;
     }
     
-    private JSONObject getWidgetConfig(String id) {
-    	if (webConfigModel == null) return null;
-		
-    	for(int i = 0 ; i < webConfigModel.length() ; i++) {
-			try {
-				JSONObject widget = webConfigModel.getJSONObject(i).getJSONObject("reportwidget");
-				if (id.equals(widget.get("id"))) {
-					return widget;
-				}
-			} catch (JSONException e) { }
-		}
-		return null;
-    }
-    
-	private JSONArray parseXML() {		
-		// Read in file.
+	private void parseXML() {		
         String path = getServletContext().getRealPath("/WEB-INF/webconfig-model.xml");
-        String file = "";
+        SAXParser parser = parser();
         try {
-			file = readInFile(path);
-		} catch (IOException e) { }
+            parser.parse(new File(path), handler());
+        } catch (IOException e) {
+            throw new InternalErrorException(e);
+        } catch (SAXException e) {
+            throw new InternalErrorException(e);
+        }
         
-		// XML to JSON.
-        JSONObject json = new JSONObject();
-        try {
-        	json = XML.toJSONObject(file);
-		} catch (JSONException e) {
-			return null;
-		}
-		
-		// Find the relevant section.
-		JSONObject webconfig = new JSONObject();
-		try {
-			webconfig = json.getJSONObject("webconfig");
-		} catch (JSONException e) {
-			return null;
-		}
-
-		// Get only the Report Widgets.
-		return getArray(webconfig, "reportwidgets");
 	}
+
+    private SAXParser parser() {
+        SAXParserFactory fac = SAXParserFactory.newInstance();
+        SAXParser parser = null;
+        try {
+            parser = fac.newSAXParser();
+        } catch (SAXException e) {
+        	
+        } catch (ParserConfigurationException e) { }
+        if (parser == null) {
+            throw new InternalErrorException("Could not create a SAX parser");
+        }
+        return parser;
+    }
+	
+    private DefaultHandler handler() {
+        DefaultHandler handler = new DefaultHandler() {
+        	// Many widgets.
+        	private JSONArray widgets = null;
+        	// One widget.
+        	private JSONObject widget = null;
+        	// Many dependencies.
+        	private JSONArray dependencies = null;
+        	// Many PathQueries.
+        	private JSONArray pathQueries = null;
+        	// Other client config.
+        	private JSONObject clientConfig = null;
+        	
+            public void startDocument() throws SAXException {
+            	widgets = new JSONArray();
+            }
+
+            public void endDocument() throws SAXException {
+            	test = widgets.toString();
+            }
+
+            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            	if ("reportwidget".equals(qName)) {
+            		// Init new widget.
+            		widget = new JSONObject();
+            	} else {
+            		// If we have a current widget...
+            		if (widget != null) {
+            			try {
+            				// Parse the attrs.
+							JSONObject attrs = new JSONObject();
+		                    for (int i = 0; i < attributes.getLength(); i++) {
+		                        Object o = attributes.getValue(i);
+		                        // Make into Boolean value.
+		                        if ("true".equals(o) || "false".equals(o)) {
+		                            o = Boolean.valueOf(o.toString());
+		                        }
+		                        attrs.put(attributes.getLocalName(i), o);
+		                    }
+		                    
+		                    // Is it a dependency?
+		                    if ("dependency".equals(qName)) {
+		                    	if (dependencies == null) dependencies = new JSONArray();
+		                    	dependencies.put(attrs);
+		                    // Is it a PathQuery?
+		                    } else if ("pathQuery".equals(qName)) {
+		                    	if (pathQueries == null) pathQueries = new JSONArray();
+		                    	pathQueries.put(attrs);
+		                    } else {
+		                    	// A simple key value then.
+		                    	String key = attrs.getString("key");
+		                    	Object val = attrs.getString("value");
+		                    	if (key != null && val != null) {
+		                    		if (clientConfig == null) clientConfig = new JSONObject();
+		                    		clientConfig.put(key, val);
+		                    	} else {
+		                    		// Exception.
+		                    	}
+		                    }
+						} catch (JSONException e) { }
+            		}
+            	}
+            }
+
+            public void endElement(String uri, String localName, String qName) throws SAXException {
+            	if ("reportwidget".equals(qName)) {
+            		// Save the deps, pqs...
+            		if (dependencies != null) {
+            			try {
+							widget.put("dependencies", dependencies);
+						} catch (JSONException e) { }
+            		}
+            		if (pathQueries != null) {
+            			// Save on client config.
+            			if (clientConfig == null) clientConfig = new JSONObject();
+            			try {
+            				clientConfig.put("pathQueries", pathQueries);
+						} catch (JSONException e) { }
+            		}
+            		if (clientConfig != null) {
+            			try {
+							widget.put("config", clientConfig);
+						} catch (JSONException e) { }
+            		}
+            		
+            		// Save the widget.
+            		widgets.put(widget);
+
+            		// Reset.
+            		widget = null;
+            		dependencies = null;
+            		pathQueries = null;
+            		clientConfig = null;
+            	}
+            }
+
+            public void characters(char ch[], int start, int length) throws SAXException {
+            	
+            }
+        };
+        return handler;
+    }
 
 }
