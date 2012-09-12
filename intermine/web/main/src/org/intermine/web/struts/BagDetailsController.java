@@ -106,6 +106,8 @@ public class BagDetailsController extends TilesAction
         if (scope.equals(Scope.GLOBAL) || scope.equals(Scope.ALL)) {
             if (bagManager.getGlobalBag(bagName) != null) {
                 imBag = bagManager.getGlobalBag(bagName);
+            } else {
+                imBag = bagManager.getSharedBags(profile).get(bagName);
             }
         }
 

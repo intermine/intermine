@@ -11,6 +11,8 @@ package org.intermine.web.struts;
  */
 
 
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,10 +51,11 @@ public class SharingBagUsersController extends TilesAction
         throws Exception {
         String bagName = (String) context.getAttribute("bagName");
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        BagManager bm = im.getBagManager();
-        request.setAttribute("currentSharingUsers", bm.getUsersSharingBag(bagName));
-        TagManager tm = im.getTagManager();
         Profile profile = SessionMethods.getProfile(request.getSession());
+        BagManager bm = im.getBagManager();
+        request.setAttribute("currentSharingUsers", bm.getUsersSharingBag(bagName,
+            profile.getUserId()));
+        TagManager tm = im.getTagManager();
         if (profile.isSuperuser()) {
             List<Tag> tags = tm.getTags(TagNames.IM_PUBLIC, bagName, TagTypes.BAG,
                                         profile.getUsername());

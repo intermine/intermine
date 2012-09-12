@@ -39,7 +39,7 @@ import org.intermine.sql.DatabaseUtil;
 /**
  * Singleton manager class for shared bags.
  * Implements retrieving, adding and deleting bag shared between users.
- * @author dbutano
+ * @author Daniela Butano
  */
 public class SharedBagManager
 {
@@ -114,11 +114,22 @@ public class SharedBagManager
         return profile;
     }
 
-    private Integer getBagId(String bagName) {
+    private Integer getBagId(String bagName, int bagOwnerId) {
+        UserProfile ownerUserProfile = new UserProfile();
+        ownerUserProfile.setId(bagOwnerId);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("id");
+        try {
+            ownerUserProfile = (UserProfile) uosw.getObjectByExample(ownerUserProfile, fieldNames);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
         SavedBag bag = new SavedBag();
         bag.setName(bagName);
-        Set<String> fieldNames = new HashSet<String>();
+        bag.setUserProfile(ownerUserProfile);
+        fieldNames = new HashSet<String>();
         fieldNames.add("name");
+        fieldNames.add("userProfile");
         try {
             bag = (SavedBag) uosw.getObjectByExample(bag, fieldNames);
         } catch (ObjectStoreException e) {
@@ -180,7 +191,7 @@ public class SharedBagManager
     /**
      * Return the users sharing the list given in input, not the owner
      */
-    public List<String> getUsersSharingBag(String bagName) {
+    public List<String> getUsersSharingBag(String bagName, int bagOwnerId) {
         List<String> usersSharingBag = new ArrayList<String>();
         Connection conn = null;
         PreparedStatement stm = null;
@@ -189,7 +200,7 @@ public class SharedBagManager
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
             String sql = "SELECT username FROM userprofile as u, sharedbag as sharebag, savedbag as sb "
                        + "WHERE u.id = sharebag.userprofileid AND sharebag.bagid = sb.id "
-                       + "AND sb.name = '" + bagName + "'";
+                       + "AND sb.name = '" + bagName + "'" + "AND sb.userprofileid = " + bagOwnerId;
             stm = conn.prepareStatement(sql);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -221,13 +232,13 @@ public class SharedBagManager
     /**
      * Share the bag given in input with user which userName is given in input
      */
-    public void shareBagWithUser(String bagName, String userName)
+    public void shareBagWithUser(String bagName, int bagOwnerId, String userName)
         throws UserNotFoundException, BagDoesNotExistException {
         UserProfile userProfile = getUserProfile(userName);
         if (userProfile == null) {
             throw new UserNotFoundException("User " + userName + " doesn't exist");
         }
-        Integer bagId = getBagId(bagName);
+        Integer bagId = getBagId(bagName, bagOwnerId);
         if (bagId == null) {
             throw new BagDoesNotExistException("The bag with name " + bagName + "does not exist.");
         }
@@ -235,7 +246,9 @@ public class SharedBagManager
         PreparedStatement stm = null;
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            String sql = "INSERT INTO " + SHARED_BAGS + " VALUES(" + bagId + ", " +
+            String subSelect = "SELECT id FROM savedbag WHERE name='" + bagName + "'"
+                             + " AND userprofileid = "+ bagOwnerId;
+            String sql = "INSERT INTO " + SHARED_BAGS + " VALUES((" + subSelect + "), " +
                        + userProfile.getId() + ")";
             stm = conn.prepareStatement(sql);
             stm.executeUpdate();
@@ -258,14 +271,14 @@ public class SharedBagManager
     /**
      * Delete the sharing between the user and the bag given in input
      */
-    public void unshareBagWithUser(String bagName, String userName)
+    public void unshareBagWithUser(String bagName, int bagOwnerId, String userName)
         throws UserNotFoundException, BagDoesNotExistException {
         UserProfile userProfile = getUserProfile(userName);
         if (userProfile == null) {
             LOG.warn("User " + userName + " doesn't exist");
             return;
         }
-        Integer bagId = getBagId(bagName);
+        Integer bagId = getBagId(bagName, bagOwnerId);
         if (bagId == null) {
             LOG.warn("The bag with name " + bagName + "does not exist.");
             return;
@@ -274,8 +287,9 @@ public class SharedBagManager
         PreparedStatement stm = null;
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            String sql = "DELETE FROM " + SHARED_BAGS + " WHERE bagid = " + bagId
-                       + " AND userprofileid = " + userProfile.getId();
+            String sql = "DELETE FROM sharedbag WHERE userprofileid = " + userProfile.getId()
+                       + " AND bagid = (SELECT id FROM savedbag WHERE name='" + bagName + "'"
+                       + " AND userprofileid = "+ bagOwnerId + ")";
             stm = conn.prepareStatement(sql);
             stm.executeUpdate();
         } catch (SQLException sqle) {
@@ -297,8 +311,9 @@ public class SharedBagManager
     /**
      * Delete the sharing between the bag and all the users sharing the bag.
      */
-    public void unshareBagWithAllUsers(String bagName) throws BagDoesNotExistException {
-            Integer bagId = getBagId(bagName);
+    public void unshareBagWithAllUsers(String bagName, int bagOwnerId)
+        throws BagDoesNotExistException {
+            Integer bagId = getBagId(bagName, bagOwnerId);
             if (bagId == null) {
                 LOG.warn("The bag with name " + bagName + "does not exist.");
                 return;
