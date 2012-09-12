@@ -122,6 +122,8 @@ public class ReportWidgetsServlet extends HttpServlet
         	private JSONArray dependencies = null;
         	// Many PathQueries.
         	private JSONArray pathQueries = null;
+        	// One PathQuery in XML form.
+        	private String pathQuery = null;
         	// Other client config.
         	private JSONObject clientConfig = null;
         	
@@ -137,46 +139,80 @@ public class ReportWidgetsServlet extends HttpServlet
             	if ("reportwidget".equals(qName)) {
             		// Init new widget.
             		widget = new JSONObject();
+            		// Save its direct attributes.
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        Object o = attributes.getValue(i);
+                        // Make into Boolean value.
+                        if ("true".equals(o) || "false".equals(o)) {
+                            o = Boolean.valueOf(o.toString());
+                        }
+                        try {
+							widget.put(attributes.getLocalName(i), o);
+						} catch (JSONException e) { }
+                    }
             	} else {
             		// If we have a current widget...
             		if (widget != null) {
             			try {
-            				// Parse the attrs.
-							JSONObject attrs = new JSONObject();
-		                    for (int i = 0; i < attributes.getLength(); i++) {
-		                        Object o = attributes.getValue(i);
-		                        // Make into Boolean value.
-		                        if ("true".equals(o) || "false".equals(o)) {
-		                            o = Boolean.valueOf(o.toString());
-		                        }
-		                        attrs.put(attributes.getLocalName(i), o);
-		                    }
-		                    
-		                    // Is it a dependency?
-		                    if ("dependency".equals(qName)) {
-		                    	if (dependencies == null) dependencies = new JSONArray();
-		                    	dependencies.put(attrs);
-		                    // Is it a PathQuery?
-		                    } else if ("pathQuery".equals(qName)) {
-		                    	if (pathQueries == null) pathQueries = new JSONArray();
-		                    	pathQueries.put(attrs);
-		                    } else {
-		                    	// A simple key value then.
-		                    	String key = attrs.getString("key");
-		                    	Object val = attrs.getString("value");
-		                    	if (key != null && val != null) {
-		                    		if (clientConfig == null) clientConfig = new JSONObject();
-		                    		clientConfig.put(key, val);
-		                    	} else {
-		                    		// Exception.
-		                    	}
-		                    }
+            				// Is it a PathQuery or its child?
+            				if ("pathQuery".equals(qName) || pathQuery != null) {
+    		                    if (pathQueries == null) pathQueries = new JSONArray();
+    		                    // Open?
+    		                    if (pathQuery == null) {
+    		                    	pathQuery = "<query";
+    		                    } else {
+    		                    	pathQuery += "<" + qName;
+    		                    }
+    		                    
+    		                    // Query attributes.
+    		                    for (int i = 0; i < attributes.getLength(); i++) {
+    		                        String v = attributes.getValue(i);
+    		                        pathQuery += " " + attributes.getLocalName(i) + "=\"" + v + "\"";
+    		                    }
+    		                    
+    		                    // Close this level.
+    		                    pathQuery += ">";
+    		                    
+            				} else {
+                				// Parse the attrs into JSON.
+    							JSONObject attrs = new JSONObject();
+    		                    for (int i = 0; i < attributes.getLength(); i++) {
+    		                        Object o = attributes.getValue(i);
+    		                        // Make into Boolean value.
+    		                        if ("true".equals(o) || "false".equals(o)) {
+    		                            o = Boolean.valueOf(o.toString());
+    		                        }
+    		                        attrs.put(attributes.getLocalName(i), o);
+    		                    }
+    		                    
+    		                    // Is it a dependency?
+    		                    if ("dependency".equals(qName)) {
+    		                    	if (dependencies == null) dependencies = new JSONArray();
+    		                    	dependencies.put(attrs);
+    		                    } else {
+    		                    	// Do we have a PathQuery "open"?
+    		                    	if (pathQuery != null) {
+    		                    		pathQuery += qName + "/";
+    		                    	} else {
+    			                    	// A simple key value then.
+    			                    	String key = attrs.getString("key");
+    			                    	Object val = attrs.getString("value");
+    			                    	if (key != null && val != null) {
+    			                    		if (clientConfig == null) clientConfig = new JSONObject();
+    			                    		clientConfig.put(key, val);
+    			                    	} else {
+    			                    		// Exception.
+    			                    	}	
+    		                    	}
+    		                    }
+            				}
 						} catch (JSONException e) { }
             		}
             	}
             }
 
             public void endElement(String uri, String localName, String qName) throws SAXException {
+            	// Closing one widget?
             	if ("reportwidget".equals(qName)) {
             		// Save the deps, pqs...
             		if (dependencies != null) {
@@ -205,6 +241,17 @@ public class ReportWidgetsServlet extends HttpServlet
             		dependencies = null;
             		pathQueries = null;
             		clientConfig = null;
+            	// Closing a PathQuery or its child?
+            	} else if ("pathQuery".equals(qName)) {
+            		// Close us up.
+            		pathQuery += "</query>";
+            		// Save it.
+            		pathQueries.put(pathQuery);
+            		// Reset.
+            		pathQuery = null;	
+            	} else if (pathQuery != null) {
+            		// Close us up.
+            		pathQuery += "</" + qName + ">";            		
             	}
             }
 
