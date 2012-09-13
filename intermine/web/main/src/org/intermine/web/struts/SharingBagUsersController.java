@@ -54,7 +54,7 @@ public class SharingBagUsersController extends TilesAction
         Profile profile = SessionMethods.getProfile(request.getSession());
         BagManager bm = im.getBagManager();
         request.setAttribute("currentSharingUsers", bm.getUsersSharingBag(bagName,
-            profile.getUserId()));
+            profile.getUsername()));
         TagManager tm = im.getTagManager();
         if (profile.isSuperuser()) {
             List<Tag> tags = tm.getTags(TagNames.IM_PUBLIC, bagName, TagTypes.BAG,

@@ -229,22 +229,39 @@ public class BagManager
         return sharedBagManager.getSharedBags(profile);
     }
 
-    public void shareBagWithUser(String bagName, int bagOwnerId, String userName)
+    public void shareBagWithUser(String bagName, String bagOwnerUserName, String userName)
         throws UserNotFoundException, BagDoesNotExistException,
         UserAlreadyShareBagException {
-        sharedBagManager.shareBagWithUser(bagName, bagOwnerId, userName);
+        Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
+        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag " + bagName
+            + " doesn't exist or doesn't belong to the user " + bagOwnerUserName);
+        }
+        sharedBagManager.shareBagWithUser(bag, userName);
     }
 
-    public void unshareBagWithUser(String bagName, int bagOwnerId, String userName)
+    public void unshareBagWithUser(String bagName, String bagOwnerUserName, String userName)
         throws UserNotFoundException, BagDoesNotExistException {
-        sharedBagManager.unshareBagWithUser(bagName, bagOwnerId, userName);
+        Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
+        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag " + bagName
+            + " doesn't exist or doesn't belong to the user " + bagOwnerUserName);
+        }
+        sharedBagManager.unshareBagWithUser(bag, userName);
     }
 
     /**
      * Return the users sharing the list given in input, not the owner
      */
-    public List<String> getUsersSharingBag(String bagName, int bagOwnerId) {
-        return sharedBagManager.getUsersSharingBag(bagName, bagOwnerId);
+    public List<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
+        Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
+        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag " + bagName + " doesn't exist");
+        }
+        return sharedBagManager.getUsersSharingBag(bag);
     }
 
     /**
