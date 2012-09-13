@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -112,7 +113,6 @@ public class ReportWidgetsServlet extends HttpServlet
 	            	}
 	            	
 	            	if (widget != null) {
-	            		
 	            		// Load the assoc file.
 	    				String file = null;
 	    				try {
@@ -123,8 +123,22 @@ public class ReportWidgetsServlet extends HttpServlet
 	    					String[] arr = file.split("\n");
 	    					file = StringUtils.join(Arrays.copyOfRange(arr, 2, arr.length), "\n");
 	    					
-					        // Write the output.
-					        pw.write(widgetsWebConfig.toString());
+	    					// Make the simple param replacements.
+	    					file = file.replaceAll(Pattern.quote(CALLBACK), paramCallback);
+	    					try {
+	    						file = file.replaceAll(Pattern.quote(TITLE), widget.getString("title"));
+	    						file = file.replaceAll(Pattern.quote(AUTHOR), widget.getString("author"));
+	    						file = file.replaceAll(Pattern.quote(DESCRIPTION), widget.getString("description"));
+	    						file = file.replaceAll(Pattern.quote(VERSION), widget.getString("version"));
+	    						
+		    					// Replace the config in the file with our config.
+		    					file = file.replaceAll(Pattern.quote(CONFIG), widget.get("config").toString());
+		    					
+						        // Write the output.
+						        pw.write(file);
+	    					} catch (JSONException e) {
+	    						pw.write("new Error(\"" + e.getMessage() + "\");");
+	    					}
 	    				} else {
 	    					pw.write("new Error(\"Could not load widget file `/js/widgets/" + paramId + ".js`\");");
 	    				}	            		
