@@ -145,16 +145,16 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.symbol",
                 "Gene.primaryIdentifier",
-                "Gene.interactions.interactionType",
-                "Gene.interactions.interactingGenes.symbol",
-                "Gene.interactions.interactingGenes.primaryIdentifier",
-                "Gene.interactions.dataSets.dataSource.name",
-                "Gene.interactions.experiment.publication.title",
-                "Gene.interactions.experiment.publication.pubMedId");
+                "Gene.interactions.details.type",
+                "Gene.interactions.gene2.symbol",
+                "Gene.interactions.gene2.primaryIdentifier",
+                "Gene.interactions.details.dataSets.dataSource.name",
+                "Gene.interactions.details.experiment.publication.title",
+                "Gene.interactions.details.experiment.publication.pubMedId");
 
         q.addOrderBy("Gene.symbol", OrderDirection.ASC);
         q.addConstraint(Constraints.inIds("Gene", fullInteractingGeneSet), "B");
-        q.addConstraint(Constraints.inIds("Gene.interactions.interactingGenes",
+        q.addConstraint(Constraints.inIds("Gene.interactions.gene2",
                 fullInteractingGeneSet), "A");
         q.setConstraintLogic("B and A");
 

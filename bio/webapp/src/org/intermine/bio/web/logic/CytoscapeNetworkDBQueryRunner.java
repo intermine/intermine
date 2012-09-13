@@ -75,7 +75,7 @@ public class CytoscapeNetworkDBQueryRunner
 
         Set<Integer> interactingGeneSet = new HashSet<Integer>();
 
-        q.addView("Gene.interactions.interactingGenes.id");
+        q.addView("Gene.interactions.gene2.id");
         q.addConstraint(Constraints.inIds("Gene", startingGeneSet));
 
         ExportResultsIterator results = executor.execute(q);
