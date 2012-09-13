@@ -473,6 +473,7 @@ public class GenomicRegionSearchService
         for (String f : featureTypes) {
             ClassDescriptor cld = model.getClassDescriptorByName(f);
             ftSet.add(cld.getType());
+            // get all subclasses
             for (ClassDescriptor subCld : model.getAllSubs(cld)) {
                 ftSet.add(subCld.getType());
             }
