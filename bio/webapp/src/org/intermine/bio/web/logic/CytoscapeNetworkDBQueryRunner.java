@@ -114,16 +114,16 @@ public class CytoscapeNetworkDBQueryRunner
 
         q.addViews("Gene.primaryIdentifier",
                 "Gene.symbol",
-                "Gene.interactions.interactionType",
-                "Gene.interactions.interactingGenes.primaryIdentifier",
-                "Gene.interactions.interactingGenes.symbol",
-                "Gene.interactions.dataSets.dataSource.name",
-                "Gene.interactions.shortName",
+                "Gene.interactions.details.type",
+                "Gene.interactions.gene2.primaryIdentifier",
+                "Gene.interactions.gene2.symbol",
+                "Gene.interactions.details.dataSets.dataSource.name",
+                "Gene.interactions.name",
                 "Gene.id",
-                "Gene.interactions.interactingGenes.id");
+                "Gene.interactions.gene2.id");
 
         q.addConstraint(Constraints.inIds("Gene", keys), "B");
-        q.addConstraint(Constraints.inIds("Gene.interactions.interactingGenes", keys), "A");
+        q.addConstraint(Constraints.inIds("Gene.interactions.gene2", keys), "A");
         q.setConstraintLogic("B and A");
 
         ExportResultsIterator results = executor.execute(q);
