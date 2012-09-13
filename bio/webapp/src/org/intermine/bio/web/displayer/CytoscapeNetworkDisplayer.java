@@ -94,7 +94,8 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         if (bag != null) {
             startingFeatureSet.addAll(bag.getContentsAsIds());
             if ("Gene".equals(bag.getType())) {
-                featureType = "Gene"; // TODO potentially dangerous once Gene has subclasses, eg ORF
+                // Nodes are modelled as Gene instead sub types of Gene
+                featureType = "Gene";
             } else if ("Protein".equals(bag.getType())) {
                 featureType = "Protein";
             }
