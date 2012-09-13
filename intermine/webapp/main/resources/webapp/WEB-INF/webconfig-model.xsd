@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsq="http://intermine.org/query/1.0">
+    <xsd:annotation>
+        <xsd:documentation>
+            The schema configures what elements can appear in webconfig-model.xml 
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:import namespace="http://intermine.org/query/1.0" schemaLocation="../webservice/query.xsd"/>
+
     <xsd:element name="webconfig" type="webConfigType"></xsd:element>
 
     <xsd:complexType name="webConfigType">
@@ -230,17 +238,7 @@
 	          </xsd:complexType>
 	        </xsd:element>
 	
-	        <xsd:element name="pathQuery" maxOccurs="unbounded" minOccurs="0">
-	          <xsd:complexType>
-	            <xsd:simpleContent>
-	              <xsd:extension base="xsd:string">
-	                <xsd:attribute type="xsd:string" name="title"/>
-	                <xsd:attribute type="xsd:string" name="model"/>
-	                <xsd:attribute type="xsd:string" name="view"/>
-	              </xsd:extension>
-	            </xsd:simpleContent>
-	          </xsd:complexType>
-	        </xsd:element>
+	        <xsd:element name="query" type="xsq:query" maxOccurs="unbounded" minOccurs="0"></xsd:element>
 		</xsd:sequence>
 		
 		<xsd:attribute type="xsd:string" name="id"/>

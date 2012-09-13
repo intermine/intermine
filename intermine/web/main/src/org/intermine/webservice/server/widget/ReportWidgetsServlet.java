@@ -236,7 +236,7 @@ public class ReportWidgetsServlet extends HttpServlet
             		// If we have a current widget...
             		if (widget != null) {
         				// Is it a PathQuery or its child?
-        				if ("pathQuery".equals(qName) || pathQuery != null) {
+        				if ("query".equals(qName) || pathQuery != null) {
 		                    if (pathQueries == null) pathQueries = new JSONObject();
 		                    
 		                    // Open?
@@ -252,7 +252,7 @@ public class ReportWidgetsServlet extends HttpServlet
 		                        String v = attributes.getValue(i);
 		                        
 		                    	// Check for PQ name.
-		                    	if ("pathQuery".equals(qName) && ("name".equals(k) || "title".equals("k"))) {
+		                    	if ("query".equals(qName) && ("name".equals(k) || "title".equals("k"))) {
 		                    		pathQueryName = v;
 		                    	}
 		                        
@@ -355,7 +355,7 @@ public class ReportWidgetsServlet extends HttpServlet
             		pathQueries = null;
             		clientConfig = null;
             	// Closing a PathQuery or its child?
-            	} else if ("pathQuery".equals(qName)) {
+            	} else if ("query".equals(qName)) {
             		// Do we have the PQ name?
             		if (pathQueryName == null) {
             			throw new SAXException("PathQuery does not have a `name` or `title` attr defined. See, not I can't even tell you which PathQuery this is...");
