@@ -541,7 +541,7 @@ public class Profile
             savedInvalidBags.remove(name);
         }
         if (isLoggedIn()) {
-            getSharedBagManager().unshareBagWithAllUsers(name, userId);
+            getSharedBagManager().unshareBagWithAllUsers(bagToDelete);
             bagToDelete.delete();
         }
 

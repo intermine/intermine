@@ -1426,7 +1426,7 @@ public class AjaxServices
             return "The user already shares the bag.";
         }
         try {
-            bagManager.shareBagWithUser(bagName, profile.getUserId(), userName);
+            bagManager.shareBagWithUser(bagName, profile.getUsername(), userName);
         } catch (UserNotFoundException e1) {
             return "User not found.";
         } catch (BagDoesNotExistException e2) {
@@ -1443,7 +1443,7 @@ public class AjaxServices
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
         try {
-            bagManager.unshareBagWithUser(bagName, profile.getUserId(), userName);
+            bagManager.unshareBagWithUser(bagName, profile.getUsername(), userName);
         } catch (UserNotFoundException unfe) {
             return "User not found.";
         } catch (BagDoesNotExistException bnee) {
@@ -1457,6 +1457,6 @@ public class AjaxServices
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
-        return bagManager.getUsersSharingBag(bagName, profile.getUserId());
+        return bagManager.getUsersSharingBag(bagName, profile.getUsername());
     }
 }

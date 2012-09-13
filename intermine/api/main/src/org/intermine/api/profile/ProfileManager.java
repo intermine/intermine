@@ -1020,6 +1020,14 @@ public class ProfileManager
         }
         return getProfile(profile.getUsername(), classKeys);
     }
+    
+    public boolean isProfileCached(String username) {
+        Profile profile = profileCache.get(username);
+        if (profile != null) {
+            return true;
+        }
+        return false;
+    }
 
     public static class AuthenticationException extends RuntimeException
     {
