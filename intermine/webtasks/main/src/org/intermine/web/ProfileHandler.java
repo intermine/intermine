@@ -10,8 +10,10 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagHandler;
 import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
+import org.intermine.api.xml.SharedBagHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.template.TemplateQuery;
@@ -38,6 +41,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Extension of DefaultHandler to handle parsing Profiles
  *
  * @author Kim Rutherford
+ * @author dbutano
  */
 class ProfileHandler extends DefaultHandler
 {
@@ -46,6 +50,8 @@ class ProfileHandler extends DefaultHandler
     private String password;
     private Map<String, SavedQuery> savedQueries;
     private Map<String, InterMineBag> savedBags;
+    private Map<String, List> sharedBagsByUser;
+    private List<Map<String, String>> sharedBags;
     private Map<String, InvalidBag> invalidBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
@@ -73,9 +79,9 @@ class ProfileHandler extends DefaultHandler
      * problem and continue if possible (used by read-userprofile-xml).
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
-    public ProfileHandler(ProfileManager profileManager,
-                          ObjectStoreWriter osw, int version) {
-        this(profileManager, null, null, new HashSet(), osw, version);
+    public ProfileHandler(ProfileManager profileManager, ObjectStoreWriter osw,
+                          int version, Map<String, List> sharedBagsByUser) {
+        this(profileManager, null, null, new HashSet(), osw, version, sharedBagsByUser);
     }
 
     /**
@@ -92,7 +98,8 @@ class ProfileHandler extends DefaultHandler
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, String defaultUsername,
-            String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw, int version) {
+            String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw, int version,
+            Map<String, List> sharedBagsByUser) {
         super();
         this.profileManager = profileManager;
         this.username = defaultUsername;
@@ -100,6 +107,7 @@ class ProfileHandler extends DefaultHandler
         this.tags = tags;
         this.osw = osw;
         this.version = version;
+        this.sharedBagsByUser = sharedBagsByUser;
     }
 
     /**
@@ -160,6 +168,10 @@ class ProfileHandler extends DefaultHandler
                     profileManager.getProfileObjectStoreWriter(), osw,
                     savedBags, invalidBags, bagsValues);
         }
+        if("shared-bags".equals(qName)) {
+           sharedBags = new ArrayList<Map<String,String>>();
+           subHandler = new SharedBagHandler(sharedBags);
+        }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
             subHandler = new TemplateQueryHandler(savedTemplates, version);
@@ -185,7 +197,11 @@ class ProfileHandler extends DefaultHandler
             || "queries".equals(qName) || qName.equals("items") || qName.equals("tags")) {
             subHandler = null;
         }
-
+        if ("shared-bags".equals(qName)) {
+            if (sharedBagsByUser  != null){
+                sharedBagsByUser.put(username, sharedBags);
+            }
+        }
         if (subHandler != null) {
             subHandler.endElement(uri, localName, qName);
         }
