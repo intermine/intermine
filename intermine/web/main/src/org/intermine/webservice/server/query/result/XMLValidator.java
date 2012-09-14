@@ -23,8 +23,6 @@ import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
@@ -51,12 +49,11 @@ public class XMLValidator
         	// `query.xsd` had to be edited to allow the `QueryType` to be exported. But this means
         	//  that now a `<query>` has to have a namespace associated. Here we do a simply
         	//  replacement to fake in the namespace of queries that are un-namespaced.
-        	if (!"jndi:/localhost/malariamine-webapp/WEB-INF/webconfig-model.xsd".equals(xmlSchemaUrl)) {
+    		String[] parts = xmlSchemaUrl.split(Pattern.quote("/"));
+        	if ("query.xsd".equals(parts[parts.length - 1])) {
         		xml = xml.replaceAll(Pattern.quote("<query"), "<xsq:query xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsq=\"http://intermine.org/query/1.0\" xsi:schemaLocation=\"http://intermine.org/query/1.0 query.xsd\"");
         		xml = xml.replaceAll(Pattern.quote("</query>"), "</xsq:query>");
         	}
-    		LOG.info("XSQ XML: " + xml);
-    		LOG.info("XSQ SCHEMA: " + xmlSchemaUrl);
         	
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = factory.newSchema(new StreamSource(new StringReader(xmlSchemaUrl)));
@@ -64,28 +61,6 @@ public class XMLValidator
 			Validator validator = schema.newValidator();
 			validator.setErrorHandler(errorHandler);
 			validator.validate(new StreamSource(new StringReader(xml)));
-    		
-//            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//
-//            factory.setNamespaceAware(false);
-//            factory.setValidating(true);
-//            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-//                    "http://www.w3.org/2001/XMLSchema");
-//            // Specify our own schema - this overrides the schemaLocation in the xml file
-//            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource",
-//                    xmlSchemaUrl);
-//
-//            DocumentBuilder builder = factory.newDocumentBuilder();
-//            builder.setErrorHandler(errorHandler);
-//            try {
-//                builder.parse(new InputSource(new StringReader(xml)));
-//            } catch (SAXParseException ex) {
-//                // Ignore this exception - error appears in errorHandler and
-//                // it is displayed to  user
-//            }
-//        } catch (Exception ex) {
-//            throw new InternalErrorException("XML validation failed.", ex);
-//        }
 			
     	} catch (SAXParseException e) {
     		// Ignore.
