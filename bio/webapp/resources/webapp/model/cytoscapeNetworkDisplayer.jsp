@@ -152,9 +152,17 @@
         }
       });
       <%-- toggle table btn --%>
+      <c:if test="${empty pageSize}">
+          <c:set var="pageSize" value="25"/>
+      </c:if>
       jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
         if (jQuery('#cwinlinetable').is(":hidden")) {
           jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
+
+          var view = new intermine.query.results.CompactView($SERVICE, ${cytoscapeNetworkResultsQuery}, LIST_EVENTS, {pageSize: ${pageSize}});
+          view.$el.appendTo('#cytoscape-network-results-table-div');
+          view.render();
+
         } else {
           jQuery('#cwinlinetable').hide();
         }
@@ -167,64 +175,9 @@
 <br />
 <div id="cwinlinetable" class="collection-table nowrap nomargin">
   <h3>Interactions</h3>
-  <div style="overflow-x:auto;">
-    <c:if test='${not empty cytoscapeNetworkPagedResults.exactSize}'>
-      <tiles:insert name="resultsTable.tile">
-           <tiles:put name="pagedResults" beanName="cytoscapeNetworkPagedResults" />
-           <tiles:put name="currentPage" value="objectDetails" />
-           <tiles:put name="inlineTable" value="true" />
-      </tiles:insert>
-    </c:if>
-  </div>
-  <div class="toggle" style="display:none;">
-    <a class="less" style="float:right; display:none; margin-left:20px;"><span>Collapse</span></a>
-    <a class="more" style="float:right;"><span>Show more rows</span></a>
-  </div>
-  <div class="show-in-table">
-    <html:link action="/collectionDetails?id=${cytoscapeInteractionObjectId}&amp;field=interactions&amp;trail=${param.trail}">
-      Show all in a table &raquo;
-    </html:link>
+  <div id="cytoscape-network-results-table-div" style="overflow-x:auto;">
   </div>
 </div>
-<script type="text/javascript">
-  (function() {
-      <%-- hide more than 10 rows --%>
-      var bodyRows = jQuery("#cwinlinetable table tbody tr");
-      if (bodyRows.length > 10) {
-        bodyRows.each(function(i) {
-          if (i > 9) {
-            jQuery(this).hide();
-          }
-        });
-        <%-- 'provide' toggler --%>
-        jQuery("#cwinlinetable div.toggle").show();
-        <%-- attach toggler event --%>
-        jQuery('#cwinlinetable div.toggle a.more').click(function(e) {
-          jQuery("#cwinlinetable table tbody tr:hidden").each(function(i) {
-            if (i < 10) {
-              jQuery(this).show();
-            }
-          });
-          jQuery("#cwinlinetable div.toggle a.less").show();
-          if (jQuery("#cwinlinetable table tbody tr:hidden").length == 0) {
-            jQuery('#cwinlinetable div.toggle a.more').hide();
-          }
-        });
-        <%-- attach collapser event --%>
-        jQuery('#cwinlinetable div.toggle a.less').click(function(e) {
-          var that = this;
-          bodyRows.each(function(i) {
-            if (i > 9) {
-              jQuery(this).hide();
-              jQuery(that).hide();
-            }
-          });
-          jQuery('#cwinlinetable div.toggle a.more').show();
-          jQuery("#cwinlinetable").scrollTo('fast', 'swing', -20);
-        });
-      }
-  })();
-</script>
 
 <!-- Flash embedding utility (needed to embed Cytoscape Web) -->
 <script type="text/javascript" src="<html:rewrite page='/model/cytoscape/js/AC_OETags.min.js'/>"></script>
