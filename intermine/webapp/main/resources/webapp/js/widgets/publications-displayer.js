@@ -11,7 +11,7 @@ new Error('This widget cannot be called directly');
  *  Author: #@+AUTHOR
  *  Description: #@+DESCRIPTION
  *  Version: #@+VERSION
- *  Generated: Thu, 06 Sep 2012 13:31:51 GMT
+ *  Generated: Fri, 14 Sep 2012 17:17:52 GMT
  */
 
 (function() {
@@ -133,7 +133,7 @@ var root = this;
         _this = this;
       $((_ref = this.view) != null ? _ref.el : void 0).hide();
       $(this.target).prepend(loading = $('<div class="alert-box">Loading &hellip;</div>'));
-      pq = this.config.pathQuery;
+      pq = this.config.pathQueries.pubsForGene;
       pq.where = {
         'symbol': {
           '=': symbol
