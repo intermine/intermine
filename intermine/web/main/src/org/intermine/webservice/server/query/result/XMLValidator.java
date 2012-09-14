@@ -34,7 +34,7 @@ import org.xml.sax.SAXParseException;
 public class XMLValidator
 {
 
-    private MyErrorHandler errorHandler = null;
+    private XMLValidatorErrorHandler errorHandler = null;
     
     private static final Logger LOG = Logger.getLogger(XMLValidator.class);
 
@@ -45,7 +45,7 @@ public class XMLValidator
      */
     public void validate(String xml, String xmlSchemaUrl) {
         
-    	errorHandler = new MyErrorHandler();
+    	errorHandler = new XMLValidatorErrorHandler();
         
     	try {
         	// `query.xsd` had to be edited to allow the `QueryType` to be exported. But this means
@@ -93,32 +93,6 @@ public class XMLValidator
 			throw new InternalErrorException("XML validation failed.", e);
 		}
     }
-
-	static class MyErrorHandler implements ErrorHandler {
-		
-		List<String> errors = new ArrayList<String>();
-		List<String> warnings = new ArrayList<String>();
-
-		public void fatalError(SAXParseException e) throws SAXException {
-			errors.add("FatalError - Line " + e.getLineNumber() + ", " + e.getColumnNumber() + ": " + e.toString());
-		}
-
-		public void error(SAXParseException e) throws SAXException {
-			errors.add("Error - Line " + e.getLineNumber() + ", " + e.getColumnNumber() + ": " + e.toString());
-		}
-
-		public void warning(SAXParseException e) throws SAXException {
-			warnings.add("Warning - Line " + e.getLineNumber() + ", " + e.getColumnNumber() + ": " + e.toString());
-		}
-
-		public List<String> getErrors() {
-			return errors;
-		}
-		
-		public List<String> getWarnings() {
-			return warnings;
-		}
-	}
     
     /**
      * Returns errors occurred during parsing xml.
