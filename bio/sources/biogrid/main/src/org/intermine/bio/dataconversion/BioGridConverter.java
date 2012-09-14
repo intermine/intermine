@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -313,7 +313,7 @@ public class BioGridConverter extends BioFileConverter
             /*********************************** INTERACTIONS ***********************************/
             // <interaction>
             } else if ("interaction".equals(qName)) {
-            	holder = new InteractionHolder();
+                holder = new InteractionHolder();
             //<interactionList><interaction><experimentList><experimentRef>
             } else if ("experimentRef".equals(qName) && "experimentList".equals(stack.peek())) {
                 attName = "experimentRef";
@@ -337,9 +337,9 @@ public class BioGridConverter extends BioFileConverter
                 attName = "role";
             // <interactionList><interaction><names><shortLabel>
             } else if ("shortLabel".equals(qName) && stack.search("interaction") == 2) {
-            	attName="interactionName";
+                attName = "interactionName";
             }
-            
+
             super.startElement(uri, localName, qName, attrs);
             stack.push(qName);
             attValue = new StringBuffer();
@@ -446,75 +446,75 @@ public class BioGridConverter extends BioFileConverter
                             && "experimentList".equals(stack.peek())) {
                 holder.setExperimentHolder(experimentIDs.get(attValue.toString()));
             // <interactionList><interaction><names><shortLabel>
-            } else if (attName != null && "interactionName".equals(attName) 
-            		&& "shortLabel".equals(qName)) {
-            	String name = attValue.toString();
-            	if (name != null) {
-            		holder.name = name;
-            	}
-                
+            } else if (attName != null && "interactionName".equals(attName)
+                    && "shortLabel".equals(qName)) {
+                String name = attValue.toString();
+                if (name != null) {
+                    holder.name = name;
+                }
+
             //</interaction>
             } else if ("interaction".equals(qName) && holder != null && holder.validActors) {
                 try {
-					storeInteraction(holder);
-				} catch (ObjectStoreException e) {
-					throw new RuntimeException(" can't store data", e);
-				}
+                    storeInteraction(holder);
+                } catch (ObjectStoreException e) {
+                    throw new RuntimeException(" can't store data", e);
+                }
                 holder = null;
             }
         }
 
         private Item getInteraction(String refId, String gene2RefId) throws ObjectStoreException {
-        	MultiKey key = new MultiKey(refId, gene2RefId);
-        	Item interaction = interactions.get(key);
+            MultiKey key = new MultiKey(refId, gene2RefId);
+            Item interaction = interactions.get(key);
 
-        	if (interaction == null) {
-        		interaction = createItem("Interaction");
-        		interaction.setReference("gene1", refId);
-        		interaction.setReference("gene2", gene2RefId);
-        		interactions.put(key, interaction);
-        		store(interaction);
-        	}
-        	return interaction;
+            if (interaction == null) {
+                interaction = createItem("Interaction");
+                interaction.setReference("gene1", refId);
+                interaction.setReference("gene2", gene2RefId);
+                interactions.put(key, interaction);
+                store(interaction);
+            }
+            return interaction;
         }
 
         private void storeInteraction(InteractionHolder h) throws ObjectStoreException  {
 
-        	// for every gene in interaction store interaction pair
+            // for every gene in interaction store interaction pair
             for (InteractorHolder gene1Interactor: h.ihs.values()) {
 
-            	// gene1
+                // gene1
                 String refId = gene1Interactor.participant.refId;
                 Set<InteractorHolder> ihs = new HashSet<InteractorHolder>(h.ihs.values());
 
                 // loop through other genes in this interaction, set as gene2
                 for (InteractorHolder gene2Interactor : ihs) {
 
-                	String gene2RefId = gene2Interactor.participant.refId;
-                	if (gene2RefId.equals(refId)) {
-                		continue;
-                	}
+                    String gene2RefId = gene2Interactor.participant.refId;
+                    if (gene2RefId.equals(refId)) {
+                        continue;
+                    }
 
-                	Item interaction = getInteraction(refId, gene2RefId);
-                	Item detail = createItem("InteractionDetail");
+                    Item interaction = getInteraction(refId, gene2RefId);
+                    Item detail = createItem("InteractionDetail");
 
-                	if (gene1Interactor.role != null) {
-                		detail.setAttribute("role1", gene1Interactor.role);
-                	}
-                	if (gene2Interactor.role != null) {
-                		detail.setAttribute("role2", gene2Interactor.role);
-                	}
-                	detail.setAttribute("type", h.interactionType);
-                	detail.setReference("relationshipType", h.methodRefId);
-                	detail.setReference("experiment", h.eh.experimentRefId);
-                	if (StringUtils.isEmpty(h.name)) {
-                		String prettyName = StringUtils.join(h.identifiers, "_");
-                    	detail.setAttribute("name", "BioGRID:" + prettyName);
-                	} else {
-                		detail.setAttribute("name", h.name);
-                	}
-                	detail.setReference("interaction", interaction);
-               		store(detail);
+                    if (gene1Interactor.role != null) {
+                        detail.setAttribute("role1", gene1Interactor.role);
+                    }
+                    if (gene2Interactor.role != null) {
+                        detail.setAttribute("role2", gene2Interactor.role);
+                    }
+                    detail.setAttribute("type", h.interactionType);
+                    detail.setReference("relationshipType", h.methodRefId);
+                    detail.setReference("experiment", h.eh.experimentRefId);
+                    if (StringUtils.isEmpty(h.name)) {
+                        String prettyName = StringUtils.join(h.identifiers, "_");
+                        detail.setAttribute("name", "BioGRID:" + prettyName);
+                    } else {
+                        detail.setAttribute("name", h.name);
+                    }
+                    detail.setReference("interaction", interaction);
+                    store(detail);
                 }
             }
         }
@@ -743,12 +743,12 @@ public class BioGridConverter extends BioFileConverter
             protected void addInteractor(String id, InteractorHolder ih) {
                 ihs.put(id, ih);
             }
-            
+
             @Override
             public String toString() {
-            	return StringUtil.join(identifiers, ",");
+                return StringUtil.join(identifiers, ",");
             }
-            
+
             @Override
             public int hashCode() {
                 return (methodRefId.hashCode() + 3 * eh.hashCode() + 5 * identifiers.hashCode());
