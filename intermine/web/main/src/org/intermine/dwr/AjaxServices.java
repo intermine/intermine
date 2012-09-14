@@ -19,7 +19,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -87,6 +87,7 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.MailUtils;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
@@ -1433,6 +1434,18 @@ public class AjaxServices
             return "The list does not exist.";
         } catch (UserAlreadyShareBagException e3) {
             return "The user already shares the bag.";
+        }
+        Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
+        try {
+            String subject = "Sharing Lists";
+            String bodyMsg = "The list " + bagName + " has been shared with you";
+            if (webProperties.getProperty("mail.application") != null) {
+                subject = subject + " in " + webProperties.getProperty("mail.application");
+                bodyMsg = bodyMsg +  " in  " + webProperties.getProperty("mail.application") + ".";
+            }
+            MailUtils.email(userName, subject, bodyMsg, webProperties);
+        } catch (MessagingException me) {
+           LOG.warn("Failed to send sharing list message.");
         }
         return "ok";
     }
