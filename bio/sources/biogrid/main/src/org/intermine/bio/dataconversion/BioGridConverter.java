@@ -78,6 +78,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<MultiKey, Item> idsToExperiments;
     private Map<String, String> strains = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
+    private static final String BAIT = "bait";
 
     /**
      * Constructor
@@ -498,11 +499,18 @@ public class BioGridConverter extends BioFileConverter
                     Item interaction = getInteraction(refId, gene2RefId);
                     Item detail = createItem("InteractionDetail");
 
+                    String role1 = gene1Interactor.role;
+                    String role2 = gene2Interactor.role;
+                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
+                        // spoke!  not storing bait - bait, only bait - prey
+                        continue;
+                    }
+
                     if (gene1Interactor.role != null) {
-                        detail.setAttribute("role1", gene1Interactor.role);
+                        detail.setAttribute("role1", role1);
                     }
                     if (gene2Interactor.role != null) {
-                        detail.setAttribute("role2", gene2Interactor.role);
+                        detail.setAttribute("role2", role2);
                     }
                     detail.setAttribute("type", h.interactionType);
                     detail.setReference("relationshipType", h.methodRefId);
