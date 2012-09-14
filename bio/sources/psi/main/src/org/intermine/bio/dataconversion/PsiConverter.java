@@ -68,6 +68,8 @@ public class PsiConverter extends BioFileConverter
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     private static final String ALIAS_TYPE = "gene name";
+ // if both roles are bait, we don't store interaction
+    private static final String BAIT = "bait";
 
     /**
      * Constructor
@@ -510,12 +512,18 @@ public class PsiConverter extends BioFileConverter
             for (InteractorHolder gene2Interactor : gene2Interactors) {
 
                 for (String gene2RefId : gene2Interactor.geneRefIds) {
+                    String role1 = gene1Interactor.role;
+                    String role2 = gene2Interactor.role;
+                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
+                        // spoke!  not storing bait - bait, only bait - prey
+                        continue;
+                    }
                     Item interaction = getInteraction(gene1RefId, gene2RefId);
                     Item interactionDetail =  createItem("InteractionDetail");
                     String shortName = h.shortName;
                     interactionDetail.setAttribute("name", shortName);
-                    interactionDetail.setAttribute("role1", gene1Interactor.role);
-                    interactionDetail.setAttribute("role2", gene2Interactor.role);
+                    interactionDetail.setAttribute("role1", role1);
+                    interactionDetail.setAttribute("role2", role2);
                     interactionDetail.setAttribute("type", INTERACTION_TYPE);
                     if (h.confidence != null) {
                         interactionDetail.setAttribute("confidence", h.confidence.toString());
