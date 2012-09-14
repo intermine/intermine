@@ -397,7 +397,13 @@ public class ReportWidgetsServlet extends HttpServlet
             		pathQuery += "</query>";
             		
             		// Convert to PathQuery.
-            		PathQuery pq = PathQueryBinding.unmarshalPathQuery(new StringReader(pathQuery), PathQuery.USERPROFILE_VERSION);
+            		PathQuery pq = null;
+            		try {
+            			pq = PathQueryBinding.unmarshalPathQuery(new StringReader(pathQuery), PathQuery.USERPROFILE_VERSION);
+            		} catch (Exception e) {
+            			// Convert Exception into SAXException.
+            			throw new SAXException(e.getMessage());
+            		}
             		// Do not check the validity of this PQ, as we would check the Model too even though we may run this PQ against a different mine.
             		//if (!pq.isValid()) {
 					//	throw new SAXException("PathQuery `" + pathQueryName + "` is invalid (" + StringUtils.join(pq.verifyQuery(), ", ") + ").");
