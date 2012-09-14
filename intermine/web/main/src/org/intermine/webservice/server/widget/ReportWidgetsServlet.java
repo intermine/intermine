@@ -67,18 +67,17 @@ public class ReportWidgetsServlet extends HttpServlet
         runService(request, response);
     }
     
-	private void runService(HttpServletRequest request, HttpServletResponse response) {        
-        // Set JavaScript header.
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/javascript");
-        
+	private void runService(HttpServletRequest request, HttpServletResponse response) {                
         // The response writer.
         PrintWriter pw = null;
 		try {
 			pw = response.getWriter();
 		} catch (IOException e) { }
         
-		if (pw != null) {			
+		if (pw != null) {
+			// UTF-8.
+			response.setCharacterEncoding("UTF-8");
+			
 	    	// Do we have config?
 	        if (widgetsWebConfig == null) {
 	        	try {
@@ -94,57 +93,81 @@ public class ReportWidgetsServlet extends HttpServlet
 	            String paramId = request.getParameter("id");
 	            String paramCallback = request.getParameter("callback");	        	
 	        	
-	            if (paramId == null) {
-	            	pw.write("new Error(\"Widget `id` not provided\");");
-	            } else if (paramCallback == null) {
-	            	pw.write("new Error(\"Widget `callback` not provided\");");
-	            } else {
-	            	// Find the relevant widget.
-	            	JSONObject widget = null; 
-	            	for (int i = 0; i < widgetsWebConfig.length(); i++) {
-	            		try {
+	            // If we have neither parameter, serve the config for all widgets.
+	            if (paramId == null && paramCallback == null) {
+	                // Set JSON header.
+	                response.setContentType("application/json");
+	                
+	                // Widget ID to a list of dependencies.
+	                JSONObject allDeps = new JSONObject(); 
+	                for (int i = 0; i < widgetsWebConfig.length(); i++) {
+	                	try {
 							JSONObject w = widgetsWebConfig.getJSONObject(i);
-							if (w.get("id").equals(paramId)) {
-								widget = w;
+							String id = (String) w.get("id");
+							if (id != null) {
+								JSONArray deps = (JSONArray) w.get("dependencies");
+								allDeps.put(id, deps);
 							}
-						} catch (JSONException e) {
-							pw.write("new Error(\"" + e.getMessage() + "\");");
-						}
-	            	}
-	            	
-	            	if (widget != null) {
-	            		// Load the assoc file.
-	    				String file = null;
-	    				try {
-	    					file = readInFile(getServletContext().getRealPath("/js/widgets/" + paramId + ".js"));
-	    				} catch (IOException e) { }
-	    				if (file != null) {
-	    					// Remove the leading line preventing direct JS file use.
-	    					String[] arr = file.split("\n");
-	    					file = StringUtils.join(Arrays.copyOfRange(arr, 2, arr.length), "\n");
-	    					
-	    					// Make the simple param replacements.
-	    					file = file.replaceAll(Pattern.quote(CALLBACK), paramCallback);
-	    					try {
-	    						file = file.replaceAll(Pattern.quote(TITLE), widget.getString("title"));
-	    						file = file.replaceAll(Pattern.quote(AUTHOR), widget.getString("author"));
-	    						file = file.replaceAll(Pattern.quote(DESCRIPTION), widget.getString("description"));
-	    						file = file.replaceAll(Pattern.quote(VERSION), widget.getString("version"));
-	    						
-		    					// Replace the config in the file with our config.
-		    					file = file.replaceAll(Pattern.quote(CONFIG), widget.get("config").toString());
+						} catch (JSONException e) { }
+	                }
+	                
+	            	pw.write(allDeps.toString());
+	            } else {
+	                // Set JavaScript header.
+	                response.setContentType("application/javascript");
+	                
+		            if (paramId == null) {
+		            	pw.write("new Error(\"Widget `id` not provided\");");
+		            } else if (paramCallback == null) {
+		            	pw.write("new Error(\"Widget `callback` not provided\");");
+		            } else {
+		            	// Find the relevant widget.
+		            	JSONObject widget = null; 
+		            	for (int i = 0; i < widgetsWebConfig.length(); i++) {
+		            		try {
+								JSONObject w = widgetsWebConfig.getJSONObject(i);
+								if (w.get("id").equals(paramId)) {
+									widget = w;
+								}
+							} catch (JSONException e) {
+								pw.write("new Error(\"" + e.getMessage() + "\");");
+							}
+		            	}
+		            	
+		            	if (widget != null) {
+		            		// Load the assoc file.
+		    				String file = null;
+		    				try {
+		    					file = readInFile(getServletContext().getRealPath("/js/widgets/" + paramId + ".js"));
+		    				} catch (IOException e) { }
+		    				if (file != null) {
+		    					// Remove the leading line preventing direct JS file use.
+		    					String[] arr = file.split("\n");
+		    					file = StringUtils.join(Arrays.copyOfRange(arr, 2, arr.length), "\n");
 		    					
-						        // Write the output.
-						        pw.write(file);
-	    					} catch (JSONException e) {
-	    						pw.write("new Error(\"" + e.getMessage() + "\");");
-	    					}
-	    				} else {
-	    					pw.write("new Error(\"Could not load widget file `/js/widgets/" + paramId + ".js`\");");
-	    				}	            		
-	            	} else {
-	            		pw.write("new Error(\"Could not find widget `" + paramId + "`\");");
-	            	}
+		    					// Make the simple param replacements.
+		    					file = file.replaceAll(Pattern.quote(CALLBACK), paramCallback);
+		    					try {
+		    						file = file.replaceAll(Pattern.quote(TITLE), widget.getString("title"));
+		    						file = file.replaceAll(Pattern.quote(AUTHOR), widget.getString("author"));
+		    						file = file.replaceAll(Pattern.quote(DESCRIPTION), widget.getString("description"));
+		    						file = file.replaceAll(Pattern.quote(VERSION), widget.getString("version"));
+		    						
+			    					// Replace the config in the file with our config.
+			    					file = file.replaceAll(Pattern.quote(CONFIG), widget.get("config").toString());
+			    					
+							        // Write the output.
+							        pw.write(file);
+		    					} catch (JSONException e) {
+		    						pw.write("new Error(\"" + e.getMessage() + "\");");
+		    					}
+		    				} else {
+		    					pw.write("new Error(\"Could not load widget file `/js/widgets/" + paramId + ".js`\");");
+		    				}	            		
+		            	} else {
+		            		pw.write("new Error(\"Could not find widget `" + paramId + "`\");");
+		            	}
+		            }
 	            }
 	        }
 		}
