@@ -572,7 +572,9 @@ public class ProfileManager
     public synchronized void createProfileWithoutBags(Profile profile) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
-        userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+        if (profile.getPassword() != null) {
+            userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+        }
         userProfile.setSuperuser(profile.isSuperUser);
         try {
             uosw.store(userProfile);
