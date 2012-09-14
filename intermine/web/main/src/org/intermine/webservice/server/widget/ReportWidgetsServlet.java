@@ -90,8 +90,17 @@ public class ReportWidgetsServlet extends HttpServlet
 	    	// Do we have config?
 	        if (widgetsWebConfig != null) {
 	        	// Get request params.
-	            String paramId = request.getParameter("id");
-	            String paramCallback = request.getParameter("callback");	        	
+	        	String paramCallback = request.getParameter("callback");
+	        	String paramId = null;
+	        	
+	        	String[] url = (request.getRequestURL() + "").split("/");
+	            if ("report".equals(url[url.length - 2])) {
+	            	paramId = url[url.length - 1]; // last part of the URL, the widget ID
+		            if (paramCallback != null) { // if we have a callback need to strip that from the url
+		            	url = paramId.split(Pattern.quote("?callback")); // split on the callback param
+		            	paramId = url[0]; // give us everything before...
+		            }	            	
+	            }
 	        	
 	            // If we have neither parameter, serve the config for all widgets.
 	            if (paramId == null && paramCallback == null) {
