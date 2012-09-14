@@ -54,6 +54,7 @@ import org.intermine.util.DynamicUtil;
  * database.
  * @author Jakub Kulaviak <jakub@flymine.org>
  * @author Alex Kalderimis
+ * @author Daniela Butano
  */
 public class TagManager
 {
@@ -422,6 +423,12 @@ public class TagManager
         if (tagNameNeedsPermission(tagName) && !profile.isSuperuser()) {
             throw new TagNamePermissionException();
         }
+        
+        if (tagNameNeedsPermission(tagName) && profile.isSuperuser()
+            && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null) {
+            throw new TagNamePermissionException("You cannot add a tag starting with "
+                + TagNames.IM_PREFIX + ", you are not the owner.");
+        }
         if (!isValidTagName(tagName)) {
             throw new TagNameException();
         }
@@ -637,6 +644,13 @@ public class TagManager
          */
         public TagNamePermissionException() {
             super(PERMISSION_MESSAGE);
+        }
+
+        /**
+         * Constructor.
+         */
+        public TagNamePermissionException(String message) {
+            super(message);
         }
     }
 }
