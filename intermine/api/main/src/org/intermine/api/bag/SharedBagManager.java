@@ -15,9 +15,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.BagDoesNotExistException;
@@ -29,7 +32,9 @@ import org.intermine.api.profile.UserAlreadyShareBagException;
 import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.api.search.CreationEvent;
 import org.intermine.api.search.DeletionEvent;
+import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.sql.DatabaseUtil;
@@ -100,8 +105,9 @@ public class SharedBagManager
      */
     public Map<String, InterMineBag> getSharedBags(Profile profile) {
         Map<String, InterMineBag> sharedBags = new HashMap<String, InterMineBag>();
-        if (profile.getUsername() == null ||
-            profileManager.getUserProfile(profile.getUsername()) == null) {
+        if (profile.getUsername() == null
+            || profile.getUserId() == null
+            || profileManager.getUserProfile(profile.getUsername()) == null) {
             return sharedBags;
         }
         Connection conn = null;
@@ -118,7 +124,7 @@ public class SharedBagManager
             while (rs.next()) {
                 bagId = rs.getInt("bagid");
                 InterMineBag bag = new InterMineBag(profileManager.getProductionObjectStore(),
-                                                    bagId, uosw);
+                                                bagId, uosw);
                 sharedBags.put(bag.getName(), bag);
             }
         } catch (SQLException sqle) {
@@ -218,6 +224,63 @@ public class SharedBagManager
         }
         if (profileManager.isProfileCached(userName)) {
             profileManager.getProfile(userName).getSearchRepository().receiveEvent(new CreationEvent(bag));
+        }
+    }
+
+    /**
+     * Perform a query to retrieve a bag's backing SavedBag
+     * @param username the bagName
+     * @return the relevant SavedBag
+     */
+    public SavedBag getSavedBag(String bagName, String dateCreated) {
+        SavedBag bag = new SavedBag();
+        bag.setName(bagName);
+        bag.setDateCreated(new Date(Long.parseLong(dateCreated)));
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("name");
+        fieldNames.add("dateCreated");
+        try {
+            bag = (SavedBag) uosw.getObjectByExample(bag, fieldNames);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
+        return bag;
+    }
+
+    /**
+     * Share the bag given in input with user which userName is given in input
+     */
+    public void shareBagWithUser(String bagName, String dateCreated, String userName)
+        throws UserNotFoundException, BagDoesNotExistException {
+        UserProfile userProfile = profileManager.getUserProfile(userName);
+        if (userProfile == null) {
+            throw new UserNotFoundException("User " + userName + " doesn't exist");
+        }
+        SavedBag bag = getSavedBag(bagName, dateCreated);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag with name " + bagName + " doesn't exist");
+        }
+        Connection conn = null;
+        PreparedStatement stm = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            String sql = "INSERT INTO " + SHARED_BAGS + " VALUES(" + bag.getId() + ", "
+                       + userProfile.getId() + ")";
+            stm = conn.prepareStatement(sql);
+            stm.executeUpdate();
+        } catch (SQLException sqle) {
+            throw new UserAlreadyShareBagException("Error sharing the "
+                    + " the bag : " + bag.getId()
+                    + " with the user " + userProfile.getId(), sqle);
+        } finally {
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Problem closing resources", e);
+                }
+            }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
     }
 
