@@ -156,6 +156,6 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         q.setConstraintLogic("B and A");
 
         request.setAttribute("cytoscapeNetworkQueryXML", q.toXml());
-        request.setAttribute("cytoscapeNetworkQueryJson", q.getJson());
+        request.setAttribute("cytoscapeNetworkQueryJson", q.toJson());
     }
 }
