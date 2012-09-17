@@ -67,6 +67,10 @@ public class ReportWidgetsServlet extends HttpServlet
         runService(request, response);
     }
     
+    private String jsError(String message) {
+    	return "throw Error(\"" + message + "\");";
+    }
+    
 	private void runService(HttpServletRequest request, HttpServletResponse response) {                
         // The response writer.
         PrintWriter pw = null;
@@ -75,7 +79,7 @@ public class ReportWidgetsServlet extends HttpServlet
 		} catch (IOException e) { }
         
 		if (pw != null) {
-			// UTF-8.
+            response.setContentType("application/javascript");
 			response.setCharacterEncoding("UTF-8");
 			
 	    	// Do we have config?
@@ -83,7 +87,7 @@ public class ReportWidgetsServlet extends HttpServlet
 	        	try {
 					parseXML();
 				} catch (ReportWidgetException e) {
-					pw.write("new Error(\"Report Widget Config: " + e.getMessage() + "\");");
+					pw.write(jsError("Report Widget Config: " + e.getMessage()));
 				}
 	        }
 	        
@@ -99,14 +103,11 @@ public class ReportWidgetsServlet extends HttpServlet
 		            if (paramCallback != null) { // if we have a callback need to strip that from the url
 		            	url = paramId.split(Pattern.quote("?callback")); // split on the callback param
 		            	paramId = url[0]; // give us everything before...
-		            }	            	
+		            }
 	            }
 	        	
 	            // If we have neither parameter, serve the config for all widgets.
-	            if (paramId == null && paramCallback == null) {
-	                // Set JSON header.
-	                response.setContentType("application/json");
-	                
+	            if (paramId == null && paramCallback == null) {	                
 	                // Widget ID to a list of dependencies.
 	                JSONObject allDeps = new JSONObject(); 
 	                for (int i = 0; i < widgetsWebConfig.length(); i++) {
@@ -120,15 +121,15 @@ public class ReportWidgetsServlet extends HttpServlet
 						} catch (JSONException e) { }
 	                }
 	                
-	            	pw.write(allDeps.toString());
-	            } else {
-	                // Set JavaScript header.
-	                response.setContentType("application/javascript");
+	                // Set JSON header, the file is fine.
+	                response.setContentType("application/json");	                
 	                
+	            	pw.write(allDeps.toString());
+	            } else {	                
 		            if (paramId == null) {
-		            	pw.write("new Error(\"Widget `id` not provided\");");
+		            	pw.write(jsError("Widget `id` not provided"));
 		            } else if (paramCallback == null) {
-		            	pw.write("new Error(\"Widget `callback` not provided\");");
+		            	pw.write(jsError("Widget `callback` not provided"));
 		            } else {
 		            	// Find the relevant widget.
 		            	JSONObject widget = null; 
@@ -139,7 +140,7 @@ public class ReportWidgetsServlet extends HttpServlet
 									widget = w;
 								}
 							} catch (JSONException e) {
-								pw.write("new Error(\"" + e.getMessage() + "\");");
+								pw.write(jsError(e.getMessage()));
 							}
 		            	}
 		            	
@@ -168,13 +169,13 @@ public class ReportWidgetsServlet extends HttpServlet
 							        // Write the output.
 							        pw.write(file);
 		    					} catch (JSONException e) {
-		    						pw.write("new Error(\"" + e.getMessage() + "\");");
+		    						pw.write(jsError(e.getMessage()));
 		    					}
 		    				} else {
-		    					pw.write("new Error(\"Could not load widget file `/js/widgets/" + paramId + ".js`\");");
+		    					pw.write(jsError("Could not load widget file `/js/widgets/" + paramId + ".js"));
 		    				}	            		
 		            	} else {
-		            		pw.write("new Error(\"Could not find widget `" + paramId + "`\");");
+		            		pw.write(jsError("Could not find widget `" + paramId));
 		            	}
 		            }
 	            }
@@ -397,17 +398,22 @@ public class ReportWidgetsServlet extends HttpServlet
             		pathQuery += "</query>";
             		
             		// Convert to PathQuery.
+            		// It seems the PQ is validated here against `model.xml` here as well.
             		PathQuery pq = null;
             		try {
             			pq = PathQueryBinding.unmarshalPathQuery(new StringReader(pathQuery), PathQuery.USERPROFILE_VERSION);
             		} catch (Exception e) {
             			// Convert Exception into SAXException.
-            			throw new SAXException(e.getMessage());
+            			if (pathQueryName != null) {
+            				throw new SAXException("PathQuery `" + pathQueryName + "` failed to convert from XML to JSON");
+            			} else {
+            				throw new SAXException("An unknown PathQuery failed to convert from XML to JSON");
+            			}
             		}
-            		// Do not check the validity of this PQ, as we would check the Model too even though we may run this PQ against a different mine.
-            		//if (!pq.isValid()) {
-					//	throw new SAXException("PathQuery `" + pathQueryName + "` is invalid (" + StringUtils.join(pq.verifyQuery(), ", ") + ").");
-            		//}
+            		// We can only run PathQueries against *this* mine.
+            		if (!pq.isValid()) {
+						throw new SAXException("PathQuery `" + pathQueryName + "` is invalid (" + StringUtils.join(pq.verifyQuery(), ", ") + ").");
+            		}
             		
             		// Save it.
             		try {
@@ -430,7 +436,7 @@ public class ReportWidgetsServlet extends HttpServlet
         };
         return handler;
     }
-
+    
     class ReportWidgetException extends Exception {
     	
     	private static final long serialVersionUID = 1L;
