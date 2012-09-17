@@ -71,7 +71,7 @@ public class ReportWidgetsServlet extends HttpServlet
     	return "throw Error(\"" + message + "\");";
     }
     
-	private void runService(HttpServletRequest request, HttpServletResponse response) {                
+	private void runService(HttpServletRequest request, HttpServletResponse response) {		
         // The response writer.
         PrintWriter pw = null;
 		try {
@@ -79,24 +79,30 @@ public class ReportWidgetsServlet extends HttpServlet
 		} catch (IOException e) { }
         
 		if (pw != null) {
-            response.setContentType("application/javascript");
-			response.setCharacterEncoding("UTF-8");
+        	// Get request params.
+        	String paramCallback = request.getParameter("callback");
+        	String paramId = null;
 			
 	    	// Do we have config?
 	        if (widgetsWebConfig == null) {
 	        	try {
 					parseXML();
-				} catch (ReportWidgetException e) {
-					pw.write(jsError("Report Widget Config: " + e.getMessage()));
+				} catch (ReportWidgetException e1) {
+					widgetsWebConfig = null; // reset the config
+					
+					if (paramCallback != null) { // JSONP
+		                response.setContentType("application/javascript");
+		    			response.setCharacterEncoding("UTF-8");
+		    			pw.write(paramCallback + "({\"status\": 500, \"message\": \"Report Widget Config: " + e1.getMessage() + "\"});");
+					} else { // JSON
+						response.setContentType("application/json");
+						pw.write("{\"status\": 500, \"message\": \"Report Widget Config: " + e1.getMessage() + "\"}");
+					}
 				}
 	        }
 	        
 	    	// Do we have config?
-	        if (widgetsWebConfig != null) {
-	        	// Get request params.
-	        	String paramCallback = request.getParameter("callback");
-	        	String paramId = null;
-	        	
+	        if (widgetsWebConfig != null) {	        	
 	        	String[] url = (request.getRequestURL() + "").split("/");
 	            if ("report".equals(url[url.length - 2])) {
 	            	paramId = url[url.length - 1]; // last part of the URL, the widget ID
@@ -106,30 +112,32 @@ public class ReportWidgetsServlet extends HttpServlet
 		            }
 	            }
 	        	
-	            // If we have neither parameter, serve the config for all widgets.
-	            if (paramId == null && paramCallback == null) {	                
-	                // Widget ID to a list of dependencies.
-	                JSONObject allDeps = new JSONObject(); 
-	                for (int i = 0; i < widgetsWebConfig.length(); i++) {
-	                	try {
-							JSONObject w = widgetsWebConfig.getJSONObject(i);
-							String id = (String) w.get("id");
-							if (id != null) {
-								JSONArray deps = (JSONArray) w.get("dependencies");
-								allDeps.put(id, deps);
-							}
-						} catch (JSONException e) { }
-	                }
-	                
-	                // Set JSON header, the file is fine.
-	                response.setContentType("application/json");	                
-	                
-	            	pw.write(allDeps.toString());
-	            } else {	                
+	            // Did we provide a callback?
+	            if (paramCallback == null) {
+            		// Respond with JSON.
+            		response.setContentType("application/json");
+            		pw.write("{\"status\": 500, \"message\":\"Provide a `callback` parameter so we can respond with JSONP\"}");
+	            } else {
+	                response.setContentType("application/javascript");
+	    			response.setCharacterEncoding("UTF-8");
+	    			
+		            // If we do not have the id of the widget, serve deps for all.
 		            if (paramId == null) {
-		            	pw.write(jsError("Widget `id` not provided"));
-		            } else if (paramCallback == null) {
-		            	pw.write(jsError("Widget `callback` not provided"));
+		                // Widget ID to a list of dependencies.
+		                JSONObject allDeps = new JSONObject(); 
+		                for (int i = 0; i < widgetsWebConfig.length(); i++) {
+		                	try {
+								JSONObject w = widgetsWebConfig.getJSONObject(i);
+								String id = (String) w.get("id");
+								if (id != null) {
+									JSONArray deps = (JSONArray) w.get("dependencies");
+									allDeps.put(id, deps);
+								}
+							} catch (JSONException e) { }
+		                }	                
+		                
+		                // Wrap response around the callback.
+		            	pw.write(paramCallback + "(" + allDeps.toString() + ");");
 		            } else {
 		            	// Find the relevant widget.
 		            	JSONObject widget = null; 
@@ -176,7 +184,7 @@ public class ReportWidgetsServlet extends HttpServlet
 		    				}	            		
 		            	} else {
 		            		pw.write(jsError("Could not find widget `" + paramId));
-		            	}
+			            }
 		            }
 	            }
 	        }
