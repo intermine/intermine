@@ -26,11 +26,15 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 
+/**
+ * gets category summary info (for the website)
+ *
+ * @author sc486
+ */
 
 public class CategorySummaryController extends TilesAction
 {
 
-    @SuppressWarnings("unused")
     /**
      * {@inheritDoc}
      */
@@ -39,26 +43,26 @@ public class CategorySummaryController extends TilesAction
             ActionForm form,
             HttpServletRequest request,
             HttpServletResponse response)
-    throws Exception {
+        throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
-            
+
             List<DisplayExperiment> experiments;
             String categoryName = request.getParameter("category");
             experiments =
                 MetadataCache.getCategoryExperiments(os).get(categoryName);
             request.setAttribute("experiments", experiments);
-            
+
             Map<String, List<GBrowseTrack>> tracks = MetadataCache.getExperimentGBrowseTracks(os);
             request.setAttribute("tracks", tracks);
-            
+
             // using the categories form experiment.category (chado)
             Map<String, List<DisplayExperiment>> categoriesNew =
                 MetadataCache.getCategoryExperiments(os);
-            
+
             request.setAttribute("catExp", categoriesNew);
-            
+
         } catch (Exception err) {
             err.printStackTrace();
         }
