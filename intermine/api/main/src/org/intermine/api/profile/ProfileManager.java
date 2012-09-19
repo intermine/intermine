@@ -44,14 +44,17 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -59,10 +62,12 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PasswordHasher;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Class to manage and persist user profile data such as saved bags
  * @author Mark Woodbridge
+ * @author Daniela Butano
  */
 public class ProfileManager
 {
@@ -86,10 +91,11 @@ public class ProfileManager
         this.os = os;
         this.uosw = userProfileOS;
         //retrieve the super user
+        String superUserName = PropertiesUtil.getProperties().getProperty("superuser.account");
         UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setSuperuser(true);
+        superuserProfile.setUsername(superUserName);
         Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("superuser");
+        fieldNames.add("username");
         try {
             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
             if (superuserProfile != null) {
@@ -644,14 +650,14 @@ public class ProfileManager
     }
 
     /**
-     * @return the superuser name
+     * @return the superuser name set in the properties file
      */
     public String getSuperuser() {
         return superuser;
     }
 
     /**
-     * @return the superuser profile
+     * @return the superuser profile set in the properties file
      */
     public Profile getSuperuserProfile() {
         return getProfile(superuser);
@@ -1022,13 +1028,62 @@ public class ProfileManager
         }
         return getProfile(profile.getUsername(), classKeys);
     }
-    
+
     public boolean isProfileCached(String username) {
         Profile profile = profileCache.get(username);
         if (profile != null) {
             return true;
         }
         return false;
+    }
+
+    public List<String> getAllUsers() {
+        List<String> users = new ArrayList<String>();
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        QueryField qfName = new QueryField(qc, "username");
+        q.addToSelect(qfName);
+        q.addFrom(qc);
+
+        Results res = uosw.execute(q);
+        Iterator<Object> iterator = res.iterator();
+        while (iterator.hasNext()) {
+            users.add(((ResultsRow<String>) iterator.next()).get(0));
+        }
+        return users;
+    }
+
+    public List<String> getSuperUsers() {
+        List<String> superusers = new ArrayList<String>();
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        QueryField qfName = new QueryField(qc, "username");
+        q.addToSelect(qfName);
+        q.addFrom(qc);
+        QueryField qf = new QueryField(qc, "superuser");
+        Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(true));
+        q.setConstraint(c);
+
+        Results res = uosw.execute(q);
+        Iterator<Object> iterator = res.iterator();
+        while (iterator.hasNext()) {
+            superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+        }
+        return superusers;
+    }
+
+    public void setSuperUser(String userName) {
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setUsername(userName);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("username");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            superuserProfile.setSuperuser(true);
+            uosw.store(superuserProfile);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
     }
 
     public static class AuthenticationException extends RuntimeException
