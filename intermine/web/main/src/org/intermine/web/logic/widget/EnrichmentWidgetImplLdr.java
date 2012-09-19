@@ -38,6 +38,16 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     private String action;
     private InterMineBag populationBag;
 
+    /**
+     * Construct an Enrichment widget loader, which performs the queries needed for
+     * enrichment statistics.
+     * 
+     * @param bag The bag containing the items we are interested in examining.
+     * @param populationBag The bag containing the background population for this test (MAY BE NULL).
+     * @param os The connection to the Object Store database.
+     * @param config The configuration detailing the kind of enrichment to do.
+     * @param filter An optional filter value.
+     */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
                                    ObjectStore os, EnrichmentWidgetConfig config,
                                    String filter) {
