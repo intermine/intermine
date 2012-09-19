@@ -10,20 +10,42 @@ package org.intermine.api.profile;
  *
  */
 
-public class UserAlreadyShareBagException extends RuntimeException {
+/**
+ * Exception thrown when a user already shares the bag.
+ * @author Daneila Butano
+ */
 
+public class UserAlreadyShareBagException extends RuntimeException
+{
+
+    /**
+     * Constructor
+     */
     public UserAlreadyShareBagException() {
     }
 
-    public UserAlreadyShareBagException(String arg0) {
-        super(arg0);
+    /**
+     * Constructor with message.
+     * @param msg message
+     */
+    public UserAlreadyShareBagException(String msg) {
+        super(msg);
     }
 
-    public UserAlreadyShareBagException(Throwable arg0) {
-        super(arg0);
+    /**
+     * Constructor with throwable
+     * @param t another throwable
+     */
+    public UserAlreadyShareBagException(Throwable t) {
+        super(t);
     }
 
-    public UserAlreadyShareBagException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
+    /**
+     * Constructor with message and throwable
+     * @param msg message
+     * @param t another throwable
+     */
+    public UserAlreadyShareBagException(String msg, Throwable t) {
+        super(msg, t);
     }
 }
