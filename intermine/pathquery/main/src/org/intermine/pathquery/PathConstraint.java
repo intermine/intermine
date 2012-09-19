@@ -109,6 +109,14 @@ public abstract class PathConstraint
             return null;
         }
     }
+    
+    public static Collection<Integer> getIds(PathConstraint con) {
+        if (con instanceof PathConstraintIds) {
+            return ((PathConstraintIds) con).getIds();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * A static method to get the type of this constraint if it is a

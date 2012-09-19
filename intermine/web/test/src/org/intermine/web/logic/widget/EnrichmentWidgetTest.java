@@ -45,14 +45,14 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         InterMineBag employeeList = createEmployeeList();
         bag = employeeList;
-        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, os, "", MAX, CORRECTION);
+        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, "", MAX, CORRECTION);
     }
 
     public void testValidateBagType() throws Exception {
         InterMineBag companyList = createCompanyList();
         WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         try {
-            new EnrichmentWidget((EnrichmentWidgetConfig) config, companyList, os, "", MAX, CORRECTION);
+            new EnrichmentWidget((EnrichmentWidgetConfig) config, companyList, null, os, "", MAX, CORRECTION);
             fail("Should raise a ResourceNotFoundException");
         } catch (ResourceNotFoundException rnfe){
         }
@@ -60,7 +60,7 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
 
     public void testProcess() throws Exception {
         EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, os, (EnrichmentWidgetConfig) config, filter);
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
         results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION);
