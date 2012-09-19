@@ -10,7 +10,6 @@ package org.modmine.web;
  *
  */
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -136,8 +135,23 @@ public class SubmissionOverlapsAction extends InterMineAction
             q.addView(overlapFeatureType + ".gene.primaryIdentifier");
         }
 
-        q.addConstraint(Constraints.inIds(overlapFeatureType,
-                getOverlappingFeaturesId(submissionOverlapsForm, im)));
+        
+        // this needed to go after the new result tables:
+        // the inIds cannot currently be serialised, and therefore used by the webservice
+        // substituted by the ONE OF constraint
+        // TODO check performance of queries
+        
+        // q.addConstraint(Constraints.inIds(overlapFeatureType,
+        //        getOverlappingFeaturesId(submissionOverlapsForm, im)));
+
+        Set<String> idS = new HashSet<String>();
+        for(Integer integer : getOverlappingFeaturesId(submissionOverlapsForm, im))
+            idS.add(integer.toString());
+        q.addConstraint(Constraints.oneOfValues(overlapFeatureType + ".id", idS));
+
+        LOG.info("OVERLAP QUERY: " + q.toString());
+        LOG.info("OVERLAP QUERYJSON: " + q.toJson());
+        
     }
 
 
@@ -255,7 +269,7 @@ public class SubmissionOverlapsAction extends InterMineAction
 
         ObjectStoreInterMineImpl ob = (ObjectStoreInterMineImpl) im.getObjectStore();
 
-        LOG.info("OVERLAP " + ob.generateSql(query));
+//        LOG.info("OVERLAP --" + ob.generateSql(query));
 
         Results results = im.getObjectStore().execute(query, 100000, true, false, true);
 //        SingletonResults results = im.getObjectStore()
@@ -264,11 +278,11 @@ public class SubmissionOverlapsAction extends InterMineAction
         Set<Integer> overlapFeatureIdSet = new HashSet<Integer>();
 
         if (results == null || results.isEmpty()) {
+            LOG.warn("OVERLAP no ovelappingIdSet!! " + overlapFeatureIdSet);
             return overlapFeatureIdSet;
         }
 
         for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
-//            overlapFeatureIdSet.add((Integer)iter.next());
             ResultsRow<?> row = (ResultsRow<?>) iter.next();
             overlapFeatureIdSet.add((Integer) row.get(0));
         }

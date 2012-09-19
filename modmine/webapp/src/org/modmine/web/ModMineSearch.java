@@ -86,29 +86,26 @@ public class ModMineSearch
         }
     }
 
-    
-    private static String prepareQueryString(String formInput)
-    {
+
+    private static String prepareQueryString(String formInput) {
         // to lowercase the search string terms but not the operators
         // TODO it should probably go into the parseQueryString method
         String[] result = formInput.split("\\s");
         StringBuffer newString = new StringBuffer();
         for (String token : result) {
-            if (token.equalsIgnoreCase("AND") ||
-                    token.equalsIgnoreCase("OR") ||
-                    token.equalsIgnoreCase("NOT"))
-            {
+            if ("OR".equalsIgnoreCase(token) || "NOT".equalsIgnoreCase(token)
+                    || "AND".equalsIgnoreCase(token)) {
                 newString.append(token.toUpperCase() + " ");
             }
             else {
                 newString.append(token.toLowerCase() + " ");
             }
         }
-        LOG.debug("QUERYSTRING " + newString.toString());        
+        LOG.debug("QUERYSTRING " + newString.toString());
         return newString.toString();
     }
 
-    
+
     /**
      * perform a keyword search over all document metadata fields with lucene
      * @param searchString
@@ -116,7 +113,7 @@ public class ModMineSearch
      * @return map of document IDs with their respective scores
      */
     public static Map<Integer, Float> runLuceneSearch(String searchString) {
-        LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();        
+        LinkedHashMap<Integer, Float> matches = new LinkedHashMap<Integer, Float>();
         String queryString = parseQueryString(prepareQueryString(searchString));
 
         long time = System.currentTimeMillis();
