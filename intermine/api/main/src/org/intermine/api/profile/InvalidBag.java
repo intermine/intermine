@@ -115,7 +115,7 @@ public class InvalidBag extends StorableBag
      * @param savedBag The saved bag retrieved from the DB.
      * @param profileId The id of the user profile.
      * @param os The production object store.
-     * @param uosw The userprofile object store.
+     * @param userprofileObjectStore The userprofile object store.
      * @throws ObjectStoreException If there is a problem creating an ObjectStoreBag.
      */
     protected InvalidBag(SavedBag savedBag, Integer profileId,
