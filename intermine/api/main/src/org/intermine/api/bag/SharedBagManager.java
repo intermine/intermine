@@ -47,11 +47,17 @@ import org.intermine.sql.DatabaseUtil;
 public class SharedBagManager
 {
     private static SharedBagManager sharedBagManager = null;
+    /** the table name **/
     public static final String SHARED_BAGS = "sharedbag";
     protected ObjectStoreWriter uosw;
     protected ProfileManager profileManager;
     private static final Logger LOG = Logger.getLogger(SharedBagManager.class);
 
+    /**
+     * Return the singleton SharedBagManager instance
+     * @param profileManager the profile manager
+     * @return the instance
+     */
     public static SharedBagManager getInstance(ProfileManager profileManager) {
         if (sharedBagManager == null) {
             sharedBagManager = new SharedBagManager(profileManager);
@@ -75,7 +81,7 @@ public class SharedBagManager
                 con.createStatement().execute(getStatementCreatingIndex());
             }
         } catch (SQLException sqle) {
-           LOG.error("Error trying to create the table " + SHARED_BAGS, sqle);
+            LOG.error("Error trying to create the table " + SHARED_BAGS, sqle);
         }
     }
 
@@ -100,8 +106,8 @@ public class SharedBagManager
     /**
      * Return a map containing the bags that the user in input has access because shared by
      * someone else
-     * @param profile
-     * @return
+     * @param profile the user profile
+     * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getSharedBags(Profile profile) {
         Map<String, InterMineBag> sharedBags = new HashMap<String, InterMineBag>();
@@ -133,8 +139,7 @@ public class SharedBagManager
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving the bag "
                     + "with bagId : " + bagId, e);
-        }
-        finally {
+        } finally {
             if (rs != null) {
                 try {
                     rs.close();
@@ -142,7 +147,7 @@ public class SharedBagManager
                         stm.close();
                     }
                 } catch (SQLException e) {
-                        throw new RuntimeException("Problem closing resources", e);
+                    throw new RuntimeException("Problem closing resources", e);
                 }
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
@@ -152,6 +157,8 @@ public class SharedBagManager
 
     /**
      * Return the users sharing the list given in input, not the owner
+     * @param bag the bag the users share
+     * @return the list of users sharing the bag
      */
     public List<String> getUsersSharingBag(InterMineBag bag) {
         List<String> usersSharingBag = new ArrayList<String>();
@@ -174,8 +181,7 @@ public class SharedBagManager
         } catch (Exception e) {
             throw new RuntimeException("Error retrieving the users sharing "
                     + "the bag : " + bag.getName(), e);
-        }
-        finally {
+        } finally {
             if (rs != null) {
                 try {
                     rs.close();
@@ -183,7 +189,7 @@ public class SharedBagManager
                         stm.close();
                     }
                 } catch (SQLException e) {
-                        throw new RuntimeException("Problem closing resources", e);
+                    throw new RuntimeException("Problem closing resources", e);
                 }
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
@@ -193,9 +199,13 @@ public class SharedBagManager
 
     /**
      * Share the bag given in input with user which userName is given in input
+     * @param bag the bag to share
+     * @param userName the user which the bag is shared with
+     * @throws UserNotFoundException if the user does't exist
+     * @throws UserAlreadyShareBagException if the user already shares the list
      */
     public void shareBagWithUser(InterMineBag bag, String userName)
-        throws UserNotFoundException, BagDoesNotExistException {
+        throws UserNotFoundException, UserAlreadyShareBagException {
         UserProfile userProfile = profileManager.getUserProfile(userName);
         if (userProfile == null) {
             throw new UserNotFoundException("User " + userName + " doesn't exist");
@@ -223,13 +233,15 @@ public class SharedBagManager
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
         if (profileManager.isProfileCached(userName)) {
-            profileManager.getProfile(userName).getSearchRepository().receiveEvent(new CreationEvent(bag));
+            profileManager.getProfile(userName).getSearchRepository()
+                          .receiveEvent(new CreationEvent(bag));
         }
     }
 
     /**
      * Perform a query to retrieve a bag's backing SavedBag
-     * @param username the bagName
+     * @param bagName the bagName
+     * @param dateCreated the date when the bag has been created
      * @return the relevant SavedBag
      */
     public SavedBag getSavedBag(String bagName, String dateCreated) {
@@ -249,6 +261,11 @@ public class SharedBagManager
 
     /**
      * Share the bag given in input with user which userName is given in input
+     * @param bagName the bag name to share
+     * @param dateCreated the date when the bag has been created
+     * @param userName the user which the bag is shared with
+     * @throws UserNotFoundException if the user does't exist
+     * @throws BagDoesNotExistException if the bag does't exist
      */
     public void shareBagWithUser(String bagName, String dateCreated, String userName)
         throws UserNotFoundException, BagDoesNotExistException {
@@ -286,9 +303,10 @@ public class SharedBagManager
 
     /**
      * Delete the sharing between the user and the bag given in input
+     * @param bag the bag shared
+     * @param userName the user name sharing the bag
      */
-    public void unshareBagWithUser(InterMineBag bag, String userName)
-        throws UserNotFoundException, BagDoesNotExistException {
+    public void unshareBagWithUser(InterMineBag bag, String userName) {
         UserProfile userProfile = profileManager.getUserProfile(userName);
         if (userProfile == null) {
             LOG.warn("User " + userName + " doesn't exist");
@@ -317,34 +335,35 @@ public class SharedBagManager
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
         if (profileManager.isProfileCached(userName)) {
-            profileManager.getProfile(userName).getSearchRepository().receiveEvent(new DeletionEvent(bag));
+            profileManager.getProfile(userName).getSearchRepository()
+                          .receiveEvent(new DeletionEvent(bag));
         }
     }
 
     /**
      * Delete the sharing between the bag and all the users sharing the bag.
+     * @param bag the bag that has been shared by users
      */
-    public void unshareBagWithAllUsers(StorableBag bag)
-        throws BagDoesNotExistException {
-            Connection conn = null;
-            PreparedStatement stm = null;
-            try {
-                conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-                String sql = "DELETE FROM " + SHARED_BAGS + " WHERE bagid = " + bag.getSavedBagId();
-                stm = conn.prepareStatement(sql);
-                stm.executeUpdate();
-            } catch (SQLException sqle) {
-                throw new RuntimeException("Error unsharing the "
-                        + " the bag : " + bag.getName() + " with all the users.", sqle);
-            } finally {
-                if (stm != null) {
-                    try {
-                        stm.close();
-                    } catch (SQLException e) {
-                        throw new RuntimeException("Problem closing resources", e);
-                    }
+    public void unshareBagWithAllUsers(StorableBag bag) {
+        Connection conn = null;
+        PreparedStatement stm = null;
+        try {
+            conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+            String sql = "DELETE FROM " + SHARED_BAGS + " WHERE bagid = " + bag.getSavedBagId();
+            stm = conn.prepareStatement(sql);
+            stm.executeUpdate();
+        } catch (SQLException sqle) {
+            throw new RuntimeException("Error unsharing the "
+                    + " the bag : " + bag.getName() + " with all the users.", sqle);
+        } finally {
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException("Problem closing resources", e);
                 }
-                ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
             }
+            ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
+    }
 }

@@ -1131,12 +1131,12 @@ public class AjaxServices
                 + taggedObject + " type: " + type);
 
         if (StringUtils.isBlank(tagName)) {
-        	LOG.error("Adding tag failed");
-        	return "tag must not be blank";
+            LOG.error("Adding tag failed");
+            return "tag must not be blank";
         }
         if (StringUtils.isBlank(taggedObject)) {
-        	LOG.error("Adding tag failed");
-        	return "object to tag must not be blank";
+            LOG.error("Adding tag failed");
+            return "object to tag must not be blank";
         }
         try {
             final HttpServletRequest request = getRequest();
@@ -1293,16 +1293,28 @@ public class AjaxServices
         return SessionMethods.getProfile(request.getSession());
     }
 
+    /**
+     * Return the single use API key for the current profile
+     * @return the single use APi key
+     */
     public static String getSingleUseKey() {
         HttpServletRequest request = getRequest();
         Profile profile = SessionMethods.getProfile(request.getSession());
         return profile.getSingleUseKey();
     }
 
+    /**
+     * Return the request retrieved from the web contest
+     * @return the request
+     */
     private static HttpServletRequest getRequest() {
         return WebContextFactory.get().getHttpServletRequest();
     }
 
+    /**
+     * Return the TagManager
+     * @return the tag manager
+     */
     private static TagManager getTagManager() {
         HttpServletRequest request = getRequest();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
@@ -1370,7 +1382,7 @@ public class AjaxServices
     /**
      * This method gets the latest bags from the session (SessionMethods) and returns them in JSON
      * @return JSON serialized to a String
-     * @throws JSONException
+     * @throws JSONException json exception
      */
     @SuppressWarnings("unchecked")
     public String getSavedBagStatus() throws JSONException {
@@ -1385,8 +1397,8 @@ public class AjaxServices
             for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
                 Map<String, Object> listAttributes = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
-                if (listAttributes.get("status").equals(BagState.CURRENT.toString()) ||
-                        listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
+                if (listAttributes.get("status").equals(BagState.CURRENT.toString())
+                        || listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
                     list.put("status", listAttributes.get("status"));
@@ -1403,6 +1415,12 @@ public class AjaxServices
         return lists.toString();
     }
 
+    /**
+     * Update with the value given in input the field of the previous template
+     * saved into the session
+     * @param field the field to update
+     * @param value the value
+     */
     public void updateTemplate(String field, String value) {
         HttpSession session = WebContextFactory.get().getSession();
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null)
@@ -1418,6 +1436,12 @@ public class AjaxServices
         }
     }
 
+    /**
+     * Share the bag given in input with the user which userName is input
+     * @param userName the user which the bag has to be shared with
+     * @param bagName the bag name to share
+     * @return 'ok' string if succeeded else error string
+     */
     public String addUserToShareBag(String userName, String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -1430,9 +1454,7 @@ public class AjaxServices
             bagManager.shareBagWithUser(bagName, profile.getUsername(), userName);
         } catch (UserNotFoundException e1) {
             return "User not found.";
-        } catch (BagDoesNotExistException e2) {
-            return "The list does not exist.";
-        } catch (UserAlreadyShareBagException e3) {
+        } catch (UserAlreadyShareBagException e2) {
             return "The user already shares the bag.";
         }
         Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
@@ -1445,11 +1467,17 @@ public class AjaxServices
             }
             MailUtils.email(userName, subject, bodyMsg, webProperties);
         } catch (MessagingException me) {
-           LOG.warn("Failed to send sharing list message.");
+            LOG.warn("Failed to send sharing list message.");
         }
         return "ok";
     }
 
+    /**
+     * Un-share the bag given in input with the user which userName is input
+     * @param userName the user which the bag has to be un-shared with
+     * @param bagName the bag name to un-share
+     * @return 'ok' string if succeeded else error string
+     */
     public String deleteUserToShareBag(String userName, String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
@@ -1465,6 +1493,11 @@ public class AjaxServices
         return "ok";
     }
 
+    /**
+     * Return the list of userssharign the bag in input
+     * @param bagName the bag name that the users share
+     * @return the list of users
+     */
     public List<String> getUsersSharingBag(String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
