@@ -44,12 +44,12 @@ public class LabsController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
             HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response)
-    throws Exception {
+            HttpServletResponse response)
+        throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
             ObjectStore os = im.getObjectStore();
@@ -67,10 +67,10 @@ public class LabsController extends TilesAction
             Results results = os.execute(q);
 
             Map<Lab, Set<Submission>> ps =
-                new LinkedHashMap<Lab, Set<Submission>>();
+                    new LinkedHashMap<Lab, Set<Submission>>();
 
             Map<Lab, Project> pp =
-                new LinkedHashMap<Lab, Project>();
+                    new LinkedHashMap<Lab, Project>();
 
             // for each lab, get its attributes and set the values for jsp
 
