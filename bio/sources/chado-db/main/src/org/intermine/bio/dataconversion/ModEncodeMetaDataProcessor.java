@@ -2486,7 +2486,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId, SubmissionProperty prop) {
         // submissionId -> [type -> SubmissionProperty]
         if (submissionId == null) {
-            throw new RuntimeException("Called addToSubToTypes with a null sub id!");
+            LOG.error("MISSING SUB: " + prop);
+            return;
+            //throw new RuntimeException("Called addToSubToTypes with a null sub id!");
         }
 
         Map<String, List<SubmissionProperty>> typeToSubProp = subToTypes.get(submissionId);
@@ -2529,6 +2531,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             currentSubId = dataSubmissionMap.get(dataId);
 
+            if (currentSubId == null) {
+                LOG.info("DSM failing dataId: " + dataId + " - " + attHeading + "|" + attName +
+                		"|" + attValue);     	           	
+            }
+            
             if (dataId.intValue() != lastDataId.intValue()
                     || attDbxref.intValue() != lastAttDbXref.intValue()
                     || currentSubId != previousSubId) {

@@ -10,14 +10,9 @@ package org.modmine.web;
  *
  */
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -46,11 +41,11 @@ public class ProjectsController extends TilesAction
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
+    public ActionForward execute(ComponentContext context,
+                                 ActionMapping mapping,
+                                 ActionForm form,
                                  HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+                                 HttpServletResponse response)
         throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
@@ -82,7 +77,7 @@ public class ProjectsController extends TilesAction
             Map<String, String> expFeatureDescription =
                 MetadataCache.getFeatTypeDescription(servletContext);
             request.setAttribute("expFeatDescription", expFeatureDescription);
-            
+
 //            Map<String, List<DisplayExperiment>> categories =
 //                MetadataCache.getCategoryExperiments(os);
 //
