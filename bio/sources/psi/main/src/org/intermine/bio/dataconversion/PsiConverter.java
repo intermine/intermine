@@ -67,6 +67,9 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
+    private static final String ALIAS_TYPE = "gene name";
+ // if both roles are bait, we don't store interaction
+    private static final String BAIT = "bait";
 
     /**
      * Constructor
@@ -121,8 +124,8 @@ public class PsiConverter extends BioFileConverter
 
             if (config.get(organism) == null) {
                 String[] configs = new String[2];
-                configs[0] = "primaryIdentifier";
-                configs[1] = "ensembl";
+                configs[0] = "symbol";
+                configs[1] = "";
                 config.put(organism, configs);
             }
             if ("identifier".equals(attributes[1])) {
@@ -254,7 +257,10 @@ public class PsiConverter extends BioFileConverter
             // <alias type="locus name" typeAc="MI:0301">HSC82</alias>
             } else if (qName.equals("alias") && stack.peek().equals("names")
                             && stack.search("interactor") == 2) {
-                attName = attrs.getValue("type");
+                String type = attrs.getValue("type");
+                if (ALIAS_TYPE.equals(type)) {
+                    attName = type;
+                }
             // <interactorList><interactor id="4"><sequence>
             } else if (qName.equals("sequence") && stack.peek().equals("interactor")) {
                 attName = "sequence";
@@ -380,7 +386,7 @@ public class PsiConverter extends BioFileConverter
                 if (StringUtils.isNotEmpty(name)) {
                     Util.addToSetMap(geneIdentifiers, qName, name);
                 }
-            // <interactorList><interactor id="4">
+            // <interactorList><interactor id="4"><names><alias>
             } else if ("alias".equals(qName)) {
                 String identifier = attValue.toString();
                 if (StringUtils.isNotEmpty(identifier)) {
@@ -506,12 +512,18 @@ public class PsiConverter extends BioFileConverter
             for (InteractorHolder gene2Interactor : gene2Interactors) {
 
                 for (String gene2RefId : gene2Interactor.geneRefIds) {
+                    String role1 = gene1Interactor.role;
+                    String role2 = gene2Interactor.role;
+                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
+                        // spoke!  not storing bait - bait, only bait - prey
+                        continue;
+                    }
                     Item interaction = getInteraction(gene1RefId, gene2RefId);
                     Item interactionDetail =  createItem("InteractionDetail");
                     String shortName = h.shortName;
                     interactionDetail.setAttribute("name", shortName);
-                    interactionDetail.setAttribute("role1", gene1Interactor.role);
-                    interactionDetail.setAttribute("role2", gene2Interactor.role);
+                    interactionDetail.setAttribute("role1", role1);
+                    interactionDetail.setAttribute("role2", role2);
                     interactionDetail.setAttribute("type", INTERACTION_TYPE);
                     if (h.confidence != null) {
                         interactionDetail.setAttribute("confidence", h.confidence.toString());
@@ -534,7 +546,8 @@ public class PsiConverter extends BioFileConverter
                 Item interactionDetail, InteractorHolder ih, String shortName, String geneRefId)
             throws ObjectStoreException {
             if (ih.isRegionFeature()) {
-                String refId = getRegion(ih, interactionDetail.getIdentifier(), shortName, geneRefId);
+                String refId = getRegion(ih, interactionDetail.getIdentifier(), shortName,
+                        geneRefId);
                 interactionDetail.addToCollection("interactingRegions", refId);
             }
         }
@@ -590,6 +603,7 @@ public class PsiConverter extends BioFileConverter
             }
 
             String field = config.get(taxonId)[0];
+            // if empty, use gene name
             String datasource = config.get(taxonId)[1];
             Set<String> identifiers = geneIdentifiers.get(datasource);
             Set<String> refIds = new HashSet<String>();

@@ -77,7 +77,7 @@ public class QueryUploadService extends WebService
         Profile profile = getPermission().getProfile();
         BagManager bagManager = this.im.getBagManager();
 
-        Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getBags(profile);
 
         int version = getVersion(request);
         Reader r = new StringReader(queriesXML);

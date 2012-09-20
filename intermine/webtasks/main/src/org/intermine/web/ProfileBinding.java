@@ -28,6 +28,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.xml.InterMineBagBinding;
 import org.intermine.api.xml.SavedQueryBinding;
+import org.intermine.api.xml.SharedBagBinding;
 import org.intermine.api.xml.TagBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
@@ -88,8 +89,10 @@ public final class ProfileBinding
             writer.writeStartElement("userprofile");
 
             if (writeUserAndPassword) {
-                writer.writeAttribute("password", profile.getPassword());
                 writer.writeAttribute("username", profile.getUsername());
+                if (profile.getPassword() != null) {
+                    writer.writeAttribute("password", profile.getPassword());
+                }
                 if (profile.getApiKey() != null) {
                     writer.writeAttribute("apikey", profile.getApiKey());
                 }
@@ -119,6 +122,11 @@ public final class ProfileBinding
             }
 
             writer.writeCharacters("\n");
+
+            //shared bags
+            SharedBagBinding.marshal(profile, writer);
+
+            //queries
             writer.writeStartElement("queries");
             if (writeQueries) {
                 for (SavedQuery query : profile.getSavedQueries().values()) {
@@ -171,7 +179,7 @@ public final class ProfileBinding
             String password, Set<Tag> tags, ObjectStoreWriter osw, int version) {
         try {
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, username, password, tags, osw, version);
+                new ProfileHandler(profileManager, username, password, tags, osw, version, null);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

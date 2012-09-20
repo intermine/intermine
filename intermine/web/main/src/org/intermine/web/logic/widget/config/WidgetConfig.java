@@ -274,7 +274,7 @@ public abstract class WidgetConfig
      * @param attributes extra attribute - like organism
      * @return the widget
      */
-    public abstract Widget getWidget(InterMineBag imBag, ObjectStore os,
+    public abstract Widget getWidget(InterMineBag imBag, InterMineBag populationBag,ObjectStore os,
                                      List<String> attributes);
 
 

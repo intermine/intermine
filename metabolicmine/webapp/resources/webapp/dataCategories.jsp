@@ -33,49 +33,49 @@
                <td>Genome sequence and annotation</td>
                <td><a href="http://www.ensembl.org">Ensembl</a></td>
                <td>Human, Mouse</td>
-               <td>Ensembl 66</td>
+               <td>Ensembl 67</td>
        </tr>
        <tr>
                <td>SNPs</td>
                <td><a href="http://www.ensembl.org/info/docs/variation/sources_documentation.html">Ensembl (including dbSNP, HGMD, COSMIC)</td>
                <td>Human</td>
-               <td>Ensembl 66 (dbSNP 135)</td>
+               <td>Ensembl 67 (dbSNP 135)</td>
        </tr>
        <tr>
                <td>GWAS</td>
                <td><a href="http://www.hugenavigator.org/HuGENavigator/gWAHitStartPage.do">HuGE navigator (including GWAS catalog)</a></td>
                <td>Human</td>
-               <td>March 2012</td>
+               <td>August 2012</td>
        </tr>
        <tr>
                <td>Gene names and symbol</td>
                <td><a href="http://www.genenames.org/">HGNC</a>, <a href="http://www.ncbi.nlm.nih.gov/gene/">NCBI</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://rgd.mcw.edu/">RGD</a></td>
                <td>Human, Mouse, Rat</td>
-               <td>March 2012</td>
+               <td>August 2012</td>
        </tr>
        <tr>
                <td>Protein sequence and annotation</a></td>
                <td><a href="http://www.uniprot.org/">UniProt</a></td>
                <td>Human, Mouse</td>
-               <td>2012_04</td>
+               <td>July 2012</td>
        </tr>
        <tr>
                <td>Protein domains</td>
                <td><a href="http://www.ebi.ac.uk/interpro/">InterPro</a></td>
                <td>Human, Mouse</td>
-               <td>March 2012</td>
+               <td>July 2012</td>
        </tr>
        <tr>
                <td>Gene Ontology</td>
                <td><a href="http://www.uniprot.org/">UniProt</a>, <a href="http://www.informatics.jax.org/">MGI</a>, <a href="http://www.geneontology.org/">GO Consortium</a></td>
                <td>Human, Mouse</td>
-               <td>March 2012</td>
+               <td>July 2012</td>
        </tr>
        <tr>
                <td>Pathways</td>
                <td><a href="http://www.reactome.org/">Reactome</a></td>
                <td>Human, Mouse</td>
-               <td>March 2012</td>
+               <td>July 2012</td>
        </tr>
        <tr>
                <td>Pathways</td>
@@ -99,38 +99,38 @@
                <td>Interactions</td>
                <td><a href="http://www.ebi.ac.uk/intact/">IntAct</a></td>
                <td>Human, Mouse</td>
-               <td>February 2012</td>
-       </tr>  
+               <td>July 2012</td>
+       </tr>
        <tr>
                <td>Interactions</td>
                <td><a href="http://thebiogrid.org/">BioGRID</a></td>
                <td>Human, Mouse</td>
-               <td>3.1.86 (March 2012)</td>
+               <td>3.1.90 (July 2012)</td>
        </tr>
        <tr>
                <td>Publications</td>
                <td><a href="ftp://ftp.ncbi.nih.gov/gene/DATA/">NCBI PubMed (gene to PubMed id mappings)</a></td>
                <td>Human, Mouse</td>
-               <td>March 2012</td>
+               <td>August 2012</td>
        </tr>
        <tr>
                <td>Disease</td>
                <td><a href="http://www.omim.org/">OMIM</a></td>
                <td>Human</td>
-               <td>October 2010</td>
-       </tr>  
+               <td>July 2012</td>
+       </tr>
        <tr>
                <td>Orthologues</td>
                <td><a href="http://www.ensembl.org/info/docs/compara/index.html">Ensembl Compara</a></td>
                <td>Human, Mouse, Rat</td>
-               <td>Ensembl 66</td>
+               <td>Ensembl 67</td>
        </tr>
        <tr>
                <td>Alleles</td>
                <td><a href="http://www.informatics.jax.org/">MGI</a></td>
                <td>Mouse</td>
-               <td>March 2012</td>
-       </tr>  
+               <td>August 2012</td>
+       </tr>
 </table>
 
 </div>

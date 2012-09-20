@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.BagConstraint;
 import org.intermine.objectstore.query.ConstraintOp;
@@ -28,10 +27,7 @@ import org.intermine.objectstore.query.QueryObjectReference;
 import org.intermine.objectstore.query.QueryReference;
 import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.SimpleConstraint;
-import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
@@ -40,10 +36,23 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
 {
     private EnrichmentWidgetConfig config;
     private String action;
+    private InterMineBag populationBag;
 
-    public EnrichmentWidgetImplLdr(InterMineBag bag, ObjectStore os, EnrichmentWidgetConfig config,
-        String filter) {
+    /**
+     * Construct an Enrichment widget loader, which performs the queries needed for
+     * enrichment statistics.
+     * 
+     * @param bag The bag containing the items we are interested in examining.
+     * @param populationBag The bag containing the background population for this test (MAY BE NULL).
+     * @param os The connection to the Object Store database.
+     * @param config The configuration detailing the kind of enrichment to do.
+     * @param filter An optional filter value.
+     */
+    public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
+                                   ObjectStore os, EnrichmentWidgetConfig config,
+                                   String filter) {
         super(bag, os, filter, config);
+        this.populationBag = populationBag;
         this.config = config;
     }
 
@@ -108,6 +117,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         QueryField qfStartClassId = new QueryField(startClass, "id");
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
+        } else if (populationBag != null) {
+            cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, populationBag.getOsb()));
         }
 
         for (PathConstraint pathConstraint : config.getPathConstraints()) {

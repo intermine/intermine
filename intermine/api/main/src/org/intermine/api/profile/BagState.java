@@ -16,6 +16,6 @@ package org.intermine.api.profile;
  * not current(= the upgrading process has not been executed yet)
  * to upgrade (= the upgrading process has not been able to upgrade it because there are some
  * conflicts that the user has to solve manually ))
- * @author dbutano
+ * @author Daniela Butano
  */
 public enum BagState { CURRENT, NOT_CURRENT, TO_UPGRADE }

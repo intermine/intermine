@@ -185,7 +185,7 @@ public class KeywordSearchResultsController extends TilesAction
         List<Integer> ids = new ArrayList<Integer>();
         if (!StringUtils.isEmpty(searchBag)) {
             LOG.debug("SEARCH BAG: '" + searchBag + "'");
-            InterMineBag bag = im.getBagManager().getUserOrGlobalBag(
+            InterMineBag bag = im.getBagManager().getBag(
                     SessionMethods.getProfile(request.getSession()), searchBag);
             if (bag != null) {
                 ids = bag.getContentsAsIds();
