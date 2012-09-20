@@ -93,7 +93,7 @@ public abstract class QueryExecutor
             ) throws ObjectStoreException {
         Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
 
-        Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
         Query q = MainHelper.makeSummaryQuery(pathQuery, summaryPath, allBags, pathToQueryNode,
                 bagQueryRunner, asOccurrances);
         return q;

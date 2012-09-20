@@ -16,7 +16,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -91,10 +90,14 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
+        String populationBagName = input.getPopulationBagName();
+        InterMineBag populationBag = (populationBagName != null)
+                                     ? retrieveBag(populationBagName)
+                                     : null;
         EnrichmentWidget widget = null;
         try {
-            widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, im.getObjectStore(),
-                input.getExtraAttributes());
+            widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, populationBag,
+                im.getObjectStore(), input.getExtraAttributes());
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \""
                                                + input.getWidgetId() + "\"");

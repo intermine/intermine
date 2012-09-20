@@ -469,7 +469,8 @@
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
     <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
     <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
-
+    <action path="/initSharingBagUsers" type="org.intermine.web.struts.SharingBagUsersController"/>
+    
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

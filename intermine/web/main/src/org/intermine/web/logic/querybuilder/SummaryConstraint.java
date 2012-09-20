@@ -16,10 +16,12 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintIds;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
 import org.intermine.pathquery.PathConstraintNull;
+import org.intermine.pathquery.PathConstraintRange;
 import org.intermine.pathquery.PathConstraintSubclass;
 
 
@@ -102,6 +104,8 @@ public class SummaryConstraint
         } else if (con instanceof PathConstraintMultiValue) {
             Collection<String> multiValues = ((PathConstraintMultiValue) con).getValues();
             return Arrays.toString(multiValues.toArray());
+        } else if (con instanceof PathConstraintIds) {
+            return Arrays.toString(PathConstraint.getIds(con).toArray());
         } else {
             throw new Error("PathConstraint type not recognised: " + con.getClass().getName());
         }

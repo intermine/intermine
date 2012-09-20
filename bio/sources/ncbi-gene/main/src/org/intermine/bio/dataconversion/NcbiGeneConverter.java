@@ -10,23 +10,27 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
-
 /**
- *
- * @author
+ * Ncbi gene info converter
+ * @author Richard Smith
+ * @author Fengyuan Hu
  */
 public class NcbiGeneConverter extends BioFileConverter
 {
@@ -37,6 +41,11 @@ public class NcbiGeneConverter extends BioFileConverter
 
     protected static final Logger LOG = Logger.getLogger(NcbiGeneConverter.class);
 
+    private static final String PROP_FILE = "ncbigene_config.properties";
+    private Properties props = new Properties();
+    private Map<String, String> config_xref = new HashMap<String, String>();
+    private Map<String, String> config_prefix = new HashMap<String, String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -44,6 +53,7 @@ public class NcbiGeneConverter extends BioFileConverter
      */
     public NcbiGeneConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        readConfig();
     }
 
     /**
@@ -64,13 +74,13 @@ public class NcbiGeneConverter extends BioFileConverter
             throw new IllegalArgumentException("No organisms passed to NcbiGeneConverter.");
         }
 
-        NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader);
+        NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader, this.taxonIds);
         LOG.info("DUPLICATE symbols: " + parser.findDuplicateSymbols("9606"));
         Map<String, Set<GeneInfoRecord>> records = parser.getGeneInfoRecords();
+
+        // #Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description type_of_gene Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority Nomenclature_status Other_designations Modification_date (tab is used as a separator, pound sign - start of a comment)
+
         for (String taxonId : records.keySet()) {
-            if (!taxonIds.contains(taxonId)) {
-                continue;
-            }
             for (GeneInfoRecord record : records.get(taxonId)) {
                 // gene type - http://www.ncbi.nlm.nih.gov/IEB/ToolBox/CPP_DOC/lxr/source/src/objects/entrezgene/entrezgene.asn
                 if (record.geneType == null) {
@@ -141,7 +151,8 @@ public class NcbiGeneConverter extends BioFileConverter
                                         + record.ensemblIds);
                             }
                             for (String ensemblId : record.ensemblIds) {
-                                createCrossReference(ncRNA.getIdentifier(), ensemblId, "Ensembl", true);
+                                createCrossReference(ncRNA.getIdentifier(),
+                                        ensemblId, "Ensembl", true);
                             }
                         }
                     }
@@ -154,67 +165,118 @@ public class NcbiGeneConverter extends BioFileConverter
                         || "miscRNA".equals(record.geneType)
                         || "rRNA".equals(record.geneType)) { // ecolimine case
 
-                    Item gene = createItem("Gene");
-                    gene.setReference("organism", getOrganism(taxonId));
-                    createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
-                    gene.setAttribute("primaryIdentifier", record.entrez);
-
-                    if (record.officialSymbol != null) {
-                        gene.setAttribute("symbol", record.officialSymbol);
-                        // if NCBI symbol is different add it as a synonym
-                        if (record.defaultSymbol != null &&
-                                !record.officialSymbol.equals(record.defaultSymbol)) {
-                            createSynonym(gene, record.defaultSymbol, true);
-                            LOG.info("GENE official symbol " + record.officialSymbol
-                                    + " does not match " + record.defaultSymbol);
-                        }
-                    } else {
-                        if (parser.isUniqueSymbol(taxonId, record.defaultSymbol)) {
-                            gene.setAttribute("symbol", record.defaultSymbol);
-                        } else {
-                            createSynonym(gene, record.defaultSymbol, true);
-                        }
-                    }
-                    if (StringUtils.isBlank(record.officialSymbol)) {
-                        LOG.info("GENE has no official symbol: " + record.entrez + " "
-                                + record.defaultSymbol);
-                    }
-
-                    // NAME
-                    if (record.officialName != null) {
-                        gene.setAttribute("name", record.officialName);
-                        if (record.defaultName != null &&
-                                !record.officialName.equals(record.defaultName)) {
-                            createSynonym(gene, record.defaultName, true);
-                        }
-                    } else if (record.defaultName != null) {
-                        gene.setAttribute("name", record.defaultName);
-                    }
-
-                    boolean loadEnsembl = true; // Load Ensembl id for genes
-                    if (loadEnsembl) {
-                        if (record.ensemblIds != null) {
-                            for (String ensemblId : record.ensemblIds) {
-                                createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl",
-                                        true);
-                            }
-                        }
-                    }
-
-                    if (record.mapLocation != null) {
-                        // cytoLocation attribute is set in chado-db_additions.xml
-                        if (gene.hasAttribute("cytoLocation")) {
-                            gene.setAttribute("cytoLocation", record.mapLocation);
-                        }
-                    }
-
-                    store(gene);
-
-                    for (String synonym : record.synonyms) {
-                        createSynonym(gene, synonym, true);
-                    }
+                     createGeneByTaxonId(taxonId, record, parser);
                 }
             }
+        }
+    }
+
+    private void createGeneByTaxonId(String taxonId, GeneInfoRecord record,
+            NcbiGeneInfoParser parser) throws ObjectStoreException {
+        Item gene = createItem("Gene");
+        gene.setReference("organism", getOrganism(taxonId));
+        createCrossReference(gene.getIdentifier(), record.entrez, "NCBI", true);
+
+        // primaryIdentifier
+        if (record.xrefs.get(config_xref.get(taxonId)) != null) {
+            gene.setAttribute(
+                    "primaryIdentifier",
+                    (config_prefix.get(taxonId) != null ? config_prefix
+                            .get(taxonId) : "")
+                            + record.xrefs.get(config_xref.get(taxonId))
+                                    .iterator().next());
+        } else {
+            gene.setAttribute("primaryIdentifier", record.entrez);
+        }
+
+        // symbol
+        if (record.officialSymbol != null) {
+            gene.setAttribute("symbol", record.officialSymbol);
+            // if NCBI symbol is different add it as a synonym
+            if (record.defaultSymbol != null &&
+                    !record.officialSymbol.equals(record.defaultSymbol)) {
+                createSynonym(gene, record.defaultSymbol, true);
+                LOG.info("GENE official symbol " + record.officialSymbol
+                        + " does not match " + record.defaultSymbol);
+            }
+        } else {
+            if (parser.isUniqueSymbol(taxonId, record.defaultSymbol)) {
+                gene.setAttribute("symbol", record.defaultSymbol);
+            } else {
+                createSynonym(gene, record.defaultSymbol, true);
+            }
+        }
+        if (StringUtils.isBlank(record.officialSymbol)) {
+            LOG.info("GENE has no official symbol: " + record.entrez + " "
+                    + record.defaultSymbol);
+        }
+
+        // ncbiGeneNumber - removed from model addition
+//        gene.setAttribute("ncbiGeneNumber", record.entrez);
+
+        // name
+        if (record.officialName != null) {
+            gene.setAttribute("name", record.officialName);
+            if (record.defaultName != null &&
+                    !record.officialName.equals(record.defaultName)) {
+                createSynonym(gene, record.defaultName, true);
+            }
+        } else if (record.defaultName != null) {
+            gene.setAttribute("name", record.defaultName);
+        }
+
+        // xref
+        for (String key : record.xrefs.keySet()) {
+            for (String id : record.xrefs.get(key)) {
+                createCrossReference(gene.getIdentifier(), id, key, true);
+            }
+        }
+
+        for (String ensemblId : record.ensemblIds) {
+            createCrossReference(gene.getIdentifier(), ensemblId, "Ensembl",
+                    true);
+        }
+
+        if (record.mapLocation != null) {
+            // cytoLocation attribute is set in chado-db_additions.xml
+            if (gene.hasAttribute("cytoLocation")) {
+                gene.setAttribute("cytoLocation", record.mapLocation);
+            }
+        }
+
+        store(gene);
+
+        for (String synonym : record.synonyms) {
+            createSynonym(gene, synonym, true);
+        }
+    }
+
+    private void readConfig() {
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(
+                    PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '"
+                    + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            String key = (String) entry.getKey(); // e.g. 10090.xref
+            String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
+
+            String[] attributes = key.split("\\.");
+            if (attributes.length == 0) {
+                throw new RuntimeException("Problem loading properties '"
+                        + PROP_FILE + "' on line " + key);
+            }
+
+            String taxonId = attributes[0];
+            if ("xref".equals(attributes[1])) {
+                config_xref.put(taxonId, value);
+            } else if ("prefix".equals(attributes[1])) {
+                config_prefix.put(taxonId, value);
+            }
+
         }
     }
 }

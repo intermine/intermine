@@ -1,12 +1,14 @@
+#Format: tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description type_of_gene Symbol_from_nomenclature_authority Full_name_from_nomenclature_authority Nomenclature_status Other_designations Modification_date (tab is used as a separator, pound sign - start of a comment)
 34	4126706	MONKEY	-	-	WormBase:WBGene308375	-	-	Record to support submission of GeneRIFs for a gene not in Entrez Gene (Myxococcus xanthus Beebe 1941.  Use when strain, subtype, isolate, etc. is unspecified, or when different from all specified ones in Gene.).	other	-	-	-	-	20080503
 6239	171593	Y74C9A.5	Y74C9A.5	-	WormBase:WBGene00022279	I	-	Y74C9A.5	protein-coding	-	-	-	-	20080516
 6239	171594	Y48G1C.4	Y48G1C.4	-	WormBase:WBGene00021677	I	-	Y48G1C.4	protein-coding	-	-	-	-	20080515
 6239	171595	Y48G1C.5	Y48G1C.5	-	WormBase:WBGene00021678	I	-	Y48G1C.5	protein-coding	-	-	-	-	20080520
 6239	171597	Y48G1C.6	Y48G1C.6	-	WormBase:WBGene00021679	I	-	Y48G1C.6	protein-coding	-	-	-	-	20080516
-7227	5740175	CG34160	Dmel_CG34160	-	FLYBASE:FBgn0085189	2L	-	CG34160 gene product from transcript CG34160-RA	protein-coding	-	-	-	CG34160-PA	20080515
-10090	567890	mouse_symbol	Dmel_CG34160	-	MGI:895149|Ensembl:ENSMUSG0000001857	2L	-	CG34160 gene product from transcript CG34160-RA	protein-coding	-	-	-	CG34160-PA	20080515
 83333	944909	ffs	b0455	ECK0449|JWR0009	EcoGene:EG30027	-	-	ncRNA	ncRNA	-	-	-	-	20110902
 83333	944880	aspU	b0206	ECK0206|JWR0006	EcoGene:EG30024	-	-	tRNA	tRNA	-	-	-	-	20110902
 83333	944740	yjhR	b4308	ECK4299|JW4271	EcoGene:EG12560	-	-	pseudo	pseudo	-	-	-	-	20110902
 83333	945053	ssrA	b2621	ECK2617|JWR0055|sipB	EcoGene:EG30100	-	-	miscRNA	miscRNA	-	-	-	-	20110924
 83333	947071	rrsG	b2591	ECK2589|JWR0054	EcoGene:EG30089	-	-	16S ribosomal RNA of rrnG operon	rRNA	-	-	-	-	20110902
+10090	567890	mouse_symbol	Dmel_CG34160	-	MGI:895149|Ensembl:ENSMUSG0000001857	2L	-	CG34160 gene product from transcript CG34160-RA	protein-coding	-	-	-	CG34160-PA	20080515
+7227	34309	RpS2	Dmel_CG5920	CG5920|Dm01335|Dmel\CG5920|S2|anon-EST:Posey202|dS2|l(2)03848|l(2)k04603|sop	FLYBASE:FBgn0004867	2L	30E1-30E1	Ribosomal protein S2	protein-coding	RpS2	Ribosomal protein S2	O	CG5920-PA|RpS2-PA|S2 ribosomal protein|ribosomal protein S2|ribosome RS2|string of pearls	20120805
+9606	5026	P2RX5	-	LRH-1|P2X5|P2X5R	HGNC:8536|MIM:602836|Ensembl:ENSG00000083454|Ensembl:ENSG00000257950|HPRD:09110|Vega:OTTHUMG00000090700|Vega:OTTHUMG00000169623	17	17p13.3	purinergic receptor P2X, ligand-gated ion channel, 5	protein-coding	P2RX5	purinergic receptor P2X, ligand-gated ion channel, 5	O	ATP receptor subunit|P2X purinoceptor 5|ionotropic ATP receptor P2X5|lymphoid-restricted histocompatibility antigen-1	20120816

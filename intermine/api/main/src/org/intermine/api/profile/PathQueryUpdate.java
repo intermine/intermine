@@ -29,8 +29,8 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 
 /**
- * Update a pathquery with a new model
- * @author butano
+ * Class for updating a pathquery with a new model
+ * @author Daniela BUtano
  *
  */
 public class PathQueryUpdate
@@ -40,14 +40,16 @@ public class PathQueryUpdate
     protected Model oldModel;
     protected boolean isUpdated = false;
 
+    /**
+     * Default constructor
+     */
     public PathQueryUpdate() {
     }
 
     /**
-     * Construct a PathQueryUpdate to update a pathquery given i input with a new model
-     * @param pathQuery
-     * @param newModel
-     * @param oldModel
+     * Construct with pathquery and former model
+     * @param pathQuery the epath query
+     * @param oldModel the former model
      */
     public PathQueryUpdate(PathQuery pathQuery, Model oldModel) {
         this.pathQuery = pathQuery;
@@ -56,7 +58,7 @@ public class PathQueryUpdate
     }
 
     /**
-     * Return a new pathquery updated to a new model
+     * Return a new pathquery updated to the new model
      * @return the new pathquery
      */
     public PathQuery getUpdatedPathQuery() {
@@ -72,11 +74,11 @@ public class PathQueryUpdate
     }
 
     /**
-     * Update path
-     * @param renamedClasses
-     * @param renamedFields
-     * @return
-     * @throws PathException
+     * Update the path query
+     * @param renamedClasses the renamed classes
+     * @param renamedFields the renamed fields
+     * @return the list of problems
+     * @throws PathException if there is problem in some paths
      */
     public synchronized List<String> update(Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
@@ -104,8 +106,14 @@ public class PathQueryUpdate
         }
     }
 
-    protected void updateConstraints (Map<String, String> renamedClasses, Map<String, String> renamedFields)
-        throws PathException {
+    /**
+     * Update the constraint with the renamed classes or/and fields
+     * @param renamedClasses the renamed classes
+     * @param renamedFields the renamed fields
+     * @throws PathException if there is problem in some paths
+     */
+    protected void updateConstraints (Map<String, String> renamedClasses,
+        Map<String, String> renamedFields) throws PathException {
         String path, newPath;
         Path p;
         for (PathConstraint pathConstraint : pathQuery.getConstraints().keySet()) {
@@ -119,6 +127,13 @@ public class PathQueryUpdate
         }
     }
 
+    /**
+     * Create a pathconstraint with the same operator and value of path contraint given in input
+     * and with the path given in input
+     * @param pathConstraint the source path contraint
+     * @param newPath the new path
+     * @return the path constraint created
+     */
     protected PathConstraint createPathConstraint(PathConstraint pathConstraint, String newPath) {
         PathConstraint newPathConstraint = null;
         ConstraintOp op = pathConstraint.getOp();
@@ -182,6 +197,14 @@ public class PathQueryUpdate
         }
     }
 
+    /**
+     * Update the path given in input with the renamed classes and fields
+     * @param path the original path to update
+     * @param renamedClasses the renamed classes
+     * @param renamedFields the renamed fields
+     * @return the updated path
+     * @throws PathException if there is problem in some paths
+     */
     protected String getPathUpdated(String path, Map<String, String> renamedClasses,
         Map<String, String> renamedFields) throws PathException {
         Path p = new Path(oldModel, path);

@@ -52,7 +52,7 @@ public class ReportInListController extends TilesAction
         BagManager bagManager = im.getBagManager();
 
         Collection<InterMineBag> bagsWithId =
-            bagManager.getCurrentUserOrGlobalBagsContainingId(profile, object.getId());
+            bagManager.getCurrentBagsContainingId(profile, object.getId());
         // wrap around
         ReportInList odil = new ReportInList(bagsWithId);
 

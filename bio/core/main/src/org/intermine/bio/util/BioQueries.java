@@ -47,7 +47,7 @@ public abstract class BioQueries
      * @param orderBySubject if true order the results using the subjectCls, otherwise order by
      * objectCls
      * @param hasLength if true, only query locations where the objectCls object has a non-zero
-     * length
+     * length, e.g. a chromosome's length should be greater than zero
      * @param batchSize the batch size for the results object
      * @param hasChromosomeLocation if true, only query where the subject has a chromosome location
      * @return a Results object: object.id, location, subject
@@ -102,7 +102,7 @@ public abstract class BioQueries
             QueryObjectReference chrLocationRef
                 = new QueryObjectReference(qcSub, "chromosomeLocation");
             ContainsConstraint chrLocRefNotNull =
-                new ContainsConstraint(chrLocationRef, ConstraintOp.IS_NULL);
+                new ContainsConstraint(chrLocationRef, ConstraintOp.IS_NOT_NULL);
             cs.addConstraint(chrLocRefNotNull);
         }
         q.setConstraint(cs);
@@ -112,6 +112,24 @@ public abstract class BioQueries
         indexesToCreate.add(qcSub);
         ((ObjectStoreInterMineImpl) os).precompute(q, indexesToCreate,
                                                    Constants.PRECOMPUTE_CATEGORY);
+
+        /**
+         * Query in a semi-SQL form:
+         *
+         * SELECT a1_.id AS a2_, a3_, a4_ FROM
+         * org.intermine.model.bio.Chromosome AS a1_,
+         * org.intermine.model.bio.SequenceFeature AS a3_,
+         * org.intermine.model.bio.Location AS a4_ WHERE (a4_.locatedOn CONTAINS
+         * a1_ AND a4_.feature CONTAINS a3_ AND a1_.length IS NOT NULL) ORDER BY
+         * a1_.id with indexes [a2_, a3_id, a4_id, a2_, a3_id]
+         *
+         *or equivalently as:
+         *
+         * SELECT a1_.id AS a2_, a3_.id AS a3_id, a4_.id AS a4_id FROM
+         * Chromosome AS a1_, SequenceFeature AS a3_, Location AS a4_ WHERE
+         * a4_.locatedOnId = a1_.id AND a4_.featureId = a3_.id AND a1_.length IS
+         * NOT NULL ORDER BY a1_.id, a3_.id, a4_.id
+         */
         Results res = os.execute(q, batchSize, true, true, true);
 
         return res;

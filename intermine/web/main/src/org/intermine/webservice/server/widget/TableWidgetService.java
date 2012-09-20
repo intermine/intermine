@@ -66,7 +66,7 @@ public class TableWidgetService extends WidgetService
         try {
             Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
             ((TableWidgetConfig) widgetConfig).setClassKeys(classKeys);
-            widget = (TableWidget) widgetConfig.getWidget(imBag, im.getObjectStore(), null);
+            widget = (TableWidget) widgetConfig.getWidget(imBag, null, im.getObjectStore(), null);
             addOutputInfo("columns", StringUtils.join(widget.getColumns().toArray(), ","));
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find a table widget called \""

@@ -18,16 +18,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
+import org.intermine.util.Util;
 
 
 /**
  * Parse NCBI Entrez gene_info file and return data structure for each row for later processing.
+ *
  * @author Richard Smith
  *
  */
 public class NcbiGeneInfoParser
 {
+    protected static final Logger LOG = Logger.getLogger(NcbiGeneInfoParser.class);
+
     private Map<String, Set<GeneInfoRecord>> recordMap = new HashMap<String, Set<GeneInfoRecord>>();
     private Map<String, Set<String>> duplicateEnsemblIds = new HashMap<String, Set<String>>();
     private Map<String, Set<String>> duplicateSymbols = new HashMap<String, Set<String>>();
@@ -38,17 +43,25 @@ public class NcbiGeneInfoParser
      * @param reader a reader for the gene_info file to be parsed
      * @throws IOException if problems reading file
      */
-    public NcbiGeneInfoParser(Reader reader) throws IOException {
+    public NcbiGeneInfoParser(Reader reader, Set<String> taxonIds) throws IOException {
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         while (lineIter.hasNext()) {
             String[] line = lineIter.next();
 
+            if (line[0].startsWith("#")) {
+                continue;
+            }
+
             String taxonId = line[0].trim();
+            if (!taxonIds.contains(taxonId)) {
+                continue;
+            }
+
             String entrez = line[1].trim();
             String defaultSymbol = line[2].trim();
             String synonyms = line[4].trim();
-            String xrefs = line[5].trim(); // dbIdentifier
+            String xrefs = line[5].trim(); // db Identifiers
             String mapLocation = line[7].trim();
             String defaultName = line[8].trim();
             String geneType = line[9].trim();
@@ -59,6 +72,7 @@ public class NcbiGeneInfoParser
                     defaultSymbol, officialName, defaultName, mapLocation, geneType);
 
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
+            record.xrefs.putAll(parseXrefs(xrefs));
 
             if (!"-".equals(synonyms)) {
                 for (String synonym : synonyms.split("\\|")) {
@@ -165,5 +179,21 @@ public class NcbiGeneInfoParser
             }
         }
         return matched;
+    }
+
+    /**
+     * Parse all xref, some gene will have multiple id from same source
+     * e.g. P2RX5 HGNC:8536|MIM:602836|Ensembl:ENSG00000083454|Ensembl:ENSG00000257950|HPRD:09110|Vega:OTTHUMG00000090700|Vega:OTTHUMG00000169623
+     * @param xrefs a "|" separated string
+     * @return a map of xrefs
+     */
+    private Map<String, Set<String>> parseXrefs(String xrefs) {
+        Map<String, Set<String>> xrefMap = new HashMap<String, Set<String>>();
+        for (String xref : xrefs.split("\\|")) {
+            if (!xref.startsWith("-")) {
+                Util.addToSetMap(xrefMap, xref.split(":")[0], xref.split(":")[1]);
+            }
+        }
+        return xrefMap;
     }
 }
