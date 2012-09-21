@@ -26,6 +26,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 /**
  * @author "Xavier Watkins"
  * @author "Alex Kalderimis"
+ * @author "Daniela Butano"
  */
 public class GraphWidget extends Widget
 {
@@ -170,7 +171,12 @@ public class GraphWidget extends Widget
     public PathQuery getSimplePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         List<String> keyFieldNames = bag.getKeyFieldNames();
-        String prefix = config.getStartClass() + ".";
+        String prefix;
+        if (!((GraphWidgetConfig) config).isListPathSet()) {
+            prefix = config.getStartClass() + ".";
+        } else {
+            prefix = ((GraphWidgetConfig) config).getListPath() + ".";
+        }
         for (String keyFieldName : keyFieldNames) {
             if (!keyFieldName.startsWith(prefix)) {
                 keyFieldName = prefix + keyFieldName;

@@ -42,6 +42,8 @@
           <value>Manager</value>
       </constraint>
   </query>
-  
+  <query name="idBagConstraints" model="testmodel" view="Company.name Company.vatNumber">
+    <constraint path="Company" op="IN" ids="1,5,7"/>
+  </query>
 
 </query-list>

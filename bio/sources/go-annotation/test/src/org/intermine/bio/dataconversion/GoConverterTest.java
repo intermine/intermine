@@ -88,7 +88,6 @@ public class GoConverterTest extends ItemsTestCase
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
 
-
     public void testCreateWithObjects() throws Exception {
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
         Item organism = tgtItemFactory.makeItem("3_1", "Organism", "");

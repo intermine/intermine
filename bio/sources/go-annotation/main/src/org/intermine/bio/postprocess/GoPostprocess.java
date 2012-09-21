@@ -83,7 +83,20 @@ public class GoPostprocess extends PostProcessor
             Gene thisGene = (Gene) rr.get(0);
             GOAnnotation thisAnnotation = (GOAnnotation) rr.get(1);
 
-            // gene can code multiple proteins
+            // process last set of annotations if this is a new gene
+            if (lastGene != null && !(lastGene.equals(thisGene))) {
+                for (GOAnnotation item : annotations.values()) {
+                    osw.store(item);
+                }
+                lastGene.setGoAnnotation(new HashSet(annotations.values()));
+                LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
+                        + lastGene.getGoAnnotation().size() + " GO.");
+                osw.store(lastGene);
+
+                lastGene = thisGene;
+                annotations = new HashMap<OntologyTerm, GOAnnotation>();
+            }
+
             OntologyTerm term = thisAnnotation.getOntologyTerm();
             Set<GOEvidence> evidence = thisAnnotation.getEvidence();
 
@@ -99,18 +112,7 @@ public class GoPostprocess extends PostProcessor
                 continue;
             }
             tempAnnotation.setSubject(thisGene);
-            if (lastGene != null && !(lastGene.equals(thisGene))) {
-                for (GOAnnotation item : annotations.values()) {
-                    osw.store(item);
-                }
-                lastGene.setGoAnnotation(new HashSet(annotations.values()));
-                LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
-                        + lastGene.getGoAnnotation().size() + " GO.");
-                osw.store(lastGene);
 
-                lastGene = thisGene;
-                annotations = new HashMap<OntologyTerm, GOAnnotation>();
-            }
             lastGene = thisGene;
             count++;
         }

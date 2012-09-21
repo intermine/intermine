@@ -54,6 +54,7 @@ import org.intermine.util.DynamicUtil;
  * database.
  * @author Jakub Kulaviak <jakub@flymine.org>
  * @author Alex Kalderimis
+ * @author Daniela Butano
  */
 public class TagManager
 {
@@ -422,22 +423,28 @@ public class TagManager
         if (tagNameNeedsPermission(tagName) && !profile.isSuperuser()) {
             throw new TagNamePermissionException();
         }
+
+        if (tagNameNeedsPermission(tagName) && profile.isSuperuser()
+            && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null) {
+            throw new TagNamePermissionException("You cannot add a tag starting with "
+                + TagNames.IM_PREFIX + ", you are not the owner.");
+        }
         if (!isValidTagName(tagName)) {
             throw new TagNameException();
         }
 
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
-    
+
     private static boolean tagNameNeedsPermission(String tagName) {
         return tagName.startsWith(TagNames.IM_PREFIX)
                 && !TagNames.IM_FAVOURITE.equals(tagName);
     }
 
     /**
-     * Associate a template with a certain tag.
+     * Associate a websearchable obj with a certain tag.
      * @param tagName The tag we want to give this template.
-     * @param template The template to tag.
+     * @param ws the websearchable obj to tag.
      * @param profile The profile to associate this tag with.
      * @return A tag object.
      * @throws TagNameException If the name is invalid (contains illegal characters)
@@ -637,6 +644,14 @@ public class TagManager
          */
         public TagNamePermissionException() {
             super(PERMISSION_MESSAGE);
+        }
+
+        /**
+         * Constructor.
+         * @param message the message to display
+         */
+        public TagNamePermissionException(String message) {
+            super(message);
         }
     }
 }

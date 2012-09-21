@@ -2372,10 +2372,22 @@ public class PathQuery implements Cloneable
                               + code + "\"";
         StringBuilder conb = new StringBuilder(commonPrefix);
 
-        Collection<String> values = PathConstraint.getValues(constraint);
-        if (values != null) {
+        Collection<String> values = PathConstraint.getValues(constraint); // Serialise the Multi-Value list
+        Collection<Integer> ids = PathConstraint.getIds(constraint); // Serialise the ID list.
+        if (ids != null ) {
+            conb.append(",\"ids\":[");
+            Iterator<Integer> it = ids.iterator();
+            while (it.hasNext()) {
+                conb.append(String.valueOf(it.next()));
+                if (it.hasNext()) {
+                    conb.append(",");
+                }
+            }
+            conb.append("]");
+        } else if (values != null) {
+            Iterator<String> it = values.iterator();
             conb.append(",\"values\":[");
-            for (Iterator<String> it = values.iterator(); it.hasNext();) {
+            while (it.hasNext()) {
                 conb.append("\"" + StringEscapeUtils.escapeJava(it.next()) + "\"");
                 if (it.hasNext()) {
                     conb.append(",");
@@ -2383,7 +2395,6 @@ public class PathQuery implements Cloneable
             }
             conb.append("]");
         } else {
-
             String value = PathConstraint.getValue(constraint);
             String extraValue = PathConstraint.getExtraValue(constraint);
 

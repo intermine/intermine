@@ -23,10 +23,14 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.UserAlreadyShareBagException;
+import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.api.profile.TagManager.TagNameException;
 import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.profile.TagManagerFactory;
@@ -45,13 +49,14 @@ import org.intermine.objectstore.query.Results;
  * A BagManager provides access to all global and/or user bags and methods to fetch them by
  * type, etc.
  * @author Richard Smith
- * @author dbutano
+ * @author Daniela Butano
  */
 public class BagManager
 {
     private static final Logger LOG = Logger.getLogger(BagManager.class);
     private final Profile superProfile;
     private final TagManager tagManager;
+    private final SharedBagManager sharedBagManager;
     private final Model model;
     private final ObjectStore osProduction;
 
@@ -69,7 +74,9 @@ public class BagManager
             throw new RuntimeException(msg);
         }
         this.model = model;
-        this.tagManager = new TagManagerFactory(superProfile.getProfileManager()).getTagManager();
+        ProfileManager pm = superProfile.getProfileManager();
+        this.tagManager = new TagManagerFactory(pm).getTagManager();
+        this.sharedBagManager = SharedBagManager.getInstance(pm);
         this.osProduction = superProfile.getProfileManager().getProductionObjectStore();
     }
 
@@ -81,6 +88,12 @@ public class BagManager
         return getUserBagsWithTag(superProfile, TagNames.IM_PUBLIC);
     }
 
+    /**
+     * Fetch globally available bags - superuser public bags that are available to everyone
+     * with a particular tag assigned to them
+     * @param tags tag the tags to filter
+     * @return a map from bag name to bag
+     */
     public Map<String, InterMineBag> getGlobalBagsWithTags(List<String> tags) {
         if (!tags.contains(TagNames.IM_PUBLIC)) {
             tags.add(TagNames.IM_PUBLIC);
@@ -152,7 +165,7 @@ public class BagManager
             tagManager.addTag(tag, bag, profile);
         }
     }
-    
+
     /**
      * Return true if the bag is public.
      * @param bag The bag in question.
@@ -169,7 +182,8 @@ public class BagManager
      * @return A list of Tag objects
      */
     public List<Tag> getTagsForBag(InterMineBag bag, Profile profile) {
-        List<Tag> tags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(), TagTypes.BAG, null));
+        List<Tag> tags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
+            TagTypes.BAG, null));
         tags.addAll(tagManager.getObjectTags(bag, profile));
         return tags;
     }
@@ -184,7 +198,8 @@ public class BagManager
     }
 
     /**
-     * Return true if there is at least one user bag for the given profile in the 'not_current' state.
+     * Return true if there is at least one user bag for the given profile in
+     * the 'not_current' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -199,7 +214,8 @@ public class BagManager
     }
 
     /**
-     * Return true if there is at least one user bag for the given profile in the 'to_upgrade' state.
+     * Return true if there is at least one user bag for the given profile in
+     * the 'to_upgrade' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -214,8 +230,68 @@ public class BagManager
     }
 
     /**
-     * Fetch all global bags and user bags combined in the same map. If user has a bag with the
-     * same name as a global bag the user's bag takes precedence.
+     * Fetch the shared bags for the given profile.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getSharedBags(Profile profile) {
+        return sharedBagManager.getSharedBags(profile);
+    }
+
+    /**
+     * Share the bag given in input with the user which userName input
+     * @param bagName the bag name to share
+     * @param bagOwnerUserName the owner of the bag to share
+     * @param userName the user which the bag is shared with
+     * @throws UserNotFoundException if the user does't exist
+     * @throws UserAlreadyShareBagException if the bag is already shared by the user
+     */
+    public void shareBagWithUser(String bagName, String bagOwnerUserName, String userName)
+        throws UserNotFoundException, UserAlreadyShareBagException {
+        Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
+        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag " + bagName
+                + " doesn't exist or doesn't belong to the user " + bagOwnerUserName);
+        }
+        sharedBagManager.shareBagWithUser(bag, userName);
+    }
+    /**
+     * Unshare the bag with the user given in input
+     * @param bagName the bag to un-share
+     * @param bagOwnerUserName the name of the bag owner
+     * @param userName the user name sharing the bag
+     * @throws UserNotFoundException if the user does't exist
+     * @throws BagDoesNotExistException if the bag does't exist
+     */
+    public void unshareBagWithUser(String bagName, String bagOwnerUserName, String userName) {
+        Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
+        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag " + bagName
+                + " doesn't exist or doesn't belong to the user " + bagOwnerUserName);
+        }
+        sharedBagManager.unshareBagWithUser(bag, userName);
+    }
+
+    /**
+     * Return the users sharing the list given in input, not the owner
+     * @param bagName the bag name the users share
+     * @param bagOwnerUserName the name of the bag owner
+     * @return the list of users sharing the bag
+     */
+    public List<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
+        Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
+        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        if (bag == null) {
+            throw new BagDoesNotExistException("The bag " + bagName + " doesn't exist");
+        }
+        return sharedBagManager.getUsersSharingBag(bag);
+    }
+
+    /**
+     * Fetch all global bags, user bags and shared bags combined in the same map.
+     * If user has a bag with the same name as a global bag the user's bag takes precedence.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
      */
@@ -228,6 +304,8 @@ public class BagManager
         if (profile != null) {
             Map<String, InterMineBag> savedBags = profile.getSavedBags();
             allBags.putAll(savedBags);
+            Map<String, InterMineBag> sharedBags = sharedBagManager.getSharedBags(profile);
+            allBags.putAll(sharedBags);
         }
 
         return allBags;
@@ -235,11 +313,13 @@ public class BagManager
 
     /**
      * Get the bags this user has access to, as long as they are current.
+     * @param profile the profile of the user accessing to the bags
+     * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getCurrentBags(Profile profile) {
         Map<String, InterMineBag> ret = Collections.synchronizedSortedMap(
                 new TreeMap<String, InterMineBag>(getBags(profile)));
-        synchronized(ret) {
+        synchronized (ret) {
             Iterator<InterMineBag> bags = ret.values().iterator();
             while (bags.hasNext()) {
                 InterMineBag bag = bags.next();
@@ -282,8 +362,8 @@ public class BagManager
     }
 
     /**
-     * Fetch a global or user bag by name.  If user has a bag with the same name as a global bag
-     * the user's bag takes precedence.
+     * Fetch a global or user or shared bag by name. If user has a bag with the same name
+     * as a global bag, the user's bag takes precedence.
      * @param profile the user to fetch bags for
      * @param bagName the name of bag to fetch
      * @return the bag or null if not found
@@ -380,7 +460,17 @@ public class BagManager
     }
 
     /**
-     * Fetch the current user or global bags that contain the given id.  If user has a bag
+     * Fetch bags shared by another user that contain the given id.
+     * @param id the id to search bags for
+     * @param profile the user to fetch bags from
+     * @return bags containing the given id
+     */
+    public Collection<InterMineBag> getSharedBagsContainingId(Profile profile, Integer id) {
+        return getBagsContainingId(getSharedBags(profile), id);
+    }
+
+    /**
+     * Fetch the current user or global or shared bags that contain the given id. If user has a bag
      * with the same name as a global bag the user's bag takes precedence.
      * Only current bags are included.
      * @param id the id to search bags for
@@ -396,6 +486,11 @@ public class BagManager
             }
         }
         for (InterMineBag bag: getUserBagsContainingId(profile, id)) {
+            if (bag.isCurrent()) {
+                bagsContainingId.add(bag);
+            }
+        }
+        for (InterMineBag bag: getSharedBagsContainingId(profile, id)) {
             if (bag.isCurrent()) {
                 bagsContainingId.add(bag);
             }

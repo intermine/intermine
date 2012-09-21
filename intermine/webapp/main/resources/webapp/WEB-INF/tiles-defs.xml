@@ -188,6 +188,7 @@
   <definition name="queryBuilderConstraint.tile" path="/queryBuilderConstraint.jsp" controllerUrl="/initQueryBuilderConstraint.do"/>
   <definition name="queryBuilderSummary.tile" path="/queryBuilderSummary.jsp" controllerUrl="/initQueryBuilderSummary.do"/>
   <definition name="inlineTagEditor.tile" path="/inlineTagEditor.jsp" controllerUrl="/initInlineTagEditor.do"/>
+  <definition name="shareBag.tile" path="/shareBag.jsp" controllerUrl="/initSharingBagUsers.do"/>
   <definition name="quickSearch.tile" path="/quickSearch.jsp"/>
   <definition name="queryBuilderView.tile" path="/queryBuilderView.jsp">
     <put name="saveQuery" value="/saveQuery.jsp"/>
@@ -271,6 +272,7 @@
   <definition name="reportDisplayer.tile" path="/reportDisplayer.jsp" controllerUrl="/initReportDisplayer.do"/>
   <definition name="otherMinesLink.tile" path="/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
   <definition name="track.tile" path="/track.jsp" />
+  <definition name="users.tile" path="/users.jsp" controllerUrl="/initUsers.do"/>
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
 

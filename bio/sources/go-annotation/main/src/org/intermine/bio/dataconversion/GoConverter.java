@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -58,10 +59,12 @@ public class GoConverter extends BioFileConverter
     private Map<String, String> publications = new LinkedHashMap<String, String>();
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
     protected Map<String, String> productMap = new LinkedHashMap<String, String>();
+    private Set<String> dbRefs = new HashSet<String>();
+    private Map<String, String> databaseAbbreviations = new HashMap<String, String>();
 
     // maps renewed for each file
     private Map<GoTermToGene, Set<Evidence>> goTermGeneToEvidence
-    = new LinkedHashMap<GoTermToGene, Set<Evidence>>();
+        = new LinkedHashMap<GoTermToGene, Set<Evidence>>();
     private Map<Integer, List<String>> productCollectionsMap;
     private Map<String, Integer> storedProductIds;
 
@@ -122,7 +125,6 @@ public class GoConverter extends BioFileConverter
         while (propNames.hasMoreElements()) {
             String taxonId = (String) propNames.nextElement();
             taxonId = taxonId.substring(0, taxonId.indexOf("."));
-
             Properties taxonProps = PropertiesUtil.stripStart(taxonId,
                     PropertiesUtil.getPropertiesStartingWith(taxonId, props));
             String identifier = taxonProps.getProperty("identifier");
@@ -371,8 +373,7 @@ public class GoConverter extends BioFileConverter
      * @return a list of Items
      */
     protected List<String> createWithObjects(String withText, Item organism,
-            String dataSource, String dataSourceCode)
-                    throws ObjectStoreException {
+            String dataSource, String dataSourceCode) throws ObjectStoreException {
 
         List<String> withProductList = new ArrayList<String>();
         try {
@@ -574,46 +575,37 @@ public class GoConverter extends BioFileConverter
         String title = sourceCode;
 
         // re-write some codes to better data source names
-        if ("UniProtKB".equals(sourceCode)) {
+        if ("UniProtKB".equalsIgnoreCase(sourceCode)) {
             title = "UniProt";
-        } else if ("FB".equals(sourceCode)) {
+        } else if ("FB".equalsIgnoreCase(sourceCode)) {
             title = "FlyBase";
-        } else if ("WB".equals(sourceCode)) {
+        } else if ("WB".equalsIgnoreCase(sourceCode)) {
             title = "WormBase";
-        } else if ("SP".equals(sourceCode)) {
+        } else if ("SP".equalsIgnoreCase(sourceCode)) {
             title = "UniProt";
         } else if (sourceCode.startsWith("GeneDB")) {
             title = "GeneDB";
-        } else if ("SANGER".equals(sourceCode)) {
+        } else if ("SANGER".equalsIgnoreCase(sourceCode)) {
             title = "GeneDB";
-        } else if ("GOA".equals(sourceCode)) {
+        } else if ("GOA".equalsIgnoreCase(sourceCode)) {
             title = "Gene Ontology";
-        } else if ("PINC".equals(sourceCode)) {
+        } else if ("PINC".equalsIgnoreCase(sourceCode)) {
             title = "Proteome Inc.";
-        } else if ("Pfam".equals(sourceCode)) {
+        } else if ("Pfam".equalsIgnoreCase(sourceCode)) {
             title = "PFAM"; // to merge with interpro
         }
         return title;
     }
 
-    private String getDataSourceName(String dataSource) {
-        if ("UniProtKB".equals(dataSource)) {
-            return "UniProt";
-        } else if ("FB".equals(dataSource)) {
-            return "FlyBase";
-        }
-        return dataSource;
-    }
-
     private String getDataset(String dataSource, String code)
-            throws ObjectStoreException {
+        throws ObjectStoreException {
         String dataSetIdentifier = dataSets.get(code);
         if (dataSetIdentifier == null) {
             String dataSourceName = getDataSourceCodeName(code);
             String title = "GO Annotation from " + dataSourceName;
             Item item = createItem("DataSet");
             item.setAttribute("name", title);
-            item.setReference("dataSource", getDataSource(getDataSourceName(dataSource)));
+            item.setReference("dataSource", getDataSource(getDataSourceCodeName(dataSource)));
             dataSetIdentifier = item.getIdentifier();
             dataSets.put(code, dataSetIdentifier);
             store(item);
@@ -624,21 +616,64 @@ public class GoConverter extends BioFileConverter
     private String newPublication(String codes) throws ObjectStoreException {
         String pubRefId = null;
         String[] array = codes.split("[|]");
+        Set<String> xrefs = new HashSet<String>();
+        Item item = null;
         for (int i = 0; i < array.length; i++) {
             if (array[i].startsWith("PMID:")) {
                 String pubMedId = array[i].substring(5);
                 if (StringUtil.allDigits(pubMedId)) {
                     pubRefId = publications.get(pubMedId);
                     if (pubRefId == null) {
-                        Item item = createItem("Publication");
+                        item = createItem("Publication");
                         item.setAttribute("pubMedId", pubMedId);
                         pubRefId = item.getIdentifier();
                         publications.put(pubMedId, pubRefId);
-                        store(item);
+
                     }
-                    return pubRefId;
+                }
+            } else {
+                xrefs.add(array[i]);
+            }
+        }
+        ReferenceList refIds = new ReferenceList("crossReferences");
+
+        // PMID may be first or last so we can't process xrefs until we've looked at all IDs
+        if (StringUtils.isNotEmpty(pubRefId)) {
+            for (String xref : xrefs) {
+                refIds.addRefId(createDbReference(xref));
+            }
+        }
+        if (item != null) {
+            item.addCollection(refIds);
+            store(item);
+        }
+        return pubRefId;
+    }
+
+    private String createDbReference(String value)
+        throws ObjectStoreException {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+        String dataSource = null;
+        if (!dbRefs.contains(value)) {
+            Item item = createItem("DatabaseReference");
+            // FB:FBrf0055969
+            if (value.contains(":")) {
+                String[] bits = value.split(":");
+                if (bits.length == 2) {
+                    String db = bits[0];
+                    dataSource = getDataSourceCodeName(db);
+                    value = bits[1];
                 }
             }
+            item.setAttribute("identifier", value);
+            if (StringUtils.isNotEmpty(dataSource)) {
+                item.setReference("source", getDataSource(dataSource));
+            }
+            dbRefs.add(value);
+            store(item);
+            return item.getIdentifier();
         }
         return null;
     }
