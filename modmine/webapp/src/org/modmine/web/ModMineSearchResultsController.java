@@ -28,6 +28,12 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.Submission;
 import org.intermine.web.logic.session.SessionMethods;
 
+/**
+ *
+ * @author sc486
+ *
+ */
+
 public class ModMineSearchResultsController extends TilesAction
 {
 
@@ -37,10 +43,10 @@ public class ModMineSearchResultsController extends TilesAction
      * {@inheritDoc}
      */
     @Override
-    public ActionForward execute(@SuppressWarnings("unused") ComponentContext context,
-            @SuppressWarnings("unused") ActionMapping mapping,
-            @SuppressWarnings("unused") ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
 

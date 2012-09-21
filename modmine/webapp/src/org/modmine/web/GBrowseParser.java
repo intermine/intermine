@@ -36,7 +36,7 @@ public final class GBrowseParser
     private static final String GBROWSE_URL_END = "/?show_tracks=1";
     private static final String GBROWSE_ST_URL_END = "/?action=scan";
     private static final String GBROWSE_DEFAULT_URL =
-        "http://modencode.oicr.on.ca/fgb2/gbrowse/";
+            "http://modencode.oicr.on.ca/fgb2/gbrowse/";
     private static final String DCC_PREFIX = "modENCODE_";
     private static final String SEPARATOR = ";";
     // private static final String TRACK_SEPARATOR = "%1E";
@@ -123,15 +123,15 @@ public final class GBrowseParser
      */
     public static Map<String, List<GBrowseTrack>> readTracksOLD(String organism) {
         Map<String, List<GBrowseTrack>> submissionsToTracks =
-            new HashMap<String, List<GBrowseTrack>>();
+                new HashMap<String, List<GBrowseTrack>>();
         try {
             URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
 
             // examples of lines:
-            //
-            // [Henikoff_Salt_H3_WIG]
+                //
+                // [Henikoff_Salt_H3_WIG]
             // key      = H3.3 Chromatin fractions extracted with NaCl
             // select   = 80mM fraction;2534 350mM fraction;2535 600mM fraction;2536
             // citation = <h1> H3.3 NaCl Salt Extracted Chromatin ....
@@ -181,7 +181,7 @@ public final class GBrowseParser
                         } else {
                             // this is a token with subId
                             String subTrack = toAppend.toString()
-                                + token.substring(0, token.indexOf(SEPARATOR));
+                                    + token.substring(0, token.indexOf(SEPARATOR));
                             String dcc = token.substring(
                                     token.indexOf(SEPARATOR) + 1, token.length());
                             if (!StringUtils.isNumeric(dcc)) {
@@ -193,7 +193,8 @@ public final class GBrowseParser
                             LOG.debug("SUBTRACK: " + subTrack + "|" + dccId);
                             toAppend.setLength(0); // empty buffer
                             GBrowseTrack newTrack =
-                                new GBrowseTrack(organism, trackName.toString(), subTrack, dccId);
+                                    new GBrowseTrack(organism, trackName.toString(),
+                                            subTrack, dccId);
                             addToGBMap(submissionsToTracks, dccId, newTrack);
                         }
                     }
@@ -206,8 +207,8 @@ public final class GBrowseParser
                     for (String token : result) {
                         String dccId = DCC_PREFIX + token;
                         GBrowseTrack newTrack =
-                            new GBrowseTrack(organism, trackName.toString(), trackName.toString(),
-                                    dccId);
+                                new GBrowseTrack(organism, trackName.toString(),
+                                        trackName.toString(), dccId);
                         addToGBMap(submissionsToTracks, dccId, newTrack);
                     }
 
@@ -221,17 +222,22 @@ public final class GBrowseParser
     }
 
 
+    /**
+     *
+     * @param organism organism
+     * @return map of submissions-tracks
+     */
     public static Map<String, List<GBrowseTrack>> readTracks(String organism) {
         Map<String, List<GBrowseTrack>> submissionsToTracks =
-            new HashMap<String, List<GBrowseTrack>>();
+                new HashMap<String, List<GBrowseTrack>>();
         try {
             URL url = new URL(GBROWSE_BASE_URL + organism + GBROWSE_ST_URL_END);
             BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
 
             // examples of lines:
-            //
-            // [Henikoff_Salt_H3_WIG]
+                //
+                // [Henikoff_Salt_H3_WIG]
             // key      = H3.3 Chromatin fractions extracted with NaCl
             // select   = 80mM fraction;2534 350mM fraction;2535 600mM fraction;2536
             // citation = <h1> H3.3 NaCl Salt Extracted Chromatin ....
@@ -282,7 +288,7 @@ public final class GBrowseParser
                         } else {
                             // this is a token with subId
                             String subTrack = toAppend.toString()
-                                + token.substring(0, token.indexOf(SEPARATOR));
+                                    + token.substring(0, token.indexOf(SEPARATOR));
                             String dcc = token.substring(
                                     token.indexOf(SEPARATOR) + 1, token.length());
                             if (!StringUtils.isNumeric(dcc)) {
@@ -294,7 +300,8 @@ public final class GBrowseParser
                             LOG.debug("SUBTRACK: " + subTrack + "|" + dccId);
                             toAppend.setLength(0); // empty buffer
                             GBrowseTrack newTrack =
-                                new GBrowseTrack(organism, trackName.toString(), subTrack, dccId);
+                                    new GBrowseTrack(organism, trackName.toString(),
+                                            subTrack, dccId);
                             addToGBMap(submissionsToTracks, dccId, newTrack);
                         }
                     }
@@ -309,25 +316,25 @@ public final class GBrowseParser
                         && dataSourceItems.length > 1) {
                     String data = line.replace("track source = ", "");
                     String[] tracks = data.split("\\s");
-                if (tracks.length == dataSourceItems.length) {
-                    for (String token : dataSourceItems) {
-                        String dccId = DCC_PREFIX + token;
+                    if (tracks.length == dataSourceItems.length) {
+                        for (String token : dataSourceItems) {
+                            String dccId = DCC_PREFIX + token;
+                            GBrowseTrack newTrack =
+                                    new GBrowseTrack(organism, trackName.toString(),
+                                            trackName.toString(), dccId);
+                            LOG.debug("GBds: " + dccId + "|" + trackName.toString());
+                            addToGBMap(submissionsToTracks, dccId, newTrack);
+                        }
+                    } else {
+                        // assign only the first one, the other are related subs
+                        String dccId = DCC_PREFIX + dataSourceItems[0];
                         GBrowseTrack newTrack =
-                            new GBrowseTrack(organism, trackName.toString(), trackName.toString(),
-                                    dccId);
-                        LOG.debug("GBds: " + dccId + "|" + trackName.toString());
+                                new GBrowseTrack(organism, trackName.toString(),
+                                        trackName.toString(), dccId);
+                        LOG.debug("GBts: " + dccId + "|" + trackName.toString());
                         addToGBMap(submissionsToTracks, dccId, newTrack);
                     }
-                } else {
-                    // assign only the first one, the other are related subs
-                    String dccId = DCC_PREFIX + dataSourceItems[0];
-                    GBrowseTrack newTrack =
-                        new GBrowseTrack(organism, trackName.toString(), trackName.toString(),
-                                dccId);
-                    LOG.debug("GBts: " + dccId + "|" + trackName.toString());
-                    addToGBMap(submissionsToTracks, dccId, newTrack);
-                }
-                dataSourceItems = null;
+                    dataSourceItems = null;
                 }
             }
             reader.close();
@@ -341,25 +348,25 @@ public final class GBrowseParser
 
 
 
-//    /**
-//     * This method adds a GBrowse track to a map with
-//     * key = dccId
-//     * value = list of associated GBrowse tracks
-//     */
-//    private static void addToGBMap(
-//            Map<Integer, List<GBrowseTrack>> m,
-//            Integer key, GBrowseTrack value) {
-//        //
-//        List<GBrowseTrack> gbs = new ArrayList<GBrowseTrack>();
-//
-//        if (m.containsKey(key)) {
-//            gbs = m.get(key);
-//        }
-//        if (!gbs.contains(value)) {
-//            gbs.add(value);
-//            m.put(key, gbs);
-//        }
-//    }
+    //    /**
+    //     * This method adds a GBrowse track to a map with
+    //     * key = dccId
+    //     * value = list of associated GBrowse tracks
+    //     */
+    //    private static void addToGBMap(
+    //            Map<Integer, List<GBrowseTrack>> m,
+    //            Integer key, GBrowseTrack value) {
+    //        //
+    //        List<GBrowseTrack> gbs = new ArrayList<GBrowseTrack>();
+    //
+    //        if (m.containsKey(key)) {
+    //            gbs = m.get(key);
+    //        }
+    //        if (!gbs.contains(value)) {
+    //            gbs.add(value);
+    //            m.put(key, gbs);
+    //        }
+    //    }
 
     /**
      * This method adds a GBrowse track to a map with

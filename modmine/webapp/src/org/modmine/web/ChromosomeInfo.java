@@ -22,21 +22,49 @@ public class ChromosomeInfo {
     private String chrPID;
     private Integer chrLength;
 
+
+    /**
+     *
+     * @return organism name
+     */
     public String getOrgName() {
         return orgName;
     }
+
+    /**
+     *
+     * @param orgName organism name
+     */
     public void setOrgName(String orgName) {
         this.orgName = orgName;
     }
+
+    /**
+     *
+     * @return organism name
+     */
     public String getChrPID() {
         return chrPID;
     }
+
+    /**
+     *
+     * @param chrPID chromosome identifier
+     */
     public void setChrPID(String chrPID) {
         this.chrPID = chrPID;
     }
+    /**
+     *
+     * @return organism name
+     */
     public Integer getChrLength() {
         return chrLength;
     }
+    /**
+     *
+     * @param chrLength chromosome length
+     */
     public void setChrLength(Integer chrLength) {
         this.chrLength = chrLength;
     }
