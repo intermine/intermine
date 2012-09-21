@@ -706,7 +706,6 @@ public class InitialiserPlugin implements PlugIn
     private void applyUserProfileUpgrades(ObjectStoreWriter osw,
                                           Map<String, String> blockingErrorKeys) {
         Connection con = null;
-        boolean setSuperUser = false;
         try {
             con = ((ObjectStoreInterMineImpl) osw).getConnection();
             DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
@@ -719,7 +718,6 @@ public class InitialiserPlugin implements PlugIn
                 DatabaseUtil.addColumn(con, "userprofile", "superuser",
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
-                setSuperUser = true;
             }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
@@ -727,9 +725,7 @@ public class InitialiserPlugin implements PlugIn
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
         }
-        if (setSuperUser) {
-            setSuperUser(osw);
-        }
+        setSuperUser(osw);
     }
 
     private void setSuperUser(ObjectStoreWriter uosw) {
