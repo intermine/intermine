@@ -6,6 +6,7 @@
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
 
+  <!--
     <source name="flybase-identifiers" type="flybase-identifiers">
       <property name="src.data.dir" location="/micklem/data/flybase-identifiers/current"/>
     </source>   
@@ -17,11 +18,12 @@
     <source name="sgd-identifiers" type="sgd-identifiers">
       <property name="src.data.dir" location="/micklem/data/sgd-identifiers/current"/>
     </source> 
-    
+  -->  
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
 
+ <!--
    <source name="mgi-identifiers" type="mgi-identifiers">
       <property name="src.data.dir" location="/micklem/data/mgi-identifiers/current"/>
     </source>
@@ -29,10 +31,10 @@
    <source name="rgd-identifiers" type="rgd-identifiers">
       <property name="src.data.dir" location="/micklem/data/rgd-identifiers/current"/>
     </source>
-   
+ -->  
    <source name="ncbi-gene" type="ncbi-gene" dump="true">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
-     <property name="organisms" value="9606"/>
+     <property name="organisms" value="9606 7227 7955 10090 10116 4932"/>
     </source>
 
     <source name="panther" type="panther" dump="true">
