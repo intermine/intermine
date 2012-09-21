@@ -35,6 +35,7 @@ import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.util.Util;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -487,12 +488,15 @@ public class PsiConverter extends BioFileConverter
             // for every gene in interaction store interaction pair
             for (InteractorHolder gene1Interactor: h.interactors) {
 
+                ReferenceList allInteractors = getAllRefIds(h.interactors);
+
                 Set<InteractorHolder> gene2Interactors
                     = new HashSet<InteractorHolder>(h.interactors);
                 gene2Interactors.remove(gene1Interactor);
 
+                // protein interactions may have more than one gene ID (not usually though)
                 for (String gene1RefId : gene1Interactor.geneRefIds) {
-                    storeDetails(h, gene1Interactor, gene2Interactors, gene1RefId);
+                    storeDetails(h, gene1Interactor, gene2Interactors, gene1RefId, allInteractors);
                 }
 
                 /* store all experiment-related items */
@@ -509,14 +513,27 @@ public class PsiConverter extends BioFileConverter
             }
         }
 
+        // get all the gene ref IDs for an interaction
+        private ReferenceList getAllRefIds(Set<InteractorHolder> allIds) {
+            ReferenceList allInteractors = new ReferenceList("allInteractors");
+            for (InteractorHolder ih : allIds) {
+                // only multiple IDs for proteins
+                for (String refId : ih.geneRefIds) {
+                    allInteractors.addRefId(refId);
+                }
+            }
+            return allInteractors;
+        }
+
         private void storeDetails(InteractionHolder h, InteractorHolder gene1Interactor,
-                Set<InteractorHolder> gene2Interactors, String gene1RefId)
+                Set<InteractorHolder> gene2Interactors, String gene1RefId,
+                ReferenceList allInteractors)
             throws ObjectStoreException {
 
-
+            // for each interaction pair, store details
             for (InteractorHolder gene2Interactor : gene2Interactors) {
 
-
+                // interactor (if protein) may have 2 genes
                 for (String gene2RefId : gene2Interactor.geneRefIds) {
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
@@ -538,11 +555,10 @@ public class PsiConverter extends BioFileConverter
                         interactionDetail.setAttribute("confidenceText", h.confidenceText);
                     }
                     interactionDetail.setReference("relationshipType", h.termRefId);
-                    interactionDetail.setReference("experiment",
-                            h.eh.experiment.getIdentifier());
+                    interactionDetail.setReference("experiment", h.eh.experiment.getIdentifier());
                     interactionDetail.setReference("interaction", interaction);
-                    processRegions(h, interactionDetail, gene1Interactor, shortName,
-                            gene1RefId);
+                    processRegions(h, interactionDetail, gene1Interactor, shortName, gene1RefId);
+                    interactionDetail.addCollection(allInteractors);
                     store(interactionDetail);
                 }
             }
