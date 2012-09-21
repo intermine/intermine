@@ -354,7 +354,7 @@ public class PsiConverter extends BioFileConverter
                     comment = null;
                 }
             // <experimentList><experimentDescription><names><shortLabel>
-            } else if (attName != null && "experimentAttribute".equals(attName)
+            } else if (attName != null && "experimentName".equals(attName)
                             && "shortLabel".equals(qName)) {
                 String shortLabel = attValue.toString();
                 if (StringUtils.isNotEmpty(shortLabel)) {
