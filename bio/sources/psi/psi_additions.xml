@@ -31,6 +31,7 @@
         <reference name="interaction" referenced-type="Interaction" reverse-reference="details"/>
         <collection name="interactingRegions" referenced-type="InteractionRegion" reverse-reference="interaction"/>
         <collection name="dataSets" referenced-type="DataSet"/>
+        <collection name="allInteractors" referenced-type="Gene"/>
     </class>
 
     <class name="Gene" is-interface="true">
