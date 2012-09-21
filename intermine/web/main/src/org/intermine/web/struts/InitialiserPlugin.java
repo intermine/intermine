@@ -193,7 +193,8 @@ public class InitialiserPlugin implements PlugIn
                 //verify superuser setted in the db matches with the user in the properties file
                 final Profile superProfile = im.getProfileManager().getSuperuserProfile();
                 if (!superProfile.getUsername()
-                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
+                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account")
+                    .trim())) {
                     blockingErrorKeys.put("errors.init.superuser", null);
                 }
                 // index global webSearchables
@@ -378,10 +379,11 @@ public class InitialiserPlugin implements PlugIn
                 try {
                     retval = WebConfig.parse(servletContext, os.getModel());
                     String validationMessage = retval.validateWidgetsConfig(os.getModel());
-                    if ( validationMessage.isEmpty()) {
+                    if (validationMessage.isEmpty()) {
                         SessionMethods.setWebConfig(servletContext, retval);
                     } else {
-                        blockingErrorKeys.put("errors.init.webconfig.validation", validationMessage);
+                        blockingErrorKeys.put("errors.init.webconfig.validation",
+                                              validationMessage);
                     }
                 } catch (FileNotFoundException fnf) {
                     LOG.error("Problem to find the webconfig-model.xml file.", fnf);
@@ -485,7 +487,7 @@ public class InitialiserPlugin implements PlugIn
             Map<String, String> lastState,
             Map<String, List<String>> origins,
             String currentSource,
-            Properties currentState ) {
+            Properties currentState) {
         for (Entry<Object, Object> pair: currentState.entrySet()) {
             if (!origins.containsKey(pair.getKey())) {
                 origins.put(String.valueOf(pair.getKey()), new ArrayList<String>());
