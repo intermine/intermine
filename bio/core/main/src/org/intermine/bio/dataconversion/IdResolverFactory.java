@@ -67,7 +67,7 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    public IdResolver createFromFile(String clsName, File f)
+    protected IdResolver createFromFile(String clsName, File f)
         throws IOException {
         resolver = new IdResolver(clsName);
         resolver.populateFromFile(f);
@@ -81,7 +81,7 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    public IdResolver createFromFile(File f)
+    protected IdResolver createFromFile(File f)
         throws IOException {
         resolver = new IdResolver(defaultClsName);
         resolver.populateFromFile(f);
@@ -95,7 +95,7 @@ public abstract class IdResolverFactory
      * @param db the file to read from
      * @return null, need strictly override
      */
-    public IdResolver createFromDb(String clsName, Database db) {
+    protected IdResolver createFromDb(String clsName, Database db) {
         return resolver;
     }
 
@@ -105,7 +105,7 @@ public abstract class IdResolverFactory
      * @param db the file to read from
      * @return null, need strictly override
      */
-    public IdResolver createFromDb(Database db) {
+    protected IdResolver createFromDb(Database db) {
         return resolver;
     }
 

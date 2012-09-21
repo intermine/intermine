@@ -82,7 +82,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     }
 
     @Override
-    public IdResolver createFromDb(String clsName, Database db) {
+    protected IdResolver createFromDb(String clsName, Database db) {
         IdResolver resolver = new IdResolver(clsName);
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();

@@ -71,8 +71,8 @@ public class OntologyIdResolverFactory extends IdResolverFactory
         return resolver;
     }
 
-
-    private IdResolver createFromDb(Database database) {
+    @Override
+    protected IdResolver createFromDb(Database database) {
         IdResolver resolver = new IdResolver(ontology);
         Connection conn = null;
         try {
