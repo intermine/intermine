@@ -48,13 +48,13 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TypeUtil;
 
-
 /**
  * An object that represents a bag of objects in our database for the webapp. It is backed by an
  * ObjectStoreBag object, but contains extra data such as name and description.
  *
  * @author Kim Rutherford
  * @author Matthew Wakeling
+ * @author Daniela Butano
  */
 public class InterMineBag extends StorableBag implements WebSearchable, Cloneable
 {
@@ -84,6 +84,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
@@ -105,6 +106,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @param keyFieldNames the list of identifiers defined for this bag
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
@@ -127,6 +129,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @param keyFieldNames the list of identifiers defined for this bag
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
@@ -159,6 +162,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param savedBagId the ID of the bag in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw)
@@ -172,7 +176,8 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param savedBagId the ID of the bag in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
-     * @param classDescriptor if true the classDescriptor will be setted
+     * @param classDescriptor if true the classDescriptor will be set
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw,
@@ -266,6 +271,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     /**
      * Returns a List which contains the ids given in input and contained
      * in this bag as Integer IDs.
+     * @param ids the list of ids
      * @return a List of Integers
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -273,7 +279,8 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
         Query q = new Query();
         q.setDistinct(false);
         try {
-            Class<? extends InterMineObject> clazz = (Class<InterMineObject>) Class.forName(getQualifiedType());
+            Class<? extends InterMineObject> clazz =
+                (Class<InterMineObject>) Class.forName(getQualifiedType());
             QueryClass qc = new QueryClass(clazz);
             QueryField idField = new QueryField(qc, "id");
             q.addToSelect(idField);
@@ -342,7 +349,6 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
                 LOG.error("Problems loading extraBag.properties. ", ioe);
             }
         } else {
-            System.out.println("Could not find extraBag.properties file");
             LOG.error("Could not find extraBag.properties file");
         }
         boolean hasExtraValue = false;

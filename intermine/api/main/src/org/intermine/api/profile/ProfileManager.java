@@ -44,14 +44,17 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.proxy.ProxyReference;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryObjectReference;
+import org.intermine.objectstore.query.QueryValue;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
@@ -59,10 +62,12 @@ import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PasswordHasher;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Class to manage and persist user profile data such as saved bags
  * @author Mark Woodbridge
+ * @author Daniela Butano
  */
 public class ProfileManager
 {
@@ -86,10 +91,11 @@ public class ProfileManager
         this.os = os;
         this.uosw = userProfileOS;
         //retrieve the super user
+        String superUserName = PropertiesUtil.getProperties().getProperty("superuser.account");
         UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setSuperuser(true);
+        superuserProfile.setUsername(superUserName);
         Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("superuser");
+        fieldNames.add("username");
         try {
             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
             if (superuserProfile != null) {
@@ -453,7 +459,11 @@ public class ProfileManager
         }
     }
 
-
+    /**
+     * Create a new profile in db with username and password given in input
+     * @param username the user name
+     * @param password the password
+     */
     public synchronized void createNewProfile(String username, String password) {
         if (this.hasProfile(username)) {
             throw new RuntimeException("Cannot create account: there already exists a user"
@@ -518,6 +528,11 @@ public class ProfileManager
         return key;
     }
 
+    /**
+     * Generate a day token
+     * @param profile the profile which token is valid
+     * @return the token
+     */
     public synchronized String generate24hrKey(Profile profile) {
         String key = generateApiKey();
         LimitedAccessToken token = new DayToken(profile);
@@ -525,6 +540,11 @@ public class ProfileManager
         return key;
     }
 
+    /**
+     * Return whether the token given in input is suitable for using in the future.
+     * @param token the token to verify
+     * @return true if is suitable for using in the future.
+     */
     public synchronized boolean tokenHasMoreUses(String token) {
         if (token != null && limitedAccessTokens.containsKey(token)) {
             LimitedAccessToken lat = limitedAccessTokens.get(token);
@@ -572,7 +592,9 @@ public class ProfileManager
     public synchronized void createProfileWithoutBags(Profile profile) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUsername(profile.getUsername());
-        userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+        if (profile.getPassword() != null) {
+            userProfile.setPassword(PasswordHasher.hashPassword(profile.getPassword()));
+        }
         userProfile.setSuperuser(profile.isSuperUser);
         try {
             uosw.store(userProfile);
@@ -642,6 +664,7 @@ public class ProfileManager
     }
 
     /**
+     * Return the super user name set in the properties file
      * @return the superuser name
      */
     public String getSuperuser() {
@@ -649,6 +672,7 @@ public class ProfileManager
     }
 
     /**
+     * Return the superuser profile set in the properties file
      * @return the superuser profile
      */
     public Profile getSuperuserProfile() {
@@ -656,6 +680,8 @@ public class ProfileManager
     }
 
     /**
+     * Return the  super user
+     * @param classKeys the classkeys
      * @return the superuser profile
      */
     public Profile getSuperuserProfile(Map<String, List<FieldDescriptor>> classKeys) {
@@ -752,6 +778,10 @@ public class ProfileManager
         }
     }
 
+    /**
+     * Abstract class for API access keys.
+     * @author Alex Kalderimis
+     */
     private static abstract class LimitedAccessToken
     {
         private final Profile profile;
@@ -910,7 +940,7 @@ public class ProfileManager
 
         /**
          * Add a role to this permission.
-         * 
+         *
          * @param role
          *            The role to add.
          */
@@ -920,7 +950,7 @@ public class ProfileManager
 
         /**
          * True if the permission granted includes access to this role.
-         * 
+         *
          * @param role
          *            The role in question.
          * @return Whether or not this user has access to the given role.
@@ -932,7 +962,7 @@ public class ProfileManager
 
     /**
      * Wrap a profile in the default permission level.
-     * 
+     *
      * @param profile
      *            The profile to wrap.
      * @return The default permission for a particular profile.
@@ -1021,6 +1051,64 @@ public class ProfileManager
         return getProfile(profile.getUsername(), classKeys);
     }
 
+    /**
+     * Check if the profile, which username is given in input, has been cached by the profile cache
+     * @param username the user name
+     * @return true if the profile is in the cache
+     */
+    public boolean isProfileCached(String username) {
+        Profile profile = profileCache.get(username);
+        if (profile != null) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return a list of users with 'superuser' role
+     * @return the user list
+     */
+    public List<String> getSuperUsers() {
+        List<String> superusers = new ArrayList<String>();
+        Query q = new Query();
+        QueryClass qc = new QueryClass(UserProfile.class);
+        QueryField qfName = new QueryField(qc, "username");
+        q.addToSelect(qfName);
+        q.addFrom(qc);
+        QueryField qf = new QueryField(qc, "superuser");
+        Constraint c = new SimpleConstraint(qf, ConstraintOp.EQUALS, new QueryValue(true));
+        q.setConstraint(c);
+
+        Results res = uosw.execute(q);
+        Iterator<Object> iterator = res.iterator();
+        while (iterator.hasNext()) {
+            superusers.add(((ResultsRow<String>) iterator.next()).get(0));
+        }
+        return superusers;
+    }
+
+    /**
+     * Update the 'superuser' role to the user which user name is given in input
+     * @param userName the user name
+     * @param isSuperUser if true the user is set with superuser role
+     */
+    public void updateSuperUser(String userName, boolean isSuperUser) {
+        UserProfile superuserProfile = new UserProfile();
+        superuserProfile.setUsername(userName);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("username");
+        try {
+            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+            superuserProfile.setSuperuser(isSuperUser);
+            uosw.store(superuserProfile);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Unable to load user profile", e);
+        }
+    }
+
+    /**
+     * Exception thrown when the authentication fails.
+     */
     public static class AuthenticationException extends RuntimeException
     {
 
@@ -1029,6 +1117,10 @@ public class ProfileManager
          */
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Constructor
+         * @param message the message to display
+         */
         public AuthenticationException(String message) {
             super(message);
         }

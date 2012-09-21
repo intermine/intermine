@@ -23,8 +23,10 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.Profile;
@@ -68,6 +70,8 @@ public final class ProfileManagerBinding
      * Default version of profile if it is not specified.
      */
     public static final String ZERO_PROFILE_VERSION = "0";
+
+    private Map<String, List> sharedBagsByUser = new HashedMap();
 
     /**
      * Convert the contents of a ProfileManager to XML and write the XML to the given writer.
@@ -178,6 +182,7 @@ class ProfileManagerHandler extends DefaultHandler
     private ProfileHandler profileHandler = null;
     private TrackManagerHandler trackHandler = null;
     private ProfileManager profileManager = null;
+    private Map<String, List> sharedBagsByUsers = null;
     private ObjectStoreWriter osw;
     private boolean abortOnError;
     private long startTime = 0;
@@ -223,10 +228,11 @@ class ProfileManagerHandler extends DefaultHandler
             } catch (SQLException sqle) {
                 LOG.error("Problem retrieving connection", sqle);
             }
+            sharedBagsByUsers = new HashedMap();
         }
         if ("userprofile".equals(qName)) {
             startTime = System.currentTimeMillis();
-            profileHandler = new ProfileHandler(profileManager, osw, version);
+            profileHandler = new ProfileHandler(profileManager, osw, version, sharedBagsByUsers);
         }
         if (profileHandler != null) {
             profileHandler.startElement(uri, localName, qName, attrs);
@@ -279,6 +285,23 @@ class ProfileManagerHandler extends DefaultHandler
             profileHandler = null;
             long totalTime = System.currentTimeMillis() - startTime;
             LOG.info("Finished profile: " + profile.getUsername() + " took " + totalTime + "ms.");
+        }
+        if ("userprofiles".equals(qName)) {
+            if (!sharedBagsByUsers.isEmpty()) {
+                SharedBagManager sharedBagManager =
+                        SharedBagManager.getInstance(profileManager);
+                String bagName, dateCreated;
+                for (String user : sharedBagsByUsers.keySet()) {
+                    List<Map<String, String>> sharedBags = sharedBagsByUsers.get(user);
+                    if (!sharedBags.isEmpty()) {
+                        for (Map<String, String> sharedBag : sharedBags) {
+                            bagName = sharedBag.get("name");
+                            dateCreated = sharedBag.get("dateCreated");
+                            sharedBagManager.shareBagWithUser(bagName, dateCreated, user);
+                        }
+                    }
+                }
+            }
         }
         if (profileHandler != null) {
             profileHandler.endElement(uri, localName, qName);

@@ -33,6 +33,7 @@
     <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
     <form-bean name="passwordResetForm" type="org.intermine.web.struts.PasswordResetForm"/>
     <form-bean name="editPropertyForm" type="org.intermine.web.struts.EditPropertiesForm"/>
+    <form-bean name="modifySuperUserForm" type="org.intermine.web.struts.ModifySuperUserForm"/>
     <!-- don't (re)move this - it's used for importing any model-specific forms -->
     <!--@MODEL_FORM_INCLUDE@-->
   </form-beans>
@@ -397,6 +398,9 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
       <forward name="passwordReset" redirect="false" path="/passwordReset.do"/>
     </action>
+    <action path="/modifySuperUser" name="modifySuperUserForm" type="org.intermine.web.struts.ModifySuperUserAction" scope="request"  validate="false">
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+    </action>
     <!-- These should all start with /init for session handling purposes -->
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
@@ -469,7 +473,9 @@
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
     <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
     <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
-
+    <action path="/initSharingBagUsers" type="org.intermine.web.struts.SharingBagUsersController"/>
+    <action path="/initUsers"  name="modifySuperUserForm" type="org.intermine.web.struts.UsersController" scope="request"  validate="false"/>
+    
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

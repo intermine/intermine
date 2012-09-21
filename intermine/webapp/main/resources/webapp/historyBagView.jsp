@@ -16,7 +16,7 @@
 <script type="text/javascript" src="js/historyBagView.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
-
+<c:set var="index" value="0"/>
 <script type="text/javascript">
 if (!im.bagWorks) {
     im.bagWorks = {};
@@ -89,6 +89,7 @@ if (!im.bagWorks) {
           </thead>
           <tbody>
           <c:forEach items="${statusSavedBag.value}" var="savedBag" varStatus="status">
+            <c:set var="index" value="${index+1}"/>
             <tr>
               <td class="list-name" style="display:none;">${savedBag.value.name}</td>
               <td class="sorting" align="center">
@@ -116,6 +117,10 @@ if (!im.bagWorks) {
                            <tiles:put name="vertical" value="true"/>
                            <tiles:put name="show" value="true"/>
                            <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
+                         </tiles:insert>
+                         <tiles:insert name="shareBag.tile">
+                           <tiles:put name="bagName" value="${savedBag.value.name}"/>
+                           <tiles:put name="id" value="${index}"/>
                          </tiles:insert>
                      </c:if>
 

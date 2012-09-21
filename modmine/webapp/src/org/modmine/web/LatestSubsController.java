@@ -33,43 +33,43 @@ import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * 
+ *
  * @author contrino
  *
  */
 
-public class LatestSubsController extends TilesAction 
+public class LatestSubsController extends TilesAction
 {
     /**
      * {@inheritDoc}
      */
-    public ActionForward execute(@SuppressWarnings("unused")  ComponentContext context,
-                                 @SuppressWarnings("unused") ActionMapping mapping,
-                                 @SuppressWarnings("unused") ActionForm form,
-                                 HttpServletRequest request,
-                                 @SuppressWarnings("unused") HttpServletResponse response)
+    public ActionForward execute(ComponentContext context,
+            ActionMapping mapping,
+            ActionForm form,
+            HttpServletRequest request,
+            HttpServletResponse response)
         throws Exception {
         try {
             final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-            
+
             ObjectStore os = im.getObjectStore();
-            
-            //get the list of projects 
-            Query q = new Query();  
+
+            //get the list of projects
+            Query q = new Query();
             QueryClass qc = new QueryClass(Submission.class);
             QueryField qfDate = new QueryField(qc, "publicReleaseDate");
 
             q.addFrom(qc);
             q.addToSelect(qc);
             q.addToOrderBy(qfDate, "desc");
-            
+
             Results results = os.executeSingleton(q);
 
-            Map< Integer, Submission> subs =
-                new LinkedHashMap<Integer, Submission>();
+            Map<Integer, Submission> subs =
+                    new LinkedHashMap<Integer, Submission>();
             // get all submission by date desc
             Integer order = 0;
-            Iterator i = results.iterator();
+            Iterator<Object> i = results.iterator();
             while (i.hasNext()) {
                 order++;
                 Submission sub = (Submission) i.next();

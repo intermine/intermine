@@ -11,28 +11,24 @@ package org.intermine.api.profile;
  */
 
 /**
- * Exception thrown when bag is not found.
+ * Exception thrown when a user already shares the bag.
  * @author Daneila Butano
  */
-public class BagDoesNotExistException extends RuntimeException
-{
 
-    /**
-     * Auto-generated serial id.
-     */
-    private static final long serialVersionUID = -4340637468451454992L;
+public class UserAlreadyShareBagException extends RuntimeException
+{
 
     /**
      * Constructor
      */
-    public BagDoesNotExistException() {
+    public UserAlreadyShareBagException() {
     }
 
     /**
      * Constructor with message.
      * @param msg message
      */
-    public BagDoesNotExistException(String msg) {
+    public UserAlreadyShareBagException(String msg) {
         super(msg);
     }
 
@@ -40,7 +36,7 @@ public class BagDoesNotExistException extends RuntimeException
      * Constructor with throwable
      * @param t another throwable
      */
-    public BagDoesNotExistException(Throwable t) {
+    public UserAlreadyShareBagException(Throwable t) {
         super(t);
     }
 
@@ -49,8 +45,7 @@ public class BagDoesNotExistException extends RuntimeException
      * @param msg message
      * @param t another throwable
      */
-    public BagDoesNotExistException(String msg, Throwable t) {
+    public UserAlreadyShareBagException(String msg, Throwable t) {
         super(msg, t);
     }
-
 }
