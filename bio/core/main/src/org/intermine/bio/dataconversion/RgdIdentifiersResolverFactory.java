@@ -35,12 +35,27 @@ import org.intermine.util.PropertiesUtil;
 public class RgdIdentifiersResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(RgdIdentifiersResolverFactory.class);
-    private final String clsName = "gene";
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/rgd-identifiers/current/GENES_RAT.txt
     private final String propName = "resolver.rgd.file";
     private final String taxonId = "10116";
+
+    /**
+     * Construct with SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public RgdIdentifiersResolverFactory(String clsName) {
+        this.clsName = clsName;
+    }
+
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public RgdIdentifiersResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
 
     @Override
     protected IdResolver createIdResolver() {
@@ -55,11 +70,8 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
         }
 
         IdResolver resolver;
-        BufferedReader reader;
         try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            resolver = createFromFile(clsName, new File(fileName));
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open RGD id mapping file: "
                     + fileName, e);
@@ -71,7 +83,10 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
         return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
+    @Override
+    public IdResolver createFromFile(String clsName, File f) throws IOException {
+        FileReader fr = new FileReader(f);
+        BufferedReader reader = new BufferedReader(fr);
         IdResolver resolver = new IdResolver(clsName);
 
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);

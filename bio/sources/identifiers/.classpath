@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="flybase-identifiers/main/src"/>
+	<classpathentry kind="src" path="flybase-identifiers/test/src"/>
+	<classpathentry kind="src" path="mgi-identifiers/main/src"/>
+	<classpathentry kind="src" path="mgi-identifiers/test/src"/>
+	<classpathentry kind="src" path="rgd-identifiers/main/src"/>
+	<classpathentry kind="src" path="sgd-identifiers/main/src"/>
+	<classpathentry kind="src" path="sgd-identifiers/test/src"/>
+	<classpathentry kind="src" path="wormbase-identifiers/main/src"/>
+	<classpathentry kind="src" path="wormbase-identifiers/test/src"/>
+	<classpathentry kind="src" path="zfin-identifiers/main/src"/>
+	<classpathentry kind="src" path="zfin-identifiers/test/src"/>
+	<classpathentry kind="lib" path="flybase-identifiers/main/dist/flybase-identifiers-tasks.jar"/>
+	<classpathentry kind="lib" path="mgi-identifiers/main/dist/mgi-identifiers-tasks.jar"/>
+	<classpathentry kind="lib" path="rgd-identifiers/main/dist/rgd-identifiers-tasks.jar"/>
+	<classpathentry kind="lib" path="sgd-identifiers/main/dist/sgd-identifiers-tasks.jar"/>
+	<classpathentry kind="lib" path="sgd-identifiers/test/dist/sources-sgd-identifiers-test.jar"/>
+	<classpathentry kind="lib" path="wormbase-identifiers/main/dist/wormbase-identifiers-tasks.jar"/>
+	<classpathentry kind="lib" path="zfin-identifiers/main/dist/zfin-identifiers-tasks.jar"/>
+	<classpathentry kind="lib" path="zfin-identifiers/test/dist/sources-zfin-identifiers-test.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="zfin-identifiers/test/build/classes"/>
+</classpath>

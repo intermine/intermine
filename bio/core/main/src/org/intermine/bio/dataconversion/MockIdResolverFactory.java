@@ -1,5 +1,7 @@
 package org.intermine.bio.dataconversion;
 
+import java.util.Set;
+
 /*
  * Copyright (C) 2002-2012 FlyMine
  *
@@ -9,8 +11,6 @@ package org.intermine.bio.dataconversion;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
-import java.util.Set;
 
 /**
  * A mock IdResolver factory needed for testing.

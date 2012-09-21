@@ -86,7 +86,7 @@ public class HomophilaConverter extends BioFileConverter
         store(pub2);
 
         // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("protein", "7227");
+        resolverFactory = new FlyBaseIdResolverFactory("protein");
     }
 
     /**

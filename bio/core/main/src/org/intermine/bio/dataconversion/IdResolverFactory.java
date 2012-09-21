@@ -13,15 +13,22 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 
+import org.intermine.sql.Database;
+
 /**
  * Create an IdResolver.
  * @author rns
+ * @author Fengyuan Hu
  *
  */
 public abstract class IdResolverFactory
 {
-    private IdResolver resolver = null;
-    private boolean caughtError = false;
+    protected IdResolver resolver = null;
+    protected boolean caughtError = false;
+
+    // ResolverFactory takes in a SO term/Class name, by default, "gene" is used
+    protected final String defaultClsName = "gene";
+    protected String clsName;
 
     /**
      * Return an IdResolver, if not already built then create it.
@@ -64,6 +71,41 @@ public abstract class IdResolverFactory
         throws IOException {
         resolver = new IdResolver(clsName);
         resolver.populateFromFile(f);
+        return resolver;
+    }
+
+    /**
+     * Read IdResolver contents from a file, allows for caching during build.
+     *
+     * @param f the file to read from
+     * @return a created IdResolver
+     * @throws IOException if problem reading from file
+     */
+    public IdResolver createFromFile(File f)
+        throws IOException {
+        resolver = new IdResolver(defaultClsName);
+        resolver.populateFromFile(f);
+        return resolver;
+    }
+
+    /**
+     * Read IdResolver contents from a database.
+     *
+     * @param clsName the class name to resolve
+     * @param db the file to read from
+     * @return null, need strictly override
+     */
+    public IdResolver createFromDb(String clsName, Database db) {
+        return resolver;
+    }
+
+    /**
+     * Read IdResolver contents from a database.
+     *
+     * @param db the file to read from
+     * @return null, need strictly override
+     */
+    public IdResolver createFromDb(Database db) {
         return resolver;
     }
 

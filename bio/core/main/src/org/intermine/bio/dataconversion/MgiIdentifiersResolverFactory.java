@@ -32,7 +32,6 @@ import org.intermine.util.PropertiesUtil;
 public class MgiIdentifiersResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(MgiIdentifiersResolverFactory.class);
-    private final String clsName = "gene";
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/mgi-identifiers/current/MGI_Coordinate.rpt
@@ -40,6 +39,23 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
     private final String taxonId = "10090";
 
     private static final String NULL_STRING = "null";
+
+    /**
+     * Construct with SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public MgiIdentifiersResolverFactory(String clsName) {
+        this.clsName = clsName;
+    }
+
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public MgiIdentifiersResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
+
 
     @Override
     protected IdResolver createIdResolver() {

@@ -48,7 +48,9 @@ public class HomologeneConverter extends BioFileConverter
 
     private static final String PROP_FILE = "homologene_config.properties";
     private static final String DEFAULT_IDENTIFIER_FIELD = "symbol";
+
     private Set<String> taxonIds = new HashSet<String>();
+    private Set<String> homologues = new HashSet<String>();
 
     private static final String ORTHOLOGUE = "orthologue";
     private static final String PARALOGUE = "paralogue";
@@ -88,10 +90,10 @@ public class HomologeneConverter extends BioFileConverter
      *
      * @param homologues a space-separated list of taxonIds
      */
-//    public void setHomologeneHomologues(String homologues) {
-//        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
-//        LOG.info("Setting list of homologues to " + homologues);
-//    }
+    public void setHomologeneHomologues(String homologues) {
+        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
+        LOG.info("Setting list of homologues to " + homologues);
+    }
 
     /**
      * {@inheritDoc}
@@ -118,9 +120,9 @@ public class HomologeneConverter extends BioFileConverter
         if (taxonIds.isEmpty()) {
             LOG.warn("homologene.organisms property not set in project XML file");
         }
-//        if (homologues.isEmpty()) {
-//            LOG.warn("homologene.homologues property not set in project XML file");
-//        }
+        if (homologues.isEmpty()) {
+            LOG.warn("homologene.homologues property not set in project XML file");
+        }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -231,19 +233,19 @@ public class HomologeneConverter extends BioFileConverter
             // both are organisms of interest
             return true;
         }
-//        if (homologues.isEmpty()) {
-//            // only interested in homologues of interest, so at least one of
-//            // this pair isn't valid
-//            return false;
-//        }
+        if (homologues.isEmpty()) {
+            // only interested in homologues of interest, so at least one of
+            // this pair isn't valid
+            return false;
+        }
         // one gene is from an organism of interest
         // one homologue is from an organism we want
         if (taxonIds.contains(taxonId)) {
             return true;
         }
-//        if (homologues.contains(taxonId)) {
-//            return true;
-//        }
+        if (homologues.contains(taxonId)) {
+            return true;
+        }
         return false;
     }
 

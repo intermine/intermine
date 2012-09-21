@@ -36,9 +36,16 @@ import org.intermine.util.PropertiesUtil;
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
-    private final String clsName = "gene";
     private final String propName = "resolver.ensembl.file";
     private final String taxonId = "9606";
+
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public EnsemblIdResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
 
     @Override
     protected IdResolver createIdResolver() {
