@@ -26,6 +26,7 @@ public class OboTerm
     private final String id;
     private String name;
     private Set<OboTermSynonym> synonyms = new LinkedHashSet<OboTermSynonym>();
+    private Set<OboTerm> xrefs = new LinkedHashSet<OboTerm>();
     private String namespace = "";
     private String description = "";
     private boolean obsolete = false;
@@ -45,6 +46,17 @@ public class OboTerm
     }
 
     /**
+     * Construct with an id, only used for uberon xrefs
+     * @param id the id of this DAG term, may not be changed after construction
+     */
+    public OboTerm(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id argument may not be null");
+        }
+        this.id = id;
+    }
+
+    /**
      * Get the id of this term.
      * @return the id
      */
@@ -60,7 +72,6 @@ public class OboTerm
         return this.name;
     }
 
-
     /**
      * Add a synonym for this term.
      * @param synonym the synonym for this term
@@ -75,6 +86,22 @@ public class OboTerm
      */
     public Set<OboTermSynonym> getSynonyms() {
         return this.synonyms;
+    }
+
+    /**
+     * Add a xref for this term.
+     * @param xref the xref for this term
+     */
+    public void addXref(OboTerm xref) {
+        this.xrefs.add(xref);
+    }
+
+    /**
+     * Get a set of xrefs (OboTerms) for this term.
+     * @return a set of xrefs
+     */
+    public Set<OboTerm> getXrefs() {
+        return this.xrefs;
     }
 
     /**

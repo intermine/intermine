@@ -43,8 +43,37 @@ public class OntologyIdResolverFactory extends IdResolverFactory
     }
 
     /**
-     * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
-     * @return an IdResolver for FlyBase
+     * Return an IdResolver, if not already built then create it.
+     * @return a specific IdResolver
+     */
+    public IdResolver getIdResolver() {
+        return getIdResolver(true);
+    }
+
+    /**
+     * Return an IdResolver, if not already built then create it.  If failOnError
+     * set to false then swallow any exceptions and return null.  Allows code to
+     * continue if no resolver can be set up.
+     * @param failOnError if false swallow any exceptions and return null
+     * @return a specific IdResolver
+     */
+    public IdResolver getIdResolver(boolean failOnError) {
+        if (resolver == null && !caughtError) {
+            try {
+                this.resolver = createIdResolver();
+            } catch (Exception e) {
+                this.caughtError = true;
+                if (failOnError) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return resolver;
+    }
+
+    /**
+     * Build an IdResolver.
+     * @return an IdResolver for GO
      */
     @Override
     protected IdResolver createIdResolver() {
@@ -71,8 +100,8 @@ public class OntologyIdResolverFactory extends IdResolverFactory
         return resolver;
     }
 
-
-    private IdResolver createFromDb(Database database) {
+    @Override
+    protected IdResolver createFromDb(Database database) {
         IdResolver resolver = new IdResolver(ontology);
         Connection conn = null;
         try {

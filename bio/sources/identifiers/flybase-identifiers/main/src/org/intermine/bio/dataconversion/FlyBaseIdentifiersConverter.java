@@ -23,6 +23,8 @@ import org.intermine.xml.full.Item;
  * Data converter to load FlyBase Identifiers from:
  * /micklem/data/flybase-identifiers/current/fb_synonym_fb_2012_04.tsv
  *
+ * This converter has been used in masterMine build
+ *
  * @author Fengyuan Hu
  */
 public class FlyBaseIdentifiersConverter extends BioFileConverter
