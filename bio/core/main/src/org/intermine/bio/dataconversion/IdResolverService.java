@@ -253,4 +253,23 @@ public class IdResolverService
     public static IdResolver getMockIdResolver(String clsName) {
         return new MockIdResolverFactory(clsName).createIdResolver();
     }
+
+    /**
+     * Create a GO id resolver
+     * @param ontology SO term
+     * @return an IdResolver
+     */
+    public static IdResolver getGoIdResolver(String ontology) {
+        return new OntologyIdResolverFactory(ontology).getIdResolver(false);
+    }
+
+    /**
+     * Create a GO id resolver
+     * @param ontology SO term
+     * @param failOnError if false swallow any exceptions and return null
+     * @return an IdResolver
+     */
+    public static IdResolver getGoIdResolver(String ontology, boolean failOnError) {
+        return new OntologyIdResolverFactory(ontology).getIdResolver(failOnError);
+    }
 }
