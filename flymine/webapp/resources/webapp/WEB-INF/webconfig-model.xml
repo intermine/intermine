@@ -750,8 +750,8 @@
                             tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
 
       <graphdisplayer id="flyatlas_for_probeset"
-                      title="Gene Expression in the Adult Fly (FlyAtlas)"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      title="Gene Expression in Fly Tissues (FlyAtlas Data)"
+                      description="For each tissue, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
                       graphType="BarChart"
                       domainLabel="Tissue"
                       rangeLabel="Up (+) or Down (-) gene count"

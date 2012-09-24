@@ -21,6 +21,7 @@ import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Homophila converter functional test.
@@ -35,7 +36,7 @@ public class HomophilaConverterTest extends ItemsTestCase
     }
 
     public void testConstruct() throws Exception {
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         HomophilaConverter converter = new HomophilaConverter(itemWriter, model);
         assertNotNull(converter.orgHuman);
         assertNotNull(converter.orgDrosophila);
@@ -54,7 +55,7 @@ public class HomophilaConverterTest extends ItemsTestCase
 
         String input = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("test/HomophilaConverterTestInput"));
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
         HomophilaConverter converter = new HomophilaConverter(itemWriter, model);
         converter.setDiseasefile(diseases);
         converter.setProteingenefile(proteinGene);
@@ -69,7 +70,7 @@ public class HomophilaConverterTest extends ItemsTestCase
         // uncomment to create a new target items files
         //writeItemsFile(itemWriter.getItems(), "homophila-tgt-items.xml");
 
-        Set expected = readItemSet("test/HomophilaConverterTest.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("test/HomophilaConverterTest.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }

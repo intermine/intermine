@@ -32,13 +32,29 @@ import org.intermine.util.PropertiesUtil;
 public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(ZfinIdentifiersResolverFactory.class);
-    private final String clsName = "gene";
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/ensembl_1_to_1.txt
     private final String propName = "resolver.zfin.file";
     private final String taxonId = "7955";
+
     private static final String GENE_PATTERN = "ZDB-GENE";
+
+    /**
+     * Construct with SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public ZfinIdentifiersResolverFactory(String clsName) {
+        this.clsName = clsName;
+    }
+
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public ZfinIdentifiersResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
 
     /**
      * Build an IdResolver from Entrez Gene gene_info file

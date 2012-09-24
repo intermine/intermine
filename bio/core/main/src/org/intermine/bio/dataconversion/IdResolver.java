@@ -30,8 +30,8 @@ import org.apache.log4j.Logger;
  * Hold data about primary identifiers and synonyms for a particular class in the
  * data model and provide methods to resolved synonyms into corresponding
  * primary identifier(s).
- * @author rns
  *
+ * @author rns
  */
 public class IdResolver
 {
@@ -70,7 +70,8 @@ public class IdResolver
 
     /**
      * For the given id return a set of matching primary identifiers in the given
-     * taxonId.  In many cases the set will have just one element.
+     * taxonId.  In many cases the set will have just one element. Some will have
+     * zero element.
      * @param taxonId the organism to search within
      * @param id the identifier to resolve
      * @return a set of matching primary identifiers

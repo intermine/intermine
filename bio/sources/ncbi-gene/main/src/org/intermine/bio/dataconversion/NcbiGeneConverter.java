@@ -256,7 +256,7 @@ public class NcbiGeneConverter extends BioFileConverter
             props.load(getClass().getClassLoader().getResourceAsStream(
                     PROP_FILE));
         } catch (IOException e) {
-            throw new RuntimeException("Problem loading properties '"
+            throw new RuntimeException("I/O Problem loading properties '"
                     + PROP_FILE + "'", e);
         }
 

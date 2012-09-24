@@ -28,18 +28,25 @@ import org.intermine.util.PropertiesUtil;
 
 /**
  * Create an IdResolver for HGNC previous symbols and aliases to current symbols.
- * @author Richard Smith
  *
+ * @author Richard Smith
  */
 public class HgncIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
-    private final String clsName = "gene";
     private final String propName = "resolver.hgnc.file";
     private final String taxonId = "9606";
 
     /**
-     * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public HgncIdResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
+
+    /**
+     * Build an IdResolver for HGNC.
      * @return an IdResolver for FlyBase
      */
     @Override
