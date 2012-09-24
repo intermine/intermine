@@ -48,6 +48,7 @@ public class OboConverter extends DataConverter
     protected Collection<OboTerm> oboTerms;
     protected List<OboRelation> oboRelations;
     protected Map<String, Item> nameToTerm = new HashMap<String, Item>();
+    protected Map<String, String> xrefs = new HashMap<String, String>();
     protected Map<OboTermSynonym, Item> synToItem = new HashMap<OboTermSynonym, Item>();
     protected Item ontology;
     private boolean createRelations = true;
@@ -199,6 +200,18 @@ public class OboConverter extends DataConverter
                 configureSynonymItem(syn, synItem, term);
             }
             item.addToCollection("synonyms", synItem);
+        }
+        for (OboTerm xref : term.getXrefs()) {
+            String identifier = xref.getId();
+            String refId = xrefs.get(identifier);
+            if (refId == null) {
+                Item xrefTerm = createItem("OntologyTerm");
+                refId = xrefTerm.getIdentifier();
+                xrefs.put(identifier, refId);
+                xrefTerm.setAttribute("identifier", identifier);
+                xrefTerm.addToCollection("crossReferences", item.getIdentifier());
+            }
+            item.addToCollection("crossReferences", refId);
         }
         OboTerm oboterm = term;
         if (!StringUtils.isEmpty(oboterm.getNamespace())) {
