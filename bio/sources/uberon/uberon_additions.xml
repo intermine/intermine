@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <classes>
   <class name="OntologyTerm" is-interface="true">
-    <collection name="crossReference" referenced-type="OntologyTerm" />
+    <collection name="crossReferences" referenced-type="OntologyTerm" />
   </class>
 </classes>

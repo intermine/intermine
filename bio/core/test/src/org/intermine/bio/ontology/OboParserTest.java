@@ -12,10 +12,12 @@ package org.intermine.bio.ontology;
 
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +36,9 @@ public class OboParserTest extends TestCase
     public void setUp() {
         parser = new OboParser();
     }
+
+
+
 
     public void testBasicStructure() throws Exception {
         parser.processOntology(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("OboParserTest.obo")));
@@ -192,6 +197,14 @@ public class OboParserTest extends TestCase
                 Arrays.asList(new String[]{"xxxxxxxx"}), "synonym_type");
         assertEquals(0, term.getSynonyms().size());
     }
+
+    public void testXrefs() throws Exception {
+        OboTerm term = new OboTerm("id", "name");
+        parser.readConfig();
+        parser.addXrefs(term, Arrays.asList(new String[]{"FBbt:000", "monkey"}));
+        assertEquals(1, term.getXrefs().size());
+    }
+
 
 //    public void testIsObsolete() {
 //        Map tagValues;
