@@ -15,14 +15,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.search.GlobalRepository;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
@@ -50,39 +52,55 @@ public class ModifySuperUserAction extends InterMineAction
         ProfileManager pm = im.getProfileManager();
         List<String> allUsers = pm.getProfileUserNames();
         ModifySuperUserForm superUserForm = (ModifySuperUserForm) form;
-        String[] superUsersList = superUserForm.getSuperUsers();
-        if (superUsersList.length == 0) {
+        String[] superUsers = superUserForm.getSuperUsers();
+        List<String> superUsersList = Arrays.asList(superUsers);
+        //some checks
+        if (superUsersList.isEmpty()) {
             recordMessage(new ActionMessage("errors.users.superusernotselected"), request);
             return mapping.findForward("mymine");
         }
         String suInProperties = pm.getSuperuser();
-        boolean found = false;
-        for (String superUser : superUsersList) {
-            if (superUser.equals(suInProperties)) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        if (!superUsersList.contains(suInProperties)) {
             recordMessage(new ActionMessage("errors.users.superuserinpropertiesnotselected"),
                          request);
         }
+        Profile profileLogged = SessionMethods.getProfile(request.getSession());
+        String userLogged = profileLogged.getUsername();
+        if (!superUsersList.contains(userLogged)) {
+            recordMessage(new ActionMessage("errors.users.userloggednotselected"),
+                         request);
+        }
 
-        boolean updated;
+        Profile profileToUpdate;
         for (String user : allUsers) {
-            updated = false;
-            for (String superUser : superUsersList) {
-                if (superUser.equals(user)) {
-                    pm.updateSuperUser(user, true);
-                    updated = true;
-                    break;
+            profileToUpdate = pm.getProfile(user);
+            if (superUsersList.contains(user)) {
+                if (!profileToUpdate.isSuperuser()) {
+                    profileToUpdate.setSuperuser(true);
+                    updateGlobalSearchRepository(profileToUpdate, true, request.getSession());
                 }
-            }
-            if (!updated && !user.equals(suInProperties)) {
-                pm.updateSuperUser(user, false);
+            } else {
+                if (!user.equals(suInProperties) && !user.equals(userLogged)) {
+                    if (profileToUpdate.isSuperuser()) {
+                    	profileToUpdate.setSuperuser(false);
+                        updateGlobalSearchRepository(profileToUpdate, false, request.getSession());
+                    }
+                }
             }
         }
 
         return mapping.findForward("mymine");
+    }
+
+    private void updateGlobalSearchRepository(Profile profile, boolean addedSuperUser,
+        HttpSession session) {
+        if (addedSuperUser) {
+            GlobalRepository gr = new GlobalRepository(profile);
+            SessionMethods.setGlobalSearchRepository(session.getServletContext(), gr);
+        } else {
+            GlobalRepository globalRepository = (GlobalRepository) SessionMethods
+                .getGlobalSearchRepository(session.getServletContext());
+            globalRepository.deleteGlobalRepository(profile);
+        }
     }
 }
