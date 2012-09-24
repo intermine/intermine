@@ -191,14 +191,19 @@ public class InitialiserPlugin implements PlugIn
                 profileManager = im.getProfileManager();
 
                 //verify superuser setted in the db matches with the user in the properties file
-                final Profile superProfile = im.getProfileManager().getSuperuserProfile();
+                final Profile superProfile = profileManager.getSuperuserProfile();
                 if (!superProfile.getUsername()
                     .equals(PropertiesUtil.getProperties().getProperty("superuser.account")
                     .trim())) {
                     blockingErrorKeys.put("errors.init.superuser", null);
                 }
+
                 // index global webSearchables
                 SearchRepository searchRepository = new GlobalRepository(superProfile);
+                List<String> users = profileManager.getSuperUsers();
+                for (String su : users) {
+                    new GlobalRepository(profileManager.getProfile(su));
+                }
                 SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
 
                 servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
