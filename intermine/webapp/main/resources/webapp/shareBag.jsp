@@ -19,7 +19,7 @@
      </c:forEach>
 </script>
   </span>
-<c:if test="${!bagIsPublic}">
+<c:if test="${shareBags}">
   <span id="addLink-${id}">
     <a class="addTagLink" onclick="startSharingBag('${id}')" >Share with users</a>
   </span>

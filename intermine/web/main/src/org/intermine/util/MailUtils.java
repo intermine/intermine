@@ -23,6 +23,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.intermine.api.profile.InterMineBag;
+
 /**
  * Mail utilities for the webapp.
  *
@@ -150,5 +152,35 @@ public abstract class MailUtils
         String subject = "";
         String body = "";
         email(to, subject, body, email, webProperties);
+    }
+
+    /**
+     * Send a 'sharing list' message
+     *
+     * @param to the address to send to
+     * @param sharingUser the user sharing the list
+     * @param bag the list shared
+     * @param webProperties properties such as the from address
+     * @throws Exception if there is a problem creating the email
+     */
+    public static void emailSharingList(String to, String sharingUser, InterMineBag bag,
+        final Map webProperties) throws Exception {
+        String applicationName = (String) webProperties.get("mail.application");
+        String subject = "Sharing Lists in " + applicationName;
+        String listUrl = webProperties.get("webapp.deploy.url") + "/"
+                  +  webProperties.get("webapp.path") + "/"
+                  + "login.do?returnto=%2FbagDetails.do%3Fscope%3Dall%26bagName%3D" + bag.getName();
+        StringBuffer bodyMsg = new StringBuffer();
+        bodyMsg.append("User " + sharingUser + " has shared a list of " + bag.getType() + " ");
+        bodyMsg.append("with you called \"" + bag.getName() + "\".\n");
+        bodyMsg.append("Click here to view the list: " + listUrl + "\n");
+        bodyMsg.append("If " + sharingUser + " deletes or modifies this list, you will not be ");
+        bodyMsg.append("notified.\nYou may COPY this list to your own account by using the ");
+        bodyMsg.append(" list operations on the list page.\n");
+        bodyMsg.append("If you have any problems or questions, please don't hesitate ");
+        bodyMsg.append("to contact us. We can be reached by replying to this email or at the ");
+        bodyMsg.append("bottom of each page on " + applicationName + ".\n\n");
+        bodyMsg.append("Thank you.\nThe " + applicationName + " team");
+        email(to, subject, bodyMsg.toString(), webProperties);
     }
 }
