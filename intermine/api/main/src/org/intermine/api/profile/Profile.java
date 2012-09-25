@@ -36,6 +36,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -233,6 +234,20 @@ public class Profile
      */
     public boolean getSuperuser() {
         return isSuperuser();
+    }
+
+    /**
+     * Set the superuser flag and store it in userprofile database
+     * @param isSuperUser if true the profile is set as superuser
+     * @throws ObjectStoreException if an error occurs during storage of the object
+     */
+    public void setSuperuser(boolean isSuperUser) throws ObjectStoreException {
+        ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
+        UserProfile p = (UserProfile) uosw.getObjectStore().getObjectById(userId,
+            UserProfile.class);
+        p.setSuperuser(isSuperUser);
+        uosw.store(p);
+        this.isSuperUser = isSuperUser;
     }
 
     /**
