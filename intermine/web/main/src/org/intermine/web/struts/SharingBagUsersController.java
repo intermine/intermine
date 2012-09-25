@@ -58,10 +58,10 @@ public class SharingBagUsersController extends TilesAction
         TagManager tm = im.getTagManager();
         List<Tag> tags = tm.getTags(TagNames.IM_PUBLIC, bagName, TagTypes.BAG,
                                     profile.getUsername());
-        if (tags.isEmpty()) {
-            request.setAttribute("bagIsPublic", false);
+        if (tags.isEmpty() || !profile.isSuperuser()) {
+            request.setAttribute("shareBags", true);
         } else {
-            request.setAttribute("bagIsPublic", true); 
+            request.setAttribute("shareBags", false);
         }
         return null;
     }
