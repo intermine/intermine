@@ -159,7 +159,7 @@ public abstract class LoginHandler extends InterMineAction
      * for a life cyle in a web service request. At the moment, this just means
      * determining if this is the super user, and running the bag upgrade
      * thread.
-     * 
+     *
      * @param api
      *            The InterMine API object.
      * @param permission
@@ -213,9 +213,7 @@ public abstract class LoginHandler extends InterMineAction
     public static Profile setUpProfile(HttpSession session, Profile profile) {
         SessionMethods.setProfile(session, profile);
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        final ProfileManager pm = im.getProfileManager();
-        final String userName = profile.getUsername();
-        if (userName != null && userName.equals(pm.getSuperuser())) {
+        if (profile.isSuperuser()) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
         SessionMethods.setNotCurrentSavedBagsStatus(session, profile);

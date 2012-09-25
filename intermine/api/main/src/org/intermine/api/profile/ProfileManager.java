@@ -1088,22 +1088,16 @@ public class ProfileManager
     }
 
     /**
-     * Update the 'superuser' role to the user which user name is given in input
-     * @param userName the user name
-     * @param isSuperUser if true the user is set with superuser role
+     * Return a list of profile with 'superuser' role
+     * @return the profile list
      */
-    public void updateSuperUser(String userName, boolean isSuperUser) {
-        UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setUsername(userName);
-        Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("username");
-        try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
-            superuserProfile.setSuperuser(isSuperUser);
-            uosw.store(superuserProfile);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Unable to load user profile", e);
+    public List<Profile> getSuperUsersProfile() {
+        List<Profile> superusersProfile = new ArrayList<Profile>();
+        List<String> superusers = getSuperUsers();
+        for (String su : superusers) {
+            superusersProfile.add(getProfile(su));
         }
+        return superusersProfile;
     }
 
     /**
