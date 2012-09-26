@@ -167,7 +167,7 @@ public class SharedBagManager
      * @param bag the bag the users share
      * @return the list of users sharing the bag
      */
-    public List<String> getUsersSharingBag(InterMineBag bag) {
+    public List<String> getUsersSharingBag(StorableBag bag) {
         List<String> usersSharingBag = new ArrayList<String>();
         Connection conn = null;
         PreparedStatement stm = null;
@@ -349,9 +349,11 @@ public class SharedBagManager
 
     /**
      * Delete the sharing between the bag and all the users sharing the bag.
+     * Method used when a bag is deleted.
      * @param bag the bag that has been shared by users
      */
     public void unshareBagWithAllUsers(StorableBag bag) {
+        List<String> usersListSharingBag = getUsersSharingBag(bag);
         Connection conn = null;
         PreparedStatement stm = null;
         try {
@@ -371,6 +373,13 @@ public class SharedBagManager
                 }
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        }
+        //update user repository for all users sharing tha bag
+        for (String userName : usersListSharingBag) {
+            if (profileManager.isProfileCached(userName)) {
+                profileManager.getProfile(userName).getSearchRepository()
+                              .receiveEvent(new DeletionEvent(bag));
+            }
         }
     }
 }
