@@ -380,6 +380,10 @@ public class ProfileManager
                 savedQueries, bags, savedTemplates, userProfile.getApiKey(),
                 userProfile.getLocalAccount(), userProfile.getSuperuser());
         profileCache.put(username, profile);
+        //only after saving the profile in the cache,
+        //we can update the user repository with shared bags
+        //if we do in the constructor we could generate loops
+        profile.updateUserRepositoryWithSharedBags();
         return profile;
     }
 
