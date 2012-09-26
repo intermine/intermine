@@ -1462,7 +1462,7 @@ public class AjaxServices
         try {
             MailUtils.emailSharingList(userName, profile.getUsername(), bag, webProperties);
         } catch (Exception ex) {
-            return "Problems sending mail.";
+            LOG.warn("Problems sending sharing list mail.", ex);
         }
         return "ok";
     }
