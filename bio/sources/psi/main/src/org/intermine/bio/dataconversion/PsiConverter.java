@@ -69,12 +69,11 @@ public class PsiConverter extends BioFileConverter
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     private static final String ALIAS_TYPE = "gene name";
- // if both roles are bait, we don't store interaction
-    private static final String BAIT = "bait";
+    private static final String SPOKE_MODEL = "prey";   // don't store if all roles prey
     private static final String DEFAULT_IDENTIFIER = "symbol";
     private static final String DEFAULT_DATASOURCE = "";
     private static final String BINDING_SITE = "MI:0117";
-    private static final Set<String> VALID_COMMENTS = new HashSet<String>();
+    private static final Set<String> INTERESTING_COMMENTS = new HashSet<String>();
 
     /**
      * Constructor
@@ -95,15 +94,15 @@ public class PsiConverter extends BioFileConverter
     }
 
     static {
-        VALID_COMMENTS.add("exp-modification");
-        VALID_COMMENTS.add("curation depth");
-        VALID_COMMENTS.add("library used");
-        VALID_COMMENTS.add("data-processing");
-        VALID_COMMENTS.add("comment");
-        VALID_COMMENTS.add("caution");
-        VALID_COMMENTS.add("last-imex assigned");
-        VALID_COMMENTS.add("imex-range assigned");
-        VALID_COMMENTS.add("imex-range requested");
+        INTERESTING_COMMENTS.add("exp-modification");
+        INTERESTING_COMMENTS.add("curation depth");
+        INTERESTING_COMMENTS.add("library used");
+        INTERESTING_COMMENTS.add("data-processing");
+        INTERESTING_COMMENTS.add("comment");
+        INTERESTING_COMMENTS.add("caution");
+        INTERESTING_COMMENTS.add("last-imex assigned");
+        INTERESTING_COMMENTS.add("imex-range assigned");
+        INTERESTING_COMMENTS.add("imex-range requested");
     }
 
     /**
@@ -224,7 +223,7 @@ public class PsiConverter extends BioFileConverter
                             && stack.search("experimentDescription") == 2) {
                 String name = attrs.getValue("name");
                 if (experimentHolder.experiment != null && name != null
-                        && VALID_COMMENTS.contains(name)) {
+                        && INTERESTING_COMMENTS.contains(name)) {
                     comment = createItem("Comment");
                     comment.setAttribute("type", name);
                     attName = "experimentAttribute";
@@ -514,7 +513,7 @@ public class PsiConverter extends BioFileConverter
                 /* store all experiment-related items */
                 ExperimentHolder eh = h.eh;
                 if (!eh.isStored) {
-                    if (eh.comments != null && eh.comments.isEmpty()) {
+                    if (eh.comments != null && !eh.comments.isEmpty()) {
                         eh.experiment.setCollection("comments", eh.comments);
                     }
                     store(eh.experiment);
@@ -547,8 +546,9 @@ public class PsiConverter extends BioFileConverter
                 for (String gene2RefId : gene2Interactor.geneRefIds) {
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
-                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
-                        // spoke!  not storing bait - bait, only bait - prey
+                    if (SPOKE_MODEL.equalsIgnoreCase(role1)
+                            && SPOKE_MODEL.equalsIgnoreCase(role2)) {
+                        // spoke!  not storing prey - prey, only bait - prey
                         continue;
                     }
                     Item interaction = getInteraction(gene1RefId, gene2RefId);

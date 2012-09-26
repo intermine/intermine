@@ -80,7 +80,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<MultiKey, Item> idsToExperiments;
     private Map<String, String> strains = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
-    private static final String BAIT = "bait";
+    private static final String SPOKE_MODEL = "prey";
 
     /**
      * Constructor
@@ -513,7 +513,7 @@ public class BioGridConverter extends BioFileConverter
 
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
-                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
+                    if (SPOKE_MODEL.equalsIgnoreCase(role1) && SPOKE_MODEL.equalsIgnoreCase(role2)) {
                         // spoke!  not storing bait - bait, only bait - prey
                         continue;
                     }
