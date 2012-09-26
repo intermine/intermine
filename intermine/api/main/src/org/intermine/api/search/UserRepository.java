@@ -64,7 +64,6 @@ public class UserRepository extends SearchRepository
     @Override
     protected void populateSearchItems() {
         searchItems.addAll(getProfile().getSavedBags().values());
-        searchItems.addAll(getProfile().getSharedBags().values());
         searchItems.addAll(getProfile().getSavedTemplates().values());
         LOG.info("Populated repository with " + searchItems.size() + " items");
     }
@@ -73,6 +72,13 @@ public class UserRepository extends SearchRepository
     protected void handleMassTagging() {
         // Nothing much we can do. May have been gloal indices, may not.
         indexes.clear();
+    }
+
+    /**
+     * Update the user repository with the shared bags
+     */
+    public void updateUserRepositoryWithSharedBags() {
+        searchItems.addAll(getProfile().getSharedBags().values());
     }
 
 }

@@ -781,4 +781,13 @@ public class Profile
     public Map<String, InterMineBag> getSharedBags() {
         return getSharedBagManager().getSharedBags(this);
     }
+
+    /**
+     * Update the user repository with the sharedbags
+     */
+    public void updateUserRepositoryWithSharedBags() {
+        if (searchRepository instanceof UserRepository) {
+            ((UserRepository) searchRepository).updateUserRepositoryWithSharedBags();
+        }
+    }
 }
