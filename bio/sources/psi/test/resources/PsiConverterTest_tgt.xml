@@ -2,25 +2,9 @@
 <item id="5_1" class="Publication">
 <attribute name="pubMedId" value="11912189"/>
 </item>
-<item id="6_3" class="Comment">
-<attribute name="description" value="J. Biol. Chem. (0021-9258)"/>
-<attribute name="type" value="journal"/>
-</item>
-<item id="6_1" class="Comment">
-<attribute name="description" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
-<attribute name="type" value="author-list"/>
-</item>
-<item id="10_2" class="Interaction">
-<attribute name="interactionType" value="physical"/>
-<attribute name="name" value="IntAct:FBgn001_FBgn002"/>
-<attribute name="role" value="bait"/>
-<attribute name="shortName" value="appl-aplip1-2"/>
-<reference name="experiment" ref_id="4_1"/>
-<reference name="gene" ref_id="7_2"/>
-<reference name="type" ref_id="3_4"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="7_1"/></collection>
-<collection name="interactingRegions"><reference ref_id="11_1"/></collection>
+<item id="6_2" class="Comment">
+<attribute name="description" value="2002"/>
+<attribute name="type" value="publication-year"/>
 </item>
 <item id="9_1" class="SOTerm">
 <attribute name="name" value="gene"/>
@@ -33,31 +17,48 @@
 <reference name="sequenceOntologyTerm" ref_id="9_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="11_1" class="InteractionRegion">
-<attribute name="endStatus" value="certain"/>
-<attribute name="name" value="region"/>
-<attribute name="primaryIdentifier" value="appl-aplip1-2_FBgn001:1-370"/>
-<attribute name="startStatus" value="certain"/>
-<reference name="gene" ref_id="7_2"/>
-<reference name="interaction" ref_id="10_2"/>
-<reference name="location" ref_id="12_1"/>
-<reference name="ontologyTerm" ref_id="3_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_2" class="Comment">
-<attribute name="description" value="2002"/>
-<attribute name="type" value="publication-year"/>
-</item>
 <item id="10_1" class="Interaction">
-<attribute name="interactionType" value="physical"/>
-<attribute name="name" value="IntAct:FBgn002_FBgn001"/>
-<attribute name="role" value="prey"/>
-<attribute name="shortName" value="appl-aplip1-2"/>
+<reference name="gene1" ref_id="7_1"/>
+<reference name="gene2" ref_id="7_2"/>
+</item>
+<item id="6_1" class="Comment">
+<attribute name="description" value="Taru H., Iijima K., Hase M., Kirino Y., Yagi Y., Suzuki T."/>
+<attribute name="type" value="author-list"/>
+</item>
+<item id="6_3" class="Comment">
+<attribute name="description" value="J. Biol. Chem. (0021-9258)"/>
+<attribute name="type" value="journal"/>
+</item>
+<item id="11_2" class="InteractionDetail">
+<attribute name="name" value="appl-aplip1-2"/>
+<attribute name="role1" value="bait"/>
+<attribute name="role2" value="prey"/>
+<attribute name="type" value="physical"/>
 <reference name="experiment" ref_id="4_1"/>
-<reference name="gene" ref_id="7_1"/>
-<reference name="type" ref_id="3_4"/>
+<reference name="interaction" ref_id="10_2"/>
+<reference name="relationshipType" ref_id="3_4"/>
+<collection name="allInteractors"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="interactingGenes"><reference ref_id="7_2"/></collection>
+<collection name="interactingRegions"><reference ref_id="12_1"/></collection>
+</item>
+<item id="10_2" class="Interaction">
+<reference name="gene1" ref_id="7_2"/>
+<reference name="gene2" ref_id="7_1"/>
+</item>
+<item id="11_1" class="InteractionDetail">
+<attribute name="name" value="appl-aplip1-2"/>
+<attribute name="role1" value="prey"/>
+<attribute name="role2" value="bait"/>
+<attribute name="type" value="physical"/>
+<reference name="experiment" ref_id="4_1"/>
+<reference name="interaction" ref_id="10_1"/>
+<reference name="relationshipType" ref_id="3_4"/>
+<collection name="allInteractors"><reference ref_id="7_1"/><reference ref_id="7_2"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="IntAct interactions data set"/>
+<reference name="dataSource" ref_id="1_1"/>
 </item>
 <item id="7_1" class="Gene">
 <attribute name="primaryIdentifier" value="FBgn002"/>
@@ -76,12 +77,13 @@
 <attribute name="identifier" value="MI:0007"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="12_1" class="Location">
-<attribute name="end" value="370"/>
-<attribute name="start" value="1"/>
-<reference name="feature" ref_id="11_1"/>
-<reference name="locatedOn" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<item id="12_1" class="InteractionRegion">
+<attribute name="endStatus" value="certain"/>
+<attribute name="startStatus" value="certain"/>
+<reference name="gene" ref_id="7_2"/>
+<reference name="interaction" ref_id="11_2"/>
+<reference name="location" ref_id="13_1"/>
+<reference name="ontologyTerm" ref_id="3_1"/>
 </item>
 <item id="3_1" class="InteractionTerm">
 <attribute name="identifier" value="MI:0117"/>
@@ -95,9 +97,12 @@
 <attribute name="identifier" value="MI:0218"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="2_1" class="DataSet">
-<attribute name="name" value="IntAct interactions data set"/>
-<reference name="dataSource" ref_id="1_1"/>
+<item id="13_1" class="Location">
+<attribute name="end" value="370"/>
+<attribute name="start" value="1"/>
+<reference name="feature" ref_id="12_1"/>
+<reference name="locatedOn" ref_id="7_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_1" class="InteractionExperiment">
 <attribute name="description" value="Interaction of Alzheimer's beta -amyloid precursor family proteins with scaffold proteins of the JNK signaling cascade."/>
