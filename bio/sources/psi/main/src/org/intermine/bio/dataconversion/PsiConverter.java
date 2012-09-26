@@ -74,6 +74,7 @@ public class PsiConverter extends BioFileConverter
     private static final String DEFAULT_IDENTIFIER = "symbol";
     private static final String DEFAULT_DATASOURCE = "";
     private static final String BINDING_SITE = "MI:0117";
+    private static final Set<String> VALID_COMMENTS = new HashSet<String>();
 
     /**
      * Constructor
@@ -91,6 +92,18 @@ public class PsiConverter extends BioFileConverter
         } catch (SAXException e) {
             throw new RuntimeException("couldn't save ontology term");
         }
+    }
+
+    static {
+        VALID_COMMENTS.add("exp-modification");
+        VALID_COMMENTS.add("curation depth");
+        VALID_COMMENTS.add("library used");
+        VALID_COMMENTS.add("data-processing");
+        VALID_COMMENTS.add("comment");
+        VALID_COMMENTS.add("caution");
+        VALID_COMMENTS.add("last-imex assigned");
+        VALID_COMMENTS.add("imex-range assigned");
+        VALID_COMMENTS.add("imex-range requested");
     }
 
     /**
@@ -210,12 +223,11 @@ public class PsiConverter extends BioFileConverter
             } else if ("attribute".equals(qName) && "attributeList".equals(stack.peek())
                             && stack.search("experimentDescription") == 2) {
                 String name = attrs.getValue("name");
-                if (experimentHolder.experiment != null && name != null) {
+                if (experimentHolder.experiment != null && name != null
+                        && VALID_COMMENTS.contains(name)) {
                     comment = createItem("Comment");
                     comment.setAttribute("type", name);
                     attName = "experimentAttribute";
-                } else {
-                    LOG.info("Can't create comment, bad experiment.");
                 }
             // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if ("hostOrganism".equals(qName)) {
@@ -502,13 +514,11 @@ public class PsiConverter extends BioFileConverter
                 /* store all experiment-related items */
                 ExperimentHolder eh = h.eh;
                 if (!eh.isStored) {
-                    eh.isStored = true;
-                    try {
+                    if (eh.comments != null && eh.comments.isEmpty()) {
                         eh.experiment.setCollection("comments", eh.comments);
-                        store(eh.experiment);
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException("Couldn't store experiment: ", e);
                     }
+                    store(eh.experiment);
+                    eh.isStored = true;
                 }
             }
         }
