@@ -69,11 +69,11 @@ public class PsiConverter extends BioFileConverter
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
     private static final String ALIAS_TYPE = "gene name";
- // if both roles are bait, we don't store interaction
-    private static final String BAIT = "bait";
+    private static final String SPOKE_MODEL = "prey";   // don't store if all roles prey
     private static final String DEFAULT_IDENTIFIER = "symbol";
     private static final String DEFAULT_DATASOURCE = "";
     private static final String BINDING_SITE = "MI:0117";
+    private static final Set<String> INTERESTING_COMMENTS = new HashSet<String>();
 
     /**
      * Constructor
@@ -91,6 +91,18 @@ public class PsiConverter extends BioFileConverter
         } catch (SAXException e) {
             throw new RuntimeException("couldn't save ontology term");
         }
+    }
+
+    static {
+        INTERESTING_COMMENTS.add("exp-modification");
+        INTERESTING_COMMENTS.add("curation depth");
+        INTERESTING_COMMENTS.add("library used");
+        INTERESTING_COMMENTS.add("data-processing");
+        INTERESTING_COMMENTS.add("comment");
+        INTERESTING_COMMENTS.add("caution");
+        INTERESTING_COMMENTS.add("last-imex assigned");
+        INTERESTING_COMMENTS.add("imex-range assigned");
+        INTERESTING_COMMENTS.add("imex-range requested");
     }
 
     /**
@@ -210,12 +222,11 @@ public class PsiConverter extends BioFileConverter
             } else if ("attribute".equals(qName) && "attributeList".equals(stack.peek())
                             && stack.search("experimentDescription") == 2) {
                 String name = attrs.getValue("name");
-                if (experimentHolder.experiment != null && name != null) {
+                if (experimentHolder.experiment != null && name != null
+                        && INTERESTING_COMMENTS.contains(name)) {
                     comment = createItem("Comment");
                     comment.setAttribute("type", name);
                     attName = "experimentAttribute";
-                } else {
-                    LOG.info("Can't create comment, bad experiment.");
                 }
             // <hostOrganismList><hostOrganism ncbiTaxId="9534"><names><fullName>
             } else if ("hostOrganism".equals(qName)) {
@@ -502,13 +513,11 @@ public class PsiConverter extends BioFileConverter
                 /* store all experiment-related items */
                 ExperimentHolder eh = h.eh;
                 if (!eh.isStored) {
-                    eh.isStored = true;
-                    try {
+                    if (eh.comments != null && !eh.comments.isEmpty()) {
                         eh.experiment.setCollection("comments", eh.comments);
-                        store(eh.experiment);
-                    } catch (ObjectStoreException e) {
-                        throw new RuntimeException("Couldn't store experiment: ", e);
                     }
+                    store(eh.experiment);
+                    eh.isStored = true;
                 }
             }
         }
@@ -537,8 +546,9 @@ public class PsiConverter extends BioFileConverter
                 for (String gene2RefId : gene2Interactor.geneRefIds) {
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
-                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
-                        // spoke!  not storing bait - bait, only bait - prey
+                    if (SPOKE_MODEL.equalsIgnoreCase(role1)
+                            && SPOKE_MODEL.equalsIgnoreCase(role2)) {
+                        // spoke!  not storing prey - prey, only bait - prey
                         continue;
                     }
                     Item interaction = getInteraction(gene1RefId, gene2RefId);
