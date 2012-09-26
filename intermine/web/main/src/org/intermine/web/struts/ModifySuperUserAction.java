@@ -77,30 +77,16 @@ public class ModifySuperUserAction extends InterMineAction
             if (superUsersList.contains(user)) {
                 if (!profileToUpdate.isSuperuser()) {
                     profileToUpdate.setSuperuser(true);
-                    updateGlobalSearchRepository(profileToUpdate, true, request.getSession());
                 }
             } else {
                 if (!user.equals(suInProperties) && !user.equals(userLogged)) {
                     if (profileToUpdate.isSuperuser()) {
-                    	profileToUpdate.setSuperuser(false);
-                        updateGlobalSearchRepository(profileToUpdate, false, request.getSession());
+                        profileToUpdate.setSuperuser(false);
                     }
                 }
             }
         }
 
         return mapping.findForward("mymine");
-    }
-
-    private void updateGlobalSearchRepository(Profile profile, boolean addedSuperUser,
-        HttpSession session) {
-        if (addedSuperUser) {
-            GlobalRepository gr = new GlobalRepository(profile);
-            SessionMethods.setGlobalSearchRepository(session.getServletContext(), gr);
-        } else {
-            GlobalRepository globalRepository = (GlobalRepository) SessionMethods
-                .getGlobalSearchRepository(session.getServletContext());
-            globalRepository.deleteGlobalRepository(profile);
-        }
     }
 }
