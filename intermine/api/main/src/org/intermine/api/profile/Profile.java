@@ -28,6 +28,7 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
 import org.intermine.api.search.DeletionEvent;
+import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
@@ -67,7 +68,7 @@ public class Profile
     protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
     protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
     protected boolean savingDisabled;
-    private final SearchRepository searchRepository;
+    private SearchRepository searchRepository;
     private String token;
 
     /**
@@ -248,6 +249,13 @@ public class Profile
         p.setSuperuser(isSuperUser);
         uosw.store(p);
         this.isSuperUser = isSuperUser;
+        if (isSuperUser) {
+            searchRepository = new GlobalRepository(this);
+        } else {
+            if ( searchRepository instanceof GlobalRepository) {
+                ((GlobalRepository) searchRepository).deleteGlobalRepository(this);
+            }
+        }
     }
 
     /**
