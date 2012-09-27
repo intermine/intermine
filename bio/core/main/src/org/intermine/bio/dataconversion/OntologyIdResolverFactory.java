@@ -58,9 +58,9 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(boolean failOnError) {
-        if (resolver == null && !caughtError) {
+        if (!caughtError) {
             try {
-                this.resolver = createIdResolver();
+                createIdResolver();
             } catch (Exception e) {
                 this.caughtError = true;
                 if (failOnError) {
@@ -76,9 +76,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for GO
      */
     @Override
-    protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver(ontology);
-
+    protected void createIdResolver() {
         try {
             // TODO we already know this database, right?
             db = DatabaseFactory.getDatabase("os.production");
@@ -87,22 +85,29 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("OntologyIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(ontology, f);
+                createFromFile(ontology, f);
             } else {
                 System.out .println("OntologyIdResolver creating from database: " + db.getName());
-                resolver = createFromDb(db);
+                createFromDb(db);
                 resolver.writeToFile(f);
                 System.out .println("OntologyIdResolver caching in file: " + cacheFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return resolver;
     }
 
     @Override
-    protected IdResolver createFromDb(Database database) {
-        IdResolver resolver = new IdResolver(ontology);
+    protected void createFromDb(Database database) {
+
+        if (resolver == null) {
+            resolver = new IdResolver(ontology);
+        }
+
+        if (resolver.hasTaxon(MOCK_TAXON_ID)) {
+            return;
+        }
+
         Connection conn = null;
         try {
             conn = database.getConnection();
@@ -134,7 +139,5 @@ public class OntologyIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-
-        return resolver;
     }
 }

@@ -17,6 +17,7 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 import java.io.File;
 import java.io.StringReader;
@@ -39,7 +40,7 @@ public class FlyFishConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlyFishConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn0037874", Collections.singleton("CG4800"));
@@ -65,7 +66,7 @@ public class FlyFishConverterTest extends ItemsTestCase
         // uncomment to create a new target items files
         //writeItemsFile(itemWriter.getItems(), "flyfish_tgt.xml");
 
-        Set expected = readItemSet("FlyFishTestItems.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("FlyFishTestItems.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }

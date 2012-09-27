@@ -23,7 +23,7 @@ import org.intermine.sql.Database;
  */
 public abstract class IdResolverFactory
 {
-    protected IdResolver resolver = null;
+    protected static IdResolver resolver = null; // static to cache
     protected boolean caughtError = false;
 
     // ResolverFactory takes in a SO term/Class name, by default, "gene" is used
@@ -39,16 +39,16 @@ public abstract class IdResolverFactory
     }
 
     /**
-     * Return an IdResolver, if not already built then create it.  If failOnError
-     * set to false then swallow any exceptions and return null.  Allows code to
+     * Return an IdResolver, if not already built then create it. If failOnError
+     * set to false then swallow any exceptions and return null. Allows code to
      * continue if no resolver can be set up.
      * @param failOnError if false swallow any exceptions and return null
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(boolean failOnError) {
-        if (resolver == null && !caughtError) {
+        if (!caughtError) {
             try {
-                this.resolver = createIdResolver();
+                createIdResolver();
             } catch (Exception e) {
                 this.caughtError = true;
                 if (failOnError) {
@@ -67,11 +67,10 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected IdResolver createFromFile(String clsName, File f)
+    protected void createFromFile(String clsName, File f)
         throws IOException {
         resolver = new IdResolver(clsName);
         resolver.populateFromFile(f);
-        return resolver;
     }
 
     /**
@@ -81,11 +80,10 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected IdResolver createFromFile(File f)
+    protected void createFromFile(File f)
         throws IOException {
         resolver = new IdResolver(defaultClsName);
         resolver.populateFromFile(f);
-        return resolver;
     }
 
     /**
@@ -95,8 +93,7 @@ public abstract class IdResolverFactory
      * @param db the file to read from
      * @return null, need strictly override
      */
-    protected IdResolver createFromDb(String clsName, Database db) {
-        return resolver;
+    protected void createFromDb(String clsName, Database db) {
     }
 
     /**
@@ -105,13 +102,12 @@ public abstract class IdResolverFactory
      * @param db the file to read from
      * @return null, need strictly override
      */
-    protected IdResolver createFromDb(Database db) {
-        return resolver;
+    protected void createFromDb(Database db) {
     }
 
     /**
      * Create and IdResolver from source information.
      * @return the new IdResolver
      */
-    protected abstract IdResolver createIdResolver();
+    protected abstract void createIdResolver();
 }

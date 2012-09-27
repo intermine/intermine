@@ -19,6 +19,7 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.xml.full.Item;
 
 /**
  * Tests for the FlyRegGFF3RecordHandler class.
@@ -35,7 +36,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
     private GFF3Converter converter;
-    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, org.intermine.model.fulldata.Item>());
 
     public FlyRegGFF3RecordHandlerTest(String arg) {
         super(arg);
@@ -72,7 +73,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         // uncomment to write a new target items files
         //writeItemsFile(writer.getItems(), "flyreg-tgt-items.xml");
 
-        Set expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
+        Set<Item> expected = readItemSet("FlyRegGFF3RecordHandlerTest.xml");
 
         assertEquals(expected, writer.getItems());
     }

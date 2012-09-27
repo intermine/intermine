@@ -20,6 +20,7 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class BioGridConverterTest extends ItemsTestCase
 {
@@ -36,7 +37,7 @@ public class BioGridConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new BioGridConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
@@ -57,7 +58,7 @@ public class BioGridConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
 
-        Set expected = readItemSet("BioGridConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("BioGridConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }
