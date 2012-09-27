@@ -61,7 +61,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
      * @return an IdResolver for Entrez Gene
      */
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -69,15 +69,13 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             String message = "ZFIN gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
         BufferedReader reader;
         try {
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            createFromFile(reader);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open ZFIN id mapping file: "
                     + fileName, e);
@@ -85,12 +83,18 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from ZFIN id mapping file: "
                     + fileName, e);
         }
-
-        return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
+        LOG.info("Resovler has taxon id " + taxonId + ":" + resolver.hasTaxon(taxonId));
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         // data is in format:
         // ZDBID  SYMBOL  Ensembl(Zv9)
@@ -110,6 +114,5 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             resolver.addSynonyms(taxonId, zfinId, Collections.singleton(symbol));
             resolver.addSynonyms(taxonId, zfinId, Collections.singleton(ensemblId));
         }
-        return resolver;
     }
 }

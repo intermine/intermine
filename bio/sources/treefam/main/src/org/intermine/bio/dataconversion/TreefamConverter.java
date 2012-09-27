@@ -66,7 +66,7 @@ public class TreefamConverter extends BioFileConverter
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        fishResolverFactory = new ZfinGeneIdResolverFactory();
+        fishResolverFactory = new ZfinIdentifiersResolverFactory();
 
     }
 

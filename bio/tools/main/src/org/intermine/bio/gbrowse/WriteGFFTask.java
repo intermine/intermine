@@ -132,7 +132,8 @@ public class WriteGFFTask extends Task
             BioQueries.findLocationAndObjects(os, Chromosome.class,
                     LOCATED_SEQUENCE_FEATURE_CLASS, false, true, false, 2000);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) results.iterator();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Iterator<ResultsRow> resIter = (Iterator) results.iterator();
 
         PrintWriter gffWriter = null;
 
@@ -599,7 +600,8 @@ public class WriteGFFTask extends Task
                                                    Constants.PRECOMPUTE_CATEGORY);
         Results res = os.execute(q, 50000, true, true, true);
 
-        @SuppressWarnings("unchecked") Iterator<ResultsRow> resIter = (Iterator) res.iterator();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        Iterator<ResultsRow> resIter = (Iterator) res.iterator();
 
         Map<Integer, List<String>> returnMap = new HashMap<Integer, List<String>>();
 

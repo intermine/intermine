@@ -39,6 +39,11 @@ public class IdResolver
     private static final Logger LOG = Logger.getLogger(IdResolver.class);
 
     private String clsName;
+
+    // TODO use multi-key (taxonId, clsName)
+    // map = new MultiKeyMap();
+    //map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"), value);
+
     protected Map<String, Map<String, Set<String>>> orgIdMaps =
         new HashMap<String, Map<String, Set<String>>>();
     protected Map<String, Map<String, Set<String>>> orgSynMaps =

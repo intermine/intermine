@@ -50,7 +50,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for FlyBase
      */
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -58,15 +58,13 @@ public class HgncIdResolverFactory extends IdResolverFactory
             String message = "HGNC resolver has no file name specified, set " + propName
                 + " to the file location.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
         BufferedReader reader;
         try {
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            createFromFile(reader);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open HGNC identifiers file: "
                     + fileName, e);
@@ -85,11 +83,17 @@ public class HgncIdResolverFactory extends IdResolverFactory
 //                    + cacheFileName, e);
 //        }
 
-        return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         // HGNC ID | Approved Symbol | Approved Name | Status | Previous Symbols | Aliases
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -101,7 +105,6 @@ public class HgncIdResolverFactory extends IdResolverFactory
             addSynonyms(resolver, symbol, line[4]);
             addSynonyms(resolver, symbol, line[5]);
         }
-        return resolver;
     }
 
     private void addSynonyms(IdResolver resolver, String symbol, String ids) {

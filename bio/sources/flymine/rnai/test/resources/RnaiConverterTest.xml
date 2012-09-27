@@ -20,24 +20,32 @@
 <reference name="sequenceOntologyTerm" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="8_2" class="RNAiResult">
-<attribute name="phenotype" value="Round"/>
-<attribute name="score" value="-2.15"/>
-<reference name="gene" ref_id="5_2"/>
-<reference name="rnaiScreen" ref_id="3_1"/>
-</item>
 <item id="6_1" class="Organism">
 <attribute name="taxonId" value="7227"/>
+</item>
+<item id="8_1" class="RNAiResult">
+<attribute name="phenotype" value="ND"/>
+<attribute name="reagentId" value="DRSC11276"/>
+<attribute name="score" value="-0.81"/>
+<reference name="gene" ref_id="5_1"/>
+<reference name="rnaiScreen" ref_id="3_1"/>
+</item>
+<item id="3_1" class="RNAiScreen">
+<attribute name="assay" value="Cell size inspection"/>
+<attribute name="bioSourceName" value="S2"/>
+<attribute name="bioSourceType" value="Cell line"/>
+<attribute name="identifier" value="GR00001-A-0"/>
+<attribute name="library" value="Library:  DRSC"/>
+<attribute name="method" value="High content (microscopy)"/>
+<attribute name="name" value="PDGF/VEGF signaling"/>
+<attribute name="reagentType" value="dsRNA"/>
+<attribute name="scoreCutoff" value="-2"/>
+<attribute name="scoreType" value="Z-score"/>
+<reference name="publication" ref_id="4_1"/>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
 <attribute name="url" value="http://www.sequenceontology.org"/>
-</item>
-<item id="8_1" class="RNAiResult">
-<attribute name="phenotype" value="ND"/>
-<attribute name="score" value="-0.81"/>
-<reference name="gene" ref_id="5_1"/>
-<reference name="rnaiScreen" ref_id="3_1"/>
 </item>
 <item id="4_1" class="Publication">
 <attribute name="pubMedId" value="19216764"/>
@@ -45,18 +53,11 @@
 <item id="1_1" class="DataSource">
 <attribute name="name" value="German Cancer Research Center (DKFZ)"/>
 </item>
-<item id="3_1" class="RNAiScreen">
-<attribute name="identifier" value="GR00001-A-0"/>
-<attribute name="assay" value="Cell size inspection"/>
-<attribute name="bioSourceName" value="S2"/>
-<attribute name="bioSourceType" value="Cell line"/>
-<attribute name="library" value="Library:  DRSC"/>
-<attribute name="reagentId" value="DRSC11276"/>
-<attribute name="method" value="High content (microscopy)"/>
-<attribute name="name" value="PDGF/VEGF signaling"/>
-<attribute name="reagent" value="dsRNA"/>
-<attribute name="scoreCutoff" value="-2"/>
-<attribute name="scoreType" value="Z-score"/>
-<reference name="publication" ref_id="4_1"/>
+<item id="8_2" class="RNAiResult">
+<attribute name="phenotype" value="Round"/>
+<attribute name="reagentId" value="DRSC13110"/>
+<attribute name="score" value="-2.15"/>
+<reference name="gene" ref_id="5_2"/>
+<reference name="rnaiScreen" ref_id="3_1"/>
 </item>
 </items>

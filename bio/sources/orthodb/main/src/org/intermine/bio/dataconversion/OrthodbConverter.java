@@ -65,6 +65,8 @@ public class OrthodbConverter extends BioFileConverter
 
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
 
+    private IdResolver rslv;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -126,6 +128,15 @@ public class OrthodbConverter extends BioFileConverter
         if (homologues.isEmpty()) {
             LOG.warn("orthodb.homologues property not set in project XML file");
         }
+
+        Set<String> allTaxonIds = new HashSet<String>() {
+            private static final long serialVersionUID = 1L;
+            {
+                addAll(taxonIds);
+                addAll(homologues);
+            }
+        };
+        rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -398,14 +409,7 @@ public class OrthodbConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        Set<String> allTaxonIds = new HashSet<String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                addAll(taxonIds);
-                addAll(homologues);
-            }
-        };
-        IdResolver rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+
         if (rslv == null) {
             // no id resolver available, so return the original identifier
             return identifier;

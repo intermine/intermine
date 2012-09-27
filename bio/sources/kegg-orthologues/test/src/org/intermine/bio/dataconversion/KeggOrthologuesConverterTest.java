@@ -19,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class KeggOrthologuesConverterTest extends ItemsTestCase
 {
@@ -32,7 +33,7 @@ public class KeggOrthologuesConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new KeggOrthologuesConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG18814"));
@@ -55,7 +56,7 @@ public class KeggOrthologuesConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
 
-        Set expected = readItemSet("KeggOrthologuesConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("KeggOrthologuesConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }
