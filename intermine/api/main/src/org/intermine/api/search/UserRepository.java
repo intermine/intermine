@@ -28,6 +28,14 @@ public class UserRepository extends SearchRepository
         super(profile);
     }
 
+    /**
+     * Constructor.
+     * @param sr The search repository used to create the new one
+     */
+    public UserRepository(SearchRepository sr) {
+        super(sr);
+    }
+
     private static final Logger LOG = Logger.getLogger(UserRepository.class);
 
     @Override
