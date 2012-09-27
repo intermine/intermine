@@ -250,11 +250,7 @@ public class Profile
         uosw.store(p);
         this.isSuperUser = isSuperUser;
         if (isSuperUser) {
-            searchRepository = new GlobalRepository(this);
-        } else {
-            if ( searchRepository instanceof GlobalRepository) {
-                ((GlobalRepository) searchRepository).deleteGlobalRepository(this);
-            }
+            searchRepository = new GlobalRepository(searchRepository);
         }
     }
 
