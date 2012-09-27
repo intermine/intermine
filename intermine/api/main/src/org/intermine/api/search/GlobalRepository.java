@@ -40,7 +40,21 @@ public class GlobalRepository extends UserRepository
      */
     public GlobalRepository(Profile profile) {
         super(profile);
-        GLOBALS.add(this);
+        if (getGlobalSearchRepository(profile) == null) {
+            GLOBALS.add(this);
+        }
+    }
+
+    /**
+     * Constructor
+     * Build a global search repository from the search repository given in input
+     * @param sr The search repository used to create the global
+     */
+    public GlobalRepository(SearchRepository sr) {
+        super(sr);
+        if (getGlobalSearchRepository(profile) == null) {
+            GLOBALS.add(this);
+        }
     }
 
     @Override

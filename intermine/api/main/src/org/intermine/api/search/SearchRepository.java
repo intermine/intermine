@@ -50,10 +50,10 @@ public abstract class SearchRepository implements WebSearchWatcher
 
     private static final Logger LOG = Logger.getLogger(SearchRepository.class);
 
-    protected final Set<WebSearchable> searchItems = new HashSet<WebSearchable>();
-    protected final Map<String, Directory> indexes = new HashMap<String, Directory>();
+    protected Set<WebSearchable> searchItems = new HashSet<WebSearchable>();
+    protected Map<String, Directory> indexes = new HashMap<String, Directory>();
 
-    private final Profile profile;
+    protected final Profile profile;
     protected final TagManager tagManager;
 
     /**
@@ -65,6 +65,17 @@ public abstract class SearchRepository implements WebSearchWatcher
         this.tagManager = new TagManagerFactory(profile.getProfileManager()).getTagManager();
         populateSearchItems();
         startListening();
+    }
+
+    /**
+     * Constructor. Create a new search repository from the given search repository.
+     * @param sr The search repo used to create the new one.
+     */
+    public SearchRepository(SearchRepository sr) {
+        this.searchItems = sr.searchItems;
+        this.indexes = sr.indexes;
+        this.profile = sr.profile;
+        this.tagManager = sr.tagManager;
     }
 
     /**
@@ -106,6 +117,10 @@ public abstract class SearchRepository implements WebSearchWatcher
 
     static void clearGlobalRepositories() {
         GLOBALS.clear();
+    }
+
+    public void addGlobalRepository() {
+        GLOBALS.add(this);
     }
 
     /**
