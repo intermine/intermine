@@ -28,6 +28,7 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
 import org.intermine.api.search.DeletionEvent;
+import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
@@ -36,6 +37,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -66,7 +68,7 @@ public class Profile
     protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
     protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
     protected boolean savingDisabled;
-    private final SearchRepository searchRepository;
+    private SearchRepository searchRepository;
     private String token;
 
     /**
@@ -233,6 +235,27 @@ public class Profile
      */
     public boolean getSuperuser() {
         return isSuperuser();
+    }
+
+    /**
+     * Set the superuser flag and store it in userprofile database
+     * @param isSuperUser if true the profile is set as superuser
+     * @throws ObjectStoreException if an error occurs during storage of the object
+     */
+    public void setSuperuser(boolean isSuperUser) throws ObjectStoreException {
+        ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
+        UserProfile p = (UserProfile) uosw.getObjectStore().getObjectById(userId,
+            UserProfile.class);
+        p.setSuperuser(isSuperUser);
+        uosw.store(p);
+        this.isSuperUser = isSuperUser;
+        if (isSuperUser) {
+            searchRepository = new GlobalRepository(this);
+        } else {
+            if ( searchRepository instanceof GlobalRepository) {
+                ((GlobalRepository) searchRepository).deleteGlobalRepository(this);
+            }
+        }
     }
 
     /**
@@ -765,5 +788,14 @@ public class Profile
      */
     public Map<String, InterMineBag> getSharedBags() {
         return getSharedBagManager().getSharedBags(this);
+    }
+
+    /**
+     * Update the user repository with the sharedbags
+     */
+    public void updateUserRepositoryWithSharedBags() {
+        if (searchRepository instanceof UserRepository) {
+            ((UserRepository) searchRepository).updateUserRepositoryWithSharedBags();
+        }
     }
 }

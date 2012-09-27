@@ -91,6 +91,19 @@ public abstract class SearchRepository implements WebSearchWatcher
         return Collections.unmodifiableSet(GLOBALS);
     }
 
+    /**
+     * Get the search repository registered as global repositories for the user specified in input.
+     * @return the global search repositories.
+     */
+    public static SearchRepository getGlobalSearchRepository(Profile profile) {
+        for (SearchRepository sr: GLOBALS) {
+            if (profile.equals(sr.getProfile())) {
+                return sr;
+            }
+        }
+        return null;
+    }
+
     static void clearGlobalRepositories() {
         GLOBALS.clear();
     }

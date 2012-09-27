@@ -77,7 +77,7 @@ public class BagManager
         ProfileManager pm = superProfile.getProfileManager();
         this.tagManager = new TagManagerFactory(pm).getTagManager();
         this.sharedBagManager = SharedBagManager.getInstance(pm);
-        this.osProduction = superProfile.getProfileManager().getProductionObjectStore();
+        this.osProduction = pm.getProductionObjectStore();
     }
 
     /**
@@ -85,7 +85,13 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public Map<String, InterMineBag> getGlobalBags() {
-        return getUserBagsWithTag(superProfile, TagNames.IM_PUBLIC);
+        Map<String, InterMineBag> globalBags = new HashMap<String, InterMineBag>();
+        ProfileManager pm = superProfile.getProfileManager();
+        List<Profile> superUserProfiles = pm.getSuperUsersProfile();
+        for (Profile superUserProfile : superUserProfiles) {
+            globalBags.putAll(getUserBagsWithTag(superUserProfile, TagNames.IM_PUBLIC));
+        }
+        return globalBags;
     }
 
     /**
@@ -98,7 +104,13 @@ public class BagManager
         if (!tags.contains(TagNames.IM_PUBLIC)) {
             tags.add(TagNames.IM_PUBLIC);
         }
-        return getUserBagsWithTags(superProfile, tags);
+        Map<String, InterMineBag> globalBagsWithTags = new HashMap<String, InterMineBag>();
+        ProfileManager pm = superProfile.getProfileManager();
+        List<Profile> superUserProfiles = pm.getSuperUsersProfile();
+        for (Profile superUserProfile : superUserProfiles) {
+            globalBagsWithTags.putAll(getUserBagsWithTags(superUserProfile, tags));
+        }
+        return globalBagsWithTags;
     }
 
     /**

@@ -10,7 +10,6 @@
 <html:xhtml/>
 <tiles:importAttribute name="bagName" ignore="true"/>
 <tiles:importAttribute name="id" ignore="true"/>
-<c:if test="${empty bagIsPublic}">
 <div>
 <span id="shareBag-${id}">
   <span id="sharingUsers-${id}" class="current-tags">
@@ -20,6 +19,7 @@
      </c:forEach>
 </script>
   </span>
+<c:if test="${shareBags}">
   <span id="addLink-${id}">
     <a class="addTagLink" onclick="startSharingBag('${id}')" >Share with users</a>
   </span>
@@ -29,9 +29,9 @@
     <input type="button" style="font-size: 10px" value="Add" onclick="addUser('${id}', '${bagName}')"/>
     <input type="button" style="font-size: 10px" value="Done" onclick="stopSharingBag('${id}')"/>
   </span>
+</c:if>
 </span>
 
-
 </div>
-</c:if>
+
 <!-- /shareBag.jsp -->
