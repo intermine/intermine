@@ -82,17 +82,20 @@ public class WebSearchableListController extends TilesAction
         HttpSession session = request.getSession();
         im = SessionMethods.getInterMineAPI(session);
         tagManager = im.getTagManager();
-        if (type.equals(TagTypes.BAG) && im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
+        if (type.equals(TagTypes.BAG)
+            && im.getBagManager().isAnyBagToUpgrade(SessionMethods.getProfile(session))) {
             ActionMessages actionErrors = getErrors(request);
-            actionErrors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("login.upgradeListManually"));
+            actionErrors.add(ActionMessages.GLOBAL_MESSAGE,
+                new ActionMessage("login.upgradeListManually"));
             saveErrors(request, actionErrors);
         }
-        if (session.getAttribute("IS_SUPERUSER") != null
+/*        if (session.getAttribute("IS_SUPERUSER") != null
                         && session.getAttribute("IS_SUPERUSER").equals(Boolean.TRUE)) {
             filteredWebSearchables = getFilterWebSearchables(request, type,
                                                           Scope.USER, tags);
 
-        } else if (scope.equals(Scope.ALL)) {
+        } else*/
+        if (scope.equals(Scope.ALL)) {
             Map globalWebSearchables =
                 getFilterWebSearchables(request, type, Scope.GLOBAL, tags);
             Map userWebSearchables =
@@ -227,7 +230,6 @@ public class WebSearchableListController extends TilesAction
 
     private Map<String, WebSearchable> sortListByMostPopular(final Map<String, WebSearchable>
         filteredWebSearchables, HttpSession session) {
-        InterMineAPI im = SessionMethods.getInterMineAPI(session);
         TemplateManager tm = im.getTemplateManager();
         Profile profile = SessionMethods.getProfile(session);
         List<String> mostPopulareTemplateNames;

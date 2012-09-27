@@ -23,7 +23,9 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.search.Scope;
@@ -309,7 +311,13 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     public Map<String, ApiTemplate> getGlobalTemplates() {
-        return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC);
+        Map<String, ApiTemplate> globalTemplates = new HashMap<String, ApiTemplate>();
+        ProfileManager pm = superProfile.getProfileManager();
+        List<Profile> superUserProfiles = pm.getSuperUsersProfile();
+        for (Profile superUserProfile : superUserProfiles) {
+            globalTemplates.putAll(getTemplatesWithTag(superUserProfile, TagNames.IM_PUBLIC));
+        }
+        return globalTemplates;
     }
 
     /**
@@ -319,7 +327,14 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     public Map<String, ApiTemplate> getGlobalTemplates(boolean filterOutAdmin) {
-        return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC, filterOutAdmin);
+        Map<String, ApiTemplate> globalTemplates = new HashMap<String, ApiTemplate>();
+        ProfileManager pm = superProfile.getProfileManager();
+        List<Profile> superUserProfiles = pm.getSuperUsersProfile();
+        for (Profile superUserProfile : superUserProfiles) {
+            globalTemplates.putAll(getTemplatesWithTag(superUserProfile,
+                                   TagNames.IM_PUBLIC, filterOutAdmin));
+        }
+        return globalTemplates;
     }
 
     /**
