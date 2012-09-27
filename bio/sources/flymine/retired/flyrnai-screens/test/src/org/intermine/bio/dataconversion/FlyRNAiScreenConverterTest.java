@@ -19,6 +19,7 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class FlyRNAiScreenConverterTest extends ItemsTestCase
 {
@@ -32,7 +33,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlyRNAiScreenConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG31973"));
@@ -53,7 +54,7 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "flyrnai-tgt-items.xml");
 
-        Set expected = readItemSet("FlyRNAiConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("FlyRNAiConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }

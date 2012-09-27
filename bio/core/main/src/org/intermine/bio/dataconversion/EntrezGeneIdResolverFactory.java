@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -75,9 +74,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(String taxonId, boolean failOnError) {
-        if (resolver == null && !caughtError) {
+        if (!caughtError) {
             try {
-                this.resolver = createIdResolver(taxonId);
+                createIdResolver(taxonId);
             } catch (Exception e) {
                 this.caughtError = true;
                 if (failOnError) {
@@ -96,9 +95,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(Collection<String> taxonIds, boolean failOnError) {
-        if (resolver == null && !caughtError) {
+        if (!caughtError) {
             try {
-                this.resolver = createIdResolver(taxonIds);
+                createIdResolver(taxonIds);
             } catch (Exception e) {
                 this.caughtError = true;
                 if (failOnError) {
@@ -113,16 +112,20 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * Build an IdResolver from Entrez Gene gene_info file
      * @return an IdResolver for Entrez Gene
      */
-    protected IdResolver createIdResolver(String taxonId) {
-        List<String> taxonIdList = Arrays.asList(taxonId);
-        return createIdResolver(taxonIdList);
+    protected void createIdResolver(String taxonId) {
+        // Don't pass null to asList - java bug (SUN already fixed it???)
+        if (taxonId == null) {
+            createIdResolver(new HashSet<String>());
+        } else {
+            createIdResolver(Arrays.asList(taxonId));
+        }
     }
 
     /**
      * Build an IdResolver from Entrez Gene gene_info file
      * @return an IdResolver for Entrez Gene
      */
-    protected IdResolver createIdResolver(Collection<String> taxonIds) {
+    protected void createIdResolver(Collection<String> taxonIds) {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -130,15 +133,13 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             String message = "Entrez gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
         BufferedReader reader;
         try {
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
-            resolver = createFromFile(reader, taxonIds);
+            createFromFile(reader, taxonIds);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open gene_info file: "
                     + fileName, e);
@@ -146,20 +147,20 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from gene_info file: "
                     + fileName, e);
         }
-
-        return resolver;
     }
 
 
     @Override
     // Not implemented. TaxonId is needed as argument
-    protected IdResolver createIdResolver() {
-        return null;
+    protected void createIdResolver() {
     }
 
-    private IdResolver createFromFile(BufferedReader reader,
+    private void createFromFile(BufferedReader reader,
             Collection<String> taxonIds) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
 
         NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader,
                 new HashSet<String>(taxonIds));
@@ -172,6 +173,10 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             if (!records.containsKey(taxonId)) {
                 LOG.warn("No records in gene_info file for taxon: "
                         + taxonId);
+            }
+
+            if (resolver.hasTaxon(taxonId)) {
+                continue;
             }
 
             for (GeneInfoRecord record : records.get(taxonId)) {
@@ -193,7 +198,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 resolver.addSynonyms(taxonId, primaryIdentifier, record.synonyms);
             }
         }
-        return resolver;
     }
 
 //    private Set<String> lowerCase(Set<String> input) {

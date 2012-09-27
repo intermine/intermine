@@ -18,8 +18,6 @@ import java.util.Set;
  */
 public class MockIdResolverFactory extends IdResolverFactory
 {
-    private IdResolver resolver = null;
-
     /**
      * Construct with class name for mock IdResolver
      * @param clsName the type to resolve
@@ -32,8 +30,7 @@ public class MockIdResolverFactory extends IdResolverFactory
      * Create a MockIdResolver
      * @return a MockIdResolver
      */
-    @Override
-    protected IdResolver createIdResolver() {
+    public IdResolver getIdResolver() {
         return resolver;
     }
 
@@ -46,5 +43,9 @@ public class MockIdResolverFactory extends IdResolverFactory
      */
     public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
         resolver.addSynonyms(taxonId, primaryId, synonyms);
+    }
+
+    @Override
+    protected void createIdResolver() {
     }
 }

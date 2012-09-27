@@ -68,6 +68,8 @@ public class PantherConverter extends BioFileConverter
         add("15492219");
     }};
 
+    private IdResolver rslv;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -184,6 +186,19 @@ public class PantherConverter extends BioFileConverter
         if (homologues.isEmpty()) {
             LOG.warn("panther.homologues property not set in project XML file");
         }
+
+        //Create id resolver
+        Set<String> allTaxonIds = new HashSet<String>() {
+            private static final long serialVersionUID = 1L;
+            {
+                addAll(taxonIds);
+                addAll(homologues);
+            }
+        };
+        rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        IdResolverService.getFishIdResolver();
+        LOG.warn("after fish resolver");
+
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
@@ -312,14 +327,6 @@ public class PantherConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        Set<String> allTaxonIds = new HashSet<String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                addAll(taxonIds);
-                addAll(homologues);
-            }
-        };
-        IdResolver rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         if (rslv == null) {
             // no id resolver available, so return the original identifier
             return identifier;

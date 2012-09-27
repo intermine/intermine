@@ -58,7 +58,7 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
 
 
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -66,15 +66,13 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
             String message = "MGI gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
         BufferedReader reader;
         try {
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            createFromFile(reader);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open MGI id mapping file: "
                     + fileName, e);
@@ -82,12 +80,16 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from MGI id mapping file: "
                     + fileName, e);
         }
-
-        return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -129,6 +131,5 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
                 }
             }
         }
-        return resolver;
     }
 }
