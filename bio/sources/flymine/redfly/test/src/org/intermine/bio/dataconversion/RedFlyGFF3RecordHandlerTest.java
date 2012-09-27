@@ -20,6 +20,7 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Tests for the RedFlyGFF3RecordHandler class.
@@ -36,7 +37,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
     private String dataSetTitle = "FlyReg data set";
     private GFF3Converter converter;
     private String ENDL = System.getProperty("line.separator");
-    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
 
     public RedFlyGFF3RecordHandlerTest(String arg) {
         super(arg);
@@ -73,7 +74,7 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         // uncomment to write a new tgt items file
         //writeItemsFile(writer.getItems(), "redfly-tgt-items.xml");
 
-        Set expected = new HashSet(readItemSet("RedFlyGFF3RecordHandlerTest.xml"));
+        Set<org.intermine.xml.full.Item> expected = new HashSet<org.intermine.xml.full.Item>(readItemSet("RedFlyGFF3RecordHandlerTest.xml"));
         //System.out.println(ItemsTestCase.compareItemSets(expected, allItems));
         assertEquals(expected, writer.getItems());
     }

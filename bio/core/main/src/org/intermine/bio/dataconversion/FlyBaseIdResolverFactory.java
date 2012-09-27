@@ -57,8 +57,15 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for FlyBase
      */
     @Override
-    protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver(clsName);
+    protected void createIdResolver() {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         try {
             db = DatabaseFactory.getDatabase(propName);
@@ -68,22 +75,20 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(clsName, f);
+                createFromFile(clsName, f);
             } else {
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
-                resolver = createFromDb(clsName, db);
+                createFromDb(clsName, db);
                 resolver.writeToFile(f);
                 System.out .println("FlyBaseIdResolver caching in file: " + cacheFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return resolver;
     }
 
     @Override
-    protected IdResolver createFromDb(String clsName, Database db) {
-        IdResolver resolver = new IdResolver(clsName);
+    protected void createFromDb(String clsName, Database db) {
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
@@ -223,7 +228,5 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-
-        return resolver;
     }
 }

@@ -35,6 +35,8 @@ public class IdResolverService
 {
     protected static final Logger LOG = Logger.getLogger(IdResolverService.class);
 
+    public static IdResolver resolver = null;
+
     private IdResolverService() {
     }
 
@@ -53,7 +55,11 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
-        return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
+        if (resolver == null) {
+            resolver = new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
+        }
+        LOG.info("service resolver: " + resolver.orgIdMaps.keySet());
+        return resolver;
     }
 
     /**
@@ -251,7 +257,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getMockIdResolver(String clsName) {
-        return new MockIdResolverFactory(clsName).createIdResolver();
+        return new MockIdResolverFactory(clsName).getIdResolver();
     }
 
     /**

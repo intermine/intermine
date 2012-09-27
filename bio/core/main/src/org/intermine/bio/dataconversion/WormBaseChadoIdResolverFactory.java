@@ -54,8 +54,14 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for WormBase
      */
     @Override
-    protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver(clsName);
+    protected void createIdResolver() {
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         try {
             db = DatabaseFactory.getDatabase(propName);
@@ -65,21 +71,19 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("WormBaseIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(clsName, f);
+                createFromFile(clsName, f);
             } else {
                 System.out .println("WormBaseIdResolver reading from database: " + db.getName());
-                resolver = createFromDb(db);
+                createFromDb(db);
                 resolver.writeToFile(f);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return resolver;
     }
 
     @Override
-    public IdResolver createFromDb(Database database) {
-        IdResolver resolver = new IdResolver(clsName);
+    public void createFromDb(Database database) {
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
@@ -178,6 +182,5 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-        return resolver;
     }
 }

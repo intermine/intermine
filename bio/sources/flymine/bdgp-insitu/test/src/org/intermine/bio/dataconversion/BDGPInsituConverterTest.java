@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 import org.intermine.objectstore.ObjectStoreException;
 
 import java.io.StringReader;
@@ -37,7 +38,7 @@ public class BDGPInsituConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new BDGPInsituConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
         resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG10002"));

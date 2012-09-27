@@ -19,6 +19,7 @@ import java.util.Set;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class PsiConverterTest extends ItemsTestCase
 {
@@ -31,7 +32,7 @@ public class PsiConverterTest extends ItemsTestCase
     }
 
     public void setUp() throws Exception {
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new PsiConverter(itemWriter,  Model.getInstanceByName("genomic"));
         converter.setIntactOrganisms("7227");
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
@@ -51,7 +52,7 @@ public class PsiConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "psi-tgt-items.xml");
 
-        Set expected = readItemSet("PsiConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("PsiConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }

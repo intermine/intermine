@@ -43,7 +43,7 @@ public class OntologyAnnotationConverterTest extends ItemsTestCase
         Reader goOboReader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
-        writer = new MockItemWriter(new LinkedHashMap());
+        writer = new MockItemWriter(new LinkedHashMap<String, org.intermine.model.fulldata.Item>());
         converter = new OntologyAnnotationConverter(writer, model);
         converter.setGaff("2.0");
         converter.setOntologyPrefix("GO");

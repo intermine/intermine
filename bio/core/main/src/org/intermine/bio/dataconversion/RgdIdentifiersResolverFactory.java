@@ -58,7 +58,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
     }
 
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -66,12 +66,10 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
             String message = "RGD gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
         try {
-            resolver = createFromFile(clsName, new File(fileName));
+            createFromFile(new BufferedReader(new FileReader(new File(fileName))));
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open RGD id mapping file: "
                     + fileName, e);
@@ -79,15 +77,17 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from RGD id mapping file: "
                     + fileName, e);
         }
-
-        return resolver;
     }
 
-    @Override
-    public IdResolver createFromFile(String clsName, File f) throws IOException {
-        FileReader fr = new FileReader(f);
-        BufferedReader reader = new BufferedReader(fr);
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -117,7 +117,6 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                 resolver.addSynonyms(taxonId, rgdId, Collections.singleton(entrez));
             }
         }
-        return resolver;
     }
 
     private Set<String> parseEnsemblIds(String fromFile) {
