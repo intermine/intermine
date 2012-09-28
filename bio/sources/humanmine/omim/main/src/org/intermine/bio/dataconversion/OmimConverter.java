@@ -51,11 +51,12 @@ public class OmimConverter extends BioDirectoryConverter
     private Map<String, Item> diseases = new HashMap<String, Item>();
 
     private String organism;
-    private EntrezGeneIdResolverFactory resolverFactory = null;
 
     private static final String OMIM_TXT_FILE = "omim.txt";
     private static final String MORBIDMAP_FILE = "morbidmap";
     private static final String PUBMED_FILE = "pubmed_cited";
+
+    private IdResolver rslv;
 
     /**
      * Constructor
@@ -64,7 +65,6 @@ public class OmimConverter extends BioDirectoryConverter
      */
     public OmimConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        resolverFactory = new EntrezGeneIdResolverFactory();
     }
 
     @Override
@@ -79,7 +79,9 @@ public class OmimConverter extends BioDirectoryConverter
     public void process(File dataDir) throws Exception {
         Map<String, File> files = readFilesInDir(dataDir);
 
-        organism = getOrganism("9606");
+        organism = getOrganism(HUMAN_TAXON);
+
+        rslv = IdResolverService.getIdResolverByOrganism(HUMAN_TAXON);
 
         String[] requiredFiles = new String[] {OMIM_TXT_FILE, MORBIDMAP_FILE, PUBMED_FILE};
         Set<String> missingFiles = new HashSet<String>();
@@ -275,15 +277,14 @@ public class OmimConverter extends BioDirectoryConverter
     }
 
     private String resolveGene(String symbol) {
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions("" + HUMAN_TAXON, symbol);
+        int resCount = rslv.countResolutions("" + HUMAN_TAXON, symbol);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + symbol + " count: " + resCount + " - "
-                     + resolver.resolveId("" + HUMAN_TAXON, symbol));
+                     + rslv.resolveId("" + HUMAN_TAXON, symbol));
             return null;
         }
-        return resolver.resolveId("" + HUMAN_TAXON, symbol).iterator().next();
+        return rslv.resolveId("" + HUMAN_TAXON, symbol).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
