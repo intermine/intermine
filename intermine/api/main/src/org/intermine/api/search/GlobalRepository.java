@@ -45,18 +45,6 @@ public class GlobalRepository extends UserRepository
         }
     }
 
-    /**
-     * Constructor
-     * Build a global search repository from the search repository given in input
-     * @param sr The search repository used to create the global
-     */
-    public GlobalRepository(SearchRepository sr) {
-        super(sr);
-        if (getGlobalSearchRepository(profile) == null) {
-            GLOBALS.add(this);
-        }
-    }
-
     @Override
     protected void handleCreation(CreationEvent e) {
         // Ignore => cannot be global on creation.

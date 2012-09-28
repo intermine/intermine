@@ -68,17 +68,6 @@ public abstract class SearchRepository implements WebSearchWatcher
     }
 
     /**
-     * Constructor. Create a new search repository from the given search repository.
-     * @param sr The search repo used to create the new one.
-     */
-    public SearchRepository(SearchRepository sr) {
-        this.searchItems = sr.searchItems;
-        this.indexes = sr.indexes;
-        this.profile = sr.profile;
-        this.tagManager = sr.tagManager;
-    }
-
-    /**
      * Begin listening for events on the items of interest.
      */
     protected void startListening() {
