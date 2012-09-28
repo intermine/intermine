@@ -44,7 +44,7 @@
              wrapper.fadeIn().removeClass('collection-table');
            },
            error: function(jXHR, textStatus) {
-             throw new Error('Failed to load Displayer "' + ${displayer.displayerName} + '", ' + textStatus);
+             throw new Error('Failed to load Displayer "${displayer.displayerName}" ' + textStatus);
            },
            complete: function(jXHR, textStatus) {
                //
