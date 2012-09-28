@@ -135,23 +135,23 @@ public class SubmissionOverlapsAction extends InterMineAction
             q.addView(overlapFeatureType + ".gene.primaryIdentifier");
         }
 
-        
-        // this needed to go after the new result tables:
-        // the inIds cannot currently be serialised, and therefore used by the webservice
-        // substituted by the ONE OF constraint
-        // TODO check performance of queries
-        
-        // q.addConstraint(Constraints.inIds(overlapFeatureType,
-        //        getOverlappingFeaturesId(submissionOverlapsForm, im)));
 
-        Set<String> idS = new HashSet<String>();
-        for(Integer integer : getOverlappingFeaturesId(submissionOverlapsForm, im))
-            idS.add(integer.toString());
-        q.addConstraint(Constraints.oneOfValues(overlapFeatureType + ".id", idS));
+        // this was needed after the new result tables:
+        // the inIds was not serializable, and therefore could not be used by the webservice
+        // substituted by the ONE OF constraint, which performed about 10% worse
+        // can go now!
+//      Set<String> idS = new HashSet<String>();
+//      for(Integer integer : getOverlappingFeaturesId(submissionOverlapsForm, im))
+//          idS.add(integer.toString());
+//      q.addConstraint(Constraints.oneOfValues(overlapFeatureType + ".id", idS));
 
-        LOG.info("OVERLAP QUERY: " + q.toString());
-        LOG.info("OVERLAP QUERYJSON: " + q.toJson());
-        
+        q.addConstraint(Constraints.inIds(overlapFeatureType,
+                getOverlappingFeaturesId(submissionOverlapsForm, im)));
+
+
+//        LOG.info("OVERLAP QUERY: " + q.toString());
+//        LOG.info("OVERLAP QUERYJSON: " + q.toJson());
+
     }
 
 
@@ -269,7 +269,7 @@ public class SubmissionOverlapsAction extends InterMineAction
 
         ObjectStoreInterMineImpl ob = (ObjectStoreInterMineImpl) im.getObjectStore();
 
-//        LOG.info("OVERLAP --" + ob.generateSql(query));
+        LOG.debug("OVERLAP --" + ob.generateSql(query));
 
         Results results = im.getObjectStore().execute(query, 100000, true, false, true);
 //        SingletonResults results = im.getObjectStore()
