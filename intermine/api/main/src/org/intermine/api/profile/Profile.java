@@ -249,9 +249,6 @@ public class Profile
         p.setSuperuser(isSuperUser);
         uosw.store(p);
         this.isSuperUser = isSuperUser;
-        if (isSuperUser) {
-            searchRepository = new GlobalRepository(searchRepository);
-        }
     }
 
     /**
