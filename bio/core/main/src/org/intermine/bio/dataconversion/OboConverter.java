@@ -210,6 +210,7 @@ public class OboConverter extends DataConverter
                 xrefs.put(identifier, refId);
                 xrefTerm.setAttribute("identifier", identifier);
                 xrefTerm.addToCollection("crossReferences", item.getIdentifier());
+                store(xrefTerm);
             }
             item.addToCollection("crossReferences", refId);
         }
