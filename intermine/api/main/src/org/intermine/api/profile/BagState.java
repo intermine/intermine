@@ -13,9 +13,10 @@ package org.intermine.api.profile;
 /**
  * Enumeration for describing the state of a bag:
  * current
- * not current(= the upgrading process has not been executed yet)
+ * not current (= the upgrading process has not been executed yet)
+ * upgrading (= the upgrading process is upgrading it)
  * to upgrade (= the upgrading process has not been able to upgrade it because there are some
  * conflicts that the user has to solve manually ))
  * @author Daniela Butano
  */
-public enum BagState { CURRENT, NOT_CURRENT, TO_UPGRADE }
+public enum BagState { CURRENT, NOT_CURRENT, UPGRADING, TO_UPGRADE }

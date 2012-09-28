@@ -58,7 +58,6 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        LOG.info("Resovler has taxon id " + taxonId + ":" + resolver.hasTaxon(taxonId));
 
         if (resolver == null) {
             resolver = new IdResolver(clsName);
