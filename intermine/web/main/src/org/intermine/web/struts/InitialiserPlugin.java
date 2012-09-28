@@ -156,6 +156,9 @@ public class InitialiserPlugin implements PlugIn
             if (!verifyTablesExist(userprofileOSW)) {
                 return;
             }
+            if (!verifySuperUserExist(userprofileOSW)) {
+                return;
+            }
             //verify if intermine_state exists in the savedbag table and if it has the right type
             if (!verifyListTables(userprofileOSW)) {
                 return;
@@ -732,22 +735,34 @@ public class InitialiserPlugin implements PlugIn
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
         }
-        setSuperUser(osw);
     }
 
-    private void setSuperUser(ObjectStoreWriter uosw) {
-        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-        UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setUsername(superuser);
-        Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("username");
-        try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+    private boolean verifySuperUserExist(ObjectStoreWriter uosw) {
+        UserProfile superuserProfile = getSuperUser(uosw);
+        if (superuserProfile != null) {
             superuserProfile.setSuperuser(true);
-            uosw.store(superuserProfile);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Unable to load user profile", e);
+            try {
+                uosw.store(superuserProfile);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Unable to set the flag to the user profile", e);
+            }
+            return true;
         }
+        blockingErrorKeys.put("errors.init.superusernotexist", null);
+        return false;
+    }
+    private UserProfile getSuperUser(ObjectStoreWriter uosw) {
+         String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+         UserProfile superuserProfile = new UserProfile();
+         superuserProfile.setUsername(superuser);
+         Set<String> fieldNames = new HashSet<String>();
+         fieldNames.add("username");
+         try {
+             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+         } catch (ObjectStoreException e) {
+             throw new RuntimeException("Unable to load user profile", e);
+         }
+         return superuserProfile;
     }
 
     /**
