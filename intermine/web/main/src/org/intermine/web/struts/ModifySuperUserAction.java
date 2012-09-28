@@ -48,7 +48,8 @@ public class ModifySuperUserAction extends InterMineAction
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
+        HttpSession session = request.getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ProfileManager pm = im.getProfileManager();
         List<String> allUsers = pm.getProfileUserNames();
         ModifySuperUserForm superUserForm = (ModifySuperUserForm) form;
@@ -64,7 +65,7 @@ public class ModifySuperUserAction extends InterMineAction
             recordMessage(new ActionMessage("errors.users.superuserinpropertiesnotselected"),
                          request);
         }
-        Profile profileLogged = SessionMethods.getProfile(request.getSession());
+        Profile profileLogged = SessionMethods.getProfile(session);
         String userLogged = profileLogged.getUsername();
         if (!superUsersList.contains(userLogged)) {
             recordMessage(new ActionMessage("errors.users.userloggednotselected"),
@@ -77,11 +78,16 @@ public class ModifySuperUserAction extends InterMineAction
             if (superUsersList.contains(user)) {
                 if (!profileToUpdate.isSuperuser()) {
                     profileToUpdate.setSuperuser(true);
+                    SessionMethods.setGlobalSearchRepository(session.getServletContext(),
+                        new GlobalRepository(profileToUpdate));
                 }
             } else {
                 if (!user.equals(suInProperties) && !user.equals(userLogged)) {
                     if (profileToUpdate.isSuperuser()) {
                         profileToUpdate.setSuperuser(false);
+                        GlobalRepository globalRepository = (GlobalRepository) SessionMethods
+                            .getGlobalSearchRepository(session.getServletContext());
+                        globalRepository.deleteGlobalRepository(profileToUpdate);
                     }
                 }
             }
