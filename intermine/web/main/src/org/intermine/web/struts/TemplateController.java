@@ -191,6 +191,9 @@ public class TemplateController extends TilesAction
         if (constraintLogic.contains("or") || constraintLogic.contains("not")) {
             request.setAttribute("displayLogicExpression", "true");
         }
+        if (profile.getSavedTemplates().get(displayTemplate.getName()) != null) {
+            request.setAttribute("IS_OWNER", true);
+        }
         return null;
     }
 
