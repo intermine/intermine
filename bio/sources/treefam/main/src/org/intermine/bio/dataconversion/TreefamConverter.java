@@ -49,9 +49,7 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, GeneHolder> idsToGenes = new HashMap<String, GeneHolder>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
     private Map<String, String[]> config = new HashMap<String, String[]>();
-    // protected IdResolverFactory flyResolverFactory;
     private static String evidenceRefId = null;
-    // protected IdResolverFactory fishResolverFactory;
     private static final String ZFIN_TAXON = "7955";
     private static final String FLY_TAXON = "7227";
 
@@ -67,9 +65,6 @@ public class TreefamConverter extends BioFileConverter
         throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        // flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        // fishResolverFactory = new ZfinIdentifiersResolverFactory();
-
     }
 
     /**
@@ -176,12 +171,6 @@ public class TreefamConverter extends BioFileConverter
         String identifierType = type;
         String identifier = ident;
         if (ZFIN_TAXON.equals(taxonId) || FLY_TAXON.equals(taxonId)) {
-            /*IdResolverFactory idResolverFactory = null;
-            if (ZFIN_TAXON.equals(taxonId)) {
-                idResolverFactory = fishResolverFactory;
-            } else if (FLY_TAXON.equals(taxonId)) {
-                idResolverFactory = flyResolverFactory;
-            }*/
             identifier = resolveGene(taxonId, identifier);
             identifierType = "primaryIdentifier";
             if (identifier == null) {
@@ -366,7 +355,6 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        //IdResolver resolver = IdResolverService.getIdResolverByOrganism(taxonId);
         if (rslv == null) {
             // no id resolver available, so return the original identifier
             return identifier;
