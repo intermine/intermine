@@ -71,8 +71,14 @@ public class UpgradeBagList implements Runnable
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
             String bagName = bag.getName();
-            
+
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
+                try {
+                    bag.setState(BagState.UPGRADING);
+                } catch (ObjectStoreException ose) {
+                    LOG.error("Problem to update the status to UPGRADING for list "
+                        + bag.getName(), ose);
+                }
                 Map<String, Object> bagAttributes = new HashMap<String, Object>();
                 bagAttributes.put(STATUS, Constants.UPGRADING_BAG);
                 status.put(bagName, bagAttributes);
