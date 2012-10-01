@@ -56,10 +56,10 @@
     <h1 class="title">
         <im:displaypath path="${object.type}"/>:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
-          <c:if test="${status.count > 0}"> </c:if><strong>${title.value.formatted}</strong>
+          <c:if test="${status.count > 0}"> </c:if><strong><c:out value="${title.value.formatted}" /></strong>
         </c:forEach>
         <c:forEach var="title" varStatus="status" items="${object.titleSub}">
-          <c:if test="${status.count > 0}"> </c:if>${title.value.formatted}
+          <c:if test="${status.count > 0}"> </c:if><c:out value="${title.value.formatted}" />
         </c:forEach>
     </h1>
     </a>
@@ -100,7 +100,7 @@
             <c:otherwise>
               <c:if test="${!field.doNotTruncate && !empty field.value}">
                 <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
-                <td><strong>${field.value}</strong></td>
+                <td><strong><c:out value="${field.value}" /></strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
               </c:if>
             </c:otherwise>
@@ -115,7 +115,7 @@
           <tr>
             <c:if test="${!empty field.value}">
               <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
-              <td><strong>${field.value}</strong></td>
+              <td><strong><c:out value="${field.value}" /></strong></td>
             </c:if>
           </tr>
         </c:if>
