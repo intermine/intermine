@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -19,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.intermine.api.query.MainHelper;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Address;
+import org.intermine.model.testmodel.Bank;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
@@ -32,6 +34,7 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OuterJoinStatus;
+import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.DynamicUtil;
@@ -59,10 +62,19 @@ public class TableRowIteratorTest
         int made = 0;
         try {
             osw.beginTransaction();
+            Bank[] banks = new Bank[COMPANIES / 2];
+            for (int bi = 0; bi < COMPANIES / 2; bi++) {
+                Bank bank = new Bank();
+                bank.setName("temp-bank-" + bi);
+                osw.store(bank);
+                banks[bi] = bank;
+                made++;
+            }
             for (int k = 0; k < COMPANIES; k++) {
                 Company c = (Company) DynamicUtil.createObject(new HashSet(Arrays.asList(Company.class)));
                 c.setName("temp-company" + k);
                 c.setVatNumber((k + 1) * (k + 1));
+                c.setBank(banks[k / 2]);
                 osw.store(c);
                 made++;
                 for (int i = 0; i < SECRETARIES; i++) {
@@ -116,7 +128,7 @@ public class TableRowIteratorTest
                 osw.close();
             }
         }
-        System.out.printf("[START UP] Made %d employees\n", made);
+        puts("[START UP] Made %d employees\n", made);
     }
 
     private EitherVisitor<TableCell, SubTable, Map<String, Object>> jsonTransformer
@@ -185,11 +197,15 @@ public class TableRowIteratorTest
                         pq, new HashMap(), new HashMap(), null, new HashMap());
 
                 Results res = osw.execute(q, 50000, true, false, true);
+                Set<Bank> banks = new HashSet<Bank>();
                 for (Object row: res) {
                     Company c = (Company) ((List) row).get(0);
                     for (Secretary s: c.getSecretarys()) {
                         osw.delete(s);
                         deleted++;
+                    }
+                    if (c.getBank() != null) {
+                        banks.add(c.getBank());
                     }
                     for (Department dep: c.getDepartments()) {
                         if (dep.getManager() != null) {
@@ -210,6 +226,10 @@ public class TableRowIteratorTest
                     osw.delete(c);
                     deleted++;
                 }
+                for (Bank b: banks) {
+                    osw.delete(b);
+                    deleted++;
+                }
                 
                 osw.commitTransaction();
             } catch (Exception e) {
@@ -222,23 +242,10 @@ public class TableRowIteratorTest
                 }
             }
         }
-        System.out.printf("\n[CLEAN UP] Deleted %d things\n", deleted);
+        puts("\n[CLEAN UP] Deleted %d things", deleted);
     }
 
-    private PathQuery getPQ() {
-        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
-
-        pq.addViews(
-            "Company.name",
-            "Company.departments.name",
-            "Company.departments.employees.name",
-            "Company.departments.employees.age",
-            "Company.departments.employees.address.address",
-            "Company.secretarys.name",
-            "Company.vatNumber");
-        return pq;
-    }
-    
+    /* VISITORS WE WILL BE USING... */
     private static class IndentingPrinter extends EitherVisitor<TableCell, SubTable, Void> {
         
         int indent = 0;
@@ -258,17 +265,17 @@ public class TableRowIteratorTest
 
         @Override
         public Void visitLeft(TableCell a) {
-            System.out.printf(spacer + "%s: %s\n", a.getPath(), a.getField());
+            puts(spacer + "%s: %s", a.getPath(), a.getField());
             return null;
         }
 
         @Override
         public Void visitRight(SubTable b) {
-            System.out.printf(spacer + "%d %s\n", b.getRows().size(), b.getJoinPath());
-            System.out.println(spacer + "  " + b.getColumns());
+            puts(spacer + "%d %s", b.getRows().size(), b.getJoinPath());
+            puts(spacer + "  " + b.getColumns());
             int c = 0;
             for (List<Either<TableCell, SubTable>> row: b.getRows()) {
-                System.out.printf(spacer + "  %s %d\n",
+                puts(spacer + "  %s %d",
                         b.getJoinPath().getLastClassDescriptor().getUnqualifiedName(), c++);
                 for (Either<TableCell, SubTable> item: row) {
                     item.accept(new IndentingPrinter(indent, depth + 1));
@@ -276,113 +283,11 @@ public class TableRowIteratorTest
             }
             return null;
         }
-        
     };
-
-    /*
-     * This test is to test the ability to deal with ungrouped OJGs. At present this 
-     * is best prohibited.
-     */
-    @Ignore 
-    public void ungroupedOJG() throws ObjectStoreException {
-    	PathQuery pq = Queries.getPathQuery("TableRowIteratorTest.ungroupedOJG");
-        
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-
-        int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter));
-            }
-        }
-       
-         /* Per company:
-         *  - 1 name
-         *  - 2 departments
-         *    - 1 name
-         *    - 3.5 employees per department (every second has a manager)
-         *      - 3 fields per employee.
-         *  - 3 secretary names
-         *  - 1 VAT Number
-         * times 3 companies.
-         */
-        assertEquals(84, c);
-    }
-
-    @Test
-    public void getJSONRecords() throws ObjectStoreException, JSONException {
-        PathQuery pq = getPQ();
-        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees.address", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
-
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-
-        EitherVisitor<TableCell, SubTable, Void> printer = new IndentingPrinter(4);
-        while(iter.hasNext()) {
-            Collection data = CollectionUtils.collect(iter.next(),
-                new Transformer() {
-                    @Override
-                    public Object transform(Object arg0) {
-                        Either<TableCell, SubTable> item = (Either<TableCell, SubTable>) arg0;
-                        return item.accept(jsonTransformer);
-                    }
-                });
-            JSONArray ja = new JSONArray(data);
-            System.out.println(ja.toString(2));
-        }
-    }
     
-    @Test
-    public void allInnerJoined() throws ObjectStoreException {
-        PathQuery pq = getPQ();
+    private static final EitherVisitor<TableCell, SubTable, Integer> deepCounter = new EitherVisitor<TableCell, SubTable, Integer>() {
 
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-        
-        List<Either<TableCell, SubTable>> row = iter.next();
-        String[] values = new String[] {
-          "temp-company0", "temp-department-0-0", "temp-employee-0-0-0", "23",
-          "3 employee st", "temp-secretary2", "1"
-        };
-        for (int i = 0; i < values.length; i++) {
-            assertEquals(values[i],
-                row.get(i).accept(new EitherVisitor<TableCell, SubTable, String>() {
-                    public String visitLeft(TableCell a) { return String.valueOf(a.getField()); }
-                    public String visitRight(SubTable b) { fail("No subtables expected"); return null; }
-                })
-            );
-        }
-        int c = 0;
-        while (iter.hasNext()) {
-            for (Either<TableCell, SubTable> o: iter.next()) {
-                c += o.accept(new EitherVisitor<TableCell, SubTable, Integer>() {
-                    public Integer visitLeft(TableCell a) {return 1;}
-                    public Integer visitRight(SubTable b) { fail("No subtables expected"); return null; }
-                });
-            }
-        }
-        assertEquals(c, 14);
-    }
-    
-    EitherVisitor<TableCell, SubTable, Integer> deepCounter = new EitherVisitor<TableCell, SubTable, Integer>() {
-
-        @Override public Integer visitLeft(TableCell a) { return 1; }
+        @Override public Integer visitLeft(TableCell a) { return Integer.valueOf(1); }
 
         @Override public Integer visitRight(SubTable b) {
             int c = 0;
@@ -395,156 +300,104 @@ public class TableRowIteratorTest
         }
         
     };
-    
-    @Test public void someOuterJoinedReferences() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews(
-                "Employee.name",
-                "Employee.department.name",
-                "Employee.department.manager.name",
-                "Employee.department.company.name",
-                "Employee.department.company.vatNumber",
-                "Employee.fullTime",
-                "Employee.address.address");
-        //pq.setOuterJoinStatus("Employee.department", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.department.manager", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.address", OuterJoinStatus.OUTER);
-        
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
 
-        Results res = osw.execute(q, 1000, true, false, true);
-        System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 10), null);
-        System.out.println(p2qn);
-        System.out.println(iter.columnForView);
-        System.out.println(iter.rowTemplates);
-        int c = 0, i = 1;
-        while (iter.hasNext()) {
-        	System.out.println("ROW " + i++);
-            List<Either<TableCell, SubTable>> row = iter.next();
-            //System.out.println();
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter)); //printer.and(deepCounter));
-            }
-            System.out.println();
-        }
-        
-         /* 
-          * 7 fields in 10 rows
+    private static final EitherVisitor<TableCell, SubTable, String> toStringNoTables = new EitherVisitor<TableCell, SubTable, String>() {
+        public String visitLeft(TableCell a) { return String.valueOf(a.getField()); }
+        public String visitRight(SubTable b) { fail("No subtables expected"); return null; }
+    };
+
+    private static final EitherVisitor<TableCell, SubTable, Integer> counterNoTables = new EitherVisitor<TableCell, SubTable, Integer>() {
+        public Integer visitLeft(TableCell a) { return Integer.valueOf(1);}
+        public Integer visitRight(SubTable b) { fail("No subtables expected"); return null; }
+    };
+
+    
+    /* AND NOW FOR THE TESTS... */
+
+    /*
+     * This test is to test the ability to deal with ungrouped OJGs. This involves changing the order
+     * of the view slightly so that outer-joined groups are grouped.
+     */
+    @Test 
+    public void ungroupedOJG() throws ObjectStoreException {
+        /*
+         *   4 cells * 3
+         * + 4 cells * 1
+         * --------------
+         * = 16
          */
-        assertEquals(70, c);
+        runQuery("ungroupedOJG", 16, new Page(4, 3));
+    }
+
+    @Test
+    public void getJSONRecords() throws ObjectStoreException, JSONException {
+        PathQuery pq = getPQ("AllOuterJoinedCollections");
+        TableRowIterator iter = getResults(pq, new Page(2, 3));
+
+        while(iter.hasNext()) {
+            List<Map<String, Object>> data = ListFunctions.map(iter.next(),
+                new F<Either<TableCell, SubTable>, Map<String, Object>>() {
+                    @Override public Map<String, Object> call(Either<TableCell, SubTable> a) {
+                        return a.accept(jsonTransformer);
+                    }
+            });
+            JSONArray ja = new JSONArray(data);
+            puts(ja.toString(2));
+        }
+    }
+
+    @Test
+    public void allInnerJoined() throws ObjectStoreException {
+        PathQuery pq = getPQ("allInnerJoined");
+        TableRowIterator iter = getResults(pq, new Page(2, 3));
+
+        // We expect:
+        String[] values = new String[] {
+          "temp-company0", "temp-department-0-0", "temp-employee-0-0-0", "26",
+          "6 employee st", "temp-secretary2", "1"
+        };
+
+        // We get:
+        List<Either<TableCell, SubTable>> row = iter.next();
+
+        // Same size
+        assertEquals(values.length, row.size());
+
+        // Same content
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(values[i], row.get(i).accept(toStringNoTables));
+        }
+
+        // For all the rows in the set.
+        int c = 0;
+        while (iter.hasNext()) {
+            for (Either<TableCell, SubTable> o: iter.next()) {
+                c += o.accept(counterNoTables);
+            }
+        }
+        assertEquals(c, 14);
+    }
+
+    @Test public void someOuterJoinedReferences() throws ObjectStoreException {
+        runQuery("someOuterJoinedReferences", 24);
     }
     
-    
-    
     @Test public void nestedOuterJoinedReferences() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        pq.addViews(
-                "Employee.name",
-                "Employee.department.name",
-                "Employee.department.manager.name",
-                "Employee.department.company.name",
-                "Employee.department.company.vatNumber",
-                "Employee.fullTime",
-                "Employee.address.address");
-        pq.setOuterJoinStatus("Employee.department", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.department.manager", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.address", OuterJoinStatus.OUTER);
-        
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-        System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 10), null);
-        System.out.println(p2qn);
-        System.out.println(iter.columnForView);
-        System.out.println(iter.rowTemplates);
-        int c = 0, i = 1;
-        while (iter.hasNext()) {
-        	System.out.println("ROW " + i++);
-            List<Either<TableCell, SubTable>> row = iter.next();
-            //System.out.println();
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter)); //printer.and(deepCounter));
-            }
-            System.out.println();
-        }
-        
-         /* 
-          * 7 fields in 10 rows
-         */
-        assertEquals(70, c);
+        runQuery("nestedOuterJoinedReferences", 24);
     }
     
     @Test public void outerJoinRefWithInnerJoinOnIt() throws ObjectStoreException {
-        PathQuery pq = new PathQuery(osw.getModel());
-        
-        pq.addViews(
-                "Employee.name",
-                "Employee.department.name",
-                "Employee.department.manager.name",
-                "Employee.department.company.name",
-                "Employee.department.company.vatNumber",
-                "Employee.fullTime",
-                "Employee.address.address");
-        pq.setOuterJoinStatus("Employee.department", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Employee.department.company", OuterJoinStatus.OUTER);
-
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-        
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 6), null);
-        int c = 0;
-        while (iter.hasNext()) {
-            List<Either<TableCell, SubTable>> row = iter.next();
-            System.out.println();
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter));
-            }
-        }
-        
-         /* 
-          * 3 fields always present in 6 rows
-          * 4 fields contingently present if there is a manager (present in two rows)
-          * 
+        /*
+         *   3 cells * 3 (E.{name,age,fullTime})
+         * + 4 cells * 1 (E.d.name, E.d.m.name, E.d.c.{name,vatNumber})
+         * -----------------
+         *   13
          */
-        assertEquals(26, c);
+        runQuery("outerJoinRefWithInnerJoinOnIt", 13, new Page(4, 3));
     }
     
     @Test public void allOuterJoinedCollections() throws ObjectStoreException {
-        
-        PathQuery pq = getPQ();
-        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees.address", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
-
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-
-        System.out.println(p2qn);
-        System.out.println(iter.columnForView);
-        System.out.println(iter.rowTemplates);
-        
-        System.out.println(res.get(0));
-        int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter));
-            }
-        }
-       
-         /* Per company:
+        /* Per company:
          *  - 1 name
          *  - 2 departments
          *    - 1 name
@@ -554,86 +407,26 @@ public class TableRowIteratorTest
          *  - 1 VAT Number
          * times 3 companies.
          */
-        assertEquals(84, c);
+        runQuery("AllOuterJoinedCollections", 84);
+        
     }
-    
-    /* 
-     * Currently the returned subtables are not in the same sequence as the 
-     * view - this may or may not need correcting.
-     */
+
     @Test public void refsFirst() throws ObjectStoreException {
-        
-        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
-
-        pq.addViews(
-            "Company.departments.name",
-            "Company.departments.employees.address.address",
-            "Company.departments.employees.name",
-            "Company.departments.employees.age",
-            "Company.secretarys.name",
-            "Company.name",
-            "Company.vatNumber");
-        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees.address", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER);
-
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-        System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-        int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter));
-            }
-        }
-       
-         /* Per company:
-         *  - 1 name
-         *  - 2 departments
-         *    - 1 name
-         *    - 3.5 employees per department (every second has a manager)
-         *      - 3 fields per employee.
-         *  - 3 secretary names
-         *  - 1 VAT Number
-         * times 3 companies.
-         */
-        assertEquals(84, c);
+        /* Per company:
+        *  - 1 name
+        *  - 2 departments
+        *    - 1 name
+        *    - 3.5 employees per department (every second has a manager)
+        *      - 3 fields per employee.
+        *  - 3 secretary names
+        *  - 1 VAT Number
+        * times 3 companies.
+        */
+        runQuery("refsFirst", 84);
     }
     
     @Test public void noTopLevel() throws ObjectStoreException {
-        
-        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
-
-        pq.addViews(
-            "Company.departments.name",
-            "Company.departments.employees.name",
-            "Company.departments.employees.age",
-            "Company.departments.employees.address.address",
-            "Company.secretarys.name");
-        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees.address", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER); //$NON-NLS-1$
-
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-        System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-        
-        int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter));
-            }
-        }
-       
-         /* Per company:
+        /* Per company:
          *  - 2 departments
          *    - 1 name
          *    - 3.5 employees per department (every second has a manager)
@@ -641,40 +434,11 @@ public class TableRowIteratorTest
          *  - 3 secretary names
          * times 3 companies.
          */
-        assertEquals(78, c);
+        runQuery("noTopLevel", 78);
     }
-    
-    
+
     @Test public void noTopLevelReversed() throws ObjectStoreException {
-        
-        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
-
-        pq.addViews(
-            "Company.departments.name",
-            "Company.departments.employees.address.address",
-            "Company.departments.employees.name",
-            "Company.departments.employees.age",
-            "Company.secretarys.name");
-        pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.departments.employees.address", OuterJoinStatus.OUTER);
-        pq.setOuterJoinStatus("Company.secretarys", OuterJoinStatus.OUTER); //$NON-NLS-1$
-
-        Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
-
-        Results res = osw.execute(q, 1000, true, false, true);
-        System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-        
-        int c = 0;
-        for (List<Either<TableCell, SubTable>> row: iter) {
-            for (Either<TableCell, SubTable> ro: row) {
-                c += ro.accept(printer.and(deepCounter));
-            }
-        }
-       
-         /* Per company:
+        /* Per company:
          *  - 2 departments
          *    - 1 name
          *    - 3.5 employees per department (every second has a manager)
@@ -682,7 +446,7 @@ public class TableRowIteratorTest
          *  - 3 secretary names
          * times 3 companies.
          */
-        assertEquals(78, c);
+        runQuery("noTopLevelReversed", 78);
     }
     
     /* Tests an outer join reference on an inner join collection. */
@@ -691,32 +455,98 @@ public class TableRowIteratorTest
     	runQuery("ticket2936", 12);
     }
     
+    /*
+     * Not totally sure what the error was - likely something to do with the fact
+     * that outerjoined subtables can themselves be totally null if their underlying
+     * join object is null. I think.
+     */
+    @Test
+    public void IrinaBug() throws ObjectStoreException {
+        runQuery("irinaBug", 24, new Page(5, 3));
+    }
+
     /* Tests an inner join references on an outer join reference. */
     @Test
     public void innerRefOnOuterRef() throws ObjectStoreException {
-    	runQuery("itWasWorking", 12);
+        /*
+         *   4 cells * 3
+         * + 3 cells * 1
+         * --------------
+         * = 15  
+         */
+    	runQuery("itWasWorking", 15, new Page(4, 3));
     }
     
+    @Test
+    public void NoSuchElement() throws ObjectStoreException {
+        // NOTE THAT THE STRUCTURE OF THESE RESULTS IS MENTAL. FIX THIS.
+        runQuery("noSuchElement", 21);
+    }
+    
+    @Test
+    public void GettingEffectiveView() throws ObjectStoreException {
+        PathQuery pq = getPQ("ungroupedOJG");
+        TableRowIterator iter = getResults(pq, new Page(2, 3));
+        List<String> expected = Arrays.asList(
+            "Employee.name", "Employee.department.name", "Employee.department.manager.name",
+            "Employee.department.company.name", "Employee.department.manager.title", "Employee.fullTime",
+            "Employee.address.address", "Employee.age");
+        List<String> orig = pq.getView();
+        List<String> rejiggered = ListFunctions.map(iter.getEffectiveView(), new F<Path, String>() {
+            public String call(Path p) {
+                return p.getNoConstraintsString();
+            }
+        });
+        puts(orig);
+        puts(rejiggered);
+        // Have the same dimensions.
+        assertEquals(orig.size(), rejiggered.size());
+        // Have all the same elements.
+        assertEquals(new HashSet<String>(orig), new HashSet<String>(rejiggered));
+        // And they are in a suitable order.
+        assertEquals(expected, rejiggered);
+    }
+
+    
+    /* THE ACTUAL TEST RUNNING INFRASTRUCTURE */
+
+    private static void puts(Object s) {
+        System.out.println("[DEBUG] " + String.valueOf(s));
+    }
+
+    private static void puts(String fmt, Object... params) {
+        puts(String.format(fmt, params));
+    }
+
     private void runQuery(String name, int expected) throws ObjectStoreException {
-    	PathQuery pq = Queries.getPathQuery("TableRowIteratorTest." + name);
-		
+        runQuery(name, expected, new Page(2, 3));
+    }
+    
+    private PathQuery getPQ(String name) {
+        return Queries.getPathQuery("TableRowIteratorTest." + name);
+    }
+
+    private TableRowIterator getResults(final PathQuery pq, final Page page)  throws ObjectStoreException {
         Map<String, QuerySelectable> p2qn = new HashMap<String, QuerySelectable>();
         Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
 
         Results res = osw.execute(q, 1000, true, false, true);
-        
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
-        
-        System.out.println(p2qn);
-        System.out.println(iter.columnForView);
-        System.out.println(iter.rowTemplates);
-        System.out.println("EXAMPLE ROW: " + res.get(0));
-        
-        int c = 0;
+        //puts("EXAMPLE ROW: " + res.get(0));
+        return new TableRowIterator(pq, res, p2qn, page, null);
+    }
+
+    private void runQuery(String name, int expected, Page page) throws ObjectStoreException {
+        puts("Running test: " + name);
+        puts("=============================");
+        PathQuery pq = getPQ(name);
+        TableRowIterator iter = getResults(pq, page);
+        int c = 0, r = page.getStart();
         for (List<Either<TableCell, SubTable>> row: iter) {
+            puts("Row " + r++);
             for (Either<TableCell, SubTable> ro: row) {
                 c += ro.accept(printer.and(deepCounter));
             }
+            puts("-----");
         }
 		
         assertEquals(expected, c);
