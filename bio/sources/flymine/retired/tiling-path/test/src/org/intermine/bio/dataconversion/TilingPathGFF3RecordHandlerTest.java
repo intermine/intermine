@@ -20,6 +20,7 @@ import org.intermine.bio.dataconversion.TilingPathGFF3RecordHandler;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Tests for the TilingPathGFF3RecordHandler class.
@@ -36,7 +37,7 @@ public class TilingPathGFF3RecordHandlerTest extends ItemsTestCase
     private String dataSetTitle = "Department of Genetics tiling path data set";
     private GFF3Converter converter;
     private String orgAbbrev = "DM";
-    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
 
     public TilingPathGFF3RecordHandlerTest(String arg) {
         super(arg);
@@ -69,7 +70,7 @@ public class TilingPathGFF3RecordHandlerTest extends ItemsTestCase
         // uncomment to write a new target items files
         //writeItemsFile(writer.getItems(), "tiling-path-tgt-items.xml");
 
-        Set expected = readItemSet("TilingPathGFF3RecordHandlerTest.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("TilingPathGFF3RecordHandlerTest.xml");
 
         assertEquals(expected, writer.getItems());
     }

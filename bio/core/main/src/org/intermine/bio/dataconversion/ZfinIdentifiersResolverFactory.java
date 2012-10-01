@@ -32,20 +32,36 @@ import org.intermine.util.PropertiesUtil;
 public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(ZfinIdentifiersResolverFactory.class);
-    private final String clsName = "gene";
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/ensembl_1_to_1.txt
     private final String propName = "resolver.zfin.file";
     private final String taxonId = "7955";
+
     private static final String GENE_PATTERN = "ZDB-GENE";
+
+    /**
+     * Construct with SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public ZfinIdentifiersResolverFactory(String clsName) {
+        this.clsName = clsName;
+    }
+
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public ZfinIdentifiersResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
 
     /**
      * Build an IdResolver from Entrez Gene gene_info file
      * @return an IdResolver for Entrez Gene
      */
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -53,15 +69,13 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             String message = "ZFIN gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
         BufferedReader reader;
         try {
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            createFromFile(reader);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open ZFIN id mapping file: "
                     + fileName, e);
@@ -69,12 +83,18 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from ZFIN id mapping file: "
                     + fileName, e);
         }
-
-        return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
+        LOG.info("Resovler has taxon id " + taxonId + ":" + resolver.hasTaxon(taxonId));
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         // data is in format:
         // ZDBID  SYMBOL  Ensembl(Zv9)
@@ -94,6 +114,5 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             resolver.addSynonyms(taxonId, zfinId, Collections.singleton(symbol));
             resolver.addSynonyms(taxonId, zfinId, Collections.singleton(ensemblId));
         }
-        return resolver;
     }
 }

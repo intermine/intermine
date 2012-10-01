@@ -156,6 +156,9 @@ public class InitialiserPlugin implements PlugIn
             if (!verifyTablesExist(userprofileOSW)) {
                 return;
             }
+            if (!verifySuperUserExist(userprofileOSW)) {
+                return;
+            }
             //verify if intermine_state exists in the savedbag table and if it has the right type
             if (!verifyListTables(userprofileOSW)) {
                 return;
@@ -191,13 +194,19 @@ public class InitialiserPlugin implements PlugIn
                 profileManager = im.getProfileManager();
 
                 //verify superuser setted in the db matches with the user in the properties file
-                final Profile superProfile = im.getProfileManager().getSuperuserProfile();
+                final Profile superProfile = profileManager.getSuperuserProfile();
                 if (!superProfile.getUsername()
-                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account").trim())) {
+                    .equals(PropertiesUtil.getProperties().getProperty("superuser.account")
+                    .trim())) {
                     blockingErrorKeys.put("errors.init.superuser", null);
                 }
+
                 // index global webSearchables
                 SearchRepository searchRepository = new GlobalRepository(superProfile);
+                List<String> users = profileManager.getSuperUsers();
+                for (String su : users) {
+                    new GlobalRepository(profileManager.getProfile(su));
+                }
                 SessionMethods.setGlobalSearchRepository(servletContext, searchRepository);
 
                 servletContext.setAttribute(Constants.GRAPH_CACHE, new HashMap<String, String>());
@@ -378,10 +387,11 @@ public class InitialiserPlugin implements PlugIn
                 try {
                     retval = WebConfig.parse(servletContext, os.getModel());
                     String validationMessage = retval.validateWidgetsConfig(os.getModel());
-                    if ( validationMessage.isEmpty()) {
+                    if (validationMessage.isEmpty()) {
                         SessionMethods.setWebConfig(servletContext, retval);
                     } else {
-                        blockingErrorKeys.put("errors.init.webconfig.validation", validationMessage);
+                        blockingErrorKeys.put("errors.init.webconfig.validation",
+                                              validationMessage);
                     }
                 } catch (FileNotFoundException fnf) {
                     LOG.error("Problem to find the webconfig-model.xml file.", fnf);
@@ -485,7 +495,7 @@ public class InitialiserPlugin implements PlugIn
             Map<String, String> lastState,
             Map<String, List<String>> origins,
             String currentSource,
-            Properties currentState ) {
+            Properties currentState) {
         for (Entry<Object, Object> pair: currentState.entrySet()) {
             if (!origins.containsKey(pair.getKey())) {
                 origins.put(String.valueOf(pair.getKey()), new ArrayList<String>());
@@ -706,7 +716,6 @@ public class InitialiserPlugin implements PlugIn
     private void applyUserProfileUpgrades(ObjectStoreWriter osw,
                                           Map<String, String> blockingErrorKeys) {
         Connection con = null;
-        boolean setSuperUser = false;
         try {
             con = ((ObjectStoreInterMineImpl) osw).getConnection();
             DatabaseUtil.addColumn(con, "userprofile", "apikey", DatabaseUtil.Type.text);
@@ -719,7 +728,6 @@ public class InitialiserPlugin implements PlugIn
                 DatabaseUtil.addColumn(con, "userprofile", "superuser",
                         DatabaseUtil.Type.boolean_type);
                 DatabaseUtil.updateColumnValue(con, "userprofile", "superuser", false);
-                setSuperUser = true;
             }
         } catch (SQLException sqle) {
             LOG.error("Problem retrieving connection", sqle);
@@ -727,24 +735,34 @@ public class InitialiserPlugin implements PlugIn
         } finally {
             ((ObjectStoreInterMineImpl) osw).releaseConnection(con);
         }
-        if (setSuperUser) {
-            setSuperUser(osw);
-        }
     }
 
-    private void setSuperUser(ObjectStoreWriter uosw) {
-        String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
-        UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setUsername(superuser);
-        Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("username");
-        try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+    private boolean verifySuperUserExist(ObjectStoreWriter uosw) {
+        UserProfile superuserProfile = getSuperUser(uosw);
+        if (superuserProfile != null) {
             superuserProfile.setSuperuser(true);
-            uosw.store(superuserProfile);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Unable to load user profile", e);
+            try {
+                uosw.store(superuserProfile);
+            } catch (ObjectStoreException e) {
+                throw new RuntimeException("Unable to set the flag to the user profile", e);
+            }
+            return true;
         }
+        blockingErrorKeys.put("errors.init.superusernotexist", null);
+        return false;
+    }
+    private UserProfile getSuperUser(ObjectStoreWriter uosw) {
+         String superuser = PropertiesUtil.getProperties().getProperty("superuser.account");
+         UserProfile superuserProfile = new UserProfile();
+         superuserProfile.setUsername(superuser);
+         Set<String> fieldNames = new HashSet<String>();
+         fieldNames.add("username");
+         try {
+             superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
+         } catch (ObjectStoreException e) {
+             throw new RuntimeException("Unable to load user profile", e);
+         }
+         return superuserProfile;
     }
 
     /**

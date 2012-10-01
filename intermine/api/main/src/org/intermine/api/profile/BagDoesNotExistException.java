@@ -1,25 +1,56 @@
 package org.intermine.api.profile;
 
-public class BagDoesNotExistException extends RuntimeException {
+/*
+ * Copyright (C) 2002-2012 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+/**
+ * Exception thrown when bag is not found.
+ * @author Daneila Butano
+ */
+public class BagDoesNotExistException extends RuntimeException
+{
 
     /**
      * Auto-generated serial id.
      */
     private static final long serialVersionUID = -4340637468451454992L;
 
+    /**
+     * Constructor
+     */
     public BagDoesNotExistException() {
     }
 
-    public BagDoesNotExistException(String arg0) {
-        super(arg0);
+    /**
+     * Constructor with message.
+     * @param msg message
+     */
+    public BagDoesNotExistException(String msg) {
+        super(msg);
     }
 
-    public BagDoesNotExistException(Throwable arg0) {
-        super(arg0);
+    /**
+     * Constructor with throwable
+     * @param t another throwable
+     */
+    public BagDoesNotExistException(Throwable t) {
+        super(t);
     }
 
-    public BagDoesNotExistException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
+    /**
+     * Constructor with message and throwable
+     * @param msg message
+     * @param t another throwable
+     */
+    public BagDoesNotExistException(String msg, Throwable t) {
+        super(msg, t);
     }
 
 }

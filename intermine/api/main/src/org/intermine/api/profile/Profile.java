@@ -28,6 +28,7 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
 import org.intermine.api.search.DeletionEvent;
+import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
@@ -36,6 +37,7 @@ import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -64,9 +66,9 @@ public class Profile
     protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
     protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
-    protected Map queryHistory = new ListOrderedMap();
+    protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
     protected boolean savingDisabled;
-    private final SearchRepository searchRepository;
+    private SearchRepository searchRepository;
     private String token;
 
     /**
@@ -84,7 +86,8 @@ public class Profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
-     * @param token The token to use as an API key
+     * @param token the token to use as an API key
+     * @param isLocal true if the account is local
      * @param isSuperUser true if the user is a super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
@@ -121,6 +124,7 @@ public class Profile
      * @param savedInvalidBags the saved bags which type doesn't match with the model
      * @param savedTemplates the saved templates for this profile
      * @param token The token to use as an API key
+     * @param isLocal true if the account is local
      * @param isSuperUser the flag identifying the super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
@@ -135,6 +139,19 @@ public class Profile
         }
     }
 
+    /**
+     * Construct a Profile
+     * @param manager the manager for this profile
+     * @param username the username for this profile
+     * @param userId the id of this user
+     * @param password the password for this profile
+     * @param savedQueries the saved queries for this profile
+     * @param bagset a bagset (=valid and invalid bags) for this profile
+     * @param savedTemplates the saved templates for this profile
+     * @param token The token to use as an API key
+     * @param isLocal true if the account is local
+     * @param isSuperUser the flag identifying the super user
+     */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, BagSet bagset,
             Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
@@ -153,6 +170,8 @@ public class Profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
+     * @param isLocal true if the account is local
+     * @param isSuperUser the flag identifying the super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
@@ -209,13 +228,27 @@ public class Profile
     public boolean isSuperuser() {
         return isSuperUser;
     }
-    
+
     /**
      * Alias of isSuperUser() for jsp purposes.
      * @return The same value as isSuperUser().
      */
     public boolean getSuperuser() {
-    	return isSuperuser();
+        return isSuperuser();
+    }
+
+    /**
+     * Set the superuser flag and store it in userprofile database
+     * @param isSuperUser if true the profile is set as superuser
+     * @throws ObjectStoreException if an error occurs during storage of the object
+     */
+    public void setSuperuser(boolean isSuperUser) throws ObjectStoreException {
+        ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
+        UserProfile p = (UserProfile) uosw.getObjectStore().getObjectById(userId,
+            UserProfile.class);
+        p.setSuperuser(isSuperUser);
+        uosw.store(p);
+        this.isSuperUser = isSuperUser;
     }
 
     /**
@@ -303,8 +336,11 @@ public class Profile
      * to the previous name. If trackerDelegate is null, the template tracks are not renamed
      * @param name the template name
      * @param trackerDelegate used to rename the template tracks.
+     * @param deleteTracks true if we want to delete the tracks associated to the template.
+     * Actually the tracks have never been deleted but only renamed
      */
-    public void deleteTemplate(String name, TrackerDelegate trackerDelegate, boolean deleteTracks) {
+    public void deleteTemplate(String name, TrackerDelegate trackerDelegate,
+        boolean deleteTracks) {
         ApiTemplate template = savedTemplates.get(name);
         if (template == null) {
             LOG.warn("Attempt to delete non-existant template: " + name);
@@ -415,6 +451,13 @@ public class Profile
         return Collections.unmodifiableMap(this.savedInvalidBags);
     }
 
+    /**
+     * Fix this bag by changing its type
+     * @param name the invalid bag name
+     * @param newType The new type of this list
+     * @throws UnknownBagTypeException If the new type is not in the current model.
+     * @throws ObjectStoreException If there is a problem saving state to the DB.
+     */
     public synchronized void fixInvalidBag(String name, String newType)
         throws UnknownBagTypeException, ObjectStoreException {
         InvalidBag invb = savedInvalidBags.get(name);
@@ -437,10 +480,11 @@ public class Profile
 
     /**
      * Get the saved bags in a map of "status key" =&gt; map of lists
-     * @return
+     * @return the map from status to a map containing bag name and bag
      */
     public Map<String, Map<String, InterMineBag>> getSavedBagsByStatus() {
-        Map<String, Map<String, InterMineBag>> result = new LinkedHashMap<String, Map<String, InterMineBag>>();
+        Map<String, Map<String, InterMineBag>> result =
+            new LinkedHashMap<String, Map<String, InterMineBag>>();
         // maintain order on the JSP page
         result.put("NOT_CURRENT", new HashMap<String, InterMineBag>());
         result.put("TO_UPGRADE", new HashMap<String, InterMineBag>());
@@ -506,6 +550,7 @@ public class Profile
      * @param description the bag description
      * @param classKeys the classKeys used to obtain  the primary identifier field
      * @return the new bag
+     * @throws UnknownBagTypeException if the bag type is wrong
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description,
@@ -554,6 +599,8 @@ public class Profile
      * If there is no such bag associated with the account, no action is performed.
      * @param name the bag name
      * @param newType the type to set
+     * @throws UnknownBagTypeException if the bag type is wrong
+     * @throws BagDoesNotExistException if the bag doesn't exist
      * @throws ObjectStoreException if problems storing bag
      */
     public void updateBagType(String name, String newType)
@@ -718,7 +765,7 @@ public class Profile
 
     /**
      * Return a single use API key for this profile
-     * @return
+     * @return the single use key
      */
     public String getSingleUseKey() {
         if (isLoggedIn()) {
@@ -734,5 +781,14 @@ public class Profile
      */
     public Map<String, InterMineBag> getSharedBags() {
         return getSharedBagManager().getSharedBags(this);
+    }
+
+    /**
+     * Update the user repository with the sharedbags
+     */
+    public void updateUserRepositoryWithSharedBags() {
+        if (searchRepository instanceof UserRepository) {
+            ((UserRepository) searchRepository).updateUserRepositoryWithSharedBags();
+        }
     }
 }

@@ -28,9 +28,12 @@ public class DoNothingIdResolverFactory extends IdResolverFactory
         resolver = new DoNothingIdResolver(clsName);
     }
 
-    @Override
-    protected IdResolver createIdResolver() {
+    public IdResolver getIdResolver() {
         return resolver;
+    }
+
+    @Override
+    protected void createIdResolver() {
     }
 
 }

@@ -824,6 +824,13 @@
                      placement="Methods"
                      types="Submission"/>
 
+    <reportdisplayer javaClass="org.modmine.web.displayer.DataAttributeDisplayer"
+                     jspName="model/dataAttribute.jsp"
+                     replacesFields="dataAttributes"
+                     placement="summary"
+                     types="SubmissionData"/>
+
+
 <!-- <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionsFromSameExperimentDisplayer"
                       jspName="model/submissionsFromSameExperimentDisplayer.jsp"
                       replacesFields=""

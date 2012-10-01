@@ -16,11 +16,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +47,8 @@ public class OboParser
 //    private static File temp = null;
     private final Pattern synPattern = Pattern.compile("\\s*\"(.+?[^\\\\])\".*");
     private final Matcher synMatcher = synPattern.matcher("");
+    private Set<String> oboXrefs = new HashSet<String>();
+    private static final String PROP_FILE = "obo_xrefs.properties";
 
     /**
      * All terms.
@@ -72,7 +76,26 @@ public class OboParser
      * @throws Exception if anything goes wrong
      */
     public void processOntology(Reader in) throws Exception {
+        readConfig();
         readTerms(new BufferedReader(in));
+    }
+
+    /**
+     * Parses config file for valid prefixes, eg. FBbt FMA. Only valid xrefs will be processed,
+     * eg. FBbt:0000001
+     */
+    protected void readConfig() {
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getClassLoader().getResourceAsStream(PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("Problem loading properties '" + PROP_FILE + "'", e);
+        }
+        Enumeration<?> propNames = props.propertyNames();
+        while (propNames.hasMoreElements()) {
+            String xref = (String) propNames.nextElement();
+            oboXrefs.add(xref);
+        }
     }
 
     /**
@@ -283,6 +306,11 @@ public class OboParser
                 addSynonyms(term, altIds, "alt_id");
             }
 
+            List<?> xrefs = (List<?>) tagValues.get("xref");
+            if (xrefs != null) {
+                addXrefs(term, xrefs);
+            }
+
             // Set namespace
             List<?> nsl = (List<?>) tagValues.get("namespace");
             if (nsl != null && nsl.size() > 0) {
@@ -345,6 +373,28 @@ public class OboParser
                 term.addSynonym(new OboTermSynonym(line, type));
             } else {
                 LOG.warn("Could not match synonym value from: " + line);
+            }
+        }
+    }
+
+    /**
+     * Add xrefs to a DagTerm.
+     * eg.  xref: FBbt:00005137
+     * xref: FMA:5884
+     * xref: MA:0002406
+     *
+     * @param term the DagTerm
+     * @param xrefs List of xrefs (Strings)
+     */
+    protected void addXrefs(OboTerm term, List<?> xrefs) {
+        for (Iterator<?> iter = xrefs.iterator(); iter.hasNext();) {
+            String identifier = (String) iter.next();
+            if (identifier.contains(":")) {
+                String[] bits = identifier.split(":");
+                String prefix = bits[0];    // eg FBbt
+                if (bits.length > 1 && prefix != null && oboXrefs.contains(prefix)) {
+                    term.addXref(new OboTerm(identifier));
+                }
             }
         }
     }

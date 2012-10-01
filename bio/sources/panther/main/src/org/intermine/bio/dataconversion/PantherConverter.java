@@ -48,12 +48,6 @@ public class PantherConverter extends BioFileConverter
     private Set<String> homologues = new HashSet<String>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
     private Map<String, String> config = new HashMap<String, String>();
-    protected IdResolverFactory flyResolverFactory;
-    private IdResolver flyResolver;
-    protected IdResolverFactory fishResolverFactory;
-    private IdResolver fishResolver;
-    protected IdResolverFactory entrezGeneIdResolverFactory;
-    private IdResolver peopleResolver;
     private static String evidenceRefId = null;
     private static final Map<String, String> TYPES = new HashMap<String, String>();
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
@@ -74,6 +68,8 @@ public class PantherConverter extends BioFileConverter
         add("15492219");
     }};
 
+    private IdResolver rslv;
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -84,9 +80,6 @@ public class PantherConverter extends BioFileConverter
         throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        fishResolverFactory = new ZfinIdentifiersResolverFactory();
-        entrezGeneIdResolverFactory = new EntrezGeneIdResolverFactory();
         or = OrganismRepository.getOrganismRepository();
     }
 
@@ -193,6 +186,19 @@ public class PantherConverter extends BioFileConverter
         if (homologues.isEmpty()) {
             LOG.warn("panther.homologues property not set in project XML file");
         }
+
+        //Create id resolver
+        Set<String> allTaxonIds = new HashSet<String>() {
+            private static final long serialVersionUID = 1L;
+            {
+                addAll(taxonIds);
+                addAll(homologues);
+            }
+        };
+        rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        IdResolverService.getFishIdResolver();
+        LOG.warn("after fish resolver");
+
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
@@ -321,51 +327,17 @@ public class PantherConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        if (taxonId.equals("7227")) { // fly
-            flyResolver = flyResolverFactory.getIdResolver(false);
-            if (flyResolver == null) {
-                // no id resolver available, so return the original identifier
-                return identifier;
-            }
-            int resCount = flyResolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
-                         + identifier + " count: " + resCount + " FBgn: "
-                         + flyResolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            return flyResolver.resolveId(taxonId, identifier).iterator().next();
-        } else if (taxonId.equals("7955")) { // fish
-            fishResolver = fishResolverFactory.getIdResolver(false);
-            if (fishResolver == null) {
-                // no id resolver available, so return the original identifier
-                return identifier;
-            }
-            int resCount = fishResolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve fish gene to one identifier, ignoring gene: "
-                         + identifier + " count: " + resCount + " ZDB-GENE: "
-                         + fishResolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            return fishResolver.resolveId(taxonId, identifier).iterator().next();
-        } else if (taxonId.equals("9606")) {
-            peopleResolver = entrezGeneIdResolverFactory.getIdResolver(false);
-            if (peopleResolver == null) {
-                // no id resolver available, so return the original identifier
-                return identifier;
-            }
-            identifier = identifier.toLowerCase();
-            int resCount = peopleResolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve human gene to one identifier, ignoring gene: "
-                         + identifier + " count: " + resCount + " : "
-                         + peopleResolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            identifier = peopleResolver.resolveId(taxonId, identifier).iterator().next();
+        if (rslv == null) {
+            // no id resolver available, so return the original identifier
             return identifier;
         }
-        return identifier;
+        int resCount = rslv.countResolutions(taxonId, identifier);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " FBgn: "
+                     + rslv.resolveId(taxonId, identifier));
+            return null;
+        }
+        return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 }

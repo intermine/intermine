@@ -11,7 +11,11 @@ package org.intermine.api.search;
  */
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.intermine.api.profile.Profile;
 import org.intermine.api.tag.TagNames;
@@ -36,7 +40,9 @@ public class GlobalRepository extends UserRepository
      */
     public GlobalRepository(Profile profile) {
         super(profile);
-        GLOBALS.add(this);
+        if (getGlobalSearchRepository(profile) == null) {
+            GLOBALS.add(this);
+        }
     }
 
     @Override
@@ -94,4 +100,32 @@ public class GlobalRepository extends UserRepository
         populateSearchItems();
         startListening();
     }
+
+    /**
+     * Get a map from name -> object for all the websearchables of the given type.
+     * @param type A valid TagType.
+     * @return A new unmodifiable map containing the requested information.
+     */
+    public Map<String, WebSearchable> getWebSearchableMap(String type) {
+        if (type == null) {
+            throw new IllegalArgumentException("'type' may not be null");
+        }
+        Map<String, WebSearchable> retval = new HashMap<String, WebSearchable>();
+        Set<SearchRepository> globalSearchRepositoryList = getGlobalSearchRepositories();
+        for (SearchRepository sr : globalSearchRepositoryList) {
+            for (WebSearchable webSearchable : sr.searchItems) {
+                if (!type.equals(webSearchable.getTagType())) {
+                    continue;
+                }
+                retval.put(webSearchable.getName(), webSearchable);
+            }
+        }
+        return Collections.unmodifiableMap(retval);
+    }
+
+    public void deleteGlobalRepository(Profile profile) {
+        SearchRepository sr = getGlobalSearchRepository(profile);
+        GLOBALS.remove(sr);
+    }
+
 }
