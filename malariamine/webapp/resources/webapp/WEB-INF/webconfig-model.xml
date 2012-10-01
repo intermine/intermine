@@ -254,7 +254,6 @@
     <dependency path="http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js" type="js" />
     
     <keyValue key="mine" value="http://beta.flymine.org/beta" />
-    <keyValue key="name" value="Radek" />
     
 	<query name="pubsForGene" view="Gene.publications.title Gene.publications.year Gene.publications.journal Gene.publications.pubMedId Gene.publications.authors.name" >
 		<join path="Gene.publications.authors" style="OUTER"/>
