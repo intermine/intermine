@@ -89,8 +89,7 @@ public class GoConverter extends BioFileConverter
 
         // only construct factory here so can be replaced by mock factory in tests
         flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
-        //ontologyResolverFactory = new OntologyIdResolverFactory("GO");
-        ontologyResolverFactory = null;
+        ontologyResolverFactory = new OntologyIdResolverFactory("GO");        
         defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
                 DEFAULT_ANNOTATION_TYPE);
         readConfig();
