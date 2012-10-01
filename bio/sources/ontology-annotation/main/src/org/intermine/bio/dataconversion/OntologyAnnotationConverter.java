@@ -69,6 +69,7 @@ public class OntologyAnnotationConverter extends BioFileConverter
     protected String ontologyPrefix = "GO";
     private String gaff = "2.0";
     protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
+    protected IdResolver rslv;
 
     private static final Logger LOG = Logger.getLogger(OntologyAnnotationConverter.class);
 
@@ -427,7 +428,8 @@ public class OntologyAnnotationConverter extends BioFileConverter
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if ("7227".equals(taxonId)) {
-                IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
+//                IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
+                IdResolver resolver = IdResolverService.getFlyIdResolver();
                 if (resolver != null) {
                     int resCount = resolver.countResolutions(taxonId, accession);
 
@@ -505,7 +507,8 @@ public class OntologyAnnotationConverter extends BioFileConverter
 
     private String resolveTerm(String identifier) {
         String goId = identifier;
-        IdResolver resolver = ontologyResolverFactory.getIdResolver(false);
+//        IdResolver resolver = ontologyResolverFactory.getIdResolver(false);
+        IdResolver resolver = IdResolverService.getGoIdResolver("GO");
         if (resolver != null) {
             int resCount = resolver.countResolutions("0", identifier);
 
