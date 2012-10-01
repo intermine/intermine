@@ -70,7 +70,7 @@ public final class ResponseUtil
         setPlainTextContentType(response);
         setFileName(response, fileName);
     }
-
+    
     /**
      * Sets response header and content type for gzipped output.
      *
