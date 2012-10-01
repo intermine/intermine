@@ -172,7 +172,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param savedBagId the ID of the bag in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
-     * @param classDescriptor if true the classDescriptor will be setted
+     * @param classDescriptor if true the classDescriptor will be set
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw,
