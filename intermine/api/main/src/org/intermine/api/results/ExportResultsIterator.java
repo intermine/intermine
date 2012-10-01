@@ -160,6 +160,31 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
         }
     }
 
+    /** Analyses the select list to predict what the structure of the results will be. It produces
+     *  a list with a disjoint type of element.
+     *  
+     * Some examples of the return values are presented below:
+     * <pre>
+     * [
+     *    {Employee.age=6, Employee.fullTime=4, Employee.name=0},
+     *    [{Employee.department.name=1}, {Employee.department.manager.name=2}, {Employee.department.company.name=3}], 
+     *    {Employee.address.address=5}
+     * ]
+     * [  
+     *    {Company.vatNumber=6, Company.name=0},
+     *    [
+     *      {Company.departments.name=1}, 
+     *      [
+     *        {Company.departments.employees.age=3, Company.departments.employees.name=2},
+     *        {Company.departments.employees.address.address=4}
+     *      ]
+     *    ], 
+     *    [
+     *      {Company.secretarys.name=5}
+     *    ]
+     * ]
+     * </pre>
+     */
     private List convertColumnTypes(List<? extends QuerySelectable> select, PathQuery pq,
             Map<String, QuerySelectable> pathToQueryNode) {
         List retval = new ArrayList();

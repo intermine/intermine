@@ -67,9 +67,9 @@ public class TableRowService extends QueryResultService
     public void runPathQuery(PathQuery pathQuery, int firstResult,
             int maxResults, String title, String description,
             WebServiceInput input, String mineLink, String layout) {
-        ObjectStore os = im.getObjectStore();
-        Profile p = getPermission().getProfile();
-        Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        final ObjectStore os = im.getObjectStore();
+        final Profile p = getPermission().getProfile();
+        final Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
         Query q;
         try {
             q = MainHelper.makeQuery(pathQuery, im.getBagManager().getCurrentBags(p),
@@ -77,10 +77,10 @@ public class TableRowService extends QueryResultService
         } catch (ObjectStoreException e) {
             throw new InternalErrorException("Could not run query", e);
         }
-        Results results = os.execute(q, QueryResultService.BATCH_SIZE, true, false, false);
-        Page page = new Page(firstResult, (maxResults == 0) ? null : maxResults);
+        final Results results = os.execute(q, QueryResultService.BATCH_SIZE, true, false, false);
+        final Page page = new Page(firstResult, (maxResults == 0) ? null : maxResults);
         
-        TableRowIterator iter = new TableRowIterator(pathQuery, results, pathToQueryNode, page, im);
+        TableRowIterator iter = new TableRowIterator(pathQuery, q, results, pathToQueryNode, page, im);
         
         final Processor processor = new Processor(im);
         
