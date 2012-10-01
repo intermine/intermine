@@ -25,33 +25,28 @@ import org.intermine.sql.DatabaseFactory;
 /**
  * Create an IdResolver for Worm genes by querying tables in a WormBase
  * chado database.
+ *
  * @author Richard Smith
  *
  */
 public class WormBaseChadoIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(WormBaseChadoIdResolverFactory.class);
-    private Database db;
-    private String soTerm = null, taxonId = null;
 
+    private Database db;
+    private final String propName = "db.wormbase";
+    private final String taxonId = "6239";
 
     /**
      * Construct with SO term of the feature type to read from chado database.
-     * @param soTerm the feature type to resolve
+     * @param clsName the feature type to resolve
      */
-    public WormBaseChadoIdResolverFactory(String soTerm) {
-        this.soTerm = soTerm;
+    public WormBaseChadoIdResolverFactory(String clsName) {
+        this.clsName = clsName;
     }
 
-    /**
-     * Construct with SO term of the feature type to read from chado database and restrict to
-     * data from only one organism.
-     * @param soTerm the feature type to resolve
-     * @param taxonId taxon id of the organism to resolve identifiers for
-     */
-    public WormBaseChadoIdResolverFactory(String soTerm, String taxonId) {
-        this.soTerm = soTerm;
-        this.taxonId = taxonId;
+    public WormBaseChadoIdResolverFactory() {
+        this.clsName = this.defaultClsName;
     }
 
     /**
@@ -59,32 +54,36 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for WormBase
      */
     @Override
-    protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver(soTerm);
+    protected void createIdResolver() {
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         try {
-            // TODO maybe this shouldn't be hard coded here?
-            db = DatabaseFactory.getDatabase("db.wormbase");
+            db = DatabaseFactory.getDatabase(propName);
 
-            String cacheFileName = "build/" + db.getName() + "." + soTerm
+            String cacheFileName = "build/" + db.getName() + "." + clsName
                 + ((taxonId != null) ? "." + taxonId : "");
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("WormBaseIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(soTerm, f);
+                createFromFile(clsName, f);
             } else {
                 System.out .println("WormBaseIdResolver reading from database: " + db.getName());
-                resolver = createFromDb(db);
+                createFromDb(db);
                 resolver.writeToFile(f);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return resolver;
     }
 
-    private IdResolver createFromDb(Database database) {
-        IdResolver resolver = new IdResolver(soTerm);
+    @Override
+    public void createFromDb(Database database) {
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
@@ -93,7 +92,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
                 + " and cv.name = \'sequence\'"
-                + " and c.name =\'" + soTerm + "\'";
+                + " and c.name =\'" + clsName + "\'";
             Statement stmt = conn.createStatement();
             ResultSet res = stmt.executeQuery(query);
             String soTermId = null;
@@ -183,7 +182,5 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-
-        return resolver;
     }
 }

@@ -31,78 +31,73 @@ import org.intermine.sql.DatabaseFactory;
 public class FlyBaseIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
-    private Database db;
-    private String soTerm = null, taxonId = null;
-    private String defaultSoTerm = "gene";
 
+    private Database db;
+    private final String propName = "db.flybase";
+    private final String taxonId = "7227";
 
     /**
      * Construct with SO term of the feature type to read from chado database.
      * @param soTerm the feature type to resolve
      */
-    public FlyBaseIdResolverFactory(String soTerm) {
-        this.soTerm = soTerm;
+    public FlyBaseIdResolverFactory(String clsName) {
+        this.clsName = clsName;
     }
-
-    public FlyBaseIdResolverFactory() {
-        this.soTerm = defaultSoTerm;
-    }
-
 
     /**
-     * Construct with SO term of the feature type to read from chado database and restrict to
-     * data from only one organism.
+     * Construct without SO term of the feature type to read from chado database.
      * @param soTerm the feature type to resolve
-     * @param taxonId taxon id of the organism to resolve identifiers for
      */
-    public FlyBaseIdResolverFactory(String soTerm, String taxonId) {
-        this.soTerm = soTerm;
-        this.taxonId = taxonId;
+    public FlyBaseIdResolverFactory() {
+        this.clsName = this.defaultClsName;
     }
-
 
     /**
      * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
      * @return an IdResolver for FlyBase
      */
     @Override
-    protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver(soTerm);
+    protected void createIdResolver() {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         try {
-            // TODO maybe this shouldn't be hard coded here?
-            db = DatabaseFactory.getDatabase("db.flybase");
+            db = DatabaseFactory.getDatabase(propName);
 
-            String cacheFileName = "build/" + db.getName() + "." + soTerm
+            String cacheFileName = "build/" + db.getName() + "." + clsName
                 + ((taxonId != null) ? "." + taxonId : "");
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(soTerm, f);
+                createFromFile(clsName, f);
             } else {
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
-                resolver = createFromDb(db);
+                createFromDb(clsName, db);
                 resolver.writeToFile(f);
                 System.out .println("FlyBaseIdResolver caching in file: " + cacheFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return resolver;
     }
 
-
-    private IdResolver createFromDb(Database database) {
-        IdResolver resolver = new IdResolver(soTerm);
+    @Override
+    protected void createFromDb(String clsName, Database db) {
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
-            conn = database.getConnection();
+            conn = db.getConnection();
             String query = "select c.cvterm_id"
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
                 + " and cv.name = \'SO\'"
-                + " and c.name =\'" + soTerm + "\'";
+                + " and c.name =\'" + clsName + "\'";
             Statement stmt = conn.createStatement();
             ResultSet res = stmt.executeQuery(query);
             String soTermId = null;
@@ -126,7 +121,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             }
 
             String extraConstraint = "";
-            if ("gene".equals(soTerm)) {
+            if ("gene".equals(clsName)) {
                 extraConstraint = " and  f.uniquename like \'FBgn%\'";
             }
 
@@ -233,7 +228,5 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-
-        return resolver;
     }
 }

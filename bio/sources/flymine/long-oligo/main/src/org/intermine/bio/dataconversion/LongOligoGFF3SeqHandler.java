@@ -28,7 +28,7 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      * Construct the seq handler.
      */
     public LongOligoGFF3SeqHandler() {
-        resolverFactory = new FlyBaseIdResolverFactory("mRNA", "7227");
+        resolverFactory = new FlyBaseIdResolverFactory("mRNA");
     }
 
 

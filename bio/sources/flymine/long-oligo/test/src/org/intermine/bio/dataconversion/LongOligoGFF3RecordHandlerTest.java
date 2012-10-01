@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.intermine.bio.io.gff3.GFF3Parser;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;

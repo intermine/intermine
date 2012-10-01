@@ -9,13 +9,15 @@ function clickUseBag(index) {
     document.getElementById("attributeOptions("+index+")").disabled=useBag;
   }
 
-  var attributeValuesElements = document.getElementsByName("attributeValues("+index+")");
-  //if attributeValues is a radio button
-  if(attributeValuesElements[0].type == 'radio') {
-    attributeValuesElements[0].disabled=useBag;
-    attributeValuesElements[1].disabled=useBag;
-  } else {
-     document.getElementById("attributeValues("+index+")").disabled=useBag;
+  if (document.getElementById("attributeValues("+index+")") && document.getElementById("attributeValues("+index+")") != undefined) {
+    var attributeValuesElements = document.getElementsByName("attributeValues("+index+")");
+     //if attributeValues is a radio button
+     if(attributeValuesElements[0].type == 'radio') {
+        attributeValuesElements[0].disabled=useBag;
+        attributeValuesElements[1].disabled=useBag;
+     } else {
+         document.getElementById("attributeValues("+index+")").disabled=useBag;
+     }
   }
   if (document.getElementById("multiValues("+index+")")) {
     document.getElementById("multiValues("+index+")").disabled=useBag;

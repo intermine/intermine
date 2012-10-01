@@ -18,6 +18,9 @@ def: "iosis\, mediated byhe cytoskeleton." [PMID:10873824, PMID:11389764, SGD:mc
 id: GO:0000002
 name: mitochondrial genome maintenance
 def: "The maintenance of the structure and integrity of the mitochondrial genome." [GO:ai]
+xref: WBbt:7777777
+xref: XAO:7777777
+xref: ZFA:7777777
 is_a: GO:0000001 ! mitochondrion organization and biogenesis
 ! random comment
 relationship: unknown_rel asdf

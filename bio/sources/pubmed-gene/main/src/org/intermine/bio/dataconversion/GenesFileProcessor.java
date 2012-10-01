@@ -113,7 +113,6 @@ public class GenesFileProcessor
             try {
                 organismId = new Integer(parts[0].trim());
                 ncbiGeneId = new Integer(parts[1].trim());
-                ncbiGeneId = new Integer(parts[1].trim());
             } catch (NumberFormatException ex) {
                 throw new GenesProcessorException("Invalid identifiers at line " + line);
             }

@@ -35,15 +35,30 @@ import org.intermine.util.PropertiesUtil;
 public class RgdIdentifiersResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(RgdIdentifiersResolverFactory.class);
-    private final String clsName = "gene";
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/rgd-identifiers/current/GENES_RAT.txt
     private final String propName = "resolver.rgd.file";
     private final String taxonId = "10116";
 
+    /**
+     * Construct with SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public RgdIdentifiersResolverFactory(String clsName) {
+        this.clsName = clsName;
+    }
+
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public RgdIdentifiersResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
+
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -51,15 +66,10 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
             String message = "RGD gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
-            return null;
         }
 
-        IdResolver resolver;
-        BufferedReader reader;
         try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            createFromFile(new BufferedReader(new FileReader(new File(fileName))));
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open RGD id mapping file: "
                     + fileName, e);
@@ -67,12 +77,17 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from RGD id mapping file: "
                     + fileName, e);
         }
-
-        return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
 
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -102,7 +117,6 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                 resolver.addSynonyms(taxonId, rgdId, Collections.singleton(entrez));
             }
         }
-        return resolver;
     }
 
     private Set<String> parseEnsemblIds(String fromFile) {

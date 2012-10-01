@@ -119,26 +119,27 @@ public class SharedBagManager
         Connection conn = null;
         PreparedStatement stm = null;
         ResultSet rs = null;
-        String clause = "userprofileid = ?";
-        Integer bagId = null;
+        Map<Integer, Map<String, String>> bagsMap = new HashMap<Integer, Map<String, String>>();
         try {
             conn = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
-            String sql = "SELECT bagid FROM " + SHARED_BAGS + " WHERE " + clause;
+            String sql = "SELECT sb.id, sb.name, u.username "
+                       + "FROM savedbag as sb, userprofile as u, "
+                       + SHARED_BAGS + " as sharedbag WHERE "
+                       + "sharedbag.bagid = sb.id "
+                       + "AND sharedbag.userprofileid = " + profile.getUserId()
+                       + " AND sb.userprofileid = u.id";
             stm = conn.prepareStatement(sql);
-            stm.setInt(1, profile.getUserId());
             rs = stm.executeQuery();
+            Map<String, String> bagMap;
             while (rs.next()) {
-                bagId = rs.getInt("bagid");
-                InterMineBag bag = new InterMineBag(profileManager.getProductionObjectStore(),
-                                                bagId, uosw);
-                sharedBags.put(bag.getName(), bag);
+                bagMap = new HashMap<String, String>();
+                bagMap.put("bagName", rs.getString(2));
+                bagMap.put("userName", rs.getString(3));
+                bagsMap.put(rs.getInt(1), bagMap);
             }
         } catch (SQLException sqle) {
             throw new RuntimeException("Error retrieving the shared bags "
                     + "for the user : " + profile.getUserId(), sqle);
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving the bag "
-                    + "with bagId : " + bagId, e);
         } finally {
             if (rs != null) {
                 try {
@@ -152,6 +153,12 @@ public class SharedBagManager
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
         }
+        for (Map<String, String> bagValues : bagsMap.values()) {
+            String userName = bagValues.get("userName");
+            String bagName = bagValues.get("bagName");
+            InterMineBag bag = profileManager.getProfile(userName).getSavedBags().get(bagName);
+            sharedBags.put(bag.getName(), bag);
+        }
         return sharedBags;
     }
 
@@ -160,7 +167,7 @@ public class SharedBagManager
      * @param bag the bag the users share
      * @return the list of users sharing the bag
      */
-    public List<String> getUsersSharingBag(InterMineBag bag) {
+    public List<String> getUsersSharingBag(StorableBag bag) {
         List<String> usersSharingBag = new ArrayList<String>();
         Connection conn = null;
         PreparedStatement stm = null;
@@ -342,9 +349,11 @@ public class SharedBagManager
 
     /**
      * Delete the sharing between the bag and all the users sharing the bag.
+     * Method used when a bag is deleted.
      * @param bag the bag that has been shared by users
      */
     public void unshareBagWithAllUsers(StorableBag bag) {
+        List<String> usersListSharingBag = getUsersSharingBag(bag);
         Connection conn = null;
         PreparedStatement stm = null;
         try {
@@ -364,6 +373,13 @@ public class SharedBagManager
                 }
             }
             ((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(conn);
+        }
+        //update user repository for all users sharing tha bag
+        for (String userName : usersListSharingBag) {
+            if (profileManager.isProfileCached(userName)) {
+                profileManager.getProfile(userName).getSearchRepository()
+                              .receiveEvent(new DeletionEvent(bag));
+            }
         }
     }
 }

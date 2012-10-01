@@ -66,7 +66,7 @@ public class BioPAXConverterTest extends MockItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set<Item> expected = readItemSet("BioPAXConverterTest_tgt.xml");
 

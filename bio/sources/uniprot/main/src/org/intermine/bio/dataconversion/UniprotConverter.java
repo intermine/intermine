@@ -64,7 +64,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private Map<String, String> ecNumbers = new HashMap<String, String>();
-    private static final String GENUS_LOOKUP = "Drosophila";
     private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
@@ -1084,8 +1083,7 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private String resolveGene(String taxId, String identifier) {
-            OrganismData od = or.getOrganismDataByTaxon(new Integer(taxId));
-            if (od != null && od.getGenus().equals(GENUS_LOOKUP) && flyResolverFactory != null) {
+            if ("7227".equals(taxId) && flyResolverFactory != null) {
                 return resolveFlyGene(taxId, identifier);
             }
             return identifier;

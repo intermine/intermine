@@ -380,6 +380,10 @@ public class ProfileManager
                 savedQueries, bags, savedTemplates, userProfile.getApiKey(),
                 userProfile.getLocalAccount(), userProfile.getSuperuser());
         profileCache.put(username, profile);
+        //only after saving the profile in the cache,
+        //we can update the user repository with shared bags
+        //if we do in the constructor we could generate loops
+        profile.updateUserRepositoryWithSharedBags();
         return profile;
     }
 
@@ -459,7 +463,11 @@ public class ProfileManager
         }
     }
 
-
+    /**
+     * Create a new profile in db with username and password given in input
+     * @param username the user name
+     * @param password the password
+     */
     public synchronized void createNewProfile(String username, String password) {
         if (this.hasProfile(username)) {
             throw new RuntimeException("Cannot create account: there already exists a user"
@@ -524,6 +532,11 @@ public class ProfileManager
         return key;
     }
 
+    /**
+     * Generate a day token
+     * @param profile the profile which token is valid
+     * @return the token
+     */
     public synchronized String generate24hrKey(Profile profile) {
         String key = generateApiKey();
         LimitedAccessToken token = new DayToken(profile);
@@ -531,6 +544,11 @@ public class ProfileManager
         return key;
     }
 
+    /**
+     * Return whether the token given in input is suitable for using in the future.
+     * @param token the token to verify
+     * @return true if is suitable for using in the future.
+     */
     public synchronized boolean tokenHasMoreUses(String token) {
         if (token != null && limitedAccessTokens.containsKey(token)) {
             LimitedAccessToken lat = limitedAccessTokens.get(token);
@@ -650,20 +668,24 @@ public class ProfileManager
     }
 
     /**
-     * @return the superuser name set in the properties file
+     * Return the super user name set in the properties file
+     * @return the superuser name
      */
     public String getSuperuser() {
         return superuser;
     }
 
     /**
-     * @return the superuser profile set in the properties file
+     * Return the superuser profile set in the properties file
+     * @return the superuser profile
      */
     public Profile getSuperuserProfile() {
         return getProfile(superuser);
     }
 
     /**
+     * Return the  super user
+     * @param classKeys the classkeys
      * @return the superuser profile
      */
     public Profile getSuperuserProfile(Map<String, List<FieldDescriptor>> classKeys) {
@@ -760,6 +782,10 @@ public class ProfileManager
         }
     }
 
+    /**
+     * Abstract class for API access keys.
+     * @author Alex Kalderimis
+     */
     private static abstract class LimitedAccessToken
     {
         private final Profile profile;
@@ -918,7 +944,7 @@ public class ProfileManager
 
         /**
          * Add a role to this permission.
-         * 
+         *
          * @param role
          *            The role to add.
          */
@@ -928,7 +954,7 @@ public class ProfileManager
 
         /**
          * True if the permission granted includes access to this role.
-         * 
+         *
          * @param role
          *            The role in question.
          * @return Whether or not this user has access to the given role.
@@ -940,7 +966,7 @@ public class ProfileManager
 
     /**
      * Wrap a profile in the default permission level.
-     * 
+     *
      * @param profile
      *            The profile to wrap.
      * @return The default permission for a particular profile.
@@ -1029,6 +1055,11 @@ public class ProfileManager
         return getProfile(profile.getUsername(), classKeys);
     }
 
+    /**
+     * Check if the profile, which username is given in input, has been cached by the profile cache
+     * @param username the user name
+     * @return true if the profile is in the cache
+     */
     public boolean isProfileCached(String username) {
         Profile profile = profileCache.get(username);
         if (profile != null) {
@@ -1037,22 +1068,10 @@ public class ProfileManager
         return false;
     }
 
-    public List<String> getAllUsers() {
-        List<String> users = new ArrayList<String>();
-        Query q = new Query();
-        QueryClass qc = new QueryClass(UserProfile.class);
-        QueryField qfName = new QueryField(qc, "username");
-        q.addToSelect(qfName);
-        q.addFrom(qc);
-
-        Results res = uosw.execute(q);
-        Iterator<Object> iterator = res.iterator();
-        while (iterator.hasNext()) {
-            users.add(((ResultsRow<String>) iterator.next()).get(0));
-        }
-        return users;
-    }
-
+    /**
+     * Return a list of users with 'superuser' role
+     * @return the user list
+     */
     public List<String> getSuperUsers() {
         List<String> superusers = new ArrayList<String>();
         Query q = new Query();
@@ -1072,20 +1091,22 @@ public class ProfileManager
         return superusers;
     }
 
-    public void setSuperUser(String userName) {
-        UserProfile superuserProfile = new UserProfile();
-        superuserProfile.setUsername(userName);
-        Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("username");
-        try {
-            superuserProfile = (UserProfile) uosw.getObjectByExample(superuserProfile, fieldNames);
-            superuserProfile.setSuperuser(true);
-            uosw.store(superuserProfile);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException("Unable to load user profile", e);
+    /**
+     * Return a list of profile with 'superuser' role
+     * @return the profile list
+     */
+    public List<Profile> getSuperUsersProfile() {
+        List<Profile> superusersProfile = new ArrayList<Profile>();
+        List<String> superusers = getSuperUsers();
+        for (String su : superusers) {
+            superusersProfile.add(getProfile(su));
         }
+        return superusersProfile;
     }
 
+    /**
+     * Exception thrown when the authentication fails.
+     */
     public static class AuthenticationException extends RuntimeException
     {
 
@@ -1094,6 +1115,10 @@ public class ProfileManager
          */
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Constructor
+         * @param message the message to display
+         */
         public AuthenticationException(String message) {
             super(message);
         }

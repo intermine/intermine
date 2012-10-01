@@ -272,6 +272,7 @@
   <definition name="reportDisplayer.tile" path="/reportDisplayer.jsp" controllerUrl="/initReportDisplayer.do"/>
   <definition name="otherMinesLink.tile" path="/otherMinesLink.jsp" controllerUrl="/initOtherMinesLink.do"/>
   <definition name="track.tile" path="/track.jsp" />
+  <definition name="users.tile" path="/users.jsp" controllerUrl="/initUsers.do"/>
   <!-- don't (re)move this - it's used for importing any model-specific actions -->
   <!--@MODEL_INCLUDE@-->
 

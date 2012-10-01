@@ -1437,7 +1437,7 @@ public class AjaxServices
     }
 
     /**
-     * Share the bag given in input with the user which userName is input
+     * Share the bag given in input with the user which userName is input and send email
      * @param userName the user which the bag has to be shared with
      * @param bagName the bag name to share
      * @return 'ok' string if succeeded else error string
@@ -1458,16 +1458,11 @@ public class AjaxServices
             return "The user already shares the bag.";
         }
         Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
+        InterMineBag bag = profile.getSavedBags().get(bagName);
         try {
-            String subject = "Sharing Lists";
-            String bodyMsg = "The list " + bagName + " has been shared with you";
-            if (webProperties.getProperty("mail.application") != null) {
-                subject = subject + " in " + webProperties.getProperty("mail.application");
-                bodyMsg = bodyMsg +  " in  " + webProperties.getProperty("mail.application") + ".";
-            }
-            MailUtils.email(userName, subject, bodyMsg, webProperties);
-        } catch (MessagingException me) {
-            LOG.warn("Failed to send sharing list message.");
+            MailUtils.emailSharingList(userName, profile.getUsername(), bag, webProperties);
+        } catch (Exception ex) {
+            LOG.warn("Problems sending sharing list mail.", ex);
         }
         return "ok";
     }

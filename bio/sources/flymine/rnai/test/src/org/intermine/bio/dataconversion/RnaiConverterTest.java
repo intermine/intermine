@@ -13,16 +13,13 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
-import org.intermine.xml.full.FullParser;
+import org.intermine.model.fulldata.Item;
 
 public class RnaiConverterTest extends ItemsTestCase
 {
@@ -34,7 +31,7 @@ public class RnaiConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new RnaiConverter(itemWriter, Model.getInstanceByName("genomic"));
 
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");

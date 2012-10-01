@@ -10,8 +10,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="test/resources"/>
 	<classpathentry kind="lib" path="main/lib/jena.jar"/>
-	<classpathentry kind="lib" path="/imbuild/im-ant-tasks/lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="/imbuild/im-ant-tasks/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="main/lib/icu4j_3_4.jar"/>
 	<classpathentry kind="lib" path="main/lib/iri.jar"/>
 	<classpathentry kind="lib" path="main/lib/collections-generic-4.01.jar"/>

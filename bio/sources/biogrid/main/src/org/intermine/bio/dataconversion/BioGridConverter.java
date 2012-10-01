@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.SAXParser;
 import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
+import org.intermine.xml.full.ReferenceList;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -78,7 +80,7 @@ public class BioGridConverter extends BioFileConverter
     private Map<MultiKey, Item> idsToExperiments;
     private Map<String, String> strains = new HashMap<String, String>();
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
-    private static final String BAIT = "bait";
+    private static final String SPOKE_MODEL = "prey";
 
     /**
      * Constructor
@@ -468,7 +470,6 @@ public class BioGridConverter extends BioFileConverter
         private Item getInteraction(String refId, String gene2RefId) throws ObjectStoreException {
             MultiKey key = new MultiKey(refId, gene2RefId);
             Item interaction = interactions.get(key);
-
             if (interaction == null) {
                 interaction = createItem("Interaction");
                 interaction.setReference("gene1", refId);
@@ -479,7 +480,18 @@ public class BioGridConverter extends BioFileConverter
             return interaction;
         }
 
+
+        // get all the gene ref IDs for an interaction
+        private ReferenceList getAllRefIds(Collection<InteractorHolder> allInteractors) {
+            ReferenceList allRefIds = new ReferenceList("allInteractors");
+            for (InteractorHolder ih : allInteractors) {
+                allRefIds.addRefId(ih.participant.refId);
+            }
+            return allRefIds;
+        }
+
         private void storeInteraction(InteractionHolder h) throws ObjectStoreException  {
+            ReferenceList allInteractors = getAllRefIds(h.ihs.values());
 
             // for every gene in interaction store interaction pair
             for (InteractorHolder gene1Interactor: h.ihs.values()) {
@@ -501,7 +513,7 @@ public class BioGridConverter extends BioFileConverter
 
                     String role1 = gene1Interactor.role;
                     String role2 = gene2Interactor.role;
-                    if (BAIT.equalsIgnoreCase(role1) && BAIT.equalsIgnoreCase(role2)) {
+                    if (SPOKE_MODEL.equalsIgnoreCase(role1) && SPOKE_MODEL.equalsIgnoreCase(role2)) {
                         // spoke!  not storing bait - bait, only bait - prey
                         continue;
                     }
@@ -522,6 +534,7 @@ public class BioGridConverter extends BioFileConverter
                         detail.setAttribute("name", h.name);
                     }
                     detail.setReference("interaction", interaction);
+                    detail.addCollection(allInteractors);
                     store(detail);
                 }
             }
