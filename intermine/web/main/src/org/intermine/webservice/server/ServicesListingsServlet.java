@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -32,6 +33,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.Output;
@@ -106,20 +108,22 @@ public class ServicesListingsServlet extends HttpServlet
     private DefaultHandler getHandler() {
         DefaultHandler handler = new DefaultHandler() {
             private final Map<String, Object> result = new HashMap<String, Object>();
-            private final List<Map<String, Object>> resources
+            private final List<Map<String, Object>> endpoints
                 = new ArrayList<Map<String, Object>>();
-            private Map<String, Object> currentService = null;
-            private Map<String, Object> methods = null;
-            private Map<String, Object> method = null;
-            private Map<String, Object> params = null;
-            private Map<String, Object> param = null;
-            private Map<String, Object> returns = null;
+            private Map<String, Object> currentEndPoint = null;
+            private List<Map<String, Object>> methods = null;
+            private Map<String, Object> currentMethod = null;
+            private List<Map<String, Object>> params = null;
+            private Map<String, Object> currentParam = null;
+            private List<Map<String, Object>> returns = null;
             private Map<String, Object> format = null;
             private Stack<String> path = new Stack<String>();
             private StringBuffer sb = null;
+            private Properties webProperties = InterMineContext.getWebProperties();
+            private static final String DEFAULT_PROP_FMT = "ws.listing.default.%s.%s";
 
             public void startDocument() {
-                result.put("resources", resources);
+                result.put("endpoints", endpoints);
             }
 
             public void endDocument() {
@@ -130,33 +134,43 @@ public class ServicesListingsServlet extends HttpServlet
                     Attributes attrs) throws SAXException {
                 path.push(qName);
                 if ("servlet-mapping".equals(qName)) {
-                    currentService = new HashMap<String, Object>();
-                } else if ("params".equals(qName)) {
-                    params = new HashMap<String, Object>();
-                    currentService.put("parameters", params);
-                } else if ("methods".equals(qName)) {
-                    methods = new HashMap<String, Object>();
-                    currentService.put("methods", methods);
+                    currentEndPoint = new HashMap<String, Object>();
+                    methods = new ArrayList<Map<String, Object>>();
+                    currentEndPoint.put("methods", methods);
                 } else if ("returns".equals(qName)) {
-                    returns = new HashMap<String, Object>();
-                    currentService.put("returnFormats", returns);
+                    returns = new ArrayList<Map<String, Object>>();
+                    currentMethod.put("returnFormats", returns);
                 } else if ("method".equals(qName)) {
-                    method = new HashMap<String, Object>();
-                    int attrLen = attrs.getLength();
-                    for (int i = 0; i < attrLen; i++) {
-                        String ln = attrs.getLocalName(i);
-                        Object o = attrs.getValue(i);
-                        if ("true".equals(o) || "false".equals(o)) {
-                            o = Boolean.valueOf(o.toString());
-                        }
-                        method.put(ln, o);
+                    currentMethod = new HashMap<String, Object>();
+                    currentMethod.put("URI",
+                        String.valueOf(currentEndPoint.get("URI")).replaceAll("^/service", ""));
+                    currentMethod.put("HTTPMethod",
+                            attrs.getValue("type"));
+                    currentMethod.put("RequiresAuthentication",
+                            attrs.getValue("authenticationRequired"));
+                    String also = attrs.getValue("ALSO");
+                    if (also != null) {
+                        currentMethod.put("ALSO", also);
                     }
+                    params = new ArrayList<Map<String, Object>>();
+                    currentMethod.put("parameters", params);
+                    methods.add(currentMethod);
                 } else if ("param".equals(qName)) {
-                    param = new HashMap<String, Object>();
-                    param.put("required",
+                    currentParam = new HashMap<String, Object>();
+                    currentParam.put("Required",
                             Boolean.valueOf(attrs.getValue("required")));
-                    param.put("type", attrs.getValue("type"));
-                    param.put("description", attrs.getValue("description"));
+                    currentParam.put("Type", attrs.getValue("type"));
+                    currentParam.put("Description", attrs.getValue("description"));
+                    String defaultValue = attrs.getValue("default");
+                    if (defaultValue != null) {
+                        currentParam.put("Default", defaultValue);
+                    }
+                    
+                    if ("enumerated".equals(currentParam.get("Type"))) {
+                        currentParam.put("EnumeratedList",
+                                Arrays.asList(attrs.getValue("values").split(",")));
+                    }
+                    params.add(currentParam);
                 } else if ("format".equals(qName)) {
                     format = new HashMap<String, Object>();
                     int attrLen = attrs.getLength();
@@ -164,44 +178,87 @@ public class ServicesListingsServlet extends HttpServlet
                         String ln = attrs.getLocalName(i);
                         format.put(ln, attrs.getValue(i));
                     }
+                    returns.add(format);
                 }
                 sb = new StringBuffer();
             }
+
             public void endElement(String uri, String localName,
                     String qName) throws SAXException {
-                Set<String> properties = new HashSet<String>(Arrays.asList(
-                            "name", "description"));
-                String content = sb.toString().replace("\n", "")
+
+                final String content = sb.toString().replace("\n", "")
                                               .trim()
                                               .replaceAll(" +", " ");
+
                 if ("servlet-mapping".equals(qName)) {
-                    currentService = null;
+                    currentEndPoint = null; 
                 } else if ("url-pattern".equals(qName)) {
-                    if (currentService != null) {
-                        currentService.put("path", StringUtils.chomp(content, "/*"));
+                    if (currentEndPoint != null) {
+                        currentEndPoint.put("URI", StringUtils.chomp(content, "/*"));
                     }
                 } else if ("servlet-name".equals(qName)) {
-                    if (sb.toString().startsWith("ws-") && currentService != null) {
-                        resources.add(currentService);
+                    if (content.startsWith("ws-") && currentEndPoint != null) {
+                        endpoints.add(currentEndPoint);
+                        currentEndPoint.put("name", content);
                     }
-                } else if (properties.contains(qName)) {
-                    currentService.put(qName, content);
-                } else if ("method".equals(qName)) {
-                    methods.put(content, method);
+                } else if ("name".equals(qName)) {
+                    if (path.contains("method")) {
+                        currentMethod.put("MethodName", content);
+                    } else if (path.contains("metadata")) {
+                        currentEndPoint.put("name", content);
+                    }
                 } else if ("param".equals(qName)) {
-                    params.put(content, param);
+                    currentParam.put("Name", content);
+                    if (!currentParam.containsKey("Default")){
+                        // Resolve configured default, if possible and not already set.
+                        String configuredDefault = webProperties.getProperty(
+                            String.format(DEFAULT_PROP_FMT, currentEndPoint.get("URI"), content));
+                        if (configuredDefault != null) {
+                            currentParam.put("Default", configuredDefault);
+                        }
+                    }
+                    currentParam = null;
                 } else if ("format".equals(qName)) {
-                    returns.put(content, format);
-                } else if ("authentication-required".equals(qName)) {
-                    Boolean mustAuthenticate = Boolean.valueOf(content);
-                    currentService.put("authenticationRequired", mustAuthenticate);
+                    format.put("Name", content);
+                    format = null;
+                } else if ("summary".equals(qName)) {
+                    currentMethod.put("Synopsis", content);
+                } else if ("description".equals(qName)) {
+                    currentMethod.put("Description", content);
                 } else if ("minVersion".equals(qName)) {
                     Integer minVersion = Integer.valueOf(content);
-                    currentService.put("minVersion", minVersion);
+                    currentEndPoint.put("minVersion", minVersion);
+                } else if ("returns".equals(qName)) {
+                    if (returns.size() > 1) {
+                        Map<String, Object> formatParam = new HashMap<String, Object>();
+                        formatParam.put("Name", "format");
+                        formatParam.put("Required", "N");
+                        formatParam.put("Default", returns.get(0).get("Name"));
+                        formatParam.put("Type", "enumerated");
+                        formatParam.put("Description", "Output format");
+                        List<String> formatValues = new ArrayList<String>();
+                        for (Map<String, Object> obj: returns) {
+                            formatValues.add(String.valueOf(obj.get("Name")));
+                        }
+                        formatParam.put("EnumeratedList", formatValues);
+                        params.add(formatParam);
+                    }
+                    returns = null;
+                } else if ("method".equals(qName)) {
+                    if (currentMethod.containsKey("ALSO")) {
+                        String[] otherMethods = String.valueOf(currentMethod.get("ALSO")).split(",");
+                        for (String m: otherMethods) {
+                            Map<String, Object> aliasMethod = new HashMap<String, Object>(currentMethod);
+                            aliasMethod.put("HTTPMethod", m);
+                            methods.add(aliasMethod);
+                        }
+                    }
+                    currentMethod = null;
                 }
 
                 path.pop();
             }
+
             public void characters(char[] ch, int start, int length)
                 throws SAXException {
                 sb.append(ch, start, length);

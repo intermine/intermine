@@ -93,6 +93,28 @@
   <servlet-mapping>
   <servlet-name>ws-query-results</servlet-name>
   <url-pattern>/service/query/results/*</url-pattern>
+  <metadata>
+    <name>Query Results</name>
+    <method type="POST" authenticationRequired="false" ALSO="GET">
+        <summary>Get results for a query against the database.</summary>
+        <description>
+            This service provides full access to arbitrary database queries.
+            Queries are accepted in a serialised XML format, executed and returned
+            in a streaming manner. The query format is a custom subset of the capabilities
+            of SQL; see the InterMine wiki for a full description of the query XML
+            syntax.
+        </description>
+        <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format">query</param>
+        <param type="Integer" required="false" default="0" description="The index of the first result to return.">start</param>
+        <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <returns>
+            <format>tab</format>
+            <format>csv</format>
+            <format key="results">json</format>
+            <format>xml</format>
+        </returns>
+    </method>
+  </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -317,6 +339,27 @@
   <servlet-mapping>
     <servlet-name>ws-template</servlet-name>
     <url-pattern>/service/templates/*</url-pattern>
+    <metadata>
+        <name>Templates</name>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get the list of available templates.</summary>
+            <description>
+                Get a listing of the templates configured in an InterMine instance.
+                Each template contains a description of its properties, defining the
+                parameters that must be provided to run it, as well as a definition of the
+                output format for its results.
+                If the request is authenticated to a user, then the templates that that has access
+                to will also be returned.
+            </description>
+            <param required="false" default="false" description="Whether or not to include invalid templates. Invalid templates cannot be run.">includeBroken</param>
+            <returns>
+                <format>xml</format>
+                <format key="templates">json</format>
+                <format>tab</format>
+                <format>csv</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -331,6 +374,21 @@
   <servlet-mapping>
     <servlet-name>ws-model</servlet-name>
     <url-pattern>/service/model/*</url-pattern>
+    <metadata>
+        <name>Data Model</name>
+        <method type="GET" authenticationRequired="false">
+            <summary>Get a description of the data model</summary>
+            <description>
+                An InterMine data model can be fully described as a set of classes
+                with various properties. This data model is useful for constructing
+                queries and interpreting the results returned from the service.
+            </description>
+            <returns>
+                <format>xml</format>
+                <format key="model">json</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -345,6 +403,20 @@
   <servlet-mapping>
     <servlet-name>ws-version</servlet-name>
     <url-pattern>/service/version/*</url-pattern>
+    <metadata>
+        <name>Web-Service Version</name>
+        <method type="GET" authenticationRequired="false">
+           <summary>Get the Web-Service Version.</summary>
+           <description>
+               Get the web-service version number. This number is incremented for
+               each change in functionality.
+           </description>
+           <returns>
+             <format>text</format>
+             <format key="version">json</format>
+           </returns>
+       </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -359,6 +431,7 @@
   <servlet-mapping>
     <servlet-name>ws-check-resource</servlet-name>
     <url-pattern>/service/check/*</url-pattern>
+    
   </servlet-mapping>
 
   <!-- NEW IN VERSION 6 -->
@@ -375,6 +448,24 @@
   <servlet-mapping>
     <servlet-name>ws-possible-values</servlet-name>
     <url-pattern>/service/path/values</url-pattern>
+    <metadata>
+        <name>Possible Values</name>
+        <minVersion>6</minVersion>
+        <method type="GET" authenticationRequired="false" ALSO="POST">
+           <summary>Get the possible values a path may have.</summary>
+           <description>
+               This service provides the possible values that a path may represent
+               in the database. This functionality is expected to primarily useful for
+               applications providing completion and suggestions for user-input.
+           </description>
+           <param type="String" required="true" description="The path whose possible values are requested">path</param>
+           <param type="JSON {string -> string}" required="false" description="Any type constraints on this path">typeConstraints</param>
+           <returns>
+             <format key="results">json</format>
+             <format key="results">count</format>
+           </returns>
+       </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -408,17 +499,13 @@
     <metadata>
         <name>Summary Fields</name>
         <minVersion>7</minVersion>
-        <methods>
-          <method authenticationRequired="false"
-            function="Get the fields used to summarise the class">GET</method>
-       </methods>
-       <params>
-        <param type="Boolean" required="false" default="false"
-            description="Whether to exclude references from the summary fields">norefs</param>
-       </params>
-       <returns>
-         <format key="classes">json</format>
-       </returns>
+        <method type="GET" authenticationRequired="false">
+           <summary>Get the fields used to summarise the class</summary>
+           <param type="Boolean" required="false" default="false" description="Whether to exclude references from the summary fields">norefs</param>
+	       <returns>
+	         <format key="classes">json</format>
+	       </returns>
+       </method>
     </metadata>
   </servlet-mapping>
 
@@ -437,23 +524,20 @@
     <metadata>
         <name>Generated Code</name>
         <minVersion>7</minVersion>
-        <methods>
-            <method authenticationRequired="false" function="Get code to run a pathquery in a given language.">GET</method>
-            <method authenticationRequired="false" function="Get code to run a pathquery in a given language. POSTing data avoids running into problems with URL length.">POST</method>
-        </methods>
-        <params>
-            <param type="String" required="true" description="The language to generate code in. Should be one of: 'pl', 'py', 'java', 'js', 'rb'.">lang</param>
-            <param type="String" required="true" description="The query to generate code for, in XML form." schema="/service/schema/query.xsd">query</param>
-        </params>
-        <returns>
-            <format key="code">json</format>
-            <format>xml</format>
-            <format default="true">text</format>
-        </returns>
-        <description>
-            This services provides the ability to generate code in one of several
-            languages based on a pathquery provided in serialised form.
-        </description>
+        <method type="GET" ALSO="PUT" authenticationRequired="false">
+            <summary>Get the code to run a pathquery in a given language.</summary>
+            <description>
+	            This service provides the ability to generate code in one of several
+	            languages based on a pathquery provided in serialised form.
+	        </description>
+            <param type="enumerated" default="py" values="pl,py,rb,js,java" required="true" description="The language to generate code in.">lang</param>
+            <param type="XML" required="true" description="The query to generate code for, in XML form." schema="/service/schema/query.xsd">query</param>
+            <returns>
+                <format>text</format>
+	            <format key="code">json</format>
+	            <format>xml</format>
+	        </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -472,26 +556,41 @@
     <metadata>
         <name>List Tags</name>
         <minVersion>7</minVersion>
-        <methods>
-            <method authenticationRequired="false" function="Get the tags for a list, or all the tags for a given user.">GET</method>
-            <method authenticationRequired="true" function="Add one or more tags to a list">POST</method>
-            <method authenticationRequired="true" function="Delete one or more tags from a list">DELETE</method>
-        </methods>
-        <params>
-            <param type="String" required="false" description="The name of the list operated on. This is not required when fetching all list tags for a user, but is in all other use cases">name</param>
-            <param type="String" required="false" description="The name of the tags to add or remove. This is not required when fetching list tags for a user, but is in all other use cases. Where provided it should take to from of a semi-colon delimited concatenation of the tag names.">tags</param>
-        </params>
-        <returns>
-            <format key="tags">json</format>
-            <format>xml</format>
-            <format>tab</format>
-            <format>csv</format>
-        </returns>
-        <description>
-            This service provides read, creation and deletion facilties to the tags
-            associated with a particular list, or all lists that a user has access
-            to.
-        </description>
+        <method authenticationRequired="false" type="GET" >
+            <summary>Get the tags for a list, or all the tags for a given user</summary>
+            <description>
+                Fetch an up-to-date list of all tags associated with a list, or all lists.
+            </description>
+            <param type="String" required="false" description="The name of a list whose tags to retrieve. If no list is provided, then all the tags associated with the authenticating user will be returned.">name</param>
+            <returns>
+	            <format key="tags">json</format>
+	            <format>xml</format>
+	            <format>tab</format>
+	            <format>csv</format>
+	        </returns>
+        </method>
+        <method authenticationRequired="true" type="POST">
+            <summary>Add one or more tags to a list</summary>
+            <param type="String" required="true" description="The name of a list to add the tag(s) to.">name</param>
+            <param type="String" required="true" description="The name of the tags to add. It should take to from of a semi-colon delimited concatenation of the tag names.">tags</param>
+            <returns>
+                <format key="tags">json</format>
+                <format>xml</format>
+                <format>tab</format>
+                <format>csv</format>
+            </returns>
+        </method>
+        <method authenticationRequired="true" type="DELETE">
+            <summary>Delete one or more tags from a list</summary>
+            <param type="String" required="true" description="The name of a list to add the tag(s) to.">name</param>
+            <param type="String" required="true" description="The name of the tags to remove. It should take to from of a semi-colon delimited concatenation of the tag names.">tags</param>
+            <returns>
+                <format key="tags">json</format>
+                <format>xml</format>
+                <format>tab</format>
+                <format>csv</format>
+            </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -512,22 +611,20 @@
     <metadata>
         <name>Widgets</name>
         <minVersion>8</minVersion>
-        <methods>
-            <method authenticationRequired="false" function="Get a list of the widgets available at a service">GET</method>
-        </methods>
-        <params>
-        </params>
-        <returns>
-            <format key="widgets">json</format>
-            <format>xml</format>
-            <format>tab</format>
-            <format>csv</format>
-        </returns>
-        <description>
-            This service returns a list of the widgets that are available at a
-            given service. Each entry for the widget includes details of its type,
-            the kind of data it processes, and the any filters it accepts.
-        </description>
+        <method authenticationRequired="false" type="GET">
+            <summary>Get a list of the widgets available at a service</summary>
+            <description>
+                This service returns a list of the widgets that are available at a
+                given service. Each entry for the widget includes details of its type,
+                the kind of data it processes, and any filters it accepts.
+            </description>
+            <returns>
+	            <format key="widgets">json</format>
+	            <format>xml</format>
+	            <format>tab</format>
+	            <format>csv</format>
+	        </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -555,30 +652,25 @@
     <metadata>
         <name>Enrichment Widgets</name>
         <minVersion>8</minVersion>
-        <methods>
-            <method authenticationRequired="true" function="get the data for a given enrichemnt widget">GET</method>
-            <method authenticationRequired="true" function="get the data for a given enrichemnt widget">POST</method>
-        </methods>
-        <params>
+        <method authenticationRequired="true" type="GET" ALSO="POST">
+            <summary>get the data for a given enrichemnt widget</summary>
+            <description>
+                Enrichment widgets provide a statistical summary of what makes a list distinct from
+                the background population over a certain domain. They return a list of members of the
+                domain ranked by p-value (low to high).
+            </description>
             <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
             <param type="String" required="true" description="The name of the enrichment widget to display">widget</param>
-            <param type="Float" required="true" description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
-            <param type="String" required="true" description="The error correction algorithm to use. The currently supported options are 'Holm-Bonferroni', 'Benjamini and Hochberg', 'Bonferroni', and 'None'">correction</param>
+            <param type="Float" default="0.05" required="true" description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
+            <param type="enumerated" values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None" default="Holm-Bonferroni" required="true" description="The error correction algorithm to use.">correction</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
-        </params>
-        <returns>
-            <format key="results">json</format>
-            <format>xml</format>
-            <format>tab</format>
-            <format>csv</format>
-        </returns>
-        <description>
-            This service returns data generated by performing enrichment
-            analyses over the list provided. These analyses aim to identify
-            significant properties of a collection of items when seen in
-            comparison to a background reference population. At present, the
-            reference population is the entire genome.
-        </description>
+            <returns>
+	            <format key="results">json</format>
+	            <format>xml</format>
+	            <format>tab</format>
+	            <format>csv</format>
+	        </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -598,24 +690,21 @@
     <metadata>
         <name>Graphical Widgets</name>
         <minVersion>8</minVersion>
-        <methods>
-            <method authenticationRequired="true" function="get the data to produce a graph">GET</method>
-            <method authenticationRequired="true" function="get the data to produce a graph">POST</method>
-        </methods>
-        <params>
+        <method type="GET" authenticationRequired="true" ALSO="POST">
+            <summary>get the data to produce a graph</summary>
+            <description>
+	           This service returns data that can be passed to charting software, such
+	           as Google's javascript Charts API, to produce graphical representations
+	           of the overview of data in a list.
+	        </description>
             <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
             <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
-        </params>
-        <returns>
-            <format key="results">json</format>
-            <format>xml</format>
-        </returns>
-        <description>
-            This service returns data that can be passed to charting software, such
-            as Google's javascript Charts API, to produce graphical representations
-            of the overview of data in a list.
-        </description>
+	        <returns>
+	            <format key="results">json</format>
+	            <format>xml</format>
+	        </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -635,22 +724,19 @@
     <metadata>
         <name>Table Widgets</name>
         <minVersion>8</minVersion>
-        <methods>
-            <method authenticationRequired="true" function="get the data to produce a graph">GET</method>
-            <method authenticationRequired="true" function="get the data to produce a graph">POST</method>
-        </methods>
-        <params>
+        <method type="GET" authenticationRequired="true" ALSO="POST">
+            <summary>Get the data as displayed by a table widget</summary>
+            <description>
+	            This service returns data to produce a table representations
+	            of the overview of data in a list.
+	        </description>
             <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
             <param type="String" required="true" description="The name of the graphical widget to display">widget</param>
-        </params>
-        <returns>
-            <format key="results">json</format>
-            <format>xml</format>
-        </returns>
-        <description>
-            This service returns data to produce a table representations
-            of the overview of data in a list.
-        </description>
+            <returns>
+	            <format key="results">json</format>
+	            <format>xml</format>
+	        </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -672,23 +758,22 @@
     <metadata>
         <name>QuickSearch</name>
         <minVersion>9</minVersion>
-        <methods>
-            <method authenticationRequired="false" function="Perform a key-word search and retrieve the results">GET</method>
-            <method authenticationRequired="false" function="Perform a key-word search and retrieve the results">POST</method>
-        </methods>
-        <params>
+        <method authenticationRequired="false" type="GET" ALSO="POST">
+            <summary>Perform a key-word search and retrieve the results</summary>
+            <description>
+                Run a general key-word style search over all data in the data-warehouse.
+                Rather than a structured query for a specific type of data, this allows
+                the user to search broadly over a range of data types, and use
+                facetting information to restrict the search results.
+            </description>
             <param type="String" required="false" description="The query string to search with. If absent, or blank, all results will be returned">q</param>
-            <param type="String" required="false" description="A list to use as a background population. If a list with private access rights is provided, the request must be authenticated.">list</param>
-        </params>
-        <returns>
-            <format key="results">json</format>
-        </returns>
-        <description>
-            Run a general key-word style search over all data in the data-warehouse.
-            Rather than a structured query for a specific type of data, this allows
-            the user to search broadly over a range of data types, and use
-            facetting information to restrict the search results.
-        </description>
+            <param type="int" required="false" description="The maximum number of records to return. If no limit is provided, all results will be returned." default="10">size</param>
+            <param type="int" required="false" description="The index of the first result to return." default="0">start</param>
+            <param type="String" required="false" description="A list to search within.">list</param>
+            <returns>
+              <format key="results">json</format>
+            </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -706,20 +791,18 @@
     <url-pattern>/service/user/whoami</url-pattern>
     <!-- Custom extensions that allow us to automatically generate documentation -->
     <metadata>
-        <name>Who-Am-I</name>
+        <name>Who-Am-I?</name>
         <minVersion>9</minVersion>
-        <methods>
-            <method authenticationRequired="true" function="Get details about the authenticated user">GET</method>
-        </methods>
-        <params>
-        </params>
-        <returns>
-            <format key="user">json</format>
-        </returns>
-        <description>
-            Retrieve information about the currently authenticated user. This can
-            be used to display the user's name.
-        </description>
+        <method authenticationRequired="true" type="GET">
+            <summary>Get details about the authenticated user</summary>
+	        <description>
+	            Retrieve information about the currently authenticated user. This can
+	            be used to display the user's name.
+	        </description>
+	        <returns>
+                <format key="user">json</format>
+            </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -739,20 +822,18 @@
     <metadata>
         <name>Token</name>
         <minVersion>9</minVersion>
-        <methods>
-            <method authenticationRequired="true" function="Get a new API key">GET</method>
-        </methods>
-        <params>
-        </params>
-        <returns>
-            <format key="token">json</format>
-        </returns>
-        <description>
-            This service allows a user to retrieve an API token which is valid
-            for up to 24 hours of unlimited use. The primary use case is to
-            get an API key where the user has only username/password credentials,
-            since the use of API keys is more secure.
-        </description>
+        <method type="GET" authenticationRequired="true">
+            <summary>Get a new API key</summary>
+	        <description>
+	            This service allows a user to retrieve an API token which is valid
+	            for up to 24 hours of unlimited use. The primary use case is to
+	            get an API key where the user has only username/password credentials,
+	            since the use of API keys is more secure.
+	        </description>
+	        <returns>
+	            <format key="token">json</format>
+	        </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -773,26 +854,26 @@
     <metadata>
       <name>Users</name>
       <minVersion>9</minVersion>
-      <methods>
-          <method authenticationRequired="false"
-              function="create a new user">POST</method>
-      </methods>
-      <params>
-        <param type="String" required="true" description="The user name of the new user. It should be an email address if possible. There must not be any user with the same username">name</param>
-        <param type="String" required="true" description="A password to associate with the account.">password</param>
-        <param type="boolean" required="false" description="Whether or not to subscribe to the mine's mailing list, if it has one. The username must be an email address if true">subscribe-to-list</param>
-      </params>
-      <returns>
-        <format key="user">json</format>
-      </returns>
-      <description>
-      This service allows users of the web service to create a new user account.
-      A user account is required for a number of operations, such as saving
-      lists. This service allows users of the webservice to register an account, and
-      start using these features that require authentication. The username and
-      password provided will be able to be used for future requests, as will
-      an API key provided with the response, which is valid for 24 hours.
-      </description>
+      <method type="POST" requiresAuthentication="false">
+          <name>User Creation</name>
+          <summary>Create a new user in the user-profile</summary>
+          <description>
+		      This service allows users of the web service to create a new user account.
+		      A user account is required for a number of operations, such as saving
+		      lists. This service allows users of the webservice to register an account, and
+		      start using these features that require authentication. The username and
+		      password provided will be able to be used for future requests, as will
+		      an API key provided with the response, which is valid for 24 hours.
+              This is equivalent to the registration mechanism in the web-application interface.
+              Requests to this service are rate limited by IP Address
+          </description>
+          <param type="String" required="true" description="The user name of the new user. It should be an email address if possible. There must not be any user with the same username">name</param>
+          <param type="String" required="true" description="A password to associate with the account.">password</param>
+          <param type="boolean" required="false" description="Whether or not to subscribe to the mine's mailing list, if it has one. The username must be an email address if true">subscribe-to-list</param>
+          <returns>
+            <format key="user">json</format>
+          </returns>
+      </method>
     </metadata>
   </servlet-mapping>
 
@@ -807,15 +888,16 @@
     <metadata>
         <name>Key Fields</name>
         <minVersion>9</minVersion>
-        <methods>
-          <method authenticationRequired="false"
-            function="Get the fields used to identify an object">GET</method>
-       </methods>
-       <params>
-       </params>
-       <returns>
-         <format key="classes">json</format>
-       </returns>
+        <method type="GET" requiresAuthentication="false">
+            <summary>Get the fields used to identify an object</summary>
+            <description>
+                Get the fields configured for this service to identify objects uniquely within
+                the database.
+            </description>
+            <returns>
+                <format key="classes">json</format>
+            </returns>
+       </method>
     </metadata>
   </servlet-mapping>
 
