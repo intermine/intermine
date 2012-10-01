@@ -8,7 +8,7 @@
   <li><span class="name label">identifiers:</span></li>
   <c:set var="size" value="${fn:length(identifiers)}" />
   <c:forEach var="identifier" items="${identifiers}" varStatus="status">
-    <li>${identifier.value}<c:if test="${status.count < size}">, </c:if></li>
+    <li><c:out value="${identifier.value}" /><c:if test="${status.count < size}">, </c:if></li>
   </c:forEach>
   </ul>
   </div>
