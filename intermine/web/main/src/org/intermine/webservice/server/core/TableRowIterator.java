@@ -1,8 +1,6 @@
 package org.intermine.webservice.server.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,67 +9,94 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.FastPathObject;
+import org.intermine.objectstore.query.PathExpressionField;
+import org.intermine.objectstore.query.QueryCollectionPathExpression;
+import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
-import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
-import org.intermine.webservice.server.core.Either.Left;
-import org.intermine.webservice.server.core.Either.Right;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.NotImplementedException;
+import org.intermine.webservice.server.core.DisjointRecursiveList.Eacher;
 
 /**
- * Iterator to present data directly from Results objects when data 
- * has been requested from path-queries. This iterator:
- * <ul>
- *   <li>Preserves the data structure of the underlying results, where
- *    each cell in each row may be either a value, or a sub-table in its own
- *    right, with its own columns.
- *   <li>Expands, however, the objects in the results to cells representing
- *    values for view paths.
- *   <li>Annotates cells with the view path they represent.
- *   <li>Annotates sub-tables with the columns they hold, and the joined collection
- *    they represent.
- * </ul>
- * @author Alex Kalderimis
- *
+ * A class for iterating over rows of results returned from the object store in a way that is very
+ * similar in shape to the raw results, but more tractable and more easily serialised and handled in
+ * other places.
  */
-public class TableRowIterator
-    implements Iterator<List<Either<TableCell, SubTable>>>,
-    Iterable<List<Either<TableCell, SubTable>>>
-{
+public class TableRowIterator implements
+        Iterator<List<Either<TableCell, SubTable>>>,
+        Iterable<List<Either<TableCell, SubTable>>> {
 
-    private final static Logger LOG = Logger.getLogger(TableRowIterator.class);
+    /* Initialisation variables */
     private final PathQuery pathQuery;
     private final Results results;
     private final Map<String, QuerySelectable> nodeForPath;
     private final List<Path> paths = new ArrayList<Path>();
-    protected final Map<Path, Integer> columnForView = new HashMap<Path, Integer>();
-    protected final Map<Path, List<Path>> rowTemplates = new HashMap<Path, List<Path>>(); // For debugging...
-    private final List<Set<Path>> nodesForThisCell = new ArrayList<Set<Path>>();
-    private final List<List<Path>> pathsForThisCell = new ArrayList<List<Path>>();
     private final Page page;
-    private final InterMineAPI im;
+    private final InterMineAPI im; // May be null.
 
-    private Iterator<Object> osIter;
-    private Path root;
+    /**
+     * The shape of the results. Each list of paths represents one of the objects returned from
+     * the object-store and the fields that we are interested in reading from it. As well as
+     * individual objects, the results may also contain nested result sets, which themselves
+     * contain objects returned from the object store. This recursive data-structure is different in
+     * precise shape for each query, and so this object provides a template for returning a row to the
+     * user.
+     */
+    private DisjointRecursiveList<List<Path>> resultsShape;
+
+    /**
+     * The view as it would have been if we didn't have to make any changes.
+     */
+    private final List<Path> effectiveView = new ArrayList<Path>();
+
+    /**
+     * Counter for keeping track of which row we are on.
+     */
     private int counter = 0;
+    private Path root;
+    private Iterator<Object> osIter;
+    private Map<DisjointRecursiveList<List<Path>>, Path> levels;
 
+    /** The mechanism for mapping an element of results to the path it logically represents **/
+    private static final EitherVisitor<TableCell, SubTable, Path> pathGetter = new EitherVisitor<TableCell, SubTable, Path>() {
+        @Override public Path visitLeft(TableCell a) {
+            return a.getPath();
+        }
+        @Override public Path visitRight(SubTable b) {
+            return b.getJoinPath();
+        }
+    };
+
+    /** 
+     * The comparator for reordering the results prior to being returned, making sure they are as close
+     * as possible to the original view order.
+     */
+    private Comparator<Either<TableCell, SubTable>> reorderer;
+
+    /**
+     * The comparator for reordering the view list prior to flattening, making sure the new outer-joined
+     * grouped view is still in the preferred view order as defined by the path-query.
+     */
+    private Comparator<Either<Path, DisjointRecursiveList<Path>>> pathReorderer;
+
+    /**
+     * Constructor.
+     * @param pathQuery The path-query these results represent an answer to.
+     * @param results The object-store results.
+     * @param nodeForPath The map from selectable to the path it represents.
+     * @param page The section of the results required.
+     * @param im A reference to the API (MAY BE NULL!).
+     */
     public TableRowIterator(
             PathQuery pathQuery,
             Results results,
@@ -83,202 +108,308 @@ public class TableRowIterator
         this.results = results;
         this.nodeForPath = nodeForPath;
         this.im = im; // Watch out, may be null!
+        
         try {
             init();
         } catch (PathException e) {
             throw new RuntimeException("Failed to initialise", e);
         }
     }
-    
-    private boolean pathMayInherit(Path p) throws PathException {
-        Path parent = p.getPrefix();
-        if (parent.isRootPath()) {
-            return false;
-        }
-        boolean thisMayInherit
-            = pathQuery.getOuterJoinStatus(parent.getNoConstraintsString()) != OuterJoinStatus.OUTER;
-        if (thisMayInherit) {
-            return true;
-        } else {
-            for (Path v: paths) {
-                Path vParent = v.getPrefix();
-                if (!vParent.isRootPath()) {
-                    if (vParent.getPrefix().equals(parent.getPrefix())) {
-                        if (pathQuery.getOuterJoinStatus(vParent.getNoConstraintsString())
-                                != OuterJoinStatus.OUTER) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            for (Path subp: p.decomposePath()) {
-                if (subp.endIsCollection() &&
-                        pathQuery.getOuterJoinStatus(subp.getNoConstraintsString()) == OuterJoinStatus.OUTER) {
-                   return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    private void initPaths() throws PathException {
-        for (String view: pathQuery.getView()) {
-            paths.add(pathQuery.makePath(view));
-        }
-    }
-    
-    private void initColumnForView() throws PathException {
-        int colNo = 0;
-        for (QuerySelectable selected: results.getQuery().getSelect()) {
-        	
-            for (Path p: paths) {
 
-                Path parent = p.getPrefix();
-                QuerySelectable qs = nodeForPath.get(parent.toStringNoConstraints());
-
-                if (selected.equals(qs)) {
-                    columnForView.put(p, new Integer(colNo));
-                    columnForView.put(parent, new Integer(colNo));
-                }
-            }
-            colNo++;
-        }
-        Queue<Integer> unassigned = new LinkedList<Integer>();
-        for (int i = 0; i < colNo; i++) {
-            Collection<Integer> assigned = columnForView.values();
-            if (!assigned.contains(i)) {
-                unassigned.add(i);
-            }
-        }
-        for (Path p: paths) {
-            String pojg = pathQuery.getOuterJoinGroup(p.toStringNoConstraints());
-            Path pojgp = pathQuery.makePath(pojg);
-            boolean mayInherit = pathMayInherit(p);
-            SEARCH: for (Path sought = p; !columnForView.containsKey(p); sought = sought.getPrefix()) {
-                if (sought.isRootPath()) {
-                    if (columnForView.containsKey(p.getPrefix())) {
-                        columnForView.put(p, columnForView.get(p.getPrefix()));
-                    } else {
-                        try {
-                            Integer i = unassigned.remove();
-                            columnForView.put(p, i);
-                            columnForView.put(p.getPrefix(), i);
-                        } catch (NoSuchElementException e) {
-                            throw new InternalErrorException(
-                                String.format("Expected %s to be one of the unassigned columns", p));
-                        }
-                    }
-                    break SEARCH;
-                }
-                String sojg = pathQuery.getOuterJoinGroup(sought.toStringNoConstraints());
-                Path sojgp = pathQuery.makePath(sojg);
-                if (mayInherit && !sojgp.isRootPath() && columnForView.containsKey(sojgp)) {
-                    columnForView.put(p, columnForView.get(sojgp));
-                } else if (pathQuery.getOuterJoinStatus(sought.getNoConstraintsString()) == OuterJoinStatus.OUTER) {
-                    if ((sought.endIsCollection() || (sought.endIsReference() && !sojgp.isRootPath()))) {
-                        for (Entry<Path, Integer> pair: columnForView.entrySet()) {
-                            Path key = pair.getKey();
-                            if (sojg.equals(pojg) && key.equals(sought)) {
-                                columnForView.put(p, pair.getValue());
-                                if (!sought.isRootPath()) {
-                                    columnForView.put(sought, pair.getValue());
-                                }
-                                break SEARCH;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    /**
+     * Perform initialisation that depends on computation involving values provided in the
+     * constructor.
+     * @throws PathException If the world has gone completely bonkers.
+     */
     private void init() throws PathException {
+
         osIter = results.iteratorFrom(page.getStart());
         counter = page.getStart();
         root = pathQuery.makePath(pathQuery.getRootClass());
-        initPaths();
-        initColumnForView();
-        initRowTemplates();
-        initCellPaths();
+
+        for (String view: pathQuery.getView()) {
+            paths.add(pathQuery.makePath(view));
+        }
+
+        ColumnConversionInput cci = new ColumnConversionInput();
+        cci.paths = paths;
+        cci.pathToQueryNode = nodeForPath;
+        cci.select = new ArrayList<QuerySelectable>(results.getQuery().getSelect());
+
+        resultsShape = determineResultShape(cci);
+        levels = getLevelMap(resultsShape);
+        levels.put(resultsShape, root);
+
+        reorderer = new Comparator<Either<TableCell, SubTable>>() {
+
+            private Integer pathToViewIndex(Path path) {
+                String pString = path.toStringNoConstraints(), view = pString;
+
+                if (!path.endIsAttribute()) {
+                    for (String v: pathQuery.getView()) {
+                        if (v.startsWith(pString)) {
+                            view = v;
+                            break;
+                        }
+                    }
+                }
+                return Integer.valueOf(pathQuery.getView().indexOf(view));
+            }
+
+            @Override
+            public int compare(Either<TableCell, SubTable> o1, Either<TableCell, SubTable> o2) {
+                Path path1 = o1.accept(pathGetter);
+                Path path2 = o2.accept(pathGetter);
+                return pathToViewIndex(path1).compareTo(pathToViewIndex(path2));
+            }
+        };
+        pathReorderer = new Comparator<Either<Path, DisjointRecursiveList<Path>>>() {
+            private EitherVisitor<Path, DisjointRecursiveList<Path>, Integer> toViewIndex = new EitherVisitor<Path, DisjointRecursiveList<Path>, Integer>() {
+                @Override
+                public Integer visitLeft(Path a) {
+                    return pathQuery.getView().indexOf(a.toStringNoConstraints());
+                }
+                @Override
+                public Integer visitRight(DisjointRecursiveList<Path> b) {
+                    return Integer.valueOf(pathQuery.getView().indexOf(b.flatten().get(0).toStringNoConstraints()));
+                }
+            };
+            @Override
+            public int compare(Either<Path, DisjointRecursiveList<Path>> o1,
+                    Either<Path, DisjointRecursiveList<Path>> o2) {
+                return o1.accept(toViewIndex).compareTo(o2.accept(toViewIndex));
+            }
+        };
+
+        effectiveView.addAll(determineEffectiveView());
     }
-    
-    private void initCellPaths() {
-        for (int i = 0; i < results.getQuery().getSelect().size(); i++) {
-            Set<Path> nodesForCell = new HashSet<Path>();
-            List<Path> pathsForCell = new ArrayList<Path>();
-            for (Path p: paths) {
-                if (columnForView.get(p).equals(i)) {
-                    nodesForCell.add(p.getPrefix());
-                    pathsForCell.add(p);
+
+    /**
+     * @return a read-only view over the effective view.
+     */
+    public List<Path> getEffectiveView() {
+        return Collections.unmodifiableList(effectiveView);
+    }
+
+    /**
+     * Merge lists of views at the same level, keeping them separate from the nested sub-tables while merging them too.
+     * @param shape The list to flatten out.
+     * @return The flattened list.
+     */
+    private DisjointRecursiveList<Path> consolidateLevels(final DisjointRecursiveList<List<Path>> shape) {
+        final DisjointRecursiveList<Path> consolidated = new DisjointRecursiveList<Path>();
+        shape.forEach(new Eacher<List<Path>>() {
+            @Override
+            public Void visitLeft(List<Path> a) {
+                for (Path p: a) {
+                    consolidated.addNode(p);
+                }
+                return null;
+            }
+            @Override
+            public Void visitRight(DisjointRecursiveList<List<Path>> b) {
+                consolidated.addList(consolidateLevels(b));
+                return null;
+            }
+        });
+        return consolidated;
+    }
+
+    /**
+     * A routine that sorts the consolidated list IN PLACE on each level. The same sorting
+     * routine is invoked on each level of the data-structure.
+     * @param consolidated A pre-consolidated recursive list.
+     */
+    private void orderListOnEachLevel(final DisjointRecursiveList<Path> consolidated) {
+        consolidated.forEach(new Eacher<Path>() {
+            @Override
+            public Void visitLeft(Path a) {
+                return null; // no-op
+            }
+            @Override
+            public Void visitRight(DisjointRecursiveList<Path> b) {
+                orderListOnEachLevel(b);
+                return null;
+            }
+        });
+        Collections.sort(consolidated.items, pathReorderer);
+    }
+
+    /**
+     * Since this iterator doesn't always respect the view as provided by the query, lumping
+     * together various view elements so that they are in groups according to their
+     * outer-join groups, this method returns the view that the path-query is taken to have had
+     * in terms of the results that are actually returned.
+     * @return The view list as it should have been.
+     */
+    private List<Path> determineEffectiveView() {
+        DisjointRecursiveList<Path> consolidated = consolidateLevels(resultsShape);
+        orderListOnEachLevel(consolidated);
+        return consolidated.flatten();
+    }
+
+    /**
+     *  Utility class to make recursive shape determination more tractable.
+     */
+    private class ColumnConversionInput {
+        List<? extends QuerySelectable> select;
+        Map<String, QuerySelectable> pathToQueryNode;
+        List<Path> paths;
+
+        /**
+         * Get the input for the next level of recursion.
+         * @param newSelect The select list on the next level.
+         * @return A new parameter object.
+         */
+        ColumnConversionInput getNextLevelInput(List<? extends QuerySelectable> newSelect) {
+            ColumnConversionInput cci = new ColumnConversionInput();
+            cci.paths = paths;
+            cci.pathToQueryNode = pathToQueryNode;
+            cci.select = newSelect;
+            return cci;
+        }
+    }
+
+    /**
+     * Start recursing through the data-structure, building up a map of table to outer-join group, from
+     * root on down. The purpose of this routine is to be able later to know what each sub-table refers to logically
+     * within the results in temrs of the view of the path-query as provided by the user.
+     * @param shape The pattern of the results we are operating over.
+     * @return A map from table (including the top level) to its outer-join group.
+     */
+    private Map<DisjointRecursiveList<List<Path>>, Path> getLevelMap(final DisjointRecursiveList<List<Path>> shape) {
+        final Map<DisjointRecursiveList<List<Path>>, Path> retVal = new HashMap<DisjointRecursiveList<List<Path>>, Path>();
+        determineLevels(shape, retVal);
+        return retVal;
+    }
+
+    /**
+     * A recursive routine to determine the level (outer-join group) for each table within a table of
+     * results. This routine uses the information within each table to establish its level, or if this
+     * level has no paths of its own then it reads the level of the sub-tables below it to determine what
+     * this one must be. At each level it populates the map provided as an argument.
+     * @param shape The pattern for the table at this level.
+     * @param shapeToLevel The map from table template to the outer-join group it represents (including the root group).
+     * @return The level of this shape.
+     */
+    private Path determineLevels(
+            final DisjointRecursiveList<List<Path>> shape,
+            final Map<DisjointRecursiveList<List<Path>>, Path> shapeToLevel
+        ) {
+        final Set<Path> pathsAtThisLevel = new HashSet<Path>();
+        final List<Path> pathsBelowThisLevel = new ArrayList<Path>();
+        if (shape.items.isEmpty()) {
+            // Should totally never happen...
+            return null;
+        }
+
+        shape.forEach(new TreeWalker<List<Path>>() {
+            @Override
+            public Void visitLeft(List<Path> views) {
+                pathsAtThisLevel.addAll(views);
+                return null;
+            }
+            @Override
+            public Void visitRight(DisjointRecursiveList<List<Path>> b) {
+                pathsBelowThisLevel.add(determineLevels(b, shapeToLevel));
+                return null;
+            }
+        });
+
+        Path retVal = null;
+        try {
+            if (!pathsAtThisLevel.isEmpty()) {
+                Path oneOfThisLevel = pathsAtThisLevel.iterator().next();
+                retVal = getOJG(oneOfThisLevel);
+            } else {
+                Path oneBelowThisLevel = pathsBelowThisLevel.iterator().next();
+                retVal = getOJG(oneBelowThisLevel.getPrefix());
+            }
+            // Make sure we get the sub-table's OJG.
+            while (!(retVal.endIsCollection() || retVal.isRootPath())) {
+                retVal = getOJG(retVal.getPrefix());
+            }
+        } catch (PathException e) {
+            throw new RuntimeException("This should never have happened.", e);
+        }
+        shapeToLevel.put(shape, retVal);
+        return retVal;
+    }
+
+    /**
+     * Simple wrapper around pathQuery methods to prevent RSI.
+     */
+    private Path getOJG(Path somePath) throws PathException {
+        return pathQuery.makePath(pathQuery.getOuterJoinGroup(somePath.getNoConstraintsString()));
+    }
+
+    /**
+     * Stolen wholesale from the mechanism in Export results iterator, and adapted to return a
+     * properly typed object rather than a raw collection, and to collect lists of paths rather than
+     * bothering with the indices.
+     * @param cci An input object
+     * @return A list containing items that are either lists of paths or lists of the same type as this list.
+     */
+    private DisjointRecursiveList<List<Path>> determineResultShape(ColumnConversionInput cci) {
+        DisjointRecursiveList<List<Path>> retval = new DisjointRecursiveList<List<Path>>();
+        for (QuerySelectable qs : cci.select) {
+            boolean done = false;
+            while (!done) {
+                if (qs instanceof QueryObjectPathExpression) {
+                    QueryObjectPathExpression qope = (QueryObjectPathExpression) qs;
+                    List<QuerySelectable> subSelect = qope.getSelect();
+                    if (!subSelect.isEmpty()) {
+                        qs = subSelect.get(0);
+                        if (qs.equals(qope.getDefaultClass())) {
+                            qs = qope;
+                            done = true;
+                        }
+                    } else {
+                        done = true;
+                    }
+                } else if (qs instanceof PathExpressionField) {
+                    PathExpressionField pef = (PathExpressionField) qs;
+                    QueryObjectPathExpression qope = pef.getQope();
+                    qs = qope.getSelect().get(pef.getFieldNumber());
+                    if (qs.equals(qope.getDefaultClass())) {
+                        qs = qope;
+                        done = true;
+                    }
+                } else {
+                    done = true;
                 }
             }
-            pathsForThisCell.add(pathsForCell);
-            nodesForThisCell.add(nodesForCell);
+            if (qs instanceof QueryCollectionPathExpression) {
+                QueryCollectionPathExpression qc = (QueryCollectionPathExpression) qs;
+                List<QuerySelectable> subSelect = qc.getSelect();
+                
+                if (subSelect.isEmpty()) {
+                    subSelect = Collections.singletonList((QuerySelectable) qc.getDefaultClass());
+                }
+                retval.addList(determineResultShape(cci.getNextLevelInput(subSelect)));
+            } else {
+                List<Path> fieldsForObject = new LinkedList<Path>();
+                for (Path path : cci.paths) {
+                    Path parent = path.getPrefix();
+                    QuerySelectable selectableForPath = cci.pathToQueryNode.get(parent.toStringNoConstraints());
+                    if (selectableForPath instanceof QueryCollectionPathExpression) {
+                        selectableForPath = ((QueryCollectionPathExpression) selectableForPath)
+                            .getDefaultClass();
+                    }
+                    if (qs.equals(selectableForPath)) {
+                        fieldsForObject.add(path);
+                    }
+                }
+                retval.addNode(fieldsForObject);
+            }
         }
+        return retval;
     }
-    
-    private void initRowTemplates() throws PathException {
-        rowTemplates.put(root, new ArrayList<Path>());
-        for (Path p: paths) {
-        	String ojg = pathQuery.getOuterJoinGroup(p.getNoConstraintsString());
-            Path node = pathQuery.makePath(ojg);
-            
-            if (!rowTemplates.containsKey(node)) {
-            	rowTemplates.put(node, new ArrayList<Path>());
-//            	if ( node.endIsCollection()) {
-//            		rowTemplates.put(node, new ArrayList<Path>());
-//            	} else if (node.endIsReference() && pathQuery.isPathCompletelyInner(node.getPrefix().getNoConstraintsString())) {
-//            		System.out.println("REFERENCE: " + node);
-//                	rowTemplates.put(node, new ArrayList<Path>());
-//            	}
-            }
-            rowTemplates.get(node).add(p);
-            if (!columnForView.containsKey(node)) {
-                columnForView.put(node, columnForView.get(p));
-            }
-            if (!root.equals(node)) {
-            	Path nodeParent = node.getPrefix();
-            	String nodeGroup = pathQuery.getOuterJoinGroup(nodeParent.getNoConstraintsString());
-            	
-            	Path ngp = pathQuery.makePath(nodeGroup);
-            	List<Path> ngpPaths = rowTemplates.get(ngp);
-            	if (ngpPaths == null) {
-            		ngpPaths = new ArrayList<Path>();
-            		rowTemplates.put(ngp, ngpPaths);
-            	}
-            	if (!ngpPaths.contains(node)) {
-            		ngpPaths.add(node);
-            	}
-            }
-        }
-//        for (Path p: paths) {
-//            String ojg = pathQuery.getOuterJoinGroup(p.getNoConstraintsString());
-//            Path ojgPath = pathQuery.makePath(ojg);
-//            if (ojgPath.isRootPath()) {
-//                rowTemplates.get(ojgPath).add(p);
-//            } else {
-//                // Find the closest node and add it there.
-//                while (!rowTemplates.containsKey(ojgPath)) {
-//                    ojgPath = ojgPath.getPrefix();
-//                }
-//                rowTemplates.get(ojgPath).add(p);
-//                // Now find a place to add the group path.
-//                if (!ojgPath.isRootPath()) {
-//                    Path groupOfGroup =
-//                        pathQuery.makePath(pathQuery.getOuterJoinGroup(ojgPath.getPrefix().getNoConstraintsString()));
-//                    while (!rowTemplates.containsKey(groupOfGroup)) {
-//                        if (groupOfGroup.isRootPath()) {
-//                            break;
-//                        }
-//                        groupOfGroup = groupOfGroup.getPrefix();
-//                    }
-//                    List<Path> rowTemplate = rowTemplates.get(groupOfGroup);
-//                    if (!rowTemplate.contains(ojgPath)) {
-//                    	rowTemplate.add(ojgPath);
-//                    }
-//                }
-//            }
-//        }
+
+    @Override
+    public Iterator<List<Either<TableCell, SubTable>>> iterator() {
+        // Return a new iterator reset to the beginning of the results set.
+        return new TableRowIterator(pathQuery, results, nodeForPath, page, im);
     }
 
     @Override
@@ -286,260 +417,98 @@ public class TableRowIterator
         return page.withinRange(counter) && osIter.hasNext();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public List<Either<TableCell, SubTable>> next() {
-        List row = (List) osIter.next();
-        List<Either<TableCell, SubTable>> data = new ArrayList<Either<TableCell, SubTable>>();
-        Set<Integer> skipList = new HashSet<Integer>();
-        List<Path> rowTemplate = rowTemplates.get(root);
-        for (Path p: rowTemplate) {
-            int idx = columnForView.get(p);
-            //if (skipList.contains(idx)) {
-            //    continue;
-            //}
-            Object o = row.get(idx);
-            
-            if (p.endIsAttribute()) {
-            	makeCells(data, o, Arrays.asList(p));
-            } else {
-            	if (p.endIsReference()) {
-            		processReference(row, data, o, rowTemplates.get(p), p);
-            	} else {
-            		processCollection(row, data, o, rowTemplates.get(p), p);
-            	}
-//                if (nodesForThisCell.get(idx).size() > 1) {
-//                    List<List<Object>> rows = (List<List<Object>>) o;
-//                    data.add(new Right(makeSubTable(rows, p.getPrefix(), pathsForThisCell.get(idx))));
-//                    //skipList.add(idx);
-//                } else {
-//	                List<List<Object>> rows = (List<List<Object>>) o;
-//	                data.add(new Right(makeSubTable(rows, p, rowTemplates.get(p))));
-//                }
-            }
-        }
-        counter++;
-        return data;
-    }
-    
-    private void processReference(
-    		List<Object> osRow,
-    		List<Either<TableCell, SubTable>> data,
-            Object o,
-            List<Path> views,
-            Path referencePath) {
-    	if (o instanceof List) {
-    		processCollection(osRow, data, o, views, referencePath);
-    	} else if (allAreAttributes(views)) {
-    		makeCells(data, o, views);
-    	} else {
-			for (int i = 0; i < views.size(); i++) {
-				Path p = views.get(i);
-				Object o2 = o;
-				if (osRow != null) {
-					o2 = osRow.get(columnForView.get(p));
-				}
-				
-	    		if (p.endIsAttribute()) {
-	    			makeCells(data, o2, Arrays.asList(p));
-	    		} else if (p.endIsReference()) {
-	    			processReference(osRow, data, o2, rowTemplates.get(p), p);
-	    		} else {
-	    			processCollection(osRow, data, o2, rowTemplates.get(p), p);
-	    		}
-	    	}
-    	}
-    }
-    
-    private boolean allAreAttributes(Collection<Path> paths) {
-    	for (Path p: paths) {
-    		if (!p.endIsAttribute()) {
-    			return false;
-    		}
-    	}
-    	return true;
-    }
-    
-    private void processCollection(
-    		List<Object> osRow,
-    		List<Either<TableCell, SubTable>> data,
-    		Object o,
-    		List<Path> views,
-    		Path collectionPath) {
-    	List<List<Object>> subRows = (List<List<Object>>) o;
-    	data.add(new Right(makeSubTable(subRows, collectionPath, rowTemplates.get(collectionPath))));
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void makeCells(
-            List<Either<TableCell, SubTable>> currentRow,
-            Object o,
-            List<Path> views) {
-        if (o == null) {
-            for (Path p: views) {
-                currentRow.add(new Left(new TableCell(p)));
-            }
-        } else if (o instanceof FastPathObject) {
-            FastPathObject fpo = (FastPathObject) o;
-            for (Path p: views) {
-	            String cls = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(o.getClass()));
-	            boolean isKeyField = false;
-	            if (im != null) {
-	                List<FieldDescriptor> keyFields = im.getClassKeys().get(cls);
-	                if (keyFields != null) {
-	                    isKeyField = keyFields.contains(p.getEndFieldDescriptor());
-	                }
-	            }
-	            currentRow.add(new Left(new TableCell(fpo, p, isKeyField)));
-            }
-        } else {
-            throw new RuntimeException(String.format(
-                "Table row iteration only supported over InterMine Objects, not %s instances. Got %s",
-                o.getClass().getName(), o
-            ));
-        }
-    }
-    
-    private static List<Entry<Integer, List<Path>>> groupColumns(List<Path> columns) {
-        final List<List<Path>> groupedColumns = new ArrayList<List<Path>>();
-        List<Path> currentGroup = new LinkedList<Path>();
-        groupedColumns.add(currentGroup);
-        ClassDescriptor currentType = columns.get(0).getLastClassDescriptor();
-        for (Path p: columns) {
-            if (p.endIsCollection() || !p.getLastClassDescriptor().equals(currentType)) {
-                currentType = p.getLastClassDescriptor();
-                currentGroup = new ArrayList<Path>();
-                groupedColumns.add(currentGroup);
-            }
-            currentGroup.add(p);
-        }
-        List<Integer> columnIndices = new ArrayList<Integer>();
-        for (int i = 0; i < groupedColumns.size(); i++) {
-            columnIndices.add(new Integer(i));
-        }
-        
-        // Required if the columns are reversed within the outer-join groups (aka. the devil's tables).
-        // Get the indices in the order we want to select them from the row.
-        /*
-        Collections.sort(columnIndices, new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                Integer depth1 = new Integer(groupedColumns.get(o1).get(0).getElements().size());
-                boolean isAttr1 = groupedColumns.get(o1).get(0).endIsAttribute();
-                Integer depth2 = new Integer(groupedColumns.get(o2).get(0).getElements().size());
-                boolean isAttr2 = groupedColumns.get(o2).get(0).endIsAttribute();
-                if (isAttr1 ^ isAttr2) {
-	            	if (isAttr1) {
-	                	return 1;
-	                } else if (isAttr1) {
-	                	return -1;
-	                }
-                }
-                return depth1.compareTo(depth2);
-                
-            }
-        });
-        
-        // Get the paths in an order that matches the indices.
-        Collections.sort(groupedColumns, new Comparator<List<Path>>() {
-            @Override
-           public int compare(List<Path> o1, List<Path> o2) {
-                // Give groups based around shorter paths precedence.
-                Integer length1 = new Integer(o1.get(0).getElements().size());
-                boolean isAttr1 = o1.get(0).endIsAttribute();
-                Integer length2 = new Integer(o2.get(0).getElements().size());
-                boolean isAttr2 = o2.get(0).endIsAttribute();
-                if (isAttr1 ^ isAttr2) {
-	            	if (isAttr1) {
-	                	return 1;
-	                } else if (isAttr1) {
-	                	return -1;
-	                }
-                }
-                return length1.compareTo(length2);
-            }
-        });
-        */
-        
-        List<Entry<Integer, List<Path>>> ret = new LinkedList<Entry<Integer, List<Path>>>();
-        for (Integer index: columnIndices) {
-            ret.add(new Pair<Integer, List<Path>>(index, groupedColumns.get(index)));
-        }
-        return ret;
-    }
-    
-    private List<Path> refsToEnd(List<Path> columns) {
-    	List<Path> ret = new ArrayList<Path>();
-    	Queue<Path> refs = new LinkedList<Path>(); 
-    	for (Path p: columns) {
-    		if (p.endIsAttribute()) {
-    			ret.add(p);
-    		} else {
-    			refs.add(p);
-    		}
-    	}
-    	while (!refs.isEmpty()) {
-    		ret.add(refs.remove());
-    	}
-    	return ret;
-    }
-    
-    private SubTable makeSubTable(
-            List<List<Object>> rows,
-            Path nodePath,
-            List<Path> columns) {
-        List<List<Either<TableCell, SubTable>>> data = new ArrayList<List<Either<TableCell, SubTable>>>();
-        
-        columns = refsToEnd(columns);
-        List<Entry<Integer, List<Path>>> indicesToPaths = groupColumns(columns);
-        
-        List<Path> subtablePaths = new ArrayList<Path>();
-        boolean doneOneRow = false;
-        for (List<Object> row: rows) {
-            List<Either<TableCell, SubTable>> subTableRow = new ArrayList<Either<TableCell, SubTable>>();
-            for (Entry<Integer, List<Path>> idxAndPaths: indicesToPaths) {
-                Object o = row.get(idxAndPaths.getKey());
-                
-                List<Path> paths = idxAndPaths.getValue();
-                if (paths.size() == 1 && paths.get(0).endIsReference()) {
-                	Path refPath = paths.get(0);
-                	paths = rowTemplates.get(refPath);
-                }
-                
-                if (o instanceof List) {
-                    List<List<Object>> subrows = (List<List<Object>>) o;
-                    Path subNodePath = paths.get(0);
-                    List<Path> subcols = rowTemplates.get(subNodePath);
-                    subTableRow.add(new Right(makeSubTable(subrows, subNodePath, subcols)));
-                    if (!doneOneRow) {
-                    	subtablePaths.add(subNodePath);
-                    }
-                } else {
-                    makeCells(subTableRow, o, paths);
-                    if (!doneOneRow) {
-                    	subtablePaths.addAll(paths);
-                    }
-                }
-            }
-            data.add(subTableRow);
-            doneOneRow = true;
-        }
-        return new SubTable(nodePath, subtablePaths, data);
-    }
-
-
     @Override
     public void remove() {
         throw new NotImplementedException(getClass(), "remove");
     }
 
     @Override
-    public Iterator<List<Either<TableCell, SubTable>>> iterator() {
-        if (counter == 0) { // Unused, we can iterate directly.
-            return this;
-        } else {
-            return new TableRowIterator(pathQuery, results, nodeForPath, page, im);
-        }
+    public List<Either<TableCell, SubTable>> next() {
+        List row = (List) osIter.next();
+        counter++;
+        return recursiveNext(row, resultsShape);
+    }
+
+    /**
+     * Actually fetch the next element and return it. This routine uses the results templates
+     * to map to results rows of similar shapes.
+     * @param row The data we are reading.
+     * @param shape The pattern of the data we are reading, and what it all means.
+     * @return A results row suitable for external consumption.
+     */
+    private List<Either<TableCell, SubTable>> recursiveNext(
+            final List row,
+            final DisjointRecursiveList<List<Path>> shape) {
+
+        final DisjointList<TableCell, SubTable> retVal = new DisjointList<TableCell, SubTable>();
+        final Iterator<Object> iter = row.iterator();
+
+        shape.forEach(new TreeWalker<List<Path>>() {
+            @Override
+            public Void visitLeft(List<Path> views) {
+                Object o = iter.next();
+                if (o == null) {
+                    for (Path p: views) {
+                        retVal.addLeft(new TableCell(p));
+                    }
+                } else if (o instanceof FastPathObject) {
+                    FastPathObject fpo = (FastPathObject) o;
+                    for (Path p: views) {
+                        String cls = TypeUtil.unqualifiedName(DynamicUtil.getSimpleClassName(o.getClass()));
+                        boolean isKeyField = false;
+                        if (im != null) {
+                            List<FieldDescriptor> keyFields = im.getClassKeys().get(cls);
+                            if (keyFields != null) {
+                                isKeyField = keyFields.contains(p.getEndFieldDescriptor());
+                            }
+                        }
+                        retVal.addLeft(new TableCell(fpo, p, isKeyField));
+                    }
+                } else {
+                    throw new RuntimeException(String.format(
+                        "Table row iteration only supported over InterMine Objects, not %s instances. Got %s",
+                        o.getClass().getName(), o
+                    ));
+                }
+                return null;
+            }
+            @Override
+            public Void visitRight(DisjointRecursiveList<List<Path>> b) {
+                Object o = iter.next();
+                if (o != null && !(o instanceof List)) {
+                    throw new RuntimeException(String.format(
+                        "Expected this result element to be a subtable of the form %s, but was %s", b, o
+                    ));
+                }
+                List<List<Either<TableCell, SubTable>>> data = new ArrayList<List<Either<TableCell, SubTable>>>();
+                if (o != null) {
+                    List ol = (List) o;
+                    for (Object elem: ol) {
+                        // Recursion happens here!!
+                        data.add(recursiveNext((List) elem, b));
+                    }
+                }
+                final List<Path> columns = new ArrayList<Path>();
+                b.forEach(new TreeWalker<List<Path>>() {
+                    @Override
+                    public Void visitLeft(List<Path> views) {
+                        columns.addAll(views);
+                        return null;
+                    }
+                    @Override
+                    public Void visitRight(DisjointRecursiveList<List<Path>> b) {
+                        return null;
+                    }
+                });
+                retVal.addRight(new SubTable(levels.get(b), columns, data));
+                return null;
+            }
+        });
+
+        // Make sure the elements within each table are in the same order as the view.
+        Collections.sort(retVal, reorderer);
+
+        return retVal;
     }
 
 }
