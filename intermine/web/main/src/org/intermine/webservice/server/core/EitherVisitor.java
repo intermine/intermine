@@ -24,10 +24,10 @@ public abstract class EitherVisitor<A, B, T>
         final EitherVisitor<A, B, T> outer = this;
         return new EitherVisitor<A, B, R>() {
             public R visitLeft(A a) {
-                return fn.f(outer.visitLeft(a));
+                return fn.call(outer.visitLeft(a));
             }
             public R visitRight(B b) {
-                return fn.f(outer.visitRight(b));
+                return fn.call(outer.visitRight(b));
             }
         };
     }
