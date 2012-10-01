@@ -68,6 +68,7 @@ public class CreateSearchIndexTask extends Task
             throw new BuildException(e);
         }
         if (!(os instanceof ObjectStoreInterMineImpl)) {
+            // Yes, yes, this is horrific...
             throw new RuntimeException("Got invalid ObjectStore - must be an "
                     + "instance of ObjectStoreInterMineImpl!");
         }
