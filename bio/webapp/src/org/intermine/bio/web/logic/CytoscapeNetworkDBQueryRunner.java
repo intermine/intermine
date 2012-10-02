@@ -118,7 +118,7 @@ public class CytoscapeNetworkDBQueryRunner
                 "Gene.interactions.gene2.primaryIdentifier",
                 "Gene.interactions.gene2.symbol",
                 "Gene.interactions.details.dataSets.dataSource.name",
-                "Gene.interactions.name",
+                "Gene.interactions.details.name",
                 "Gene.id",
                 "Gene.interactions.gene2.id");
 
