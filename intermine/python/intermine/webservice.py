@@ -679,7 +679,7 @@ class JSONIterator(object):
                 self.check_return_status()
             else:
                 line = line.strip().strip(',')
-                if len(line)> 0:
+                if len(line) > 0:
                     try:
                         row = json.loads(line)
                     except json.decoder.JSONDecodeError, e:
