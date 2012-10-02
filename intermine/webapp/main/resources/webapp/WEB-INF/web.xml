@@ -659,8 +659,9 @@
                 the background population over a certain domain. They return a list of members of the
                 domain ranked by p-value (low to high).
             </description>
-            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
+            <param type="String" required="true" description="The name of the list to investigate">list</param>
             <param type="String" required="true" description="The name of the enrichment widget to display">widget</param>
+            <param type="String" required="false" description="The name of the list to use as the background population">population</param>
             <param type="Float" default="0.05" required="true" description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
             <param type="enumerated" values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None" default="Holm-Bonferroni" required="true" description="The error correction algorithm to use.">correction</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
