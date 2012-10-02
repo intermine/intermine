@@ -162,20 +162,6 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
                 PathQuery.USERPROFILE_VERSION);
         request.setAttribute("cytoscapeNetworkQueryXML", queryXML);
-        LOG.info("Cytoscape network query xml =============================" + queryXML);
-
-        // set inline table in request
-        try {
-            WebResultsExecutor we = im.getWebResultsExecutor(profile);
-            WebResults webResults = we.execute(q);
-            PagedTable pagedResults = new PagedTable(webResults,
-                    reportObject.getNumberOfTableRowsToShow().intValue());
-            pagedResults.setTableid("CytoscapeNetworkDisplayer");
-            LOG.info("Cytoscape network paged results =============================" + pagedResults);
-            request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException(e);
-        }
-
+        request.setAttribute("cytoscapeNetworkResultsQuery", q);
     }
 }
