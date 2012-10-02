@@ -35,6 +35,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.search.Scope;
 import org.intermine.api.search.SearchFilterEngine;
@@ -145,7 +146,19 @@ public class WebSearchableListController extends TilesAction
         Profile profile = SessionMethods.getProfile(session);
         request.setAttribute("userWebSearchables", profile.getWebSearchablesByType(type));
         request.setAttribute("filteredWebSearchables", filteredWebSearchables);
-
+        if (type.equals(TagTypes.BAG)) {
+            ProfileManager pm = profile.getProfileManager();
+            Map<String, InterMineBag> sharedBags = profile.getSharedBags();
+            Map<String, String> sharedBagsByOwner = new HashMap<String, String>();
+            for (Map.Entry<String, InterMineBag> entry : sharedBags.entrySet()) {
+                int id = entry.getValue().getProfileId();
+                String username = pm.getProfileUserName(id);
+                String[] usernameSplitted = StringUtil.split(username, "@");
+                sharedBagsByOwner.put(entry.getKey(),
+                    usernameSplitted[0] + " at " + usernameSplitted[1]);
+            }
+            request.setAttribute("sharedBagWebSearchables", sharedBagsByOwner);
+        }
         JSONWriter jsonWriter = new JSONWriter();
         request.setAttribute("wsNames", jsonWriter.write(wsMapForJS));
         return null;
