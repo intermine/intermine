@@ -157,7 +157,9 @@ public class SharedBagManager
             String userName = bagValues.get("userName");
             String bagName = bagValues.get("bagName");
             InterMineBag bag = profileManager.getProfile(userName).getSavedBags().get(bagName);
-            sharedBags.put(bag.getName(), bag);
+            if (bag != null) {
+                sharedBags.put(bag.getName(), bag);
+            }
         }
         return sharedBags;
     }

@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    </html:form>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -120,6 +119,7 @@ if (!im.bagWorks) {
                          </tiles:insert>
                          <tiles:insert name="shareBag.tile">
                            <tiles:put name="bagName" value="${savedBag.value.name}"/>
+                           <tiles:put name="isBagValid" value="true"/>
                            <tiles:put name="id" value="${index}"/>
                          </tiles:insert>
                      </c:if>
@@ -218,6 +218,7 @@ if (!im.bagWorks) {
          </thead>
 
          <c:forEach items="${PROFILE.invalidBags}" var="bagEntry" varStatus="status">
+           <c:set var="index" value="${index+1}"/>
            <c:set var="bag" value="${bagEntry.value}"/>
            <tr>
              <td class="list-name" style="display:none;">${bag.name}</td> <%-- ID cell --%>
@@ -247,6 +248,11 @@ if (!im.bagWorks) {
                     <tiles:put name="show" value="true"/>"
                     <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
                   </tiles:insert>
+                  <tiles:insert name="shareBag.tile">
+                           <tiles:put name="bagName" value="${bag.name}"/>
+                           <tiles:put name="isBagValid" value="false"/>
+                           <tiles:put name="id" value="${index}"/>
+                   </tiles:insert>
                 </c:if>
 
               </td>
