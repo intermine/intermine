@@ -621,7 +621,6 @@ public class WebConfig
         }
     }
 
-
     /**
      * Fetch config for the report page displayers.
      * @return report page displayer config in the order specified in the config file
