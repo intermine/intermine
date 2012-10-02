@@ -668,6 +668,27 @@ public class ProfileManager
     }
 
     /**
+     * Return a List of the usernames in all of the stored profiles.
+     *
+     * @return the usernames
+     */
+    public synchronized String getProfileUserName(int profileId) {
+        UserProfile profile = new UserProfile();
+        profile.setId(profileId);
+        Set<String> fieldNames = new HashSet<String>();
+        fieldNames.add("id");
+        try {
+            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+        } catch (ObjectStoreException e) {
+            return null; // Could not be found.
+        }
+        if (profile == null) {
+            return null;
+        }
+        return profile.getUsername();
+    }
+
+    /**
      * Return the super user name set in the properties file
      * @return the superuser name
      */
