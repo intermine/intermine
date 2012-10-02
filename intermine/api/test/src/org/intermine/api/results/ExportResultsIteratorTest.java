@@ -56,7 +56,6 @@ public class ExportResultsIteratorTest extends TestCase
         ObjectStoreDummyImpl os = new ObjectStoreDummyImpl();
         os.setResultsSize(1);
 
-
         // Set up some known objects in the first 3 results rows
         Company company1 = (Company) DynamicUtil.createObject(Collections.singleton(Company.class));
         company1.setName("Company1");
@@ -114,41 +113,41 @@ public class ExportResultsIteratorTest extends TestCase
         sub1.add(subRow1);
         row.add(sub1);
         os.addRow(row);
-        
+
         PathQuery pq = new PathQuery(model);
         pq.addViews("Company.name", "Company.vatNumber", "Company.departments.name", "Company.departments.employees.name");
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
-        
+
         Path p1 = pq.makePath("Company.name");
         Path p2 = pq.makePath("Company.vatNumber");
         Path p3 = pq.makePath("Company.departments.name");
         Path p4 = pq.makePath("Company.departments.employees.name");
-        
+
         List expected = Arrays.asList(
-        		Arrays.asList(
-	        		new ResultElement(company1, p1, false), 
-	        		new ResultElement(company1, p2, false), 
-	        		new ResultElement(department1, p3, false), 
-	        		new ResultElement(employee1, p4, false)
-	        	),
                 Arrays.asList(
-                	new ResultElement(company1, p1, false), 
-                	new ResultElement(company1, p2, false), 
-                	new ResultElement(department1, p3, false), 
-                	new ResultElement(employee2, p4, false)
+                    new ResultElement(company1, p1, false), 
+                    new ResultElement(company1, p2, false), 
+                    new ResultElement(department1, p3, false), 
+                    new ResultElement(employee1, p4, false)
                 ),
                 Arrays.asList(
-            		new ResultElement(company1, p1, false), 
-            		new ResultElement(company1, p2, false), 
-            		new ResultElement(department2, p3, false), 
-            		new ResultElement(employee3, p4, false)
+                    new ResultElement(company1, p1, false), 
+                    new ResultElement(company1, p2, false), 
+                    new ResultElement(department1, p3, false), 
+                    new ResultElement(employee2, p4, false)
                 ),
                 Arrays.asList(
-            		new ResultElement(company1, p1, false), 
-            		new ResultElement(company1, p2, false), 
-            		new ResultElement(department2, p3, false), 
-            		new ResultElement(employee4, p4, false)
+                    new ResultElement(company1, p1, false), 
+                    new ResultElement(company1, p2, false), 
+                    new ResultElement(department2, p3, false), 
+                    new ResultElement(employee3, p4, false)
+                ),
+                Arrays.asList(
+                    new ResultElement(company1, p1, false), 
+                    new ResultElement(company1, p2, false), 
+                    new ResultElement(department2, p3, false), 
+                    new ResultElement(employee4, p4, false)
                 )
         );
 
@@ -156,9 +155,9 @@ public class ExportResultsIteratorTest extends TestCase
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 1, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
-        
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
-        
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
+
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
@@ -216,7 +215,7 @@ public class ExportResultsIteratorTest extends TestCase
         sub1.add(subRow1);
         row.add(sub1);
         os.addRow(row);
-        
+
         PathQuery pq = new PathQuery(model);
         pq.addViews("Company.name", "Company.vatNumber", "Company.departments.name", "Company.contractors.name");
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
@@ -225,51 +224,51 @@ public class ExportResultsIteratorTest extends TestCase
         Path p2 = pq.makePath("Company.vatNumber");
         Path p3 = pq.makePath("Company.departments.name");
         Path p4 = pq.makePath("Company.contractors.name");
-        
+
         List expected = Arrays.asList(
-        		Arrays.asList(
-        				new ResultElement(company1, p1, false), 
-        				new ResultElement(company1, p2, false), 
-        				new ResultElement(department1, p3, false), 
-        				null
-        		),
-				Arrays.asList(new ResultElement(company1, p1, false), 
-						new ResultElement(company1, p2, false), 
-						new ResultElement(department2, p3, false), 
-						null
-				),
-				Arrays.asList(
-						new ResultElement(company1, p1, false), 
-						new ResultElement(company1, p2, false), 
-						null, 
-						new ResultElement(contractor1, p4, false)
-				),
-				Arrays.asList(
-						new ResultElement(company1, p1, false), 
-						new ResultElement(company1, p2, false), 
-						null, 
-						new ResultElement(contractor2, p4, false)
-				),
-				Arrays.asList(
-						new ResultElement(company1, p1, false), 
-						new ResultElement(company1, p2, false), 
-						null, 
-						new ResultElement(contractor3, p4, false)
-				)
-        	);
-        
+                Arrays.asList(
+                        new ResultElement(company1, p1, false), 
+                        new ResultElement(company1, p2, false), 
+                        new ResultElement(department1, p3, false), 
+                        null
+                ),
+                Arrays.asList(new ResultElement(company1, p1, false), 
+                        new ResultElement(company1, p2, false), 
+                        new ResultElement(department2, p3, false), 
+                        null
+                ),
+                Arrays.asList(
+                        new ResultElement(company1, p1, false), 
+                        new ResultElement(company1, p2, false), 
+                        null, 
+                        new ResultElement(contractor1, p4, false)
+                ),
+                Arrays.asList(
+                        new ResultElement(company1, p1, false), 
+                        new ResultElement(company1, p2, false), 
+                        null, 
+                        new ResultElement(contractor2, p4, false)
+                ),
+                Arrays.asList(
+                        new ResultElement(company1, p1, false), 
+                        new ResultElement(company1, p2, false), 
+                        null, 
+                        new ResultElement(contractor3, p4, false)
+                )
+            );
+
         Map pathToQueryNode = new HashMap();
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 1, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
-        
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
-        
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
+
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
-        
+
         assertEquals(expected, got);
     }
 
@@ -304,31 +303,31 @@ public class ExportResultsIteratorTest extends TestCase
         pq.setOuterJoinStatus("Department.company", OuterJoinStatus.OUTER);
         Path p1 = pq.makePath("Department.name");
         Path p2 = pq.makePath("Department.company.name");
-        
+
         List expected = Arrays.asList(
-        		Arrays.asList(
-        				new ResultElement(department1, p1, false), 
-        				new ResultElement(company1, p2, false)
-        		),
                 Arrays.asList(
-                		new ResultElement(department2, p1, false), 
-                		new ResultElement(company1, p2, false)
+                        new ResultElement(department1, p1, false), 
+                        new ResultElement(company1, p2, false)
+                ),
+                Arrays.asList(
+                        new ResultElement(department2, p1, false), 
+                        new ResultElement(company1, p2, false)
                 )
         );
-        
+
         Map pathToQueryNode = new HashMap();
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 2, true, true, new HashMap());
         System.err.println(resultList);
         Results results = new DummyResults(q, resultList);
-        
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
 
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
-        
+
         assertEquals(expected, got);
     }
 
@@ -374,33 +373,33 @@ public class ExportResultsIteratorTest extends TestCase
         Path p1 = pq.makePath("Employee.name");
         Path p2 = pq.makePath("Employee.department.name");
         Path p3 = pq.makePath("Employee.department.company.name");
-        
+
         List expected = Arrays.asList(
-        		Arrays.asList(
-        				new ResultElement(e1, p1, false), 
-        				new ResultElement(department1, p2, false), 
-        				new ResultElement(company1, p3, false)
-        		),
                 Arrays.asList(
-                		new ResultElement(e2, p1, false), 
-                		new ResultElement(department2, p2, false), 
-                		new ResultElement(company1, p3, false)
+                        new ResultElement(e1, p1, false), 
+                        new ResultElement(department1, p2, false), 
+                        new ResultElement(company1, p3, false)
+                ),
+                Arrays.asList(
+                        new ResultElement(e2, p1, false), 
+                        new ResultElement(department2, p2, false), 
+                        new ResultElement(company1, p3, false)
                 )
         );
-        
+
         Map pathToQueryNode = new HashMap();
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 2, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
-        
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
-        
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
+
         System.out.println("Columns: " + iter.getColumns());
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
-        
+
         assertEquals(expected, got);
     }
 
@@ -442,27 +441,27 @@ public class ExportResultsIteratorTest extends TestCase
         Path p1 = pq.makePath("Company.name");
         Path p2 = pq.makePath("Company.departments.name");
         Path p3 = pq.makePath("Company.contractors.name");
-        
+
         List expected = Arrays.asList(
-        		Arrays.asList(
-        				new ResultElement(company, p1, false),
-        				new ResultElement(department, p2, false),
-        				new ResultElement(contractor, p3, false)
-        		)
+            Arrays.asList(
+                new ResultElement(company, p1, false),
+                new ResultElement(department, p2, false),
+                new ResultElement(contractor, p3, false)
+            )
         );
-        
+
         Map pathToQueryNode = new HashMap();
         Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 1, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
-        
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
-        
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
+
         List got = new ArrayList();
         for (List gotRow : new IteratorIterable<List<ResultElement>>(iter)) {
             got.add(gotRow);
         }
-        
+
         assertEquals(expected, got);
     }
 }

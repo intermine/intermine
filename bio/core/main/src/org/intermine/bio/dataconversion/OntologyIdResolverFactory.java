@@ -31,6 +31,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
     private Database db;
     private String ontology = null;
     private static final String MOCK_TAXON_ID = "0";
+    private final String propName = "db.production";
 
 
     /**
@@ -77,9 +78,17 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(MOCK_TAXON_ID)) {
+            return;
+        }
+
         try {
             // TODO we already know this database, right?
-            db = DatabaseFactory.getDatabase("os.production");
+            db = DatabaseFactory.getDatabase(propName);
 
             String cacheFileName = "build/" + db.getName() + "." + ontology;
             File f = new File(cacheFileName);

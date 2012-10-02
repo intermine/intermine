@@ -67,9 +67,12 @@ public class PathQueryExecutor extends QueryExecutor
      * @param bagQueryRunner for executing bag searches in queries
      * @param bagManager access to global and user bags
      */
-    public PathQueryExecutor(ObjectStore os,
-            Map<String, List<FieldDescriptor>> classKeys, Profile profile,
-            BagQueryRunner bagQueryRunner, BagManager bagManager) {
+    public PathQueryExecutor(
+            ObjectStore os,
+            Map<String, List<FieldDescriptor>> classKeys,
+            Profile profile,
+            BagQueryRunner bagQueryRunner,
+            BagManager bagManager) {
         this.os = os;
         this.bagQueryRunner = bagQueryRunner;
         this.bagManager = bagManager;
@@ -88,20 +91,18 @@ public class PathQueryExecutor extends QueryExecutor
     public ExportResultsIterator execute(PathQuery pathQuery) {
         try {
             Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-            Map<String, BagQueryResult> returnBagQueryResults =
-                new HashMap<String, BagQueryResult>();
+            Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
 
             Query q = makeQuery(pathQuery, returnBagQueryResults, pathToQueryNode);
-
             Results results = os.execute(q, batchSize, true, true, false);
 
-            Query realQ = results.getQuery();
-            if (realQ == q) {
-                queryToPathToQueryNode.put(q, pathToQueryNode);
-            } else {
-                pathToQueryNode = queryToPathToQueryNode.get(realQ);
-            }
-            return new ExportResultsIterator(pathQuery, results, pathToQueryNode);
+            //Query realQ = results.getQuery();
+            //if (realQ == q) {
+            //    queryToPathToQueryNode.put(q, pathToQueryNode);
+            //} else {
+            //    pathToQueryNode = queryToPathToQueryNode.get(realQ);
+            //}
+            return new ExportResultsIterator(pathQuery, q, results, pathToQueryNode);
         } catch (ObjectStoreException e) {
             throw new RuntimeException("Creating export results iterator failed", e);
         }
@@ -123,20 +124,27 @@ public class PathQueryExecutor extends QueryExecutor
             final int limit) {
         try {
             Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
-            Map<String, BagQueryResult> returnBagQueryResults =
-                new HashMap<String, BagQueryResult>();
+            Map<String, BagQueryResult> returnBagQueryResults = new HashMap<String, BagQueryResult>();
 
             Query q = makeQuery(pathQuery, returnBagQueryResults, pathToQueryNode);
-
             Results results = os.execute(q, batchSize, true, true, false);
 
+            /* 
+             * The purpose behind all this is to make sure that the results caching
+             * does not interfere with the routine to convertColumns in ExportResultsIterator.
+             * Sad, but true.
+             * TODO: dispense with these stupid shenanigins! and just pass through the query itself.
             Query realQ = results.getQuery();
             if (realQ == q) {
                 queryToPathToQueryNode.put(q, pathToQueryNode);
             } else {
                 pathToQueryNode = queryToPathToQueryNode.get(realQ);
             }
-            return new ResultIterator(pathQuery, results, pathToQueryNode, start, limit);
+            if (pathToQueryNode == null) {
+                throw new Error("realQ != q but !queryToPathToQueryNode.contains(realQ)");
+            }
+            */
+            return new ResultIterator(pathQuery, q, results, pathToQueryNode, start, limit);
         } catch (ObjectStoreException e) {
             throw new RuntimeException(
                     "Creating export results iterator failed", e);
@@ -152,6 +160,17 @@ public class PathQueryExecutor extends QueryExecutor
                 pathToBagQueryResult);
         return q;
     }
+    
+    /* make this the returned value rather than those stupid maps...
+    private class MainHelperResult {
+        final Map<String, BagQueryResult> pathToBagQueryResult = new HashMap<String, BagQueryResult>();
+        final Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
+        Query query;
+        
+        MainHelperResult() {
+        }
+    }
+    */
 
     /**
      * Make the Lower-level Query object to run from the the higher level
@@ -239,16 +258,15 @@ class ResultIterator extends ExportResultsIterator
 {
 
     private int counter = 0;
-
     private final int limit;
-
     private final int start;
 
     /**
      * Constructor for ExportResultsIterator. This creates a new instance from the given
      * ObjectStore, PathQuery, and other necessary objects.
      *
-     * @param pathQuery a PathQuery to run
+     * @param pathQuery a PathQuery to run.
+     * @param q The object-store query this path-query corresponds to.
      * @param results the results object created when executing the query
      * @param pathToQueryNode a map from path in pathQuery to QuerySelectable in the generated
      * ObjectStore query
@@ -256,10 +274,10 @@ class ResultIterator extends ExportResultsIterator
      * @param limit the number of result rows to return
      * @throws ObjectStoreException if something goes wrong executing the query
      */
-    public ResultIterator(PathQuery pathQuery, Results results,
+    public ResultIterator(PathQuery pathQuery, Query q, Results results,
             Map<String, QuerySelectable> pathToQueryNode, int start, int limit)
         throws ObjectStoreException {
-        super(pathQuery, results, pathToQueryNode);
+        super(pathQuery, q, results, pathToQueryNode);
         this.limit = limit;
         this.start = start;
     }

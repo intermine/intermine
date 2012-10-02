@@ -35,4 +35,7 @@
     <typedef
         name="create-quicksearch-index"
         classname="org.intermine.web.task.CreateSearchIndexTask"/>
+    <typedef
+        name="evict-orphans"
+        classname="org.intermine.web.task.EvictOrphansTask"/>
 </antlib>
