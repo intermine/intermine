@@ -12,17 +12,25 @@ package org.intermine.webservice.server.user;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Properties;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.util.MailUtils;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.core.RateLimitHistory;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.RateLimitException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
@@ -36,6 +44,8 @@ public class NewUserService extends JSONService
 {
 
     private static final Logger LOG = Logger.getLogger(NewUserService.class);
+    private int maxNewUsersPerAddressPerHour = 1000;
+    private static RateLimitHistory requestHistory = null;
 
     /**
      * Constructor.
@@ -43,6 +53,30 @@ public class NewUserService extends JSONService
      */
     public NewUserService(InterMineAPI im) {
         super(im);
+        if (requestHistory == null) {
+            Properties webProperties = InterMineContext.getWebProperties();
+            String rateLimit = webProperties.getProperty("webservice.newuser.ratelimit");
+            if (rateLimit != null) {
+                try {
+                    maxNewUsersPerAddressPerHour = Integer.valueOf(rateLimit.trim()).intValue();
+                } catch (NumberFormatException e) {
+                    LOG.error("Configured new user rate limit is not a valid integer. Defaulting to 1000 per hour", e);
+                    maxNewUsersPerAddressPerHour = 1000;
+                }
+            }
+            requestHistory = new RateLimitHistory((60 * 60), maxNewUsersPerAddressPerHour);
+        }
+    }
+
+    @Override
+    protected void validateState() {
+        super.validateState();
+        final String ipAddr = request.getRemoteAddr();
+        if (!requestHistory.isWithinLimit(ipAddr)) {
+            throw new RateLimitException(ipAddr, maxNewUsersPerAddressPerHour);
+        }
+        // Record this request...
+        requestHistory.recordRequest(ipAddr);
     }
 
     @Override

@@ -289,7 +289,7 @@ public class RecordIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
 
         EitherVisitor<TableCell, SubTable, Void> printer = new IndentingPrinter(4);
         while(iter.hasNext()) {
@@ -315,7 +315,7 @@ public class RecordIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
         
         List<Either<TableCell, SubTable>> row = iter.next();
         String[] values = new String[] {
@@ -377,7 +377,7 @@ public class RecordIteratorTest
         Query q = MainHelper.makeQuery(pq, new HashMap(), p2qn, null, new HashMap());
 
         Results res = osw.execute(q, 1000, true, false, true);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 10), null);
+        TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 10), null);
         int c = 0;
         while (iter.hasNext()) {
             List<Either<TableCell, SubTable>> row = iter.next();
@@ -412,7 +412,7 @@ public class RecordIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 6), null);
+        TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 6), null);
         int c = 0;
         while (iter.hasNext()) {
             List<Either<TableCell, SubTable>> row = iter.next();
@@ -443,7 +443,7 @@ public class RecordIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
 
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
             for (Either<TableCell, SubTable> ro: row) {
@@ -486,7 +486,7 @@ public class RecordIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        TableRowIterator iter = new TableRowIterator(pq, q ,res, p2qn, new Page(2, 3), null);
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
             for (Either<TableCell, SubTable> ro: row) {
@@ -527,7 +527,7 @@ public class RecordIteratorTest
 
         Results res = osw.execute(q, 1000, true, false, true);
         System.out.println(res);
-        TableRowIterator iter = new TableRowIterator(pq, res, p2qn, new Page(2, 3), null);
+        TableRowIterator iter = new TableRowIterator(pq, q, res, p2qn, new Page(2, 3), null);
         int c = 0;
         for (List<Either<TableCell, SubTable>> row: iter) {
             for (Either<TableCell, SubTable> ro: row) {
