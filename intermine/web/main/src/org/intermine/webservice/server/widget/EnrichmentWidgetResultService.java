@@ -22,6 +22,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
@@ -98,6 +99,8 @@ public class EnrichmentWidgetResultService extends WidgetService
         try {
             widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, populationBag,
                 im.getObjectStore(), input.getExtraAttributes());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage(), e);
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \""
                                                + input.getWidgetId() + "\"");
