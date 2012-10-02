@@ -95,7 +95,7 @@ public abstract class Widget
     public abstract List<List<Object>> getResults() throws Exception;
 
     /**
-     * Return the PathQuery generated dinamically by the attribute views in the config file
+     * Return the PathQuery generated dynamically by the attribute views in the configuration file
      * @return the pathquery
      */
     public abstract PathQuery getPathQuery();
@@ -103,8 +103,8 @@ public abstract class Widget
     /**
      * Create a pathquery having a view composed by all items set in the view attribute
      * in the config file
-     * @param os th eobject store
-     * @param config the widget config
+     * @param os the object store
+     * @param config the widget configuration
      * @return the path query created
      */
     protected PathQuery createPathQueryView(ObjectStore os, WidgetConfig config) {

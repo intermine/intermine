@@ -659,8 +659,9 @@
                 the background population over a certain domain. They return a list of members of the
                 domain ranked by p-value (low to high).
             </description>
-            <param type="String" required="true" description="The name of the list to use as the population for the graph">list</param>
+            <param type="String" required="true" description="The name of the list to investigate">list</param>
             <param type="String" required="true" description="The name of the enrichment widget to display">widget</param>
+            <param type="String" required="false" description="The name of the list to use as the background population">population</param>
             <param type="Float" default="0.05" required="true" description="The maximum p-value of results to display. The range is 0.0 - 1.0">maxp</param>
             <param type="enumerated" values="Holm-Bonferroni,Benjamini and Hochberg,Bonferroni,None" default="Holm-Bonferroni" required="true" description="The error correction algorithm to use.">correction</param>
             <param type="String" required="false" description="An optional filter that some widgets accept">filter</param>
@@ -737,6 +738,38 @@
 	            <format>xml</format>
 	        </returns>
         </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-report-widget</servlet-name>
+    <servlet-class>org.intermine.webservice.server.widget.ReportWidgetsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-report-widget</servlet-name>
+    <url-pattern>/service/widget/report/*</url-pattern>
+    <metadata>
+        <name>Report Widgets</name>
+        <minVersion>8</minVersion>
+        <methods>
+            <method authenticationRequired="false" function="get the Report Widget JavaScript package">GET</method>
+        </methods>
+        <params>
+            <param type="String" required="true" description="The name of the widget to use">id</param>
+            <param type="String" required="true" description="The callback to use in the widget">callback</param>
+        </params>
+        <returns>
+            <format key="results">json</format>
+            <format>js</format>
+        </returns>
+        <description>
+            This service returns a Report Widget in a JavaScript package.
+        </description>
     </metadata>
   </servlet-mapping>
 

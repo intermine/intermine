@@ -23,6 +23,7 @@ import org.intermine.model.FastPathObject;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.PathExpressionField;
+import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryCollectionPathExpression;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.QuerySelectable;
@@ -46,6 +47,7 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
     // This object contains a description of the collections in the input.
     private List columns;
     private final List<Path> paths = new ArrayList<Path>();
+    private final Query query;
     private int columnCount;
     protected final Results results;
     private boolean isGoingFaster = false;
@@ -61,10 +63,11 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      * ObjectStore query
      * @throws ObjectStoreException if something goes wrong executing the query
      */
-    public ExportResultsIterator(PathQuery pathQuery, Results results,
+    public ExportResultsIterator(PathQuery pathQuery, Query q, Results results,
             Map<String, QuerySelectable> pathToQueryNode) throws ObjectStoreException {
         this.results = results;
         this.originatingQuery = pathQuery;
+        this.query = q;
         init(pathQuery, pathToQueryNode);
     }
 
@@ -91,11 +94,9 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
                         + " in view of PathQuery is invalid", e);
             }
         }
-        columns = convertColumnTypes(results.getQuery().getSelect(), pq, pathToQueryNode);
+        columns = convertColumnTypes(query.getSelect(), pq, pathToQueryNode);
         columnCount = pq.getView().size();
     }
-
-
 
     /**
      * {@inheritDoc}
@@ -185,8 +186,19 @@ public class ExportResultsIterator implements Iterator<List<ResultElement>>
      * ]
      * </pre>
      */
-    private List convertColumnTypes(List<? extends QuerySelectable> select, PathQuery pq,
-            Map<String, QuerySelectable> pathToQueryNode) {
+    private List convertColumnTypes(
+            final List<? extends QuerySelectable> select,
+            final PathQuery pq,
+            final Map<String, QuerySelectable> pathToQueryNode) {
+        if (select == null) {
+            throw new IllegalArgumentException("select may not be null");
+        }
+        if (pq == null) {
+            throw new IllegalArgumentException("pq may not be null");
+        }
+        if (pathToQueryNode == null) {
+            throw new IllegalArgumentException("pathToQueryNode may not be null");
+        }
         List retval = new ArrayList();
         for (QuerySelectable qs : select) {
             boolean notFinished = true;

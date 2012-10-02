@@ -28,6 +28,7 @@ import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.StorableBag;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.UserAlreadyShareBagException;
 import org.intermine.api.profile.UserNotFoundException;
@@ -294,9 +295,12 @@ public class BagManager
      */
     public List<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
         Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
-        InterMineBag bag = ownerBagProfile.getSavedBags().get(bagName);
+        StorableBag bag = ownerBagProfile.getSavedBags().get(bagName);
         if (bag == null) {
-            throw new BagDoesNotExistException("The bag " + bagName + " doesn't exist");
+            bag = ownerBagProfile.getInvalidBags().get(bagName);
+            if (bag == null) {
+                throw new BagDoesNotExistException("The bag " + bagName + " doesn't exist");
+            }
         }
         return sharedBagManager.getUsersSharingBag(bag);
     }
