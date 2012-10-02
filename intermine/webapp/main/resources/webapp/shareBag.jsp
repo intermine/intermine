@@ -9,6 +9,7 @@
 
 <html:xhtml/>
 <tiles:importAttribute name="bagName" ignore="true"/>
+<tiles:importAttribute name="isBagValid" ignore="true"/>
 <tiles:importAttribute name="id" ignore="true"/>
 <div>
 <span id="shareBag-${id}">
@@ -19,7 +20,7 @@
      </c:forEach>
 </script>
   </span>
-<c:if test="${shareBags}">
+<c:if test="${shareBags && isBagValid}">
   <span id="addLink-${id}">
     <a class="addTagLink" onclick="startSharingBag('${id}')" >Share with users</a>
   </span>
