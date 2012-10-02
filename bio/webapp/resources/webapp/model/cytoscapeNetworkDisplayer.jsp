@@ -156,10 +156,11 @@
         if (jQuery('#cwinlinetable').is(":hidden")) {
           jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
 
-          var view = new intermine.query.results.CompactView($SERVICE, ${cytoscapeNetworkQueryJson}, LIST_EVENTS, {pageSize: 25});
-          view.$el.appendTo('#cytoscape-network-results-table-div');
-          view.render();
-
+          if (jQuery('#cytoscape-network-results-table-div').is(':empty') ) {
+              var view = new intermine.query.results.CompactView($SERVICE, ${cytoscapeNetworkQueryJson}, LIST_EVENTS, {pageSize: 25});
+              view.$el.appendTo('#cytoscape-network-results-table-div');
+              view.render();
+          }
         } else {
           jQuery('#cwinlinetable').hide();
         }

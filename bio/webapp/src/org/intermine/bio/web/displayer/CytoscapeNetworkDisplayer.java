@@ -155,10 +155,7 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
                 fullInteractingGeneSet), "A");
         q.setConstraintLogic("B and A");
 
-        // set inline query xml in request
-        String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
-                PathQuery.USERPROFILE_VERSION);
-        request.setAttribute("cytoscapeNetworkQueryXML", queryXML);
+        request.setAttribute("cytoscapeNetworkQueryXML", q.toXml());
         request.setAttribute("cytoscapeNetworkQueryJson", q.getJson());
     }
 }
