@@ -52,8 +52,8 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(CytoscapeNetworkDisplayer.class);
 
-    private static String DATA_NOT_INTEGRATED = "Interaction data is not integrated.";
-    private static String EXCEPTION_OCCURED = "An exception occured";
+    private static final String DATA_NOT_INTEGRATED = "Interaction data is not integrated.";
+    private static final String EXCEPTION_OCCURED = "An exception occured";
 
     /**
      * Construct with config and the InterMineAPI.
