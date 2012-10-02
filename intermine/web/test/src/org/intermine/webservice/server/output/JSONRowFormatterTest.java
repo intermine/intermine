@@ -31,6 +31,7 @@ import org.intermine.api.query.MainHelper;
 import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.metadata.Model;
 import org.intermine.model.testmodel.Employee;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.dummy.DummyResults;
 import org.intermine.objectstore.dummy.ObjectStoreDummyImpl;
 import org.intermine.objectstore.query.Query;
@@ -143,14 +144,17 @@ public class JSONRowFormatterTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.name", "Employee.age");
 
+        iterator = getIterator(pq);
+        processor = new JSONRowResultProcessor(dummyAPI);
+    }
+
+    private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
         Map pathToQueryNode = new HashMap();
         Query q;
-        q = MainHelper
-                .makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
-        iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
-        processor = new JSONRowResultProcessor(dummyAPI);
+        return new ExportResultsIterator(pq, q, results, pathToQueryNode);
     }
 
     /*

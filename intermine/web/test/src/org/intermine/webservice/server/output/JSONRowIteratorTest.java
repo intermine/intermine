@@ -226,7 +226,7 @@ public class JSONRowIteratorTest extends TestCase {
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
 
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
@@ -245,7 +245,7 @@ public class JSONRowIteratorTest extends TestCase {
         "]";
         expected = new JSONArray(jsonString);
 
-        iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
         jsonIter = new JSONRowIterator(iter, apiWithRedirection);
 
         got = new ArrayList<JSONArray>();
@@ -283,12 +283,7 @@ public class JSONRowIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Manager.name", "Manager.age");
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
-        Results results = new DummyResults(q, resultList);
-
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = getIterator(pq);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
@@ -303,7 +298,16 @@ public class JSONRowIteratorTest extends TestCase {
             JSONArray expected = new JSONArray(jsonStrings.get(i));
             assertEquals(null, JSONObjTester.getProblemsComparing(expected, got.get(i)));
         }
+    }
 
+    private ExportResultsIterator getIterator(PathQuery pq) throws ObjectStoreException {
+        Map pathToQueryNode = new HashMap();
+        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
+        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
+        Results results = new DummyResults(q, resultList);
+
+        ExportResultsIterator iter = new ExportResultsIterator(pq, q, results, pathToQueryNode);
+        return iter;
     }
 
     public void testMultipleSimpleObjects() throws Exception {
@@ -351,12 +355,7 @@ public class JSONRowIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Employee.age", "Employee.name");
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 5, true, true, new HashMap());
-        Results results = new DummyResults(q, resultList);
-
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = getIterator(pq);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
@@ -409,12 +408,7 @@ public class JSONRowIteratorTest extends TestCase {
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 1, true, true, new HashMap());
-        Results results = new DummyResults(q, resultList);
-
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = getIterator(pq);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
@@ -477,12 +471,7 @@ public class JSONRowIteratorTest extends TestCase {
                 "Employee.department.manager.department.company.name",
                 "Employee.department.company.contractors.companys.address.address");
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = new ArrayList(); // empty results
-        Results results = new DummyResults(q, resultList);
-
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = getIterator(pq);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
@@ -529,12 +518,7 @@ public class JSONRowIteratorTest extends TestCase {
         pq.setOuterJoinStatus("Company.departments", OuterJoinStatus.OUTER);
         pq.setOuterJoinStatus("Company.departments.employees", OuterJoinStatus.OUTER);
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 1, true, true, new HashMap());
-        Results results = new DummyResults(q, resultList);
-
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = getIterator(pq);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
@@ -591,12 +575,7 @@ public class JSONRowIteratorTest extends TestCase {
         PathQuery pq = new PathQuery(model);
         pq.addViews("Company.name", "Company.vatNumber");
 
-        Map pathToQueryNode = new HashMap();
-        Query q = MainHelper.makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
-        List resultList = os.execute(q, 0, 1, true, true, new HashMap());
-        Results results = new DummyResults(q, resultList);
-
-        ExportResultsIterator iter = new ExportResultsIterator(pq, results, pathToQueryNode);
+        ExportResultsIterator iter = getIterator(pq);
 
         JSONRowIterator jsonIter = new JSONRowIterator(iter, apiWithoutRedirection);
 
