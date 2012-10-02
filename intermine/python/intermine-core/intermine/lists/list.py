@@ -1,6 +1,7 @@
 import weakref
 import urllib
 
+from intermine.results import JSONIterator, EnrichmentLine
 
 class List(object):
     """
@@ -16,7 +17,7 @@ class List(object):
     --------
 
     example::
-        
+
         >>> from intermine.webservice import Service
         >>>
         >>> flymine = Service("www.flymine.org/query", "SOMETOKEN")
@@ -35,7 +36,7 @@ class List(object):
     OVERVIEW
     --------
 
-    Lists are created from a webservice, and can be manipulated in various ways. 
+    Lists are created from a webservice, and can be manipulated in various ways.
     The operations are::
         * Union: this | that
         * Intersection: this & that
@@ -51,7 +52,7 @@ class List(object):
 
         >>> new_list = service.create_list(content, type, name="Some name", description="Some description", tags=["some", "tags"])
 
-    Lists can also be created from a query's result with the exact 
+    Lists can also be created from a query's result with the exact
     same syntax. In the case of queries, the type is not required,
     but the query should have just one view, and it should be an id.
 
@@ -67,11 +68,11 @@ class List(object):
         Constructor
         ===========
 
-        Do not construct these objects yourself. They should be 
+        Do not construct these objects yourself. They should be
         fetched from a service or constructed using the "create_list"
         method.
         """
-        try: 
+        try:
             self._service = args["service"]
             self._manager = weakref.proxy(args["manager"])
             self._name = args["name"]
@@ -87,12 +88,12 @@ class List(object):
 
             if "tags" in args:
                 tags = args["tags"]
-            else: 
+            else:
                 tags = []
 
             self._tags = frozenset(tags)
         except KeyError:
-            raise ValueError("Missing argument") 
+            raise ValueError("Missing argument")
         self.unmatched_identifiers = set([])
 
     @property
@@ -160,7 +161,7 @@ class List(object):
         raise AttributeError("List names cannot be deleted, only changed")
 
     @property
-    def size(self): 
+    def size(self):
         """Return the number of elements in the list. Also available as len(obj)"""
         return self._size
 
@@ -203,7 +204,7 @@ class List(object):
         Construct a query to fetch the items in this list
         =================================================
 
-        Return a new query constrained to the objects in this list, 
+        Return a new query constrained to the objects in this list,
         and with a single view column of the objects ids.
 
         @rtype: intermine.query.Query
@@ -247,19 +248,19 @@ class List(object):
         return intersection
 
     def __or__(self, other):
-        """ 
+        """
         Return the union of this list and another
         """
         return self._manager.union([self, other])
 
     def __add__(self, other):
-        """ 
+        """
         Return the union of this list and another
         """
         return self._manager.union([self, other])
 
     def __iadd__(self, other):
-        """ 
+        """
         Append other to this list.
         """
         return self.append(other)
@@ -298,11 +299,21 @@ class List(object):
         return self
 
     def append(self, appendix):
-        "Append the arguments to this list"
+        """Append the arguments to this list"""
         try:
             return self._do_append(self._manager.union(appendix))
         except:
             return self._do_append(appendix)
+
+    def calculate_enrichment(self, widget, background = None, correction = "Holm-Bonferroni", maxp = 0.05, filter = ''):
+        """Perform an enrichment calculation on this list"""
+        params = dict(list = self.name, widget = widget, correction = correction, maxp = maxp, filter = filter)
+        if background is not None:
+            params["population"] = background
+        form = urllib.urlencode(params)
+        uri = self._service.root + self._service.LIST_ENRICHMENT_PATH
+        resp = self._service.opener.open(uri, form)
+        return JSONIterator(resp, EnrichmentLine)
 
     def __xor__(self, other):
         """Calculate the symmetric difference of this list and another"""

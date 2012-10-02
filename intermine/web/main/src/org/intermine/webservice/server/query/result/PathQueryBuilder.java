@@ -11,14 +11,12 @@ package org.intermine.webservice.server.query.result;
  */
 
 import java.io.StringReader;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
