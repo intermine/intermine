@@ -152,14 +152,11 @@
         }
       });
       <%-- toggle table btn --%>
-      <c:if test="${empty pageSize}">
-          <c:set var="pageSize" value="25"/>
-      </c:if>
       jQuery('#cwtabsbyside #tabs-controls #toggleTable').click(function(e) {
         if (jQuery('#cwinlinetable').is(":hidden")) {
           jQuery('#cwinlinetable').show().scrollTo('slow', 'swing', -20);
 
-          var view = new intermine.query.results.CompactView($SERVICE, ${cytoscapeNetworkResultsQuery}, LIST_EVENTS, {pageSize: ${pageSize}});
+          var view = new intermine.query.results.CompactView($SERVICE, ${cytoscapeNetworkQueryJson}, LIST_EVENTS, {pageSize: 25});
           view.$el.appendTo('#cytoscape-network-results-table-div');
           view.render();
 

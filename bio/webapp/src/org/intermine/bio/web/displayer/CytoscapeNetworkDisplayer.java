@@ -21,8 +21,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.WebResults;
 import org.intermine.bio.web.logic.CytoscapeNetworkDBQueryRunner;
 import org.intermine.bio.web.logic.CytoscapeNetworkUtil;
 import org.intermine.metadata.Model;
@@ -39,7 +37,6 @@ import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -162,6 +159,6 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
                 PathQuery.USERPROFILE_VERSION);
         request.setAttribute("cytoscapeNetworkQueryXML", queryXML);
-        request.setAttribute("cytoscapeNetworkResultsQuery", q);
+        request.setAttribute("cytoscapeNetworkQueryJson", q.getJson());
     }
 }
