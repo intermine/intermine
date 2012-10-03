@@ -2,6 +2,7 @@ import weakref
 import urllib
 
 from intermine.results import JSONIterator, EnrichmentLine
+from intermine.model import ConstraintNode
 
 class List(object):
     """
@@ -212,6 +213,12 @@ class List(object):
         q = self._service.new_query(self.list_type)
         q.add_constraint(self.list_type, "IN", self.name)
         return q
+
+    def make_list_constraint(self, path, op):
+        """
+        Implementation of trait that allows use of these objects in list constraints
+        """
+        return ConstraintNode(path, op, self.name)
 
     def __iter__(self):
         """Return an iterator over the objects in this list, with all attributes selected for output"""
