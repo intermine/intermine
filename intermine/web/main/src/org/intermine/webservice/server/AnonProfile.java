@@ -56,6 +56,11 @@ final class AnonProfile extends Profile
         return false;
     }
 
+    @Override
+    public boolean isLoggedIn() {
+        return false;
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public InterMineBag createBag(String name, String type, String desc,

@@ -17,6 +17,7 @@ from itertools import groupby
 import UserDict
 
 from intermine.errors import WebserviceError
+from intermine.model import Attribute, Reference, Collection
 
 USER_AGENT = 'WebserviceInterMinePerlAPIClient'
 

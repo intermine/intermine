@@ -52,7 +52,7 @@ class LiveListTest(unittest.TestCase):
         s = Service("www.flymine.org/query")
         all_lists = s.get_all_lists()
         possible_statuses = set(["CURRENT", "TO_UPGRADE", "NOT_CURRENT"])
-        got = set((l.status for l in all_lists)) 
+        got = set((l.status for l in all_lists))
         self.assertTrue(got <= possible_statuses)
 
     def testListTagAdding(self):
@@ -83,7 +83,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(set(), l.tags)
         l.update_tags()
         self.assertEqual(set(["a-tag", "b-tag"]), l.tags)
-    
+
     def testLists(self):
         t = self.TYPE;
         s = self.SERVICE
@@ -286,7 +286,7 @@ class LiveListTest(unittest.TestCase):
         expected = [
             LiveListTest.VINCENT,
             LiveListTest.DAVID, LiveListTest.ALEX,
-            LiveListTest.FRANK, 
+            LiveListTest.FRANK,
             LiveListTest.JEAN_MARC, LiveListTest.JENNIFER_SCHIRRMANN,
             LiveListTest.KEITH, LiveListTest.GARETH
         ]
@@ -320,7 +320,7 @@ class LiveListTest(unittest.TestCase):
         self.assertEqual(emp_rows_without_ids(listA), expected)
         self.assertEqual(prev_name, listA.name)
         self.assertEqual(prev_desc, listA.description)
-        
+
         # Test subqueries
         with_cc_q = s.model.Bank.where("corporateCustomers.id", "IS NOT NULL")
         with_cc_l = s.create_list(with_cc_q)
@@ -352,6 +352,12 @@ class LiveListTest(unittest.TestCase):
 
         all_b = s.new_query("Bank") | with_cc_l
         self.assertEqual(5, all_b.size)
+
+        # Test enrichment
+
+        favs = s.l("My-Favourite-Employees")
+        enriched_contractors = map(lambda x: x.identifier, favs.calculate_enrichment('contractor_enrichment', maxp = 1.0))
+        self.assertEqual(enriched_contractors, ['Vikram'])
 
     def tearDown(self):
         s = self.SERVICE
