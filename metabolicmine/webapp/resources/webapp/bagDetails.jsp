@@ -30,8 +30,6 @@
 //]]>-->
 </script>
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
-<script type="text/javascript" src="http://cdn.intermine.org/api"></script>
-<script type="text/javascript" src="http://cdn.intermine.org/js/intermine/widgets/1.4.2/intermine.widgets.js"></script>
 
 <%-- CSS framework --%>
 <link rel="stylesheet" type="text/css" href="css/960gs.css" />
