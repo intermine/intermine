@@ -11,15 +11,17 @@ new Error('This widget cannot be called directly');
  *  Author: #@+AUTHOR
  *  Description: #@+DESCRIPTION
  *  Version: #@+VERSION
- *  Generated: Mon, 01 Oct 2012 11:59:27 GMT
+ *  Generated: Wed, 03 Oct 2012 15:48:00 GMT
  */
 
 (function() {
 var root = this;
 
   /**#@+ the presenter */
-  var AssertException, RadialDendrogram, TreeDendrogram, Widget,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+  var AssertException, Config, Dendrogram, PopoverTable, RadialDendrogram, TreeDendrogram, Widget,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
   
   AssertException = (function() {
   
@@ -57,6 +59,10 @@ var root = this;
       },
       highLevelTerms: {
         "select": ["Allele.highLevelPhenotypeTerms.name", "Allele.highLevelPhenotypeTerms.relations.childTerm.name"],
+        "constraints": []
+      },
+      alleles: {
+        "select": ["Gene.alleles.genotypes.phenotypeTerms.name", "Gene.alleles.symbol", "Gene.alleles.primaryIdentifier", "Gene.alleles.name", "Gene.alleles.type", "Gene.alleles.genotypes.geneticBackground", "Gene.alleles.genotypes.zygosity", "Gene.alleles.organism.name"],
         "constraints": []
       }
     };
@@ -135,13 +141,13 @@ var root = this;
                 'name': child,
                 'count': children[child].count,
                 'band': Math.floor(children[child].count / _this.band),
-                'depth': 2
+                'type': 'leaf'
               });
             } else {
               terms[parent] = {
-                'name': parent,
+                'name': parent.replace(' phenotype', ''),
                 'children': [],
-                'depth': 1
+                'type': 'hlt'
               };
             }
           }
@@ -201,64 +207,31 @@ var root = this;
   
   
     Widget.prototype.renderGraph = function(data) {
-      var l, tangle, term, widget, _i, _len, _ref,
+      var config,
         _this = this;
       assert(typeof data === 'object' && (data.children != null), '`data` needs to be an Object with `children`');
       assert(this.target != null, 'need to have a target for rendering defined');
-      assert(typeof Tangle !== "undefined" && Tangle !== null, 'Tangle lib does not seem to be loaded');
       assert(this.band != null, '`band` of allele counts not provided');
       assert(this.max != null, '`max` top allele count not provided');
-      assert((this.hlts != null) && this.hlts instanceof Array, '`hlts` needs to be populated by an Array of High Level Terms');
-      $(this.target).find('.config').html(this.templates.config());
-      l = $(this.target).find('.config .terms ul');
-      _ref = this.hlts;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        term = _ref[_i];
-        l.append($('<li/>', {
-          'class': 'option',
-          'text': term
-        }));
-      }
-      $(this.target).find('.config .terms .option').click(function(e) {
-        assert(typeof tangle !== "undefined" && tangle !== null, 'wow a bit too fast there fella');
-        $(_this.target).find('.config .terms .option.selected').removeClass('selected');
-        $(e.target).addClass('selected');
-        return tangle.setValue('showCategory', $(e.target).text());
-      });
-      $(this.target).find('.config .types .option').click(function(e) {
-        assert(typeof tangle !== "undefined" && tangle !== null, 'wow a bit too fast there fella');
-        $(_this.target).find('.config .types .option.selected').removeClass('selected');
-        $(e.target).addClass('selected');
-        return tangle.setValue('type', $(e.target).text());
-      });
-      widget = this;
-      return tangle = new Tangle($(this.target).find('.config')[0], {
-        initialize: function() {
-          this.termTextBand = 3;
-          this.hideTermsBand = 2;
-          this.showCategory = 'all';
-          return this.type = 'radial';
-        },
-        update: function() {
-          this.termTextCount = (this.termTextBand - 1) * widget.band;
-          this.hideTermsCount = (this.hideTermsBand - 1) * widget.band;
-          return widget.dendrogram(data, this);
-        }
+      config = new Config(this.templates.config, $(this.target).find('.config'));
+      return config.update(function(config) {
+        return _this.dendrogram(data, config);
       });
     };
   
-    Widget.prototype.dendrogram = function(data, opts) {
-      var filterChildren, params, target;
+    Widget.prototype.dendrogram = function(data, config) {
+      var filterChildren, graph, params, target,
+        _this = this;
       assert(this.target != null, 'need to have a target for rendering defined');
       assert(this.config.width != null, 'need to provide a `width` for the chart');
       assert(this.config.height != null, 'need to provide a `height` for the chart');
-      assert(typeof opts === 'object', '`opts` of the graph are not provided by Tangle, go untangle');
+      assert(typeof config === 'object', '`config` of the graph are not provided');
       data = (filterChildren = function(node, bandCutoff, category) {
         var ch, children, _i, _len, _ref;
         assert(node != null, '`node` not provided');
         assert(bandCutoff != null, '`bandCutoff` not provided');
         assert(category != null, '`category` not provided');
-        if (node.depth === 1) {
+        if (node.type === 'hlt') {
           if (!(node.children != null) || node.children.length === 0) {
             return;
           }
@@ -286,10 +259,11 @@ var root = this;
             'name': node.name,
             'count': node.count,
             'band': node.band,
+            'type': node.type,
             'children': children
           };
         }
-      })(data, opts.hideTermsBand, opts.showCategory);
+      })(data, config.opts.hideTermsBand, config.opts.category);
       target = $(this.target).find('.graph');
       target.empty();
       if (data == null) {
@@ -299,28 +273,118 @@ var root = this;
         }));
       }
       params = {
-        'termTextBand': opts.termTextBand,
+        'termTextBand': config.opts.termTextBand,
         'data': data,
         'width': this.config.width,
         'height': this.config.height,
         'el': target[0]
       };
-      switch (opts.type) {
+      switch (config.opts.type) {
         case 'radial':
-          return new RadialDendrogram(params);
+          graph = new RadialDendrogram(params);
+          break;
         case 'tree':
-          return new TreeDendrogram(params);
+          graph = new TreeDendrogram(params);
       }
+      return graph.click(function(type, node) {
+        var pq, _ref;
+        switch (type) {
+          case 'hlt':
+            if (config.opts.category === 'all') {
+              return config.set('category', node);
+            } else {
+              return config.set('category', 'all');
+            }
+            break;
+          case 'leaf':
+            pq = _this.pq.alleles;
+            pq.constraints = [];
+            pq.constraints.push({
+              "path": "Gene.alleles.genotypes.phenotypeTerms.name",
+              "op": "=",
+              "value": node
+            });
+            pq.constraints.push({
+              "path": "Gene",
+              "op": "LOOKUP",
+              "value": _this.config.symbol
+            });
+            if ((_ref = _this.popover) != null) {
+              _ref.remove();
+            }
+            return _this.popover = new PopoverTable({
+              'el': target,
+              'pq': pq,
+              'service': _this.service,
+              'template': _this.templates.popover
+            });
+        }
+      });
     };
   
     return Widget;
   
   })();
   
-  RadialDendrogram = (function() {
+  Config = (function() {
+  
+    Config.prototype.opts = {
+      'termTextBand': 3,
+      'hideTermsBand': 2,
+      'type': 'radial',
+      'category': 'all'
+    };
+  
+    function Config(template, target) {
+      var k, v, _fn, _ref,
+        _this = this;
+      $(target).html(template(this.opts));
+      _ref = this.opts;
+      _fn = function(k) {
+        return $(target).find("." + k + " input").change(function(e) {
+          _this.opts[k] = $(e.target).val();
+          return _this.fn(_this);
+        });
+      };
+      for (k in _ref) {
+        v = _ref[k];
+        _fn(k);
+      }
+    }
+  
+    Config.prototype.set = function(key, value) {
+      this.opts[key] = value;
+      return this.fn(this);
+    };
+  
+    Config.prototype.update = function(fn) {
+      this.fn = fn;
+      return this.fn(this);
+    };
+  
+    return Config;
+  
+  })();
+  
+  Dendrogram = (function() {
+  
+    function Dendrogram() {}
+  
+    Dendrogram.prototype.click = function(fn) {
+      this.fn = fn;
+    };
+  
+    return Dendrogram;
+  
+  })();
+  
+  RadialDendrogram = (function(_super) {
+  
+    __extends(RadialDendrogram, _super);
   
     function RadialDendrogram(opts) {
-      var arc, cluster, d, depths, diagonal, key, link, links, n, node, nodes, rx, ry, sort, value, vis, _i, _j, _len, _len1, _ref;
+      var arc, cluster, d, depths, diagonal, key, link, links, n, nodes, rx, ry, sort, value, vis, _fn, _i, _j, _len, _len1, _ref,
+        _this = this;
       assert((opts.width != null) && typeof opts.width === 'number', '`width` is missing and needs to be a number');
       assert((opts.height != null) && typeof opts.height === 'number', '`height` is missing and needs to be a number');
       assert((opts.el != null) && typeof opts.el === 'object', '`el` is missing and needs to be an HTMLDivElement');
@@ -360,25 +424,37 @@ var root = this;
       }
       n = vis.append("svg:g").attr("class", "nodes");
       depths = [n.append("svg:g").attr("class", "tier depth-2"), n.append("svg:g").attr("class", "tier depth-1"), n.append("svg:g").attr("class", "tier depth-0")];
+      _fn = function(d) {
+        var circle, node;
+        node = depths[Math.abs(d.depth - 2)].append("svg:g").attr("class", d.count != null ? "node depth-" + d.depth + " count-" + d.count : "node depth-" + d.depth).attr("transform", "rotate(" + (d.x - 90) + ")translate(" + d.y + ")");
+        circle = node.append("svg:circle").attr("r", Math.abs(d.depth - 6)).attr("class", d.band ? d.type ? "band-" + d.band + " type " + d.type : "band-" + d.band : d.type ? "type " + d.type : void 0);
+        circle.on("click", function() {
+          if (_this.fn != null) {
+            return _this.fn(d.type, d.name);
+          }
+        });
+        node.append("svg:title").text(d.name);
+        if (!(d.band != null) || d.band > (_this.termTextBand - 2)) {
+          return node.append("svg:text").attr("dx", d.x < 180 ? 8 : -8).attr("dy", ".31em").attr("text-anchor", d.x < 180 ? "start" : "end").attr("transform", d.x < 180 ? null : "rotate(180)").text(d.name.length > 50 ? d.name.slice(0, 50) + '...' : d.name);
+        }
+      };
       for (_j = 0, _len1 = nodes.length; _j < _len1; _j++) {
         d = nodes[_j];
-        node = depths[Math.abs(d.depth - 2)].append("svg:g").attr("class", d.count != null ? "node depth-" + d.depth + " count-" + d.count : "node depth-" + d.depth).attr("transform", "rotate(" + (d.x - 90) + ")translate(" + d.y + ")");
-        node.append("svg:circle").attr("r", Math.abs(d.depth - 6)).attr("class", d.band ? "band-" + d.band : void 0);
-        node.append("svg:title").text(d.name);
-        if (!(d.band != null) || d.band > (this.termTextBand - 2)) {
-          node.append("svg:text").attr("dx", d.x < 180 ? 8 : -8).attr("dy", ".31em").attr("text-anchor", d.x < 180 ? "start" : "end").attr("transform", d.x < 180 ? null : "rotate(180)").text(d.name.length > 50 ? d.name.slice(0, 50) + '...' : d.name);
-        }
+        _fn(d);
       }
     }
   
     return RadialDendrogram;
   
-  })();
+  })(Dendrogram);
   
-  TreeDendrogram = (function() {
+  TreeDendrogram = (function(_super) {
+  
+    __extends(TreeDendrogram, _super);
   
     function TreeDendrogram(opts) {
-      var cluster, d, depths, diagonal, key, link, links, n, node, nodes, sort, value, vis, _i, _j, _len, _len1, _ref;
+      var cluster, d, depths, diagonal, key, link, links, n, nodes, sort, value, vis, _fn, _i, _j, _len, _len1, _ref,
+        _this = this;
       assert((opts.width != null) && typeof opts.width === 'number', '`width` is missing and needs to be a number');
       assert((opts.height != null) && typeof opts.height === 'number', '`height` is missing and needs to be a number');
       assert((opts.el != null) && typeof opts.el === 'object', '`el` is missing and needs to be an HTMLDivElement');
@@ -415,18 +491,61 @@ var root = this;
       }
       n = vis.append("svg:g").attr("class", "nodes");
       depths = [n.append("svg:g").attr("class", "tier depth-2"), n.append("svg:g").attr("class", "tier depth-1"), n.append("svg:g").attr("class", "tier depth-0")];
+      _fn = function(d) {
+        var circle, node;
+        node = depths[Math.abs(d.depth - 2)].append("svg:g").attr("class", d.count != null ? "node depth-" + d.depth + " count-" + d.count : "node depth-" + d.depth).attr("transform", "translate(" + d.y + "," + d.x + ")");
+        circle = node.append("svg:circle").attr("r", Math.abs(d.depth - 6)).attr("class", d.band ? d.type ? "band-" + d.band + " type " + d.type : "band-" + d.band : d.type ? "type " + d.type : void 0);
+        circle.on("click", function() {
+          if (_this.fn != null) {
+            return _this.fn(d.type, d.name);
+          }
+        });
+        node.append("svg:title").text(d.name);
+        if (!(d.band != null) || d.band > (_this.termTextBand - 2)) {
+          return node.append("svg:text").attr("dx", d.children ? -8 : 8).attr("dy", "3").attr("text-anchor", d.children ? "end" : "start").text(d.name.length > 50 ? d.name.slice(0, 50) + '...' : d.name);
+        }
+      };
       for (_j = 0, _len1 = nodes.length; _j < _len1; _j++) {
         d = nodes[_j];
-        node = depths[Math.abs(d.depth - 2)].append("svg:g").attr("class", d.count != null ? "node depth-" + d.depth + " count-" + d.count : "node depth-" + d.depth).attr("transform", "translate(" + d.y + "," + d.x + ")");
-        node.append("svg:circle").attr("r", Math.abs(d.depth - 6)).attr("class", d.band ? "band-" + d.band : void 0);
-        node.append("svg:title").text(d.name);
-        if (!(d.band != null) || d.band > (this.termTextBand - 2)) {
-          node.append("svg:text").attr("dx", d.children ? -8 : 8).attr("dy", "3").attr("text-anchor", d.children ? "end" : "start").text(d.name.length > 50 ? d.name.slice(0, 50) + '...' : d.name);
-        }
+        _fn(d);
       }
     }
   
     return TreeDendrogram;
+  
+  })(Dendrogram);
+  
+  PopoverTable = (function() {
+  
+    function PopoverTable(opts) {
+      this.remove = __bind(this.remove, this);
+  
+      var key, value,
+        _this = this;
+      for (key in opts) {
+        value = opts[key];
+        this[key] = value;
+      }
+      this.service.query(this.pq, function(q) {
+        return q.rows(function(rows) {
+          $(_this.el).append(_this.html = $(_this.template({
+            'columns': _this.pq.select,
+            'rows': rows,
+            titleize: function(text) {
+              return text.split('.').pop().replace(/([A-Z])/g, ' $1');
+            }
+          })));
+          return _this.html.find('a.close').click(_this.remove);
+        });
+      });
+    }
+  
+    PopoverTable.prototype.remove = function() {
+      var _ref;
+      return (_ref = this.html) != null ? _ref.remove() : void 0;
+    };
+  
+    return PopoverTable;
   
   })();
   
@@ -435,13 +554,14 @@ var root = this;
 
   /**#@+ the templates */
   var templates = {};
-  templates.config=function(e){e||(e={});var t=[],n=function(e){var n=t,r;return t=[],e.call(this),r=t.join(""),t=n,i(r)},r=function(e){return e&&e.ecoSafe?e:typeof e!="undefined"&&e!=null?o(e):""},i,s=e.safe,o=e.escape;return i=e.safe=function(e){if(e&&e.ecoSafe)return e;if(typeof e=="undefined"||e==null)e="";var t=new String(e);return t.ecoSafe=!0,t},o||(o=e.escape=function(e){return(""+e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){t.push('<p><strong>Show term text</strong> when band is <span data-var="termTextBand" class="TKAdjustableNumber" data-min="1" data-max="5"></span> or higher corresponding to allele count of <span data-var="termTextCount"></span> or higher.</p>\n\n<div><strong>Hide terms</strong> when band is <span data-var="hideTermsBand" class="TKAdjustableNumber" data-min="1" data-max="5"></span> or higher corresponding to allele count of <span data-var="hideTermsCount"></span> or higher.</div>\n\n<div class="terms">Show <span class="option selected">all</span> or only <ul></ul> terms.</div>\n\n<div class="types">Use a <a class="option selected">radial</a> or <a class="option">tree</a> <strong>dendrogram</strong>.</div>')}).call(this)}.call(e),e.safe=s,e.escape=o,t.join("")};
-  templates.widget=function(e){e||(e={});var t=[],n=function(e){var n=t,r;return t=[],e.call(this),r=t.join(""),t=n,i(r)},r=function(e){return e&&e.ecoSafe?e:typeof e!="undefined"&&e!=null?o(e):""},i,s=e.safe,o=e.escape;return i=e.safe=function(e){if(e&&e.ecoSafe)return e;if(typeof e=="undefined"||e==null)e="";var t=new String(e);return t.ecoSafe=!0,t},o||(o=e.escape=function(e){return(""+e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){t.push("<h4>"),t.push(r(this.title)),t.push('</h4>\n<div class="config"></div>\n<div class="graph"></div>')}).call(this)}.call(e),e.safe=s,e.escape=o,t.join("")};
+  templates.widget=function(e){e||(e={});var t=[],n=function(e){var n=t,r;return t=[],e.call(this),r=t.join(""),t=n,i(r)},r=function(e){return e&&e.ecoSafe?e:typeof e!="undefined"&&e!=null?o(e):""},i,s=e.safe,o=e.escape;return i=e.safe=function(e){if(e&&e.ecoSafe)return e;if(typeof e=="undefined"||e==null)e="";var t=new String(e);return t.ecoSafe=!0,t},o||(o=e.escape=function(e){return(""+e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){t.push("<h4>"),t.push(r(this.title)),t.push('</h4>\n<div class="config">Loading &hellip;</div>\n<div class="graph"></div>')}).call(this)}.call(e),e.safe=s,e.escape=o,t.join("")};
+  templates.config=function(e){e||(e={});var t=[],n=function(e){var n=t,r;return t=[],e.call(this),r=t.join(""),t=n,i(r)},r=function(e){return e&&e.ecoSafe?e:typeof e!="undefined"&&e!=null?o(e):""},i,s=e.safe,o=e.escape;return i=e.safe=function(e){if(e&&e.ecoSafe)return e;if(typeof e=="undefined"||e==null)e="";var t=new String(e);return t.ecoSafe=!0,t},o||(o=e.escape=function(e){return(""+e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){t.push('<div class="hideTermsBand">\n    Term cutoff\n    <input type="range" min="1" max="5" step="1" value="'),t.push(r(this.hideTermsBand)),t.push('" />\n</div>\n\n<div class="termTextBand">\n    Term text cutoff\n    <input type="range" min="1" max="5" step="1" value="'),t.push(r(this.termTextBand)),t.push('" />\n</div>\n\n<div class="type">\n    Use a \n    <input type="radio" name="type" value="radial" checked="checked">radial\n    <input type="radio" name="type" value="tree">tree\n    dendrogram\n</div>')}).call(this)}.call(e),e.safe=s,e.escape=o,t.join("")};
+  templates.popover=function(e){e||(e={});var t=[],n=function(e){var n=t,r;return t=[],e.call(this),r=t.join(""),t=n,i(r)},r=function(e){return e&&e.ecoSafe?e:typeof e!="undefined"&&e!=null?o(e):""},i,s=e.safe,o=e.escape;return i=e.safe=function(e){if(e&&e.ecoSafe)return e;if(typeof e=="undefined"||e==null)e="";var t=new String(e);return t.ecoSafe=!0,t},o||(o=e.escape=function(e){return(""+e).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){(function(){var e,n,i,s,o,u,a,f,l,c,h;t.push('<div class="popover">\n    <a class="close">close</a>\n    <div class="inner">\n        <table>\n            <thead>\n                <tr>\n                    '),c=this.columns;for(s=0,a=c.length;s<a;s++)e=c[s],t.push('\n                        <th title="'),t.push(r(e)),t.push('">'),t.push(r(this.titleize(e))),t.push("</th>\n                    ");t.push("\n                </tr>\n            </thead>\n            <tbody>\n                "),h=this.rows;for(o=0,f=h.length;o<f;o++){n=h[o],t.push("\n                    <tr>\n                        ");for(u=0,l=n.length;u<l;u++)i=n[u],t.push("\n                            <td>"),t.push(r(i)),t.push("</td>\n                        ");t.push("\n                    </tr>\n                ")}t.push("\n            </tbody>\n        </table>\n    </div>\n</div>")}).call(this)}.call(e),e.safe=s,e.escape=o,t.join("")};
   
   /**#@+ css */
   var style = document.createElement('style');
   style.type = 'text/css';
-  style.innerHTML = 'div#w#@+CALLBACK path.arc{fill:#FFF}div#w#@+CALLBACK .node.depth-0{font-size:18px}div#w#@+CALLBACK .node.depth-1{font-size:14px}div#w#@+CALLBACK .node.depth-2{font-size:10px}div#w#@+CALLBACK .node circle{fill:#FFF;stroke:#CCC;stroke-width:1.5px}div#w#@+CALLBACK .node.depth-2 circle{stroke:#FEE5D9;fill:#FEE5D9}div#w#@+CALLBACK .node circle.band-1{stroke:#FCAE91;fill:#FCAE91}div#w#@+CALLBACK .node circle.band-2{stroke:#FB6A4A;fill:#FB6A4A}div#w#@+CALLBACK .node circle.band-3{stroke:#DE2D26;fill:#DE2D26}div#w#@+CALLBACK .node circle.band-4{stroke:#A50F15;fill:#A50F15}div#w#@+CALLBACK .link{fill:none;stroke:#CCC;stroke-width:1px}div#w#@+CALLBACK .link.band-0{stroke:#FEE5D9}div#w#@+CALLBACK .link.band-1{stroke:#FCAE91}div#w#@+CALLBACK .link.band-2{stroke:#FB6A4A}div#w#@+CALLBACK .link.band-3{stroke:#DE2D26}div#w#@+CALLBACK .link.band-4{stroke:#A50F15}div#w#@+CALLBACK .config{background:#FFF;padding:20px;box-shadow:0 0 10px #CCC}div#w#@+CALLBACK .config>div{margin:0}div#w#@+CALLBACK .config>div:not(:last-child){margin-bottom:10px}div#w#@+CALLBACK .config ul{display:inline;margin:0;list-style-type:none}div#w#@+CALLBACK .config ul li{display:inline-block;white-space:nowrap;margin-top:6px}div#w#@+CALLBACK .config ul li:not(:last-child){margin-right:5px}div#w#@+CALLBACK .config ul li:not(:last-child):after{content:\',\';color:#222}div#w#@+CALLBACK .config .option{color:#46f;border-bottom:1px dashed #46f;cursor:pointer;position:relative}div#w#@+CALLBACK .config .option.selected{color:#00c}div#w#@+CALLBACK .config .option:not(.selected):hover:before{content:\'select\';color:#00f;position:absolute;top:-6px;left:0;font:9px "Helvetica-Neue","Arial",sans-serif}div#w#@+CALLBACK .alert-box{margin-top:10px}';
+  style.innerHTML = 'div#w#@+CALLBACK article{position:relative}div#w#@+CALLBACK .graph{float:left}div#w#@+CALLBACK path.arc{fill:#FFF}div#w#@+CALLBACK .node.depth-0{font-size:18px}div#w#@+CALLBACK .node.depth-1{font-size:14px}div#w#@+CALLBACK .node.depth-2{font-size:10px}div#w#@+CALLBACK circle.hlt,div#w#@+CALLBACK circle.leaf{cursor:pointer}div#w#@+CALLBACK .node circle{fill:#FFF;stroke:#CCC;stroke-width:1.5px}div#w#@+CALLBACK .node.depth-2 circle{stroke:#FEE5D9;fill:#FEE5D9}div#w#@+CALLBACK .node circle.band-1{stroke:#FCAE91;fill:#FCAE91}div#w#@+CALLBACK .node circle.band-2{stroke:#FB6A4A;fill:#FB6A4A}div#w#@+CALLBACK .node circle.band-3{stroke:#DE2D26;fill:#DE2D26}div#w#@+CALLBACK .node circle.band-4{stroke:#A50F15;fill:#A50F15}div#w#@+CALLBACK .link{fill:none;stroke:#CCC;stroke-width:1px}div#w#@+CALLBACK .link.band-0{stroke:#FEE5D9}div#w#@+CALLBACK .link.band-1{stroke:#FCAE91}div#w#@+CALLBACK .link.band-2{stroke:#FB6A4A}div#w#@+CALLBACK .link.band-3{stroke:#DE2D26}div#w#@+CALLBACK .link.band-4{stroke:#A50F15}div#w#@+CALLBACK .config{background:#FFF;padding:20px;box-shadow:0 0 10px #CCC;width:170px;float:left}div#w#@+CALLBACK .config>div{margin:0}div#w#@+CALLBACK .config>div:not(:last-child){margin-bottom:10px}div#w#@+CALLBACK .alert-box{margin-top:10px}div#w#@+CALLBACK .popover{position:absolute;top:0;left:0;z-index:1;width:100%}div#w#@+CALLBACK .popover .inner{max-height:300px;overflow-y:auto;clear:both;box-shadow:0 0 10px #CCC}div#w#@+CALLBACK .popover a.close{float:right;font-weight:700}div#w#@+CALLBACK .popover table{margin:0}div#w#@+CALLBACK .popover table th{text-transform:capitalize}';
   document.head.appendChild(style);
   
   /**#@+ callback */
