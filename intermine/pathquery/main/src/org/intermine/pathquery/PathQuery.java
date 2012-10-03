@@ -2280,7 +2280,7 @@ public class PathQuery implements Cloneable
 
         // LOGIC - only if there is some. Just logic = A is dumb.
         String constraintLogic = getConstraintLogic();
-        if (constraintLogic != null && constraintLogic.length() > 1) { 
+        if (constraintLogic != null && constraintLogic.length() > 1) {
             ret.put("constraintLogic", constraintLogic);
         }
 
@@ -2344,7 +2344,7 @@ public class PathQuery implements Cloneable
             Iterator<Entry<PathConstraint, String>> it = cons.entrySet().iterator();
             while (it.hasNext()) {
                 Entry<PathConstraint, String> pair = it.next();
-                
+
                 sb.append(constraintToJson(pair.getKey(), pair.getValue()));
                 if (it.hasNext()) {
                     sb.append(",");
