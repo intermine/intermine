@@ -120,9 +120,47 @@ public final class SequenceFeatureExportUtil
                 }
             } catch (ObjectStoreException e) {
                 LOG.error("Failed to summarise path: " + summaryPath + " when retrieving organism"
-                        + " values for query: " + cloneQuery);
+                        + " short name for query: " + cloneQuery);
             }
         }
         return organismShortNames;
+    }
+
+    /**
+     * Get organism taxon ids info from PathQuery
+     *
+     * @param pathQuery PathQuery
+     * @param session http session
+     * @return set of organism taxon ids
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Set<String> getTaxonIds(PathQuery pathQuery, HttpSession session) {
+
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
+
+        Set<String> organismTaxonIds = new HashSet<String>();
+
+        for (Path exportPath : getExportClassPaths(pathQuery)) {
+            String summaryPath = exportPath.toStringNoConstraints() + ".organism.taxonId";
+
+            // make sure the organism name is being selected
+            PathQuery cloneQuery = pathQuery.clone();
+            cloneQuery.addView(summaryPath);
+
+            try {
+                List<ResultsRow> results = (List) webResultsExecutor.summariseQuery(cloneQuery,
+                        summaryPath);
+
+                for (ResultsRow row : results) {
+                    organismTaxonIds.add((String) row.get(0));
+                }
+            } catch (ObjectStoreException e) {
+                LOG.error("Failed to summarise path: " + summaryPath + " when retrieving organism"
+                        + " taxon id for query: " + cloneQuery);
+            }
+        }
+        return organismTaxonIds;
     }
 }

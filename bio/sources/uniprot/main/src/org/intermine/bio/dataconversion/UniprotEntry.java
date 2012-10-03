@@ -125,6 +125,7 @@ public class UniprotEntry
         reset();
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void addToCollection(String collectionName, String value) {
         List<String> values = collections.get(collectionName);
         if (values == null) {
@@ -152,6 +153,7 @@ public class UniprotEntry
      * @param refId id representing comment intermine object
      * @param objectId id representing the object in the database.  used later to add pub collection
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void addCommentRefId(String refId, Integer objectId) {
         commentEvidence.put(objectId, new ArrayList(comment.evidence));
         addRefId("comments", refId);
@@ -326,6 +328,7 @@ public class UniprotEntry
     /**
      * @return list of accessions
      */
+    @SuppressWarnings("unchecked")
     public List<String> getAccessions() {
         List<String> accessions = collections.get("accessions");
         if (accessions == null) {
@@ -518,6 +521,7 @@ public class UniprotEntry
     /**
      * @return list of isoform accessions for this uniprot entry
      */
+    @SuppressWarnings("unchecked")
     public List<String> getIsoforms() {
         List<String> isoforms = collections.get("isoforms");
         if (isoforms == null) {
@@ -541,6 +545,7 @@ public class UniprotEntry
      * as a synonym
      * @return list of isoform synonyms
      */
+    @SuppressWarnings("unchecked")
     public List<String> getIsoformSynonyms() {
         if (collections.get("isoformSynonyms") == null) {
             return Collections.EMPTY_LIST;
@@ -576,6 +581,7 @@ public class UniprotEntry
      * as a synonym
      * @return list of isoform synonyms
      */
+    @SuppressWarnings("unchecked")
     public List<String> getProteinNames() {
         if (collections.get("proteinNames") == null) {
             return Collections.EMPTY_LIST;
