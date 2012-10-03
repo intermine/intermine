@@ -27,7 +27,7 @@ from intermine.query import Query, Template
 from intermine.model import Model, Attribute, Reference, Collection, Column
 from intermine.lists.listmanager import ListManager
 from intermine.errors import ServiceError, WebserviceError
-from intermine.results import InterMineURLOpener
+from intermine.results import InterMineURLOpener, ResultIterator
 
 """
 Webservice Interaction Routines for InterMine Webservices
