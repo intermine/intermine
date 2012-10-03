@@ -4,7 +4,7 @@ from xml.dom import minidom, getDOMImplementation
 
 from intermine.util import openAnything, ReadableException
 from intermine.pathfeatures import PathDescription, Join, SortOrder, SortOrderList
-from intermine.model import Column, Class, Model, Reference
+from intermine.model import Column, Class, Model, Reference, ConstraintNode
 import constraints
 
 """
@@ -1513,9 +1513,16 @@ class Query(object):
 
     def to_query(self):
         """
-        Return the query to allow equivalent treatment of lists and queries.
+        Implementation of trait that allows use of these objects as queries (casting).
         """
         return self
+
+    def make_list_constraint(self, path, op):
+        """
+        Implementation of trait that allows use of these objects in list constraints
+        """
+        l = self.service.create_list(self)
+        return ConstraintNode(path, op, l.name)
 
     def to_query_params(self):
         """
