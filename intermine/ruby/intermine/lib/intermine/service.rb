@@ -109,6 +109,7 @@ module InterMine
         LIST_INTERSECTION_PATH = "/lists/intersect/json"
         LIST_SUBTRACTION_PATH = "/lists/subtract/json"
         LIST_TAG_PATH = "/list/tags/json"
+        LIST_ENRICHMENT_PATH = "/list/enrichment"
 
         # The webservice version. An integer that 
         # supplies information about what features are supported.
