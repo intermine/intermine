@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.BagDoesNotExistException;
@@ -195,10 +196,11 @@ public class BagManager
      * @return A list of Tag objects
      */
     public List<Tag> getTagsForBag(InterMineBag bag, Profile profile) {
-        List<Tag> tags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
+        // Add on the public tag, if this bag is tagged with it.
+        Set<Tag> tags = new HashSet<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
             TagTypes.BAG, null));
         tags.addAll(tagManager.getObjectTags(bag, profile));
-        return tags;
+        return new ArrayList<Tag>(tags);
     }
 
     /**
