@@ -36,11 +36,9 @@ public class TreefamConverterTest extends ItemsTestCase
 
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new TreefamConverter(itemWriter, Model.getInstanceByName("genomic"));
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
-        converter.flyResolverFactory = resolverFactory;
-
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
 
         super.setUp();
     }

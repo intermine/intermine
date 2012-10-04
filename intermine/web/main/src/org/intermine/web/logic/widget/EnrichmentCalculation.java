@@ -57,6 +57,9 @@ public final class EnrichmentCalculation
 
             Integer sampleCount = entry.getValue();
             Integer populationCount = populationCounts.get(attribute);
+            if (populationCount == null) {
+                populationCount = 0;
+            }
 
             HypergeometricDistributionImpl h =
                 new HypergeometricDistributionImpl(populationSize, populationCount, sampleSize);
