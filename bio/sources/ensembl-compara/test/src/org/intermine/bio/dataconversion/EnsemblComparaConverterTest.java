@@ -48,15 +48,11 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new EnsemblComparaConverter(itemWriter, model);
-        MockIdResolverFactory flyResolverFactory = new MockIdResolverFactory("Gene");
-        flyResolverFactory.addResolverEntry("7227", "FBgn0013672",
-                Collections.singleton("FBgn0013672"));
-        flyResolverFactory.addResolverEntry("7227", "FBgn0010412",
-                Collections.singleton("FBgn0010412"));
-        converter.flyResolverFactory = flyResolverFactory;
-        DoNothingIdResolverFactory humanResolverFactory = new DoNothingIdResolverFactory("Gene");
-        converter.humanResolverFactory = humanResolverFactory;
-    }
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+//        converter.rslv = IdResolverService.getDoNothingIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn00xxxxx", Collections.singleton("FBgn0013672"));
+        converter.rslv.addResolverEntry("7227", "FBgn0010412", Collections.singleton("FBgn0010412"));
+        converter.rslv.addResolverEntry("9606", "A", Collections.singleton("B"));}
 
     /**
      * @throws Exception e
@@ -74,7 +70,7 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "ensembl-compara-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "ensembl-compara-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected =
             readItemSet("EnsemblComparaConverterTest_tgt.xml");
