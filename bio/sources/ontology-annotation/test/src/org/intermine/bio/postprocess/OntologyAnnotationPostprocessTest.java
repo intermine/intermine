@@ -23,7 +23,6 @@ import org.intermine.model.InterMineObject;
 import org.intermine.model.bio.GOAnnotation;
 import org.intermine.model.bio.GOEvidence;
 import org.intermine.model.bio.GOEvidenceCode;
-import org.intermine.model.bio.GOTerm;
 import org.intermine.model.bio.Gene;
 import org.intermine.model.bio.OntologyTerm;
 import org.intermine.model.bio.Protein;
@@ -63,7 +62,7 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
         q.addToSelect(qc);
         ObjectStore os = osw.getObjectStore();
         SingletonResults res = os.executeSingleton(q);
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         osw.beginTransaction();
         while (resIter.hasNext()) {
             InterMineObject o = (InterMineObject) resIter.next();
@@ -75,7 +74,7 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
     public void testPostProcess() throws Exception {
         setUpData();
         OntologyAnnotationPostprocess gp = new OntologyAnnotationPostprocess(osw);
-        gp.setOntologyPrefix("GO");
+//        gp.setOntologyPrefix("GO");
         gp.postProcess();
 
         Gene resGene = (Gene) getFromDb(Gene.class).iterator().next();
@@ -111,20 +110,20 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
         Protein protein2 = (Protein) DynamicUtil.createObject(Collections.singleton(Protein.class));
         protein2.addGenes(gene);
 
-        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, protein1, protein2}));
+        List<Object> toStore = new ArrayList<Object>(Arrays.asList(new Object[] {gene, protein1, protein2}));
 
         toStore.addAll(setUpAnnotations(protein1));
         toStore.addAll(setUpAnnotations(protein2));
 
         osw.beginTransaction();
-        Iterator i = toStore.iterator();
+        Iterator<Object> i = toStore.iterator();
         while (i.hasNext()) {
             osw.store((InterMineObject) i.next());
         }
         osw.commitTransaction();
     }
 
-    private List setUpAnnotations(Protein protein) {
+    private List<Object> setUpAnnotations(Protein protein) {
         GOAnnotation go = (GOAnnotation) DynamicUtil.createObject(Collections.singleton(GOAnnotation.class));
         go.setSubject(protein);
         OntologyTerm ontologyTerm = (OntologyTerm) DynamicUtil.createObject(Collections.singleton(OntologyTerm.class));
@@ -135,7 +134,7 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
         Publication pub = (Publication) DynamicUtil.createObject(Collections.singleton(Publication.class));
         evidence.addPublications(pub);
         go.setEvidence(Collections.singleton(evidence));
-        return new ArrayList(Arrays.asList(new Object[] {go, ontologyTerm, evidence, code, pub}));
+        return new ArrayList<Object>(Arrays.asList(new Object[] {go, ontologyTerm, evidence, code, pub}));
     }
 
 
@@ -169,9 +168,9 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
         go2.setEvidence(Collections.singleton(evidence2));
 
 
-        List toStore = new ArrayList(Arrays.asList(new Object[] {gene, protein1, protein2, go1, ontologyTerm, evidence1, code1, pub1, go2, ontologyTerm, evidence2, code2, pub2}));
+        List<Object> toStore = new ArrayList<Object>(Arrays.asList(new Object[] {gene, protein1, protein2, go1, ontologyTerm, evidence1, code1, pub1, go2, ontologyTerm, evidence2, code2, pub2}));
         osw.beginTransaction();
-        Iterator i = toStore.iterator();
+        Iterator<Object> i = toStore.iterator();
         while (i.hasNext()) {
             osw.store((InterMineObject) i.next());
         }
@@ -179,14 +178,14 @@ public class OntologyAnnotationPostprocessTest extends XMLTestCase {
     }
 
 
-    private Set<InterMineObject> getFromDb(Class relClass) throws Exception {
+    private Set<InterMineObject> getFromDb(Class<Gene> relClass) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(relClass);
         q.addToSelect(qc);
         q.addFrom(qc);
         SingletonResults res = osw.getObjectStore().executeSingleton(q);
         Set<InterMineObject> results = new HashSet<InterMineObject>();
-        Iterator resIter = res.iterator();
+        Iterator<?> resIter = res.iterator();
         while(resIter.hasNext()) {
             results.add((InterMineObject) resIter.next());
         }

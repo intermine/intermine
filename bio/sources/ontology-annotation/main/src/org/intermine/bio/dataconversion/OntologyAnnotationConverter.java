@@ -68,7 +68,6 @@ public class OntologyAnnotationConverter extends BioFileConverter
     // These should be altered for different ontologies:
     protected String ontologyPrefix = "GO";
     private String gaff = "2.0";
-    protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
     protected IdResolver rslv;
 
     private static final Logger LOG = Logger.getLogger(OntologyAnnotationConverter.class);
@@ -84,8 +83,8 @@ public class OntologyAnnotationConverter extends BioFileConverter
         super(writer, model);
 
         // only construct factory here so can be replaced by mock factory in tests
-        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
-        ontologyResolverFactory = new OntologyIdResolverFactory("GO");
+//        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
+//        ontologyResolverFactory = new OntologyIdResolverFactory("GO");
 
         readConfig();
     }
@@ -167,6 +166,12 @@ public class OntologyAnnotationConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws ObjectStoreException, IOException {
+
+        // Create resolvers
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+            rslv = IdResolverService.getGoIdResolver(ontologyPrefix);
+        }
 
         initialiseMapsForFile();
 
@@ -428,18 +433,16 @@ public class OntologyAnnotationConverter extends BioFileConverter
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if ("7227".equals(taxonId)) {
-//                IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
-                IdResolver resolver = IdResolverService.getFlyIdResolver();
-                if (resolver != null) {
-                    int resCount = resolver.countResolutions(taxonId, accession);
+                if (rslv != null) {
+                    int resCount = rslv.countResolutions(taxonId, accession);
 
                     if (resCount != 1) {
                         LOG.info("RESOLVER: failed to resolve gene to one identifier, "
                                  + "ignoring gene: " + accession + " count: " + resCount + " FBgn: "
-                                 + resolver.resolveId(taxonId, accession));
+                                 + rslv.resolveId(taxonId, accession));
                         return null;
                     }
-                    accession = resolver.resolveId(taxonId, accession).iterator().next();
+                    accession = rslv.resolveId(taxonId, accession).iterator().next();
                 }
             }
         } else if ("protein".equalsIgnoreCase(type)) {
@@ -507,19 +510,17 @@ public class OntologyAnnotationConverter extends BioFileConverter
 
     private String resolveTerm(String identifier) {
         String goId = identifier;
-//        IdResolver resolver = ontologyResolverFactory.getIdResolver(false);
-        IdResolver resolver = IdResolverService.getGoIdResolver("GO");
-        if (resolver != null) {
-            int resCount = resolver.countResolutions("0", identifier);
+        if (rslv != null) {
+            int resCount = rslv.countResolutions("0", identifier);
 
             if (resCount > 1) {
                 LOG.info("RESOLVER: failed to resolve ontology term to one identifier, "
                          + "ignoring term: " + identifier + " count: " + resCount + " : "
-                         + resolver.resolveId("0", identifier));
+                         + rslv.resolveId("0", identifier));
                 return null;
             }
             if (resCount == 1) {
-                goId = resolver.resolveId("0", identifier).iterator().next();
+                goId = rslv.resolveId("0", identifier).iterator().next();
             }
         }
         return goId;
