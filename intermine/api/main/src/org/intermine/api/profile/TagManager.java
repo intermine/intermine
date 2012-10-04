@@ -502,7 +502,8 @@ public class TagManager
 
     private static boolean tagNameNeedsPermission(String tagName) {
         return tagName.startsWith(TagNames.IM_PREFIX)
-                && !TagNames.IM_FAVOURITE.equals(tagName);
+                && !TagNames.IM_FAVOURITE.equals(tagName)
+                && !tagName.startsWith(TagNames.IM_WIDGET);
     }
 
     /**

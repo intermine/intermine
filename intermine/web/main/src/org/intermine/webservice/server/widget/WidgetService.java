@@ -36,6 +36,9 @@ public abstract class WidgetService extends JSONService
     }
 
     protected InterMineBag retrieveBag(String bagName) {
+        if ("".equals(bagName)) {
+            return null;
+        }
         Profile profile = getPermission().getProfile();
         InterMineBag imBag = im.getBagManager().getBag(profile, bagName);
         if (imBag == null) {

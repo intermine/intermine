@@ -19,6 +19,7 @@ import org.intermine.webservice.server.WebServiceInput;
  * WidgetsServiceInput is parameter object representing parameters
  * for the WidgetsService web service.
  * @author "Xavier Watkins"
+ * @author Daniela Butano
  *
  */
 public class WidgetsServiceInput extends WebServiceInput
@@ -26,6 +27,7 @@ public class WidgetsServiceInput extends WebServiceInput
     private String widgetId;
     private String bagName;
     private String populationBagName;
+    private boolean savePopulation = false;
     private List<String> extraAttributes = new ArrayList<String>();
 
     /**
@@ -81,7 +83,7 @@ public class WidgetsServiceInput extends WebServiceInput
      * @return the bagName
      */
     public String getPopulationBagName() {
-       return populationBagName;
+        return populationBagName;
     }
 
     /**
@@ -90,6 +92,14 @@ public class WidgetsServiceInput extends WebServiceInput
      */
     public void setPopulationBagName(String populationBagName) {
         this.populationBagName = populationBagName;
+    }
+
+    public boolean isSavePopulation() {
+        return savePopulation;
+    }
+
+    public void setSavePopulation(boolean savePopulation) {
+        this.savePopulation = savePopulation;
     }
 
 }

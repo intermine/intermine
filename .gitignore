@@ -10,12 +10,6 @@ client-build/
 executeLog*
 *.pyc
 *.class
-*.iml
-.idea/
-nbproject/
-nb-build.xml
-
-malariamine/
 
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png
@@ -186,14 +180,3 @@ malariamine/
 
 # /intermine/webservice/client/javascript/imbedding/0.2/style/
 /intermine/webservice/client/javascript/imbedding/0.2/style/*min.*
-/intermine/objectstore/main/nbproject/private/
-/intermine/api/model/userprofile/nbproject/private/
-/intermine/pathquery/main/nbproject/private/
-/intermine/webservice/client/main/nbproject/private/
-/intermine/api/main/nbproject/private/
-/intermine/integrate/main/nbproject/private/
-/intermine/integrate/model/fulldata/nbproject/private/
-/intermine/objectstore/model/testmodel/nbproject/private/
-/intermine/objectstore/test/nbproject/private/
-/intermine/web/main/nbproject/private/
-/intermine/webapp/main/nbproject/private/
