@@ -741,6 +741,38 @@
     </metadata>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>ws-report-widget</servlet-name>
+    <servlet-class>org.intermine.webservice.server.widget.ReportWidgetsServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-report-widget</servlet-name>
+    <url-pattern>/service/widget/report/*</url-pattern>
+    <metadata>
+        <name>Report Widgets</name>
+        <minVersion>8</minVersion>
+        <methods>
+            <method authenticationRequired="false" function="get the Report Widget JavaScript package">GET</method>
+        </methods>
+        <params>
+            <param type="String" required="true" description="The name of the widget to use">id</param>
+            <param type="String" required="true" description="The callback to use in the widget">callback</param>
+        </params>
+        <returns>
+            <format key="results">json</format>
+            <format>js</format>
+        </returns>
+        <description>
+            This service returns a Report Widget in a JavaScript package.
+        </description>
+    </metadata>
+  </servlet-mapping>
+
    <!-- NEW IN VERSION 9 -->
 
   <servlet>

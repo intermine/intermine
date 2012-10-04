@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -34,7 +35,6 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
  * @author "Xavier Watkins"
@@ -54,9 +54,13 @@ public class EnrichmentWidget extends Widget
     private String errorCorrection, max;
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
+    private ClassDescriptor typeDescriptor;
 
 
     /**
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
+
      * @param config widget config
      * @param interMineBag bag for this widget
      * @param os object store
@@ -71,6 +75,7 @@ public class EnrichmentWidget extends Widget
         this.bag = interMineBag;
         this.populationBag = populationBag;
         this.os = os;
+        this.typeDescriptor = os.getModel().getClassDescriptorByName(config.getTypeClass());
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
@@ -83,11 +88,20 @@ public class EnrichmentWidget extends Widget
      * Throws a ResourceNotFoundException if it's not valid
      */
     private void validateBagType() {
-        String typeClass = config.getTypeClass();
-        if (!typeClass.equals(bag.getType())) {
-            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
-                    + config.getId() + "\" with type " + bag.getType());
+        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
+        if (bagType == null) {
+            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
         }
+        if ("InterMineObject".equals(typeDescriptor.getName())) {
+            return; // This widget accepts anything, however useless.
+        } else if (bagType.equals(typeDescriptor)) {
+            return; // Exact match.
+        } else if (bagType.getAllSuperDescriptors().contains(typeDescriptor)) {
+            return; // Sub-class.
+        }
+        throw new IllegalArgumentException(
+            String.format("The %s enrichment query only accepts lists of %s, but you provided a list of %s",
+                config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**

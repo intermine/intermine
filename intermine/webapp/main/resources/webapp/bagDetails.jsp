@@ -32,8 +32,6 @@
 <script type="text/javascript" src="<html:rewrite page='/js/report.js'/>"></script>
 
 <script type="text/javascript" src="<html:rewrite page='/js/inlinetemplate.js'/>"></script>
-<script type="text/javascript" src="http://cdn.intermine.org/api"></script>
-<script type="text/javascript" src="http://cdn.intermine.org/js/intermine/widgets/1.6.3/intermine.widgets.js"></script>
 
 <div class="body">
 <c:choose>
