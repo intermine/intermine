@@ -46,10 +46,7 @@ public class EnsemblComparaConverter extends BioFileConverter
     private static final String DATASET_TITLE = "Ensembl Compara data set";
     private static final String DATA_SOURCE_NAME = "Ensembl";
     private Map<String, String> genes = new HashMap<String, String>();
-    protected IdResolverFactory flyResolverFactory;
-    protected IdResolverFactory humanResolverFactory;
-    private IdResolver flyResolver = null;
-    private IdResolver humanResolver;
+    protected IdResolver rslv = null;
     private Map<String, String> configs = new HashMap<String, String>();
     private static String evidenceRefId = null;
 
@@ -61,10 +58,6 @@ public class EnsemblComparaConverter extends BioFileConverter
     public EnsemblComparaConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        flyResolver = flyResolverFactory.getIdResolver(false);
-        humanResolverFactory = new EnsemblIdResolverFactory();
-        humanResolver = humanResolverFactory.getIdResolver(false);
     }
 
     /**
@@ -107,6 +100,13 @@ public class EnsemblComparaConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+
+        // init resolver
+        if (rslv == null) { // a workround for unit test
+            rslv = IdResolverService.getFlyIdResolver();
+            rslv = IdResolverService.getEnsemblIdResolver();
+        }
+
         if (taxonIds == null || taxonIds.isEmpty()) {
             throw new IllegalArgumentException("No organism data provided for Ensembl Compara");
         }
@@ -209,32 +209,19 @@ public class EnsemblComparaConverter extends BioFileConverter
 
     private String resolveGene(String taxonId, String identifier) {
         String id = identifier;
-        if ("7227".equals(taxonId)) {
-            if (flyResolver == null) {
-                return identifier;
-            }
-            int resCount = flyResolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                        + identifier + " count: " + resCount + " FBgn: "
-                        + flyResolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            id = flyResolver.resolveId(taxonId, identifier).iterator().next();
+
+        if (rslv == null) {
+            return identifier;
         }
-        if ("9606".equals(taxonId)) {
-            if (humanResolver == null) {
-                return identifier;
-            }
-            int resCount = humanResolver.countResolutions(taxonId, identifier);
-            if (resCount != 1) {
-                LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                        + identifier + " count: " + resCount + " resolved to: "
-                        + humanResolver.resolveId(taxonId, identifier));
-                return null;
-            }
-            id = humanResolver.resolveId(taxonId, identifier).iterator().next();
+        int resCount = rslv.countResolutions(taxonId, identifier);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                    + identifier + " count: " + resCount + " resolved to: "
+                    + rslv.resolveId(taxonId, identifier));
+            return null;
         }
+        id = rslv.resolveId(taxonId, identifier).iterator().next();
+
         return id;
     }
 

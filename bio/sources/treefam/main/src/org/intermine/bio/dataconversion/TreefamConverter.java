@@ -53,7 +53,7 @@ public class TreefamConverter extends BioFileConverter
     private static final String ZFIN_TAXON = "7955";
     private static final String FLY_TAXON = "7227";
 
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -215,7 +215,9 @@ public class TreefamConverter extends BioFileConverter
         Set<String> resolveTaxonIds = new HashSet<String>();
         resolveTaxonIds.add(ZFIN_TAXON);
         resolveTaxonIds.add(FLY_TAXON);
-        rslv = IdResolverService.getIdResolverByOrganism(resolveTaxonIds);
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(resolveTaxonIds);
+        }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {

@@ -128,6 +128,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage(), e);
+            throw e;
         }
     }
 
