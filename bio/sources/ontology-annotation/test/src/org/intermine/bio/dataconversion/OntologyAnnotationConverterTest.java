@@ -47,20 +47,19 @@ public class OntologyAnnotationConverterTest extends ItemsTestCase
         converter = new OntologyAnnotationConverter(writer, model);
         converter.setGaff("2.0");
         converter.setOntologyPrefix("GO");
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));
-        resolverFactory.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
-        resolverFactory.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
-        resolverFactory.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
-        converter.flybaseResolverFactory = resolverFactory;
 
-        resolverFactory = new MockIdResolverFactory("go");
-        resolverFactory.addResolverEntry("0", "GO:1234567", Collections.singleton("GO:9999999"));
-        resolverFactory.addResolverEntry("0", "GO:0000011:", Collections.singleton("GO:0000011"));
-        resolverFactory.addResolverEntry("0", "GO:0000004", Collections.singleton("GO:0000004"));
-        resolverFactory.addResolverEntry("0", "GO:0000005", Collections.singleton("GO:0000005"));
-        resolverFactory.addResolverEntry("0", "GO:0000001", Collections.singleton("GO:0000001"));
-        converter.ontologyResolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));
+        converter.rslv.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
+        converter.rslv.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
+        converter.rslv.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
+
+        converter.rslv = IdResolverService.getMockIdResolver("Go");
+        converter.rslv.addResolverEntry("0", "GO:1234567", Collections.singleton("GO:9999999"));
+        converter.rslv.addResolverEntry("0", "GO:0000011:", Collections.singleton("GO:0000011"));
+        converter.rslv.addResolverEntry("0", "GO:0000004", Collections.singleton("GO:0000004"));
+        converter.rslv.addResolverEntry("0", "GO:0000005", Collections.singleton("GO:0000005"));
+        converter.rslv.addResolverEntry("0", "GO:0000001", Collections.singleton("GO:0000001"));
     }
 
     private void writeTempFile(File outFile, Reader srcFileReader) throws Exception {
