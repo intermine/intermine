@@ -114,6 +114,7 @@ public class EnrichmentWidget extends Widget
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage(), e);
+            throw e;
         }
     }
 

@@ -11,11 +11,20 @@ package org.intermine.webservice.server.widget;
  */
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.TagManager.TagNameException;
+import org.intermine.api.profile.TagManager.TagNamePermissionException;
+import org.intermine.api.tag.TagNames;
+import org.intermine.api.tag.TagTypes;
+import org.intermine.model.userprofile.Tag;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -41,6 +50,7 @@ import org.intermine.webservice.server.output.XMLFormatter;
  *
  * @author Alex Kalderimis
  * @author Xavier Watkins
+ * @author Daniela Butano
  */
 public class EnrichmentWidgetResultService extends WidgetService
 {
@@ -90,10 +100,10 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
-        String populationBagName = input.getPopulationBagName();
-        InterMineBag populationBag = (populationBagName != null)
-                                     ? retrieveBag(populationBagName)
-                                     : null;
+        //reference population
+        InterMineBag populationBag = getReferencePopulationBag(input);
+
+        //instantiate the widget
         EnrichmentWidget widget = null;
         try {
             widget = (EnrichmentWidget) widgetConfig.getWidget(imBag, populationBag,
@@ -101,6 +111,8 @@ public class EnrichmentWidgetResultService extends WidgetService
         } catch (ClassCastException e) {
             throw new ResourceNotFoundException("Could not find an enrichment widget called \""
                                                + input.getWidgetId() + "\"");
+        } catch (IllegalArgumentException ae) {
+            throw new RuntimeException("Choose another population list", ae);
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputPathQuery(widget, widgetConfig);
@@ -138,5 +150,75 @@ public class EnrichmentWidgetResultService extends WidgetService
 
     private WidgetsServiceInput getInput() {
         return new WidgetsRequestParser(request).getInput();
+    }
+
+    private InterMineBag getReferencePopulationBag(WidgetsServiceInput input)
+        throws TagNamePermissionException, TagNameException {
+        String populationBagName = input.getPopulationBagName();
+        if (populationBagName == null) {
+            //get preferences
+            populationBagName = getPreferredReferencePopulation(input);
+        }
+        if ("".equals(populationBagName)) {
+            //json formatter doesn't format empty string
+            addOutputInfo(WidgetsRequestParser.POPULATION_BAG_NAME, null);
+        } else {
+            addOutputInfo(WidgetsRequestParser.POPULATION_BAG_NAME, populationBagName);
+        }
+        InterMineBag populationBag = null;
+        populationBag = retrieveBag(populationBagName);
+        saveReferencePopulation(input);
+        return populationBag;
+    }
+
+    private void saveReferencePopulation(WidgetsServiceInput input)
+        throws TagNamePermissionException, TagNameException {
+        if (input.isSavePopulation()) {
+            Profile profile = getPermission().getProfile();
+            if (profile.isLoggedIn()) {
+                TagManager tm = im.getTagManager();
+                String tagName = TagNames.IM_WIDGET + TagNames.SEPARATOR + input.getWidgetId()
+                           + TagNames.SEPARATOR + input.getPopulationBagName();
+                List<Tag> currentTags = getReferencePopulationTags(input);
+               for (Tag tag : currentTags) {
+                  tm.deleteTag(tag);
+               }
+               if (!"".equals(input.getPopulationBagName())) {
+                   tm.addTag(tagName, input.getBagName(), TagTypes.BAG, profile);
+               }
+            }
+        }
+    }
+
+    private List<Tag> getReferencePopulationTags(WidgetsServiceInput input) {
+        Profile profile = getPermission().getProfile();
+        List<Tag> populationTags = new ArrayList<Tag>();
+        if (profile.isLoggedIn()) {
+            TagManager tm = im.getTagManager();
+            String prefixTagPopulation = TagNames.IM_WIDGET + TagNames.SEPARATOR + input.getWidgetId()
+                           + TagNames.SEPARATOR;
+            List<Tag> tags = tm.getTags(null, null, TagTypes.BAG, profile.getUsername());
+            for (Tag tag : tags) {
+                if (tag.getObjectIdentifier().equals(input.getBagName())
+                    && tag.getTagName().startsWith(prefixTagPopulation)) {
+                    populationTags.add(tag);
+                }
+            }
+        }
+        return populationTags;
+    }
+
+    private String getPreferredReferencePopulation(WidgetsServiceInput input) {
+        Profile profile = getPermission().getProfile();
+        if (profile.isLoggedIn()) {
+            List<Tag> populationTags = getReferencePopulationTags(input);
+            if (!populationTags.isEmpty()) {
+                String prefixTagPopulation = TagNames.IM_WIDGET + TagNames.SEPARATOR + input.getWidgetId()
+                        + TagNames.SEPARATOR;
+                String tagName = populationTags.get(0).getTagName();
+                return tagName.replace(prefixTagPopulation, "");
+            }
+        }
+        return "";
     }
 }
