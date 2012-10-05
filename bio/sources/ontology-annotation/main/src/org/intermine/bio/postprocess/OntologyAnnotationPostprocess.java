@@ -103,7 +103,7 @@ public class OntologyAnnotationPostprocess extends PostProcessor
                 for (GOAnnotation item : annotations.values()) {
                     osw.store(item);
                 }
-                lastGene.setGoAnnotation(new HashSet(annotations.values()));
+                lastGene.setGoAnnotation(new HashSet<GOAnnotation>(annotations.values()));
                 LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
                         + lastGene.getGoAnnotation().size() + " GO.");
                 osw.store(lastGene);
@@ -119,7 +119,7 @@ public class OntologyAnnotationPostprocess extends PostProcessor
             for (GOAnnotation item : annotations.values()) {
                 osw.store(item);
             }
-            lastGene.setGoAnnotation(new HashSet(annotations.values()));
+            lastGene.setGoAnnotation(new HashSet<GOAnnotation>(annotations.values()));
             LOG.debug("store gene " + lastGene.getSecondaryIdentifier() + " with "
                     + lastGene.getGoAnnotation().size() + " GO.");
             osw.store(lastGene);
