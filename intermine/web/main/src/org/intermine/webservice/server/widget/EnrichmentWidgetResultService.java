@@ -103,6 +103,7 @@ public class EnrichmentWidgetResultService extends WidgetService
 
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
+        addOutputUserLogged();
 
         //instantiate the widget
         EnrichmentWidget widget = null;
@@ -132,6 +133,14 @@ public class EnrichmentWidgetResultService extends WidgetService
         addOutputInfo("pathQuery", widget.getPathQuery().toJson());
         addOutputInfo("pathConstraint", widget.getPathConstraint());
         addOutputInfo("pathQueryForMatches", widget.getPathQueryForMatches().toJson());
+    }
+
+    private void addOutputUserLogged() {
+        if (getPermission().getProfile().isLoggedIn()) {
+            addOutputAttribute("isLogged", "true");
+        } else {
+            addOutputAttribute("isLogged", "false");
+        }
     }
 
     protected WidgetResultProcessor getProcessor() {
