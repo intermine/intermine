@@ -44,7 +44,8 @@ public final class FriendlyMineQueryRunner
         = new CacheMap<MultiKey, JSONObject>();
     private static final String RELEASE_VERSION_URL = "/version/release";
     private static final boolean DEBUG = false;
-
+    private static final int CONNECT_TIMEOUT = 20000; // 20 seconds
+    
     private FriendlyMineQueryRunner() {
         // don't
     }
@@ -169,7 +170,9 @@ public final class FriendlyMineQueryRunner
             if (!urlString.contains("?")) {
                 // GET
                 URL url = new URL(urlString);
-                reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                URLConnection conn = url.openConnection();
+                conn.setConnectTimeout(CONNECT_TIMEOUT);
+                reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 LOG.info("FriendlyMine URL (GET) " + urlString);
             } else {
                 // POST
