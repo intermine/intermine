@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
@@ -169,14 +170,15 @@ public abstract class MailUtils
         String subject = "Sharing Lists in " + applicationName;
         String listUrl = webProperties.get("webapp.deploy.url") + "/"
                   +  webProperties.get("webapp.path") + "/"
-                  + "login.do?returnto=%2FbagDetails.do%3Fscope%3Dall%26bagName%3D" + bag.getName();
+                  + "login.do?returnto=%2FbagDetails.do%3Fscope%3Dall%26bagName%3D"
+                  + URLEncoder.encode(bag.getName(), "UTF-8");
         StringBuffer bodyMsg = new StringBuffer();
-        bodyMsg.append("User " + sharingUser + " has shared a list of " + bag.getType() + " ");
-        bodyMsg.append("with you called \"" + bag.getName() + "\".\n");
-        bodyMsg.append("Click here to view the list: " + listUrl + "\n");
+        bodyMsg.append("User " + sharingUser + " has shared a list of " + bag.getType() + "s ");
+        bodyMsg.append("with you called \"" + bag.getName() + "\".\n\n");
+        bodyMsg.append("Click here to view the list: " + listUrl + ".\n\n");
         bodyMsg.append("If " + sharingUser + " deletes or modifies this list, you will not be ");
         bodyMsg.append("notified.\nYou may COPY this list to your own account by using the ");
-        bodyMsg.append(" list operations on the list page.\n");
+        bodyMsg.append(" list operations on the list page.\n\n");
         bodyMsg.append("If you have any problems or questions, please don't hesitate ");
         bodyMsg.append("to contact us. We can be reached by replying to this email or at the ");
         bodyMsg.append("bottom of each page on " + applicationName + ".\n\n");
