@@ -89,6 +89,10 @@
 <attribute name="identifier" value="FBrf0135704"/>
 <reference name="source" ref_id="5_1"/>
 </item>
+<item id="10_5" class="DatabaseReference">
+<attribute name="identifier" value="FBrf0135704"/>
+<reference name="source" ref_id="5_1"/>
+</item>
 <item id="7_4" class="GOTerm">
 <attribute name="identifier" value="GO:0007198"/>
 <collection name="dataSets"><reference ref_id="4_1"/></collection>
