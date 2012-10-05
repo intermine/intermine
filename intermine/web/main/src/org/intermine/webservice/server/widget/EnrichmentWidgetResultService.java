@@ -13,7 +13,6 @@ package org.intermine.webservice.server.widget;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
