@@ -1,0 +1,4 @@
+<project name="anopheles-identifiers-tasks" default="default" basedir=".">
+  <description>build anopheles-identifiers tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>
