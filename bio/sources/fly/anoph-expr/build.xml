@@ -1,8 +1,0 @@
-
-<project name="anoph-expr" default="default" basedir=".">
-  <description>build, test, package anoph-expr</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-  
-</project>
-
