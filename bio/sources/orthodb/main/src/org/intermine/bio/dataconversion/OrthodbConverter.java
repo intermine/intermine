@@ -136,7 +136,9 @@ public class OrthodbConverter extends BioFileConverter
                 addAll(homologues);
             }
         };
-        rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -409,8 +411,7 @@ public class OrthodbConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-
-        if (rslv == null) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;
         }
