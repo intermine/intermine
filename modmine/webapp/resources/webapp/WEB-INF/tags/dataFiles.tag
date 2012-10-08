@@ -5,23 +5,23 @@
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
 <%
-	Object o = jspContext.getAttribute("files");
+  Object o = jspContext.getAttribute("files");
     int filesSize;
-	if(o instanceof Set) {
-	   Set<org.intermine.model.bio.ResultFile> files = (Set)jspContext.getAttribute("files");
-	   filesSize = files.size();
-	} else {
-	 List<org.intermine.model.bio.ResultFile> files = (List)jspContext.getAttribute("files");
-	 filesSize = files.size();
-	}
+  if(o instanceof Set) {
+     Set<org.intermine.model.bio.ResultFile> files = (Set)jspContext.getAttribute("files");
+     filesSize = files.size();
+  } else {
+   List<org.intermine.model.bio.ResultFile> files = (List)jspContext.getAttribute("files");
+   filesSize = files.size();
+  }
 %>
 
   <c:set var="nr" value="<%=filesSize%>" />
   <c:choose>
   <c:when test="${nr > 30}">
   <br></br>
-    <a href="${WEB_PROPERTIES['ftp.prefix']}/${dccId}/extracted"
-      title="Access the submission ${nr} files" class="value extlink"">
+    <a href="http://submit.modencode.org/submit/public/download/${dccId}?root=data"
+      title="Access the submission ${nr} files" class="value extlink">
     <c:out value="${nr} files" /> </a>
   </c:when>
   <c:otherwise>
