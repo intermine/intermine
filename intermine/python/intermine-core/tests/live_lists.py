@@ -48,12 +48,13 @@ class LiveListTest(unittest.TestCase):
         unittest.TestCase.__init__(self, name)
         self.initialListCount = self.SERVICE.get_list_count()
 
-    def testListsFromFlyMine(self):
-        s = Service("www.flymine.org/query")
-        all_lists = s.get_all_lists()
-        possible_statuses = set(["CURRENT", "TO_UPGRADE", "NOT_CURRENT"])
-        got = set((l.status for l in all_lists))
-        self.assertTrue(got <= possible_statuses)
+    # Disabled due to bug in FlyMine 34.0.
+    # def testListsFromFlyMine(self):
+    #     s = Service("www.flymine.org/query")
+    #     all_lists = s.get_all_lists()
+    #     possible_statuses = set(["CURRENT", "TO_UPGRADE", "NOT_CURRENT"])
+    #     got = set((l.status for l in all_lists))
+    #     self.assertTrue(got <= possible_statuses)
 
     def testListTagAdding(self):
         s = self.SERVICE
