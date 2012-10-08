@@ -3,23 +3,36 @@ The test and clean code is shamelessly stolen from
 http://da44en.wordpress.com/2002/11/22/using-distutils/
 """
 
+import os
+import sys
+import time
 from distutils.core import Command, setup
 from distutils import log
 from distutils.fancy_getopt import fancy_getopt
+from setuptools.command.test import test as SetupTest
 from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import splitext, basename, join as pjoin, walk
 from warnings import warn
-import os
-import time
 from tests.testserver import TestServer
 from tests.test import WebserviceTest
+
+class Tox(SetupTest):
+    def finalize_options(self):
+        SetupTest.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+    def run_tests(self):
+        import tox
+        errno = tox.cmdline(self.test_args)
+        sys.exit(errno)
 
 class TestCommand(Command):
     user_options = [('verbose', 'v', "produce verbose output", 1)]
 
     def initialize_options(self):
         self._dir = os.getcwd()
+        self.test_prefix = 'test'
 
     def finalize_options(self):
         args, obj = fancy_getopt(self.user_options, {}, None, None)
@@ -43,7 +56,7 @@ class TestCommand(Command):
         time.sleep(1)
 
         testfiles = [ ]
-        for t in glob(pjoin(self._dir, 'tests', 'test*.py')):
+        for t in glob(pjoin(self._dir, 'tests', self.test_prefix + '*.py')):
             if not t.endswith('__init__.py'):
                 testfiles.append('.'.join(
                     ['tests', splitext(basename(t))[0]])
@@ -54,6 +67,12 @@ class TestCommand(Command):
         t = TextTestRunner(verbosity = self.verbose)
         t.run(tests)
         exit()
+
+class LiveTestCommand(TestCommand):
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        self.test_prefix = 'live'
 
 class CleanCommand(Command):
     """
@@ -119,8 +138,8 @@ setup(
         name = "intermine",
         packages = ["intermine", "intermine.lists"],
         provides = ["intermine"],
-        cmdclass = { 'test': TestCommand, 'clean': CleanCommand },
-        version = "0.99.08",
+        cmdclass = { 'test': TestCommand, 'clean': CleanCommand, 'tox': Tox, 'livetest': LiveTestCommand },
+        version = "1.00.00",
         description = "InterMine WebService client",
         author = "Alex Kalderimis",
         author_email = "dev@intermine.org",
@@ -129,7 +148,7 @@ setup(
         keywords = ["webservice", "genomic", "bioinformatics"],
         classifiers = [
             "Programming Language :: Python",
-            "Development Status :: 4 - Beta",
+            "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
             "Intended Audience :: Developers",
             "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
@@ -144,7 +163,7 @@ setup(
 InterMine Webservice Client
 ----------------------------
 
-Provides access routines to datawarehouses powered 
+Provides access routines to datawarehouses powered
 by InterMine technology.
 
 """,
