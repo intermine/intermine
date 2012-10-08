@@ -167,7 +167,7 @@ public abstract class MailUtils
     public static void emailSharingList(String to, String sharingUser, InterMineBag bag,
         final Map webProperties) throws Exception {
         String applicationName = (String) webProperties.get("mail.application");
-        String subject = "Sharing Lists in " + applicationName;
+        String subject = applicationName + " shared list (" + bag.getName() + ")";
         String listUrl = webProperties.get("webapp.deploy.url") + "/"
                   +  webProperties.get("webapp.path") + "/"
                   + "login.do?returnto=%2FbagDetails.do%3Fscope%3Dall%26bagName%3D"
