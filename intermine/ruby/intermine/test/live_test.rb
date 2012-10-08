@@ -130,4 +130,10 @@ class LiveDemoTest <  Test::Unit::TestCase
         assert_equal(tags.sort, new_list.tags.sort)
     end
 
+    def testEnrichment
+        l = @service.list("My-Favourite-Employees")
+        contractors = l.calculate_enrichment :contractor_enrichment, :maxp => 1.0
+        assert_equal("Vikram", contractors.first[:identifier])
+    end
+
 end
