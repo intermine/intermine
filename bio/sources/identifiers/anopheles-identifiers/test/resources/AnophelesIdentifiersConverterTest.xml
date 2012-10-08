@@ -1,0 +1,40 @@
+<items>
+<item id="6_1" class="Synonym">
+<attribute name="value" value="ENSANGG00000014969"/>
+<reference name="subject" ref_id="4_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_2" class="Gene">
+<attribute name="primaryIdentifier" value="AGAP000035"/>
+<attribute name="secondaryIdentifier" value="ENSANGG00000027829"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="VectorBase"/>
+</item>
+<item id="4_1" class="Gene">
+<attribute name="primaryIdentifier" value="AGAP000034"/>
+<attribute name="secondaryIdentifier" value="ENSANGG00000014848"/>
+<reference name="organism" ref_id="3_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="VectorBase Anopheles"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="3_1" class="Organism">
+<attribute name="taxonId" value="7165"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+</items>
