@@ -35,10 +35,9 @@ public class ReactomeConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new ReactomeConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
+        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
     }
 
     public void testProcess() throws Exception {

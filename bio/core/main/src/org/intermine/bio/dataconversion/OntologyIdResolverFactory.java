@@ -23,7 +23,6 @@ import org.intermine.sql.DatabaseFactory;
 
 /**
  * @author Julie Sullivan
- *
  */
 public class OntologyIdResolverFactory extends IdResolverFactory
 {
@@ -78,6 +77,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
+
         if (resolver == null) {
             resolver = new IdResolver(clsName);
         }
@@ -108,14 +108,6 @@ public class OntologyIdResolverFactory extends IdResolverFactory
 
     @Override
     protected void createFromDb(Database database) {
-
-        if (resolver == null) {
-            resolver = new IdResolver(ontology);
-        }
-
-        if (resolver.hasTaxon(MOCK_TAXON_ID)) {
-            return;
-        }
 
         Connection conn = null;
         try {

@@ -32,10 +32,9 @@ public class UniprotConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new UniprotConverter(itemWriter, Model.getInstanceByName("genomic"));
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0000001", Collections.singleton("CG1111"));
-        resolverFactory.addResolverEntry("7227", "FBgn0000002", Collections.singleton("CG2222"));
-        converter.flyResolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn0000001", Collections.singleton("CG1111"));
+        converter.rslv.addResolverEntry("7227", "FBgn0000002", Collections.singleton("CG2222"));
         super.setUp();
     }
 
