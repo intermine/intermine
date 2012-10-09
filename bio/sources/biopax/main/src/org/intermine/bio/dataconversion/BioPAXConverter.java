@@ -51,10 +51,10 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     private String dbName = DEFAULT_DB_NAME;
     private String identifierField = "primaryAccession"; // default value, can be overridden
     private String bioentityType = "Protein"; // default value, can be overridden
-    protected IdResolverFactory resolverFactory;
     private Map<String, Item> bioentities = new HashMap<String, Item>();
     private Traverser traverser;
     private Set<BioPAXElement> visited = new HashSet<BioPAXElement>();
+    @SuppressWarnings("unused")
     private int depth = 0;
     private Item organism, dataset;
     private String pathwayRefId = null;
@@ -76,8 +76,6 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel)
         throws ObjectStoreException {
         super(writer, intermineModel);
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
         traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
         readConfig();
         or = OrganismRepository.getOrganismRepository();

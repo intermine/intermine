@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -23,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * ID resolver for ZFIN genes.
@@ -62,6 +65,15 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
+
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -86,33 +98,22 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
     }
 
     private void createFromFile(BufferedReader reader) throws IOException {
-        LOG.info("Resovler has taxon id " + taxonId + ":" + resolver.hasTaxon(taxonId));
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(taxonId)) {
-            return;
-        }
 
         // data is in format:
-        // ZDBID  SYMBOL  Ensembl(Zv9)
+        // ZDBID	ID1,ID2
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length < 3 || line[0].startsWith("#") || !line[0].startsWith(GENE_PATTERN)) {
+            if (line.length < 2 || line[0].startsWith("#") || !line[0].startsWith(GENE_PATTERN)) {
                 continue;
             }
 
             String zfinId = line[0];
-            String symbol = line[1];
-            String ensemblId = line[2];
+            String[] synonyms = StringUtil.split(line[1], ",");
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
-            resolver.addSynonyms(taxonId, zfinId, Collections.singleton(symbol));
-            resolver.addSynonyms(taxonId, zfinId, Collections.singleton(ensemblId));
+            resolver.addSynonyms(taxonId, zfinId, new HashSet<String>(Arrays.asList(synonyms)));
         }
     }
 }

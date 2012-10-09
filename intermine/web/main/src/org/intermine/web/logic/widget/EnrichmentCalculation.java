@@ -47,7 +47,9 @@ public final class EnrichmentCalculation
 
         int sampleSize = input.getSampleSize();
         int populationSize = input.getPopulationSize();
-
+        if (sampleSize > populationSize) {
+            
+        }
         Map<String, Integer> sampleCounts = input.getAnnotatedCountsInSample();
         Map<String, Integer> populationCounts = input.getAnnotatedCountsInPopulation();
 

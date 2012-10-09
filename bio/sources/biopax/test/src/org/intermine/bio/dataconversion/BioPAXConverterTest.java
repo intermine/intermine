@@ -45,6 +45,7 @@ public class BioPAXConverterTest extends MockItemsTestCase
      *
      * @throws Exception
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testProcess() throws Exception {
         if (processDmel) {
             TEST_FILE = "83333.owl";

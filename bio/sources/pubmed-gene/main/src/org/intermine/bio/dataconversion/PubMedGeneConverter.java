@@ -10,16 +10,17 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +29,6 @@ import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Item;
-
 
 /**
  * DataConverter creating items from PubMed data files. Data files contain
@@ -45,13 +45,14 @@ import org.intermine.xml.full.Item;
 public class PubMedGeneConverter extends BioFileConverter
 {
     private String referencesFileName;
-    private File infoFile;
     private Set<String> taxonIds = new HashSet<String>();
     private Map<Integer, String> publications = new HashMap<Integer, String>();
     private String datasetRefId;
     private String datasourceRefId;
-    protected IdResolverFactory resolverFactory;
+    protected IdResolver rslv;
     private Map<Integer, String> organisms = new HashMap<Integer, String>();
+    private Map<String, Item> genes = new HashMap<String, Item>();
+    private Set<String> genesToRemove = new TreeSet<String>();
 
     /**
      * @param writer item writer
@@ -71,7 +72,6 @@ public class PubMedGeneConverter extends BioFileConverter
         dataset.setReference("dataSource", datasourceRefId);
         store(dataset);
         datasetRefId = dataset.getIdentifier();
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -92,22 +92,20 @@ public class PubMedGeneConverter extends BioFileConverter
     public void process(Reader reader)
         throws Exception {
 
-        if (getInfoFile() == null) {
-            throw new RuntimeException("PubMedGeneConverter: Property infoFile is not set.");
+        // init resolver
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
         }
-        Reader infoReader = null;
+
         try {
             ReferencesFileProcessor proc = new ReferencesFileProcessor(reader);
-            infoReader = new FileReader(getInfoFile());
-            GenesFileProcessor geneConverter = new GenesFileProcessor(infoReader, this,
-                                                                      datasetRefId,
-                                                                      resolverFactory);
+
             Iterator<PubMedReference> it = proc.getReferencesIterator();
             /* Uses ReferencesFileProcessor to obtain iterator over data in
              * references file. In each iteration data for one organism is
              * obtained from references file and is processed by GenesFileProcessor.
              * Genes are saved by GenesFileProcessor, organisms and publications
-             * are saved by this convertor.
+             * are saved by this convertor (GenesFileProcessor is not in use since IM 1.1).
              * Procedure is based on the fact that both files are sorted by organism id.
              */
             while (it.hasNext()) {
@@ -117,21 +115,19 @@ public class PubMedGeneConverter extends BioFileConverter
                     continue;
                 }
                 Map<Integer, List<String>> geneToPub = convertAndStorePubs(ref.getReferences());
-                geneConverter.processGenes(geneToPub, organismId, createOrganism(organismId),
-                        taxonIds);
+                for (Entry<Integer, List<String>> e: geneToPub.entrySet()) {
+                    processGene(e.getKey(), e.getValue(), organismId, createOrganism(organismId));
+                }
+                storeGenes();
             }
+
         } catch (ReferencesProcessorException ex) {
             throw new RuntimeException("Conversion failed. File: " + getReferencesFileName(), ex);
-        } catch (GenesProcessorException ex) {
-            throw new RuntimeException("Conversion failed. File: " + getInfoFile(), ex);
         } catch (Throwable ex) {
             throw new RuntimeException("Conversion failed.", ex);
         } finally {
             if (reader != null) {
                 reader.close();
-            }
-            if (infoReader != null) {
-                infoReader.close();
             }
         }
     }
@@ -143,14 +139,14 @@ public class PubMedGeneConverter extends BioFileConverter
             List<Integer> pubs = geneToPub.get(geneId);
             List<String> list = new ArrayList<String>();
             for (Integer pubId : pubs) {
-                String writerPubId = publications.get(pubId);
-                if (writerPubId == null) {
+                String pubRefId = publications.get(pubId);
+                if (pubRefId == null) {
                     Item pub = createPublication(pubId);
-                    writerPubId = pub.getIdentifier();
-                    publications.put(pubId, writerPubId);
+                    pubRefId = pub.getIdentifier();
+                    publications.put(pubId, pubRefId);
                     store(pub);
                 }
-                list.add(writerPubId);
+                list.add(pubRefId);
             }
             ret.put(geneId, list);
         }
@@ -178,21 +174,6 @@ public class PubMedGeneConverter extends BioFileConverter
         this.referencesFileName = fileName;
     }
 
-    /**
-     * @return file with information about genes
-     */
-    public File getInfoFile() {
-        return infoFile;
-    }
-
-    /**
-     * @param infoFile file
-     * {@link #getInfoFile()}
-     */
-    public void setInfoFile(File infoFile) {
-        this.infoFile = infoFile;
-    }
-
     private String createOrganism(Integer organismId) {
         Integer taxonId = BioUtil.replaceStrain(organismId);
         String refId = organisms.get(taxonId);
@@ -206,7 +187,68 @@ public class PubMedGeneConverter extends BioFileConverter
         } catch (ObjectStoreException e) {
             throw new RuntimeException("storing organism failed", e);
         }
-        return organism.getIdentifier();
+        refId = organism.getIdentifier();
+        organisms.put(taxonId, refId);
+        return refId;
+    }
+
+    private Item createGene(String ncbiGeneId, String taxonId, String organismRefId) {
+        Item gene = createItem("Gene");
+        String pid = resolveToPrimIdentifier(taxonId, ncbiGeneId);
+        if (pid == null) {
+            return null;
+        }
+        // Case where a gene has multiple NCBI id mapping to one single pid
+        if (genes.keySet().contains(pid)) {
+            genesToRemove.add(pid);
+            return null;
+        }
+        gene.setAttribute("primaryIdentifier", pid);
+        gene.setReference("organism", organismRefId);
+        gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
+        return gene;
+    }
+
+    private String resolveToPrimIdentifier(String taxonId, String identifier) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
+            return identifier;
+        }
+        int resCount = rslv.countResolutions(taxonId, identifier);
+        if (resCount != 1) { // not process
+            return null;
+        }
+        return rslv.resolveId(taxonId, identifier).iterator().next();
+    }
+
+    private void storeGenes() {
+        for (String id : genesToRemove) {
+            genes.remove(id);
+        }
+        try {
+            List<Item> gs = new ArrayList<Item>();
+            for (String id : genes.keySet()) {
+                gs.add(genes.get(id));
+            }
+            store(gs);
+        } catch (ObjectStoreException e) {
+            throw new GenesProcessorException(e);
+        }
+        genes = new HashMap<String, Item>();
+    }
+
+    private void processGene(Integer ncbiGeneId, List<String> publications, Integer taxonId,
+            String organismRefId) {
+
+        taxonId = BioUtil.replaceStrain(taxonId);
+
+        Item gene = createGene(ncbiGeneId.toString(), taxonId.toString(), organismRefId);
+        if (gene == null) {
+            return;
+        }
+        for (String pubRefId : publications) {
+            gene.addToCollection("publications", pubRefId);
+        }
+        genes.put(gene.getAttribute("primaryIdentifier").getValue(), gene);
     }
 }
 
