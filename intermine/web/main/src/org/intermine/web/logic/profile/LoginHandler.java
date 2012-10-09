@@ -62,7 +62,7 @@ public abstract class LoginHandler extends InterMineAction
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
         Profile profile = pm.getProfile(username);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (im.getBagManager().isAnyBagNotCurrent(profile)) {
+        if (im.getBagManager().isAnyBagNotCurrentOrUpgrading(profile)) {
             recordError(new ActionMessage("login.upgradeListStarted"), request);
         } else if (im.getBagManager().isAnyBagToUpgrade(profile)) {
             recordError(new ActionMessage("login.upgradeListManually"), request);
