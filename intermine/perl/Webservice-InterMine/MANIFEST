@@ -9,6 +9,7 @@ lib/Webservice/InterMine/Constraint/Binary.pm
 lib/Webservice/InterMine/Constraint/List.pm
 lib/Webservice/InterMine/Constraint/Loop.pm
 lib/Webservice/InterMine/Constraint/Multi.pm
+lib/Webservice/InterMine/Constraint/Range.pm
 lib/Webservice/InterMine/Constraint/Role/Logical.pm
 lib/Webservice/InterMine/Constraint/Role/Operator.pm
 lib/Webservice/InterMine/Constraint/Role/Template.pm
@@ -36,7 +37,6 @@ lib/Webservice/InterMine/ListFactory.pm
 lib/Webservice/InterMine/LogicalOperator.pm
 lib/Webservice/InterMine/LogicalSet.pm
 lib/Webservice/InterMine/LogicParser.pm
-lib/Webservice/InterMine/Model.pm
 lib/Webservice/InterMine/Parser.pm
 lib/Webservice/InterMine/Parser/FlatFile.pm
 lib/Webservice/InterMine/Parser/JSON.pm
@@ -90,10 +90,7 @@ lib/Webservice/InterMine/SortOrder.pm
 lib/Webservice/InterMine/TemplateConstraintFactory.pm
 lib/Webservice/InterMine/TemplateFactory.pm
 lib/Webservice/InterMine/Types.pm
-Makefile.PL
 MANIFEST			This list of files
-META.json
-META.yml
 README
 t/00-load.t
 t/01_path/01_validate.t
@@ -149,6 +146,7 @@ t/pod.t
 t/tests/Test/Webservice/InterMine/Constraint.pm
 t/tests/Test/Webservice/InterMine/Constraint/Binary.pm
 t/tests/Test/Webservice/InterMine/Constraint/Multi.pm
+t/tests/Test/Webservice/InterMine/Constraint/Range.pm
 t/tests/Test/Webservice/InterMine/Constraint/Roles/Operator.pm
 t/tests/Test/Webservice/InterMine/Constraint/Roles/Templated.pm
 t/tests/Test/Webservice/InterMine/Constraint/SubClass.pm
