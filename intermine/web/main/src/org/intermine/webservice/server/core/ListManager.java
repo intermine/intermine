@@ -65,7 +65,7 @@ public class ListManager
         Date waitUntil = new Date(System.currentTimeMillis() + MAX_WAIT);
         // Wait up to 20 secs for the bags to be updated.
         while (new Date().before(waitUntil)) {
-            if (!bagManager.isAnyBagNotCurrent(profile)) {
+            if (!bagManager.isAnyBagNotCurrentOrUpgrading(profile)) {
                 break;
             }
         }

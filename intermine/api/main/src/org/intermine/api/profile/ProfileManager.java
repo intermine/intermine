@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
@@ -267,7 +269,24 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
-        return getProfile(username, new HashMap<String, List<FieldDescriptor>>());
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
+        return getProfile(username, classKeys);
+    }
+
+    /**
+     * Load keys that describe how objects should be uniquely identified
+     */
+    private Map<String, List<FieldDescriptor>> getClassKeys(Model model) {
+        Properties classKeyProps = new Properties();
+        try {
+            classKeyProps.load(getClass().getClassLoader()
+                    .getResourceAsStream("class_keys.properties"));
+        } catch (Exception e) {
+            LOG.error("Error loading class descriptions", e);
+        }
+        Map<String, List<FieldDescriptor>>  classKeys =
+            ClassKeyHelper.readKeys(model, classKeyProps);
+        return classKeys;
     }
 
     /**
