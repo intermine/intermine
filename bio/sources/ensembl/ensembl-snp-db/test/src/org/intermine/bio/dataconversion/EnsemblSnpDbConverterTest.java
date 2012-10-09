@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.bio.dataconversion.EnsemblSnpDbConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
