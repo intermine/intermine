@@ -168,3 +168,6 @@ t/tests/Test/Webservice/InterMine/SortOrder.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraintFactory.pm
 t/tests/Test/Webservice/InterMine/TemplateConstraints.pm
 t/tests/Test/Webservice/InterMine/TemplateFactory.pm
+Makefile.PL
+META.yml
+META.json
