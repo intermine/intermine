@@ -1,4 +1,0 @@
-<project name="ncbi-gene-tasks" default="default" basedir=".">
-  <description>build ncbi-gene tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

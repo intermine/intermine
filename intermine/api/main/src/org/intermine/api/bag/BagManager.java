@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.BagDoesNotExistException;
@@ -222,6 +221,23 @@ public class BagManager
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return true if there is at least one user bag for the given profile in
+     * the 'not_current' state or 'upgrading'.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
+    public boolean isAnyBagNotCurrentOrUpgrading(Profile profile) {
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (InterMineBag bag : savedBags.values()) {
+            if (bag.getState().equals(BagState.NOT_CURRENT.toString())
+                || bag.getState().equals(BagState.UPGRADING.toString())) {
                 return true;
             }
         }

@@ -230,7 +230,9 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
             state = BagState.CURRENT;
         } else if (BagState.NOT_CURRENT.toString().equals(savedBagStatus)) {
             state = BagState.NOT_CURRENT;
-        } else {
+        } else if (BagState.UPGRADING.toString().equals(savedBagStatus)) {
+            state = BagState.UPGRADING;
+        }else {
             state = BagState.TO_UPGRADE;
         }
     }

@@ -23,15 +23,25 @@ import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.model.fulldata.Item;
 
+/**
+ * Unit test for TreefamConverter
+ * @author IM
+ *
+ */
 public class TreefamConverterTest extends ItemsTestCase
 {
     private TreefamConverter converter;
     private MockItemWriter itemWriter;
 
+    /**
+     * Constructor
+     * @param arg argument
+     */
     public TreefamConverterTest(String arg) {
         super(arg);
     }
 
+    @Override
     public void setUp() throws Exception {
 
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
@@ -43,6 +53,10 @@ public class TreefamConverterTest extends ItemsTestCase
         super.setUp();
     }
 
+    /**
+     * Test process
+     * @throws Exception e
+     */
     public void testProcess() throws Exception {
 
         File genes = File.createTempFile("genes", "");
