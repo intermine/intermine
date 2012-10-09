@@ -153,9 +153,14 @@ public class WebSearchableListController extends TilesAction
             for (Map.Entry<String, InterMineBag> entry : sharedBags.entrySet()) {
                 int id = entry.getValue().getProfileId();
                 String username = pm.getProfileUserName(id);
-                String[] usernameSplitted = StringUtil.split(username, "@");
-                sharedBagsByOwner.put(entry.getKey(),
-                    usernameSplitted[0] + " at " + usernameSplitted[1]);
+                String usernameFormatted;
+                if (username.contains("@")) {
+                    String[] usernameSplitted = StringUtil.split(username, "@");
+                    usernameFormatted = usernameSplitted[0] + " at " + usernameSplitted[1];
+                } else {//openid username
+                    usernameFormatted = username;
+                }
+                sharedBagsByOwner.put(entry.getKey(), usernameFormatted);
             }
             request.setAttribute("sharedBagWebSearchables", sharedBagsByOwner);
         }
