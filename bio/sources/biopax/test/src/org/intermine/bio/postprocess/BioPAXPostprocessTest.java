@@ -46,6 +46,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
         setUpData();
     }
 
+    @SuppressWarnings("rawtypes")
     public void tearDown() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
@@ -75,6 +76,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
 
 
     // Store a gene with two proteins, each protein has a pathway
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setUpData() throws Exception {
         DataSet dataset = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
         dataset.setName("Reactome data set");
@@ -101,6 +103,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
         osw.commitTransaction();
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Set<InterMineObject> getFromDb(Class relClass) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(relClass);
