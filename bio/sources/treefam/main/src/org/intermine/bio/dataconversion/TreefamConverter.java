@@ -357,7 +357,7 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        if (rslv == null) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;
         }

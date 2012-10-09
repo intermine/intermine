@@ -27,15 +27,13 @@ import org.apache.log4j.Logger;
  * 3. any instance of resolver should be caching during build
  * 4. data sync issue: NCBI entrez info might be out of sync with other MOD datasets
  * 5. how to add new resolver? By reflection?
- * 6. are resolvers cached? smart caching?
+ * 6. Resolver is cached within a source? smart caching cross sources?
  *
  * @author Fengyuan Hu
  */
 public class IdResolverService
 {
     protected static final Logger LOG = Logger.getLogger(IdResolverService.class);
-
-    public static IdResolver resolver = null;
 
     private IdResolverService() {
     }
@@ -55,11 +53,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
-        if (resolver == null) {
-            resolver = new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
-        }
-        LOG.info("service resolver: " + resolver.orgIdMaps.keySet());
-        return resolver;
+        return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
     }
 
     /**
@@ -252,15 +246,6 @@ public class IdResolverService
     }
 
     /**
-     * Create a mock id resolver for unit test
-     * @param clsName SO term
-     * @return an IdResolver
-     */
-    public static IdResolver getMockIdResolver(String clsName) {
-        return new MockIdResolverFactory(clsName).getIdResolver();
-    }
-
-    /**
      * Create a GO id resolver
      * @param ontology SO term
      * @return an IdResolver
@@ -277,5 +262,14 @@ public class IdResolverService
      */
     public static IdResolver getGoIdResolver(String ontology, boolean failOnError) {
         return new OntologyIdResolverFactory(ontology).getIdResolver(failOnError);
+    }
+
+    /**
+     * Create a mock id resolver for unit test
+     * @param clsName SO term
+     * @return an IdResolver
+     */
+    public static IdResolver getMockIdResolver(String clsName) {
+        return new MockIdResolverFactory(clsName).getIdResolver();
     }
 }
