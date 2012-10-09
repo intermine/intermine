@@ -59,6 +59,8 @@ public class PsiConverter extends BioFileConverter
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> regions = new HashMap<String, String>();
     private String termId = null;
+    protected IdResolverFactory flyResolverFactory;
+    protected IdResolverFactory humanResolverFactory;
     private static final String INTERACTION_TYPE = "physical";
     private static final String ENSEMBL = "ensembl";
     private Map<String, String[]> config = new HashMap<String, String[]>();
@@ -73,11 +75,6 @@ public class PsiConverter extends BioFileConverter
     private static final String BINDING_SITE = "MI:0117";
     private static final Set<String> INTERESTING_COMMENTS = new HashSet<String>();
 
-    private static final String HUMAN_TAXON = "9606";
-    private static final String FLY_TAXON = "7227";
-
-    protected IdResolver rslv;
-
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -86,6 +83,9 @@ public class PsiConverter extends BioFileConverter
     public PsiConverter(ItemWriter writer, Model model) {
         super(writer, model, "IntAct", "IntAct interactions data set");
         readConfig();
+        // only construct factory here so can be replaced by mock factory in tests
+        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
+        humanResolverFactory = new EnsemblIdResolverFactory();
         try {
             termId = getTerm(BINDING_SITE);
         } catch (SAXException e) {
@@ -110,15 +110,6 @@ public class PsiConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-
-        // init reslover
-        Set<String> resolveTaxonIds = new HashSet<String>();
-        resolveTaxonIds.add(HUMAN_TAXON);
-        resolveTaxonIds.add(FLY_TAXON);
-        if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(resolveTaxonIds);
-        }
-
         PsiHandler handler = new PsiHandler();
         try {
             SAXParser.parse(new InputSource(reader), handler);
@@ -683,17 +674,18 @@ public class PsiConverter extends BioFileConverter
         }
 
         private String resolveGeneIdentifier(String taxonId, String datasource, String id) {
-            if (FLY_TAXON.equals(taxonId) && rslv.hasTaxon(taxonId)) {
-                if (rslv != null) {
+            if ("7227".equals(taxonId)) {
+                IdResolver resolver = flyResolverFactory.getIdResolver(false);
+                if (resolver != null) {
                     String identifier = id;
-                    int resCount = rslv.countResolutions(taxonId, identifier);
+                    int resCount = resolver.countResolutions(taxonId, identifier);
                     if (resCount != 1) {
                         LOG.info("RESOLVER: failed to resolve gene to one identifier, "
                                 + "ignoring gene: " + identifier + " count: " + resCount + " FBgn: "
-                                + rslv.resolveId(taxonId, identifier));
+                                + resolver.resolveId(taxonId, identifier));
                         return null;
                     }
-                    identifier = rslv.resolveId(taxonId, identifier).iterator().next();
+                    identifier = resolver.resolveId(taxonId, identifier).iterator().next();
                     return identifier;
                 }
             }
@@ -715,17 +707,18 @@ public class PsiConverter extends BioFileConverter
                             + " to organism repository");
                 }
                 if (id.startsWith(ensemblPrefix)) {
-                    if (HUMAN_TAXON.equals(taxonId) && rslv.hasTaxon(taxonId)) {
-                        if (rslv != null) {
+                    if ("9606".equals(taxonId)) {
+                        IdResolver resolver = humanResolverFactory.getIdResolver(false);
+                        if (resolver != null) {
                             String identifier = id;
-                            int resCount = rslv.countResolutions(taxonId, identifier);
+                            int resCount = resolver.countResolutions(taxonId, identifier);
                             if (resCount != 1) {
                                 LOG.info("RESOLVER: failed to resolve gene to one identifier, "
                                         + "ignoring gene: " + identifier + " count: " + resCount
-                                        + " results: " + rslv.resolveId(taxonId, identifier));
+                                        + " results: " + resolver.resolveId(taxonId, identifier));
                                 return null;
                             }
-                            identifier = rslv.resolveId(taxonId, identifier).iterator().next();
+                            identifier = resolver.resolveId(taxonId, identifier).iterator().next();
                             return identifier;
                         }
                     }
