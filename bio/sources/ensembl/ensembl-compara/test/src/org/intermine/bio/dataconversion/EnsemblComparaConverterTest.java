@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.intermine.bio.dataconversion.EnsemblComparaConverter;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -52,7 +53,8 @@ public class EnsemblComparaConverterTest extends ItemsTestCase
 //        converter.rslv = IdResolverService.getDoNothingIdResolver("Gene");
         converter.rslv.addResolverEntry("7227", "FBgn00xxxxx", Collections.singleton("FBgn0013672"));
         converter.rslv.addResolverEntry("7227", "FBgn0010412", Collections.singleton("FBgn0010412"));
-        converter.rslv.addResolverEntry("9606", "A", Collections.singleton("B"));}
+        converter.rslv.addResolverEntry("9606", "A", Collections.singleton("B"));
+    }
 
     /**
      * @throws Exception e
