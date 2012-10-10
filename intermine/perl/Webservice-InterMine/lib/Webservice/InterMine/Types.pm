@@ -62,7 +62,8 @@ use MooseX::Types -declare => [
     qw(
         Constraint ConstraintList ConstraintFactory
         ConstraintCode UnaryOperator BinaryOperator FakeBinaryOperator LCBinaryOperator
-        TernaryOperator MultiOperator LoopOperator ListOperator NotInWithUnderScores
+        TernaryOperator MultiOperator RangeOperator LCRangeOps LCAndUnderscoredRangeOps
+        LoopOperator ListOperator NotInWithUnderScores
         LCUnaryOperator LCLoopOperator LCListOperator LCTernaryOperator NotQuiteMulti 
         XmlLoopOperators NoSpaceLoopOperator
 
@@ -174,6 +175,17 @@ coerce TernaryOperator, from LCTernaryOperator, via {uc($_)};
 enum MultiOperator, [ 'ONE OF', 'NONE OF', ];
 subtype NotQuiteMulti, as Str, where {/^n?one[ _-]of$/i};
 coerce MultiOperator, from NotQuiteMulti, via {s/[_-]/ /g;uc($_)};
+
+my @range_ops = (
+    'OVERLAPS', 'DOES NOT OVERLAP',
+    'WITHIN', 'OUTSIDE', 
+    'CONTAINS', 'DOES NOT CONTAIN'
+);
+enum RangeOperator, [ @range_ops ];
+enum LCRangeOps, [ map lc, @range_ops ];
+enum LCAndUnderscoredRangeOps, [ map {s/ /_/g; lc} @range_ops ];
+coerce RangeOperator, from LCRangeOps, via { uc };
+coerce RangeOperator, from LCAndUnderscoredRangeOps, via {s/_/ /g; uc };
 
 class_type Constraint, { class => 'Webservice::InterMine::Constraint' };
 subtype ConstraintList, as ArrayRef [Constraint];

@@ -816,6 +816,7 @@ class Query(object):
           - Check that SubClassConstraints have a correct subclass relationship
           - Check that LoopConstraints have a valid loopPath, of a compatible type
           - Check that ListConstraints refer to an object
+          - Don't even try to check RangeConstraints: these have variable semantics
 
         @param cons: The constraints to check (defaults to all constraints on the query)
 
@@ -826,7 +827,9 @@ class Query(object):
         if cons is None: cons = self.constraints
         for con in cons:
             pathA = self.model.make_path(con.path, self.get_subclass_dict())
-            if isinstance(con, constraints.TernaryConstraint):
+            if isinstance(con, constraints.RangeConstraint):
+                pass # No verification done on these, beyond checking its path, of course.
+            elif isinstance(con, constraints.TernaryConstraint):
                 if pathA.get_class() is None:
                     raise ConstraintError("'" + str(pathA) + "' does not represent a class, or a reference to a class")
             elif isinstance(con, constraints.BinaryConstraint) or isinstance(con, constraints.MultiConstraint):
