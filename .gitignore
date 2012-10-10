@@ -132,6 +132,14 @@ executeLog*
 /intermine/python/docs
 /intermine/python/.git
 
+# /intermine/python/intermine-core
+/intermine/python/intermine-core/*.egg-info
+/intermine/python/intermine-core/*.zip
+/intermine/python/intermine-core/htmlcov
+/intermine/python/intermine-core/docs
+/intermine/python/intermine-core/.git
+/intermine/python/intermine-core/.tox
+
 # /intermine/python/intermine-bio/
 /intermine/python/intermine-bio/docs
 

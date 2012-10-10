@@ -640,6 +640,20 @@ class TestQuery < Test::Unit::TestCase
         assert_equal(conA.values, %w{Sales Marketing Janitorial})
     end
 
+    def test_range_constraints
+        query = InterMine::PathQuery::Query.new(@model, "Employee")
+        query.add_constraint({
+            :path => "age",
+            :op => "WITHIN",
+            :values => %w{1..10 30..35}
+        })
+
+        conA = query.constraints.first
+        assert_equal(conA.path.to_s, "Employee.age")
+        assert_equal(conA.op, "WITHIN")
+        assert_equal(conA.values, ["1..10", "30..35"])
+    end
+
     def test_bad_multi_constraint
         query = InterMine::PathQuery::Query.new(@model, "Employee")
         assert_raise ArgumentError do
@@ -976,6 +990,11 @@ class TestQuery < Test::Unit::TestCase
             :extra_value => "zip"
         })
         query.add_constraint({
+            :path => "age",
+            :op => "WITHIN",
+            :values => %w{1..10 30..35}
+        })
+        query.add_constraint({
             :path => "Employee",
             :sub_class => "Manager"
         })
@@ -992,6 +1011,9 @@ class TestQuery < Test::Unit::TestCase
         "<constraint loopPath='Employee.department.manager' op='=' code='E' path='Employee'/>" +
         "<constraint op='LOOKUP' code='F' value='quux' path='Employee'/>" + 
         "<constraint extraValue='zip' op='LOOKUP' code='G' value='zop' path='Employee'/>" + 
+        "<constraint op='WITHIN' code='H' path='Employee.age'>" +
+           "<value>1..10</value><value>30..35</value>" +
+        "</constraint>" +
         "</query>"
 
         compare_xml(expected, query.to_xml.to_s)

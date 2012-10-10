@@ -20,5 +20,8 @@
 	<classpathentry kind="lib" path="zfin-identifiers/main/dist/zfin-identifiers-tasks.jar"/>
 	<classpathentry kind="lib" path="zfin-identifiers/test/dist/sources-zfin-identifiers-test.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/bio-core-main"/>
+	<classpathentry kind="src" path="/intermine-integrate-main"/>
+	<classpathentry kind="src" path="/intermine-integrate-test"/>
 	<classpathentry kind="output" path="zfin-identifiers/test/build/classes"/>
 </classpath>
