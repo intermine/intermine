@@ -68,7 +68,6 @@ public class BioGridConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(BioGridConverter.class);
     private static final String PROP_FILE = "biogrid_config.properties";
-    protected IdResolverFactory resolverFactory;
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, String> pubs = new HashMap<String, String>();
     private Map<String, String> organisms = new HashMap<String, String>();
@@ -82,6 +81,9 @@ public class BioGridConverter extends BioFileConverter
     private Map<MultiKey, Item> interactions = new HashMap<MultiKey, Item>();
     private static final String SPOKE_MODEL = "prey";
 
+    protected IdResolver rslv;
+    private static final String FLY = "7227";
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -90,8 +92,6 @@ public class BioGridConverter extends BioFileConverter
     public BioGridConverter(ItemWriter writer, Model model) {
         super(writer, model, "BioGRID", "BioGRID interaction data set");
         readConfig();
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     static {
@@ -118,6 +118,10 @@ public class BioGridConverter extends BioFileConverter
             if (!isValidOrganism(file.getName())) {
                 return;
             }
+        }
+
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(FLY);
         }
 
         BioGridHandler handler = new BioGridHandler();
@@ -560,8 +564,6 @@ public class BioGridConverter extends BioFileConverter
         private boolean setGene(String taxonId, InteractorHolder ih, String identifierField,
                                 String db) throws SAXException {
 
-            IdResolver resolver = resolverFactory.getIdResolver(false);
-
             String identifier = null;
             String label = identifierField;
 
@@ -571,8 +573,8 @@ public class BioGridConverter extends BioFileConverter
                 identifier = ih.xrefs.get(db);
             }
 
-            if ("7227".equals(taxonId) && resolver != null) {
-                identifier = resolveGene(resolver, taxonId, identifier);
+            if (FLY.equals(taxonId) && rslv != null) {
+                identifier = resolveGene(taxonId, identifier);
                 label = "primaryIdentifier";
             }
 
@@ -642,17 +644,17 @@ public class BioGridConverter extends BioFileConverter
          * @param ih interactor holder
          * @throws ObjectStoreException
          */
-        private String resolveGene(IdResolver resolver, String taxonId, String identifier) {
+        private String resolveGene(String taxonId, String identifier) {
             String id = identifier;
-            if ("7227".equals(taxonId) && resolver != null) {
-                int resCount = resolver.countResolutions(taxonId, identifier);
+            if (FLY.equals(taxonId) && rslv != null && rslv.hasTaxon(FLY)) {
+                int resCount = rslv.countResolutions(taxonId, identifier);
                 if (resCount != 1) {
                     LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                              + identifier + " count: " + resCount + " FBgn: "
-                             + resolver.resolveId(taxonId, identifier));
+                             + rslv.resolveId(taxonId, identifier));
                     return null;
                 }
-                id = resolver.resolveId(taxonId, identifier).iterator().next();
+                id = rslv.resolveId(taxonId, identifier).iterator().next();
             }
             return id;
         }

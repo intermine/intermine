@@ -21,13 +21,17 @@ my $rs = $service->resultset("Employee")
 is_deeply(
     $rs->summarize("age"),
     {
-        'stdev' => '7.3147502083982108',
         'average' => '37.0243902439024390',
+        'buckets' => 20,
+        'histogram' => [
+            1,1,1,2,4,11,11,5,6,4,8,9,11,4,4
+        ],
+        'max' => 49,
         'min' => 10,
-        'max' => 49
+        'stdev' => '7.3147502083982108'
     },
     "Can summarise all info"
-);
+) or diag(explain($rs->summarize('age')));
 
 is('37.0243902439024390', $rs->summarize("age")->{average}, 
     "Can pull out a single value");

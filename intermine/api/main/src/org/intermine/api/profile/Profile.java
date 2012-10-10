@@ -489,6 +489,7 @@ public class Profile
         result.put("NOT_CURRENT", new HashMap<String, InterMineBag>());
         result.put("TO_UPGRADE", new HashMap<String, InterMineBag>());
         result.put("CURRENT", new HashMap<String, InterMineBag>());
+        result.put("UPGRADING", new HashMap<String, InterMineBag>());
 
         for (InterMineBag bag : savedBags.values()) {
             String state = bag.getState();

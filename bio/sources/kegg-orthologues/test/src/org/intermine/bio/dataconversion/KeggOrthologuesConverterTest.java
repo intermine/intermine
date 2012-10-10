@@ -35,12 +35,11 @@ public class KeggOrthologuesConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new KeggOrthologuesConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG18814"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG3481"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("CG3763"));
-        converter.flyResolverFactory = resolverFactory;
-        converter.flyResolver = resolverFactory.getIdResolver(false);
+
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG18814"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG3481"));
+        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("CG3763"));
     }
 
     public void testProcess() throws Exception {

@@ -49,6 +49,14 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
 
     @Override
     protected void createIdResolver() {
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
+
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -74,13 +82,6 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
     }
 
     private void createFromFile(BufferedReader reader) throws IOException {
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(taxonId)) {
-            return;
-        }
 
         Set<String> validChromosomes = validChromosomes();
 
