@@ -447,8 +447,13 @@ module Metadata
         # attributes (ie. columns that can hold values, rather than references to 
         # other tables.)
         #
+        # The array returned will be sorted in alphabetical order by field-name.
+        #
         def attributes
-            return @fields.select {|k, v| v.is_a?(AttributeDescriptor)}.map {|pair| pair[1]}
+            return @fields.
+                select {|_, v| v.is_a?(AttributeDescriptor)}.
+                sort   {|(k0, _), (k1, _)| k0 <=> k1}.
+                map    {|(_, v)| v}
         end
 
         # Returns a human readable string
