@@ -91,9 +91,8 @@ public class UpgradeBagList implements Runnable
                         && (result.getIssues().isEmpty()
                             || onlyOtherIssuesAlreadyContained(result))) {
                         Map<Integer, List> matches = result.getMatches();
-                        //we set temporary the updateBagValues parameter to true
-                        //in this way will update the extra field recently added
-                        bag.upgradeOsb(matches.keySet(), true);
+                        //we don't need to update the extra field added later
+                        bag.upgradeOsb(matches.keySet(), false);
                         bagAttributes.put(STATUS, BagState.CURRENT.toString());
                         try {
                             bagAttributes.put("size", bag.getSize());

@@ -49,13 +49,15 @@
 
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>
+      <!--<property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>-->
+      <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238 559292"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="createinterpro" value="true"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>
+     <!-- <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>-->
+      <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -99,7 +101,7 @@
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
      </source>
-    <source name="ensembl" type="ensembl">
+    <source name="ensembl-core" type="ensembl-core">
      <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
@@ -145,7 +147,7 @@
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
-    <source name="go-annotation" type="ontology-annotation">
+    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
       <property name="ontologyPrefix" value="GO"/>

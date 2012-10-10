@@ -60,6 +60,7 @@ public class GoConverter extends BioFileConverter
     private Map<String, Item> organisms = new LinkedHashMap<String, Item>();
     protected Map<String, String> productMap = new LinkedHashMap<String, String>();
     private Set<String> dbRefs = new HashSet<String>();
+    @SuppressWarnings("unused")
     private Map<String, String> databaseAbbreviations = new HashMap<String, String>();
 
     // maps renewed for each file
@@ -75,7 +76,7 @@ public class GoConverter extends BioFileConverter
     private String gaff = "2.0";
     private static final String DEFAULT_ANNOTATION_TYPE = "gene";
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
-    protected IdResolverFactory flybaseResolverFactory, ontologyResolverFactory;
+    protected IdResolver rslv;
     private static Config defaultConfig = null;
 
     private static final Logger LOG = Logger.getLogger(GoConverter.class);
@@ -89,10 +90,6 @@ public class GoConverter extends BioFileConverter
      */
     public GoConverter(ItemWriter writer, Model model) throws Exception {
         super(writer, model);
-
-        // only construct factory here so can be replaced by mock factory in tests
-        flybaseResolverFactory = new FlyBaseIdResolverFactory("gene");
-        ontologyResolverFactory = null; // temporarily disable        
         defaultConfig = new Config(DEFAULT_IDENTIFIER_FIELD, DEFAULT_IDENTIFIER_FIELD,
                 DEFAULT_ANNOTATION_TYPE);
         readConfig();
@@ -167,6 +164,12 @@ public class GoConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws ObjectStoreException, IOException {
+
+        // Create resolvers
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+            rslv = IdResolverService.getGoIdResolver("Go");
+        }
 
         initialiseMapsForFile();
 
@@ -445,17 +448,16 @@ public class GoConverter extends BioFileConverter
 
             // if a Dmel gene we need to use FlyBaseIdResolver to find a current id
             if ("7227".equals(taxonId)) {
-                IdResolver resolver = flybaseResolverFactory.getIdResolver(false);
-                if (resolver != null) {
-                    int resCount = resolver.countResolutions(taxonId, accession);
+                if (rslv != null) {
+                    int resCount = rslv.countResolutions(taxonId, accession);
 
                     if (resCount != 1) {
                         LOG.info("RESOLVER: failed to resolve gene to one identifier, "
                                 + "ignoring gene: " + accession + " count: " + resCount + " FBgn: "
-                                + resolver.resolveId(taxonId, accession));
+                                + rslv.resolveId(taxonId, accession));
                         return null;
                     }
-                    accession = resolver.resolveId(taxonId, accession).iterator().next();
+                    accession = rslv.resolveId(taxonId, accession).iterator().next();
                 }
             }
         } else if ("protein".equalsIgnoreCase(type)) {
@@ -523,18 +525,17 @@ public class GoConverter extends BioFileConverter
 
     private String resolveTerm(String identifier) {
         String goId = identifier;
-        IdResolver resolver = ontologyResolverFactory.getIdResolver(false);
-        if (resolver != null) {
-            int resCount = resolver.countResolutions("0", identifier);
+        if (rslv != null) {
+            int resCount = rslv.countResolutions("0", identifier);
 
             if (resCount > 1) {
                 LOG.info("RESOLVER: failed to resolve ontology term to one identifier, "
                         + "ignoring term: " + identifier + " count: " + resCount + " : "
-                        + resolver.resolveId("0", identifier));
+                        + rslv.resolveId("0", identifier));
                 return null;
             }
             if (resCount == 1) {
-                goId = resolver.resolveId("0", identifier).iterator().next();
+                goId = rslv.resolveId("0", identifier).iterator().next();
             }
         }
         return goId;
@@ -737,18 +738,22 @@ public class GoConverter extends BioFileConverter
             return evidenceCode;
         }
 
+        @SuppressWarnings("unused")
         protected String getWithText() {
             return withText;
         }
 
+        @SuppressWarnings("unused")
         protected String getDataset() {
             return dataSourceCode;
         }
 
+        @SuppressWarnings("unused")
         protected String getDatasource() {
             return dataSource;
         }
 
+        @SuppressWarnings("unused")
         protected Item getOrganism() {
             return organism;
         }

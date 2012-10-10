@@ -55,6 +55,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(String taxonId) {
+        if (taxonId == null) {
+            return null;
+        }
         return getIdResolver(taxonId, true);
     }
 
@@ -63,6 +66,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(Collection<String> taxonIds) {
+        if (taxonIds == null | taxonIds.isEmpty()) {
+            return null;
+        }
         return getIdResolver(taxonIds, true);
     }
 

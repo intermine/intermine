@@ -29,8 +29,6 @@ public class BioGridConverterTest extends ItemsTestCase
     MockItemWriter itemWriter;
     private final String currentFile = "BIOGRID-ORGANISM-Drosophila_melanogaster-3.1.76.psi25.xml";
 
-
-
     public BioGridConverterTest(String arg) {
         super(arg);
     }
@@ -39,10 +37,10 @@ public class BioGridConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new BioGridConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn002"));
-        converter.resolverFactory = resolverFactory;
+
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn001"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn002"));
     }
 
     public void testProcess() throws Exception {
@@ -56,7 +54,7 @@ public class BioGridConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "biogrid-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("BioGridConverterTest_tgt.xml");
 

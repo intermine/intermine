@@ -34,7 +34,7 @@ class Join(PathFeature):
         d.update(style=self.style)
         return d
     def __repr__(self):
-        return('<' + self.__class__.__name__ 
+        return('<' + self.__class__.__name__
                 + ' '.join([':', self.path, self.style]) + '>')
 
 class PathDescription(PathFeature):
@@ -52,13 +52,13 @@ class SortOrder(PathFeature):
     DESC = "desc"
     DIRECTIONS = frozenset(["asc", "desc"])
     def __init__(self, path, order):
-        try: 
+        try:
             order = order.lower()
         except:
             pass
 
         if not order in self.DIRECTIONS:
-            raise TypeError("Order must be one of " + str(self.DIRECTIONS) 
+            raise TypeError("Order must be one of " + str(self.DIRECTIONS)
                 + " - not " + order)
         self.order = order
         super(SortOrder, self).__init__(path)
@@ -72,8 +72,8 @@ class SortOrderList(object):
     A container implementation for holding sort orders
     ==================================================
 
-    This class exists to hold the sort order information for a 
-    query. It handles appending elements, and the stringification 
+    This class exists to hold the sort order information for a
+    query. It handles appending elements, and the stringification
     of the sort order.
     """
     def __init__(self, *sos):
@@ -81,10 +81,10 @@ class SortOrderList(object):
         self.append(*sos)
     def append(self, *sos):
         """
-        Add sort order elements to the sort order list. 
+        Add sort order elements to the sort order list.
         ===============================================
 
-        Elements can be provided as a SortOrder object or 
+        Elements can be provided as a SortOrder object or
         as a tuple of arguments (path, direction).
         """
         for so in sos:
@@ -110,4 +110,4 @@ class SortOrderList(object):
         return self.sort_orders.next()
     def __iter__(self):
         return iter(self.sort_orders)
-        
+

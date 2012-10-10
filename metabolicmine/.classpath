@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="webapp/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/bio-webapp"/>
+	<classpathentry kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="output" path="dbmodel/build/classes"/>
 </classpath>

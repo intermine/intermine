@@ -42,12 +42,14 @@ public class KeggPathwayConverter extends BioFileConverter
     protected static final Logger LOG = Logger.getLogger(KeggPathwayConverter.class);
     private static final String PROP_FILE = "kegg_config.properties";
     private Map<String, Item> geneItems = new HashMap<String, Item>();
-    protected IdResolverFactory resolverFactory;
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private Set<String> taxonIds = new HashSet<String>();
 
     protected Map<String, String> pathwayIdentifiers = new HashMap<String, String>();
     protected Map<String, Item> pathwaysNotStored = new HashMap<String, Item>();
+
+    protected IdResolver rslv;
+    protected static final String HUMAN = "9606";
 
     /**
      * Constructor
@@ -57,8 +59,6 @@ public class KeggPathwayConverter extends BioFileConverter
     public KeggPathwayConverter(ItemWriter writer, Model model) {
         super(writer, model, "GenomeNet", "KEGG pathways data set");
         readConfig();
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -116,6 +116,15 @@ public class KeggPathwayConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         File currentFile = getCurrentFile();
+
+        // init resolver
+        if (rslv == null) {
+            // No need to resolve human gene as Kegg uses NCBI id
+            Set<String> taxons = new HashSet<String>(taxonIds);
+            taxons.remove(HUMAN);
+            rslv = IdResolverService.getIdResolverByOrganism(taxons);
+        }
+
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             Pattern filePattern = Pattern.compile("^(\\S+)_gene_map.*");
@@ -186,17 +195,17 @@ public class KeggPathwayConverter extends BioFileConverter
     private Item getGene(String geneCG, String organism, ReferenceList referenceList)
         throws ObjectStoreException {
         String identifier = null;
-        IdResolver resolver = resolverFactory.getIdResolver(false);
+
         String taxonId = config.get(organism)[0];
-        if ("7227".equals(taxonId) && resolver != null) {
-            int resCount = resolver.countResolutions(taxonId, geneCG);
+        if (rslv != null && rslv.hasTaxon(taxonId)) {
+            int resCount = rslv.countResolutions(taxonId, geneCG);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                          + geneCG + " count: " + resCount + " FBgn: "
-                         + resolver.resolveId(taxonId, geneCG));
+                         + rslv.resolveId(taxonId, geneCG));
                 return null;
             }
-            identifier = resolver.resolveId(taxonId, geneCG).iterator().next();
+            identifier = rslv.resolveId(taxonId, geneCG).iterator().next();
         } else {
             identifier = geneCG;
         }
