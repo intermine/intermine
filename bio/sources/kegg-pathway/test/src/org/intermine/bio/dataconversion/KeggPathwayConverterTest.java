@@ -35,11 +35,12 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new KeggPathwayConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1004"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG10045"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("CG1007"));
-        converter.resolverFactory = resolverFactory;
+        converter.setKeggOrganisms("7227 10090 9606");
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1004"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG10045"));
+        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("CG1007"));
+        converter.rslv.addResolverEntry("10090", "MGI:007", Collections.singleton("100037258"));
     }
 
     public void testProcess() throws Exception {
@@ -51,10 +52,18 @@ public class KeggPathwayConverterTest extends ItemsTestCase
         converter.setCurrentFile(srcFile);
         converter.process(new FileReader(srcFile));
 
+        srcFile = new File(getClass().getClassLoader().getResource("hsa/hsa_gene_map.tab").toURI());
+        converter.setCurrentFile(srcFile);
+        converter.process(new FileReader(srcFile));
+
+        srcFile = new File(getClass().getClassLoader().getResource("mmu/mmu_gene_map.tab").toURI());
+        converter.setCurrentFile(srcFile);
+        converter.process(new FileReader(srcFile));
+
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("KeggConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());

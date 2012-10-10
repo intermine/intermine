@@ -197,7 +197,7 @@ public final class Constants
      * This constant must changed every time the API changes, either by addition
      * or deletion of features.
      */
-    public static final int WEB_SERVICE_VERSION = 10;
+    public static final int WEB_SERVICE_VERSION = 11;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have

@@ -24,6 +24,7 @@ import org.intermine.sql.Database;
 public abstract class IdResolverFactory
 {
     protected static IdResolver resolver = null; // static to cache
+
     protected boolean caughtError = false;
 
     // ResolverFactory takes in a SO term/Class name, by default, "gene" is used

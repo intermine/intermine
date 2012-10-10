@@ -1,0 +1,4 @@
+<project name="ensembl-compara-tasks" default="default" basedir=".">
+  <description>build ensembl-compara tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

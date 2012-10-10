@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -297,7 +296,8 @@ public class TemplateManager
      */
     public Map<String, ApiTemplate> getValidGlobalTemplates() {
         Map<String, ApiTemplate> validTemplates = new HashMap<String, ApiTemplate>();
-        for (Map.Entry<String, ApiTemplate> entry : getGlobalTemplates().entrySet()) {
+        Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+        for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
             if (entry.getValue().isValid()) {
                 validTemplates.put(entry.getKey(), entry.getValue());
             }
@@ -374,8 +374,9 @@ public class TemplateManager
     private Map<String, ApiTemplate> getTemplatesWithTag(Profile profile, String tag,
             boolean filterOutAdmin) {
         Map<String, ApiTemplate> templatesWithTag = new HashMap<String, ApiTemplate>();
+        Map<String, ApiTemplate> savedTemplates = profile.getSavedTemplates();
 
-        for (Map.Entry<String, ApiTemplate> entry : profile.getSavedTemplates().entrySet()) {
+        for (Map.Entry<String, ApiTemplate> entry : savedTemplates.entrySet()) {
             ApiTemplate template = entry.getValue();
             List<Tag> tags = tagManager.getTags(tag, template.getName(), TagTypes.TEMPLATE,
                     profile.getUsername());

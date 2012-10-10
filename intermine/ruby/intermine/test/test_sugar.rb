@@ -32,13 +32,14 @@ class TestQuerySugar < Test::Unit::TestCase
 
     def test_view_expansion
         q = @model.table("Employee").select("*", "department.*")
-        expected = ["Employee.name",
-         "Employee.end",
-         "Employee.id",
-         "Employee.fullTime",
+        expected = [
          "Employee.age",
-         "Employee.department.name",
-         "Employee.department.id"]
+         "Employee.end",
+         "Employee.fullTime",
+         "Employee.id",
+         "Employee.name",
+         "Employee.department.id",
+         "Employee.department.name"]
 
         assert_equal(expected, q.views.map {|x| x.to_s})
     end
@@ -50,7 +51,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where(:name => {"=" => nil}).
                    where(:fullTime => {"!=" => nil})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint op='IS NULL' code='A' path='Employee.age'/>" +
                         "<constraint op='IS NULL' code='B' path='Employee.name'/>" +
                         "<constraint op='IS NOT NULL' code='C' path='Employee.fullTime'/>" + 
@@ -68,7 +69,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where("department.name" => {:contains => "foo"}).
                    where(:name => {"!=" => "bar"})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint op='=' code='A' value='foo' path='Employee.name'/>" + 
                         "<constraint op='=' code='B' value='10' path='Employee.age'/>" + 
                         "<constraint op='&lt;' code='C' value='200' path='Employee.end'/>" +
@@ -90,7 +91,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where(:name => {:ne => "bar"}).
                    where(:name => {:== => "zop"})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint op='&lt;' code='A' value='100' path='Employee.age'/>" + 
                         "<constraint op='&gt;' code='B' value='200' path='Employee.age'/>" + 
                         "<constraint op='&lt;=' code='C' value='300' path='Employee.age'/>" + 
@@ -110,7 +111,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where(:department => {:lookup => "foo"}).
                    where("department.company" => {:lookup => "foo", :with => "extra"})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint op='LOOKUP' code='A' value='foo' path='Employee.department'/>" + 
                         "<constraint extraValue='extra' op='LOOKUP' code='B' value='foo' path='Employee.department.company'/>" + 
                 "</query>"
@@ -127,7 +128,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where("Employee.department" => {:in => "a list"}).
                    where("Employee.department.company" => {:not_in => "a list"})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint op='IN' code='A' value='test-list' path='Employee'/>" +
                         "<constraint op='IN' code='B' value='test-list' path='Employee.department.manager'/>" +
                         "<constraint op='NOT IN' code='C' value='test-list' path='Employee.department.manager'/>" +
@@ -152,7 +153,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where("department.manager.age" => {:none_of => [46, 47]}).
                    where("department.manager.end" => {:one_of => [56, 57]})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                        "<constraint op='ONE OF' code='A' path='Employee.age'>" + 
                             "<value>30</value><value>31</value><value>32</value><value>33</value><value>34</value><value>35</value>" +
                        "</constraint>" + 
@@ -194,7 +195,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where("department.company.CEO" => {:is => "department.manager"}).
                    where("department.company.CEO" => {:is_not => "department.employees"})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint op='=' loopPath='Employee.department.manager' code='A' path='Employee.department.company.CEO'/>" + 
                         "<constraint op='!=' loopPath='Employee.department.employees' code='B' path='Employee.department.company.CEO'/>" + 
                 "</query>"
@@ -209,7 +210,7 @@ class TestQuerySugar < Test::Unit::TestCase
                    where("department.employees" => manager).
                    where("department.employees" => {:sub_class => "CEO"})
 
-        expected = "<query model='testmodel' sortOrder='Employee.name ASC' view='Employee.name Employee.end Employee.id Employee.fullTime Employee.age'>" +
+        expected = "<query model='testmodel' sortOrder='Employee.age ASC' view='Employee.age Employee.end Employee.fullTime Employee.id Employee.name'>" +
                         "<constraint type='Manager' path='Employee.department.employees'/>" +
                         "<constraint type='CEO' path='Employee.department.employees'/>" +
                 "</query>"
