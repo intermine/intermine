@@ -26,11 +26,6 @@
   </c:when>
   <c:otherwise>
   <c:forEach items="${files}" var="file" varStatus="file_status">
-<%--
-   <a href="${WEB_PROPERTIES['ftp.prefix']}/${dccId}/extracted/${file}"
-      title="Download ${file}" class="value extlink"> <c:out
-      value="${file}" /> </a>
-      --%>
    <a href="${file.url}"
       title="Download ${file.type} file ${file.name}" class="value extlink"> <c:out
       value="${file.name}" /> </a>
