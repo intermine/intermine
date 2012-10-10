@@ -195,10 +195,11 @@ public class BagManager
      * @return A list of Tag objects
      */
     public List<Tag> getTagsForBag(InterMineBag bag, Profile profile) {
-        List<Tag> tags = new ArrayList<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
+        // Add on the public tag, if this bag is tagged with it.
+        Set<Tag> tags = new HashSet<Tag>(tagManager.getTags(TagNames.IM_PUBLIC, bag.getName(),
             TagTypes.BAG, null));
         tags.addAll(tagManager.getObjectTags(bag, profile));
-        return tags;
+        return new ArrayList<Tag>(tags);
     }
 
     /**
@@ -220,6 +221,23 @@ public class BagManager
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         for (InterMineBag bag : savedBags.values()) {
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return true if there is at least one user bag for the given profile in
+     * the 'not_current' state or 'upgrading'.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
+    public boolean isAnyBagNotCurrentOrUpgrading(Profile profile) {
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (InterMineBag bag : savedBags.values()) {
+            if (bag.getState().equals(BagState.NOT_CURRENT.toString())
+                || bag.getState().equals(BagState.UPGRADING.toString())) {
                 return true;
             }
         }
