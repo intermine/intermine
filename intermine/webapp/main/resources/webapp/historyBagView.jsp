@@ -47,7 +47,7 @@ if (!im.bagWorks) {
   <html:form action="/modifyBag">
   <c:forEach items="${PROFILE.savedBagsByStatus}" var="statusSavedBag">
 
-    <div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT'}">style="display:none;"</c:if>>
+    <div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT' || statusSavedBag.key == 'UPGRADING'}">style="display:none;"</c:if>>
     <c:choose>
       <c:when test="${statusSavedBag.key == 'TO_UPGRADE'}">
         <h2>Lists to upgrade</h2>
