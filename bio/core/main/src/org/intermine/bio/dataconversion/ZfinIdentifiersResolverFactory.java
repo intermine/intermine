@@ -81,6 +81,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             String message = "ZFIN gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
+            return;
         }
 
         BufferedReader reader;
