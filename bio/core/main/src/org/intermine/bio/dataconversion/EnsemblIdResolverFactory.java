@@ -64,7 +64,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             String message = "Ensembl resolver has no file name specified, set " + propName
                 + " to the file location.";
             LOG.error(message);
-
+            return;
         }
 
         BufferedReader reader;
