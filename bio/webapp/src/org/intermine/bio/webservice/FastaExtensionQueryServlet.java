@@ -21,11 +21,11 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * A servlet to hand off to the FASTA-query-service.
- * @author Alex Kalderimis.
+ * A servlet to hand off to the fasta extension query service.
  *
+ * @author Fengyuan Hu
  */
-public class FastaQueryServlet extends HttpServlet
+public class FastaExtensionQueryServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
 
@@ -54,6 +54,8 @@ public class FastaQueryServlet extends HttpServlet
         // according new data
         // and not remember fields initialized according previous request data
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        new FastaQueryService(im).service(request, response);
+        new FastaExtensionQueryService(im).service(request, response);
     }
 }
+
+
