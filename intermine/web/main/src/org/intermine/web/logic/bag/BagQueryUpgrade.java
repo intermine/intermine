@@ -33,7 +33,9 @@ public class BagQueryUpgrade
 
     public BagQueryResult getBagQueryResult() {
         BagQueryResult bagQueryResult = null;
+        LOG.warn("ContentsOrderByExtraValue before: " + bag.getName());
         List<BagValue> bagValueList = bag.getContentsOrderByExtraValue();
+        LOG.warn("ContentsOrderByExtraValue after: " + bag.getName());
         List<BagQueryResult> bagQueryResultList = new ArrayList<BagQueryResult>();
         List<String> primaryIdentifiersList = new ArrayList<String>();
         String extra;
@@ -60,6 +62,7 @@ public class BagQueryUpgrade
                     }
                 }
             }
+            LOG.warn("after bagValueListCycle: " + bag.getName());
             bagQueryResultList.add(bagQueryRunner.searchForBag(bag.getType(), primaryIdentifiersList, prevExtra, false));
             bagQueryResult = combineBagQueryResult(bagQueryResultList);
         } catch (ClassNotFoundException cnfe) {
@@ -68,6 +71,7 @@ public class BagQueryUpgrade
         } catch (InterMineException ie) {
             LOG.warn("Impossible upgrade the bags list " + bag.getTitle(), ie);
         }
+        LOG.warn("before returning bagQueryResult: " + bag.getName()); 
         return bagQueryResult;
     }
 

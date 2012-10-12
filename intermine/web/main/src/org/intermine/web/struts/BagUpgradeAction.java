@@ -31,7 +31,7 @@ import org.intermine.web.logic.session.SessionMethods;
 /**
  * An action that prepare a BagQueryResult and save it into the session.
  *
- * @author dbutano
+ * @author Daniela Butano
  */
 
 public class BagUpgradeAction extends InterMineAction
@@ -67,15 +67,5 @@ public class BagUpgradeAction extends InterMineAction
         request.setAttribute("newBagName", bagName);
         request.setAttribute("bagType", savedBag.getType());
         return mapping.findForward("bagUploadConfirm");
-    }
-
-    private BagQueryResult combineBagQueryResult(List<BagQueryResult> bagQueryResultList) {
-        BagQueryResult bagQueryResult = new BagQueryResult();
-        for (BagQueryResult bqr : bagQueryResultList) {
-            bagQueryResult.getMatches().putAll(bqr.getMatches());
-            bagQueryResult.getIssues().putAll(bqr.getIssues());
-            bagQueryResult.getUnresolved().putAll(bqr.getUnresolved());
-        }
-        return bagQueryResult;
     }
 }
