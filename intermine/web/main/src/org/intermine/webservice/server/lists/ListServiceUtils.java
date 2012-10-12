@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
@@ -60,13 +61,15 @@ public final class ListServiceUtils
      * @param profile A profile to use to create temporary bags
      * @param classKeys A classKeys to use to create bags
      * @return A set of bags of the given type.
+     * @throws UnknownBagTypeException if the bag type is wrong
+     * @throws ClassKeysNotFoundException if the classKeys is empty
      * @throws ObjectStoreException if there is a problem storing or creating bags.
      */
     public static Collection<InterMineBag> castBagsToCommonType(
             Collection<InterMineBag> bags, String type,
             Set<String> nameAccumulator, Profile profile,
             Map<String, List<FieldDescriptor>> classKeys)
-        throws UnknownBagTypeException, ObjectStoreException {
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         Set<InterMineBag> castBags = new HashSet<InterMineBag>();
         for (InterMineBag bag: bags) {
             if (bag.isOfType(type)) {
