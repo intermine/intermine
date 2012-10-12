@@ -271,7 +271,7 @@ public class AjaxServices
                 try {
                     profile.fixInvalidBag(name, newName);
                     InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session))
+                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner()))
                         .start();
                 } catch (UnknownBagTypeException e) {
                     return "<i>" + e.getMessage() + "</i>";
@@ -1388,22 +1388,25 @@ public class AjaxServices
     public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
         @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> savedBagStatus =
-            (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-
+        Map<String, InterMineBag> savedBags = SessionMethods.getProfile(session).getSavedBags();
         // this is where my lists go
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
-            for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
-                Map<String, Object> listAttributes = entry.getValue();
+            for (Map.Entry<String, InterMineBag> entry : savedBags.entrySet()) {
+                InterMineBag bag = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
-                if (listAttributes.get("status").equals(BagState.CURRENT.toString())
-                        || listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
+                if (bag.isCurrent() || bag.isToUpgrade()) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
-                    list.put("status", listAttributes.get("status"));
-                    if (listAttributes.containsKey("size")) {
-                        list.put("size", listAttributes.get("size"));
+                    list.put("status", bag.getState());
+                    if (bag.isCurrent()) {
+                        try {
+                            list.put("size", bag.getSize());
+                        } catch (ObjectStoreException os) {
+                            LOG.error("Problems retrieving size of bag " + bag.getName(), os);
+                        }
+                    } else {
+                        list.put("size", 0);
                     }
                     lists.add(list);
                 }

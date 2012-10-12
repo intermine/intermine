@@ -624,6 +624,17 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     }
 
     /**
+     * Return true if the status bag is to_upgrade, otherwise false 
+     * @return isToUpgrade
+     */
+    public boolean isToUpgrade() {
+        if (BagState.TO_UPGRADE.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Return the bag state: current, not current, to upgrade
      * @return the status
      */
