@@ -148,6 +148,10 @@ public class ServicesListingsServlet extends HttpServlet
                             attrs.getValue("type"));
                     currentMethod.put("RequiresAuthentication",
                             attrs.getValue("authenticationRequired"));
+                    if (attrs.getValue("slug") != null) {
+                    	currentMethod.put("URI",
+                    		currentMethod.get("URI") + attrs.getValue("slug"));
+                    }
                     String also = attrs.getValue("ALSO");
                     if (also != null) {
                         currentMethod.put("ALSO", also);
@@ -158,7 +162,7 @@ public class ServicesListingsServlet extends HttpServlet
                 } else if ("param".equals(qName)) {
                     currentParam = new HashMap<String, Object>();
                     currentParam.put("Required",
-                            Boolean.valueOf(attrs.getValue("required")));
+                            Boolean.valueOf(attrs.getValue("required")) ? "Y" : "N");
                     currentParam.put("Type", attrs.getValue("type"));
                     currentParam.put("Description", attrs.getValue("description"));
                     String defaultValue = attrs.getValue("default");
