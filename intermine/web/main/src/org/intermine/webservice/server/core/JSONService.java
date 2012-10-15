@@ -51,12 +51,20 @@ public abstract class JSONService extends WebService
         output.setHeaderAttributes(getHeaderAttributes());
     }
 
+    protected String getResultsKey() {
+    	return null;
+    }
+    
     /**
      * Get the header attributes to apply to the formatter.
      * @return A map from string to object.
      */
     protected Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
+        String resultsKey = getResultsKey();
+        if (resultsKey != null) {
+        	attributes.put(JSONFormatter.KEY_INTRO, "\"" + resultsKey + "\":");
+        }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
         }
