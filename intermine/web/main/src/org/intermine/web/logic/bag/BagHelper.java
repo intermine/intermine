@@ -12,11 +12,14 @@ package org.intermine.web.logic.bag;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
+import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -99,13 +102,18 @@ public final class BagHelper
 
         InterMineBag bag = null;
         try {
+            List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
+                im.getClassKeys(), bagType);
             bag = new InterMineBag(bagName, bagType, bagDescription, new Date(),
                            BagState.CURRENT, os, profile.getUserId(),
-                           profile.getProfileManager().getProfileObjectStoreWriter());
+                           profile.getProfileManager().getProfileObjectStoreWriter(),
+                           keyFielNames);
         } catch (UnknownBagTypeException e) {
             throw new RuntimeException("Bag type determined from query is invalid", e);
+        } catch (ClassKeysNotFoundException cke) {
+            throw new RuntimeException("Bag has not class key set", cke);
         }
-        osw.addToBagFromQuery(bag.getOsb(), q);
+        bag.addToBagFromQuery(q);
         profile.saveBag(bag.getName(), bag);
         return bag;
     }
