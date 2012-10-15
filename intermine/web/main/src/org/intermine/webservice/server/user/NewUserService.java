@@ -24,6 +24,7 @@ import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.util.Emailer;
 import org.intermine.util.MailUtils;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.core.JSONService;
@@ -88,17 +89,17 @@ public class NewUserService extends JSONService
 
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
+        
+        Emailer emailer = InterMineContext.getEmailer();
 
         try {
-            MailUtils.email(input.getUsername(), webProperties);
-            String mailingList = webProperties.getProperty("mail.mailing-list");
-            if (!isBlank(mailingList) && input.subscribeToList()) {
-                MailUtils.subscribe(input.getUsername(), webProperties);
-                user.put("subscribedToList", true);
-                user.put("mailingList", mailingList);
-            } else {
-                user.put("subscribedToList", false);
+            emailer.welcome(input.getUsername());
+            String mailingList = null;
+            if (input.subscribeToList()) {
+            	mailingList = emailer.subscribeToList(input.getUsername());
             }
+            user.put("subscribedToList", mailingList != null);
+            user.put("mailingList", mailingList);
         } catch (Exception e) {
             LOG.error("Failed to send confirmation email", e);
         }
