@@ -173,8 +173,7 @@ public abstract class LoginHandler extends InterMineAction
         if (userName != null && userName.equals(pm.getSuperuser())) {
             permission.addRole("SUPERUSER");
         }
-        Runnable upgrade = new SessionlessBagUpgrade(profile,
-                api.getBagQueryRunner());
+        Runnable upgrade = new UpgradeBagList(profile, api.getBagQueryRunner());
         runBagUpgrade(upgrade, api, profile);
 
     }
@@ -216,9 +215,7 @@ public abstract class LoginHandler extends InterMineAction
         if (profile.isSuperuser()) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
-        SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
-        Runnable upgrade = new UpgradeBagList(profile, im.getBagQueryRunner(),
-                session);
+        Runnable upgrade = new UpgradeBagList(profile, im.getBagQueryRunner());
         runBagUpgrade(upgrade, im, profile);
         return profile;
     }

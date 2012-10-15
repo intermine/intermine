@@ -109,6 +109,8 @@ public final class BagOperations
         } catch (UnknownBagTypeException e) {
             throw new RuntimeException(
                     "The type returned by getCommonBagType is not in the model", e);
+        } catch (ClassKeysNotFoundException cke) {
+            throw new RuntimeException("Bag has not class key set", cke);
         }
         ObjectStoreBagCombination osbc =
             new ObjectStoreBagCombination(op);
