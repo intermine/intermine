@@ -20,6 +20,7 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -69,9 +70,28 @@ public class FastaQueryService extends AbstractQueryService
 
     @Override
     protected void execute() throws Exception {
-        HttpSession session = request.getSession();
+        Profile profile = getPermission().getProfile();
+        
+        final String xml = request.getParameter(XML_PARAM);
+        if (StringUtils.isBlank(xml)) {
+            throw new MissingParameterException(XML_PARAM);
+        }
+        PathQuery pathQuery = getQuery(xml);
 
-        PathQuery pathQuery = getQuery();
+        final String extension = request.getParameter("extension");
+        
+        if (StringUtils.isBlank(extension)) {
+            exportFasta(profile, pathQuery);
+        } else {
+            exportFastaWithExtension(profile, pathQuery, extension);
+        }
+    }
+
+    private void exportFastaWithExtension(final Profile profile, final PathQuery pathQuery, final String extension) {
+        // TODO Auto-generated method stub
+    }
+
+    private void exportFasta(final Profile profile, final PathQuery pathQuery) {
         int index = 0;
 
         Exporter exporter;
@@ -80,7 +100,6 @@ public class FastaQueryService extends AbstractQueryService
             exporter = new SequenceExporter(objStore, os, index, im.getClassKeys());
             ExportResultsIterator iter = null;
             try {
-                Profile profile = SessionMethods.getProfile(session);
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
@@ -93,7 +112,6 @@ public class FastaQueryService extends AbstractQueryService
         } catch (Exception e) {
             throw new InternalErrorException("Service failed:" + e, e);
         }
-
     }
 
 
@@ -103,13 +121,8 @@ public class FastaQueryService extends AbstractQueryService
      * that there are only SequenceFeatures in the view.
      * @return A suitable pathquery for getting GFF3 data from.
      */
-    protected PathQuery getQuery() {
-        String xml = request.getParameter(XML_PARAM);
-
-        if (StringUtils.isEmpty(xml)) {
-            throw new BadRequestException("query is blank");
-        }
-
+    protected PathQuery getQuery(final String xml) {
+        
         PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
 
