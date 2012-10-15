@@ -178,7 +178,7 @@ public abstract class MailUtils
         bodyMsg.append("Click here to view the list: " + listUrl + ".\n\n");
         bodyMsg.append("If " + sharingUser + " deletes or modifies this list, you will not be ");
         bodyMsg.append("notified.\nYou may COPY this list to your own account by using the ");
-        bodyMsg.append(" list operations on the list page.\n\n");
+        bodyMsg.append("list operations on the list page.\n\n");
         bodyMsg.append("If you have any problems or questions, please don't hesitate ");
         bodyMsg.append("to contact us. We can be reached by replying to this email or at the ");
         bodyMsg.append("bottom of each page on " + applicationName + ".\n\n");
