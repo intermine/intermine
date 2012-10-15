@@ -968,7 +968,7 @@
    
    <servlet>
      <servlet-name>ws-list-invitations</servlet-name>
-     <servlet-class>org.intermine.wevservice.server.lists.ListSharingInvitationServlet</servlet-class>
+     <servlet-class>org.intermine.webservice.server.lists.ListSharingInvitationServlet</servlet-class>
    </servlet>
    
    <servlet-mapping>
@@ -1020,7 +1020,7 @@
     
    <servlet>
      <servlet-name>ws-list-shares</servlet-name>
-     <servlet-class>org.intermine.wevservice.server.lists.ListShareServlet</servlet-class>
+     <servlet-class>org.intermine.webservice.server.lists.ListShareServlet</servlet-class>
    </servlet>
    
    <servlet-mapping>
@@ -1037,7 +1037,7 @@
           </description>
           <param type="String" required="true" description="The list of yours you wish to share">list</param>
           <param type="String" required="true" description="The email address of the user to invite to share a list.">to</param>
-          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">send-emai</param>
+          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">notify</param>
           <returns>
             <format key="invitation">json</format>
           </returns>
