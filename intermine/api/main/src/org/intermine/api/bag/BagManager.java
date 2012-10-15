@@ -287,6 +287,7 @@ public class BagManager
         }
         sharedBagManager.shareBagWithUser(bag, userName);
     }
+    
     /**
      * Unshare the bag with the user given in input
      * @param bagName the bag to un-share
@@ -311,7 +312,7 @@ public class BagManager
      * @param bagOwnerUserName the name of the bag owner
      * @return the list of users sharing the bag
      */
-    public List<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
+    public Set<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
         Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
         StorableBag bag = ownerBagProfile.getSavedBags().get(bagName);
         if (bag == null) {
@@ -320,7 +321,7 @@ public class BagManager
                 throw new BagDoesNotExistException("The bag " + bagName + " doesn't exist");
             }
         }
-        return sharedBagManager.getUsersSharingBag(bag);
+        return sharedBagManager.getUsersWithAccessToBag(bag);
     }
 
     /**

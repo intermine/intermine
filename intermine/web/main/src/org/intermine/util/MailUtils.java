@@ -45,7 +45,7 @@ public abstract class MailUtils
      * @param webProperties properties such as the from address
      * @throws Exception if there is a problem creating the email
      */
-    public static void email(String to, final Map webProperties) throws Exception {
+    public static void welcome(String to, final Map webProperties) throws MessagingException {
         String subject = (String) webProperties.get("mail.subject");
         String text = (String) webProperties.get("mail.text");
         email(to, subject, text, webProperties);
@@ -148,7 +148,7 @@ public abstract class MailUtils
      * @param webProperties the web properties
      * @throws Exception when somethign goes wrong
      */
-    public static void subscribe(String email, final Map webProperties) throws Exception {
+    public static void subscribe(String email, final Map webProperties) throws MessagingException {
         String to = (String) webProperties.get("mail.mailing-list");
         String subject = "";
         String body = "";

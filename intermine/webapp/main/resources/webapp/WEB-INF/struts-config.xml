@@ -5,6 +5,7 @@
 <struts-config>
   <!-- ========== Form Bean Definitions =================================== -->
   <form-beans>
+    <form-bean name="invitationForm" type="org.intermine.web.struts.InvitationForm"/>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
@@ -72,6 +73,8 @@
     <action path="/contact" forward="contact.page">
     </action>
     <action path="/contextHelp" forward="contextHelp.page">
+    </action>
+    <action path="viewInvitation" forward="viewInvitation.page" name="invitationForm" validate="false" type="org.intermine.web.struts.InvitationAction">
     </action>
 
     <action path="/templateProblems" forward="templateProblems.page"/>
@@ -317,6 +320,11 @@
     </action>
     <action path="/bagUpgrade" type="org.intermine.web.struts.BagUpgradeAction">
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
+    </action>
+    <action path="/accept" name="invitationForm" type="org.intermine.web.struts.InvitationAction" input="mymine">
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="login" path="/login.do"/>
     </action>
     <action path="/findInList" name="findInListForm" type="org.intermine.web.struts.FindInListAction" input="bagDetails">
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>

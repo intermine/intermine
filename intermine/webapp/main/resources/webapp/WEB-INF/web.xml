@@ -963,6 +963,111 @@
         <minVersion>10</minVersion>
       </metadata>
    </servlet-mapping>
+   
+   <!-- NEW IN VERSION 11 -->
+   
+   <servlet>
+     <servlet-name>ws-list-invitations</servlet-name>
+     <servlet-class>org.intermine.webservice.server.lists.ListSharingInvitationServlet</servlet-class>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-list-invitations</servlet-name>
+     <url-pattern>/service/lists/invitations/*</url-pattern>
+     <metadata>
+       <name>List Invitations</name>
+       <minVersion>11</minVersion>
+       <method type="POST" requiresAuthentication="true">
+          <name>Invitation Creation</name>
+          <summary>Invite another user to share a list</summary>
+          <description>
+			Blah... todo
+          </description>
+          <param type="String" required="true" description="The list of yours you wish to share">list</param>
+          <param type="String" required="true" description="The email address of the user to invite to share a list.">to</param>
+          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">send-emai</param>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
+      <method type="GET" requiresAuthentication="true" slug="/:uid">
+          <name>Invitation Details</name>
+          <summary>Details of a single invitation, or of all one's out-standing invitations</summary>
+          <description>
+            One if uid, else all
+			Blah... todo
+          </description>
+          <param type="String" required="false" description="The identifier of the invitation - a 20 character unique string">uid</param>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
+      <method type="PUT" requiresAuthentication="true" slug="/:uid">
+          <name>Invitation Acceptance</name>
+          <summary>Declare the acceptance of an invitation.</summary>
+          <description>
+			Blah... todo
+          </description>
+          <param type="String" required="true" description="The identifier of the invitation - a 20 character unique string">uid</param>
+          <param type="boolean" required="true" description="Whether or not this invitation is accepted or not.">accepted</param>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
+     </metadata>
+   </servlet-mapping>
+   
+    
+   <servlet>
+     <servlet-name>ws-list-shares</servlet-name>
+     <servlet-class>org.intermine.webservice.server.lists.ListShareServlet</servlet-class>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-list-shares</servlet-name>
+     <url-pattern>/service/lists/shares/*</url-pattern>
+     <metadata>
+       <name>List Invitations</name>
+       <minVersion>11</minVersion>
+       <method type="POST" requiresAuthentication="true">
+          <name>Invitation Creation</name>
+          <summary>Invite another user to share a list</summary>
+          <description>
+			Blah... todo
+          </description>
+          <param type="String" required="true" description="The list of yours you wish to share">list</param>
+          <param type="String" required="true" description="The email address of the user to invite to share a list.">to</param>
+          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">notify</param>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
+      <method type="GET" requiresAuthentication="true" slug="/:uid">
+          <name>Invitation Details</name>
+          <summary>Details of a single invitation, or of all one's out-standing invitations</summary>
+          <description>
+            One if uid, else all
+			Blah... todo
+          </description>
+          <param type="String" required="false" description="The identifier of the invitation - a 20 character unique string">uid</param>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
+      <method type="PUT" requiresAuthentication="true" slug="/:uid">
+          <name>Invitation Acceptance</name>
+          <summary>Declare the acceptance of an invitation.</summary>
+          <description>
+			Blah... todo
+          </description>
+          <param type="String" required="true" description="The identifier of the invitation - a 20 character unique string">uid</param>
+          <param type="boolean" required="true" description="Whether or not this invitation is accepted or not.">accepted</param>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
+     </metadata>
+   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
