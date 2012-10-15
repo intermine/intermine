@@ -12,8 +12,7 @@ public class InterMineContext {
     private static Properties webProperties;
     private static WebConfig webConfig;
     private static boolean isInitialised = false;
-	private static Emailer emailer;
-
+    private static Emailer emailer;
 
     public static void initilise(final InterMineAPI imApi, Properties webProps,
             WebConfig wc) {
@@ -25,7 +24,7 @@ public class InterMineContext {
     }
     
     public static Emailer getEmailer() {
-    	return emailer;
+        return emailer;
     }
 
     private static void checkInit() {
