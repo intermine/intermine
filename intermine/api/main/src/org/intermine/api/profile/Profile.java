@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
@@ -552,11 +553,12 @@ public class Profile
      * @param classKeys the classKeys used to obtain  the primary identifier field
      * @return the new bag
      * @throws UnknownBagTypeException if the bag type is wrong
+     * @throws ClassKeysNotFoundException if the classKeys is empty
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description,
         Map<String, List<FieldDescriptor>> classKeys)
-        throws UnknownBagTypeException, ObjectStoreException {
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(

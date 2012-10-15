@@ -1152,50 +1152,6 @@ public final class SessionMethods
     }
 
     /**
-     * Returns SavedBagsStatus saved in session.
-     * @param session session
-     * @return SavedBagsStatus
-     */
-    public static Map<String, Map<String, Object>> getNotCurrentSavedBagsStatus(HttpSession session) {
-        return (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-    }
-
-    /**
-     * Sets in the session the map containing the status of the bags not current.
-     * A bag not current could be:
-     * not current (= the upgrading process has not started upgrading it yet),
-     * upgrading...(= the upgrading process is upgrading it),
-     * to upgrade (= the upgrading process has not been able to upgrade it because there are some
-     * conflicts that the user has to resolve manually ).
-     * @param session the session
-     * @param profile the profile used to retrieve the savedbags
-     * object to put in the session
-     */
-    public static void setNotCurrentSavedBagsStatus(HttpSession session, Profile profile) {
-        @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> savedBagsStatus = new HashedMap();
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        synchronized (savedBags) {
-            for (InterMineBag bag : savedBags.values()) {
-                if (!bag.isCurrent()) {
-                    Map<String, Object> bagAttributes = new HashMap<String, Object>();
-                    String bagState = bag.getState();
-                    bagAttributes.put("status", bagState);
-                    if (bagState.equals(BagState.CURRENT.toString())) {
-                        try {
-                            bagAttributes.put("size", bag.getSize());
-                        } catch (ObjectStoreException e) {
-                            // nothing serious happens here...
-                        }
-                    }
-                    savedBagsStatus.put(bag.getName(), bagAttributes);
-                }
-            }
-        }
-        session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
-    }
-
-    /**
      * Set the set of supported Open-ID providers to use.
      * @param ctx The Servlet-Context
      * @param providers The providers we accept.
