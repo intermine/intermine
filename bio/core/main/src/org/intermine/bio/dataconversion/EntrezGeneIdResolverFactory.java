@@ -178,11 +178,17 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Failed to read any records from gene_info file.");
         }
 
-        for (String taxonId : taxonIds) {
-            if (!records.containsKey(taxonId)) {
-                LOG.warn("No records in gene_info file for taxon: "
-                        + taxonId);
+        // Some species are not found in gene_info
+        if (taxonIds.size() > records.size()) {
+            Set<String> taxonIdsCopy = new HashSet<String>(taxonIds);
+            taxonIdsCopy.removeAll(records.keySet());
+            if (taxonIdsCopy.size() > 0) {
+                LOG.warn("No records in gene_info file for species: "
+                        + taxonIdsCopy);
             }
+        }
+
+        for (String taxonId : records.keySet()) {
 
             if (resolver.hasTaxon(taxonId)) {
                 continue;

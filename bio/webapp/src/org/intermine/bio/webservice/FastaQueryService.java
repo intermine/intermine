@@ -3,8 +3,6 @@ package org.intermine.bio.webservice;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
@@ -16,10 +14,10 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -69,18 +67,31 @@ public class FastaQueryService extends AbstractQueryService
 
     @Override
     protected void execute() throws Exception {
-        HttpSession session = request.getSession();
+        Profile profile = getPermission().getProfile();
 
-        PathQuery pathQuery = getQuery();
+        final String xml = request.getParameter(XML_PARAM);
+        if (StringUtils.isBlank(xml)) {
+            throw new MissingParameterException(XML_PARAM);
+        }
+        PathQuery pathQuery = getQuery(xml);
+
+        final String extension = request.getParameter("extension");
+
+        exportFasta(profile, pathQuery, extension);
+    }
+
+    private void exportFasta(final Profile profile, final PathQuery pathQuery,
+            final String extension) {
         int index = 0;
 
         Exporter exporter;
         try {
             ObjectStore objStore = im.getObjectStore();
-            exporter = new SequenceExporter(objStore, os, index, im.getClassKeys());
+            exporter = new SequenceExporter(objStore, os, index,
+                    im.getClassKeys(), parseExtension(extension));
+
             ExportResultsIterator iter = null;
             try {
-                Profile profile = SessionMethods.getProfile(session);
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
                 iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
                 iter.goFaster();
@@ -93,7 +104,6 @@ public class FastaQueryService extends AbstractQueryService
         } catch (Exception e) {
             throw new InternalErrorException("Service failed:" + e, e);
         }
-
     }
 
 
@@ -103,12 +113,7 @@ public class FastaQueryService extends AbstractQueryService
      * that there are only SequenceFeatures in the view.
      * @return A suitable pathquery for getting GFF3 data from.
      */
-    protected PathQuery getQuery() {
-        String xml = request.getParameter(XML_PARAM);
-
-        if (StringUtils.isEmpty(xml)) {
-            throw new BadRequestException("query is blank");
-        }
+    protected PathQuery getQuery(final String xml) {
 
         PathQueryBuilder builder = getQueryBuilder(xml);
         PathQuery pq = builder.getQuery();
@@ -119,6 +124,25 @@ public class FastaQueryService extends AbstractQueryService
         }
 
         return pq;
+    }
+
+    private int parseExtension(final String extension) {
+        if (StringUtils.isBlank(extension)) {
+            return 0;
+        }
+
+        String ext = extension.toLowerCase();
+        if (ext.matches("^((\\d+)|(\\d*[0-9](\\.\\d*[0-9])?(k|m)))(b|bp)?$")) {
+            float extIntNum = Float.parseFloat(ext.replaceAll("[(k|m)(b|bp)]", ""));
+            if (ext.contains("k")) {
+                extIntNum = Float.parseFloat(ext.replaceAll("[(k|m)(b|bp)]", "")) * 1000;
+            } else if (ext.contains("m")) {
+                extIntNum = Float.parseFloat(ext.replaceAll("[(k|m)(b|bp)]", "")) * 1000000;
+            }
+            return extIntNum < 1 ? 0 : Math.round(extIntNum);
+        } else {
+            return 0;
+        }
     }
 
 }
