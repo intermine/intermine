@@ -15,12 +15,16 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.log4j.Logger;
 import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.DNATools;
+import org.biojava.bio.seq.Sequence;
 import org.biojava.bio.seq.io.FastaFormat;
 import org.biojava.bio.seq.io.SeqIOTools;
 import org.biojava.bio.symbol.IllegalSymbolException;
@@ -53,7 +57,6 @@ import org.intermine.web.logic.export.Exporter;
  **/
 public class SequenceExporter implements Exporter
 {
-
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(SequenceExporter.class);
 
@@ -62,6 +65,10 @@ public class SequenceExporter implements Exporter
     private int featureIndex;
     private int writtenResultsCount = 0;
     private final Map<String, List<FieldDescriptor>> classKeys;
+
+    private int extension; // must > 0
+    // Map to hold DNA sequence of a whole chromosome in memory
+    private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
 
     /**
      * Constructor.
@@ -75,11 +82,12 @@ public class SequenceExporter implements Exporter
      * @param classKeys for the model
      */
     public SequenceExporter(ObjectStore os, OutputStream outputStream,
-            int featureIndex, Map<String, List<FieldDescriptor>> classKeys) {
+            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension) {
         this.os = os;
         this.out = outputStream;
         this.featureIndex = featureIndex;
         this.classKeys = classKeys;
+        this.extension = extension;
     }
 
     /**
@@ -113,7 +121,7 @@ public class SequenceExporter implements Exporter
 
                 ResultElement resultElement = row.get(featureIndex);
 
-                BioSequence bioSequence;
+                Sequence bioSequence;
                 Object object = os.getObjectById(resultElement.getId());
                 if (!(object instanceof InterMineObject)) {
                     continue;
@@ -126,8 +134,13 @@ public class SequenceExporter implements Exporter
                 }
 
                 if (object instanceof SequenceFeature) {
-                    bioSequence = createSequenceFeature(header, object,
-                            row, unionPathCollection, newPathCollection);
+                    if (extension > 0) {
+                        bioSequence = createSequenceFeatureWithExtension(header, object,
+                                row, unionPathCollection, newPathCollection);
+                    } else {
+                        bioSequence = createSequenceFeature(header, object,
+                                row, unionPathCollection, newPathCollection);
+                    }
                 } else if (object instanceof Protein) {
                     bioSequence = createProtein(header, object, row,
                             unionPathCollection, newPathCollection);
@@ -198,6 +211,50 @@ public class SequenceExporter implements Exporter
         return bioSequence;
     }
 
+    private Sequence createSequenceFeatureWithExtension(StringBuffer header,
+            Object object, List<ResultElement> row,
+            Collection<Path> unionPathCollection,
+            Collection<Path> newPathCollection)
+        throws IllegalSymbolException {
+
+        SequenceFeature feature = (SequenceFeature) object;
+
+        Chromosome chr = feature.getChromosome();
+        String chrName = chr.getPrimaryIdentifier();
+        int chrLength = chr.getLength();
+        int start = feature.getChromosomeLocation().getStart();
+        int end = feature.getChromosomeLocation().getEnd();
+        String org = feature.getOrganism().getShortName();
+
+        String chrResidueString;
+        if (chromosomeSequenceMap.get(new MultiKey(chrName, org)) == null) {
+            chrResidueString = chr.getSequence().getResidues()
+                    .toString();
+            chromosomeSequenceMap.put(
+                    new MultiKey(chrName, org), chr.getSequence().getResidues().toString());
+        } else {
+            chrResidueString = chromosomeSequenceMap.get(new MultiKey(chrName, org));
+        }
+
+        if (extension > 0) {
+            start = start - extension;
+            end = end + extension;
+        }
+
+        end = Math.min(end, chrLength);
+        start = Math.max(start, 1);
+
+        String seqName = "genomic_region_" + chrName + "_"
+                + start + "_" + end + "_"
+                + org.replace("\\. ", "_");
+
+        Sequence seq = DNATools.createDNASequence(chrResidueString.substring(start - 1, end),
+                        seqName);
+
+        makeHeader(header, object, row, unionPathCollection, newPathCollection);
+        return seq;
+    }
+
     /**
      * Set the header to be the contents of row, separated by spaces.
      */
@@ -244,6 +301,10 @@ public class SequenceExporter implements Exporter
 
                 String locString = chr + ':' + start + '-' + end;
                 headerBits.add(locString);
+            }
+
+            if (extension > 0) {
+                headerBits.add("extension:" + extension + "bp");
             }
 
             for (ResultElement re : subRow) {
