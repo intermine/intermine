@@ -6,9 +6,10 @@
 <!-- users.jsp -->
 <html:xhtml/>
 &nbsp;
+<c:choose>
+<c:when test="${IS_SUPERUSER}">
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <h2><fmt:message key="users.heading"/></h2>
-
 <p class="apikey"><fmt:message key="users.description"/></p>
 <html:form action="/modifySuperUser">
       <table class="bag-table sortable-onload-2 rowstyle-alt colstyle-alt no-arrow">
@@ -33,5 +34,11 @@
         </table>
         <input type="submit" value="Save"/>
         <input type="reset" value="Reset"/>
-</html:form>
+        </html:form>
+</c:when>
+<c:otherwise>
+   <h3>Shhh! Super secret stuff...</h3>
+</c:otherwise>
+</c:choose>
+
 <!-- /users.jsp -->
