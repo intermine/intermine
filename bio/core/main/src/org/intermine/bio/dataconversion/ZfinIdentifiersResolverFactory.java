@@ -81,6 +81,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             String message = "ZFIN gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
+            return;
         }
 
         BufferedReader reader;
@@ -100,7 +101,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
     private void createFromFile(BufferedReader reader) throws IOException {
 
         // data is in format:
-        // ZDBID	ID1,ID2
+        // ZDBID	ID1|ID2
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
@@ -110,7 +111,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             }
 
             String zfinId = line[0];
-            String[] synonyms = StringUtil.split(line[1], ",");
+            String[] synonyms = StringUtil.split(line[1], "\\|");
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
             resolver.addSynonyms(taxonId, zfinId, new HashSet<String>(Arrays.asList(synonyms)));

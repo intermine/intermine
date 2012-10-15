@@ -66,6 +66,7 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
             String message = "MGI gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
+            return;
         }
 
         BufferedReader reader;

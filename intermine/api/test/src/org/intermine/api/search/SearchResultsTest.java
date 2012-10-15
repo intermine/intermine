@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.lucene.queryParser.ParseException;
 import org.intermine.api.InterMineAPITestCase;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
@@ -273,7 +274,9 @@ public class SearchResultsTest extends InterMineAPITestCase {
     }
 
     @Test
-    public void testRespondToCreation() throws ParseException, IOException, TagNameException, TagNamePermissionException, ObjectStoreException, UnknownBagTypeException {
+    public void testRespondToCreation() throws ParseException, IOException, TagNameException,
+        TagNamePermissionException, ObjectStoreException, UnknownBagTypeException,
+        ClassKeysNotFoundException {
         SearchResults results;
         SearchRepository sr = sallyProfile.getSearchRepository();
 

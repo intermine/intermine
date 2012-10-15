@@ -132,13 +132,20 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for Entrez Gene
      */
     protected void createIdResolver(Collection<String> taxonIds) {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
+        // File path not set in MINE.properties
         if (StringUtils.isBlank(fileName)) {
             String message = "Entrez gene resolver has no file name specified, set " + propName
                 + " to the location of the gene_info file.";
             LOG.warn(message);
+            return;
         }
 
         BufferedReader reader;
@@ -163,10 +170,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     private void createFromFile(BufferedReader reader,
             Collection<String> taxonIds) throws IOException {
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
 
         NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader,
                 new HashSet<String>(taxonIds));

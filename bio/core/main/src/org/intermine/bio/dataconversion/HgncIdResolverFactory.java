@@ -58,6 +58,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
             String message = "HGNC resolver has no file name specified, set " + propName
                 + " to the file location.";
             LOG.warn(message);
+            return;
         }
 
         BufferedReader reader;

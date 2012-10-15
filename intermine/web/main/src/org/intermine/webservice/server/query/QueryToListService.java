@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -168,6 +169,8 @@ public class QueryToListService extends AbstractQueryService
         } catch (UnknownBagTypeException e) {
             output.addResultItem(Arrays.asList("0"));
             throw new InternalErrorException(e.getMessage(), e);
+        } catch (ClassKeysNotFoundException cke) {
+            throw new BadRequestException("Bag has not class key set", cke);
         } finally {
             if (profile.getSavedBags().containsKey(tempName)) {
                 profile.deleteBag(tempName);
