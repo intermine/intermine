@@ -11,6 +11,10 @@ package org.intermine.api;
  */
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +23,11 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.bag.BagQueryHelper;
+import org.intermine.api.bag.SharedBagManager;
+import org.intermine.api.bag.SharingInvite;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.BagSet;
 import org.intermine.api.profile.DeletingProfileManager;
@@ -38,6 +45,7 @@ import org.intermine.objectstore.ObjectStoreFactory;
 import org.intermine.objectstore.ObjectStoreSummary;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.ObjectStoreWriterFactory;
+import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
@@ -51,6 +59,8 @@ import org.intermine.util.PropertiesUtil;
  *
  */
 public class InterMineAPITestCase extends TestCase {
+	
+	private static final Logger LOG = Logger.getLogger(InterMineAPITestCase.class);
 
     protected InterMineAPI im;
     protected ObjectStore os;
@@ -67,6 +77,11 @@ public class InterMineAPITestCase extends TestCase {
 
     public void setUp() throws Exception {
 
+	    // When we construct the InterMineAPI it expects to have superuser account already created
+        // and the superuser.account property set.  This would be the normal application state.
+        Properties props = PropertiesUtil.getProperties();
+        props.put("superuser.account", "superUser");
+        
         os = ObjectStoreFactory.getObjectStore("os.unittest");
         uosw =  ObjectStoreWriterFactory.getObjectStoreWriter("osw.userprofile-test");
 
@@ -78,11 +93,6 @@ public class InterMineAPITestCase extends TestCase {
 
         InputStream configStream = getClass().getClassLoader().getResourceAsStream("bag-queries.xml");
         BagQueryConfig bagQueryConfig = BagQueryHelper.readBagQueryConfig(os.getModel(), configStream);
-
-        // When we construct the InterMineAPI it expects to have superuser account already created
-        // and the superuser.account property set.  This would be the normal webapp state.
-        Properties props = PropertiesUtil.getProperties();
-        props.put("superuser.account", "superUser");
 
         ProfileManager pmTmp = new ProfileManager(os, uosw);
         Profile superUser = new Profile(pmTmp, "superUser", null, "password", new HashMap(),
@@ -144,6 +154,32 @@ public class InterMineAPITestCase extends TestCase {
             UserProfile userProfile = (UserProfile) resIter.next();
             pm.deleteProfile(userProfile.getId());
         }
+        Connection con = null;
+		PreparedStatement stm1 = null, stm2 = null;
+        try {
+        	// Horrible, I know, but necessary.
+        	con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
+			
+			stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);			
+			stm1.executeUpdate();
+			
+			stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);			
+			stm2.executeUpdate();
+        } catch (Exception e) {
+        	LOG.error("Error dropping extra tables", e);
+        } finally {
+        	for (Statement stm: new Statement[]{stm1, stm2}) {
+        		if (stm != null) {
+                    try {
+                        stm.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException("Problem closing resources", e);
+                    }
+                }
+        	}
+			((ObjectStoreWriterInterMineImpl) uosw).releaseConnection(con);
+        }
+        
     }
 
     private Map<String, List<FieldDescriptor>> getClassKeys(Model model) {
