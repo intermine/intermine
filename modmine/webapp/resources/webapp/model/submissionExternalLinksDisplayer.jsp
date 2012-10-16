@@ -122,7 +122,7 @@ border-top:1px none #000;
 </div>
 <p style="padding-left:20px;">View all tracks:</p>
 <div style="padding:5px 35px;">
-<mm:allTracks tracks="${subTracks}" dccId="${object.dCCid}"/>
+<mm:allTracks tracks="${subTracks}" dccId="${dCCid}"/>
 </div>
 </c:when>
 <c:otherwise>
@@ -134,14 +134,14 @@ border-top:1px none #000;
 <%-- FILES --%>
 <c:if test="${!empty files}">
 <div class="filelink" style="padding-left:20px;">
-<mm:dataFiles files="${files}" dccId="${object.dCCid}"/>
+<mm:dataFiles files="${files}" dccId="${dCCid}"/>
 </div>
 </c:if>
 
 <%-- TARBALL --%>
 <div style="padding:2px 20px;">
 <b>
-<mm:getTarball dccId="${object.dCCid}"/>
+<mm:getTarball dccId="${dCCid}"/>
 </b>
 </div>
 </td>
