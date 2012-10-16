@@ -188,3 +188,11 @@ executeLog*
 
 # /intermine/webservice/client/javascript/imbedding/0.2/style/
 /intermine/webservice/client/javascript/imbedding/0.2/style/*min.*
+
+# mines
+malariamine/
+
+# IDEs
+nbproject/
+nb-build.xml
+.idea/
