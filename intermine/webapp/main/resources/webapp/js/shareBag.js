@@ -26,11 +26,28 @@
       }*/
       var user = jQuery('#userValue-' + id).val();
       var callBack = function(returnStr) {
+        var sendInvite, notification, failureMessage = returnStr;
         if (returnStr == 'ok') {
           refreshSharingUsers(bagName, id);
           jQuery('#userValue-' + id).val('');
         } else {
-            new FailureNotification({message: returnStr}).render();
+            if (returnStr.match(/not found/)) {
+                failureMessage = jQuery("<span>");
+                failureMessage.append(returnStr);
+                failureMessage.append(" Would you like to send an invitation to " + user + "? ");
+                jQuery("<button>OK</button>").appendTo(failureMessage).click(function(evt) {
+                    notification.close();
+                    if (window.$SERVICE) {
+                      $SERVICE.fetchList(bagName, function(l) {
+                          l.inviteUserToShare(user).fail(function(err) {new FailureNotification({message: err}).render()});
+                      });
+                    } else {
+                        new FailureNotification({message: "You are not logged in"}).render();
+                    }
+                });
+            }
+            notification = new FailureNotification({message: failureMessage});
+            notification.render();
         }
       };
       if (user != '') {
