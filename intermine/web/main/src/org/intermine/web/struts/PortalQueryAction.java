@@ -285,7 +285,7 @@ public class PortalQueryAction extends InterMineAction
         } else if (bagListSize > 0) {
             ActionMessage msg = new ActionMessage("results.lookup.matches.many",
                     new Integer(bagListSize));
-            actionMessages.add(" " + Constants.PORTAL_MSG, msg);
+            actionMessages.add(". " + Constants.PORTAL_MSG, msg);
         } else if (bagListSize == 0) {
             ActionMessage msg = new ActionMessage("portal.nomatches", extId);
             actionMessages.add(Constants.PORTAL_MSG, msg);
