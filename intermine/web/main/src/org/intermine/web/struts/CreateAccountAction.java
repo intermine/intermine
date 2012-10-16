@@ -53,7 +53,7 @@ public class CreateAccountAction extends LoginHandler
         pm.createNewProfile(username, password);
         Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
         try {
-            MailUtils.email(username, webProperties);
+            MailUtils.welcome(username, webProperties);
             if (((CreateAccountForm) form).getMailinglist()
                 && webProperties.getProperty("mail.mailing-list") != null
                 && webProperties.getProperty("mail.mailing-list").length() > 0) {

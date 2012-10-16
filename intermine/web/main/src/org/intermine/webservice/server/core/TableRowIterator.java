@@ -165,7 +165,6 @@ public class TableRowIterator implements
         cci.select = new ArrayList<QuerySelectable>(query.getSelect());
 
         resultsShape = determineResultShape(cci);
-        LOG.info(resultsShape);
         levels = getLevelMap(resultsShape);
         levels.put(resultsShape, root);
 
@@ -427,7 +426,6 @@ public class TableRowIterator implements
                         selectableForPath = ((QueryCollectionPathExpression) selectableForPath)
                             .getDefaultClass();
                     }
-                    LOG.info(String.format("Path(%s) => %s(%s) is %s(%s)?", path, selectableForPath.getClass(), selectableForPath, qs.getClass(), qs));
                     if (qs.equals(selectableForPath)) {
                         fieldsForObject.add(path);
                     }

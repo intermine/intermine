@@ -1486,7 +1486,7 @@ public class AjaxServices
         } catch (UserNotFoundException unfe) {
             return "User not found.";
         } catch (BagDoesNotExistException bnee) {
-            return "Tha list does not exist.";
+            return "That list does not exist.";
         }
         return "ok";
     }
@@ -1496,7 +1496,7 @@ public class AjaxServices
      * @param bagName the bag name that the users share
      * @return the list of users
      */
-    public List<String> getUsersSharingBag(String bagName) {
+    public Collection<String> getUsersSharingBag(String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);

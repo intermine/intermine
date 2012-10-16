@@ -32,10 +32,8 @@ public class JSONListFormatter implements ListFormatter {
     private int rowsLeft = 0;
     private final SimpleDateFormat iso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    @Override
-    public List<String> format(InterMineBag list) {
-        rowsLeft -= 1;
-        Map<String, Object> listMap = new HashMap<String, Object>();
+    public Map<String, Object> bagToMap(InterMineBag list) {
+    	Map<String, Object> listMap = new HashMap<String, Object>();
         listMap.put("name", list.getName());
         listMap.put("type", list.getType());
         listMap.put("title", list.getTitle());
@@ -65,7 +63,13 @@ public class JSONListFormatter implements ListFormatter {
         } else {
             listMap.put("authorized", false);
         }
-        JSONObject listObj = new JSONObject(listMap);
+        return listMap;
+    }
+
+    @Override
+    public List<String> format(InterMineBag list) {
+        rowsLeft -= 1;
+        JSONObject listObj = new JSONObject(bagToMap(list));
         String ret = listObj.toString();
         if (rowsLeft > 0) {
             return Arrays.asList(ret, "");

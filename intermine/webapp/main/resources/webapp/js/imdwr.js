@@ -65,7 +65,7 @@ function renameElement(name, type, index){
         if (str.indexOf('<i>') != -1) {
             setTimeout(function() {window.location.reload();}, 1000);
         } else {
-        	window.location.reload();
+            window.location.reload();
         }
     });
 }
@@ -734,6 +734,7 @@ function validateBagOperations(formName, operation) {
             }
         }
     }
+
     AjaxServices.validateBagOperations(bagName, selectedBags, operation, function(errMsg) {
         if (errMsg != '') {
             var msgBagInUse = "You are trying to delete the list";
@@ -748,11 +749,13 @@ function validateBagOperations(formName, operation) {
                 Boxy.alert(errMsg, null, {title: 'Error', modal: false});
             }
         } else {
+            jQuery('table.boxy-wrapper').hide();
             frm.listsButton.value = operation;
             frm.submit();
         }
     });
 
+    return false;
 }
 
 // table.jsp, bagUploadConfirm.jsp
@@ -771,6 +774,7 @@ function validateBagName(formName) {
     var frm = document.forms[formName];
 
     var bagName = frm.newBagName.value;
+
     AjaxServices.validateBagName(bagName, function(errMsg) {
         if (errMsg != '') {
             jQuery('#bigGreen').removeClass('clicked');

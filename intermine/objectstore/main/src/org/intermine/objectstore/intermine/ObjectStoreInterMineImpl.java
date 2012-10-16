@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -241,6 +242,11 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Returns a Connection. Please put them back.
+     * 
+     * Whenever you receive a connection from the object-store, you MUST
+     * release its resources by calling releaseConnection.
+     * 
+     * Failure to do so KILLS THE OBJECT STORE!
      *
      * @return a java.sql.Connection
      * @throws SQLException if there is a problem with that
@@ -251,6 +257,30 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
             retval.setAutoCommit(true);
         }
         return retval;
+    }
+    
+    /**
+     * Convenience wrapper to manage the boilerplate when performing unsafe operations.
+     * 
+     * @param operation The operation to perform.
+     * @return
+     * @throws SQLException
+     */
+    public <T> T performUnsafeOperation(final String sql, SQLOperation<T> operation) throws SQLException {
+    	Connection con = null;
+    	PreparedStatement stm = null;
+    	T retval;
+    	try {
+    		con = getConnection();
+    		stm = con.prepareStatement(sql);
+    		retval = operation.run(stm);
+    		return retval;
+    	} finally {
+    		if (stm != null) {
+				stm.close();
+    		}
+    		releaseConnection(con);
+    	}
     }
 
     /**

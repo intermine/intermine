@@ -21,6 +21,10 @@
     <put name="body" value="login.tile"/>
     <put name="pageName" value="login"/>
   </definition>
+  <definition name="viewInvitation.page" extends="layout.template">
+    <put name="body" value="viewInvitation.tile"/>
+    <put name="pageName" value="viewInvitation"/>
+  </definition>
   <definition name="query.page" extends="layout.template">
     <put name="body" value="query.tile"/>
     <put name="pageName" value="query"/>
@@ -167,6 +171,7 @@
   <definition name="pagenotfound.tile" path="/pagenotfound.jsp"/>
   <definition name="begin.tile" path="/begin.jsp"/>
   <definition name="login.tile" path="/login.jsp" controllerUrl="/initLogin.do"/>
+  <definition name="viewInvitation.tile" path="/viewInvitation.jsp" controllerUrl="/viewInvitation.do"/>
   <definition name="export.tile" path="/export.jsp" controllerUrl="/initExport.do"/>
   <definition name="aspects.tile" path="/aspectIcons.jsp" />
   <definition name="query.tile" path="/queryBuilderPage.jsp">
