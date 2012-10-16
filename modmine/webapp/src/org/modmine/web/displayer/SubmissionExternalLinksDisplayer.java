@@ -85,6 +85,7 @@ public class SubmissionExternalLinksDisplayer extends ReportDisplayer
 
         request.setAttribute("files", files);
         request.setAttribute("filesNR", files.size());
+        request.setAttribute("dCCid", o.getdCCid());
 
         // Database records
         request.setAttribute("dbRecordsJSON", getDbRecordsJSON(os, profile, im, dccId));
