@@ -81,6 +81,8 @@
            */
           AjaxServices.getContent(suffix, wholeList, field, className,
             function (array) {
+              if (array == null) return;
+              
               jQuery('#'+INPUT).focus();
               if (array[0] == "true") {
                 if (getWholeList()) {
