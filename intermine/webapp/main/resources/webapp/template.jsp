@@ -335,7 +335,7 @@
           <%-- For some reason, we are faking up the real sumbit actions with these buttons... --%>
           <div class="floatRight">
           <input type="button" onclick="jQuery('input#editQueryButton').click();" class="editQueryBuilder" value="<fmt:message key="template.submitToQuery"/>" />
-          <c:if test="${IS_SUPERUSER || scope == 'user'}">
+          <c:if test="${IS_OWNER}">
             <input type="button" onclick="jQuery('input#editTemplateButton').click();" class="editTemplate" value="<fmt:message key="template.submitToQueryEdit"/>" />
           </c:if>
           </div>
