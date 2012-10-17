@@ -306,7 +306,13 @@ public class BagManager
         sharedBagManager.unshareBagWithUser(bag, userName);
     }
     
-
+    /**
+     * Unshare the bag with the user given in input
+     * @param bag the bag to un-share
+     * @param profile the user sharing the bag
+     * @throws UserNotFoundException if the user does't exist
+     * @throws BagDoesNotExistException if the bag does't exist
+     */
     public void unshareBagWithUser(InterMineBag bag, Profile profile) {
         sharedBagManager.unshareBagWithUser(bag, profile.getUsername());
     }
