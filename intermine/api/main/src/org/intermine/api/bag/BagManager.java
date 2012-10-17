@@ -305,6 +305,11 @@ public class BagManager
         }
         sharedBagManager.unshareBagWithUser(bag, userName);
     }
+    
+
+    public void unshareBagWithUser(InterMineBag bag, Profile profile) {
+        sharedBagManager.unshareBagWithUser(bag, profile.getUsername());
+    }
 
     /**
      * Return the users sharing the list given in input, not the owner
@@ -633,5 +638,6 @@ public class BagManager
             return aK.toLowerCase().compareTo(bK.toLowerCase());
         }
     }
+
 
 }
