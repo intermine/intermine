@@ -29,13 +29,13 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
 import org.intermine.api.search.DeletionEvent;
-import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
@@ -315,7 +315,11 @@ public class Profile
      * @param name the template name
      * @param template the template
      */
-    public void saveTemplate(String name, ApiTemplate template) {
+    public void saveTemplate(String name, ApiTemplate template) throws BadTemplateException {
+        if (!NameUtil.isValidName(template.getName())
+           || "".equals(template.getTitle().trim())) {
+            throw new BadTemplateException("Invalid name or empty title");
+        }
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
@@ -660,7 +664,8 @@ public class Profile
      * @param template the new template
      * @throws ObjectStoreException if problems storing
      */
-    public void updateTemplate(String oldName, ApiTemplate template) throws ObjectStoreException {
+    public void updateTemplate(String oldName, ApiTemplate template)
+        throws ObjectStoreException, BadTemplateException {
         if (oldName == null) {
             throw new IllegalArgumentException("oldName may not be null");
         }
@@ -670,9 +675,13 @@ public class Profile
                     + " exist: " + oldName);
         }
 
-        savedTemplates.remove(oldName);
-
-        saveTemplate(template.getName(), template);
+        ApiTemplate oldTemplate = savedTemplates.remove(oldName);
+        try {
+            saveTemplate(template.getName(), template);
+        } catch (BadTemplateException bte) {
+            savedTemplates.put(oldName, oldTemplate);
+            throw bte;
+        }
         if (!oldName.equals(template.getName())) {
             searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);

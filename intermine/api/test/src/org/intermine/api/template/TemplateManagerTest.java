@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPITestCase;
+import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -40,7 +41,7 @@ public class TemplateManagerTest extends InterMineAPITestCase {
         setUpTemplatesAndTags();
     }
 
-    private void setUpTemplatesAndTags() throws TagException {
+    private void setUpTemplatesAndTags() throws TagException, BadTemplateException {
         TagManager tagManager = im.getTagManager();
 
         PathQuery q = new PathQuery(im.getModel());

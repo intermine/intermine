@@ -24,6 +24,7 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
+import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
@@ -34,6 +35,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Imports templates in XML format.
@@ -72,6 +74,7 @@ public class TemplatesImportAction extends InterMineAction
                 }
             }
             boolean validConstraints = true;
+            boolean validTemplate = true;
             for (TemplateQuery template : templates.values()) {
                 ApiTemplate apiTemplate = new ApiTemplate(template);
                 String templateName = apiTemplate.getName();
@@ -83,7 +86,12 @@ public class TemplatesImportAction extends InterMineAction
                 }
                 if (template.validateLookupConstraints() &&
                     !template.getEditableConstraints().isEmpty()) {
-                    profile.saveTemplate(apiTemplate.getName(), apiTemplate);
+                    try {
+                        profile.saveTemplate(apiTemplate.getName(), apiTemplate);
+                    } catch (BadTemplateException bte) {
+                       validTemplate = false;
+                       continue;
+                    }
                     imported++;
                 } else {
                     validConstraints = false;
@@ -94,6 +102,9 @@ public class TemplatesImportAction extends InterMineAction
                         new Integer(imported), new Integer(renamed)), request);
             if (!validConstraints) {
                 recordError(new ActionMessage("importTemplates.error.noneditablelookup"), request);
+            }
+            if (!validTemplate) {
+                recordError(new ActionMessage("importTemplates.error.notitle"), request);
             }
 
             return new ForwardParameters(mapping.findForward("mymine"))
