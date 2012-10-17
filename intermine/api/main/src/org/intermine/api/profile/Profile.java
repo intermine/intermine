@@ -316,9 +316,8 @@ public class Profile
      * @param template the template
      */
     public void saveTemplate(String name, ApiTemplate template) throws BadTemplateException {
-        if (!NameUtil.isValidName(template.getName())
-           || "".equals(template.getTitle().trim())) {
-            throw new BadTemplateException("Invalid name or empty title");
+        if (!NameUtil.isValidName(template.getName())) {
+            throw new BadTemplateException("Invalid name.");
         }
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {

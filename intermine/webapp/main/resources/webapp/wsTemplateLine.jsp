@@ -61,7 +61,12 @@
 </c:if>
 <c:if test="${showTitles}">
     <html:link styleClass="templateTitle" action="/template?name=${webSearchable.name}&amp;scope=${scope}"
-                 titleKey="history.action.execute.hover">${webSearchable.title}</html:link>
+                 titleKey="history.action.execute.hover">
+                 <c:choose>
+                   <c:when test="${!empty webSearchable.title}">${webSearchable.title}</c:when>
+                   <c:otherwise>${webSearchable.name}</c:otherwise>
+                 </c:choose>
+     </html:link>
 </c:if>
 
 <tiles:insert name="setFavourite.tile">
