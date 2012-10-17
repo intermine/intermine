@@ -284,6 +284,8 @@ function filterWebSearchablesHandler(event, object, type, wsListId) {
             return;
         }
         if (event.keyCode == 13
+            || event.keyCode == 16
+            || event.keyCode == 17
             || event.keyCode == 33
             || event.keyCode == 34
             || event.keyCode == 35
@@ -292,7 +294,7 @@ function filterWebSearchablesHandler(event, object, type, wsListId) {
             || event.keyCode == 38
             || event.keyCode == 39
             ||event.keyCode ==  40) {
-            return;
+            return false;
         }
     }
 
