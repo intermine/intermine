@@ -48,9 +48,6 @@
       </tr>
       <tr>
         <td align="right" valign="top"><fmt:message key="templateBuilder.templateTitle"/>
-          <c:if test="${empty QUERY.title}">
-            <span class="errors">(Required)</span>
-          </c:if>
         </td>
         <td nowrap>
           <input type="text" onchange="updateTemplate('title', this.value);" value="<c:if test="${not empty QUERY.title}"><c:out value="${QUERY.title}" escapeXml="true"/></c:if>" size="55" name="title">

@@ -104,7 +104,7 @@ public class TemplatesImportAction extends InterMineAction
                 recordError(new ActionMessage("importTemplates.error.noneditablelookup"), request);
             }
             if (!validTemplate) {
-                recordError(new ActionMessage("importTemplates.error.notitle"), request);
+                recordError(new ActionMessage("importTemplates.error.invalidname"), request);
             }
 
             return new ForwardParameters(mapping.findForward("mymine"))
