@@ -13,8 +13,10 @@ package org.intermine.webservice.server.template.result;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.intermine.web.logic.template.TemplateResultInput;
 import org.intermine.webservice.server.WebServiceRequestParser;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.result.QueryResultRequestParser;
 
 /**
@@ -50,7 +52,11 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private void parseRequest(TemplateResultInput input) {
         super.parseRequest(request, input);
         input.setName(getRequiredStringParameter(NAME_PARAMETER));
-        input.setConstraints(TemplateHelper.parseConstraints(request));
+        try {
+            input.setConstraints(TemplateHelper.parseConstraints(request));
+        } catch (TemplateValueParseException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
         input.setLayout(request.getParameter(QueryResultRequestParser.LAYOUT_PARAMETER));
     }
 

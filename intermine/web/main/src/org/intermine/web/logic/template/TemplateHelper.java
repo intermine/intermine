@@ -212,8 +212,9 @@ public final class TemplateHelper
      *
      * @param request HTTP request by user
      * @return map of constraints and values to be used to populate template.
+     * @throws TemplateValueParseException if the request parameters are bad.
      */
-    public static Map<String, List<ConstraintInput>> parseConstraints(HttpServletRequest request) {
+    public static Map<String, List<ConstraintInput>> parseConstraints(HttpServletRequest request)  throws TemplateValueParseException {
         // Maximum number of constraints is determined by the valid code range
         // on PathQueries.
         Map<String, List<ConstraintInput>> ret = new HashMap<String, List<ConstraintInput>>();
@@ -244,7 +245,7 @@ public final class TemplateHelper
             String code = request.getParameter(codeParameter);
 
             if (opString != null && opString.length() > 0 && op == null) {
-                throw new IllegalArgumentException("invalid parameter: '"
+                throw new TemplateValueParseException("invalid parameter: '"
                     + opParameter + "' with value '" + opString + "': "
                     + "This must be valid operation code. "
                     + "Special characters must be encoded in request. "
@@ -257,26 +258,26 @@ public final class TemplateHelper
                 String problemIntro =
                     "parameters were provided for constraint " + i;
                 if (!isPresent(id)) {
-                    throw new IllegalArgumentException(problemIntro
+                    throw new TemplateValueParseException(problemIntro
                         + " but no path was provided to identify the "
                         + "constraint. Missing parameter: '"
                         + idParameter + "'.");
                 }
                 if (!isPresent(op)) {
-                    throw new IllegalArgumentException(problemIntro
+                    throw new TemplateValueParseException(problemIntro
                         + " but the operation was not specified."
                         + " Missing parameter '" + opParameter + "'.");
                 }
                 if (!PathConstraintNull.VALID_OPS.contains(op)
                     && (request.getParameterValues(valueParameter) == null)) {
-                    throw new IllegalArgumentException(problemIntro
+                    throw new TemplateValueParseException(problemIntro
                         + " but no values were provided, and " + op
                         + " requires at least one value. Missing"
                         + " parameter '" + valueParameter + "'.");
                 }
                 if (!PathConstraintMultiValue.VALID_OPS.contains(op)
                     && multivalues != null && multivalues.size() > 1) {
-                    throw new IllegalArgumentException(
+                    throw new TemplateValueParseException(
                         " An operation was provided ('" + op + "') "
                         + " that expected at most one value, but "
                         + multivalues.size()
@@ -304,7 +305,7 @@ public final class TemplateHelper
         }
         allIdParameters.removeAll(processedIds);
         if (allIdParameters.size() > 0) {
-            throw new IllegalArgumentException("Maximum number of template parameters ("
+            throw new TemplateValueParseException("Maximum number of template parameters ("
                     + PathQuery.MAX_CONSTRAINTS
                     + ") exceeded. "
                     + "The extra values were :"
@@ -313,10 +314,10 @@ public final class TemplateHelper
         return ret;
     }
 
-    private static ConstraintOp getConstraintOp(String parName, String parValue) {
+    private static ConstraintOp getConstraintOp(String parName, String parValue) throws TemplateValueParseException {
         ConstraintOp ret = ConstraintOp.getConstraintOp(CodeTranslator.getCode(parValue));
         if (parValue != null && ret == null) {
-            throw new IllegalArgumentException(
+            throw new TemplateValueParseException (
                     "Problem with parameter '" + parName
                     + "': '" + parValue + "' is not a valid operator.");
         }
@@ -331,15 +332,24 @@ public final class TemplateHelper
         return (op != null);
     }
 
+    public static class TemplateValueParseException extends Exception {
+        private static final long serialVersionUID = -6128402589193631537L;
+        
+        public TemplateValueParseException(String message) {
+            super(message);
+        }
+    }
+
     /**
      * Creates a map from input to be used later to populate the template.
      *
      * @param template template
      * @param input values from URL
      * @return map from constraints to values
+     * @throws TemplateValueParseException if the input is bad.
      */
     public static Map<String, List<TemplateValue>> getValuesFromInput(TemplateQuery template,
-            TemplateResultInput input) {
+            TemplateResultInput input) throws TemplateValueParseException {
         Map<String, List<TemplateValue>> values = new HashMap<String, List<TemplateValue>>();
         for (String path : template.getEditablePaths()) {
             List<PathConstraint> constraintsForPath = template.getEditableConstraints(path);
@@ -350,7 +360,7 @@ public final class TemplateHelper
 
             // too many inputs for path
             if (constraintsForPath.size() < inputsForPath.size()) {
-                throw new IllegalArgumentException("There were more constraints specified "
+                throw new TemplateValueParseException("There were more constraints specified "
                         + " in the request than there are editable constraints for path "
                         + path + ".");
             }
@@ -374,7 +384,7 @@ public final class TemplateHelper
                                 + "for path " + path + " but codes weren't set.  If there is"
                                 + " more than one constraint on a path you need to specify the"
                                 + " corresponding constraint codes.";
-                            throw new IllegalArgumentException(err);
+                            throw new TemplateValueParseException(err);
                         }
                         if (conInput.getCode().equals(code)) {
                             if (foundConInput != null) {
@@ -382,7 +392,7 @@ public final class TemplateHelper
                                     + " specified with code: " + conInput.getCode()
                                     + " in the request for path: " + path + "  You should only"
                                     + " provide one value per code.";
-                                throw new IllegalArgumentException(err);
+                                throw new TemplateValueParseException(err);
                             }
                             foundConInput = conInput;
                         }
@@ -396,7 +406,7 @@ public final class TemplateHelper
     }
 
     private static void checkAndAddValue(Map<String, List<TemplateValue>> values,
-            TemplateQuery template, PathConstraint con, ConstraintInput conInput, String code) {
+            TemplateQuery template, PathConstraint con, ConstraintInput conInput, String code) throws TemplateValueParseException {
         if (conInput != null) {
             if (template.isRequired(con)) {
                 addToValuesMap(values, createTemplateValue(con, conInput, SwitchOffAbility.LOCKED));
@@ -404,7 +414,7 @@ public final class TemplateHelper
                 addToValuesMap(values, createTemplateValue(con, conInput, SwitchOffAbility.ON));
             }
         } else if (template.isRequired(con)) {
-            throw new IllegalArgumentException("There isn't a specified constraint value "
+            throw new TemplateValueParseException("There isn't a specified constraint value "
                     + "and operation for path " + con.getPath()
                     + ((code != null) ? " and code " + code : "")
                     + " in the request; this constraint is required.");
