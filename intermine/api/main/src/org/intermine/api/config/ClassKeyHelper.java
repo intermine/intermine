@@ -39,6 +39,9 @@ public final class ClassKeyHelper
 
     private static final Logger LOG = Logger.getLogger(ClassKeyHelper.class);
 
+    private static final Map<Model, Map<String, List<FieldDescriptor>>> classKeys =
+        new HashMap<Model, Map<String, List<FieldDescriptor>>>();
+
     /**
      * Read class keys from a properties into a map from classname to set of
      * available keys.
@@ -50,30 +53,33 @@ public final class ClassKeyHelper
      * @return map from class name to set of available keys
      */
     public static Map<String, List<FieldDescriptor>> readKeys(Model model, Properties props) {
-        Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
-        for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
-            String clsName = cld.getUnqualifiedName();
-            if (props.containsKey(cld.getUnqualifiedName())) {
-                String keys = (String) props.get(clsName);
-                String[] tokens = keys.split(",");
-                for (String token : tokens) {
-                    String keyString = token.trim();
-                    FieldDescriptor fld = cld.getFieldDescriptorByName(keyString);
-                    if (fld != null) {
-                        ClassKeyHelper.addKey(classKeys, clsName, fld);
-                        for (ClassDescriptor subCld : model.getAllSubs(cld)) {
-                            ClassKeyHelper.addKey(classKeys, subCld.getUnqualifiedName(), fld);
+        if (!classKeys.containsKey(model)) {
+            Map<String, List<FieldDescriptor>> theseKeys = new HashMap<String, List<FieldDescriptor>>();
+            for (ClassDescriptor cld : model.getTopDownLevelTraversal()) {
+                String clsName = cld.getUnqualifiedName();
+                if (props.containsKey(cld.getUnqualifiedName())) {
+                    String keys = (String) props.get(clsName);
+                    String[] tokens = keys.split(",");
+                    for (String token : tokens) {
+                        String keyString = token.trim();
+                        FieldDescriptor fld = cld.getFieldDescriptorByName(keyString);
+                        if (fld != null) {
+                            ClassKeyHelper.addKey(theseKeys, clsName, fld);
+                            for (ClassDescriptor subCld : model.getAllSubs(cld)) {
+                                ClassKeyHelper.addKey(theseKeys, subCld.getUnqualifiedName(), fld);
+                            }
+                        } else {
+                            LOG.warn("problem loading class key: " + keyString
+                                    + " for class " + clsName);
                         }
-                    } else {
-                        LOG.warn("problem loading class key: " + keyString
-                                + " for class " + clsName);
                     }
+                } else {
+                    LOG.warn("No key defined for " + clsName);
                 }
-            } else {
-                LOG.warn("No key defined for " + clsName);
+                classKeys.put(model, theseKeys);
             }
         }
-        return classKeys;
+        return classKeys.get(model);
     }
 
     /**

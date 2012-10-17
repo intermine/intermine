@@ -43,6 +43,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
@@ -216,6 +217,57 @@ public abstract class WebService
             throw new IllegalStateException("There should always be a valid permission object");
         }
         return permission;
+    }
+
+    /**
+     * Get a parameter this service deems to be required.
+     * @param name The name of the parameter
+     * @return The value of the parameter. Never null, never blank.
+     * @throws MissingParameterException If the value of the parameter is blank or null.
+     */
+    protected String getRequiredParameter(String name) throws MissingParameterException {
+        String value = request.getParameter(name);
+        if (StringUtils.isBlank(value)) {
+            throw new MissingParameterException(name);
+        }
+        return value;
+    }
+
+    /**
+     * Get a parameter this service deems to be optional, or the default value.
+     * @param name The name of the parameter.
+     * @param defaultValue The default value.
+     * @return The value provided, if there is a non-blank one, or the default value.
+     */
+    protected String getOptionalParameter(String name, String defaultValue) {
+        String value = request.getParameter(name);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    /**
+     * Get a profile that is a true authenticated user that exists in the database.
+     *
+     * @return The user's profile.
+     * @throws ServiceForbiddenException if this request resolves to an unauthenticated profile.
+     */
+    protected Profile getAuthenticatedUser() throws ServiceForbiddenException {
+        Profile profile = getPermission().getProfile();
+        if (profile.isLoggedIn()) {
+            return profile;
+        }
+        throw new ServiceForbiddenException("You must be logged in to use this service");
+    }
+
+    /**
+     * Get a parameter this service deems to be optional, or <code>null</code>.
+     * @param name The name of the parameter.
+     * @return The value of the parameter, or <code>null</code>
+     */
+    protected String getOptionalParameter(String name) {
+        return getOptionalParameter(name, null);
     }
 
     /**

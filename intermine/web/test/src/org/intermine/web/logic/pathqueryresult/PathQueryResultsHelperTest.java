@@ -136,7 +136,7 @@ public class PathQueryResultsHelperTest extends TestCase
 
     // This test expects the references from the the configuration to be excluded.
     public void testMakePathQueryForBag() throws Exception {
-        InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), BagState.CURRENT, os, null, uosw);
+        InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), BagState.CURRENT, os, null, uosw, Arrays.asList("name"));
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os.getModel());
         String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
             + "<constraint path=\"Employee\" op=\"IN\" value=\"Fred\"/>"

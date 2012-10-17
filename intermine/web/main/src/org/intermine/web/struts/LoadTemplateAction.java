@@ -38,6 +38,7 @@ import org.intermine.web.logic.export.http.TableHttpExporter;
 import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.intermine.web.logic.template.TemplateResultInput;
 
 /**
@@ -54,7 +55,11 @@ public class LoadTemplateAction extends DispatchAction
 
         TemplateResultInput input = new TemplateResultInput();
         // parse constraints from request
-        input.setConstraints(TemplateHelper.parseConstraints(request));
+        try {
+            input.setConstraints(TemplateHelper.parseConstraints(request));
+        } catch (TemplateValueParseException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
         input.setName(name);
 
         TemplateManager templateManager = im.getTemplateManager();
@@ -63,8 +68,12 @@ public class LoadTemplateAction extends DispatchAction
             throw new RuntimeException("template not found: " + name);
         }
 
-        Map<String, List<TemplateValue>> templateValues = TemplateHelper.getValuesFromInput(
-                template, input);
+        Map<String, List<TemplateValue>> templateValues;
+        try {
+            templateValues = TemplateHelper.getValuesFromInput(template, input);
+        } catch (TemplateValueParseException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
 
         // make new template
         try {

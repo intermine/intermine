@@ -919,13 +919,6 @@ public class AjaxServices
                         return msg;
                     }
                 }
-                for (int i = 0; i < selectedBags.length; i++) {
-                    Map allBags = profile.getAllBags();
-                    if (!allBags.containsKey(selectedBags[i])) {
-                        return "List `" + selectedBags[i] + "` cannot be deleted as it is a shared "
-                            + "list";
-                    }
-                }
             } else if (!"copy".equals(operation)) {
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 String defaultName = properties.getProperty("lists.input.example");

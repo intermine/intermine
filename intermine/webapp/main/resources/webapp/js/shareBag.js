@@ -38,9 +38,10 @@
                 jQuery("<button>OK</button>").appendTo(failureMessage).click(function(evt) {
                     notification.close();
                     if (window.$SERVICE) {
+                      var errHandler = function(err) {new FailureNotification({message: err}).render()};
                       $SERVICE.fetchList(bagName, function(l) {
-                          l.inviteUserToShare(user).fail(function(err) {new FailureNotification({message: err}).render()});
-                      });
+                          l.inviteUserToShare(user).fail(errHandler);
+                      }).fail(errHandler);
                     } else {
                         new FailureNotification({message: "You are not logged in"}).render();
                     }
