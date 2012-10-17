@@ -1,53 +1,25 @@
 package org.intermine.webservice.server.lists;
 
-import java.io.IOException;
+import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.core.NoServiceException;
+import org.intermine.webservice.server.core.WebServiceServlet;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
-
-public class AvailableListsServlet extends HttpServlet
+public class AvailableListsServlet extends WebServiceServlet
 {
-    /**
-     * Serialisation constant.
-     */
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        getAvailableLists(request, response);
-    }
-
-    private void getAvailableLists(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = InterMineContext.getInterMineAPI();
-        new AvailableListsService(im).service(request, response);
-    }
-
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        saveUploadedList(request, response);
-    }
-
-    private void saveUploadedList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = InterMineContext.getInterMineAPI();
-        new ListUploadService(im).service(request, response);
-    }
-
-    @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        deleteList(request, response);
-    }
-
-    private void deleteList(HttpServletRequest request, HttpServletResponse response) {
-        final InterMineAPI im = InterMineContext.getInterMineAPI();
-        new ListDeletionService(im).service(request, response);
+    protected WebService getService(Method method) throws NoServiceException {
+        switch (method) {
+        case GET:
+            return new AvailableListsService(api);
+        case POST:
+            return new ListUploadService(api);
+        case DELETE:
+            return new ListDeletionService(api);
+        default:
+            throw new NoServiceException();
+        }
     }
 
 }
