@@ -126,23 +126,34 @@ public class FastaQueryService extends AbstractQueryService
         return pq;
     }
 
-    private int parseExtension(final String extension) {
+    /**
+     * A method for parsing the value of the extension parameter. Static and protected for testing purposes.
+     * @param extension The extension as provided by the user.
+     * @return An integer representing the number of base pairs.
+     * @throws BadRequestException If there is a problem interpreting the extension string.
+     */
+    protected static int parseExtension(final String extension) throws BadRequestException {
         if (StringUtils.isBlank(extension)) {
             return 0;
         }
+        final String ext = extension.toLowerCase().trim();
 
-        String ext = extension.toLowerCase();
-        if (ext.matches("^((\\d+)|(\\d*[0-9](\\.\\d*[0-9])?(k|m)))(b|bp)?$")) {
-            float extIntNum = Float.parseFloat(ext.replaceAll("[(k|m)(b|bp)]", ""));
-            if (ext.contains("k")) {
-                extIntNum = Float.parseFloat(ext.replaceAll("[(k|m)(b|bp)]", "")) * 1000;
-            } else if (ext.contains("m")) {
-                extIntNum = Float.parseFloat(ext.replaceAll("[(k|m)(b|bp)]", "")) * 1000000;
-            }
-            return extIntNum < 1 ? 0 : Math.round(extIntNum);
-        } else {
-            return 0;
+        if (!ext.matches("^((\\d+)|(\\d+(\\.\\d+)?(k|m)))(bp?)?$")) {
+            throw new BadRequestException("Illegal extension format: " + ext);
         }
+
+        final String justTheNumber = ext.replaceAll("[kmbp]", "");
+        final int scale = (ext.contains("k") ? 1000 : ext.contains("m") ? 1000000 : 1);
+        final float number;
+        try {
+            number = Float.parseFloat(justTheNumber) * scale;
+        } catch (NumberFormatException e) {
+            throw new BadRequestException("Illegal number: " + justTheNumber, e);
+        }
+        if (number != Math.ceil(number)) {
+            throw new BadRequestException("The extension must be a whole number of base pairs. I got: " + number + "bp");
+        }
+        return Math.round(number);
     }
 
 }
