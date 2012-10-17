@@ -10,8 +10,11 @@ import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.api.profile.UserAlreadyShareBagException;
+import org.intermine.api.profile.UserNotFoundException;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -58,7 +61,7 @@ public class ListShareCreationService extends JSONService {
             // scrape for usernames. But the you can do the same
             // thing in the registration service...
             if (pm.getProfile(recipient) == null) {
-                throw new ResourceNotFoundException("The value of the 'recipient' parameter is not the name of user you can share lists with");
+                throw new ResourceNotFoundException("The value of the 'with' parameter is not the name of user you can share lists with");
             }
         }
     }
@@ -67,13 +70,19 @@ public class ListShareCreationService extends JSONService {
     public String getResultsKey() {
         return "share";
     }
-    
+
     @Override
     protected void execute() throws ServiceException {
          UserInput input = new UserInput();
-         
-         sbm.shareBagWithUser(input.bag, input.recipient);
-         
+
+         try {
+             sbm.shareBagWithUser(input.bag, input.recipient);
+         } catch (UserAlreadyShareBagException e) {
+             throw new BadRequestException("This bag is already shared with this user", e);
+         } catch (UserNotFoundException e) {
+             throw new InternalErrorException("The userprofile is confused.", e);
+         }
+
          Map<String, Object> data = new HashMap<String, Object>();
          data.put(input.bag.getName(), sbm.getUsersWithAccessToBag(input.bag));
          
