@@ -119,9 +119,6 @@ public class TemplateSettingsForm extends ActionForm
         if (!NameUtil.isValidName(name)) {
             errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.badChars"));
         }
-        if ("".equals(title.trim())) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("errors.template.notitle"));
-        }
         return errors;
     }
 

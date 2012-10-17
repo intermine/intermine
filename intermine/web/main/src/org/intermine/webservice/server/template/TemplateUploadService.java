@@ -99,7 +99,7 @@ public class TemplateUploadService extends WebService
                 profile.saveTemplate(name, new ApiTemplate(templ));
                 this.output.addResultItem(Arrays.asList(name, "Success"));
             } catch (BadTemplateException bte) {
-                throw new BadRequestException("The template has invalid name or empty title.");
+                throw new BadRequestException("The template has invalid name.");
             } catch (RuntimeException e) {
                 throw new ServiceException("Failed to save template: " + name, e);
             }
