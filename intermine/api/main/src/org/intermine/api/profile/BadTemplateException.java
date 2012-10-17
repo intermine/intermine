@@ -11,7 +11,7 @@ package org.intermine.api.profile;
  */
 
 /**
- * Exception thrown when template has invalid name or no title.
+ * Exception thrown when template has invalid name.
  * @author Daneila Butano
  */
 public class BadTemplateException extends Exception
