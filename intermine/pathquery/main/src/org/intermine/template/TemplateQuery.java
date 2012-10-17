@@ -438,6 +438,18 @@ public class TemplateQuery extends PathQuery
     }
 
     /**
+     * Return the template's title, or its name if it has no title.
+     */
+    @Override
+    public String getTitle() {
+        String title = super.getTitle();
+        if (title == null || "".equals(title)) {
+            return getName();
+        }
+        return title;
+    }
+
+    /**
      * Get the paths of all editable constraints in this template.
      *
      * @return the nodes

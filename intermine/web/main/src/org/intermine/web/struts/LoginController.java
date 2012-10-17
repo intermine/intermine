@@ -46,6 +46,7 @@ public class LoginController extends TilesAction
         LoginForm loginForm = (LoginForm) form;
         String returnToString = request.getParameter("returnto");
         loginForm.setReturnToString(returnToString);
+        request.getSession().setAttribute("returnTo", returnToString);
 
         Properties webprops = SessionMethods.getWebProperties(request);
         String ourPath = webprops.getProperty("webapp.baseurl");
