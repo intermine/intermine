@@ -65,7 +65,6 @@ public class CreateAccountAction extends LoginHandler
             SessionMethods.recordError("Failed to send confirmation email", session);
         }
 
-
         /*
          * This code generates an MD5 key for the given username which is then
          * encoded in Hexadecimal. This could later be used for account
@@ -77,6 +76,11 @@ public class CreateAccountAction extends LoginHandler
          * (NoSuchAlgorithmException e) { }
          */
         doLogin(request, username, password);
+
+        if (session.getAttribute("returnTo") != null) {
+            return new ActionForward(session.getAttribute("returnTo").toString());
+        }
+
         return new ActionForward("/begin.do");
     }
 }
