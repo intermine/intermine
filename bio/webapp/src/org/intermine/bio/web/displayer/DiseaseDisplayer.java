@@ -74,8 +74,9 @@ public class DiseaseDisplayer extends ReportDisplayer
         Set<String> orthologues = new HashSet<String>();
         ProfileManager profileManager = im.getProfileManager();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
+        PathQuery q = null;
         try {
-            PathQuery q = getQuery(gene);
+            q = getQuery(gene);
         } catch (Exception e) {
             return Collections.emptySet();
         }
