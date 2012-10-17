@@ -175,10 +175,11 @@ public abstract class MailUtils
         StringBuffer bodyMsg = new StringBuffer();
         bodyMsg.append("User " + sharingUser + " has shared a list of " + bag.getType() + "s ");
         bodyMsg.append("with you called \"" + bag.getName() + "\".\n\n");
-        bodyMsg.append("Click here to view the list: " + listUrl + ".\n\n");
+        bodyMsg.append("Click here to open and view the list: " + listUrl + ".\n\n");
+        bodyMsg.append("You cannot delete or modify this list yourself. However, you may COPY "
+                      + "this list to your own account by using the list operations on the list page.\n");
         bodyMsg.append("If " + sharingUser + " deletes or modifies this list, you will not be ");
-        bodyMsg.append("notified.\nYou may COPY this list to your own account by using the ");
-        bodyMsg.append("list operations on the list page.\n\n");
+        bodyMsg.append("notified.\n\n");
         bodyMsg.append("If you have any problems or questions, please don't hesitate ");
         bodyMsg.append("to contact us. We can be reached by replying to this email or at the ");
         bodyMsg.append("bottom of each page on " + applicationName + ".\n\n");
