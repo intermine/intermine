@@ -80,16 +80,23 @@ public class ImportQueriesAction extends InterMineAction
         try {
             profile.disableSaving();
             StringBuffer sb = new StringBuffer();
+            int imported = 0;
+            boolean validNameQuery = true;
             for (String queryName : queries.keySet()) {
                 PathQuery query = queries.get(queryName);
                 queryName = NameUtil.validateName(allBags.keySet(), queryName);
+                //to improve!! return a badqueryexception
+                if (queryName.isEmpty()) {
+                    validNameQuery = false;
+                    continue;
+                } 
                 SessionMethods.saveQuery(session, queryName, query);
-                if (sb.length() > 0) {
-                    sb.append(", ");
-                }
-                sb.append(queryName);
+                imported++;
             }
-            recordMessage(new ActionMessage("query.imported", sb.toString()), request);
+            recordMessage(new ActionMessage("query.imported", new Integer(imported)), request);
+            if (!validNameQuery) {
+                recordError(new ActionMessage("query.imported.invalidname"), request);
+            }
             return new ForwardParameters(mapping.findForward("mymine"))
                 .addParameter("subtab", "saved").forward();
         } finally {
