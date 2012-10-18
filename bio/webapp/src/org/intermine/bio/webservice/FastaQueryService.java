@@ -150,6 +150,9 @@ public class FastaQueryService extends AbstractQueryService
         } catch (NumberFormatException e) {
             throw new BadRequestException("Illegal number: " + justTheNumber, e);
         }
+        if (number < 0) {
+            throw new BadRequestException("Negative extensions are not allowed.");
+        }
         if (number != Math.ceil(number)) {
             throw new BadRequestException("The extension must be a whole number of base pairs. I got: " + number + "bp");
         }
