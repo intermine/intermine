@@ -11,14 +11,19 @@ package org.intermine.web;
  */
 
 import java.io.Reader;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.SharingInvite;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -143,6 +148,8 @@ public final class ProfileBinding
             }
             writer.writeEndElement();
             writer.writeCharacters("\n");
+
+            /* TAGS */
             writer.writeStartElement("tags");
             TagManager tagManager =
                 new TagManagerFactory(profile.getProfileManager()).getTagManager();
@@ -156,11 +163,71 @@ public final class ProfileBinding
             }
             // end <tags>
             writer.writeEndElement();
+
+            /* PREFERENCES */
+            writer.writeStartElement("preferences");
+            for (Entry<String, String> preference: profile.getPreferences().entrySet()) {
+                writer.writeStartElement(preference.getKey());
+                writer.writeCharacters(preference.getValue());
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+
+            /* INVITATIONS */
+            writer.writeStartElement("invitations");
+            Collection<SharingInvite.IntermediateRepresentation> invites =
+                    SharingInvite.getInviteData(profile.getProfileManager(), profile);
+            Map<Integer, String> bagNameCache = new HashMap<Integer, String>();
+            Map<String, InterMineBag> bags = profile.getSavedBags();
+            for (SharingInvite.IntermediateRepresentation invite: invites) {
+                writer.writeStartElement("invite");
+
+                /* EACH INVITE */
+                writer.writeStartElement("bag");
+                writer.writeCharacters(getBagName(bagNameCache, bags, invite.getBagId()));
+                writer.writeEndElement();
+                writer.writeStartElement("invitee");
+                writer.writeCharacters(invite.getInvitee());
+                writer.writeEndElement();
+                writer.writeStartElement("token");
+                writer.writeCharacters(invite.getToken());
+                writer.writeEndElement();
+                writer.writeStartElement("accepted");
+                writer.writeCharacters(String.valueOf(invite.getAccepted()));
+                writer.writeEndElement();
+                writer.writeStartElement("createdAt");
+                writer.writeCharacters(String.valueOf(invite.getCreatedAt().getTime()));
+                writer.writeEndElement();
+                writer.writeStartElement("acceptedAt");
+                if (invite.getAcceptedAt() != null) {
+                    writer.writeCharacters(String.valueOf(invite.getAcceptedAt().getTime()));
+                }
+                writer.writeEndElement();
+
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+
             // end <userprofile>
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling profile", e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading invites.", e);
         }
+    }
+
+    private static String getBagName(
+            Map<Integer, String> cache, Map<String, InterMineBag> bags, Integer id) {
+        if (id != null && !cache.containsKey(id)) {
+            for (String name: bags.keySet()) {
+                if (id.equals(bags.get(name).getSavedBagId())) {
+                    cache.put(id, name);
+                    break;
+                }
+            }
+        }
+        return cache.get(id);
     }
 
     /**

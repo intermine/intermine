@@ -21,73 +21,73 @@ import org.intermine.webservice.server.output.JSONFormatter;
 
 public class ListSharingInvitationDetailsService extends JSONService {
 
-	public ListSharingInvitationDetailsService(InterMineAPI im) {
-		super(im);
-	}
-	
-	protected Map<String, Object> getHeaderAttributes() {
-		Map<String, Object> attrs = super.getHeaderAttributes();
-		attrs.put(JSONFormatter.KEY_INTRO, "\"invitation\":");
-		return attrs;
-	}
+    public ListSharingInvitationDetailsService(InterMineAPI im) {
+        super(im);
+    }
+    
+    protected Map<String, Object> getHeaderAttributes() {
+        Map<String, Object> attrs = super.getHeaderAttributes();
+        attrs.put(JSONFormatter.KEY_INTRO, "\"invitation\":");
+        return attrs;
+    }
 
-	@Override
-	protected void execute() throws Exception {
-		Profile p = getPermission().getProfile();
-		if (!p.isLoggedIn()) {
-			throw new ServiceForbiddenException("You must be logged in to use this service");
-		}
-		String token, pathInfo = request.getPathInfo();
-		if (pathInfo != null && pathInfo.matches("/[^/]{20}")) {
-			token = pathInfo.substring(1, 21);
-		} else {
-			token = request.getParameter("uid");
-		}
-		
-		if (StringUtils.isBlank(token)) {
-			sendAllPending();
-		} else {
-			sendIndividual(token);
-		}	
-	}
-	
-	private void sendAllPending() throws SQLException, ObjectStoreException {
-		Profile inviter = getPermission().getProfile();
-		Collection<SharingInvite> invites = SharingInvite.getInvites(im, inviter);
-		
-		addResultItem(ListFunctions.map(invites, new F<SharingInvite, Object>() {
-			@Override
-			public Object call(SharingInvite a) {
-				return inviteToMap(a);
-			}
-		}), false);
-	}
-	
-	private void  sendIndividual(String token) throws SQLException, ObjectStoreException {
-		SharingInvite invite;
-		
-		try {
-			invite = SharingInvite.getByToken(im, token);
-		} catch (NotFoundException e) {
-			throw new ResourceNotFoundException(e.getMessage(), e);
-		}
-		
-		Map<String, Object> toSerialise = inviteToMap(invite);
-		
-		addResultItem(toSerialise, false);
+    @Override
+    protected void execute() throws Exception {
+        Profile p = getPermission().getProfile();
+        if (!p.isLoggedIn()) {
+            throw new ServiceForbiddenException("You must be logged in to use this service");
+        }
+        String token, pathInfo = request.getPathInfo();
+        if (pathInfo != null && pathInfo.matches("/[^/]{20}")) {
+            token = pathInfo.substring(1, 21);
+        } else {
+            token = request.getParameter("uid");
+        }
+        
+        if (StringUtils.isBlank(token)) {
+            sendAllPending();
+        } else {
+            sendIndividual(token);
+        }    
+    }
+    
+    private void sendAllPending() throws SQLException, ObjectStoreException {
+        Profile inviter = getPermission().getProfile();
+        Collection<SharingInvite> invites = SharingInvite.getInvites(im, inviter);
+        
+        addResultItem(ListFunctions.map(invites, new F<SharingInvite, Object>() {
+            @Override
+            public Object call(SharingInvite a) {
+                return inviteToMap(a);
+            }
+        }), false);
+    }
+    
+    private void  sendIndividual(String token) throws SQLException, ObjectStoreException {
+        SharingInvite invite;
+        
+        try {
+            invite = SharingInvite.getByToken(im, token);
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException(e.getMessage(), e);
+        }
+        
+        Map<String, Object> toSerialise = inviteToMap(invite);
+        
+        addResultItem(toSerialise, false);
 
-	}
+    }
 
-	private Map<String, Object> inviteToMap(SharingInvite invite) {
-		InterMineBag bag = invite.getBag();
-		Profile inviter = im.getProfileManager().getProfile(bag.getProfileId());
-		
-		Map<String, Object> toSerialise = new HashMap<String, Object>();
-		toSerialise.put("uid", invite.getToken());
-		toSerialise.put("inviter", inviter.getName());
-		toSerialise.put("list", bag.getName());
-		toSerialise.put("invitee", invite.getInvitee());
-		return toSerialise;
-	}
+    private Map<String, Object> inviteToMap(SharingInvite invite) {
+        InterMineBag bag = invite.getBag();
+        Profile inviter = im.getProfileManager().getProfile(bag.getProfileId());
+        
+        Map<String, Object> toSerialise = new HashMap<String, Object>();
+        toSerialise.put("uid", invite.getToken());
+        toSerialise.put("inviter", inviter.getName());
+        toSerialise.put("list", bag.getName());
+        toSerialise.put("invitee", invite.getInvitee());
+        return toSerialise;
+    }
 
 }

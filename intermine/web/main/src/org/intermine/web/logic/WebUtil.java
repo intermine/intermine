@@ -19,6 +19,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -588,6 +589,26 @@ public abstract class WebUtil
         }
 
         return formatPathDescription(p, pq, config);
+    }
+
+    /**
+     * So we can test set membership in JSPs.
+     * @param things The things
+     * @param o The thing
+     * @return Whether the thing is one of the things.
+     */
+    public static boolean contains(Collection<?> things, Object o) {
+        return things.contains(o);
+    }
+
+    /**
+     * So we can test map membership in JSPs.
+     * @param mapping The things
+     * @param o The thing
+     * @return Whether the thing is one of the keys in things.
+     */
+    public static boolean containsKey(Map<?, ?> mapping, Object o) {
+        return mapping.containsKey(o);
     }
 
     /**
