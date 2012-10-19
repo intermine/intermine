@@ -11,6 +11,7 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.UserPreferences;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.template.TemplatePrecomputeHelper;
@@ -118,6 +120,11 @@ public class MyMineController extends TilesAction
                         new ActionMessage("bags.invalid.notice"));
             }
             saveErrors(request, actionErrors);
+        }
+
+        if (onSubTab(request, "account")) {
+            session.setAttribute("SPECIAL_PREFERENCES", UserPreferences.COMMON_KEYS);
+            session.setAttribute("BOOLEAN_PREFERENCES", UserPreferences.BOOLEAN_KEYS);
         }
         return null;
     }
