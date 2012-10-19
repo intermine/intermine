@@ -451,8 +451,8 @@ public class GFF3Record
                 String newValue;
                 try {
                     newValue = URLEncoder.encode("" + oldValue, "UTF-8");
-                    // decode white space from "+"
-                    newValue = newValue.replaceAll("\\+", " ");
+                    newValue = newValue.replaceAll("\\+", " "); // decode white space from "+"
+                    newValue = newValue.replaceAll("%3A", ":");
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("error while encoding: " + oldValue, e);
                 }

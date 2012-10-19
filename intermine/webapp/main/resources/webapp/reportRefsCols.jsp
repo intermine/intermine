@@ -38,7 +38,7 @@
         <div id="${fn:replace(aspectPlacement, ":", "_")}${fieldName}_table" class="collection-table">
         <a name="${fieldName}" class="anchor"></a>
         <h3>
-          <c:if test="${IS_SUPERUSER}">
+          <c:if test="${SHOW_TAGS}">
             <div class="right">
               <c:set var="descriptor" value="${collection.descriptor}" />
               <tiles:insert name="inlineTagEditor.tile">
