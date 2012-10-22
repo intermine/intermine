@@ -71,6 +71,7 @@ public class Profile
     protected boolean savingDisabled;
     private SearchRepository searchRepository;
     private String token;
+    private Map<String, String> preferences;
 
     /**
      * True if this account is purely local. False if it was created
@@ -112,6 +113,13 @@ public class Profile
         }
         searchRepository = new UserRepository(this);
         this.token = token;
+        if (this.userId != null) {
+            // preferences backed by DB.
+            this.preferences = manager.getPreferences(this);
+        } else {
+            // preferences just stored in memory.
+            this.preferences = new HashMap<String, String>();
+        }
     }
 
     /**
@@ -199,6 +207,17 @@ public class Profile
     }
 
     /**
+     * Get this user's preferred email address.
+     * @return This user's email address.
+     */
+    public String getEmailAddress() {
+        if (preferences.containsKey(UserPreferences.EMAIL)) {
+            return preferences.get(UserPreferences.EMAIL);
+        }
+        return getUsername();
+    }
+
+    /**
      * Return a first part of the username before the "@" sign (used in metabolicMine)
      * @author radek
      *
@@ -266,7 +285,14 @@ public class Profile
      * @param userId an Integer
      */
     public void setUserId(Integer userId) {
+        Integer oldId = getUserId();
         this.userId = userId;
+        if (this.userId != null && !this.userId.equals(oldId)) { // Need to update the preferences
+            Map<String, String> oldPrefs = preferences;
+            this.preferences = manager.getPreferences(this);
+            preferences.putAll(oldPrefs);
+            oldPrefs.clear(); // Delete them now that they are copied over.
+        }
     }
 
     /**
@@ -801,5 +827,25 @@ public class Profile
         if (searchRepository instanceof UserRepository) {
             ((UserRepository) searchRepository).updateUserRepositoryWithSharedBags();
         }
+    }
+
+    /**
+     * Get the object representing the preferences of this user.
+     *
+     * Changes to this user's preferences can be written directly into
+     * this object.
+     * @return A representation of the preferences of a user.
+     */
+    public Map<String, String> getPreferences() {
+        return preferences;
+    }
+
+    /**
+     * Determine whether a user perfers a certain thing or not.
+     * @param The name of the preference.
+     * @return Whether this preference is set by this user.
+     */
+    public boolean prefers(String preference) {
+        return preferences.containsKey(preference);
     }
 }

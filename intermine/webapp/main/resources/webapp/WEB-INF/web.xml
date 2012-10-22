@@ -1068,6 +1068,52 @@
       </method>
      </metadata>
    </servlet-mapping>
+   
+    <servlet>
+     <servlet-name>ws-user-preferences</servlet-name>
+     <servlet-class>org.intermine.webservice.server.user.PreferencesServlet</servlet-class>
+   </servlet>
+   
+   <servlet-mapping>
+     <servlet-name>ws-user-preferences</servlet-name>
+     <url-pattern>/service/user/preferences/*</url-pattern>
+     <metadata>
+       <name>User Preferences</name>
+       <minVersion>11</minVersion>
+       <method type="POST" also="PUT" requiresAuthentication="true">
+          <name>Set Preference(s)</name>
+          <summary>Set the value of one or more preferences</summary>
+          <description>
+            Blah... todo
+          </description>
+          <param type="String" required="false" repeat="true" description="The preference to set">?</param>
+          <returns>
+            <format key="preferences">json</format>
+          </returns>
+      </method>
+      <method type="GET" requiresAuthentication="true">
+          <name>Invitation Details</name>
+          <summary>Get a user's preferences</summary>
+          <description>
+            Blah... todo
+          </description>
+          <returns>
+            <format key="preferences">json</format>
+          </returns>
+      </method>
+      <method type="DELETE" requiresAuthentication="true" slug="/:uid">
+          <name>Delete Preference(s)</name>
+          <summary>Remove one or all preferences.</summary>
+          <description>
+            Blah... todo
+          </description>
+          <param type="String" required="false" description="The preference to delete. If not provided, all will be cleared">key</param>
+          <returns>
+            <format key="preferences">json</format>
+          </returns>
+      </method>
+     </metadata>
+   </servlet-mapping>
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>

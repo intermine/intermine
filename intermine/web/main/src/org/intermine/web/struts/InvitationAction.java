@@ -53,7 +53,7 @@ public class InvitationAction extends InterMineAction {
             sbm.acceptInvitation(invite, p);
             emailer.email(
                 pm.getProfileUserName(invite.getBag().getProfileId()), "was-accepted",
-                invite.getCreatedAt(), invite.getInvitee(), invite.getBag(), p.getUsername(),
+                invite.getCreatedAt(), invite.getInvitee(), invite.getBag().getName(), p.getUsername(),
                 props.getProperty("project.title"));
             return forwardToBagDetails(mapping, invite);
         } catch (MessagingException e) {

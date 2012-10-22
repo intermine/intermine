@@ -62,7 +62,7 @@
     </c:when>
 
     <%-- api key --%>
-    <c:when test="${subtabs[subtabName]  =='apikey'}">
+    <c:when test="${subtabs[subtabName]  =='account'}">
       <tiles:insert name="manageApiKey.jsp" />
     </c:when>
 

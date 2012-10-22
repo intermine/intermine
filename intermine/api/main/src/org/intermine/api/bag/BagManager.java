@@ -273,7 +273,7 @@ public class BagManager
      * Share the bag given in input with the user which userName input
      * @param bagName the bag name to share
      * @param bagOwnerUserName the owner of the bag to share
-     * @param userName the user which the bag is shared with
+     * @param userName the user with whom the bag is shared
      * @throws UserNotFoundException if the user does't exist
      * @throws UserAlreadyShareBagException if the bag is already shared by the user
      */
@@ -287,7 +287,20 @@ public class BagManager
         }
         sharedBagManager.shareBagWithUser(bag, userName);
     }
-    
+
+    /**
+     * Let the recipient gain access to this bag in future uses of the application.
+     * @param bag the bag to share
+     * @param recipient the user with whom which the bag is shared
+     * @throws UserNotFoundException if the user does't exist
+     * @throws UserAlreadyShareBagException if the bag is already shared by the user
+     */
+    public void shareBagWithUser(InterMineBag bag, Profile recipient)
+            throws UserNotFoundException, UserAlreadyShareBagException {
+        if (recipient == null) throw new UserNotFoundException("recipient is null");
+        sharedBagManager.shareBagWithUser(bag, recipient.getUsername());
+    }
+
     /**
      * Unshare the bag with the user given in input
      * @param bagName the bag to un-share
