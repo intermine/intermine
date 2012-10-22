@@ -455,7 +455,7 @@ public abstract class WebService
                         + "Authorization field contains invalid value. "
                         + "Decoded authorization value: " + parts[0]);
                 }
-                final String username = parts[0];
+                final String username = StringUtils.lowerCase(parts[0]);
                 final String password = parts[1];
 
                 permission = pm.getPermission(username, password, im.getClassKeys());
