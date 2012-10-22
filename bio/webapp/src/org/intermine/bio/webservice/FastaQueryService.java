@@ -32,7 +32,10 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
 public class FastaQueryService extends AbstractQueryService
 {
 
+    private static final String EXT = "extension";
+    private static final String TOO_MANY_COLUMNS = "Queries for this webservice may only have one output column";
     private static final String XML_PARAM = "query";
+    private static final int COLUMN = 0;
 
     /**
      * Constructor.
@@ -67,45 +70,30 @@ public class FastaQueryService extends AbstractQueryService
 
     @Override
     protected void execute() throws Exception {
-        Profile profile = getPermission().getProfile();
+        final Profile profile = getPermission().getProfile();
+        final PathQuery pq = getQuery(getRequiredParameter(XML_PARAM));
+        final int extension = parseExtension(getOptionalParameter(EXT, "0"));
 
-        final String xml = request.getParameter(XML_PARAM);
-        if (StringUtils.isBlank(xml)) {
-            throw new MissingParameterException(XML_PARAM);
-        }
-        PathQuery pathQuery = getQuery(xml);
-
-        final String extension = request.getParameter("extension");
-
-        exportFasta(profile, pathQuery, extension);
+        exportFasta(profile, pq, extension);
     }
 
-    private void exportFasta(final Profile profile, final PathQuery pathQuery,
-            final String extension) {
-        int index = 0;
+    private void exportFasta(final Profile profile, final PathQuery pathQuery, final int extension) throws Exception {
 
-        Exporter exporter;
+        ObjectStore objStore = im.getObjectStore();
+        Exporter exporter = new SequenceExporter(objStore, os, COLUMN, im.getClassKeys(), extension);
+        ExportResultsIterator iter = null;
+
         try {
-            ObjectStore objStore = im.getObjectStore();
-            exporter = new SequenceExporter(objStore, os, index,
-                    im.getClassKeys(), parseExtension(extension));
-
-            ExportResultsIterator iter = null;
-            try {
-                PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
-                iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
-                iter.goFaster();
-                exporter.export(iter);
-            } finally {
-                if (iter != null) {
-                    iter.releaseGoFaster();
-                }
+            PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+            iter = executor.execute(pathQuery, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
+            iter.goFaster();
+            exporter.export(iter);
+        } finally {
+            if (iter != null) {
+                iter.releaseGoFaster();
             }
-        } catch (Exception e) {
-            throw new InternalErrorException("Service failed:" + e, e);
         }
     }
-
 
     /**
      * Return the query specified in the request, shorn of all duplicate
@@ -119,8 +107,7 @@ public class FastaQueryService extends AbstractQueryService
         PathQuery pq = builder.getQuery();
 
         if (pq.getView().size() > 1) {
-            throw new BadRequestException(
-                    "Queries for this webservice may only have one output column");
+            throw new BadRequestException(TOO_MANY_COLUMNS);
         }
 
         return pq;

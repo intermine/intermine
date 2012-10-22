@@ -219,14 +219,16 @@ class ProfileManagerHandler extends DefaultHandler
                 version = Integer.parseInt(value);
             }
             ObjectStoreWriter userprofileOsw = profileManager.getProfileObjectStoreWriter();
+            Connection con = null;
             try {
-                Connection con = ((ObjectStoreInterMineImpl) userprofileOsw).getConnection();
+                con = ((ObjectStoreInterMineImpl) userprofileOsw).getConnection();
                 if (!DatabaseUtil.tableExists(con, "bagvalues")) {
                     DatabaseUtil.createBagValuesTables(con);
                 }
-                ((ObjectStoreInterMineImpl) userprofileOsw).releaseConnection(con);
             } catch (SQLException sqle) {
                 LOG.error("Problem retrieving connection", sqle);
+            } finally {
+                ((ObjectStoreInterMineImpl) userprofileOsw).releaseConnection(con);
             }
             sharedBagsByUsers = new HashedMap();
         }
@@ -252,7 +254,8 @@ class ProfileManagerHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
         if ("userprofile".equals(qName)) {
-            Profile profile = profileHandler.getProfile();
+            Profile profile;
+            profile = profileHandler.getProfile();
             profileManager.createProfileWithoutBags(profile);
             try {
                 Map<String, Set<BagValue>> bagValues = profileHandler.getBagsValues();
@@ -261,6 +264,17 @@ class ProfileManagerHandler extends DefaultHandler
                 }
             } catch (ObjectStoreException ose) {
                 throw new SAXException(ose);
+            }
+            // Must come after the bags themselves have been stored.
+            try {
+                // Make sure the tables we need exist.
+                SharedBagManager sbm = SharedBagManager.getInstance(profileManager);
+                profileHandler.getInvitationHandler().storeInvites(profile);
+            } catch (SQLException e) {
+                LOG.error("Cannot store invitations", e);
+                if (abortOnError) {
+                    throw new SAXException(e);
+                }
             }
             Set<Tag> tags = profileHandler.getTags();
             TagManager tagManager =

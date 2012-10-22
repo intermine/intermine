@@ -133,7 +133,7 @@
    <c:if test="${PROFILE.local}">
        <c:set var="itemList" value="${itemList} mymine:mymine.password.tab.title:password:1"/>
    </c:if>
-    <c:set var="itemList" value="${itemList} mymine:mymine.apikey.tab.title:apikey:1"/>
+    <c:set var="itemList" value="${itemList} mymine:mymine.account.tab.title:account:1"/>
   <fmt:message key="${pageName}.tab" var="tab" />
   <c:choose>
     <c:when test="${tab == 'mymine'}">

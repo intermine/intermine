@@ -11,13 +11,13 @@ package org.intermine.webservice.server.user;
  */
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
-import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
 /**
@@ -53,19 +53,17 @@ public class WhoAmIService extends JSONService
     }
 
     @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> retval = super.getHeaderAttributes();
-        retval.put(JSONFormatter.KEY_INTRO, "\"user\":");
-        return retval;
+    protected String getResultsKey() {
+        return "user";
     }
 
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        JSONObject user = new JSONObject();
-        user.put("username", profile.getUsername());
-
-        output.addResultItem(Arrays.asList(user.toString()));
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("username", profile.getUsername());
+        data.put("preferences", profile.getPreferences());
+        addResultItem(data, false);
     }
 
 

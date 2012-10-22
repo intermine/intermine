@@ -73,7 +73,21 @@
  	<function-signature>
  		org.intermine.template.TemplateQuery populateTemplateWithObject(org.intermine.template.TemplateQuery, org.intermine.model.InterMineObject )
  	</function-signature>
-  </function>	
+  </function>
+  
+  
+  <function>
+      <name>contains</name>
+      <function-class>org.intermine.web.logic.WebUtil</function-class>
+      <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
+  </function>
+  
+  <function>
+      <name>containsKey</name>
+      <function-class>org.intermine.web.logic.WebUtil</function-class>
+      <function-signature>boolean containsKey(java.util.Map, java.lang.Object)</function-signature>
+  </function>
+  
 
 
 </taglib>

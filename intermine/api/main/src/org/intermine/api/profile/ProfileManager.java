@@ -270,28 +270,23 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
-    	// Duplicate cache check, but better this than do I/O, which getClassKeys must do
-    	Profile profile = profileCache.get(username);
-        if (profile != null) {
-            return profile;
-        }
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
         return getProfile(username, classKeys);
     }
     
-	public Profile getProfile(int id) {
-		Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
-		UserProfile up;
-		try {
-			up = (UserProfile) uosw.getObjectById(id, UserProfile.class);
-		} catch (ObjectStoreException e) {
-			throw new RuntimeException("Error retrieving profile", e);
-		}
-		if (up != null && profileCache.containsKey(up.getUsername())) {
-			return profileCache.get(up.getUsername());
-		}
-		return wrapUserProfile(up, classKeys);
-	}
+    public Profile getProfile(int id) {
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
+        UserProfile up;
+        try {
+            up = (UserProfile) uosw.getObjectById(id, UserProfile.class);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving profile", e);
+        }
+        if (up != null && profileCache.containsKey(up.getUsername())) {
+            return profileCache.get(up.getUsername());
+        }
+        return wrapUserProfile(up, classKeys);
+    }
 
     /**
      * Load keys that describe how objects should be uniquely identified
@@ -328,6 +323,21 @@ public class ProfileManager
         UserProfile userProfile = getUserProfile(username);
 
         if (userProfile == null) {
+            // See if we can resolve the user by an alias.
+            Integer trueId;
+            try {
+                // See if this is one of the unique mappings.
+                for (String pref: UserPreferences.UNIQUE_KEYS) {
+                    trueId = getPreferencesManager().getUserWithUniqueMapping(pref, username);
+                    if (trueId != null) {
+                        return getProfile(trueId);
+                    }
+                }
+            } catch (DuplicateMappingException e) {
+                LOG.error("DB in in an illegal state", e);
+            } catch (SQLException e) {
+                LOG.warn(e);
+            }
             return null;
         }
         
@@ -335,10 +345,10 @@ public class ProfileManager
     }
     
     private synchronized Profile wrapUserProfile(UserProfile userProfile,
-    		Map<String, List<FieldDescriptor>> classKeys) {
-    	if (userProfile == null) {
-			return null;
-		}
+            Map<String, List<FieldDescriptor>> classKeys) {
+        if (userProfile == null) {
+            return null;
+        }
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
         Map<String, InvalidBag> savedInvalidBags = new HashMap<String, InvalidBag>();
         Query q = new Query();
@@ -701,14 +711,14 @@ public class ProfileManager
      * @return the name of the user, or null.
      */
     public synchronized String getProfileUserName(int profileId) {
-		try {
-			UserProfile profile = (UserProfile) uosw.getObjectById(profileId, UserProfile.class);
-			return profile.getUsername();
-		} catch (ObjectStoreException e) {
-			return null; // Not in DB.
-		} catch (NullPointerException e) {
-			return null; // profile was null (impossible!)
-		}
+        try {
+            UserProfile profile = (UserProfile) uosw.getObjectById(profileId, UserProfile.class);
+            return profile.getUsername();
+        } catch (ObjectStoreException e) {
+            return null; // Not in DB.
+        } catch (NullPointerException e) {
+            return null; // profile was null (impossible!)
+        }
     }
 
     /**
@@ -1163,6 +1173,28 @@ public class ProfileManager
             super(message);
         }
 
+    }
+
+    /**
+     * Get the preferences for a profile.
+     * @param profile The profile to retrieve preferences for.
+     * @return A user-preferences map.
+     */
+    protected UserPreferences getPreferences(Profile profile) {
+        try {
+            return new UserPreferences(getPreferencesManager(), profile);
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not retrieve user-preferences", e);
+        }
+    }
+
+    private PreferencesManager preferencesManager = null;
+
+    private PreferencesManager getPreferencesManager() {
+        if (preferencesManager == null) {
+            preferencesManager = new PreferencesManager(uosw);
+        }
+        return preferencesManager;
     }
 
 }

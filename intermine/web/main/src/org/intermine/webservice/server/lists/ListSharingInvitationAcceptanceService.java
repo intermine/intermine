@@ -136,10 +136,11 @@ public class ListSharingInvitationAcceptanceService extends JSONService {
         Emailer emailer = InterMineContext.getEmailer();
         ProfileManager pm = im.getProfileManager();
         Profile receiver = getPermission().getProfile();
+        Profile owner = pm.getProfile(invite.getBag().getProfileId());
 
         try {
         emailer.email(
-                pm.getProfileUserName(invite.getBag().getProfileId()), "was-accepted",
+                owner.getEmailAddress(), "was-accepted",
                 invite.getCreatedAt(), invite.getInvitee(), invite.getBag(),
                 receiver.getUsername(), webProperties.getProperty("project.title"));
         } catch (MessagingException e) {
