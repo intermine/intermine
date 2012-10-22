@@ -323,13 +323,15 @@ public class ProfileManager
         UserProfile userProfile = getUserProfile(username);
 
         if (userProfile == null) {
-            // See if we can resolve the user by alias.
+            // See if we can resolve the user by an alias.
             Integer trueId;
             try {
-                trueId = getPreferencesManager().getUserWithUniqueMapping(
-                    UserPreferences.ALIAS, username);
-                if (trueId != null) {
-                    return getProfile(trueId);
+                // See if this is one of the unique mappings.
+                for (String pref: UserPreferences.UNIQUE_KEYS) {
+                    trueId = getPreferencesManager().getUserWithUniqueMapping(pref, username);
+                    if (trueId != null) {
+                        return getProfile(trueId);
+                    }
                 }
             } catch (DuplicateMappingException e) {
                 LOG.error("DB in in an illegal state", e);

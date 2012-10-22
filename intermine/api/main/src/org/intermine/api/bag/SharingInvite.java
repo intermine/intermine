@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -23,6 +24,8 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.intermine.SQLOperation;
 
 public class SharingInvite {
+
+    private static final Logger LOG = Logger.getLogger(SharingInvite.class);
 
     public static class NotFoundException extends Exception {
 
@@ -188,9 +191,9 @@ public class SharingInvite {
                     stm.setInt(2, bag.getProfileId());
                     stm.setString(3, token);
                     stm.setString(4, invitee);
-    
+
                     stm.executeUpdate();
-    
+
                     return null;
                 }
             });
@@ -284,7 +287,7 @@ public class SharingInvite {
         SavedBag savedBag = (SavedBag) os.getObjectById(rep.bagId, SavedBag.class);
         InterMineBag bag = bm.getBag(inviter, savedBag.getName());
         return new SharingInvite( bag, rep.invitee, rep.token,
-                rep.acceptedAt, rep.createdAt, rep.accepted);
+                rep.createdAt, rep.acceptedAt, rep.accepted);
     }
 
     public static class IntermediateRepresentation {
