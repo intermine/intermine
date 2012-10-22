@@ -109,7 +109,7 @@ public class NullRefs {
             }
         }
     }
-    
+
     @Before
     public void setup() {
         try {
@@ -119,7 +119,7 @@ public class NullRefs {
             return;
         } 
     }
-    
+
     @After
     public void teardown() {
         if (osw != null) {
@@ -204,11 +204,11 @@ public class NullRefs {
         Query q = makeQuery(pq);
         doNullRefTests(q);
     }
-    
+
     private void doNullRefTests(Query q) {
         doTest(q, 2, 20);
     }
-    
+
     @Test
     public void nonNullRefs() {
         Query q = new Query();
@@ -283,6 +283,32 @@ public class NullRefs {
         System.out.println(q.toString());
         doNonNullCollectionTests(q);
     }
+
+    @Test
+    public void nonNullPathQueryCollectionsUnmarshall() {
+        String xml = "<query model=\"testmodel\" view=\"Department.name\">"
+            + "<constraint path=\"Department.name\" op=\"=\" value=\"temp-*\"/>"
+            + "<constraint path=\"Department.employees\" op=\"IS NOT NULL\"/>"
+            + "</query>";
+        PathQuery pq = PathQueryBinding.unmarshalPathQuery(
+            new StringReader(xml), PathQuery.USERPROFILE_VERSION);
+
+        Query q = makeQuery(pq);
+        doNonNullCollectionTests(q);
+    }
+
+    @Test
+    public void nonNullPathQueryCollectionsSynonymUnmarshall() {
+        String xml = "<query model=\"testmodel\" view=\"Department.name\">"
+            + "<constraint path=\"Department.name\" op=\"=\" value=\"temp-*\"/>"
+            + "<constraint path=\"Department.employees\" op=\"IS NOT EMPTY\"/>"
+            + "</query>";
+        PathQuery pq = PathQueryBinding.unmarshalPathQuery(
+            new StringReader(xml), PathQuery.USERPROFILE_VERSION);
+
+        Query q = makeQuery(pq);
+        doNonNullCollectionTests(q);
+    }
     
     private void doNonNullCollectionTests(Query q) {
         Results res = osw.execute(q, 50000, true, false, true);
@@ -308,7 +334,7 @@ public class NullRefs {
     public void nullCollections() {
         QueryClass dep = new QueryClass(Department.class);
         QueryClass emp = new QueryClass(Employee.class);
-        
+
         Query q = new Query();
         q.addFrom(dep);
         q.addToSelect(dep);
@@ -317,7 +343,7 @@ public class NullRefs {
         cons.addConstraint(
             new SimpleConstraint(nameF, ConstraintOp.MATCHES, new QueryValue("temp-%")));
         q.setConstraint(cons);
-        
+
         Query subQ = new Query();
         subQ.alias(dep, q.getAliases().get(dep)); // W. T. F. 
         subQ.setDistinct(false);
