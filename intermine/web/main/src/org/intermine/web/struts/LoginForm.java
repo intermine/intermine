@@ -33,6 +33,8 @@ public class LoginForm extends ActionForm
     /**
      * Gets the value of username
      *
+     * The user name is <em>always</em> returned in <strong>LOWER CASE</strong>.
+     *
      * @return the value of username
      */
     public String getUsername()  {
