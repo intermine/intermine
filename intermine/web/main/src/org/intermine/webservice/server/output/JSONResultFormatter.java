@@ -67,7 +67,7 @@ public abstract class JSONResultFormatter extends JSONFormatter
                 } else {
                     // Format as attribute
                     String attr = (attributes.get(key) == null) ? null : attributes.get(key).toString();
-                    sb.append(quote(StringEscapeUtils.escapeJavaScript(attr)));
+                    sb.append(quote(StringEscapeUtils.escapeJava(attr)));
                 }
                 sb.append(",");
             }
