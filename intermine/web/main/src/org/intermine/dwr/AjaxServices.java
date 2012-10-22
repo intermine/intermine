@@ -1500,7 +1500,11 @@ public class AjaxServices
     }
 
     /**
-     * Return the list of userssharign the bag in input
+     * Return the list of users who have access to this bag because it has been
+     * shared with them.
+     *
+     * TODO: present pretty names for open-id users.
+     *
      * @param bagName the bag name that the users share
      * @return the list of users
      */
