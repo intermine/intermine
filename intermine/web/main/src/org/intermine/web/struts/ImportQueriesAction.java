@@ -46,11 +46,9 @@ public class ImportQueriesAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = SessionMethods.getProfile(session);
-        BagManager bagManager = im.getBagManager();
-        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
 
         Map<String, PathQuery> queries = null;
-        queries = qif.getQueryMap(allBags);
+        queries = qif.getQueryMap();
 
 
         if (queries.size() == 1
@@ -84,7 +82,7 @@ public class ImportQueriesAction extends InterMineAction
             boolean validNameQuery = true;
             for (String queryName : queries.keySet()) {
                 PathQuery query = queries.get(queryName);
-                queryName = NameUtil.validateName(allBags.keySet(), queryName);
+                queryName = NameUtil.validateName(profile.getSavedQueries().keySet(), queryName);
                 //to improve!! return a badqueryexception
                 if (queryName.isEmpty()) {
                     validNameQuery = false;
