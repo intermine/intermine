@@ -94,7 +94,6 @@
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />
       <property name="src.data.dir.includes" value="gene2pubmed" />
-      <property name="infoFile" location="/micklem/data/pubmed/current/gene_info" />
     </source>
     <source name="omim" type="omim">
       <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
