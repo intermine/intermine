@@ -224,7 +224,7 @@ public class OmimConverter extends BioDirectoryConverter
             String[] symbols = symbolStr.split(",");
             // main HGNC symbols is first, others are synonyms
             String symbolFromFile = symbols[0].trim();
-            String ncbiGeneNumber = resolveGene(symbolFromFile.toLowerCase());
+            String ncbiGeneNumber = resolveGene(symbolFromFile);
             if (ncbiGeneNumber != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);
@@ -342,7 +342,7 @@ public class OmimConverter extends BioDirectoryConverter
     }
     private String getGeneIdentifier(String symbol) throws ObjectStoreException {
         String geneIdentifier = null;
-        String entrezGeneNumber = resolveGene(symbol.toLowerCase());
+        String entrezGeneNumber = resolveGene(symbol);
         if (entrezGeneNumber != null) {
             geneIdentifier = genes.get(entrezGeneNumber);
             if (geneIdentifier == null) {
