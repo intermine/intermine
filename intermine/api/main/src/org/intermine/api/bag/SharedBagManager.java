@@ -288,7 +288,6 @@ public class SharedBagManager
         } catch (SQLException e) {
             throw new RuntimeException("Error accepting invitation", e);
         }
-        
         try {
             shareBagWithUser(invitation.getBag(), accepter.getUsername());
         } catch (UserNotFoundException e) {

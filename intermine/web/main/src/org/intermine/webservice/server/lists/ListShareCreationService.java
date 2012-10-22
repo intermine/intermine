@@ -20,6 +20,7 @@ import org.intermine.api.profile.UserPreferences;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.Emailer;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.Constants;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -66,7 +67,7 @@ public class ListShareCreationService extends JSONService {
             // scrape for usernames. But the you can do the same
             // thing in the registration service...
             recipient = pm.getProfile(recipientName);
-            if (recipient == null || recipient.getPreferences().containsKey(UserPreferences.HIDDEN)) {
+            if (recipient == null || recipient.prefers(Constants.HIDDEN)) {
                 throw new ResourceNotFoundException("The value of the 'with' parameter is not the name of user you can share lists with");
             }
 
@@ -75,11 +76,17 @@ public class ListShareCreationService extends JSONService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResultsKey() {
         return "share";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void execute() throws Exception {
          UserInput input = new UserInput();
@@ -89,8 +96,6 @@ public class ListShareCreationService extends JSONService {
              sbm.shareBagWithUser(input.bag, input.recipient.getUsername());
          } catch (UserAlreadyShareBagException e) {
              throw new BadRequestException("This bag is already shared with this user", e);
-         } catch (UserNotFoundException e) {
-             throw new InternalErrorException("The userprofile is confused.", e);
          }
 
          Map<String, Object> data = new HashMap<String, Object>();
@@ -98,11 +103,11 @@ public class ListShareCreationService extends JSONService {
 
          addResultItem(data, false);
 
-         if (input.notify) {
+         if (input.notify && !input.recipient.prefers(Constants.NO_SPAM)) {
              try {
                  emailer.informUserOfNewSharedBag(input.recipient.getEmailAddress(), input.owner, input.bag);
              } catch (Exception e) {
-                 LOG.warn("Could not email recipient: " + input.recipient.getEmailAddress());
+                 LOG.warn("Could not email recipient: " + input.recipient, e);
              }
          }
     }

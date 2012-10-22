@@ -233,4 +233,12 @@ public final class Constants
      * The key for the open-id providers located in the servlet context.
      */
     public static final String OPENID_PROVIDERS = "OPENID_PROVIDERS";
+
+    /* The names of various user preferences known to the web application */
+
+    /** The preference set if the user does not like lots of emails */
+    public static final String NO_SPAM = "do_not_spam";
+
+    /** The preference set if the user does not want to be found */
+    public static final String HIDDEN = "hidden";
 }

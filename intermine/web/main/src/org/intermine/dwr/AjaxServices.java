@@ -1454,7 +1454,7 @@ public class AjaxServices
         if (bag == null) {
             return "This is not one of your lists";
         }
-        if (invitee == null || invitee.getPreferences().containsKey(UserPreferences.HIDDEN)) {
+        if (invitee == null || invitee.getPreferences().containsKey(Constants.HIDDEN)) {
             return "User not found."; // Users can request not to be found.
         }
         if (profile.getUsername().equals(userName)) {
@@ -1469,7 +1469,7 @@ public class AjaxServices
         }
 
         try {
-            if (!invitee.getPreferences().containsKey(UserPreferences.NO_SPAM)) {
+            if (!invitee.getPreferences().containsKey(Constants.NO_SPAM)) {
                 emailer.informUserOfNewSharedBag(invitee.getEmailAddress(), profile, bag);
             }
         } catch (Exception ex) {

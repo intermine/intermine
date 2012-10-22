@@ -4,27 +4,66 @@ import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.util.PropertiesUtil;
 
 public class UserPreferences extends AbstractMap<String, String> {
 
-    /* Some commonly used preference names */
-    public static final String NO_SPAM = "do_not_spam"; // If this key is set at all, then we should not send extra emails to the user.
-    public static final String HIDDEN = "hidden"; // If this key is set at all, then we should not let other users discover this one.
-    public static final String ALIAS = "alias"; // The alias of this user.
+//    /* Some commonly used preference names */
+//    public static final String NO_SPAM = "do_not_spam"; // If this key is set at all, then we should not send extra emails to the user.
+//    public static final String HIDDEN = "hidden"; // If this key is set at all, then we should not let other users discover this one.
+//    public static final String ALIAS = "alias"; // The alias of this user.
+
+    // This is known to the API as the Profile needs to read this to provide getEmailAddress().
     public static final String EMAIL = "email"; // The preferred address to send emails to.
-    public static final Set<String> COMMON_KEYS =
-            Collections.unmodifiableSet(new LinkedHashSet<String>(Arrays.asList(NO_SPAM, HIDDEN, ALIAS, EMAIL)));
-    public static final Set<String> BOOLEAN_KEYS =
-            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(NO_SPAM, HIDDEN)));
-    public static final Set<String> UNIQUE_KEYS =
-            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(ALIAS)));
+
+    public static final Set<String> COMMON_KEYS;
+    public static final Set<String> BOOLEAN_KEYS;
+    public static final Set<String> UNIQUE_KEYS;
+
+    static {
+        Properties props = PropertiesUtil.getPropertiesStartingWith("api.profile.preferences.names");
+        Set<String> all = new LinkedHashSet<String>(),
+                bools = new LinkedHashSet<String>(),
+                uniques = new LinkedHashSet<String>();
+        Enumeration<Object> keys = props.keys();
+        while (keys.hasMoreElements()) {
+            String key = String.valueOf(keys.nextElement());
+            String value = props.getProperty(key);
+            all.add(value);
+            if (StringUtils.contains(key, "bool")) {
+                bools.add(value);
+            } else if (StringUtils.contains(key, "unique")) {
+                uniques.add(value);
+            }
+        }
+        /* 
+         * START OF HACK
+         * For now, this is a total hack. But this should be replaced by a working
+         * properties based solution.
+         * TODO: rip out this hack and make all these properties configurable.
+         */
+        bools.add("do_not_spam");
+        bools.add("hidden");
+        uniques.add("alias");
+        all.addAll(bools);
+        all.addAll(uniques);
+        /* END OF HACK */
+        all.add(EMAIL);
+        COMMON_KEYS = Collections.unmodifiableSet(all);
+        BOOLEAN_KEYS = Collections.unmodifiableSet(bools);
+        UNIQUE_KEYS = Collections.unmodifiableSet(uniques);
+    }
+
     public static final Logger LOG = Logger.getLogger(UserPreferences.class);
 
     private final Map<String, String> backingMap;

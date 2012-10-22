@@ -829,7 +829,23 @@ public class Profile
         }
     }
 
+    /**
+     * Get the object representing the preferences of this user.
+     *
+     * Changes to this user's preferences can be written directly into
+     * this object.
+     * @return A representation of the preferences of a user.
+     */
     public Map<String, String> getPreferences() {
         return preferences;
+    }
+
+    /**
+     * Determine whether a user perfers a certain thing or not.
+     * @param The name of the preference.
+     * @return Whether this preference is set by this user.
+     */
+    public boolean prefers(String preference) {
+        return preferences.containsKey(preference);
     }
 }
