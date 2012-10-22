@@ -220,19 +220,22 @@ public class OmimConverter extends BioDirectoryConverter
                 }
                 counts.get(geneMapType).total++;
             }
-            String symbolStr = bits[1];
-            String[] symbols = symbolStr.split(",");
+
+            // String symbolStr = bits[1];
+            // String[] symbols = symbolStr.split(",");
             // main HGNC symbols is first, others are synonyms
-            String symbolFromFile = symbols[0].trim();
-            String ncbiGeneNumber = resolveGene(symbolFromFile);
-            if (ncbiGeneNumber != null) {
+            // String symbolFromFile = symbols[0].trim();
+
+            String mimId = bits[2];
+            String entrezId = resolveGene(mimId);
+            if (entrezId != null) {
                 resolvedCount++;
                 //String gene = getGeneId(symbol);
                 if (geneMapType != null) {
                     counts.get(geneMapType).resolved++;
                 }
             }
-            String geneId = getGeneIdentifier(symbolFromFile);
+            String geneItemId = getGeneItemId(entrezId);
             m = matchMajorDiseaseNumber.matcher(first);
             String diseaseMimId = null;
             while (m.find()) {
@@ -240,9 +243,9 @@ public class OmimConverter extends BioDirectoryConverter
                 diseaseMimId = m.group(1);
             }
 
-            if (diseaseMimId != null && geneId != null) {
+            if (diseaseMimId != null && geneItemId != null) {
                 Item disease = getDisease(diseaseMimId);
-                disease.addToCollection("genes", geneId);
+                disease.addToCollection("genes", geneItemId);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (String bit : bits) {
@@ -276,15 +279,15 @@ public class OmimConverter extends BioDirectoryConverter
                 + " unique diseases from " + lineCount + " line file.");
     }
 
-    private String resolveGene(String symbol) {
-        int resCount = rslv.countResolutions("" + HUMAN_TAXON, symbol);
+    private String resolveGene(String mimId) {
+        int resCount = rslv.countResolutions("" + HUMAN_TAXON, mimId);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                     + symbol + " count: " + resCount + " - "
-                     + rslv.resolveId("" + HUMAN_TAXON, symbol));
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene - MIM:"
+                     + mimId + " count: " + resCount + " - "
+                     + rslv.resolveId("" + HUMAN_TAXON, mimId));
             return null;
         }
-        return rslv.resolveId("" + HUMAN_TAXON, symbol).iterator().next();
+        return rslv.resolveId("" + HUMAN_TAXON, mimId).iterator().next();
     }
 
     private void processPubmedCitedFile(Reader reader) throws IOException, ObjectStoreException {
@@ -340,20 +343,21 @@ public class OmimConverter extends BioDirectoryConverter
         }
         return pubId;
     }
-    private String getGeneIdentifier(String symbol) throws ObjectStoreException {
-        String geneIdentifier = null;
-        String entrezGeneNumber = resolveGene(symbol);
-        if (entrezGeneNumber != null) {
-            geneIdentifier = genes.get(entrezGeneNumber);
-            if (geneIdentifier == null) {
+
+    private String getGeneItemId(String entrezId) throws ObjectStoreException {
+        String geneItemId = null;
+        // String entrezGeneNumber = resolveGene(symbol);
+        if (entrezId != null) {
+            geneItemId = genes.get(entrezId);
+            if (geneItemId == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("primaryIdentifier", entrezGeneNumber);
+                gene.setAttribute("primaryIdentifier", entrezId);
                 gene.setReference("organism", organism);
                 store(gene);
-                geneIdentifier = gene.getIdentifier();
-                genes.put(entrezGeneNumber, geneIdentifier);
+                geneItemId = gene.getIdentifier();
+                genes.put(entrezId, geneItemId);
             }
         }
-        return geneIdentifier;
+        return geneItemId;
     }
 }
