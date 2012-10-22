@@ -451,9 +451,13 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                         // link to report page by default, unless it says otherwise in config
 
                         if (redirector != null) {
-                            String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
-                            if (linkRedirect != null) {
-                                resultElement.setLinkRedirect(linkRedirect);
+                            try {
+                                String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
+                                if (linkRedirect != null) {
+                                    resultElement.setLinkRedirect(linkRedirect);
+                                }
+                            } catch (ClassCastException e) {
+                                // Simple objects cannot be consumed by redirectors.
                             }
                         }
 
