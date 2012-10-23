@@ -1,7 +1,7 @@
 package org.intermine.web.task;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -68,6 +68,7 @@ public class CreateSearchIndexTask extends Task
             throw new BuildException(e);
         }
         if (!(os instanceof ObjectStoreInterMineImpl)) {
+            // Yes, yes, this is horrific...
             throw new RuntimeException("Got invalid ObjectStore - must be an "
                     + "instance of ObjectStoreInterMineImpl!");
         }

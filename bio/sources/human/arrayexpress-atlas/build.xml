@@ -1,0 +1,5 @@
+<project name="arrayexpress-atlas" default="default" basedir=".">
+  <description>build, test, package arrayexpress-atlas</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

@@ -8,16 +8,17 @@ class LiveResultsTest < Test::Unit::TestCase
 
     def setup
         @service = Service.new("http://localhost/intermine-test")
-        @q = @service.query("Employee").select("*", "department.*").where(:age => {:lt => 50})
-        @empty = @service.query("Employee").where(:name => "DOES NOT EXIST")
-        @exp_count = 73
-        @expected_last = "XML Leader"
-        @expected_last_obj = "XML Leader"
-        @expected_target = 36.3561643835616
-        @expected_two_vowels = 29
-        @exp_trideps = 5
-        @exp_s_deps = 28
         @max = 50
+        @q = @service.query("Employee").select("*", "department.*").where(:age => {:lt => @max})
+        @empty = @service.query("Employee").where(:name => "some-non-existant-value")
+        @exp_count = 82
+        @expected_last = "Didier Legu\303\251lec"
+        @expected_last_summary = "Vincent"
+        @expected_last_obj = "Both Quotes '\""
+        @expected_target = 37.02439
+        @expected_two_vowels = 31
+        @exp_trideps = 5
+        @exp_s_deps = 29
         @exp_row_size = 7
         @rows_args = []
         @results_args = []
@@ -98,8 +99,8 @@ class LiveResultsTest < Test::Unit::TestCase
     end
         
     def testObjectFiltering
-        s_deps = @q.results(*@results_args).select {|o| o.department.name.start_with? "S"}
-        assert_equal(@exp_s_deps, s_deps.length)
+        emps_in_s_deps = @q.results(*@results_args).select {|o| o.department.name.start_with? "S"}
+        assert_equal(@exp_s_deps, emps_in_s_deps.length)
     end
 
     def testSummaryIteration
@@ -122,7 +123,7 @@ class LiveResultsTest < Test::Unit::TestCase
     def testSummaryMapping
         names = @q.summaries("name", *@summary_args).map {|s| s["item"]}
         assert_equal(@exp_count, names.length)
-        assert_equal(@expected_last, names.last)
+        assert_equal(@expected_last_summary, names.last)
     end
 
     def testSummaryFolding
@@ -144,8 +145,9 @@ class LiveTemplateResultsTest < LiveResultsTest
         @empty = @q
         @exp_count = 18
         @expected_last = "Tim Canterbury"
-        @expected_last_obj = "Gareth Keenan"
-        @expected_target = 43.8333333333333 
+        @expected_last_summary = "Tim Canterbury"
+        @expected_last_obj = "Fatou"
+        @expected_target = 47.277778
         @expected_two_vowels = 4
         @dep_size = 18
         @exp_trideps = 1

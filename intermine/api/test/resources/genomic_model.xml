@@ -65,7 +65,7 @@
 <class name="ChromosomalTranslocation" extends="ChromosomeStructureVariation" is-interface="true"></class>
 <class name="Comment" is-interface="true">
     <attribute name="type" type="java.lang.String"/>
-    <attribute name="text" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
     <collection name="publications" referenced-type="Publication"/>
 </class>
 <class name="InteractionTerm" extends="OntologyTerm" is-interface="true"></class>

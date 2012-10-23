@@ -5,6 +5,8 @@
 <struts-config>
   <!-- ========== Form Bean Definitions =================================== -->
   <form-beans>
+    <form-bean name="invitationForm" type="org.intermine.web.struts.InvitationForm"/>
+    <form-bean name="queryForm" type="org.intermine.web.struts.QueryForm"/>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
@@ -33,6 +35,7 @@
     <form-bean name="csvExportForm" type="org.intermine.web.struts.CSVExportForm"/>
     <form-bean name="passwordResetForm" type="org.intermine.web.struts.PasswordResetForm"/>
     <form-bean name="editPropertyForm" type="org.intermine.web.struts.EditPropertiesForm"/>
+    <form-bean name="modifySuperUserForm" type="org.intermine.web.struts.ModifySuperUserForm"/>
     <!-- don't (re)move this - it's used for importing any model-specific forms -->
     <!--@MODEL_FORM_INCLUDE@-->
   </form-beans>
@@ -71,6 +74,8 @@
     <action path="/contact" forward="contact.page">
     </action>
     <action path="/contextHelp" forward="contextHelp.page">
+    </action>
+    <action path="viewInvitation" forward="viewInvitation.page" name="invitationForm" validate="false" type="org.intermine.web.struts.InvitationAction">
     </action>
 
     <action path="/templateProblems" forward="templateProblems.page"/>
@@ -317,6 +322,15 @@
     <action path="/bagUpgrade" type="org.intermine.web.struts.BagUpgradeAction">
       <forward name="bagUploadConfirm" path="bagUploadConfirm.page"/>
     </action>
+    <action path="/accept" name="invitationForm" type="org.intermine.web.struts.InvitationAction" input="mymine">
+      <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+      <forward name="login" path="/login.do"/>
+    </action>
+    <action path="/run" name="queryForm" type="org.intermine.web.struts.RunQueryAction" input="begin">
+      <forward name="success" path="/queryBuilderViewAction.do"/>
+      <forward name="failure" path="/begin.do"/>
+    </action>
     <action path="/findInList" name="findInListForm" type="org.intermine.web.struts.FindInListAction" input="bagDetails">
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
     </action>
@@ -397,6 +411,9 @@
       <forward name="begin" redirect="true" path="/begin.do"/>
       <forward name="passwordReset" redirect="false" path="/passwordReset.do"/>
     </action>
+    <action path="/modifySuperUser" name="modifySuperUserForm" type="org.intermine.web.struts.ModifySuperUserAction" scope="request"  validate="false">
+      <forward name="mymine" redirect="true" path="/mymine.do"/>
+    </action>
     <!-- These should all start with /init for session handling purposes -->
     <action path="/initLogin" name="loginForm" validate="false" type="org.intermine.web.struts.LoginController">
     </action>
@@ -469,7 +486,9 @@
     <action path="/initAttributeLinks" type="org.intermine.bio.web.AttributeLinksController"/>
     <action path="/initReportDisplayer" type="org.intermine.web.struts.ReportDisplayerController"/>
     <action path="/initOtherMinesLink" type="org.intermine.bio.web.OtherMinesLinkController"/>
-
+    <action path="/initSharingBagUsers" type="org.intermine.web.struts.SharingBagUsersController"/>
+    <action path="/initUsers"  name="modifySuperUserForm" type="org.intermine.web.struts.UsersController" scope="request"  validate="false"/>
+    
     <!-- don't (re)move this - it's used for importing any model-specific actions -->
     <!--@MODEL_INCLUDE@-->
   </action-mappings>

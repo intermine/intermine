@@ -219,5 +219,13 @@
       </sequential>
     </macrodef>
   </target>
+	
+  <target name="create-quicksearch-index" depends="-init-build-db, -init-properties">
+  	<create-quicksearch-index oSAlias="${objectstore.name}"/>
+  </target>
+	
+  <target name="evict-orphans" depends="-init-properties, -init-build-db">
+  	<evict-orphans objectStoreAlias="${userprofile.objectstorewriter.name}"/>
+  </target>
 
 </project>

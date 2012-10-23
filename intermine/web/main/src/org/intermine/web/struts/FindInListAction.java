@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -74,7 +74,7 @@ public class FindInListAction extends InterMineAction
         String bagName = qsf.getBagName();
         Profile profile = SessionMethods.getProfile(session);
         BagManager bagManager = im.getBagManager();
-        InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
+        InterMineBag bag = bagManager.getBag(profile, bagName);
 
         ForwardParameters forwardParameters =
             new ForwardParameters(mapping.findForward("bagDetails"));

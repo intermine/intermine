@@ -616,10 +616,7 @@ module InterMine::PathQuery
                 if y.end_with?("*")
                     prefix = y.chomp(".*")
                     path = make_path(prefix)
-                    attrs = path.end_cd.attributes.map {|x| 
-                        prefix + "." + x.name
-                    }
-                    add_views(attrs)
+                    add_views(path.end_cd.attributes.map {|x| prefix + "." + x.name})
                 else
                     path = make_path(y)
                     path = make_path(y.to_s + ".id") unless path.is_attribute?
@@ -946,7 +943,7 @@ module InterMine::PathQuery
             @classes = [
                 SingleValueConstraint, 
                 SubClassConstraint, 
-                LookupConstraint, MultiValueConstraint, 
+                LookupConstraint, MultiValueConstraint, RangeConstraint,
                 UnaryConstraint, LoopConstraint, ListConstraint]
 
             @query = query
@@ -972,14 +969,9 @@ module InterMine::PathQuery
 
             attr_keys = parameters.keys
             suitable_classes = @classes.select { |cls| 
-                is_suitable = true
-                attr_keys.each { |key| 
-                    is_suitable = is_suitable && (cls.method_defined?(key)) 
-                    if key.to_s == "op"
-                        is_suitable = is_suitable && cls.valid_ops.include?(parameters[key])
-                    end
-                }
-                is_suitable
+                attr_keys.reduce(true) do |suitable, k|
+                    suitable && cls.method_defined?(k) && (k.to_s != "op" or cls.valid_ops.include?(parameters[k]))
+                end
             }
             if suitable_classes.size > 1
                 raise ArgumentError, "More than one class found for #{parameters.inspect}"
@@ -1360,7 +1352,28 @@ module InterMine::PathQuery
         end
     end
 
+    class RangeConstraint < MultiValueConstraint
+
+        VALID_OPS = [
+            "WITHIN", "OUTSIDE",
+            "CONTAINS", "DOES NOT CONTAIN",
+            "OVERLAPS", "DOES NOT OVERLAP"
+        ]
+
+        def self.valid_ops
+            return VALID_OPS
+        end
+
+        def validate
+            # no-op
+        end
+    end
+
     class TemplateMultiValueConstraint < MultiValueConstraint 
+        include TemplateConstraint
+    end
+
+    class TemplateRangeConstraint < RangeConstraint
         include TemplateConstraint
     end
 

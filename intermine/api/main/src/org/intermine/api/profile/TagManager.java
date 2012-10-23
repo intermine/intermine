@@ -54,6 +54,7 @@ import org.intermine.util.DynamicUtil;
  * database.
  * @author Jakub Kulaviak <jakub@flymine.org>
  * @author Alex Kalderimis
+ * @author Daniela Butano
  */
 public class TagManager
 {
@@ -122,6 +123,9 @@ public class TagManager
     public boolean hasTag(String tagName, Taggable taggable, Profile profile) {
         String userName = null;
         if (profile != null) {
+            if (!profile.isLoggedIn()) {
+                return false;
+            }
             userName = profile.getUsername();
         }
         List<Tag> found = getTags(tagName, taggable.getName(), taggable.getTagType(), userName);
@@ -215,6 +219,29 @@ public class TagManager
 
     /**
      * Returns names of tags of specified user and tag type. For anonymous user returns empty set.
+     *
+     * @param type tag type
+     * @param user the user. MAY NOT BE NULL.
+     * @return tag names
+     */
+    public Set<String> getUserTagNames(String type, Profile user) {
+        if (user == null) {
+            throw new IllegalArgumentException("user may not be null.");
+        }
+        if (user.isLoggedIn()) {
+            return Collections.emptySet();
+        }
+        return getUserTagNames(type, user.getUsername());
+    }
+
+    /**
+     * Returns names of tags of specified user and tag type. For anonymous user returns empty set.
+     *
+     * <p>
+     * Use of this method is <strong>strongly discouraged</strong>. It is better to use the typed methods
+     * instead. This method will be removed in the future.
+     * </p>
+     *
      * @param type tag type
      * @param userName user name
      * @return tag names
@@ -225,7 +252,12 @@ public class TagManager
     }
 
     /**
-     * Returns tags of specified user and tag type. For anonymous user returns empty set.
+     * Returns tags of specified user.
+     *
+     * <p>
+     * Use of this method is <strong>strongly discouraged</strong>. Use typed methods instead.
+     * </p>
+     *
      * @param userName user name
      * @return tags
      */
@@ -234,7 +266,23 @@ public class TagManager
     }
 
     /**
-     * Returns names of tagged tags for specified object. For anonymous user returns empty set.
+     * Returns tags of specified user.
+     *
+     * @param userName user name
+     * @return tags
+     */
+    public List<Tag> getUserTags(Profile user) {
+        if (user == null) {
+            throw new IllegalArgumentException("'user' may not be null.");
+        }
+        if (!user.isLoggedIn()) {
+            return Collections.emptyList();
+        }
+        return getTags(null, null, null, user.getUsername());
+    }
+
+    /**
+     * Returns names of tagged tags for specified object.
      * @param taggedObject tagged object, eg. template name
      * @param type tag type, eg. template
      * @param userName user name
@@ -252,7 +300,11 @@ public class TagManager
      * @return tag names
      */
     public Set<String> getObjectTagNames(Taggable taggable, Profile profile) {
-        return getObjectTagNames(taggable.getName(), taggable.getTagType(), profile.getUsername());
+        if (profile.isLoggedIn()) {
+            return getObjectTagNames(taggable.getName(), taggable.getTagType(), profile.getUsername());
+        } else {
+            return Collections.emptySet();
+        }
     }
 
     /**
@@ -262,7 +314,11 @@ public class TagManager
      * @return tags.
      */
     public List<Tag> getObjectTags(Taggable taggable, Profile profile) {
-        return getTags(null, taggable.getName(), taggable.getTagType(), profile.getUsername());
+        if (profile.isLoggedIn()) {
+            return getTags(null, taggable.getName(), taggable.getTagType(), profile.getUsername());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -297,6 +353,12 @@ public class TagManager
     /**
      * Return a List of Tags that match all the arguments.  Any null arguments will be treated as
      * wildcards.
+     *
+     * <p>
+     * Use of this method is <strong>strongly discouraged</strong>. There are typed methods that are more
+     * suitable. Use them instead.
+     * </p>
+     *
      * @param tagName the tag name - any String
      * @param taggedObjectId an object identifier that is appropriate for the given tag type
      * (eg. "Department.name" for the "collection" type)
@@ -416,28 +478,38 @@ public class TagManager
         if (profile == null) {
             throw new IllegalArgumentException("profile cannot be null");
         }
+        if (!profile.isLoggedIn()) {
+            throw new IllegalArgumentException("profile must exist in the user database");
+        }
         if (tagName == null) {
             throw new IllegalArgumentException("tagName cannot be null");
         }
         if (tagNameNeedsPermission(tagName) && !profile.isSuperuser()) {
             throw new TagNamePermissionException();
         }
+
+        //if (tagNameNeedsPermission(tagName) && profile.isSuperuser()
+        //    && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null) {
+        //    throw new TagNamePermissionException("You cannot add a tag starting with "
+        //        + TagNames.IM_PREFIX + ", you are not the owner.");
+        //}
         if (!isValidTagName(tagName)) {
             throw new TagNameException();
         }
 
         return addTag(tagName, objectIdentifier, type, profile.getUsername());
     }
-    
+
     private static boolean tagNameNeedsPermission(String tagName) {
         return tagName.startsWith(TagNames.IM_PREFIX)
-                && !TagNames.IM_FAVOURITE.equals(tagName);
+                && !TagNames.IM_FAVOURITE.equals(tagName)
+                && !tagName.startsWith(TagNames.IM_WIDGET);
     }
 
     /**
-     * Associate a template with a certain tag.
+     * Associate a websearchable obj with a certain tag.
      * @param tagName The tag we want to give this template.
-     * @param template The template to tag.
+     * @param ws the websearchable obj to tag.
      * @param profile The profile to associate this tag with.
      * @return A tag object.
      * @throws TagNameException If the name is invalid (contains illegal characters)
@@ -637,6 +709,14 @@ public class TagManager
          */
         public TagNamePermissionException() {
             super(PERMISSION_MESSAGE);
+        }
+
+        /**
+         * Constructor.
+         * @param message the message to display
+         */
+        public TagNamePermissionException(String message) {
+            super(message);
         }
     }
 }

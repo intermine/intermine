@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -126,8 +126,10 @@ public class TypeConverterTest extends StoreDataTestCase
 
         Results r = getEmployeesAndAddresses();
         assertEquals("Results: " + r, 2, r.size());
+        List<String> classKeys = new ArrayList<String>();
+        classKeys.add("name");
         InterMineBag imb = new InterMineBag("Fred", "Employee", "Test bag", new Date(),
-                                            BagState.CURRENT, os, null, uosw);
+                                            BagState.CURRENT, os, null, uosw, classKeys);
         imb.addIdToBag(((Employee) ((List) r.get(0)).get(0)).getId(), "Employee");
         imb.addIdToBag(((Employee) ((List) r.get(1)).get(0)).getId(), "Employee");
         Map expected = new HashMap();
@@ -157,8 +159,10 @@ public class TypeConverterTest extends StoreDataTestCase
     }
 
     public void testGetConversionMapQuery() throws Exception {
+        List<String> classKeys = new ArrayList<String>();
+        classKeys.add("name");
         InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(),
-                                            BagState.CURRENT, os, null, uosw);
+                                            BagState.CURRENT, os, null, uosw, classKeys);
         PathQuery resQuery = TypeConverter.getConversionMapQuery(conversionTemplates, Employee.class, Address.class, bag);
         assertEquals(1, resQuery.getConstraints().size());
         PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();
@@ -169,8 +173,10 @@ public class TypeConverterTest extends StoreDataTestCase
     }
 
     public void testGetConversionQuery() throws Exception {
+        List<String> classKeys = new ArrayList<String>();
+        classKeys.add("name");
         InterMineBag bag = new InterMineBag("Fred", "Employee", "Test bag", new Date(),
-                                            BagState.CURRENT, os, null, uosw);
+                                            BagState.CURRENT, os, null, uosw, classKeys);
         PathQuery resQuery = TypeConverter.getConversionQuery(conversionTemplates, Employee.class, Address.class, bag);
         assertEquals(1, resQuery.getConstraints().size());
         PathConstraintBag resCon = (PathConstraintBag) resQuery.getConstraints().keySet().iterator().next();

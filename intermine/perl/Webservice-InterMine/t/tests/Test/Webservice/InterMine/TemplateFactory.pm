@@ -114,8 +114,8 @@ sub get_templates : Test(2) {
         model         => $test->model,
     );
     my @templates = $obj->get_templates;
-    is(scalar(@templates), 14, "Gets the right number of templates");
-    is($obj->_get_parsed_count, 14, "Getting templates means they get parsed");
+    is(scalar(@templates), 15, "Gets the right number of templates");
+    is($obj->_get_parsed_count, 15, "Getting templates means they get parsed");
 }
 
 sub get_template_by_name : Test(4) {
@@ -130,7 +130,7 @@ sub get_template_by_name : Test(4) {
     isa_ok($t, 'Webservice::InterMine::Query::Template');
     is($t->title, "View all the employees with certain name", "Retrieves a template");
     is($obj->_get_parsed_count, 1, "Only this template has been parsed");
-    is($obj->get_template_count, 14, "But all templates have been found");
+    is($obj->get_template_count, 15, "But all templates have been found");
 
 }
 
@@ -145,6 +145,7 @@ sub get_template_names : Test(2) {
         'InnerInsideOuter',
         'ManagerLookup',
         'MultiValueConstraints',
+        'RangeQueries',
         'SortOrderNotInView',
         'SubClassContraints',
         'SwitchableConstraints',

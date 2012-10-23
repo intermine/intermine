@@ -77,7 +77,7 @@
   <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="text"/>
+      <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
 
@@ -145,7 +145,7 @@
     <fields>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <bagdisplayers>
@@ -197,16 +197,6 @@
     </fields>
   </class>
 
-  <class className="org.intermine.model.bio.Interaction">
-   <fields>
-     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-     <fieldconfig fieldExpr="shortName"/>
-     <fieldconfig fieldExpr="confidenceText"/>
-     <fieldconfig fieldExpr="confidence"/>
-     <fieldconfig fieldExpr="role"/>
-    </fields>
-
-  </class>
   <class className="org.intermine.model.bio.InteractionExperiment">
     <fields>
       <fieldconfig fieldExpr="name"/>
@@ -233,7 +223,6 @@
     <fields>
       <fieldconfig fieldExpr="primaryIdentifier" />
       <fieldconfig fieldExpr="organism.name" name="Organism"/>
-      <fieldconfig fieldExpr="ontologyAnnotations" hideInQueryBuilder="true" />
     </fields>
   </class>
 
@@ -623,12 +612,6 @@
                      placement="Function"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GBrowseDisplayer"
-                     jspName="model/gbrowseDisplayer.jsp"
-                     replacesFields=""
-                     placement="Genes"
-                     types="SequenceFeature"/>
-
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
                      replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
@@ -639,7 +622,7 @@
                      jspName="model/homologueDisplayer.jsp"
                      replacesFields="homologues"
                      placement="Homology"
-                     parameters="{'dataSets': ['TreeFam data set', 'KEGG orthologues data set']}"
+                     parameters="{'dataSets': ['Panther data set']}"
                      types="Gene"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.JMOLDisplayer"
@@ -682,7 +665,7 @@
                      jspName="model/publicationAnnotationsDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
-                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
+                     parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence"
                      types="Publication"/>
 
     <!-- currently only works with classes with publications collection -->
@@ -751,8 +734,8 @@
                              chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
       <graphdisplayer id="flyatlas_for_gene"
-                      title="Gene Expression in the Adult Fly (FlyAtlas)"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      title="Gene Expression in the Fly (FlyAtlas)"
+                      description="For each tissue in the fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
                       graphType="BarChart"
                       domainLabel="Tissue"
                       rangeLabel="Up (+) or Down (-) gene count"
@@ -767,8 +750,8 @@
                             tissue.name,enrichment,affyCall,mRNASignal,mRNASignalSEM,presentCall"/>
 
       <graphdisplayer id="flyatlas_for_probeset"
-                      title="Gene Expression in the Adult Fly (FlyAtlas)"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      title="Gene Expression in Fly Tissues (FlyAtlas Data)"
+                      description="For each tissue, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
                       graphType="BarChart"
                       domainLabel="Tissue"
                       rangeLabel="Up (+) or Down (-) gene count"
@@ -958,18 +941,5 @@
                                 homologues.homologue.organism.shortName,
                                 homologues.type"/>
 
-      <bagtabledisplayer id="interactions" title="Interactions"
-                         pathStrings="Gene.interactions.interactingGenes"
-                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier, name"
-                         exportField="primaryIdentifier"
-                         typeClass="Gene"
-                         columnTitle="Interactions"
-                         views="secondaryIdentifier, symbol, organism.shortName,
-                                interactions.shortName, interactions.type.name,
-                                interactions.role,
-                                interactions.interactingGenes.primaryIdentifier,
-                                interactions.interactingGenes.symbol,
-                                interactions.experiment.name"/>
     </widgets>
 </webconfig>

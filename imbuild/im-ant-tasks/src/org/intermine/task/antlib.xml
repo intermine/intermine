@@ -24,4 +24,5 @@
     <typedef
         name="merge-source-models"
     	classname="org.intermine.task.MergeSourceModelsTask"/>
+
 </antlib>

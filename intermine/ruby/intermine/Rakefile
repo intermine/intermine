@@ -1,14 +1,14 @@
 require 'rubygems'
 require 'rubygems/specification' unless defined?(Gem::Specification)
+require 'rubygems/package_task'
 require 'rake/testtask'
-require 'rake/gempackagetask'
 
-gem 'rdoc', '=2.1.0'
-require 'rdoc/rdoc'
-require 'rake/rdoctask'
-
-gem 'darkfish-rdoc'
-require 'darkfish-rdoc'
+#gem 'rdoc'# , '=2.1.0'
+#require 'rdoc/rdoc'
+#require 'rake/rdoctask'
+#
+#gem 'darkfish-rdoc'
+#require 'darkfish-rdoc'
 
 def gemspec
     @gemspec ||= begin
@@ -38,30 +38,44 @@ task :release => :package do
       sh "gem push pkg/#{gemspec.name}-#{gemspec.version}.gem"
 end
 
-Rake::GemPackageTask.new(gemspec) do |pkg|
+Gem::PackageTask.new(gemspec) do |pkg|
     pkg.need_zip = true
     pkg.need_tar = true
-
 end
 
-Rake::TestTask.new do |t|
-    t.libs << "test"
-    t.test_files = FileList['test/unit_tests.rb']
-    t.verbose = true
+
+
+namespace :test do
+
+    desc "Run the unit-tests"
+    Rake::TestTask.new(:unit) do |t|
+        t.libs << "test"
+        t.test_files = FileList['test/unit_tests.rb']
+        t.verbose = true
+        puts "Running UNIT TESTS"
+    end
+
+    desc "Run the live integration tests"
+    Rake::TestTask.new(:live) do |t|
+        t.libs << "test"
+        t.test_files = FileList['test/live_test.rb'] << FileList['test/live_summary_test.rb'] << FileList['test/live_results.rb']
+        t.verbose = false
+        puts "Running LIVE INTEGRATION TESTS"
+    end
+
+    desc "Run all tests"
+    task :all => [:unit, :live]
 end
 
-Rake::TestTask.new(:live_tests) do |t|
-    t.libs << "test"
-    t.test_files = FileList['test/live_test.rb'] << FileList['test/live_summary_test.rb'] << FileList['test/live_results.rb']
-    t.verbose = true
-end
+desc "Run the default test-suite"
+task :test => ["test:all"]
 
-Rake::RDocTask.new do |t|
-    t.title = 'InterMine Webservice Client Documentation'
-    t.rdoc_files.include 'README.rdoc'
-    t.rdoc_files.include 'lib/**/*rb'
-    t.main = 'README.rdoc'
-    t.options += ['-SHN', '-f', 'darkfish']
-end
+#Rake::RDocTask.new do |t|
+#    t.title = 'InterMine Webservice Client Documentation'
+#    t.rdoc_files.include 'README.rdoc'
+#    t.rdoc_files.include 'lib/**/*rb'
+#    t.main = 'README.rdoc'
+#    t.options += ['-SHN', '-f', 'darkfish']
+#end
 
 

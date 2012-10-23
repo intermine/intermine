@@ -54,6 +54,7 @@
            titleKey="history.action.export.hover">
   <img src="images/export.png" width="16" height="13" alt="Export">
 </html:link>--%>
+<c:if test="${! empty sharedBagWebSearchables[wsName]}"><i> shared by ${sharedBagWebSearchables[wsName]}</i></c:if>
 <tiles:insert name="setFavourite.tile" >
   <tiles:put name="name" value="${webSearchable.name}"/>
   <tiles:put name="type" value="bag"/>

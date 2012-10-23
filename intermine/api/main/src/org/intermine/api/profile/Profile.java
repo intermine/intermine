@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,8 @@ import java.util.TreeMap;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.ClassKeysNotFoundException;
+import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
@@ -33,8 +35,10 @@ import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
@@ -47,6 +51,7 @@ import org.intermine.objectstore.ObjectStoreWriter;
  *
  * @author Mark Woodbridge
  * @author Thomas Riley
+ * @author Daniela Butano
  */
 public class Profile
 {
@@ -62,10 +67,11 @@ public class Profile
     protected Map<String, ApiTemplate> savedTemplates = new TreeMap<String, ApiTemplate>();
 
     protected Map<String, InvalidBag> savedInvalidBags = new TreeMap<String, InvalidBag>();
-    protected Map queryHistory = new ListOrderedMap();
+    protected Map<String, SavedQuery> queryHistory = new ListOrderedMap();
     protected boolean savingDisabled;
-    private final SearchRepository searchRepository;
+    private SearchRepository searchRepository;
     private String token;
+    private Map<String, String> preferences;
 
     /**
      * True if this account is purely local. False if it was created
@@ -82,7 +88,8 @@ public class Profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
-     * @param token The token to use as an API key
+     * @param token the token to use as an API key
+     * @param isLocal true if the account is local
      * @param isSuperUser true if the user is a super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
@@ -106,6 +113,13 @@ public class Profile
         }
         searchRepository = new UserRepository(this);
         this.token = token;
+        if (this.userId != null) {
+            // preferences backed by DB.
+            this.preferences = manager.getPreferences(this);
+        } else {
+            // preferences just stored in memory.
+            this.preferences = new HashMap<String, String>();
+        }
     }
 
     /**
@@ -119,6 +133,7 @@ public class Profile
      * @param savedInvalidBags the saved bags which type doesn't match with the model
      * @param savedTemplates the saved templates for this profile
      * @param token The token to use as an API key
+     * @param isLocal true if the account is local
      * @param isSuperUser the flag identifying the super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
@@ -133,6 +148,19 @@ public class Profile
         }
     }
 
+    /**
+     * Construct a Profile
+     * @param manager the manager for this profile
+     * @param username the username for this profile
+     * @param userId the id of this user
+     * @param password the password for this profile
+     * @param savedQueries the saved queries for this profile
+     * @param bagset a bagset (=valid and invalid bags) for this profile
+     * @param savedTemplates the saved templates for this profile
+     * @param token The token to use as an API key
+     * @param isLocal true if the account is local
+     * @param isSuperUser the flag identifying the super user
+     */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, BagSet bagset,
             Map<String, ApiTemplate> savedTemplates, String token, boolean isLocal,
@@ -151,6 +179,8 @@ public class Profile
      * @param savedQueries the saved queries for this profile
      * @param savedBags the saved bags for this profile
      * @param savedTemplates the saved templates for this profile
+     * @param isLocal true if the account is local
+     * @param isSuperUser the flag identifying the super user
      */
     public Profile(ProfileManager manager, String username, Integer userId, String password,
             Map<String, SavedQuery> savedQueries, Map<String, InterMineBag> savedBags,
@@ -174,6 +204,17 @@ public class Profile
      */
     public String getUsername() {
         return username;
+    }
+
+    /**
+     * Get this user's preferred email address.
+     * @return This user's email address.
+     */
+    public String getEmailAddress() {
+        if (preferences.containsKey(UserPreferences.EMAIL)) {
+            return preferences.get(UserPreferences.EMAIL);
+        }
+        return getUsername();
     }
 
     /**
@@ -207,13 +248,27 @@ public class Profile
     public boolean isSuperuser() {
         return isSuperUser;
     }
-    
+
     /**
      * Alias of isSuperUser() for jsp purposes.
      * @return The same value as isSuperUser().
      */
     public boolean getSuperuser() {
-    	return isSuperuser();
+        return isSuperuser();
+    }
+
+    /**
+     * Set the superuser flag and store it in userprofile database
+     * @param isSuperUser if true the profile is set as superuser
+     * @throws ObjectStoreException if an error occurs during storage of the object
+     */
+    public void setSuperuser(boolean isSuperUser) throws ObjectStoreException {
+        ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
+        UserProfile p = (UserProfile) uosw.getObjectStore().getObjectById(userId,
+            UserProfile.class);
+        p.setSuperuser(isSuperUser);
+        uosw.store(p);
+        this.isSuperUser = isSuperUser;
     }
 
     /**
@@ -230,7 +285,14 @@ public class Profile
      * @param userId an Integer
      */
     public void setUserId(Integer userId) {
+        Integer oldId = getUserId();
         this.userId = userId;
+        if (this.userId != null && !this.userId.equals(oldId)) { // Need to update the preferences
+            Map<String, String> oldPrefs = preferences;
+            this.preferences = manager.getPreferences(this);
+            preferences.putAll(oldPrefs);
+            oldPrefs.clear(); // Delete them now that they are copied over.
+        }
     }
 
     /**
@@ -279,7 +341,10 @@ public class Profile
      * @param name the template name
      * @param template the template
      */
-    public void saveTemplate(String name, ApiTemplate template) {
+    public void saveTemplate(String name, ApiTemplate template) throws BadTemplateException {
+        if (!NameUtil.isValidName(template.getName())) {
+            throw new BadTemplateException("Invalid name.");
+        }
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
@@ -301,8 +366,11 @@ public class Profile
      * to the previous name. If trackerDelegate is null, the template tracks are not renamed
      * @param name the template name
      * @param trackerDelegate used to rename the template tracks.
+     * @param deleteTracks true if we want to delete the tracks associated to the template.
+     * Actually the tracks have never been deleted but only renamed
      */
-    public void deleteTemplate(String name, TrackerDelegate trackerDelegate, boolean deleteTracks) {
+    public void deleteTemplate(String name, TrackerDelegate trackerDelegate,
+        boolean deleteTracks) {
         ApiTemplate template = savedTemplates.get(name);
         if (template == null) {
             LOG.warn("Attempt to delete non-existant template: " + name);
@@ -413,6 +481,13 @@ public class Profile
         return Collections.unmodifiableMap(this.savedInvalidBags);
     }
 
+    /**
+     * Fix this bag by changing its type
+     * @param name the invalid bag name
+     * @param newType The new type of this list
+     * @throws UnknownBagTypeException If the new type is not in the current model.
+     * @throws ObjectStoreException If there is a problem saving state to the DB.
+     */
     public synchronized void fixInvalidBag(String name, String newType)
         throws UnknownBagTypeException, ObjectStoreException {
         InvalidBag invb = savedInvalidBags.get(name);
@@ -435,14 +510,16 @@ public class Profile
 
     /**
      * Get the saved bags in a map of "status key" =&gt; map of lists
-     * @return
+     * @return the map from status to a map containing bag name and bag
      */
     public Map<String, Map<String, InterMineBag>> getSavedBagsByStatus() {
-        Map<String, Map<String, InterMineBag>> result = new LinkedHashMap<String, Map<String, InterMineBag>>();
+        Map<String, Map<String, InterMineBag>> result =
+            new LinkedHashMap<String, Map<String, InterMineBag>>();
         // maintain order on the JSP page
         result.put("NOT_CURRENT", new HashMap<String, InterMineBag>());
         result.put("TO_UPGRADE", new HashMap<String, InterMineBag>());
         result.put("CURRENT", new HashMap<String, InterMineBag>());
+        result.put("UPGRADING", new HashMap<String, InterMineBag>());
 
         for (InterMineBag bag : savedBags.values()) {
             String state = bag.getState();
@@ -504,11 +581,13 @@ public class Profile
      * @param description the bag description
      * @param classKeys the classKeys used to obtain  the primary identifier field
      * @return the new bag
+     * @throws UnknownBagTypeException if the bag type is wrong
+     * @throws ClassKeysNotFoundException if the classKeys is empty
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description,
         Map<String, List<FieldDescriptor>> classKeys)
-        throws UnknownBagTypeException, ObjectStoreException {
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
@@ -539,6 +618,7 @@ public class Profile
             savedInvalidBags.remove(name);
         }
         if (isLoggedIn()) {
+            getSharedBagManager().unshareBagWithAllUsers(bagToDelete);
             bagToDelete.delete();
         }
 
@@ -551,6 +631,8 @@ public class Profile
      * If there is no such bag associated with the account, no action is performed.
      * @param name the bag name
      * @param newType the type to set
+     * @throws UnknownBagTypeException if the bag type is wrong
+     * @throws BagDoesNotExistException if the bag doesn't exist
      * @throws ObjectStoreException if problems storing bag
      */
     public void updateBagType(String name, String newType)
@@ -607,7 +689,8 @@ public class Profile
      * @param template the new template
      * @throws ObjectStoreException if problems storing
      */
-    public void updateTemplate(String oldName, ApiTemplate template) throws ObjectStoreException {
+    public void updateTemplate(String oldName, ApiTemplate template)
+        throws ObjectStoreException, BadTemplateException {
         if (oldName == null) {
             throw new IllegalArgumentException("oldName may not be null");
         }
@@ -617,9 +700,13 @@ public class Profile
                     + " exist: " + oldName);
         }
 
-        savedTemplates.remove(oldName);
-
-        saveTemplate(template.getName(), template);
+        ApiTemplate oldTemplate = savedTemplates.remove(oldName);
+        try {
+            saveTemplate(template.getName(), template);
+        } catch (BadTemplateException bte) {
+            savedTemplates.put(oldName, oldTemplate);
+            throw bte;
+        }
         if (!oldName.equals(template.getName())) {
             searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
@@ -643,6 +730,10 @@ public class Profile
 
     private TagManager getTagManager() {
         return new TagManagerFactory(manager).getTagManager();
+    }
+
+    private SharedBagManager getSharedBagManager() {
+        return SharedBagManager.getInstance(manager);
     }
 
     /**
@@ -711,7 +802,7 @@ public class Profile
 
     /**
      * Return a single use API key for this profile
-     * @return
+     * @return the single use key
      */
     public String getSingleUseKey() {
         if (isLoggedIn()) {
@@ -719,5 +810,42 @@ public class Profile
         } else {
             return "";
         }
+    }
+
+    /**
+     * Return the shared bags for the profile.
+     * @return a map from bag name to bag
+     */
+    public Map<String, InterMineBag> getSharedBags() {
+        return getSharedBagManager().getSharedBags(this);
+    }
+
+    /**
+     * Update the user repository with the sharedbags
+     */
+    public void updateUserRepositoryWithSharedBags() {
+        if (searchRepository instanceof UserRepository) {
+            ((UserRepository) searchRepository).updateUserRepositoryWithSharedBags();
+        }
+    }
+
+    /**
+     * Get the object representing the preferences of this user.
+     *
+     * Changes to this user's preferences can be written directly into
+     * this object.
+     * @return A representation of the preferences of a user.
+     */
+    public Map<String, String> getPreferences() {
+        return preferences;
+    }
+
+    /**
+     * Determine whether a user perfers a certain thing or not.
+     * @param The name of the preference.
+     * @return Whether this preference is set by this user.
+     */
+    public boolean prefers(String preference) {
+        return preferences.containsKey(preference);
     }
 }

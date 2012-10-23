@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,6 +43,7 @@ import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
@@ -196,7 +197,7 @@ public abstract class WebService
      * The configuration object.
      */
     protected final InterMineAPI im;
-    
+
     /** The properties this mine was configured with **/
     protected final Properties webProperties = InterMineContext.getWebProperties();
 
@@ -207,7 +208,7 @@ public abstract class WebService
 
     /**
      * Return the permission object representing the authorisation state of the request. This
-     * is guaranteed to not be null. 
+     * is guaranteed to not be null.
      * @return A permission object, from which a service may inspect the level of authorisation,
      *          and retrieve details about whom the request is authorised for.
      */
@@ -219,9 +220,60 @@ public abstract class WebService
     }
 
     /**
+     * Get a parameter this service deems to be required.
+     * @param name The name of the parameter
+     * @return The value of the parameter. Never null, never blank.
+     * @throws MissingParameterException If the value of the parameter is blank or null.
+     */
+    protected String getRequiredParameter(String name) throws MissingParameterException {
+        String value = request.getParameter(name);
+        if (StringUtils.isBlank(value)) {
+            throw new MissingParameterException(name);
+        }
+        return value;
+    }
+
+    /**
+     * Get a parameter this service deems to be optional, or the default value.
+     * @param name The name of the parameter.
+     * @param defaultValue The default value.
+     * @return The value provided, if there is a non-blank one, or the default value.
+     */
+    protected String getOptionalParameter(String name, String defaultValue) {
+        String value = request.getParameter(name);
+        if (StringUtils.isBlank(value)) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    /**
+     * Get a profile that is a true authenticated user that exists in the database.
+     *
+     * @return The user's profile.
+     * @throws ServiceForbiddenException if this request resolves to an unauthenticated profile.
+     */
+    protected Profile getAuthenticatedUser() throws ServiceForbiddenException {
+        Profile profile = getPermission().getProfile();
+        if (profile.isLoggedIn()) {
+            return profile;
+        }
+        throw new ServiceForbiddenException("You must be logged in to use this service");
+    }
+
+    /**
+     * Get a parameter this service deems to be optional, or <code>null</code>.
+     * @param name The name of the parameter.
+     * @return The value of the parameter, or <code>null</code>
+     */
+    protected String getOptionalParameter(String name) {
+        return getOptionalParameter(name, null);
+    }
+
+    /**
      * Set the default name-space for configuration property look-ups.
      *
-     * If a value is set, it must be provided before any actions are taken. This means this 
+     * If a value is set, it must be provided before any actions are taken. This means this
      * property must be set before the execute method is called.
      * @param namespace The name space to use (eg: "some.namespace"). May not be null.
      */
@@ -234,10 +286,10 @@ public abstract class WebService
             throw new IllegalStateException("Name space must be set prior to, or as part of, " +
                     "initialisation.");
         }
-        
+
         propertyNameSpace = namespace;
     }
-    
+
     /**
      * Get a configuration property by name.
      * @param name The name of the property to retrieve.
@@ -403,7 +455,7 @@ public abstract class WebService
                         + "Authorization field contains invalid value. "
                         + "Decoded authorization value: " + parts[0]);
                 }
-                final String username = parts[0];
+                final String username = StringUtils.lowerCase(parts[0]);
                 final String password = parts[1];
 
                 permission = pm.getPermission(username, password, im.getClassKeys());

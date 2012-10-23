@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -34,6 +35,8 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class LoginAction extends LoginHandler
 {
+    private static final Logger LOG = Logger.getLogger(LoginAction.class);
+
     /**
      * Method called for login in
      *
@@ -48,7 +51,6 @@ public class LoginAction extends LoginHandler
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ProfileManager pm = im.getProfileManager();
 
         LoginForm lf = (LoginForm) form;
 

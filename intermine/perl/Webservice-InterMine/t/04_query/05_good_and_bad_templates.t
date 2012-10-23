@@ -58,8 +58,7 @@ open my $GFH, '<', $good_templates
 $good_content .= $_ for <$GFH>;
 close $GFH or die "Cannot close $good_templates, $!";
 
-$good_content =~
-  s/^.*<template-queries>(.*)<\/template-queries>.*$/$1/s;
+$good_content =~ s/^.*<template-queries>(.*)<\/template-queries>.*$/$1/s;
 my @goodies = $good_content =~ m!(<template .*?</template>)!sg;
 my @sort_order = (
     'Employee.name', 'Employee.name',
@@ -67,7 +66,7 @@ my @sort_order = (
     'Employee.name', 'Employee.name',
     'Contractor.id', 'Manager.name',
     'Company.name',  'Company.name',
-    'Company.name',  'Employee.name',
+    'Company.name',  'Employee.name', 'Employee.name',
     'Company.departments.employees.name',
     'Employee.name',
 );

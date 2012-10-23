@@ -20,7 +20,6 @@ import org.intermine.api.profile.Profile;
  */
 public class UserRepository extends SearchRepository
 {
-
     /**
      * Constructor.
      * @param profile The profile of the user whose data we are indexing.
@@ -73,6 +72,13 @@ public class UserRepository extends SearchRepository
     protected void handleMassTagging() {
         // Nothing much we can do. May have been gloal indices, may not.
         indexes.clear();
+    }
+
+    /**
+     * Update the user repository with the shared bags
+     */
+    public void updateUserRepositoryWithSharedBags() {
+        searchItems.addAll(getProfile().getSharedBags().values());
     }
 
 }

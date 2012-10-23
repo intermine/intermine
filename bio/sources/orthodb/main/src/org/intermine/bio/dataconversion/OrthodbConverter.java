@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,6 +35,8 @@ import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
+ * Orthodb data Converter
+ *
  * @author Fengyuan Hu
  */
 public class OrthodbConverter extends BioFileConverter
@@ -46,7 +48,9 @@ public class OrthodbConverter extends BioFileConverter
 
     private static final String PROP_FILE = "orthodb_config.properties";
     private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
+
     private Set<String> taxonIds = new HashSet<String>();
+    private Set<String> homologues = new HashSet<String>();
 
     private static final String ORTHOLOGUE = "orthologue";
     private static final String PARALOGUE = "paralogue";
@@ -58,6 +62,10 @@ public class OrthodbConverter extends BioFileConverter
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
     private OrganismRepository or;
+
+    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+
+    private IdResolver rslv;
 
     /**
      * Constructor
@@ -86,10 +94,10 @@ public class OrthodbConverter extends BioFileConverter
      *
      * @param homologues a space-separated list of taxonIds
      */
-//    public void setOrthodbHomologues(String homologues) {
-//        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
-//        LOG.info("Setting list of homologues to " + homologues);
-//    }
+    public void setOrthodbHomologues(String homologues) {
+        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
+        LOG.info("Setting list of homologues to " + homologues);
+    }
 
     /**
      * {@inheritDoc}
@@ -102,7 +110,7 @@ public class OrthodbConverter extends BioFileConverter
             1) Level
             2) OG_ID - OrthoDB group id
             3) Protein_ID
-            4) Gene_ID
+            4) Gene_ID, e.g. FBgn0162343(fly), ENSMUSG00000027919(mouse)
             5) Organism - full name
             6) UniProt_ACC
             7) UniProt_Description
@@ -117,9 +125,20 @@ public class OrthodbConverter extends BioFileConverter
         if (taxonIds.isEmpty()) {
             LOG.warn("orthodb.organisms property not set in project XML file");
         }
-//        if (homologues.isEmpty()) {
-//            LOG.warn("orthodb.homologues property not set in project XML file");
-//        }
+        if (homologues.isEmpty()) {
+            LOG.warn("orthodb.homologues property not set in project XML file");
+        }
+
+        Set<String> allTaxonIds = new HashSet<String>() {
+            private static final long serialVersionUID = 1L;
+            {
+                addAll(taxonIds);
+                addAll(homologues);
+            }
+        };
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -194,6 +213,7 @@ public class OrthodbConverter extends BioFileConverter
         Vector<Vector<List<String>>> combns = getAllCombinations(data, m);
 
         for (int i=0; i<combns.size(); i++) {
+
             List<String> record1 = combns.elementAt(i).elementAt(0);
             List<String> record2 = combns.elementAt(i).elementAt(1);
 
@@ -203,17 +223,28 @@ public class OrthodbConverter extends BioFileConverter
             String taxonId2 = record2.get(0);
             String gene2 = record2.get(1);
 
-            Item homologue = createItem("Homologue");
-            homologue.setReference("gene", gene1);
-            homologue.setReference("homologue", gene2);
-            homologue.addToCollection("evidence", getEvidence());
-            homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
-            homologue.addToCollection(
-                    "crossReferences",
-                    createCrossReference(homologue.getIdentifier(), groupId,
-                            DATA_SOURCE_NAME, true));
-            store(homologue);
+            if (gene1 == null || gene2 == null) {
+                continue;
+            }
+
+            // Create both way relations
+            createHomologue(gene1, taxonId1, gene2, taxonId2, groupId);
+            createHomologue(gene2, taxonId2, gene1, taxonId1, groupId);
         }
+    }
+
+    private void createHomologue(String gene1, String taxonId1, String gene2,
+            String taxonId2, String groupId) throws ObjectStoreException {
+        Item homologue = createItem("Homologue");
+        homologue.setReference("gene", gene1);
+        homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", getEvidence());
+        homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
+        homologue.addToCollection(
+                "crossReferences",
+                createCrossReference(homologue.getIdentifier(), groupId,
+                        DATA_SOURCE_NAME, true));
+        store(homologue);
     }
 
     // genes (in taxonIDs) are always processed
@@ -227,19 +258,19 @@ public class OrthodbConverter extends BioFileConverter
             // both are organisms of interest
             return true;
         }
-//        if (homologues.isEmpty()) {
-//            // only interested in homologues of interest, so at least one of
-//            // this pair isn't valid
-//            return false;
-//        }
+        if (homologues.isEmpty()) {
+            // only interested in homologues of interest, so at least one of
+            // this pair isn't valid
+            return false;
+        }
         // one gene is from an organism of interest
         // one homologue is from an organism we want
         if (taxonIds.contains(taxonId)) {
             return true;
         }
-//        if (homologues.contains(taxonId)) {
-//            return true;
-//        }
+        if (homologues.contains(taxonId)) {
+            return true;
+        }
         return false;
     }
 
@@ -250,12 +281,51 @@ public class OrthodbConverter extends BioFileConverter
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
 
-        Item item = createItem("Gene");
-        item.setAttribute(identifierType, geneId);
-        item.setReference("organism", getOrganism(taxonId));
-        store(item);
+        geneId = resolveGene(taxonId, geneId);
+        if (geneId == null) {
+            return null;
+        }
 
-        return item.getIdentifier();
+        String refId = identifiersToGenes.get(geneId);
+        if (refId == null) {
+            Item item = createItem("Gene");
+            item.setAttribute(identifierType, geneId);
+
+            {
+            /**
+             * !!! Ugly Code Ahead
+             * OrthoDB use secondaryIdentifier for worm gene, in wormbase-identifiers, gene
+             * WBGene00006756 (ZC416.8, unc-17) and WBGene00000481 (ZC416.8, cha-1) have the same
+             * secondaryIdentifier ZC416.8, but OrthoDB points to cha-1 in term of the protein id
+             * ZC416.8b. To fix the issue, set symbol as another key to filter the duplication.
+             * Same for Y105E8A.7 and B0564.1
+             *
+             * For a better fix, load uniprot data, set key to secondaryIdentifier, protein and
+             * organism. But MasterMine tries to not load protein data.
+             */
+
+                if ("ZC416.8".equals(geneId)) {
+                    item.removeAttribute(identifierType);
+                    item.setAttribute("symbol", "cha-1");
+                }
+
+                if ("Y105E8A.7".equals(geneId)) {
+                    item.removeAttribute(identifierType);
+                    item.setAttribute("symbol", "lev-10");
+                }
+
+                if ("B0564.1".equals(geneId)) {
+                    item.removeAttribute(identifierType);
+                    item.setAttribute("symbol", "exos-4.1");
+                }
+            }
+
+            item.setReference("organism", getOrganism(taxonId));
+            refId = item.getIdentifier();
+            identifiersToGenes.put(geneId, refId);
+            store(item);
+        }
+        return refId;
     }
 
     private String getTaxon(String name) {
@@ -338,5 +408,20 @@ public class OrthodbConverter extends BioFileConverter
                 combination(allCombinations, newData, newCombination, length - 1);
             }
         }
+    }
+
+    private String resolveGene(String taxonId, String identifier) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
+            // no id resolver available, so return the original identifier
+            return identifier;
+        }
+        int resCount = rslv.countResolutions(taxonId, identifier);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " FBgn: "
+                     + rslv.resolveId(taxonId, identifier));
+            return null;
+        }
+        return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 }

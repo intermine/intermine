@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -77,7 +77,7 @@ public class QueryUploadService extends WebService
         Profile profile = getPermission().getProfile();
         BagManager bagManager = this.im.getBagManager();
 
-        Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getBags(profile);
 
         int version = getVersion(request);
         Reader r = new StringReader(queriesXML);

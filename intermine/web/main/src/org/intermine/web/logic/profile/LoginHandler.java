@@ -1,7 +1,7 @@
 package org.intermine.web.logic.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -62,7 +62,7 @@ public abstract class LoginHandler extends InterMineAction
         ProfileManager pm = SessionMethods.getInterMineAPI(session).getProfileManager();
         Profile profile = pm.getProfile(username);
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        if (im.getBagManager().isAnyBagNotCurrent(profile)) {
+        if (im.getBagManager().isAnyBagNotCurrentOrUpgrading(profile)) {
             recordError(new ActionMessage("login.upgradeListStarted"), request);
         } else if (im.getBagManager().isAnyBagToUpgrade(profile)) {
             recordError(new ActionMessage("login.upgradeListManually"), request);
@@ -159,7 +159,7 @@ public abstract class LoginHandler extends InterMineAction
      * for a life cyle in a web service request. At the moment, this just means
      * determining if this is the super user, and running the bag upgrade
      * thread.
-     * 
+     *
      * @param api
      *            The InterMine API object.
      * @param permission
@@ -173,8 +173,7 @@ public abstract class LoginHandler extends InterMineAction
         if (userName != null && userName.equals(pm.getSuperuser())) {
             permission.addRole("SUPERUSER");
         }
-        Runnable upgrade = new SessionlessBagUpgrade(profile,
-                api.getBagQueryRunner());
+        Runnable upgrade = new UpgradeBagList(profile, api.getBagQueryRunner());
         runBagUpgrade(upgrade, api, profile);
 
     }
@@ -213,14 +212,10 @@ public abstract class LoginHandler extends InterMineAction
     public static Profile setUpProfile(HttpSession session, Profile profile) {
         SessionMethods.setProfile(session, profile);
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        final ProfileManager pm = im.getProfileManager();
-        final String userName = profile.getUsername();
-        if (userName != null && userName.equals(pm.getSuperuser())) {
+        if (profile.isSuperuser()) {
             session.setAttribute(Constants.IS_SUPERUSER, Boolean.TRUE);
         }
-        SessionMethods.setNotCurrentSavedBagsStatus(session, profile);
-        Runnable upgrade = new UpgradeBagList(profile, im.getBagQueryRunner(),
-                session);
+        Runnable upgrade = new UpgradeBagList(profile, im.getBagQueryRunner());
         runBagUpgrade(upgrade, im, profile);
         return profile;
     }

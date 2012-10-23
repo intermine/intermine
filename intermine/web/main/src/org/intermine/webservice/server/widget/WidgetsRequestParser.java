@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,6 +33,8 @@ public class WidgetsRequestParser
     private static final String WIDGET_ID = "widget";
 
     private static final String BAG_NAME = "list";
+    public static final String POPULATION_BAG_NAME = "current_population";
+    private static final String SAVE_POPULATION = "remember_population";
     private static final String FILTER = "filter";
     private static final String MAXP = "maxp";
     private static final String ERROR_CORRECTION = "correction";
@@ -54,6 +56,8 @@ public class WidgetsRequestParser
 
         String widgetId = request.getParameter(WIDGET_ID);
         String bagName = request.getParameter(BAG_NAME);
+        String populationBagName = request.getParameter(POPULATION_BAG_NAME);
+        String savePopulation = request.getParameter(SAVE_POPULATION);
         String filter = request.getParameter(FILTER);
         String maxP = request.getParameter(MAXP);
         String errorCorrection = request.getParameter(ERROR_CORRECTION);
@@ -67,6 +71,10 @@ public class WidgetsRequestParser
         ret.setBagName(bagName);
         ret.setWidgetId(widgetId);
         ret.setExtraAttributes(Arrays.asList(filter, maxP, errorCorrection));
+        ret.setPopulationBagName(populationBagName);
+        if (savePopulation != null && "true".equalsIgnoreCase(savePopulation)) {
+            ret.setSavePopulation(true);
+         }
 
         return ret;
     }

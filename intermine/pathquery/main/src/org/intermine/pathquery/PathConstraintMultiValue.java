@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,6 +27,7 @@ public class PathConstraintMultiValue extends PathConstraint
     /** List of valid ops for this type of constraint */
     public static final Set<ConstraintOp> VALID_OPS = new HashSet<ConstraintOp>(Arrays.asList(
                 ConstraintOp.ONE_OF, ConstraintOp.NONE_OF));
+    
     private Collection<String> values;
 
     /**
@@ -56,6 +57,9 @@ public class PathConstraintMultiValue extends PathConstraint
         if (values == null) {
             throw new NullPointerException("Cannot create a multivalue constrait with a null "
                     + " collection of values.");
+        }
+        if (values.isEmpty()) {
+        	throw new IllegalArgumentException("at least one value must be supplied.");
         }
         this.values = values;
     }

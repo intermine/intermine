@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,8 +36,11 @@ public abstract class WidgetService extends JSONService
     }
 
     protected InterMineBag retrieveBag(String bagName) {
+        if ("".equals(bagName)) {
+            return null;
+        }
         Profile profile = getPermission().getProfile();
-        InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(profile, bagName);
+        InterMineBag imBag = im.getBagManager().getBag(profile, bagName);
         if (imBag == null) {
             throw new BadRequestException("You do not have access to a bag named" + bagName);
         }

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -49,7 +49,7 @@ public class ListManager
         List<String> ret = new ArrayList<String>();
 
         Collection<InterMineBag> bags
-            = bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
+            = bagManager.getCurrentBagsContainingId(profile, objectId);
 
         for (InterMineBag bag : bags) {
             ret.add(bag.getName());
@@ -65,11 +65,11 @@ public class ListManager
         Date waitUntil = new Date(System.currentTimeMillis() + MAX_WAIT);
         // Wait up to 20 secs for the bags to be updated.
         while (new Date().before(waitUntil)) {
-            if (!bagManager.isAnyBagNotCurrent(profile)) {
+            if (!bagManager.isAnyBagNotCurrentOrUpgrading(profile)) {
                 break;
             }
         }
-        return bagManager.getUserAndGlobalBags(profile).values();
+        return bagManager.getBags(profile).values();
     }
 
     /**
@@ -87,6 +87,6 @@ public class ListManager
      * @return A collection of lists.
      */
     public Collection<InterMineBag> getListsContaining(Integer objectId) {
-        return bagManager.getCurrentUserOrGlobalBagsContainingId(profile, objectId);
+        return bagManager.getCurrentBagsContainingId(profile, objectId);
     }
 }

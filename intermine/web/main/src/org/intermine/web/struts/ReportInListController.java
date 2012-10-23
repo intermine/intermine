@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,7 +52,7 @@ public class ReportInListController extends TilesAction
         BagManager bagManager = im.getBagManager();
 
         Collection<InterMineBag> bagsWithId =
-            bagManager.getCurrentUserOrGlobalBagsContainingId(profile, object.getId());
+            bagManager.getCurrentBagsContainingId(profile, object.getId());
         // wrap around
         ReportInList odil = new ReportInList(bagsWithId);
 
