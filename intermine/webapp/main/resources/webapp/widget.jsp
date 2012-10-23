@@ -39,30 +39,10 @@
                     });
                 },
                 resultsCb: function(pq) {
-                    var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
-                    "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
-                    "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
-                    "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/font-awesome/css/font-awesome.css\" rel=\"stylesheet\">" +
-                    "<script type=\"text/javascript\">$(function() { " +
-                        "var pq = " + JSON.stringify(pq) + ";" +
-                        "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
-                        "var view = new intermine.query.results.CompactView(service, pq);" +
-                        "view.$el.appendTo(\"#container\"); view.render();" +
-                    " });</scr"+"ipt>" +
-                    "</head><body><div id=\"container\"></div></body></html>";
-
-                    var w = window.open();
-                    w.document.open();
-                    w.document.write(data);
-                    w.document.close();
+					(new intermine.Service({'root': service})).query(pq, function(query) {						
+						window.open(service.replace('/service/', "run.do") + "?query=" + query.toXML());
+						window.focus();
+					});
                 }
             };
             window.widgets.chart("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
@@ -89,30 +69,10 @@
                     });
                 },
                 resultsCb: function(pq) {
-                    var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
-                    "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
-                    "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
-                    "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/font-awesome/css/font-awesome.css\" rel=\"stylesheet\">" +
-                    "<script type=\"text/javascript\">$(function() { " +
-                        "var pq = " + JSON.stringify(pq) + ";" +
-                        "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
-                        "var view = new intermine.query.results.CompactView(service, pq);" +
-                        "view.$el.appendTo(\"#container\"); view.render();" +
-                    " });</scr"+"ipt>" +
-                    "</head><body><div id=\"container\"></div></body></html>";
-
-                    var w = window.open();
-                    w.document.open();
-                    w.document.write(data);
-                    w.document.close();
+					(new intermine.Service({'root': service})).query(pq, function(query) {						
+						window.open(service.replace('/service/', "run.do") + "?query=" + query.toXML());
+						window.focus();
+					});
                 }
             };
             window.widgets.enrichment("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
@@ -139,30 +99,10 @@
                     });
                 },
                 resultsCb: function(pq) {
-                    var data = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Results Table</title>" +
-                    "<link href=\"http://cdn.intermine.org/css/bootstrap/2.0.3-prefixed/css/bootstrap.min.css\" rel=\"stylesheet\">" +
-                    "<script src=\"http://cdn.intermine.org/js/jquery/1.7/jquery.min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/underscore.js/1.3.3/underscore-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/backbone.js/0.9.2/backbone-min.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/imjs/latest/imjs.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/deps.js\"></scr"+"ipt>" +
-                    "<script src=\"http://cdn.intermine.org/js/intermine/im-tables/latest/imtables.js\"></scr"+"ipt>" +
-                    "<link href=\"http://cdn.intermine.org/js/intermine/im-tables/latest/tables.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/jquery-ui/1.8.19/jquery-ui-1.8.19.custom.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/google-code-prettify/latest/prettify.css\" rel=\"stylesheet\">" +
-                    "<link href=\"http://cdn.intermine.org/css/font-awesome/css/font-awesome.css\" rel=\"stylesheet\">" +
-                    "<script type=\"text/javascript\">$(function() { " +
-                        "var pq = " + JSON.stringify(pq) + ";" +
-                        "var service = new intermine.Service({'root': \"" + service + "\", 'token': \"${token}\"});" +
-                        "var view = new intermine.query.results.CompactView(service, pq);" +
-                        "view.$el.appendTo(\"#container\"); view.render();" +
-                    " });</scr"+"ipt>" +
-                    "</head><body><div id=\"container\"></div></body></html>";
-
-                    var w = window.open();
-                    w.document.open();
-                    w.document.write(data);
-                    w.document.close();
+					(new intermine.Service({'root': service})).query(pq, function(query) {						
+						window.open(service.replace('/service/', "run.do") + "?query=" + query.toXML());
+						window.focus();
+					});
                 }
             };
             window.widgets.table("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
