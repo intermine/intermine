@@ -60,7 +60,7 @@ public class NcbiSummariesConverter extends BioFileConverter
                 LOG.error("description " + count++ + " " + description);
                 if (!StringUtils.isBlank(description)) {
                     Item gene = createItem("Gene");
-                    gene.setAttribute("ncbiGeneNumber", entrez);
+                    gene.setAttribute("primaryIdentifier", entrez);
                     gene.setAttribute("description", description);
                     gene.setReference("organism", getOrganism(HUMAN_TAXON_ID));
                     store(gene);
