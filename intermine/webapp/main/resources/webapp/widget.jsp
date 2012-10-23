@@ -40,7 +40,7 @@
                 },
                 resultsCb: function(pq) {
 					(new intermine.Service({'root': service})).query(pq, function(query) {						
-						window.open(service.replace('/service/', "run.do") + "?query=" + query.toXML());
+						window.open(service.replace('/service\/?$/', "/run.do") + "?query=" + query.toXML());
 						window.focus();
 					});
                 }
