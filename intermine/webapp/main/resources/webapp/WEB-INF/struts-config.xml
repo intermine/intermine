@@ -6,6 +6,7 @@
   <!-- ========== Form Bean Definitions =================================== -->
   <form-beans>
     <form-bean name="invitationForm" type="org.intermine.web.struts.InvitationForm"/>
+    <form-bean name="queryForm" type="org.intermine.web.struts.QueryForm"/>
     <form-bean name="loginForm" type="org.intermine.web.struts.LoginForm"/>
     <form-bean name="templateForm" type="org.intermine.web.struts.TemplateForm"/>
     <form-bean name="modifyQueryForm" type="org.intermine.web.struts.ModifyQueryForm"/>
@@ -325,6 +326,10 @@
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
       <forward name="mymine" redirect="true" path="/mymine.do"/>
       <forward name="login" path="/login.do"/>
+    </action>
+    <action path="/run" name="queryForm" type="org.intermine.web.struts.RunQueryAction" input="begin">
+      <forward name="success" path="/queryBuilderViewAction.do"/>
+      <forward name="failure" path="/begin.do"/>
     </action>
     <action path="/findInList" name="findInListForm" type="org.intermine.web.struts.FindInListAction" input="bagDetails">
       <forward name="bagDetails" redirect="true" path="/bagDetails.do"/>
