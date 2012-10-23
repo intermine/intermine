@@ -1,0 +1,5 @@
+<project name="mgi-alleles" default="default" basedir=".">
+  <description>build, test, package mgi-alleles</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

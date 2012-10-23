@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -78,7 +78,7 @@ public class CreateTemplateAction extends InterMineAction
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
         ActionErrors errors = tsf.validate(mapping, request);
         saveErrors(request, (ActionMessages) errors);
-        if (errors != null) {
+        if (!errors.isEmpty()) {
             return mapping.findForward("query");
         }
         template.setDescription(tsf.getDescription());

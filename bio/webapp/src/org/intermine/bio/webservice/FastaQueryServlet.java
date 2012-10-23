@@ -21,7 +21,7 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.web.logic.session.SessionMethods;
 
 /**
- * A servlet to hand off to the GFF3-query-service.
+ * A servlet to hand off to the FASTA-query-service.
  * @author Alex Kalderimis.
  *
  */

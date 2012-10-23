@@ -69,7 +69,6 @@ public abstract class StorableBag implements WebSearchable
         }
     }
 
-
     protected Integer profileId;
     protected Integer savedBagId;
 
@@ -109,7 +108,7 @@ public abstract class StorableBag implements WebSearchable
     public abstract String getType();
 
     /** @return the id of the profile belonging to the user this list belongs to */
-    protected Integer getProfileId() {
+    public Integer getProfileId() {
         return profileId;
     }
 
@@ -143,7 +142,7 @@ public abstract class StorableBag implements WebSearchable
      * delete the bag. They MUST ALSO call this method (as super.delete()). This is to ensure that
      * bag deletion events are registered correctly.
      *
-     * @throws ObjectStoreException
+     * @throws ObjectStoreException 
      */
     public void delete() throws ObjectStoreException {
         fireEvent(new DeletionEvent(this));
@@ -177,7 +176,6 @@ public abstract class StorableBag implements WebSearchable
     protected SavedBag storeSavedBag() throws ObjectStoreException {
         SavedBag savedBag = new SavedBag();
         savedBag.setId(getSavedBagId());
-        Integer profileId = getProfileId();
         if (profileId != null) {
             savedBag.setName(getName());
             savedBag.setType(getType());
@@ -264,7 +262,6 @@ public abstract class StorableBag implements WebSearchable
      */
     private List<BagValue> getContents(Order order) {
         String name = getName();
-        Integer savedBagId = getSavedBagId();
         ObjectStoreWriter uosw = getUserProfileWriter();
         Connection conn = null;
         Statement stm = null;

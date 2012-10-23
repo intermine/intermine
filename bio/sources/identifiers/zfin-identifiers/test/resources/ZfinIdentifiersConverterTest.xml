@@ -1,0 +1,109 @@
+<items>
+<item id="3_2" class="Gene">
+<attribute name="primaryIdentifier" value="ZDB-GENE-000125-12"/>
+<attribute name="symbol" value="igfbp2a"/>
+<reference name="organism" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000009473"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_7" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000093725"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="primaryIdentifier" value="ZDB-GENE-000112-47"/>
+<attribute name="symbol" value="ppardb"/>
+<reference name="organism" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_5" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000092831"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_5"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_4" class="Gene">
+<attribute name="primaryIdentifier" value="ZDB-GENE-000128-11"/>
+<attribute name="symbol" value="dbx1b"/>
+<reference name="organism" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_3" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000002336"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_2" class="DataSource">
+<attribute name="name" value="ZFIN"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_1" class="Organism">
+<attribute name="taxonId" value="7955"/>
+</item>
+<item id="4_2" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000052470"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_5" class="Gene">
+<attribute name="primaryIdentifier" value="ZDB-GENEP-060503-6"/>
+<attribute name="symbol" value="si:dkeyp-46h3.9"/>
+<reference name="organism" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_4" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000001859"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_4"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_6" class="Gene">
+<attribute name="primaryIdentifier" value="ZDB-GENE-061207-15"/>
+<attribute name="symbol" value="mical2b"/>
+<reference name="organism" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="ZFIN"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="ZFIN genes"/>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="3_3" class="Gene">
+<attribute name="primaryIdentifier" value="ZDB-GENE-000125-4"/>
+<attribute name="symbol" value="dlc"/>
+<reference name="organism" ref_id="5_1"/>
+<reference name="sequenceOntologyTerm" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_6" class="CrossReference">
+<attribute name="identifier" value="ENSDARG00000020395"/>
+<reference name="source" ref_id="1_2"/>
+<reference name="subject" ref_id="3_6"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+</items>

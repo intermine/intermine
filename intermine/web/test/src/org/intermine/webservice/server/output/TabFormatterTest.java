@@ -32,8 +32,8 @@ public class TabFormatterTest extends TestCase {
     private Employee dawn;
     private Employee keith;
     private Employee lee;
-    public static SimpleDateFormat ISO8601FORMAT = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssZ");
+    public static SimpleDateFormat ISO8601FORMAT
+        = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     private ExportResultsIterator iterator;
 
     private final Model model = Model.getInstanceByName("testmodel");
@@ -49,7 +49,6 @@ public class TabFormatterTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-
         os = new ObjectStoreDummyImpl();
 
         sw = new StringWriter();
@@ -117,9 +116,9 @@ public class TabFormatterTest extends TestCase {
                 .makeQuery(pq, new HashMap(), pathToQueryNode, null, null);
         List resultList = os.execute(q, 0, 5, true, true, new HashMap());
         Results results = new DummyResults(q, resultList);
-        iterator = new ExportResultsIterator(pq, results, pathToQueryNode);
+        iterator = new ExportResultsIterator(pq, q, results, pathToQueryNode);
         processor =  new ResultProcessor();
- }
+    }
 
     /*
      * @see junit.framework.TestCase#tearDown()

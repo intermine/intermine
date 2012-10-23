@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -209,13 +209,36 @@ public class PathQueryHandler extends DefaultHandler
         }
 
         ConstraintOp constraintOp = ConstraintOp.getConstraintOp(attrs.get("op"));
+        if (constraintOp == null) {
+            // Handle any allowed synonyms.
+            String origOp = attrs.get("op");
+            if ("IS EMPTY".equals(origOp)) { // Synonym for IS NULL
+                constraintOp = ConstraintOp.IS_NULL;
+            } else if ("IS NOT EMPTY".equals(origOp)) { // Synonym for IS NOT NULL
+                constraintOp = ConstraintOp.IS_NOT_NULL;
+            }
+        }
+        // TODO: work out if this is pointless busy-work.
         if (ConstraintOp.CONTAINS.equals(constraintOp)) {
             constraintOp = ConstraintOp.CONTAINS;
         }
         if (ConstraintOp.DOES_NOT_CONTAIN.equals(constraintOp)) {
             constraintOp = ConstraintOp.DOES_NOT_CONTAIN;
-        }
-        if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
+        } 
+        
+        if (PathConstraintRange.VALID_OPS.contains(constraintOp) && !values.isEmpty()) {
+        	Collection<String> valuesCollection = new LinkedHashSet<String>();
+            for (String value : values) {
+                valuesCollection.add(value.trim());
+            }
+            return new PathConstraintRange(path, constraintOp, valuesCollection);
+        } else if (PathConstraintMultitype.VALID_OPS.contains(constraintOp) && !values.isEmpty()) {
+            Collection<String> typesCollection = new LinkedHashSet<String>();
+            for (String value : values) {
+                typesCollection.add(value.trim());
+            }
+            return new PathConstraintMultitype(path, constraintOp, typesCollection);
+        } else if (PathConstraintAttribute.VALID_OPS.contains(constraintOp)) {
             boolean isLoop = (attrs.get("loopPath") != null);
             if (PathConstraintLoop.VALID_OPS.contains(constraintOp)) {
                 try {
@@ -267,6 +290,8 @@ public class PathQueryHandler extends DefaultHandler
                         + " but no bag or ids were provided (from text \""
                         + attrs.get("op") + "\", attributes: " + attrs + ")");
             }
+        
+        	
         } else if (PathConstraintMultiValue.VALID_OPS.contains(constraintOp)) {
             Collection<String> valuesCollection = new LinkedHashSet<String>();
             for (String value : values) {

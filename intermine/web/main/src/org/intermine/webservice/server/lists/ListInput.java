@@ -78,7 +78,7 @@ public class ListInput
         if (StringUtils.isBlank(nameParam)) {
             nameParam = DEFAULT_LIST_NAME;
             name = nameParam;
-            Set<String> listNames = bagManager.getUserAndGlobalBags(profile).keySet();
+            Set<String> listNames = bagManager.getBags(profile).keySet();
             int counter = 2;
             
             while (listNames.contains(name)) {
@@ -156,7 +156,7 @@ public class ListInput
             for (String value: paramValues) {
                 String[] names = StringUtils.split(value, ";");
                 for (String name: names) {
-                    InterMineBag list = bagManager.getUserOrGlobalBag(profile, name);
+                    InterMineBag list = bagManager.getBag(profile, name);
                     map.put(name, list);
                 }
             }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,23 +43,22 @@ public class GoConverterTest extends ItemsTestCase
         Reader goOboReader = new InputStreamReader(
             getClass().getClassLoader().getResourceAsStream("go-tiny.obo"));
         writeTempFile(goOboFile, goOboReader);
-        writer = new MockItemWriter(new LinkedHashMap());
+        writer = new MockItemWriter(new LinkedHashMap<String, org.intermine.model.fulldata.Item>());
         converter = new GoConverter(writer, model);
         converter.setGaff("2.0");
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));
-        resolverFactory.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
-        resolverFactory.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
-        resolverFactory.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
-        converter.flybaseResolverFactory = resolverFactory;
 
-        resolverFactory = new MockIdResolverFactory("go");
-        resolverFactory.addResolverEntry("0", "GO:1234567", Collections.singleton("GO:9999999"));
-        resolverFactory.addResolverEntry("0", "GO:0000011:", Collections.singleton("GO:0000011"));
-        resolverFactory.addResolverEntry("0", "GO:0000004", Collections.singleton("GO:0000004"));
-        resolverFactory.addResolverEntry("0", "GO:0000005", Collections.singleton("GO:0000005"));
-        resolverFactory.addResolverEntry("0", "GO:0000001", Collections.singleton("GO:0000001"));
-        converter.ontologyResolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn0004168", Collections.singleton("FBgn0020002"));
+        converter.rslv.addResolverEntry("7227", "FBgn0015567", Collections.singleton("FBgn0015567"));
+        converter.rslv.addResolverEntry("7227", "FBgn0026430", Collections.singleton("FBgn0026430"));
+        converter.rslv.addResolverEntry("7227", "FBgn0001612", Collections.singleton("FBgn0001612"));
+
+        converter.rslv = IdResolverService.getMockIdResolver("Go");
+        converter.rslv.addResolverEntry("0", "GO:1234567", Collections.singleton("GO:9999999"));
+        converter.rslv.addResolverEntry("0", "GO:0000011:", Collections.singleton("GO:0000011"));
+        converter.rslv.addResolverEntry("0", "GO:0000004", Collections.singleton("GO:0000004"));
+        converter.rslv.addResolverEntry("0", "GO:0000005", Collections.singleton("GO:0000005"));
+        converter.rslv.addResolverEntry("0", "GO:0000001", Collections.singleton("GO:0000001"));
     }
 
     private void writeTempFile(File outFile, Reader srcFileReader) throws Exception {
@@ -83,11 +82,10 @@ public class GoConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write a new target items file
-        //writeItemsFile(writer.getItems(), "go-tgt-items.xml");
+        // writeItemsFile(writer.getItems(), "go-tgt-items.xml");
 
         assertEquals(readItemSet("GoConverterOboTest_tgt.xml"), writer.getItems());
     }
-
 
     public void testCreateWithObjects() throws Exception {
         ItemFactory tgtItemFactory = new ItemFactory(Model.getInstanceByName("genomic"));
@@ -99,7 +97,8 @@ public class GoConverterTest extends ItemsTestCase
         expected.add("1_2");
         converter.initialiseMapsForFile();
         assertEquals(expected, new HashSet<String>(converter.createWithObjects(
-                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612", organism, "FlyBase")));
+                "FLYBASE:Grip84; FB:FBgn0026430, FLYBASE:l(1)dd4; FB:FBgn0001612",
+                organism, "FlyBase", "FlyBase")));
     }
 
 }

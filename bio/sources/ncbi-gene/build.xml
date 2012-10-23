@@ -1,5 +1,0 @@
-<project name="ncbi-gene" default="default" basedir=".">
-  <description>build, test, package ncbi-gene</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

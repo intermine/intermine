@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="properties"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-web"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-integrate-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-main"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/userprofile"/>
+	<classpathentry kind="lib" path="/testmodel-dbmodel/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
+	<classpathentry kind="lib" path="/intermine-web/lib/commons-math-2.2.jar"/>
+	<classpathentry kind="lib" path="/intermine-api-main/lib/json20110106.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bio-core-main"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="src" path="/bio-webapp"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

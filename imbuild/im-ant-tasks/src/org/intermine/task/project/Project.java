@@ -1,7 +1,7 @@
 package org.intermine.task.project;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,6 +31,10 @@ public class Project
     Map<String, Source> sources = new LinkedHashMap<String, Source>();
     List<UserProperty> properties = new ArrayList<UserProperty>();
     Map<String, PostProcess> postProcesses = new LinkedHashMap<String, PostProcess>();
+
+    // this will hold a set of canonical locations for sources
+    Set<String> srcLocations = new HashSet<String>();
+        
 
     /**
      * Add a Source object
@@ -118,9 +122,6 @@ public class Project
                     + " source directories can be found.");
         }
         
-        // this will hold a list of canonical locations
-        List<String> srcLocations = new ArrayList<String>();
-        
         // check that directories specified by 'source.location' properties exist
         // resolve relative paths into a canonical file
         List<String> badLocations = new ArrayList<String>();
@@ -150,7 +151,7 @@ public class Project
             }
             
             if (tmpDir.exists()) {
-                srcLocations.add(canonicalPath);
+                visitAllDirs(tmpDir);
             } else {
                 badLocations.add(canonicalPath);
             }
@@ -230,4 +231,20 @@ public class Project
         }
         return sourceLocations;
     }
+
+    private void visitAllDirs(File dir) {
+        if (dir.isDirectory()) {
+            try {
+                srcLocations.add(dir.getCanonicalPath());
+            } catch (IOException e) {
+                throw new BuildException("Error finding canonical path for 'source.location': "
+                        + dir.getPath());
+            }
+
+            String[] children = dir.list();
+            for (String child : children) {
+                visitAllDirs(new File(dir, child));
+            }
+        }
+    }   
 }

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,8 +21,6 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.WebResults;
 import org.intermine.bio.web.logic.CytoscapeNetworkDBQueryRunner;
 import org.intermine.bio.web.logic.CytoscapeNetworkUtil;
 import org.intermine.metadata.Model;
@@ -35,11 +33,9 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.util.StringUtil;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
-import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.ReportObject;
 import org.intermine.web.logic.session.SessionMethods;
 
@@ -52,8 +48,8 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(CytoscapeNetworkDisplayer.class);
 
-    private static String DATA_NOT_INTEGRATED = "Interaction data is not integrated.";
-    private static String EXCEPTION_OCCURED = "An exception occured";
+    private static final String DATA_NOT_INTEGRATED = "Interaction data is not integrated.";
+    private static final String EXCEPTION_OCCURED = "An exception occured";
 
     /**
      * Construct with config and the InterMineAPI.
@@ -94,7 +90,8 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         if (bag != null) {
             startingFeatureSet.addAll(bag.getContentsAsIds());
             if ("Gene".equals(bag.getType())) {
-                featureType = "Gene"; // TODO potentially dangerous once Gene has subclasses, eg ORF
+                // Nodes are modelled as Gene instead sub types of Gene
+                featureType = "Gene";
             } else if ("Protein".equals(bag.getType())) {
                 featureType = "Protein";
             }
@@ -144,35 +141,20 @@ public class CytoscapeNetworkDisplayer extends ReportDisplayer
         PathQuery q = new PathQuery(model);
         q.addViews("Gene.symbol",
                 "Gene.primaryIdentifier",
-                "Gene.interactions.interactionType",
-                "Gene.interactions.interactingGenes.symbol",
-                "Gene.interactions.interactingGenes.primaryIdentifier",
-                "Gene.interactions.dataSets.dataSource.name",
-                "Gene.interactions.experiment.publication.title",
-                "Gene.interactions.experiment.publication.pubMedId");
+                "Gene.interactions.details.type",
+                "Gene.interactions.gene2.symbol",
+                "Gene.interactions.gene2.primaryIdentifier",
+                "Gene.interactions.details.dataSets.dataSource.name",
+                "Gene.interactions.details.experiment.publication.title",
+                "Gene.interactions.details.experiment.publication.pubMedId");
 
         q.addOrderBy("Gene.symbol", OrderDirection.ASC);
         q.addConstraint(Constraints.inIds("Gene", fullInteractingGeneSet), "B");
-        q.addConstraint(Constraints.inIds("Gene.interactions.interactingGenes",
+        q.addConstraint(Constraints.inIds("Gene.interactions.gene2",
                 fullInteractingGeneSet), "A");
         q.setConstraintLogic("B and A");
 
-        // set inline query xml in request
-        String queryXML = PathQueryBinding.marshal(q, "", model.getName(),
-                PathQuery.USERPROFILE_VERSION);
-        request.setAttribute("cytoscapeNetworkQueryXML", queryXML);
-
-        // set inline table in request
-        try {
-            WebResultsExecutor we = im.getWebResultsExecutor(profile);
-            WebResults webResults = we.execute(q);
-            PagedTable pagedResults = new PagedTable(webResults,
-                    reportObject.getNumberOfTableRowsToShow().intValue());
-            pagedResults.setTableid("CytoscapeNetworkDisplayer");
-            request.setAttribute("cytoscapeNetworkPagedResults", pagedResults);
-        } catch (ObjectStoreException e) {
-            throw new RuntimeException(e);
-        }
-
+        request.setAttribute("cytoscapeNetworkQueryXML", q.toXml());
+        request.setAttribute("cytoscapeNetworkQueryJson", q.toJson());
     }
 }

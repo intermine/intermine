@@ -236,10 +236,10 @@ PRINTING: {
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
     $q->print_results(to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|"Employee > Name"\t"Employee > Years Alive"\t"Employee > Works Full Time?"\t"Employee > Lives At"\t"Employee > Works In"\t"Employee > Works For"\t"Employee > Works Under"
-"EmployeeA1"\t"10"\t"true"\t"Employee Street, AVille"\t"DepartmentA1"\t"CompanyA"\t"EmployeeA1"
-"EmployeeA2"\t"20"\t"true"\t"Employee Street, AVille"\t"DepartmentA1"\t"CompanyA"\t"EmployeeA1"
-"EmployeeA3"\t"30"\t"false"\t"Employee Street, AVille"\t"DepartmentA1"\t"CompanyA"\t"EmployeeA1"
+    my $expected = qq|Employee > Name\tEmployee > Years Alive\tEmployee > Works Full Time?\tEmployee > Lives At\tEmployee > Works In\tEmployee > Works For\tEmployee > Works Under
+EmployeeA1\t10\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
+EmployeeA2\t20\ttrue\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
+EmployeeA3\t30\tfalse\tEmployee Street, AVille\tDepartmentA1\tCompanyA\tEmployeeA1
 |;
     for ($buffer, $expected) {
         s/\t/[TAB]/g;
@@ -273,7 +273,7 @@ EmployeeA3....|.30...........|.false.............|.Employee.Street,.AVille..|.De
 
 my $t;
 lives_ok(
-    sub {$t = $module->template('employeesFromCompanyAndDepartment');},
+    sub {$t = $module->template('Department_Employees');},
     "Gets a template ok",
 );
 
@@ -282,7 +282,7 @@ isa_ok($t, 'Webservice::InterMine::Query::Template', "The template");
 is($t->editable_constraints, 2, "And it has 2 editable constraints");
 
 lives_ok(
-    sub {$res = $t->results_with(valueA => "CompanyB");},
+    sub {$res = $t->results_with(valueA => '*', valueB => "CompanyB");},
     "Runs results with ok",
 ) or diag($t->url);
 
@@ -304,42 +304,59 @@ $exp_res = [
     ['EmployeeA3','30']
 ];
 
+# Hack to fix broken template on the server
+$t->get_constraint('A')->set_value('DepartmentA1');
+
 $res = $t->results;
 
 for my $row (0, 1, 2) {
     for my $col (0, 1) {
-        is($res->[$col][$row], $exp_res->[$col][$row]);
+        is($res->[$row][$col], $exp_res->[$row][$col], "value of $col:$row is wrong");
     }
 }
 
-$exp_res = ['EmployeeA2',20];
+$exp_res = ['EmployeeA2',20, "true"];
 
 is_deeply($t->results(size => 1, start => 1)->[0]->to_aref, $exp_res, "And it handles start and size");
 
 $exp_res = [
     {
-        'age' => 10,
-        'class' => 'Manager',
-        'name' => 'EmployeeA1',
-    },
-    {
-        'age' => 20,
-        'class' => 'Employee',
-        'name' => 'EmployeeA2',
-    },
-    {
-        'age' => 30,
-        'class' => 'Employee',
-        'name' => 'EmployeeA3',
-    }
-];
+        class => 'Department',
+        employees => [
+        {
+            'age' => 10,
+            'class' => 'Manager',
+            'name' => 'EmployeeA1',
+        },
+        {
+            'age' => 20,
+            'class' => 'Employee',
+            'name' => 'EmployeeA2',
+        },
+        {
+            'age' => 30,
+            'class' => 'Employee',
+            'name' => 'EmployeeA3',
+        }
+    ]
+}];
 $res = $t->results(as => "jsonobjects");
-for my $r (@$res) {
-    delete $r->{objectId}; # Horrifically ugly, but we cannot rely on these to be consistent.
+
+sub clean {
+    my @things = @_;
+    for my $thing (@things) {
+        delete $thing->{objectId};
+        delete $thing->{fullTime};
+        if (my $employees = $thing->{employees}) {
+            clean(@$employees);
+        }
+    }
 }
+clean(@$res);
+
 is_deeply($res, $exp_res, "And for complex formats") or diag(explain $res);
 $res = $t->results(as => "jsonobjects", json => 'inflate');
-is($res->[0]->name, "EmployeeA1", "Can access inflated columns ok");
+is($res->[0]->employees->[0]->name, "EmployeeA1", "Can access inflated columns ok");
 
 subtest "and for json rows" => sub {
     $res = $t->results(as => "jsonrows");
@@ -355,15 +372,15 @@ subtest "and for json rows" => sub {
 SHOWING_TEMPLATES: {
     my $buffer = '';
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
-    $t->show_with(valueA => 'companyB', to => $fh);
+    $t->show_with(valueA => '*', valueB => 'companyB', to => $fh);
     close $fh or die "$!";
-    my $expected = q!employeesFromCompanyAndDepartment.-.View.all.the.employees.that.work.within.a.certain.department.of.the.specified.company
---------------+-------------
-Employee.name.|.Employee.age
---------------+-------------
-EmployeeB1....|.40..........
-EmployeeB2....|.50..........
-EmployeeB3....|.60..........
+    my $expected = q!Department_Employees.-.Department.-->.Employees
+--------------------------+--------------------------+------------------------------
+Department.employees.name.|.Department.employees.age.|.Department.employees.fullTime
+--------------------------+--------------------------+------------------------------
+EmployeeB1................|.40.......................|.true.........................
+EmployeeB2................|.50.......................|.true.........................
+EmployeeB3................|.60.......................|.true.........................
 !;
     $buffer =~ s/ /./g;
     $expected =~ s/ /./g;
@@ -374,12 +391,12 @@ EmployeeB3....|.60..........
 PRINTING_TEMPLATES: {
     my $buffer = '';
     open(my $fh, '>', \$buffer) or die "Horribly, $!";
-    $t->print_results_with(valueA => 'companyB', to => $fh, columnheaders => 1);
+    $t->print_results_with(valueA => '*', valueB => 'companyB', to => $fh, columnheaders => 1);
     close $fh or die "$!";
-    my $expected = qq|"Employee.>.Name"\t"Employee.>.Years Alive"
-"EmployeeB1"\t"40"
-"EmployeeB2"\t"50"
-"EmployeeB3"\t"60"
+    my $expected = qq|Department.>.Employees.>.Name	Department.>.Employees.>.Years.Alive	Department.>.Employees.>.Works.Full.Time?
+EmployeeB1	40	true
+EmployeeB2	50	true
+EmployeeB3	60	true
 |;
     $buffer =~ s/ /./g;
     $expected =~ s/ /./g;
@@ -467,7 +484,10 @@ TEST_IMPORTED_FNS: {
         "And they have the expected content - reified objects"
     ) or diag explain(\@results);
     
-    my $res = get_template('employeesFromCompanyAndDepartment')->results_with(valueA => "CompanyB");
+    my $res = get_template('Department_Employees')->results_with(
+        valueA => '*',
+        valueB => "CompanyB"
+    );
     my $exp_res = [
         ['EmployeeB1','40'],
         ['EmployeeB2','50'],
@@ -484,7 +504,8 @@ TEST_IMPORTED_FNS: {
 }
 
 TEST_LIST_STATUS: {
-    my @lists = get_service("www.flymine.org/query")->get_lists();
+    #my @lists = get_service("www.flymine.org/query")->get_lists();
+    my @lists = get_service("localhost/intermine-test", "test-user-token")->get_lists();
     ok($lists[0]->has_status, "Status is provided");
     my %possible_statuses = (CURRENT => 1, TO_UPGRADE => 1, NOT_CURRENT => 1);
     ok($possible_statuses{$lists[0]->status}, "And list is one of the possible statuses");

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,30 +10,27 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Set;
-
 /**
  * A mock IdResolver factory needed for testing.
  * @author rns
  */
 public class MockIdResolverFactory extends IdResolverFactory
 {
-    private IdResolver resolver = null;
-
     /**
      * Construct with class name for mock IdResolver
      * @param clsName the type to resolve
      */
     public MockIdResolverFactory(String clsName) {
-        resolver = new IdResolver(clsName);
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
     }
 
     /**
      * Create a MockIdResolver
      * @return a MockIdResolver
      */
-    @Override
-    protected IdResolver createIdResolver() {
+    public IdResolver getIdResolver() {
         return resolver;
     }
 
@@ -44,7 +41,11 @@ public class MockIdResolverFactory extends IdResolverFactory
      * @param primaryId main identifier
      * @param synonyms synonyms for the main identifier
      */
-    public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-        resolver.addSynonyms(taxonId, primaryId, synonyms);
+//    public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
+//        resolver.addSynonyms(taxonId, primaryId, synonyms);
+//    }
+
+    @Override
+    protected void createIdResolver() {
     }
 }

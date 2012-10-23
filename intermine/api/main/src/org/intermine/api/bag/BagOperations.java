@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -109,6 +109,8 @@ public final class BagOperations
         } catch (UnknownBagTypeException e) {
             throw new RuntimeException(
                     "The type returned by getCommonBagType is not in the model", e);
+        } catch (ClassKeysNotFoundException cke) {
+            throw new RuntimeException("Bag has not class key set", cke);
         }
         ObjectStoreBagCombination osbc =
             new ObjectStoreBagCombination(op);

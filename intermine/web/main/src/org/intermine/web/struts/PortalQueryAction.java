@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -285,7 +285,7 @@ public class PortalQueryAction extends InterMineAction
         } else if (bagListSize > 0) {
             ActionMessage msg = new ActionMessage("results.lookup.matches.many",
                     new Integer(bagListSize));
-            actionMessages.add(Constants.PORTAL_MSG, msg);
+            actionMessages.add(". " + Constants.PORTAL_MSG, msg);
         } else if (bagListSize == 0) {
             ActionMessage msg = new ActionMessage("portal.nomatches", extId);
             actionMessages.add(Constants.PORTAL_MSG, msg);

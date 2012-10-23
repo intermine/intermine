@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -131,7 +131,12 @@ public class MinePathwaysDisplayer extends ReportDisplayer
         Map<String, Set<String>> orthologues = new HashMap<String, Set<String>>();
         ProfileManager profileManager = im.getProfileManager();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
-        PathQuery q = getQuery(gene);
+        PathQuery q = null;
+        try {
+            q = getQuery(gene);
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
         if (!q.isValid()) {
             return Collections.emptyMap();
         }

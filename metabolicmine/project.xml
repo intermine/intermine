@@ -1,7 +1,6 @@
 <project type="bio">
   <property name="target.model" value="genomic" />
   <property name="source.location" location="../bio/sources/" />
-  <property name="source.location" location="../bio/sources/humanmine" />
   <property name="common.os.prefix" value="common" />
   <property name="intermine.properties.file" value="metabolicmine.properties" />
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties" />
@@ -40,8 +39,11 @@
       <property name="uniprot.organisms" value="9606 10090" />
       <property name="createinterpro" value="true" />
       <property name="src.data.dir" location="/micklem/data/uniprot/current/" />
+      <property name="loadtrembl" value="false"/>
     </source>
-    <!--    <source name="uniprot-fasta" type="fasta" dump="true">
+
+<!--
+    <source name="uniprot-fasta" type="fasta" dump="true">
       <property name="fasta.taxonId" value="9606 10090"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
@@ -52,7 +54,9 @@
       <property name="fasta.sequenceType" value="protein" />
       <property name="fasta.loaderClassName"
                 value="org.intermine.bio.dataconversion.UniProtFastaLoaderTask"/>
-    </source>-->
+    </source>
+-->
+
     <source name="uniprot-keywords" type="uniprot-keywords">
       <property name="src.data.dir" location="/micklem/data/uniprot/current" />
       <property name="src.data.dir.includes" value="keywlist.xml" />
@@ -90,10 +94,9 @@
       <property name="src.data.dir" location="/micklem/data/pubmed/current" />
       <property name="pubmed.organisms" value="9606 10090" />
       <property name="src.data.dir.includes" value="gene2pubmed" />
-      <property name="infoFile" location="/micklem/data/pubmed/current/gene_info" />
     </source>
     <source name="omim" type="omim">
-      <property name="src.data.dir" location="/micklem/data/metabolic/omim/test" />
+      <property name="src.data.dir" location="/micklem/data/metabolic/omim/current" />
     </source>
     <source name="ensembl-mouse" type="ensembl" dump="true">
       <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core" />
@@ -126,9 +129,13 @@
       <property name="organism" value="9606" />
       <property name="sources" value="dbSNP" />
     </source>
-    <!--    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
-     <property name="source.db.name" value="ensembl.10090.variation"/>
-    </source>-->
+
+<!--
+    <source name="ensembl-snp-db-mouse" type="ensembl-snp-db" dump="true">
+        <property name="source.db.name" value="ensembl.10090.variation"/>
+    </source>
+-->
+
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/micklem/data/metabolic/kegg/current" />
       <property name="kegg.organisms" value="9606 10090" />
@@ -146,15 +153,15 @@
     <source name="update-publications" type="update-publications">
       <property name="src.data.file" location="build/publications.xml" />
     </source>
-    <source name="entrez-organism" type="entrez-organism">
+    <source name="entrez-organism" type="entrez-organism" dump="true">
       <property name="src.data.file" location="build/organisms.xml" />
     </source>
 
 <!--
     <source name="panther" type="panther">
           <property name="src.data.dir" location="/micklem/data/panther/current"/>
-          <property name="panther.organisms" value="7955"/>
-        </source>
+          <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>
 
     <source name="homologene" type="homologene">
           <property name="src.data.dir" location="/micklem/data/homologene/current"/>
@@ -180,5 +187,4 @@
     <post-process name="create-search-index" />
     <post-process name="create-attribute-indexes" />
   </post-processing>
-
 </project>

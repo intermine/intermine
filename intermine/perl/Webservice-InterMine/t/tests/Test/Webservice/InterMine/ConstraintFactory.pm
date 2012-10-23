@@ -33,6 +33,10 @@ sub constraint_types {{
 	args => [path => 'Some.path', type => 'Some.other.path'],
 	class => 'Webservice::InterMine::Constraint::SubClass',
     },
+    range => {
+        args => [path => "Some.path", op => 'OVERLAPS', values => [qw/foo bar baz/]],
+        class => 'Webservice::InterMine::Constraint::Range',
+    }
 }}
 
 sub startup : Test(startup => 1) {
@@ -40,7 +44,7 @@ sub startup : Test(startup => 1) {
     use_ok($test->class);
 }
 
-sub get_constraint_class : Test(8) {
+sub get_constraint_class : Test(9) {
     my $test = shift;
    throws_ok(
        sub {$test->class->get_constraint_class()},
@@ -76,7 +80,7 @@ sub test_get_constraint_class {
     );
 }
 
-sub make_constraint : Test(10) {
+sub make_constraint : Test(12) {
     my $test = shift;
     for my $type ($test->types) {
 	my $args  = $test->constraint_types->{$type}->{args};

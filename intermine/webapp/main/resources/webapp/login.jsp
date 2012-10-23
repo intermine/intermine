@@ -81,6 +81,7 @@
     <ul>
       <li>your <span class="lists">lists</span> and <span class="queries">queries</span> will be privately saved</li>
       <li>you can <span class="favorite">favorite</span> items</li>
+      <li>you can share <span class="lists">lists</span> with other users</li>
     </ul>
 
     <br/>

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,7 +23,6 @@ import org.intermine.sql.DatabaseFactory;
 
 /**
  * @author Julie Sullivan
- *
  */
 public class OntologyIdResolverFactory extends IdResolverFactory
 {
@@ -31,6 +30,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
     private Database db;
     private String ontology = null;
     private static final String MOCK_TAXON_ID = "0";
+    private final String propName = "db.production";
 
 
     /**
@@ -43,37 +43,72 @@ public class OntologyIdResolverFactory extends IdResolverFactory
     }
 
     /**
-     * Build an IdResolver for FlyBase by accessing a FlyBase chado database.
-     * @return an IdResolver for FlyBase
+     * Return an IdResolver, if not already built then create it.
+     * @return a specific IdResolver
+     */
+    public IdResolver getIdResolver() {
+        return getIdResolver(true);
+    }
+
+    /**
+     * Return an IdResolver, if not already built then create it.  If failOnError
+     * set to false then swallow any exceptions and return null.  Allows code to
+     * continue if no resolver can be set up.
+     * @param failOnError if false swallow any exceptions and return null
+     * @return a specific IdResolver
+     */
+    public IdResolver getIdResolver(boolean failOnError) {
+        if (!caughtError) {
+            try {
+                createIdResolver();
+            } catch (Exception e) {
+                this.caughtError = true;
+                if (failOnError) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return resolver;
+    }
+
+    /**
+     * Build an IdResolver.
+     * @return an IdResolver for GO
      */
     @Override
-    protected IdResolver createIdResolver() {
-        IdResolver resolver = new IdResolver(ontology);
+    protected void createIdResolver() {
+
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(MOCK_TAXON_ID)) {
+            return;
+        }
 
         try {
             // TODO we already know this database, right?
-            db = DatabaseFactory.getDatabase("os.production");
+            db = DatabaseFactory.getDatabase(propName);
 
             String cacheFileName = "build/" + db.getName() + "." + ontology;
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("OntologyIdResolver reading from cache file: " + cacheFileName);
-                resolver = createFromFile(ontology, f);
+                createFromFile(ontology, f);
             } else {
                 System.out .println("OntologyIdResolver creating from database: " + db.getName());
-                resolver = createFromDb(db);
+                createFromDb(db);
                 resolver.writeToFile(f);
                 System.out .println("OntologyIdResolver caching in file: " + cacheFileName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return resolver;
     }
 
+    @Override
+    protected void createFromDb(Database database) {
 
-    private IdResolver createFromDb(Database database) {
-        IdResolver resolver = new IdResolver(ontology);
         Connection conn = null;
         try {
             conn = database.getConnection();
@@ -105,7 +140,5 @@ public class OntologyIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
-
-        return resolver;
     }
 }

@@ -11,7 +11,7 @@ unless ($do_live_tests) {
 
 use Webservice::InterMine;
 
-my $service = Webservice::InterMine->get_service('squirrel.flymine.org/intermine-test');
+my $service = Webservice::InterMine->get_service('localhost/intermine-test');
 
 my $path = $service->new_path('Department.employees.name');
 

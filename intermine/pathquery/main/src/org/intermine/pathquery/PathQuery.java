@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,10 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -36,7 +36,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
-import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.util.DynamicUtil;
 import org.intermine.util.TypeUtil;
 
@@ -1629,13 +1628,14 @@ public class PathQuery implements Cloneable
                                 + " cannot be applied to the root path");
                         continue;
                     }
-                    if (constraint.getOp().equals(ConstraintOp.IS_NULL)) {
-                        if (!path.endIsAttribute()) {
-                            problems.add("Constraint " + constraint
-                                    + " is invalid - can only set IS NULL on an attribute");
-                            continue;
-                        }
-                    }
+                    // TODO - make IS NULL work on references and collections.
+                    //if (constraint.getOp().equals(ConstraintOp.IS_NULL)) {
+                    //    if (!path.endIsAttribute()) {
+                    //        problems.add("Constraint " + constraint
+                    //                + " is invalid - can only set IS NULL on an attribute");
+                    //        continue;
+                    //    }
+                    //}
                 } else if (constraint instanceof PathConstraintBag) {
                     // We do not check that the bag exists here. Call getBagNames() and check
                     // elsewhere.
@@ -1650,6 +1650,23 @@ public class PathQuery implements Cloneable
                                 + " must not be on an attribute");
                         continue;
                     }
+                } else if (constraint instanceof PathConstraintMultitype) {
+                    if (path.endIsAttribute()) {
+                        problems.add("Constraint " + constraint + " must be on a class or reference");
+                        continue;
+                    }
+                    for (String typeName: ((PathConstraintMultitype) constraint).getValues()) {
+                        ClassDescriptor cd = model.getClassDescriptorByName(typeName);
+                        if (cd == null) {
+                            problems.add(String.format("Type '%s' named in [%s] is not in the model",
+                                    typeName, constraint));
+                        } else if (!cd.getAllSuperDescriptors().contains(path.getEndClassDescriptor())) {
+                            problems.add(String.format("%s is not a subtype of %s, as required by %s",
+                                    typeName, path.getEndClassDescriptor(), constraint));
+                        }
+                    }
+                } else if (constraint instanceof PathConstraintRange) {
+                    // Cannot verify these constraints until we try and make the query in the MainHelper.
                 } else if (constraint instanceof PathConstraintMultiValue) {
                     if (!path.endIsAttribute()) {
                         problems.add("Constraint " + constraint + " must be on an attribute");
@@ -2263,7 +2280,7 @@ public class PathQuery implements Cloneable
 
         // LOGIC - only if there is some. Just logic = A is dumb.
         String constraintLogic = getConstraintLogic();
-        if (constraintLogic != null && constraintLogic.length() > 1) { 
+        if (constraintLogic != null && constraintLogic.length() > 1) {
             ret.put("constraintLogic", constraintLogic);
         }
 
@@ -2327,7 +2344,7 @@ public class PathQuery implements Cloneable
             Iterator<Entry<PathConstraint, String>> it = cons.entrySet().iterator();
             while (it.hasNext()) {
                 Entry<PathConstraint, String> pair = it.next();
-                
+
                 sb.append(constraintToJson(pair.getKey(), pair.getValue()));
                 if (it.hasNext()) {
                     sb.append(",");
@@ -2354,10 +2371,22 @@ public class PathQuery implements Cloneable
                               + code + "\"";
         StringBuilder conb = new StringBuilder(commonPrefix);
 
-        Collection<String> values = PathConstraint.getValues(constraint);
-        if (values != null) {
+        Collection<String> values = PathConstraint.getValues(constraint); // Serialise the Multi-Value list
+        Collection<Integer> ids = PathConstraint.getIds(constraint); // Serialise the ID list.
+        if (ids != null ) {
+            conb.append(",\"ids\":[");
+            Iterator<Integer> it = ids.iterator();
+            while (it.hasNext()) {
+                conb.append(String.valueOf(it.next()));
+                if (it.hasNext()) {
+                    conb.append(",");
+                }
+            }
+            conb.append("]");
+        } else if (values != null) {
+            Iterator<String> it = values.iterator();
             conb.append(",\"values\":[");
-            for (Iterator<String> it = values.iterator(); it.hasNext();) {
+            while (it.hasNext()) {
                 conb.append("\"" + StringEscapeUtils.escapeJava(it.next()) + "\"");
                 if (it.hasNext()) {
                     conb.append(",");
@@ -2365,7 +2394,6 @@ public class PathQuery implements Cloneable
             }
             conb.append("]");
         } else {
-
             String value = PathConstraint.getValue(constraint);
             String extraValue = PathConstraint.getExtraValue(constraint);
 

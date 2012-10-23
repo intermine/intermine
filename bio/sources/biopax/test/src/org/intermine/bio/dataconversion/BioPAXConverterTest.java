@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,6 +45,7 @@ public class BioPAXConverterTest extends MockItemsTestCase
      *
      * @throws Exception
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testProcess() throws Exception {
         if (processDmel) {
             TEST_FILE = "83333.owl";
@@ -66,7 +67,7 @@ public class BioPAXConverterTest extends MockItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set<Item> expected = readItemSet("BioPAXConverterTest_tgt.xml");
 

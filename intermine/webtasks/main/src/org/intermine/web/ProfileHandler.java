@@ -1,7 +1,7 @@
 package org.intermine.web;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,21 +10,28 @@ package org.intermine.web;
  *
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.intermine.api.bag.InvitationHandler;
 import org.intermine.api.profile.BagSet;
 import org.intermine.api.profile.BagValue;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.InvalidBag;
+import org.intermine.api.profile.PreferencesHandler;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagHandler;
 import org.intermine.api.xml.InterMineBagHandler;
 import org.intermine.api.xml.SavedQueryHandler;
+import org.intermine.api.xml.SharedBagHandler;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.template.TemplateQuery;
@@ -38,23 +45,34 @@ import org.xml.sax.helpers.DefaultHandler;
  * Extension of DefaultHandler to handle parsing Profiles
  *
  * @author Kim Rutherford
+ * @author dbutano
  */
 class ProfileHandler extends DefaultHandler
 {
+    private static final Logger LOG = Logger.getLogger(ProfileHandler.class);
+
     private ProfileManager profileManager;
     private String username;
     private String password;
     private Map<String, SavedQuery> savedQueries;
     private Map<String, InterMineBag> savedBags;
+    private Map<String, List> sharedBagsByUser;
+    private List<Map<String, String>> sharedBags;
     private Map<String, InvalidBag> invalidBags;
     private Map<String, TemplateQuery> savedTemplates;
     private Set<Tag> tags;
     private Map<String, Set<BagValue>> bagsValues;
+    private final Map<String, String> preferences = new HashMap<String, String>();
     private ObjectStoreWriter osw;
     private int version;
     private String apiKey = null;
     private boolean isLocal = true;
     private boolean isSuperUser;
+    private final InvitationHandler invitationHandler = new InvitationHandler();
+
+    public InvitationHandler getInvitationHandler() {
+        return invitationHandler;
+    }
 
     /**
      * The current child handler.  If we have just seen a "bags" element, it will be an
@@ -73,9 +91,9 @@ class ProfileHandler extends DefaultHandler
      * problem and continue if possible (used by read-userprofile-xml).
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
-    public ProfileHandler(ProfileManager profileManager,
-                          ObjectStoreWriter osw, int version) {
-        this(profileManager, null, null, new HashSet(), osw, version);
+    public ProfileHandler(ProfileManager profileManager, ObjectStoreWriter osw,
+                          int version, Map<String, List> sharedBagsByUser) {
+        this(profileManager, null, null, new HashSet(), osw, version, sharedBagsByUser);
     }
 
     /**
@@ -92,7 +110,8 @@ class ProfileHandler extends DefaultHandler
      * @param version the version of the profile xml, an attribute on the profile manager xml
      */
     public ProfileHandler(ProfileManager profileManager, String defaultUsername,
-            String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw, int version) {
+            String defaultPassword, Set<Tag> tags, ObjectStoreWriter osw, int version,
+            Map<String, List> sharedBagsByUser) {
         super();
         this.profileManager = profileManager;
         this.username = defaultUsername;
@@ -100,17 +119,23 @@ class ProfileHandler extends DefaultHandler
         this.tags = tags;
         this.osw = osw;
         this.version = version;
+        this.sharedBagsByUser = sharedBagsByUser;
     }
 
     /**
      * Return the de-serialised Profile.
      * @return the new Profile
      */
-    public Profile getProfile() {
+    public Profile getProfile() throws SAXException {
         Profile retval = new Profile(profileManager, username, null, password, savedQueries,
                                      new BagSet(savedBags, invalidBags),
                                      TemplateHelper.upcast(savedTemplates), apiKey,
                                      isLocal, isSuperUser);
+        try {
+            retval.getPreferences().putAll(preferences);
+        } catch (RuntimeException e) {
+            throw new SAXException(e);
+        }
         return retval;
     }
 
@@ -160,6 +185,10 @@ class ProfileHandler extends DefaultHandler
                     profileManager.getProfileObjectStoreWriter(), osw,
                     savedBags, invalidBags, bagsValues);
         }
+        if("shared-bags".equals(qName)) {
+            sharedBags = new ArrayList<Map<String,String>>();
+            subHandler = new SharedBagHandler(sharedBags);
+        }
         if ("template-queries".equals(qName)) {
             savedTemplates = new LinkedHashMap();
             subHandler = new TemplateQueryHandler(savedTemplates, version);
@@ -170,6 +199,12 @@ class ProfileHandler extends DefaultHandler
         }
         if ("tags".equals(qName)) {
             subHandler = new TagHandler(username, tags);
+        }
+        if ("preferences".equals(qName)) {
+            subHandler = new PreferencesHandler(preferences);
+        }
+        if ("invitations".equals(qName)) {
+            subHandler = invitationHandler;
         }
         if (subHandler != null) {
             subHandler.startElement(uri, localName, qName, attrs);
@@ -182,10 +217,16 @@ class ProfileHandler extends DefaultHandler
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
         if ("bags".equals(qName) || qName.equals("template-queries")
-            || "queries".equals(qName) || qName.equals("items") || qName.equals("tags")) {
+            || "queries".equals(qName) || qName.equals("items")
+            || qName.equals("tags") || qName.equals("preferences")
+            || qName.equals("invitations")) {
             subHandler = null;
         }
-
+        if ("shared-bags".equals(qName)) {
+            if (sharedBagsByUser  != null){
+                sharedBagsByUser.put(username, sharedBags);
+            }
+        }
         if (subHandler != null) {
             subHandler.endElement(uri, localName, qName);
         }
@@ -195,9 +236,7 @@ class ProfileHandler extends DefaultHandler
      * {@inheritDoc}
      */
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (subHandler != null
-            && (subHandler instanceof TemplateQueryHandler
-                || subHandler instanceof SavedQueryHandler)) {
+        if (subHandler != null) {
             subHandler.characters(ch, start, length);
         }
     }

@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,6 +63,7 @@ public final class BioUtil
      * @param organismFieldName eg. name, shortName or taxonId
      * @return collection of organism names
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Collection<String> getOrganisms(ObjectStore os, InterMineBag bag,
             boolean lowercase, String organismFieldName) {
 
@@ -108,7 +109,7 @@ public final class BioUtil
         q.setConstraint(cs);
 
         Results r = os.execute(q);
-        Iterator<ResultsRow> it = (Iterator) r.iterator();
+        Iterator<ResultsRow> it = ((Iterator) r.iterator());
         Collection<String> orgs = new ArrayList();
 
         while (it.hasNext()) {
@@ -134,13 +135,12 @@ public final class BioUtil
      * are all lowercase, so the chromosome names need to be lowercase when used in queries
      * @return collection of chromosome names
      */
-    @SuppressWarnings("unchecked")
     public static Collection<String> getChromosomes(ObjectStore os, Collection<String> organisms,
             boolean lowercase) {
         Model model = os.getModel();
 
         final String dmel = "drosophila melanogaster";
-        ArrayList<String> chromosomes = new ArrayList();
+        ArrayList<String> chromosomes = new ArrayList<String>();
 
         if (organisms.contains("homo sapiens")) {
             chromosomes.add("1");
@@ -231,10 +231,10 @@ public final class BioUtil
         q.addToOrderBy(qfChromosome);
 
         Results r = os.execute(q);
-        Iterator it = r.iterator();
+        Iterator<?> it = r.iterator();
 
         while (it.hasNext()) {
-            ResultsRow rr =  (ResultsRow) it.next();
+            ResultsRow<?> rr =  (ResultsRow<?>) it.next();
             String chromosome = (String) rr.get(0);
             if (lowercase) {
                 chromosome.toLowerCase();

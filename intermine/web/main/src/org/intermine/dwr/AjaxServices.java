@@ -1,7 +1,7 @@
 package org.intermine.dwr;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -50,6 +51,7 @@ import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.mines.FriendlyMineQueryRunner;
 import org.intermine.api.mines.Mine;
+import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -57,6 +59,9 @@ import org.intermine.api.profile.ProfileAlreadyExistsException;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.profile.UserAlreadyShareBagException;
+import org.intermine.api.profile.UserNotFoundException;
+import org.intermine.api.profile.UserPreferences;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
 import org.intermine.api.search.SearchRepository;
@@ -72,7 +77,6 @@ import org.intermine.api.template.TemplateSummariser;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.ReferenceDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -84,14 +88,16 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.Emailer;
+import org.intermine.util.MailUtils;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConverter;
-import org.intermine.web.logic.config.Type;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.profile.UpgradeBagList;
 import org.intermine.web.logic.query.PageTableQueryMonitor;
@@ -100,15 +106,6 @@ import org.intermine.web.logic.results.PagedTable;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.QueryCountQueryMonitor;
 import org.intermine.web.logic.session.SessionMethods;
-import org.intermine.web.logic.widget.EnrichmentWidget;
-import org.intermine.web.logic.widget.GraphWidget;
-import org.intermine.web.logic.widget.HTMLWidget;
-import org.intermine.web.logic.widget.TableWidget;
-import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
-import org.intermine.web.logic.widget.config.GraphWidgetConfig;
-import org.intermine.web.logic.widget.config.HTMLWidgetConfig;
-import org.intermine.web.logic.widget.config.TableWidgetConfig;
-import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -117,6 +114,7 @@ import org.json.JSONObject;
  * This class contains the methods called through DWR Ajax
  *
  * @author Xavier Watkins
+ * @author Daniela Butano
  *
  */
 public class AjaxServices
@@ -147,11 +145,6 @@ public class AjaxServices
         } catch (Exception e) {
             processException(e);
         }
-    }
-
-    private static void processWidgetException(Exception e, String widgetId) {
-        String msg = "Failed to render widget: " + widgetId;
-        LOG.error(msg, e);
     }
 
     private static void processException(Exception e) {
@@ -281,7 +274,7 @@ public class AjaxServices
                 try {
                     profile.fixInvalidBag(name, newName);
                     InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session))
+                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner()))
                         .start();
                 } catch (UnknownBagTypeException e) {
                     return "<i>" + e.getMessage() + "</i>";
@@ -634,7 +627,7 @@ public class AjaxServices
             TemplateManager templateManager = im.getTemplateManager();
             WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
             int count = 0;
-            InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            InterMineBag  imBag = bagManager.getBag(profile, bagName);
             List<ApiTemplate> conversionTemplates = templateManager.getConversionTemplates();
             PathQuery pathQuery = TypeConverter.getConversionQuery(conversionTemplates,
                     TypeUtil.instantiate(pckName + "." + imBag.getType()),
@@ -660,7 +653,7 @@ public class AjaxServices
             final InterMineAPI im = SessionMethods.getInterMineAPI(session);
             final Profile profile = SessionMethods.getProfile(session);
             final BagManager bagManager = im.getBagManager();
-            final InterMineBag  imBag = bagManager.getUserOrGlobalBag(profile, bagName);
+            final InterMineBag  imBag = bagManager.getBag(profile, bagName);
             final ServletContext servletContext = WebContextFactory.get().getServletContext();
             final WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
             final BagConverter bagConverter = PortalHelper.getBagConverter(im, webConfig,
@@ -929,13 +922,6 @@ public class AjaxServices
                         return msg;
                     }
                 }
-                for (int i = 0; i < selectedBags.length; i++) {
-                    Map allBags = profile.getAllBags();
-                    if (!allBags.containsKey(selectedBags[i])) {
-                        return "List `" + selectedBags[i] + "` cannot be deleted as it is a shared "
-                            + "list";
-                    }
-                }
             } else if (!"copy".equals(operation)) {
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 String defaultName = properties.getProperty("lists.input.example");
@@ -976,160 +962,6 @@ public class AjaxServices
         }
     }
 
-    /**
-     * @param widgetId unique id for this widget
-     * @param bagName name of list
-     * @param selectedExtraAttribute extra attribute (like organism)
-     * @return graph widget
-     */
-    public static GraphWidget getProcessGraphWidget(String widgetId, String bagName,
-                                                    String selectedExtraAttribute) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model =  os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                    + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widget: widgets) {
-                if (widget.getId().equals(widgetId)) {
-                    GraphWidgetConfig graphWidgetConf = (GraphWidgetConfig) widget;
-                    graphWidgetConf.setSession(session);
-                    GraphWidget graphWidget = new GraphWidget(graphWidgetConf, imBag, os,
-                                    selectedExtraAttribute);
-                    if (!graphWidget.getResults().isEmpty()) {
-                        return graphWidget;
-                    }
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
-
-    /**
-     * @param widgetId unique id for this widget
-     * @param bagName name of list
-     * @return graph widget
-     */
-    public static HTMLWidget getProcessHTMLWidget(String widgetId, String bagName) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            Model model = im.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-
-            BagManager bagManager = im.getBagManager();
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                            + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widget: widgets) {
-                if (widget.getId().equals(widgetId)) {
-                    HTMLWidgetConfig htmlWidgetConf = (HTMLWidgetConfig) widget;
-                    HTMLWidget htmlWidget = new HTMLWidget(htmlWidgetConf);
-                    return htmlWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param widgetId unique ID for this widget
-     * @param bagName name of list
-     * @return table widget
-     */
-    public static TableWidget getProcessTableWidget(String widgetId, String bagName) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model =  os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                            + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widgetConfig: widgets) {
-                if (widgetConfig.getId().equals(widgetId)) {
-                    TableWidgetConfig tableWidgetConfig = (TableWidgetConfig) widgetConfig;
-                    tableWidgetConfig.setClassKeys(classKeys);
-                    tableWidgetConfig.setWebConfig(webConfig);
-                    TableWidget tableWidget = new TableWidget(tableWidgetConfig, imBag, os);
-                    return tableWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param widgetId unique ID for each widget
-     * @param bagName name of list
-     * @param errorCorrection error correction method to use
-     * @param max maximum value to display
-     * @param filters list of strings used to filter widget results, ie Ontology
-     * @param externalLink link to external datasource
-     * @param externalLinkLabel name of external datasource.
-     * @return enrichment widget
-     */
-    public static EnrichmentWidget getProcessEnrichmentWidget(String widgetId, String bagName,
-            String errorCorrection, String max, String filters, String externalLink,
-            String externalLinkLabel) {
-        try {
-            ServletContext servletContext = WebContextFactory.get().getServletContext();
-            HttpSession session = WebContextFactory.get().getSession();
-            final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-            WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
-            ObjectStore os = im.getObjectStore();
-            Model model = os.getModel();
-            Profile profile = SessionMethods.getProfile(session);
-            BagManager bagManager = im.getBagManager();
-
-            InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, bagName);
-            Type type = webConfig.getTypes().get(model.getPackageName()
-                    + "." + imBag.getType());
-            List<WidgetConfig> widgets = type.getWidgets();
-            for (WidgetConfig widgetConfig : widgets) {
-                if (widgetConfig.getId().equals(widgetId)) {
-                    EnrichmentWidgetConfig enrichmentWidgetConfig =
-                                                        (EnrichmentWidgetConfig) widgetConfig;
-                    //enrichmentWidgetConfig.setExternalLink(externalLink);
-                    //enrichmentWidgetConfig.setExternalLinkLabel(externalLinkLabel);
-                    EnrichmentWidget enrichmentWidget = new EnrichmentWidget(
-                                    enrichmentWidgetConfig, imBag, os, filters, max,
-                                    errorCorrection);
-                    return enrichmentWidget;
-                }
-            }
-        } catch (RuntimeException e) {
-            processWidgetException(e, widgetId);
-        }
-        return null;
-    }
 
     /**
      * Add an ID to the PagedTable selection
@@ -1295,12 +1127,12 @@ public class AjaxServices
                 + taggedObject + " type: " + type);
 
         if (StringUtils.isBlank(tagName)) {
-        	LOG.error("Adding tag failed");
-        	return "tag must not be blank";
+            LOG.error("Adding tag failed");
+            return "tag must not be blank";
         }
         if (StringUtils.isBlank(taggedObject)) {
-        	LOG.error("Adding tag failed");
-        	return "object to tag must not be blank";
+            LOG.error("Adding tag failed");
+            return "object to tag must not be blank";
         }
         try {
             final HttpServletRequest request = getRequest();
@@ -1334,7 +1166,7 @@ public class AjaxServices
                 } else {
                     WebSearchable ws = null;
                     if (TagTypes.BAG.equals(type)) {
-                        ws = bm.getUserOrGlobalBag(profile, taggedObject);
+                        ws = bm.getBag(profile, taggedObject);
                     } else if (TagTypes.TEMPLATE.equals(type)) {
                         ws = tm.getUserOrGlobalTemplate(profile, taggedObject);
                     }
@@ -1457,16 +1289,28 @@ public class AjaxServices
         return SessionMethods.getProfile(request.getSession());
     }
 
+    /**
+     * Return the single use API key for the current profile
+     * @return the single use APi key
+     */
     public static String getSingleUseKey() {
         HttpServletRequest request = getRequest();
         Profile profile = SessionMethods.getProfile(request.getSession());
         return profile.getSingleUseKey();
     }
 
+    /**
+     * Return the request retrieved from the web contest
+     * @return the request
+     */
     private static HttpServletRequest getRequest() {
         return WebContextFactory.get().getHttpServletRequest();
     }
 
+    /**
+     * Return the TagManager
+     * @return the tag manager
+     */
     private static TagManager getTagManager() {
         HttpServletRequest request = getRequest();
         final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
@@ -1534,28 +1378,31 @@ public class AjaxServices
     /**
      * This method gets the latest bags from the session (SessionMethods) and returns them in JSON
      * @return JSON serialized to a String
-     * @throws JSONException
+     * @throws JSONException json exception
      */
     @SuppressWarnings("unchecked")
     public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
         @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> savedBagStatus =
-            (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-
+        Map<String, InterMineBag> savedBags = SessionMethods.getProfile(session).getSavedBags();
         // this is where my lists go
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
-            for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
-                Map<String, Object> listAttributes = entry.getValue();
+            for (Map.Entry<String, InterMineBag> entry : savedBags.entrySet()) {
+                InterMineBag bag = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
-                if (listAttributes.get("status").equals(BagState.CURRENT.toString()) ||
-                        listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
+                if (bag.isCurrent() || bag.isToUpgrade()) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
-                    list.put("status", listAttributes.get("status"));
-                    if (listAttributes.containsKey("size")) {
-                        list.put("size", listAttributes.get("size"));
+                    list.put("status", bag.getState());
+                    if (bag.isCurrent()) {
+                        try {
+                            list.put("size", bag.getSize());
+                        } catch (ObjectStoreException os) {
+                            LOG.error("Problems retrieving size of bag " + bag.getName(), os);
+                        }
+                    } else {
+                        list.put("size", 0);
                     }
                     lists.add(list);
                 }
@@ -1567,6 +1414,12 @@ public class AjaxServices
         return lists.toString();
     }
 
+    /**
+     * Update with the value given in input the field of the previous template
+     * saved into the session
+     * @param field the field to update
+     * @param value the value
+     */
     public void updateTemplate(String field, String value) {
         HttpSession session = WebContextFactory.get().getSession();
         boolean isNewTemplate = (session.getAttribute(Constants.NEW_TEMPLATE) != null)
@@ -1577,8 +1430,89 @@ public class AjaxServices
         }
         try {
             PropertyUtils.setSimpleProperty(templateQuery, field, value);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * Share the bag given in input with the user which userName is input and send email
+     * @param userName the user which the bag has to be shared with
+     * @param bagName the bag name to share
+     * @return 'ok' string if succeeded else error string
+     */
+    public String addUserToShareBag(String userName, String bagName) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        final Profile profile = SessionMethods.getProfile(session);
+        final BagManager bagManager = im.getBagManager();
+        final Emailer emailer = InterMineContext.getEmailer();
+        final ProfileManager pm = profile.getProfileManager();
+
+        InterMineBag bag = profile.getSavedBags().get(bagName);
+        Profile invitee = pm.getProfile(userName);
+        if (bag == null) {
+            return "This is not one of your lists";
+        }
+        if (invitee == null || invitee.getPreferences().containsKey(Constants.HIDDEN)) {
+            return "User not found."; // Users can request not to be found.
+        }
+        if (profile.getUsername().equals(userName)) {
+            return "You are trying to share this with yourself.";
+        }
+        try {
+            bagManager.shareBagWithUser(bag, invitee);
+        } catch (UserNotFoundException e1) {
+            return "User not found."; // Shouldn't happen now, but, hey ho.
+        } catch (UserAlreadyShareBagException e2) {
+            return "The user already shares the bag.";
+        }
+
+        try {
+            if (!invitee.getPreferences().containsKey(Constants.NO_SPAM)) {
+                emailer.informUserOfNewSharedBag(invitee.getEmailAddress(), profile, bag);
+            }
+        } catch (Exception ex) {
+            LOG.warn("Problems sending sharing list mail.", ex);
+        }
+        return "ok";
+    }
+
+    /**
+     * Un-share the bag given in input with the user which userName is input
+     * @param userName the user which the bag has to be un-shared with
+     * @param bagName the bag name to un-share
+     * @return 'ok' string if succeeded else error string
+     */
+    public String deleteUserToShareBag(String userName, String bagName) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        BagManager bagManager = im.getBagManager();
+        try {
+            bagManager.unshareBagWithUser(bagName, profile.getUsername(), userName);
+        } catch (UserNotFoundException unfe) {
+            return "User not found.";
+        } catch (BagDoesNotExistException bnee) {
+            return "That list does not exist.";
+        }
+        return "ok";
+    }
+
+    /**
+     * Return the list of users who have access to this bag because it has been
+     * shared with them.
+     *
+     * TODO: present pretty names for open-id users.
+     *
+     * @param bagName the bag name that the users share
+     * @return the list of users
+     */
+    public Collection<String> getUsersSharingBag(String bagName) {
+        HttpSession session = WebContextFactory.get().getSession();
+        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
+        Profile profile = SessionMethods.getProfile(session);
+        BagManager bagManager = im.getBagManager();
+        return bagManager.getUsersSharingBag(bagName, profile.getUsername());
     }
 }

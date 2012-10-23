@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.user;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,17 +12,26 @@ package org.intermine.webservice.server.user;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Properties;
 
 import org.directwebremoting.util.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
+import org.intermine.util.Emailer;
 import org.intermine.util.MailUtils;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.core.RateLimitHistory;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.RateLimitException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
@@ -36,6 +45,8 @@ public class NewUserService extends JSONService
 {
 
     private static final Logger LOG = Logger.getLogger(NewUserService.class);
+    private int maxNewUsersPerAddressPerHour = 1000;
+    private static RateLimitHistory requestHistory = null;
 
     /**
      * Constructor.
@@ -43,6 +54,30 @@ public class NewUserService extends JSONService
      */
     public NewUserService(InterMineAPI im) {
         super(im);
+        if (requestHistory == null) {
+            Properties webProperties = InterMineContext.getWebProperties();
+            String rateLimit = webProperties.getProperty("webservice.newuser.ratelimit");
+            if (rateLimit != null) {
+                try {
+                    maxNewUsersPerAddressPerHour = Integer.valueOf(rateLimit.trim()).intValue();
+                } catch (NumberFormatException e) {
+                    LOG.error("Configured new user rate limit is not a valid integer. Defaulting to 1000 per hour", e);
+                    maxNewUsersPerAddressPerHour = 1000;
+                }
+            }
+            requestHistory = new RateLimitHistory((60 * 60), maxNewUsersPerAddressPerHour);
+        }
+    }
+
+    @Override
+    protected void validateState() {
+        super.validateState();
+        final String ipAddr = request.getRemoteAddr();
+        if (!requestHistory.isWithinLimit(ipAddr)) {
+            throw new RateLimitException(ipAddr, maxNewUsersPerAddressPerHour);
+        }
+        // Record this request...
+        requestHistory.recordRequest(ipAddr);
     }
 
     @Override
@@ -54,17 +89,17 @@ public class NewUserService extends JSONService
 
         JSONObject user = new JSONObject();
         user.put("username", input.getUsername());
+        
+        Emailer emailer = InterMineContext.getEmailer();
 
         try {
-            MailUtils.email(input.getUsername(), webProperties);
-            String mailingList = webProperties.getProperty("mail.mailing-list");
-            if (!isBlank(mailingList) && input.subscribeToList()) {
-                MailUtils.subscribe(input.getUsername(), webProperties);
-                user.put("subscribedToList", true);
-                user.put("mailingList", mailingList);
-            } else {
-                user.put("subscribedToList", false);
+            emailer.welcome(input.getUsername());
+            String mailingList = null;
+            if (input.subscribeToList()) {
+            	mailingList = emailer.subscribeToList(input.getUsername());
             }
+            user.put("subscribedToList", mailingList != null);
+            user.put("mailingList", mailingList);
         } catch (Exception e) {
             LOG.error("Failed to send confirmation email", e);
         }

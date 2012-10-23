@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.tag.AspectTagUtil;
 import org.intermine.api.tag.TagNames;
@@ -96,7 +97,9 @@ public class ReportController extends InterMineAction
             ServletContext servletContext = session.getServletContext();
             ObjectStore os = im.getObjectStore();
             String superuser = im.getProfileManager().getSuperuser();
-
+            if (superuser.equals(SessionMethods.getProfile(session).getUsername())) {
+                request.setAttribute("SHOW_TAGS", true);
+            }
             // place InlineLists based on TagManager, reportObject is cached while Controller is not
             Map<String, List<InlineList>> placedInlineLists =
                 new TreeMap<String, List<InlineList>>();

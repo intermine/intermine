@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -34,7 +35,6 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 /**
  * @author "Xavier Watkins"
@@ -47,15 +47,20 @@ public class EnrichmentWidget extends Widget
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
     private int notAnalysed = 0;
     private InterMineBag bag;
+    private InterMineBag populationBag;
     private ObjectStore os;
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
+    private ClassDescriptor typeDescriptor;
 
 
     /**
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
+
      * @param config widget config
      * @param interMineBag bag for this widget
      * @param os object store
@@ -64,10 +69,13 @@ public class EnrichmentWidget extends Widget
      * @param filter filter to use (ie Ontology)
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
-                            ObjectStore os, String filter, String max, String errorCorrection) {
+                            InterMineBag populationBag, ObjectStore os,
+                            String filter, String max, String errorCorrection) {
         super(config);
         this.bag = interMineBag;
+        this.populationBag = populationBag;
         this.os = os;
+        this.typeDescriptor = os.getModel().getClassDescriptorByName(config.getTypeClass());
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
@@ -80,11 +88,20 @@ public class EnrichmentWidget extends Widget
      * Throws a ResourceNotFoundException if it's not valid
      */
     private void validateBagType() {
-        String typeClass = config.getTypeClass();
-        if (!typeClass.equals(bag.getType())) {
-            throw new ResourceNotFoundException("Could not find an enrichment widget called \""
-                    + config.getId() + "\" with type " + bag.getType());
+        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
+        if (bagType == null) {
+            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
         }
+        if ("InterMineObject".equals(typeDescriptor.getName())) {
+            return; // This widget accepts anything, however useless.
+        } else if (bagType.equals(typeDescriptor)) {
+            return; // Exact match.
+        } else if (bagType.getAllSuperDescriptors().contains(typeDescriptor)) {
+            return; // Sub-class.
+        }
+        throw new IllegalArgumentException(
+            String.format("The %s enrichment query only accepts lists of %s, but you provided a list of %s",
+                config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**
@@ -93,7 +110,7 @@ public class EnrichmentWidget extends Widget
     @Override
     public void process() {
         try {
-            ldr = new EnrichmentWidgetImplLdr(bag, os,
+            ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
                 (EnrichmentWidgetConfig) config, filter);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
@@ -111,6 +128,7 @@ public class EnrichmentWidget extends Widget
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
             LOG.error(e.getMessage(), e);
+            throw e;
         }
     }
 

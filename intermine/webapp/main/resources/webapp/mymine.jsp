@@ -50,6 +50,11 @@
     <c:when test="${subtabs[subtabName]  =='tracks'}">
       <tiles:insert name="tracks.jsp"/>
     </c:when>
+    
+    <%-- users --%>
+    <c:when test="${subtabs[subtabName]  =='users'}">
+      <tiles:insert name="users.tile"/>
+    </c:when>
 
     <%-- password --%>
     <c:when test="${subtabs[subtabName]  =='password'}">
@@ -57,7 +62,7 @@
     </c:when>
 
     <%-- api key --%>
-    <c:when test="${subtabs[subtabName]  =='apikey'}">
+    <c:when test="${subtabs[subtabName]  =='account'}">
       <tiles:insert name="manageApiKey.jsp" />
     </c:when>
 

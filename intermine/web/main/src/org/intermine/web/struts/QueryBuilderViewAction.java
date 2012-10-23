@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,11 +48,11 @@ public class QueryBuilderViewAction extends InterMineAction
                                  @SuppressWarnings("unused") HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        ChangeTableSizeForm resultsForm =
-            (ChangeTableSizeForm) session.getAttribute("changeTableForm");
-        if (resultsForm != null) {
-            resultsForm.reset(mapping, request);
-        }
+        //ChangeTableSizeForm resultsForm =
+        //    (ChangeTableSizeForm) session.getAttribute("changeTableForm");
+        //if (resultsForm != null) {
+        //    resultsForm.reset(mapping, request);
+        //}
 
         PathQuery pathQuery = SessionMethods.getQuery(session).clone();
         String qid = SessionMethods.startQueryWithTimeout(request, true, pathQuery);

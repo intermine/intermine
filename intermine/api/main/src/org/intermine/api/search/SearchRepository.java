@@ -50,10 +50,10 @@ public abstract class SearchRepository implements WebSearchWatcher
 
     private static final Logger LOG = Logger.getLogger(SearchRepository.class);
 
-    protected final Set<WebSearchable> searchItems = new HashSet<WebSearchable>();
-    protected final Map<String, Directory> indexes = new HashMap<String, Directory>();
+    protected Set<WebSearchable> searchItems = new HashSet<WebSearchable>();
+    protected Map<String, Directory> indexes = new HashMap<String, Directory>();
 
-    private final Profile profile;
+    protected final Profile profile;
     protected final TagManager tagManager;
 
     /**
@@ -91,8 +91,25 @@ public abstract class SearchRepository implements WebSearchWatcher
         return Collections.unmodifiableSet(GLOBALS);
     }
 
+    /**
+     * Get the search repository registered as global repositories for the user specified in input.
+     * @return the global search repositories.
+     */
+    public static SearchRepository getGlobalSearchRepository(Profile profile) {
+        for (SearchRepository sr: GLOBALS) {
+            if (profile.equals(sr.getProfile())) {
+                return sr;
+            }
+        }
+        return null;
+    }
+
     static void clearGlobalRepositories() {
         GLOBALS.clear();
+    }
+
+    public void addGlobalRepository() {
+        GLOBALS.add(this);
     }
 
     /**

@@ -509,7 +509,7 @@ sub overload_appending {
     $self->append($other);
 }
 
-=head2 enrichment(widget => $name, [maxp => $val, correction => $algorithm, filter => $filter])
+=head2 enrichment(widget => $name, [population => $background, maxp => $val, correction => $algorithm, filter => $filter])
 
 Receive results from an enrichment widget.
 

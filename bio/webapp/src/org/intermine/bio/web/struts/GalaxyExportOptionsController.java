@@ -1,7 +1,7 @@
 package org.intermine.bio.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -183,7 +183,7 @@ public class GalaxyExportOptionsController extends TilesAction
             for (PathConstraint constraint : constrains.keySet()) {
                 if (constraint instanceof PathConstraintBag) {
                     String bagName = ((PathConstraintBag) constraint).getBag();
-                    InterMineBag imBag = im.getBagManager().getUserOrGlobalBag(
+                    InterMineBag imBag = im.getBagManager().getBag(
                             SessionMethods.getProfile(session), bagName);
 
                     // find the classKeys

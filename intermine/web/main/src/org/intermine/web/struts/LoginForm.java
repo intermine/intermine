@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,8 @@ public class LoginForm extends ActionForm
 
     /**
      * Gets the value of username
+     *
+     * The user name is <em>always</em> returned in <strong>LOWER CASE</strong>.
      *
      * @return the value of username
      */

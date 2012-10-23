@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -473,6 +473,7 @@ public class GenomicRegionSearchService
         for (String f : featureTypes) {
             ClassDescriptor cld = model.getClassDescriptorByName(f);
             ftSet.add(cld.getType());
+            // get all subclasses
             for (ClassDescriptor subCld : model.getAllSubs(cld)) {
                 ftSet.add(subCld.getType());
             }

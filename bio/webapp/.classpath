@@ -16,6 +16,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
 	<classpathentry kind="lib" path="/intermine-web/lib/commons-math-2.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-webservice-client"/>
-	<classpathentry kind="src" path="/metabolicmine"/>
 	<classpathentry kind="output" path="build/webapp/WEB-INF/classes"/>
 </classpath>

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -56,7 +56,7 @@ public class ListTagRemovalService extends ListTagService
 
         BagManager bagManager = im.getBagManager();
         Profile profile = getPermission().getProfile();
-        Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getBags(profile);
         InterMineBag list = lists.get(listName);
         if (list == null) {
             throw new ResourceNotFoundException("You do not have access to a list called "

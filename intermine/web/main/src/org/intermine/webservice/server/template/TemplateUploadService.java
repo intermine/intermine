@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.template.TemplateQuery;
@@ -97,6 +98,8 @@ public class TemplateUploadService extends WebService
             try {
                 profile.saveTemplate(name, new ApiTemplate(templ));
                 this.output.addResultItem(Arrays.asList(name, "Success"));
+            } catch (BadTemplateException bte) {
+                throw new BadRequestException("The template has invalid name.");
             } catch (RuntimeException e) {
                 throw new ServiceException("Failed to save template: " + name, e);
             }
