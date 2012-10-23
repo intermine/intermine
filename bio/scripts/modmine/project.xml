@@ -15,8 +15,7 @@ NOT TO BE USED FOR A BUILD
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="source.location" location="../bio/sources/"/>
-    <property name="source.location" location="../bio/sources/flymine"/>
-    <property name="common.os.prefix" value="common"/>
+  <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="modmine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
@@ -163,7 +162,7 @@ NOT TO BE USED FOR A BUILD
     <source name="go-annotation" type="go-annotation" dump="true">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/modmine"/>
-      <property name="src.data.dir.includes" value="*/gene_association*"/>
+      <property name="ontologyPrefix" value="GO"/>
     </source>
     <source name="fly-anatomy-ontology" type="fly-anatomy-ontology">
       <property name="src.data.file" location="/micklem/data/ontologies/fly-anatomy/current/fly_anatomy.obo"/>
