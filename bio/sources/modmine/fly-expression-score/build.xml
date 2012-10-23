@@ -1,5 +1,5 @@
 <project name="fly-expression-score" default="default" basedir=".">
   <description>build, test, package fly-expression-score</description>
-  
-  <import file="../../../imbuild/source.xml"/>
+
+  <import file="../../../../imbuild/source.xml"/>
 </project>
