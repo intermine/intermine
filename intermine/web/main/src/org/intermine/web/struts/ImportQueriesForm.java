@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -48,11 +48,10 @@ public class ImportQueriesForm extends ValidatorForm
 
     /**
      * Return a Map from query name to Query object.
-     * @param savedBags map from bag name to bag
      * @return the Map
      * @throws Exception if a problem parsing query XML
      */
-    public Map<String, PathQuery> getQueryMap(Map<String, InterMineBag> savedBags)
+    public Map<String, PathQuery> getQueryMap()
         throws Exception {
         if (map == null) {
             // multiple queries must be wrapped by <queries> element, add it if not already there
@@ -133,8 +132,7 @@ public class ImportQueriesForm extends ValidatorForm
         Profile profile = SessionMethods.getProfile(session);
 
         try {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
-            if (getQueryMap(allBags).size() == 0) {
+            if (getQueryMap().size() == 0) {
                 if (errors == null) {
                     errors = new ActionErrors();
                 }

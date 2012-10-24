@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -28,6 +28,7 @@ import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.intermine.web.logic.template.TemplateResultInput;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.QueryToListService;
@@ -86,8 +87,12 @@ public class TemplateToListService extends QueryToListService
         }
 
 
-        Map<String, List<TemplateValue>> templateValues = TemplateHelper.getValuesFromInput(
-                template, input);
+        Map<String, List<TemplateValue>> templateValues;
+        try {
+            templateValues = TemplateHelper.getValuesFromInput(template, input);
+        } catch (TemplateValueParseException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
         TemplateQuery populatedTemplate;
         try {
             populatedTemplate =

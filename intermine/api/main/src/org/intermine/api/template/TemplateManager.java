@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.search.Scope;
@@ -295,7 +296,8 @@ public class TemplateManager
      */
     public Map<String, ApiTemplate> getValidGlobalTemplates() {
         Map<String, ApiTemplate> validTemplates = new HashMap<String, ApiTemplate>();
-        for (Map.Entry<String, ApiTemplate> entry : getGlobalTemplates().entrySet()) {
+        Map<String, ApiTemplate> globalTemplates = getGlobalTemplates();
+        for (Map.Entry<String, ApiTemplate> entry : globalTemplates.entrySet()) {
             if (entry.getValue().isValid()) {
                 validTemplates.put(entry.getKey(), entry.getValue());
             }
@@ -309,7 +311,13 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     public Map<String, ApiTemplate> getGlobalTemplates() {
-        return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC);
+        Map<String, ApiTemplate> globalTemplates = new HashMap<String, ApiTemplate>();
+        ProfileManager pm = superProfile.getProfileManager();
+        List<Profile> superUserProfiles = pm.getSuperUsersProfile();
+        for (Profile superUserProfile : superUserProfiles) {
+            globalTemplates.putAll(getTemplatesWithTag(superUserProfile, TagNames.IM_PUBLIC));
+        }
+        return globalTemplates;
     }
 
     /**
@@ -319,7 +327,14 @@ public class TemplateManager
      * @return a map from template name to template query
      */
     public Map<String, ApiTemplate> getGlobalTemplates(boolean filterOutAdmin) {
-        return getTemplatesWithTag(superProfile, TagNames.IM_PUBLIC, filterOutAdmin);
+        Map<String, ApiTemplate> globalTemplates = new HashMap<String, ApiTemplate>();
+        ProfileManager pm = superProfile.getProfileManager();
+        List<Profile> superUserProfiles = pm.getSuperUsersProfile();
+        for (Profile superUserProfile : superUserProfiles) {
+            globalTemplates.putAll(getTemplatesWithTag(superUserProfile,
+                                   TagNames.IM_PUBLIC, filterOutAdmin));
+        }
+        return globalTemplates;
     }
 
     /**
@@ -359,8 +374,9 @@ public class TemplateManager
     private Map<String, ApiTemplate> getTemplatesWithTag(Profile profile, String tag,
             boolean filterOutAdmin) {
         Map<String, ApiTemplate> templatesWithTag = new HashMap<String, ApiTemplate>();
+        Map<String, ApiTemplate> savedTemplates = profile.getSavedTemplates();
 
-        for (Map.Entry<String, ApiTemplate> entry : profile.getSavedTemplates().entrySet()) {
+        for (Map.Entry<String, ApiTemplate> entry : savedTemplates.entrySet()) {
             ApiTemplate template = entry.getValue();
             List<Tag> tags = tagManager.getTags(tag, template.getName(), TagTypes.TEMPLATE,
                     profile.getUsername());

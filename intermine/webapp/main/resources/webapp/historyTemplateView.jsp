@@ -120,7 +120,10 @@
               </c:choose>
 
               <td class="sorting">
-                ${savedTemplate.value.title}
+                <c:choose>
+                   <c:when test="${!empty savedTemplate.value.title}">${savedTemplate.value.title}</c:when>
+                   <c:otherwise>${savedTemplate.value.name}</c:otherwise>
+                 </c:choose>
               </td>
               <td class="sorting">
                 <c:choose>

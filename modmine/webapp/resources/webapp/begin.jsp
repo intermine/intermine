@@ -11,7 +11,7 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 
 <script>
-// get the categories from the sam web service that feeds modencode home page
+// get the categories from the same web service that feeds modencode home page
 $.getJSON("${WEB_PROPERTIES['webapp.url']}/${WEB_PROPERTIES['webapp.path']}/service/query/metadatacache/catexp",
         function(data) {
     var url = "${WEB_PROPERTIES['webapp.path']}/categorySummary.do?category=";

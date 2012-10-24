@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -356,8 +356,14 @@ public class ModelUpdate
                             String backupTemplateName = templateQuery.getName() + OLD;
                             ApiTemplate backupTemplateQuery = templateQuery.clone();
                             backupTemplateQuery.setName(backupTemplateName);
-                            profile.saveTemplate(backupTemplateName, backupTemplateQuery);
-                            profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
+                            try {
+                                profile.saveTemplate(backupTemplateName, backupTemplateQuery);
+                                profile.saveTemplate(templateQuery.getName(), updatedTemplateQuery);
+                            } catch (BadTemplateException e) {
+                                stdout.println("Problems updating templateQuery " + templateQuery.getName()
+                                               + e.getMessage());
+                                continue;
+                            }
                             stdout.println("Updated the template: " + templateQuery.getName());
                         }
                     } catch (PathException pe) {

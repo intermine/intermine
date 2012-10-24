@@ -6,8 +6,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mm"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-    prefix="str"%>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str"%>
 
 <!-- experiment.jsp -->
 

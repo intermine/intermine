@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1544,7 +1544,7 @@ public final class SqlGenerator
                                 bagConstraintToString(state, buffer, new BagConstraint(new
                                             QueryField(arg1Qcb), ConstraintOp.IN,
                                             arg1Qcb.getOsb()), q,
-                                        schema, SAFENESS_UNSAFE); // TODO: Not really unsafe
+                                        schema, SAFENESS_UNSAFE); // TODO: Not really unsafe [ 2012-08-06 ajk: what does this comment mean??]
                                 buffer.append(" AND ");
                             } else if (arg1Qcb.getIds() != null) {
                                 BagConstraint bagCon = new BagConstraint(new QueryField(arg1Qcb),

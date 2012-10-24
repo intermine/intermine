@@ -1,7 +1,7 @@
 package org.intermine.task;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -112,7 +112,7 @@ public class Integrate extends Task
         } else {
             Vector<String> bits = StringUtils.split(sourceAttribute, ',');
             for (String bit: bits) {
-                sourceNames.add(bit);
+                sourceNames.add(bit.trim());
             }
         }
 

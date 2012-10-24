@@ -154,6 +154,9 @@ Revision history for Webservice-InterMine
         Added support and tests for lazy attribute fetching.
 0.9912: Wed Mar 21 12:41:34 GMT 2012
         Added support for enrichment widgets.
+1.0000: Tue Oct  9 13:39:20 BST 2012
+        Added support for range constraints.
+        Updated tests
 
         
 

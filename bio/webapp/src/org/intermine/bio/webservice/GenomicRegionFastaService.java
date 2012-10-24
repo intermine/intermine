@@ -46,7 +46,7 @@ public class GenomicRegionFastaService extends AbstractRegionExportService
         Exporter exporter;
         try {
             ObjectStore objStore = im.getObjectStore();
-            exporter = new SequenceExporter(objStore, os, index, im.getClassKeys());
+            exporter = new SequenceExporter(objStore, os, index, im.getClassKeys(), 0);
             ExportResultsIterator iter = null;
             try {
                 PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);

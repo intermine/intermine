@@ -5,7 +5,7 @@ import java.util.Collection;
 import org.intermine.objectstore.query.ConstraintOp;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -105,6 +105,14 @@ public abstract class PathConstraint
     public static Collection<String> getValues(PathConstraint con) {
         if (con instanceof PathConstraintMultiValue) {
             return ((PathConstraintMultiValue) con).getValues();
+        } else {
+            return null;
+        }
+    }
+    
+    public static Collection<Integer> getIds(PathConstraint con) {
+        if (con instanceof PathConstraintIds) {
+            return ((PathConstraintIds) con).getIds();
         } else {
             return null;
         }

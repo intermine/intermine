@@ -312,6 +312,54 @@ module InterMine::Lists
             @tags = @manager.tags_for(self)
         end
 
+        ENRICHMENT_DEFAULTS = {:correction => "Holm-Bonferroni", :maxp => 0.05}
+
+        # Retrieve the results of an enrichment calculation
+        #
+        # Get the results of an enrichment calculate_enrichment with the default parameter values:
+        #
+        #  calculate_enrichment(widget)
+        #
+        # Pass optional parameters to the enrichment service:
+        #
+        #  calculate_enrichment(widget, :correction => "Benjamini-Hochberg", :maxp => 0.1)
+        #
+        # The optional parameters are: :correction, :maxp, :filter
+        #
+        # Each result returned by the enrichment service is a hash with the following
+        # keys: "p-value", "identifier", "matches", "description". The Hash returned also allows
+        # key access with symbols.
+        #
+        def calculate_enrichment(widget, opts = {})
+            s = @manager.service
+            params = s.params.merge(ENRICHMENT_DEFAULTS).merge(opts).merge(:widget => widget, :list => @name)
+            uri = URI.parse(s.root + Service::LIST_ENRICHMENT_PATH)
+            res = Net::HTTP.post_form(uri, params)
+            return case res
+            when Net::HTTPSuccess
+                JSON.parse(res.body)["results"].map {|row| SymbolAcceptingHash[row] }
+            else
+                begin
+                    container = JSON.parse(res.body)
+                    raise ServiceError, container["error"]
+                rescue
+                    res.error!
+                end
+            end
+        end
+
+        class SymbolAcceptingHash < Hash
+
+            def [](key)
+                return case key
+                when Symbol
+                    return super(key.to_s.gsub(/[_]/, '-'))
+                else
+                    return super(key)
+                end
+            end
+        end
+
         private
 
         # Used to interpret arguments to add and remove

@@ -3,7 +3,6 @@ import weakref
 import re
 
 from intermine.util import openAnything, ReadableException
-from intermine.lists.list import List
 
 """
 Classes representing the data model
@@ -56,8 +55,8 @@ class Field(object):
             -  interactions is a group of Interaction objects, which link back to this as gene
             -  length is a Integer
             ...
-      
-    @see: L{Attribute} 
+
+    @see: L{Attribute}
     @see: L{Reference}
     @see: L{Collection}
     """
@@ -192,7 +191,7 @@ class Class(object):
         >>> cd = intermine.model.Class("Gene", ["SequenceFeature"])
         <intermine.model.Class: Gene>
 
-        This constructor is called when deserialising the 
+        This constructor is called when deserialising the
         model - you should have no need to create Classes by hand
 
         @param name: The name of this class
@@ -289,8 +288,8 @@ class Class(object):
         Check if self is, or inherits from other
         ========================================
 
-        This method validates statements about inheritance. 
-        Returns true if the "other" is, or is within the 
+        This method validates statements about inheritance.
+        Returns true if the "other" is, or is within the
         ancestry of, this class
 
         Other can be passed as a name (str), or as the class object itself
@@ -420,7 +419,7 @@ class Path(object):
     def end(self):
         """
         The descriptor for the last part of the string.
-        
+
         @rtype: L{model.Class} or L{model.Field}
         """
         return self.parts[-1]
@@ -429,7 +428,7 @@ class Path(object):
         """
         Return the class object for this path, if it refers to a class
         or a reference. Attribute paths return None
-        
+
         @rtype: L{model.Class}
         """
         if self.is_class():
@@ -442,12 +441,12 @@ class Path(object):
             return None
 
     end_class = property(get_class)
-    
+
     def is_reference(self):
         """
         Return true if the path is a reference, eg: Gene.organism or Gene.proteins
         Note: Collections are ALSO references
-        
+
         @rtype: boolean
         """
         return isinstance(self.end, Reference)
@@ -455,7 +454,7 @@ class Path(object):
     def is_class(self):
         """
         Return true if the path just refers to a class, eg: Gene
-        
+
         @rtype: boolean
         """
         return isinstance(self.end, Class)
@@ -463,7 +462,7 @@ class Path(object):
     def is_attribute(self):
         """
         Return true if the path refers to an attribute, eg: Gene.length
-        
+
         @rtype: boolean
         """
         return isinstance(self.end, Attribute)
@@ -473,7 +472,7 @@ class Path(object):
 
     def __hash__(self):
         i = hash(str(self))
-        return reduce(lambda a, b: a ^ b, [hash(k) ^ hash(v) for k, v in self.subclasses.items()], i) 
+        return reduce(lambda a, b: a ^ b, [hash(k) ^ hash(v) for k, v in self.subclasses.items()], i)
 
 class ConstraintTree(object):
 
@@ -574,7 +573,7 @@ class Column(object):
                 return branch
             except ModelError, e:
                 raise AttributeError(str(e))
-        raise AttributeError("No attribute '" + name + "'") 
+        raise AttributeError("No attribute '" + name + "'")
 
     def __str__(self):
         return str(self._path)
@@ -591,54 +590,39 @@ class Column(object):
     __lshift__ = __rshift__
 
     def __eq__(self, other):
-        if isinstance(other, Column):
-            return ConstraintNode(str(self), "IS", str(other))
-        elif other is None:
+        if other is None:
             return ConstraintNode(str(self), "IS NULL")
+        elif isinstance(other, Column):
+            return ConstraintNode(str(self), "IS", str(other))
+        elif hasattr(other, "make_list_constraint"):
+            return other.make_list_constraint(str(self), "IN")
         elif isinstance(other, list):
             return ConstraintNode(str(self), "ONE OF", other)
-        elif isinstance(other, List):
-            return ConstraintNode(str(self), "IN", other.name)
-        elif hasattr(other, "to_query"):
-            q = other.to_query()
-            l = q.service.create_list(q)
-            return ConstraintNode(str(self), "IN", l.name)
         else:
             return ConstraintNode(str(self), "=", other)
 
     def __ne__(self, other):
-        if isinstance(other, Column):
-            return ConstraintNode(str(self), "IS NOT", str(other))
-        elif other is None:
+        if other is None:
             return ConstraintNode(str(self), "IS NOT NULL")
+        elif isinstance(other, Column):
+            return ConstraintNode(str(self), "IS NOT", str(other))
+        elif hasattr(other, "make_list_constraint"):
+            return other.make_list_constraint(str(self), "NOT IN")
         elif isinstance(other, list):
             return ConstraintNode(str(self), "NONE OF", other)
-        elif isinstance(other, List):
-            return ConstraintNode(str(self), "NOT IN", other.name)
-        elif hasattr(other, "to_query"):
-            q = other.to_query()
-            l = q.service.create_list(q)
-            return ConstraintNode(str(self), "NOT IN", l.name)
         else:
             return ConstraintNode(str(self), "!=", other)
 
     def __xor__(self, other):
-        if hasattr(other, "to_query"):
-            q = other.to_query()
-            l = q.service.create_list(q)
-            return ConstraintNode(str(self), "NOT IN", l.name)
-        elif isinstance(other, List):
-            return ConstraintNode(str(self), "NOT IN", other.name)
+        if hasattr(other, "make_list_constraint"):
+            return other.make_list_constraint(str(self), "NOT IN")
         elif isinstance(other, list):
             return ConstraintNode(str(self), "NONE OF", other)
+        raise TypeError("Invalid argument for xor: %r" % other)
 
     def in_(self, other):
-        if isinstance(other, List):
-            return ConstraintNode(str(self), "IN", other.name)
-        elif hasattr(other, "to_query"):
-            q = other.to_query()
-            l = q.service.create_list(q)
-            return ConstraintNode(str(self), "IN", l.name)
+        if hasattr(other, "make_list_constraint"):
+            return other.make_list_constraint(str(self), "IN")
         elif isinstance(other, list):
             return ConstraintNode(str(self), "ONE OF", other)
         raise TypeError("Invalid argument for in_: %r" % other)
@@ -686,7 +670,7 @@ class Model(object):
     --------
 
     This class represents the data model  - ie. an abstraction
-    of the database schema. It can be used to introspect what 
+    of the database schema. It can be used to introspect what
     data is available and how it is inter-related
     """
 
@@ -699,9 +683,9 @@ class Model(object):
 
           >>> model = Model(xml)
 
-        You will most like not need to create a model directly, 
+        You will most like not need to create a model directly,
         instead get one from the Service object:
-        
+
         @see: L{intermine.webservice.Service}
 
         @param source: the model.xml, as a local file, string, or url
@@ -773,7 +757,7 @@ class Model(object):
         """
         Make names point to instances and insert inherited fields
         =========================================================
-        
+
         This method ensures the model is internally consistent. This method
         is called during instantiaton. It does not need to be called
         directly.
@@ -794,7 +778,7 @@ class Model(object):
         """
         Returns the lineage of the class
         ================================
-        
+
             >>> classes = Model.to_ancestry(cd)
 
         Returns the class' parents, and all the class' parents' parents
@@ -816,7 +800,7 @@ class Model(object):
 
             >>> classes = model.to_classes(["Gene", "Protein", "Organism"])
 
-        This simply maps from a list of strings to a list of 
+        This simply maps from a list of strings to a list of
         classes in the calling model.
 
         @raise ModelError: if the list of class names includes ones that don't exist
@@ -844,7 +828,7 @@ class Model(object):
 
         This is the recommended way of retrieving a class from
         the model. As well as handling class names, you can also
-        pass in a path such as "Gene.proteins" and get the 
+        pass in a path such as "Gene.proteins" and get the
         corresponding class back (<intermine.model.Class: Protein>)
 
         @raise ModelError: if the class name refers to a non-existant object
@@ -896,7 +880,7 @@ class Model(object):
         When you don't need to interrogate relationships
         between paths, simply using this method to validate
         a path string is enough. It guarantees that there
-        is a descriptor for each section of the string, 
+        is a descriptor for each section of the string,
         with the appropriate relationships
 
         @raise PathParseError: if there is a problem parsing the path string
@@ -905,18 +889,18 @@ class Model(object):
             self.parse_path_string(path_string, subclasses)
             return True
         except PathParseError, e:
-            raise PathParseError("Error parsing '%s' (subclasses: %s)" 
+            raise PathParseError("Error parsing '%s' (subclasses: %s)"
                             % ( path_string, str(subclasses) ), e )
 
     def parse_path_string(self, path_string, subclasses={}):
         """
         Parse a path string into a list of descriptors - one for each section
         =====================================================================
-    
+
             >>> parts = Model.parse_path_string(string)
 
-        This method is used when making paths from a model, and 
-        when validating path strings. It probably won't need to 
+        This method is used when making paths from a model, and
+        when validating path strings. It probably won't need to
         be called directly.
 
         @see: L{intermine.model.Model.make_path}
@@ -926,29 +910,29 @@ class Model(object):
         descriptors = []
         names = path_string.split('.')
         root_name = names.pop(0)
-     
+
         root_descriptor = self.get_class(root_name)
         descriptors.append(root_descriptor)
-     
+
         if root_name in subclasses:
             current_class = self.get_class(subclasses[root_name])
         else:
-            current_class = root_descriptor 
-     
+            current_class = root_descriptor
+
         for field_name in names:
             field = current_class.get_field(field_name)
             descriptors.append(field)
-     
+
             if isinstance(field, Reference):
                 key = '.'.join(map(lambda x: x.name, descriptors))
                 if key in subclasses:
                     current_class = self.get_class(subclasses[key])
-                else: 
+                else:
                     current_class = field.type_class
             else:
                 current_class = None
-     
-        return descriptors 
+
+        return descriptors
 
     def _unproxied(self):
         return self
@@ -960,7 +944,7 @@ class PathParseError(ModelError):
     pass
 
 class ModelParseError(ModelError):
-   
+
     def __init__(self, message, source, cause=None):
         self.source = source
         super(ModelParseError, self).__init__(message, cause)

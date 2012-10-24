@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -46,6 +46,7 @@ public class LoginController extends TilesAction
         LoginForm loginForm = (LoginForm) form;
         String returnToString = request.getParameter("returnto");
         loginForm.setReturnToString(returnToString);
+        request.getSession().setAttribute("returnTo", returnToString);
 
         Properties webprops = SessionMethods.getWebProperties(request);
         String ourPath = webprops.getProperty("webapp.baseurl");

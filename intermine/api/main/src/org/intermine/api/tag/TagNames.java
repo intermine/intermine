@@ -1,7 +1,7 @@
 package org.intermine.api.tag;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -70,6 +70,11 @@ public interface TagNames
      * templates to be displayed on search results page
      */
     String IM_SEARCH_RESULTS = "im:searchresults";
+
+    /**
+     * bag with background population for specific widget 
+     */
+    String IM_WIDGET = "im:widget";
 
     /**
      * Tag separator.

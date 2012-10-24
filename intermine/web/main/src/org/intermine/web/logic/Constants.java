@@ -1,7 +1,7 @@
 package org.intermine.web.logic;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -197,7 +197,7 @@ public final class Constants
      * This constant must changed every time the API changes, either by addition
      * or deletion of features.
      */
-    public static final int WEB_SERVICE_VERSION = 10;
+    public static final int WEB_SERVICE_VERSION = 11;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
@@ -233,4 +233,12 @@ public final class Constants
      * The key for the open-id providers located in the servlet context.
      */
     public static final String OPENID_PROVIDERS = "OPENID_PROVIDERS";
+
+    /* The names of various user preferences known to the web application */
+
+    /** The preference set if the user does not like lots of emails */
+    public static final String NO_SPAM = "do_not_spam";
+
+    /** The preference set if the user does not want to be found */
+    public static final String HIDDEN = "hidden";
 }

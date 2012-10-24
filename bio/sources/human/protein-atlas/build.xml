@@ -1,0 +1,5 @@
+<project name="protein-atlas" default="default" basedir=".">
+  <description>build, test, package protein-atlas</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

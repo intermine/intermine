@@ -20,3 +20,8 @@
 dd {
   margin:5px 0 7px 35px;padding-left: 10px;
   border-left: 1px dashed #888;}
+
+.dataSetDescription li, .dataSetDescription p {
+  padding: 4px;
+  padding-left: 16px;
+}

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -2486,7 +2486,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             Integer submissionId, SubmissionProperty prop) {
         // submissionId -> [type -> SubmissionProperty]
         if (submissionId == null) {
-            throw new RuntimeException("Called addToSubToTypes with a null sub id!");
+            LOG.error("MISSING SUB: " + prop);
+            return;
+            //throw new RuntimeException("Called addToSubToTypes with a null sub id!");
         }
 
         Map<String, List<SubmissionProperty>> typeToSubProp = subToTypes.get(submissionId);
@@ -2529,6 +2531,11 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             currentSubId = dataSubmissionMap.get(dataId);
 
+            if (currentSubId == null) {
+                LOG.info("DSM failing dataId: " + dataId + " - " + attHeading + "|" + attName +
+                		"|" + attValue);     	           	
+            }
+            
             if (dataId.intValue() != lastDataId.intValue()
                     || attDbxref.intValue() != lastAttDbXref.intValue()
                     || currentSubId != previousSubId) {

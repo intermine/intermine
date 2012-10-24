@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -185,7 +185,7 @@ public class KeywordSearchResultsController extends TilesAction
         List<Integer> ids = new ArrayList<Integer>();
         if (!StringUtils.isEmpty(searchBag)) {
             LOG.debug("SEARCH BAG: '" + searchBag + "'");
-            InterMineBag bag = im.getBagManager().getUserOrGlobalBag(
+            InterMineBag bag = im.getBagManager().getBag(
                     SessionMethods.getProfile(request.getSession()), searchBag);
             if (bag != null) {
                 ids = bag.getContentsAsIds();

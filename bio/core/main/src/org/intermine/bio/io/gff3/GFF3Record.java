@@ -1,7 +1,7 @@
 package org.intermine.bio.io.gff3;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -451,8 +451,8 @@ public class GFF3Record
                 String newValue;
                 try {
                     newValue = URLEncoder.encode("" + oldValue, "UTF-8");
-                    // decode white space from "+"
-                    newValue = newValue.replaceAll("\\+", " ");
+                    newValue = newValue.replaceAll("\\+", " "); // decode white space from "+"
+                    newValue = newValue.replaceAll("%3A", ":");
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException("error while encoding: " + oldValue, e);
                 }

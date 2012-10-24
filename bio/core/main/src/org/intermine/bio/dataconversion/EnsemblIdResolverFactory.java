@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -36,12 +36,27 @@ import org.intermine.util.PropertiesUtil;
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
-    private final String clsName = "gene";
     private final String propName = "resolver.ensembl.file";
     private final String taxonId = "9606";
 
+    /**
+     * Construct without SO term of the feature type.
+     * @param soTerm the feature type to resolve
+     */
+    public EnsemblIdResolverFactory() {
+        this.clsName = this.defaultClsName;
+    }
+
     @Override
-    protected IdResolver createIdResolver() {
+    protected void createIdResolver() {
+        if (resolver == null) {
+            resolver = new IdResolver(clsName);
+        }
+
+        if (resolver.hasTaxon(taxonId)) {
+            return;
+        }
+
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -49,15 +64,14 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             String message = "Ensembl resolver has no file name specified, set " + propName
                 + " to the file location.";
             LOG.error(message);
-            return null;
+            return;
         }
 
-        IdResolver resolver;
         BufferedReader reader;
         try {
             FileReader fr = new FileReader(new File(fileName));
             reader = new BufferedReader(fr);
-            resolver = createFromFile(reader);
+            createFromFile(reader);
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("Failed to open Ensembl identifiers file: "
                     + fileName, e);
@@ -65,11 +79,9 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             throw new IllegalArgumentException("Error reading from Ensembl identifiers file: "
                     + fileName, e);
         }
-        return resolver;
     }
 
-    private IdResolver createFromFile(BufferedReader reader) throws IOException {
-        IdResolver resolver = new IdResolver(clsName);
+    private void createFromFile(BufferedReader reader) throws IOException {
 
         Set<String> validChromosomes = validChromosomes();
 
@@ -83,7 +95,6 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
                 resolver.addMainIds(taxonId, ensembl, Collections.singleton(ensembl));
             }
         }
-        return resolver;
     }
 
     private Set<String> validChromosomes() {

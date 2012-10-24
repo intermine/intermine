@@ -52,8 +52,8 @@ class TestServer( threading.Thread ): # pragma: no cover
 
         SilentRequestHandler.protocol_version = protocol
         SilentRequestHandler.silent = self.silent
-        if not self.silent:
-            print "Starting", protocol, "server on port", self.port
+        #if not self.silent:
+        #    print "Starting", protocol, "server on port", self.port
         self.http = HTTPServer(server_address, SilentRequestHandler)
         self.http.serve_forever()
 

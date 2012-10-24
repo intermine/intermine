@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,17 +24,27 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Hold data about primary identifiers and synonyms for a particular class in the
  * data model and provide methods to resolved synonyms into corresponding
  * primary identifier(s).
- * @author rns
  *
+ * @author rns
  */
 public class IdResolver
 {
-    private String clsName;
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(IdResolver.class);
+
+    private String clsName; // Comment: not really useful field...
+
+    // TODO use multi-key (taxonId, clsName)
+    // map = new MultiKeyMap();
+    //map.put(new MultiKey("relationship", "ThreePrimeUTR", "adjacent_to", "CDS"), value);
+    // MultiKey.getKey(int index)
+
     protected Map<String, Map<String, Set<String>>> orgIdMaps =
         new HashMap<String, Map<String, Set<String>>>();
     protected Map<String, Map<String, Set<String>>> orgSynMaps =
@@ -45,6 +55,13 @@ public class IdResolver
         new HashMap<String, Map<String, Set<String>>>();
     private Map<String, Map<String, Set<String>>> orgIdSynMaps =
         new HashMap<String, Map<String, Set<String>>>();
+
+    /**
+     * Construct and empty IdResolver
+     */
+    public IdResolver() {
+    }
+
     /**
      * Construct and empty IdResolver
      * @param clsName the class to resolve identifiers for
@@ -66,7 +83,8 @@ public class IdResolver
 
     /**
      * For the given id return a set of matching primary identifiers in the given
-     * taxonId.  In many cases the set will have just one element.
+     * taxonId.  In many cases the set will have just one element. Some will have
+     * zero element.
      * @param taxonId the organism to search within
      * @param id the identifier to resolve
      * @return a set of matching primary identifiers
@@ -141,6 +159,17 @@ public class IdResolver
      */
     protected void addSynonyms(String taxonId, String primaryIdentifier, Set<String> ids) {
         addEntry(taxonId, primaryIdentifier, ids, Boolean.FALSE);
+    }
+
+    /**
+     * Create entries for the IdResolver, these will be added when getIdResolver
+     * is called.
+     * @param taxonId the organism of identifiers
+     * @param primaryId main identifier
+     * @param synonyms synonyms for the main identifier
+     */
+    public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
+        addSynonyms(taxonId, primaryId, synonyms);
     }
 
     /**
@@ -280,6 +309,7 @@ public class IdResolver
                 }
             }
         }
+        reader.close();
     }
 
     // check that the given taxon id has some data for it

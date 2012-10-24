@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +26,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 /**
  * @author "Xavier Watkins"
  * @author "Alex Kalderimis"
+ * @author "Daniela Butano"
  */
 public class GraphWidget extends Widget
 {
@@ -170,7 +171,12 @@ public class GraphWidget extends Widget
     public PathQuery getSimplePathQuery() {
         PathQuery q = new PathQuery(os.getModel());
         List<String> keyFieldNames = bag.getKeyFieldNames();
-        String prefix = config.getStartClass() + ".";
+        String prefix;
+        if (!((GraphWidgetConfig) config).isListPathSet()) {
+            prefix = config.getStartClass() + ".";
+        } else {
+            prefix = ((GraphWidgetConfig) config).getListPath() + ".";
+        }
         for (String keyFieldName : keyFieldNames) {
             if (!keyFieldName.startsWith(prefix)) {
                 keyFieldName = prefix + keyFieldName;

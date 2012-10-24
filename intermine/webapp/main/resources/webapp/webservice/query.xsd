@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="query">
-    <xs:complexType>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns:xsq="http://intermine.org/query/1.0"
+           targetNamespace="http://intermine.org/query/1.0">
+    
+    <xs:element name="query" type="xsq:query"></xs:element>       
+    
+    <!-- So we can export the Query Type to say webconfig-model.xsd -->
+    <xs:complexType name="query">
       <xs:sequence>
-        <!-- Is optional  -->
+<!--         Is optional  -->
         <xs:element name="pathDescription" minOccurs="0"
           maxOccurs="unbounded">
           <xs:complexType>
-            <!--fake element is here to allow empty element -->
+<!--            fake element is here to allow empty element -->
             <xs:sequence>
               <xs:element name="fake" minOccurs="0"></xs:element>
             </xs:sequence>
@@ -32,7 +37,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="constraint"
-                  type="constrainttype" minOccurs="0" maxOccurs="unbounded" />
+                  type="xsq:constrainttype" minOccurs="0" maxOccurs="unbounded" />
               </xs:sequence>
               <xs:attribute name="path" type="xs:string"
                 use="required" />
@@ -41,7 +46,7 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="constraint" minOccurs="0"
-            maxOccurs="unbounded" type="constrainttype" />
+            maxOccurs="unbounded" type="xsq:constrainttype" />
         </xs:choice>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="optional" />
@@ -54,7 +59,7 @@
       <xs:attribute name="constraintLogic" type="xs:string"
         use="optional" />
     </xs:complexType>
-  </xs:element>
+    
     <xs:complexType name="constrainttype">
         <xs:sequence>
             <xs:element name="value" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>

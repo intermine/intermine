@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.pathquery;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -99,6 +100,23 @@ public class PathQueryBindingTest extends TestCase
 
     public void testQueryWithConstraint() throws Exception {
         assertEquals(expected.get("queryWithConstraint").toString(), savedQueries.get("queryWithConstraint").toString());
+    }
+    
+    public void testRangeQuery() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Employee.name");
+        pq.addConstraint(new PathConstraintRange("Employee.age", ConstraintOp.WITHIN, Arrays.asList("40 .. 50", "55 .. 60")));
+        pq.addConstraint(new PathConstraintRange("Employee.employmentPeriod", ConstraintOp.OVERLAPS, Arrays.asList("01-01-2012")));
+        
+        assertEquals(pq.toString(), savedQueries.get("rangeQueries").toString());
+    }
+    
+    public void testMultiTypeQuery() throws Exception {
+        PathQuery pq = new PathQuery(Model.getInstanceByName("testmodel"));
+        pq.addViews("Employable.name");
+        pq.addConstraint(new PathConstraintMultitype("Employable", ConstraintOp.ISA, Arrays.asList("Contractor", "Manager")));
+        
+        assertEquals(pq.toString(), savedQueries.get("multitype").toString());
     }
 
     public void testMarshallings() throws Exception {

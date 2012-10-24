@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -115,7 +115,7 @@ public class InvalidBag extends StorableBag
      * @param savedBag The saved bag retrieved from the DB.
      * @param profileId The id of the user profile.
      * @param os The production object store.
-     * @param uosw The userprofile object store.
+     * @param userprofileObjectStore The userprofile object store.
      * @throws ObjectStoreException If there is a problem creating an ObjectStoreBag.
      */
     protected InvalidBag(SavedBag savedBag, Integer profileId,

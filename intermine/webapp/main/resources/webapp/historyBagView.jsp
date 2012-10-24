@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    </html:form>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
@@ -16,7 +15,7 @@
 <script type="text/javascript" src="js/historyBagView.js"></script>
 <link rel="stylesheet" type="text/css" href="css/sorting.css"/>
 <c:set var="type" value="bag"/>
-
+<c:set var="index" value="0"/>
 <script type="text/javascript">
 if (!im.bagWorks) {
     im.bagWorks = {};
@@ -48,7 +47,7 @@ if (!im.bagWorks) {
   <html:form action="/modifyBag">
   <c:forEach items="${PROFILE.savedBagsByStatus}" var="statusSavedBag">
 
-    <div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT'}">style="display:none;"</c:if>>
+    <div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT' || statusSavedBag.key == 'UPGRADING'}">style="display:none;"</c:if>>
     <c:choose>
       <c:when test="${statusSavedBag.key == 'TO_UPGRADE'}">
         <h2>Lists to upgrade</h2>
@@ -89,6 +88,7 @@ if (!im.bagWorks) {
           </thead>
           <tbody>
           <c:forEach items="${statusSavedBag.value}" var="savedBag" varStatus="status">
+            <c:set var="index" value="${index+1}"/>
             <tr>
               <td class="list-name" style="display:none;">${savedBag.value.name}</td>
               <td class="sorting" align="center">
@@ -116,6 +116,11 @@ if (!im.bagWorks) {
                            <tiles:put name="vertical" value="true"/>
                            <tiles:put name="show" value="true"/>
                            <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
+                         </tiles:insert>
+                         <tiles:insert name="shareBag.tile">
+                           <tiles:put name="bagName" value="${savedBag.value.name}"/>
+                           <tiles:put name="isBagValid" value="true"/>
+                           <tiles:put name="id" value="${index}"/>
                          </tiles:insert>
                      </c:if>
 
@@ -213,6 +218,7 @@ if (!im.bagWorks) {
          </thead>
 
          <c:forEach items="${PROFILE.invalidBags}" var="bagEntry" varStatus="status">
+           <c:set var="index" value="${index+1}"/>
            <c:set var="bag" value="${bagEntry.value}"/>
            <tr>
              <td class="list-name" style="display:none;">${bag.name}</td> <%-- ID cell --%>
@@ -242,6 +248,11 @@ if (!im.bagWorks) {
                     <tiles:put name="show" value="true"/>"
                     <tiles:put name="onChangeCode" value="refreshTagSelect('mainSelect', 'bag')"/>
                   </tiles:insert>
+                  <tiles:insert name="shareBag.tile">
+                           <tiles:put name="bagName" value="${bag.name}"/>
+                           <tiles:put name="isBagValid" value="false"/>
+                           <tiles:put name="id" value="${index}"/>
+                   </tiles:insert>
                 </c:if>
 
               </td>

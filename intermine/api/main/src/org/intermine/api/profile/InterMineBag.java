@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.search.PropertyChangeEvent;
@@ -48,13 +49,13 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TypeUtil;
 
-
 /**
  * An object that represents a bag of objects in our database for the webapp. It is backed by an
  * ObjectStoreBag object, but contains extra data such as name and description.
  *
  * @author Kim Rutherford
  * @author Matthew Wakeling
+ * @author Daniela Butano
  */
 public class InterMineBag extends StorableBag implements WebSearchable, Cloneable
 {
@@ -80,37 +81,18 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param type the class of objects stored in the bag
      * @param description the description of the bag
      * @param dateCreated the Date when this bag was created
-     * @param state the state of this bag
-     * @param os the production ObjectStore
-     * @param profileId the ID of the user in the userprofile database
-     * @param uosw the ObjectStoreWriter of the userprofile database
-     * @throws ObjectStoreException if an error occurs
-     */
-    public InterMineBag(String name, String type, String description, Date dateCreated,
-        BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw)
-        throws UnknownBagTypeException, ObjectStoreException {
-        this.type = TypeUtil.unqualifiedName(type);
-        init(name, description, dateCreated, state, os, profileId, uosw);
-    }
-
-    /**
-     * Constructs a new InterMineIdBag, and saves it in the UserProfile database.
-     *
-     * @param name the name of the bag
-     * @param type the class of objects stored in the bag
-     * @param description the description of the bag
-     * @param dateCreated the Date when this bag was created
      * @param state the state of the bag
      * @param os the production ObjectStore
      * @param profileId the ID of the user in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @param keyFieldNames the list of identifiers defined for this bag
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, Integer profileId, ObjectStoreWriter uosw,
         List<String> keyFieldNames)
-        throws UnknownBagTypeException, ObjectStoreException {
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         this.type = TypeUtil.unqualifiedName(type);
         init(name, description, dateCreated, state, os, profileId, uosw);
         this.keyFieldNames = keyFieldNames;
@@ -127,12 +109,13 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param uosw the ObjectStoreWriter of the userprofile database
      * @param keyFieldNames the list of identifiers defined for this bag
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if an error occurs
      */
     public InterMineBag(String name, String type, String description, Date dateCreated,
         BagState state, ObjectStore os, ObjectStoreWriter uosw,
         List<String> keyFieldNames)
-        throws UnknownBagTypeException, ObjectStoreException {
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         this(name, type, description, dateCreated, state, os, null, uosw, keyFieldNames);
     }
 
@@ -159,6 +142,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param savedBagId the ID of the bag in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw)
@@ -172,7 +156,8 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      * @param os the production ObjectStore
      * @param savedBagId the ID of the bag in the userprofile database
      * @param uosw the ObjectStoreWriter of the userprofile database
-     * @param classDescriptor if true the classDescriptor will be setted
+     * @param classDescriptor if true the classDescriptor will be set
+     * @throws UnknownBagTypeException if the type bag is unknown
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag(ObjectStore os, Integer savedBagId, ObjectStoreWriter uosw,
@@ -225,7 +210,9 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
             state = BagState.CURRENT;
         } else if (BagState.NOT_CURRENT.toString().equals(savedBagStatus)) {
             state = BagState.NOT_CURRENT;
-        } else {
+        } else if (BagState.UPGRADING.toString().equals(savedBagStatus)) {
+            state = BagState.UPGRADING;
+        }else {
             state = BagState.TO_UPGRADE;
         }
     }
@@ -266,6 +253,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     /**
      * Returns a List which contains the ids given in input and contained
      * in this bag as Integer IDs.
+     * @param ids the list of ids
      * @return a List of Integers
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -273,7 +261,8 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
         Query q = new Query();
         q.setDistinct(false);
         try {
-            Class<? extends InterMineObject> clazz = (Class<InterMineObject>) Class.forName(getQualifiedType());
+            Class<? extends InterMineObject> clazz =
+                (Class<InterMineObject>) Class.forName(getQualifiedType());
             QueryClass qc = new QueryClass(clazz);
             QueryField idField = new QueryField(qc, "id");
             q.addToSelect(idField);
@@ -342,7 +331,6 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
                 LOG.error("Problems loading extraBag.properties. ", ioe);
             }
         } else {
-            System.out.println("Could not find extraBag.properties file");
             LOG.error("Could not find extraBag.properties file");
         }
         boolean hasExtraValue = false;
@@ -610,6 +598,17 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
      */
     public boolean isCurrent() {
         if (BagState.CURRENT.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true if the status bag is to_upgrade, otherwise false 
+     * @return isToUpgrade
+     */
+    public boolean isToUpgrade() {
+        if (BagState.TO_UPGRADE.equals(state)) {
             return true;
         }
         return false;

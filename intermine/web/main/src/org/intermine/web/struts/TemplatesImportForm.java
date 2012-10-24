@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -128,7 +128,7 @@ public class TemplatesImportForm extends ValidatorForm
         }
 
         try {
-            Map<String, InterMineBag> allBags = bagManager.getUserAndGlobalBags(profile);
+            Map<String, InterMineBag> allBags = bagManager.getBags(profile);
             TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
         } catch (Exception err) {
             if (errors == null) {

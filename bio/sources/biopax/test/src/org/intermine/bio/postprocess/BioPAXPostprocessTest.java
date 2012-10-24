@@ -1,7 +1,7 @@
 package org.intermine.bio.postprocess;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -46,6 +46,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
         setUpData();
     }
 
+    @SuppressWarnings("rawtypes")
     public void tearDown() throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(InterMineObject.class);
@@ -75,6 +76,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
 
 
     // Store a gene with two proteins, each protein has a pathway
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void setUpData() throws Exception {
         DataSet dataset = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
         dataset.setName("Reactome data set");
@@ -101,6 +103,7 @@ public class BioPAXPostprocessTest extends XMLTestCase {
         osw.commitTransaction();
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Set<InterMineObject> getFromDb(Class relClass) throws Exception {
         Query q = new Query();
         QueryClass qc = new QueryClass(relClass);

@@ -4,29 +4,12 @@ client-dist/
 build/
 client-build/
 *.log
+*.log.*
 .settings
 .eclipse
 executeLog*
 *.pyc
 *.class
-
-# /bio/sources/flymine/bdgp-insitu/test/
-/bio/sources/flymine/bdgp-insitu/test/bdgp_tgt.xml
-
-# bio/sources/panther/test/
-bio/sources/panther/test/panther-tgt-items.xml
-
-# /bio/test-all/
-/bio/test-all/flybase-ids_tgt.xml
-/bio/test-all/flybase-gene-names_tgt.xml
-/bio/test-all/diseaseregion_items.xml
-/bio/test-all/Drosophila_melanogaster_chr_1.gff
-/bio/test-all/flybase_cds_tgt.xml
-/bio/test-all/Drosophila_melanogaster_chr_1.fa
-/bio/test-all/affy-probes-tgt-items.xml
-/bio/test-all/flyatlas-tgt-items.xml
-/bio/test-all/OMIM_test.xml
-/bio/test-all/tmp
 
 # /intermine/objectstore/main/
 /intermine/objectstore/main/src.png
@@ -149,6 +132,14 @@ bio/sources/panther/test/panther-tgt-items.xml
 /intermine/python/docs
 /intermine/python/.git
 
+# /intermine/python/intermine-core
+/intermine/python/intermine-core/*.egg-info
+/intermine/python/intermine-core/*.zip
+/intermine/python/intermine-core/htmlcov
+/intermine/python/intermine-core/docs
+/intermine/python/intermine-core/.git
+/intermine/python/intermine-core/.tox
+
 # /intermine/python/intermine-bio/
 /intermine/python/intermine-bio/docs
 
@@ -182,6 +173,9 @@ bio/sources/panther/test/panther-tgt-items.xml
 # /intermine/web/test
 /intermine/web/test/properties
 
+# intermine/api/test
+/intermine/api/test/properties
+
 # /intermine/web/test/src/org/intermine/webservice/server/output/
 /intermine/web/test/src/org/intermine/webservice/server/output/RowResultProcessorBenchmark.java
 /intermine/web/test/src/org/intermine/webservice/server/output/FilterBenchmarkTest.java
@@ -194,3 +188,11 @@ bio/sources/panther/test/panther-tgt-items.xml
 
 # /intermine/webservice/client/javascript/imbedding/0.2/style/
 /intermine/webservice/client/javascript/imbedding/0.2/style/*min.*
+
+# mines
+malariamine/
+
+# IDEs
+nbproject/
+nb-build.xml
+.idea/

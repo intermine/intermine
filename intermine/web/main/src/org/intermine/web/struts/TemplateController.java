@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -190,6 +190,9 @@ public class TemplateController extends TilesAction
         String constraintLogic = template.getConstraintLogic().toLowerCase();
         if (constraintLogic.contains("or") || constraintLogic.contains("not")) {
             request.setAttribute("displayLogicExpression", "true");
+        }
+        if (profile.getSavedTemplates().get(displayTemplate.getName()) != null) {
+            request.setAttribute("IS_OWNER", true);
         }
         return null;
     }

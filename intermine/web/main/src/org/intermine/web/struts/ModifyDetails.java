@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,7 +22,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.tiles.ComponentContext;
-import org.directwebremoting.WebContextFactory;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
@@ -76,7 +75,7 @@ public class ModifyDetails extends DispatchAction
         TemplateQuery template = templateManager.getTemplate(profile, name, scope);
 
         BagManager bagManager = im.getBagManager();
-        InterMineBag bag = bagManager.getUserOrGlobalBag(profile, bagName);
+        InterMineBag bag = bagManager.getBag(profile, bagName);
 
         TemplateQuery populatedTemplate;
         try {
@@ -250,7 +249,7 @@ public class ModifyDetails extends DispatchAction
         }
         BagManager bagManager = im.getBagManager();
 
-        InterMineBag interMineBag = bagManager.getUserOrGlobalBag(profile, id);
+        InterMineBag interMineBag = bagManager.getBag(profile, id);
         cc.putAttribute("interMineIdBag", interMineBag);
         cc.putAttribute("templateQuery", tq);
         cc.putAttribute("placement", request.getParameter("placement"));

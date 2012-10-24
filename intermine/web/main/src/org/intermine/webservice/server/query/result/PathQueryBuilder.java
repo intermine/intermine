@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,14 +11,12 @@ package org.intermine.webservice.server.query.result;
  */
 
 import java.io.StringReader;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-
 import org.intermine.api.profile.BagState;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.pathquery.PathQuery;
