@@ -90,7 +90,7 @@ public class NcbiGeneConverter extends BioFileConverter
                     Item ncRNA = createItem("NcRNA");
                     ncRNA.setReference("organism", getOrganism(taxonId));
 
-                    ncRNA.setAttribute("ncbiGeneNumber", record.entrez);
+                    ncRNA.setAttribute("primaryIdentifier", record.entrez);
                     ncRNA.setAttribute("secondaryIdentifier", record.entrez);
 
                     // SYMBOL
