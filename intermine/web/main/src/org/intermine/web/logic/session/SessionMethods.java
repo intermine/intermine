@@ -37,7 +37,9 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.ApiTemplate;
@@ -508,18 +510,19 @@ public final class SessionMethods
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     final InterMineAPI im = getInterMineAPI(session);
                     try {
-                        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-                        final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
+
+                        final PathQueryExecutor pqe = im.getPathQueryExecutor(profile);
+                        
                         Action action = new Action() {
                             @Override
                             public void process() {
-                                pr.getRows();
+                                pqe.execute(pathQuery);
                             }
                         };
                         CompletionCallBack completionCallBack = new CompletionCallBack() {
                             @Override
                             public void complete() {
-                                SessionMethods.setResultsTable(session, "results." + qid, pr);
+                                // Do nothing...
                             }
                         };
                         SessionMethods.runQuery(session, messages, qid, action, completionCallBack);
@@ -527,7 +530,6 @@ public final class SessionMethods
                         if (saveQuery) {
                             String queryName = NameUtil.findNewQueryName(
                                     profile.getHistory().keySet());
-                            executor.setQueryInfo(pathQuery, pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                         }
 
