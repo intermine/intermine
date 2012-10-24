@@ -15,99 +15,25 @@
 <html:xhtml/>
 <c:set var="split" value="${fn:split(widget.class,'.')}"/>
 <c:set var="type" value="${split[fn:length(split)-1]}"/>
-<c:set var="bagName" value="${bag.name}"/>
-<c:set var="widgetId" value="${widget.id}"/>
 
 <c:choose>
     <c:when test="${type == 'GraphWidgetConfig'}" >
-        <div id="${widgetId}-widget" class="bootstrap widget"></div>
-        <script type="text/javascript">
-        (function() {
-            var callbacks = {
-                matchCb: function(id, type) {
-                    window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
-                },
-                listCb: function(pq) {
-                    var service = new intermine.Service({'root': window.service, 'token': "${token}"});
-                    service.query(pq, function(query) {
-                        var dialogue = new intermine.query.actions.ListCreator(query);
-                        dialogue.render().$el.appendTo('#${widgetId}-widget');
-                        dialogue.openDialogue();
-
-                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
-                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
-                    });
-                },
-                resultsCb: function(pq) {
-					(new intermine.Service({'root': service})).query(pq, function(query) {						
-						window.open(service.replace('/service\/?$/', "/run.do") + "?query=" + query.toXML());
-						window.focus();
-					});
-                }
-            };
-            window.widgets.chart("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
-        })();
-        </script>
+        <c:set var="widgetStyle" value="chart"/>
     </c:when>
     <c:when test="${type == 'EnrichmentWidgetConfig'}" >
-        <div id="${widgetId}-widget" class="bootstrap widget"></div>
-        <script type="text/javascript">
-        (function() {
-            var callbacks = {
-                matchCb: function(id, type) {
-                    window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
-                },
-                listCb: function(pq) {
-                    var service = new intermine.Service({'root': window.service, 'token': "${token}"});
-                    service.query(pq, function(query) {
-                        var dialogue = new intermine.query.actions.ListCreator(query);
-                        dialogue.render().$el.appendTo('#${widgetId}-widget');
-                        dialogue.openDialogue();
-
-                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
-                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
-                    });
-                },
-                resultsCb: function(pq) {
-					(new intermine.Service({'root': service})).query(pq, function(query) {						
-						window.open(service.replace('/service/', "run.do") + "?query=" + query.toXML());
-						window.focus();
-					});
-                }
-            };
-            window.widgets.enrichment("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
-        })();
-        </script>
+        <c:set var="widgetStyle" value="enrichment"/>
     </c:when>
     <c:when test="${type == 'TableWidgetConfig'}" >
-        <div id="${widgetId}-widget" class="bootstrap widget"></div>
-        <script type="text/javascript">
-        (function() {
-            var callbacks = {
-                matchCb: function(id, type) {
-                    window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
-                },
-                listCb: function(pq) {
-                    var service = new intermine.Service({'root': window.service, 'token': "${token}"});
-                    service.query(pq, function(query) {
-                        var dialogue = new intermine.query.actions.ListCreator(query);
-                        dialogue.render().$el.appendTo('#${widgetId}-widget');
-                        dialogue.openDialogue();
-
-                        query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
-                        query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
-                    });
-                },
-                resultsCb: function(pq) {
-					(new intermine.Service({'root': service})).query(pq, function(query) {						
-						window.open(service.replace('/service/', "run.do") + "?query=" + query.toXML());
-						window.focus();
-					});
-                }
-            };
-            window.widgets.table("${widgetId}", "${bagName}", "#${widgetId}-widget", callbacks);
-        })();
-        </script>
+        <c:set var="widgetStyle" value="table"/>
     </c:when>
 </c:choose>
+
+<div id="${widget.id}-widget" class="bootstrap widget"></div>
+<tiles:insert template="widgetScript.jsp">
+    <tiles:put name="token" value="${token}"/> 
+    <tiles:put name="widgetId" value="${widget.id}"/> 
+    <tiles:put name="bagName" value="${bag.name}"/> 
+    <tiles:put name="style" value="${widgetStyle}"/>
+</tiles:insert>
+
 <!-- /widget.jsp -->
