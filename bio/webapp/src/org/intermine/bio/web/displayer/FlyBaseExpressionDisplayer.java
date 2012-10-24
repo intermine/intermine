@@ -1,7 +1,7 @@
 package org.intermine.bio.web.displayer;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -72,20 +72,24 @@ public class FlyBaseExpressionDisplayer extends ReportDisplayer
         if (id != null) {
             // fetch the expression
             String geneId = String.valueOf(id);
-            query = getQuery(geneId, query);
+            
+            try {
+                query = getQuery(geneId, query);
 
-            // execute the query
-            Profile profile = SessionMethods.getProfile(session);
-            PathQueryExecutor executor = im.getPathQueryExecutor(profile);
-            ExportResultsIterator values = executor.execute(query);
+                // execute the query
+                Profile profile = SessionMethods.getProfile(session);
+                PathQueryExecutor executor = im.getPathQueryExecutor(profile);
+                ExportResultsIterator values = executor.execute(query);
 
-            Map results = processResults(values);
-            request.setAttribute("flybaseResults", results);
+                Map results = processResults(values);
+                request.setAttribute("flybaseResults", results);
 
-            // inline collection table to toggle
-            InlineResultsTable table = processTable(request, reportObject);
-            request.setAttribute("flybaseCollection", table);
-
+                // inline collection table to toggle
+                InlineResultsTable table = processTable(request, reportObject);
+                request.setAttribute("flybaseCollection", table);
+            } catch (Exception e) {
+                request.setAttribute("flybaseResults",new LinkedHashMap<String, String>());
+            }
         }
     }
 

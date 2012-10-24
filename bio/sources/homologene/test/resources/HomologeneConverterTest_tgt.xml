@@ -1,6 +1,9 @@
 <items>
-<item id="8_1" class="OrthologueEvidence">
-<reference name="evidenceCode" ref_id="7_1"/>
+<item id="9_22" class="CrossReference">
+<attribute name="identifier" value="5"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_22"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_10" class="Gene">
 <attribute name="symbol" value="Acat1"/>
@@ -8,42 +11,38 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_6" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_2"/>
-<reference name="homologue" ref_id="3_4"/>
-<collection name="crossReferences"><reference ref_id="9_6"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
 <item id="3_2" class="Gene">
 <attribute name="symbol" value="Acadm"/>
 <reference name="organism" ref_id="4_2"/>
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
+<item id="6_6" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_4"/>
+<reference name="homologue" ref_id="3_1"/>
+<collection name="crossReferences"><reference ref_id="9_6"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_13" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_13"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="6_4" class="Homologue">
 <attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="homologue" ref_id="3_5"/>
+<reference name="gene" ref_id="3_3"/>
+<reference name="homologue" ref_id="3_1"/>
 <collection name="crossReferences"><reference ref_id="9_4"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
-<item id="3_8" class="Gene">
-<attribute name="symbol" value="acdh-12"/>
-<reference name="organism" ref_id="4_3"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="2_1" class="DataSet">
-<attribute name="name" value="HomoloGene data set"/>
-<reference name="dataSource" ref_id="1_1"/>
-</item>
-<item id="3_12" class="Gene">
-<attribute name="symbol" value="T02G5.4"/>
-<reference name="organism" ref_id="4_3"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="9_18" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_18"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_7" class="Gene">
@@ -66,52 +65,22 @@
 <reference name="subject" ref_id="6_4"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="9_17" class="CrossReference">
-<attribute name="identifier" value="6"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_17"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_7" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_2"/>
-<reference name="homologue" ref_id="3_5"/>
-<collection name="crossReferences"><reference ref_id="9_7"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
-<item id="9_19" class="CrossReference">
-<attribute name="identifier" value="6"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_19"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
 <item id="4_2" class="Organism">
 <attribute name="taxonId" value="10090"/>
 </item>
-<item id="3_1" class="Gene">
-<attribute name="symbol" value="ACADM"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="7_1" class="OrthologueEvidenceCode">
-<attribute name="abbreviation" value="AA"/>
-<attribute name="name" value="Amino acid sequence comparison"/>
-</item>
-<item id="6_17" class="Homologue">
+<item id="6_36" class="Homologue">
 <attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_10"/>
-<reference name="homologue" ref_id="3_11"/>
-<collection name="crossReferences"><reference ref_id="9_17"/></collection>
+<reference name="gene" ref_id="3_12"/>
+<reference name="homologue" ref_id="3_10"/>
+<collection name="crossReferences"><reference ref_id="9_36"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
-<item id="6_18" class="Homologue">
+<item id="6_10" class="Homologue">
 <attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_10"/>
-<reference name="homologue" ref_id="3_12"/>
-<collection name="crossReferences"><reference ref_id="9_18"/></collection>
+<reference name="gene" ref_id="3_3"/>
+<reference name="homologue" ref_id="3_2"/>
+<collection name="crossReferences"><reference ref_id="9_10"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
@@ -121,11 +90,27 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="9_9" class="CrossReference">
+<item id="9_19" class="CrossReference">
 <attribute name="identifier" value="3"/>
 <reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_9"/>
+<reference name="subject" ref_id="6_19"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_14" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_5"/>
+<reference name="homologue" ref_id="3_2"/>
+<collection name="crossReferences"><reference ref_id="9_14"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_28" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_10"/>
+<reference name="homologue" ref_id="3_9"/>
+<collection name="crossReferences"><reference ref_id="9_28"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="9_7" class="CrossReference">
 <attribute name="identifier" value="3"/>
@@ -139,27 +124,21 @@
 <reference name="subject" ref_id="6_5"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_5" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_2"/>
-<reference name="homologue" ref_id="3_3"/>
-<collection name="crossReferences"><reference ref_id="9_5"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
-<item id="6_11" class="Homologue">
+<item id="6_21" class="Homologue">
 <attribute name="type" value="orthologue"/>
 <reference name="gene" ref_id="3_6"/>
 <reference name="homologue" ref_id="3_7"/>
-<collection name="crossReferences"><reference ref_id="9_11"/></collection>
+<collection name="crossReferences"><reference ref_id="9_21"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
-<item id="9_18" class="CrossReference">
-<attribute name="identifier" value="6"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_18"/>
+<item id="6_2" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="homologue" ref_id="3_1"/>
+<collection name="crossReferences"><reference ref_id="9_2"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="3_11" class="Gene">
 <attribute name="symbol" value="kat-1"/>
@@ -167,23 +146,21 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="9_12" class="CrossReference">
-<attribute name="identifier" value="5"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_12"/>
+<item id="6_34" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_11"/>
+<reference name="homologue" ref_id="3_10"/>
+<collection name="crossReferences"><reference ref_id="9_34"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
-<item id="3_3" class="Gene">
-<attribute name="symbol" value="acdh-10"/>
-<reference name="organism" ref_id="4_3"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="6_3" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="homologue" ref_id="3_3"/>
+<collection name="crossReferences"><reference ref_id="9_3"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_13" class="CrossReference">
-<attribute name="identifier" value="5"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_13"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="9_1" class="CrossReference">
 <attribute name="identifier" value="3"/>
@@ -191,19 +168,27 @@
 <reference name="subject" ref_id="6_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="9_14" class="CrossReference">
-<attribute name="identifier" value="6"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_14"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_8" class="Homologue">
-<attribute name="type" value="paralogue"/>
-<reference name="gene" ref_id="3_3"/>
-<reference name="homologue" ref_id="3_4"/>
-<collection name="crossReferences"><reference ref_id="9_8"/></collection>
+<item id="6_9" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="homologue" ref_id="3_3"/>
+<collection name="crossReferences"><reference ref_id="9_9"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_5" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="homologue" ref_id="3_4"/>
+<collection name="crossReferences"><reference ref_id="9_5"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_17" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_17"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="9_6" class="CrossReference">
 <attribute name="identifier" value="3"/>
@@ -211,19 +196,19 @@
 <reference name="subject" ref_id="6_6"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="3_13" class="Gene">
-<attribute name="symbol" value="Acvr1"/>
-<reference name="organism" ref_id="4_2"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_19" class="Homologue">
-<attribute name="type" value="paralogue"/>
-<reference name="gene" ref_id="3_11"/>
-<reference name="homologue" ref_id="3_12"/>
-<collection name="crossReferences"><reference ref_id="9_19"/></collection>
+<item id="6_29" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_9"/>
+<reference name="homologue" ref_id="3_11"/>
+<collection name="crossReferences"><reference ref_id="9_29"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_33" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_33"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="9_3" class="CrossReference">
 <attribute name="identifier" value="3"/>
@@ -231,62 +216,28 @@
 <reference name="subject" ref_id="6_3"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="0_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
-</item>
-<item id="6_10" class="Homologue">
-<attribute name="type" value="paralogue"/>
-<reference name="gene" ref_id="3_4"/>
-<reference name="homologue" ref_id="3_5"/>
-<collection name="crossReferences"><reference ref_id="9_10"/></collection>
+<item id="6_11" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="homologue" ref_id="3_4"/>
+<collection name="crossReferences"><reference ref_id="9_11"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
-<item id="9_16" class="CrossReference">
-<attribute name="identifier" value="6"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_16"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_10" class="CrossReference">
-<attribute name="identifier" value="3"/>
-<reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_10"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="4_3" class="Organism">
 <attribute name="taxonId" value="6239"/>
 </item>
-<item id="3_6" class="Gene">
-<attribute name="symbol" value="ACADVL"/>
-<reference name="organism" ref_id="4_1"/>
-<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<item id="9_29" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_29"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_3" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="homologue" ref_id="3_4"/>
-<collection name="crossReferences"><reference ref_id="9_3"/></collection>
+<item id="9_20" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_20"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
-<item id="6_16" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_9"/>
-<reference name="homologue" ref_id="3_12"/>
-<collection name="crossReferences"><reference ref_id="9_16"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
-</item>
-<item id="6_12" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_6"/>
-<reference name="homologue" ref_id="3_8"/>
-<collection name="crossReferences"><reference ref_id="9_12"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="9_2" class="CrossReference">
 <attribute name="identifier" value="3"/>
@@ -294,32 +245,335 @@
 <reference name="subject" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_15" class="Homologue">
+<item id="9_16" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_16"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_22" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_7"/>
+<reference name="homologue" ref_id="3_6"/>
+<collection name="crossReferences"><reference ref_id="9_22"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_31" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_31"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="6_33" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_10"/>
+<reference name="homologue" ref_id="3_11"/>
+<collection name="crossReferences"><reference ref_id="9_33"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_31" class="Homologue">
 <attribute name="type" value="orthologue"/>
 <reference name="gene" ref_id="3_9"/>
+<reference name="homologue" ref_id="3_12"/>
+<collection name="crossReferences"><reference ref_id="9_31"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="HomoloGene"/>
+</item>
+<item id="8_1" class="OrthologueEvidence">
+<reference name="evidenceCode" ref_id="7_1"/>
+</item>
+<item id="3_8" class="Gene">
+<attribute name="symbol" value="acdh-12"/>
+<reference name="organism" ref_id="4_3"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_14" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_14"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_7" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="homologue" ref_id="3_5"/>
+<collection name="crossReferences"><reference ref_id="9_7"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_24" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_8"/>
+<reference name="homologue" ref_id="3_6"/>
+<collection name="crossReferences"><reference ref_id="9_24"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="HomoloGene data set"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="9_38" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_38"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_28" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_28"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_32" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_32"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_38" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_12"/>
 <reference name="homologue" ref_id="3_11"/>
+<collection name="crossReferences"><reference ref_id="9_38"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="3_12" class="Gene">
+<attribute name="symbol" value="T02G5.4"/>
+<reference name="organism" ref_id="4_3"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_34" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_34"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_36" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_36"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_8" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_5"/>
+<reference name="homologue" ref_id="3_1"/>
+<collection name="crossReferences"><reference ref_id="9_8"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_35" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_10"/>
+<reference name="homologue" ref_id="3_12"/>
+<collection name="crossReferences"><reference ref_id="9_35"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="3_1" class="Gene">
+<attribute name="symbol" value="ACADM"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_15" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_15"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_1" class="OrthologueEvidenceCode">
+<attribute name="abbreviation" value="AA"/>
+<attribute name="name" value="Amino acid sequence comparison"/>
+</item>
+<item id="6_15" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_3"/>
+<reference name="homologue" ref_id="3_4"/>
 <collection name="crossReferences"><reference ref_id="9_15"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
-<item id="9_11" class="CrossReference">
+<item id="9_9" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_9"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_24" class="CrossReference">
 <attribute name="identifier" value="5"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_24"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_16" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_4"/>
+<reference name="homologue" ref_id="3_3"/>
+<collection name="crossReferences"><reference ref_id="9_16"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_37" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_37"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_11" class="CrossReference">
+<attribute name="identifier" value="3"/>
 <reference name="source" ref_id="1_1"/>
 <reference name="subject" ref_id="6_11"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_27" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_9"/>
+<reference name="homologue" ref_id="3_10"/>
+<collection name="crossReferences"><reference ref_id="9_27"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_37" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_11"/>
+<reference name="homologue" ref_id="3_12"/>
+<collection name="crossReferences"><reference ref_id="9_37"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_25" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_7"/>
+<reference name="homologue" ref_id="3_8"/>
+<collection name="crossReferences"><reference ref_id="9_25"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_32" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_12"/>
+<reference name="homologue" ref_id="3_9"/>
+<collection name="crossReferences"><reference ref_id="9_32"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="3_3" class="Gene">
+<attribute name="symbol" value="acdh-10"/>
+<reference name="organism" ref_id="4_3"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_27" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_27"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_23" class="CrossReference">
+<attribute name="identifier" value="5"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_23"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_20" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_5"/>
+<reference name="homologue" ref_id="3_4"/>
+<collection name="crossReferences"><reference ref_id="9_20"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_25" class="CrossReference">
+<attribute name="identifier" value="5"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_25"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_18" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_5"/>
+<reference name="homologue" ref_id="3_3"/>
+<collection name="crossReferences"><reference ref_id="9_18"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="3_13" class="Gene">
+<attribute name="symbol" value="Acvr1"/>
+<reference name="organism" ref_id="4_2"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_30" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_11"/>
+<reference name="homologue" ref_id="3_9"/>
+<collection name="crossReferences"><reference ref_id="9_30"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_35" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_35"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_23" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_6"/>
+<reference name="homologue" ref_id="3_8"/>
+<collection name="crossReferences"><reference ref_id="9_23"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="9_10" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_10"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_6" class="Gene">
+<attribute name="symbol" value="ACADVL"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="5_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_13" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_2"/>
+<reference name="homologue" ref_id="3_5"/>
+<collection name="crossReferences"><reference ref_id="9_13"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_26" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="3_8"/>
+<reference name="homologue" ref_id="3_7"/>
+<collection name="crossReferences"><reference ref_id="9_26"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="5_1" class="SOTerm">
 <attribute name="name" value="gene"/>
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_13" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_7"/>
-<reference name="homologue" ref_id="3_8"/>
-<collection name="crossReferences"><reference ref_id="9_13"/></collection>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 <item id="3_4" class="Gene">
 <attribute name="symbol" value="acdh-8"/>
@@ -327,22 +581,33 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="9_15" class="CrossReference">
-<attribute name="identifier" value="6"/>
+<item id="9_26" class="CrossReference">
+<attribute name="identifier" value="5"/>
 <reference name="source" ref_id="1_1"/>
-<reference name="subject" ref_id="6_15"/>
+<reference name="subject" ref_id="6_26"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="4_1" class="Organism">
-<attribute name="taxonId" value="9606"/>
-</item>
-<item id="6_14" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_9"/>
-<reference name="homologue" ref_id="3_10"/>
-<collection name="crossReferences"><reference ref_id="9_14"/></collection>
+<item id="6_19" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_4"/>
+<reference name="homologue" ref_id="3_5"/>
+<collection name="crossReferences"><reference ref_id="9_19"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="6_17" class="Homologue">
+<attribute name="type" value="paralogue"/>
+<reference name="gene" ref_id="3_3"/>
+<reference name="homologue" ref_id="3_5"/>
+<collection name="crossReferences"><reference ref_id="9_17"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_12" class="CrossReference">
+<attribute name="identifier" value="3"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_12"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="9_8" class="CrossReference">
 <attribute name="identifier" value="3"/>
@@ -350,13 +615,19 @@
 <reference name="subject" ref_id="6_8"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="6_2" class="Homologue">
+<item id="6_12" class="Homologue">
 <attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="homologue" ref_id="3_3"/>
-<collection name="crossReferences"><reference ref_id="9_2"/></collection>
+<reference name="gene" ref_id="3_4"/>
+<reference name="homologue" ref_id="3_2"/>
+<collection name="crossReferences"><reference ref_id="9_12"/></collection>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="8_1"/></collection>
+</item>
+<item id="9_30" class="CrossReference">
+<attribute name="identifier" value="6"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_30"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
 <item id="3_5" class="Gene">
 <attribute name="symbol" value="acdh-7"/>
@@ -364,15 +635,10 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="1_1" class="DataSource">
-<attribute name="name" value="HomoloGene"/>
-</item>
-<item id="6_9" class="Homologue">
-<attribute name="type" value="paralogue"/>
-<reference name="gene" ref_id="3_3"/>
-<reference name="homologue" ref_id="3_5"/>
-<collection name="crossReferences"><reference ref_id="9_9"/></collection>
+<item id="9_21" class="CrossReference">
+<attribute name="identifier" value="5"/>
+<reference name="source" ref_id="1_1"/>
+<reference name="subject" ref_id="6_21"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="8_1"/></collection>
 </item>
 </items>

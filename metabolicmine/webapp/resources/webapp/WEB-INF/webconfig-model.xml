@@ -72,7 +72,7 @@
   <class className="org.intermine.model.bio.Comment">
     <fields>
       <fieldconfig fieldExpr="type"/>
-      <fieldconfig fieldExpr="text"/>
+      <fieldconfig fieldExpr="description"/>
     </fields>
   </class>
 
@@ -122,7 +122,7 @@
       <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="length" displayer="/model/sequenceShortDisplayerWithField.jsp" />
-      <fieldconfig fieldExpr="summary" doNotTruncate="true" showInSummary="false" showInResults="false" showInInlineCollection="false" />
+      <fieldconfig fieldExpr="description" doNotTruncate="true" showInSummary="false" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="chromosomeLocation" displayer="/model/chromosomeLocDisplayer.jsp" showInResults="false" />
       <fieldconfig fieldExpr="chromosome.primaryIdentifier" showInInlineCollection="false" showInSummary="false" />
       <fieldconfig fieldExpr="chromosomeLocation.start" showInInlineCollection="false" showInSummary="false" />
@@ -194,16 +194,6 @@
       <fieldconfig fieldExpr="gene.primaryIdentifier" showInResults="false" showInInlineCollection="false" />
       <fieldconfig fieldExpr="homologue.primaryIdentifier"/>
       <fieldconfig fieldExpr="homologue.organism.shortName"/>
-    </fields>
-  </class>
-
-  <class className="org.intermine.model.bio.Interaction">
-   <fields>
-     <fieldconfig fieldExpr="gene.primaryIdentifier"/>
-     <fieldconfig fieldExpr="shortName"/>
-     <fieldconfig fieldExpr="confidenceText"/>
-     <fieldconfig fieldExpr="confidence"/>
-     <fieldconfig fieldExpr="role"/>
     </fields>
   </class>
 
@@ -451,7 +441,7 @@
                      jspName="model/publicationAnnotationsDisplayer.jsp"
                      replacesFields=""
                      placement="summary"
-                     parameters="Gene,Protein,Interaction.experiment,GOAnnotation.evidence"
+                     parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence"
                      types="Publication"/>
 
     <!-- currently only works with classes with publications collection -->
@@ -639,20 +629,6 @@
         exportField="primaryIdentifier"
         typeClass="Gene"
         columnTitle="Orthologues"/>-->
-
-      <bagtabledisplayer id="interactions" title="Interactions"
-                         pathStrings="Gene.interactions.interactingGenes"
-                         description="Genes (from the list or not) that interact with genes in this list.  Counts may include the same interaction more than once if observed in multiple experiments."
-                         displayFields="primaryIdentifier, name"
-                         exportField="primaryIdentifier"
-                         typeClass="Gene"
-                         columnTitle="Interactions"
-                         views="secondaryIdentifier, symbol, organism.shortName,
-                                interactions.shortName, interactions.type.name,
-                                interactions.role,
-                                interactions.interactingGenes.primaryIdentifier,
-                                interactions.interactingGenes.symbol,
-                                interactions.experiment.name"/>
 
       <bagtabledisplayer id="snp_consequence_types" title="SNP Consequence Types"
                          pathStrings="SNP.consequences"

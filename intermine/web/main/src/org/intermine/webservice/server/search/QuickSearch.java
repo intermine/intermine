@@ -211,7 +211,7 @@ public class QuickSearch extends JSONService
                 LOG.debug("SEARCH BAG: '" + searchBag + "'");
                 final BagManager bm = im.getBagManager();
                 final Profile p = getPermission().getProfile();
-                final InterMineBag bag = bm.getUserOrGlobalBag(p, searchBag);
+                final InterMineBag bag = bm.getBag(p, searchBag);
                 if (bag != null) {
                     ids.addAll(bag.getContentsAsIds());
                 }

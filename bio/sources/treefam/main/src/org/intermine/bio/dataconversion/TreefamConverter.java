@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -49,9 +49,11 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, GeneHolder> idsToGenes = new HashMap<String, GeneHolder>();
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
     private Map<String, String[]> config = new HashMap<String, String[]>();
-    protected IdResolverFactory resolverFactory;
-    private IdResolver flyResolver;
     private static String evidenceRefId = null;
+    private static final String ZFIN_TAXON = "7955";
+    private static final String FLY_TAXON = "7227";
+
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -63,8 +65,6 @@ public class TreefamConverter extends BioFileConverter
         throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -170,8 +170,8 @@ public class TreefamConverter extends BioFileConverter
         throws ObjectStoreException {
         String identifierType = type;
         String identifier = ident;
-        if ("7227".equals(taxonId)) {
-            identifier = resolveGene(identifier);
+        if (ZFIN_TAXON.equals(taxonId) || FLY_TAXON.equals(taxonId)) {
+            identifier = resolveGene(taxonId, identifier);
             identifierType = "primaryIdentifier";
             if (identifier == null) {
                 return null;
@@ -211,6 +211,14 @@ public class TreefamConverter extends BioFileConverter
         } catch (IOException err) {
             throw new RuntimeException("error reading geneFile", err);
         }
+
+        Set<String> resolveTaxonIds = new HashSet<String>();
+        resolveTaxonIds.add(ZFIN_TAXON);
+        resolveTaxonIds.add(FLY_TAXON);
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(resolveTaxonIds);
+        }
+
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
@@ -348,22 +356,18 @@ public class TreefamConverter extends BioFileConverter
         return identifier;
     }
 
-
-    private String resolveGene(String identifier) {
-        // we only have a resolver for dmel for now
-        String taxonId = "7227";
-        flyResolver = resolverFactory.getIdResolver(false);
-        if (flyResolver == null) {
+    private String resolveGene(String taxonId, String identifier) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;
         }
-        int resCount = flyResolver.countResolutions(taxonId, identifier);
+        int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " FBgn: "
-                     + flyResolver.resolveId(taxonId, identifier));
+                    + identifier + " count: " + resCount + " "
+                    + rslv.resolveId(taxonId, identifier));
             return null;
         }
-        return flyResolver.resolveId(taxonId, identifier).iterator().next();
+        return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 }

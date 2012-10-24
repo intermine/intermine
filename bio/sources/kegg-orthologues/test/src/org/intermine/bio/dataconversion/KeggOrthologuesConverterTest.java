@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class KeggOrthologuesConverterTest extends ItemsTestCase
 {
@@ -32,14 +33,13 @@ public class KeggOrthologuesConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new KeggOrthologuesConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG18814"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG3481"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("CG3763"));
-        converter.flyResolverFactory = resolverFactory;
-        converter.flyResolver = resolverFactory.getIdResolver(false);
+
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG18814"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG3481"));
+        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("CG3763"));
     }
 
     public void testProcess() throws Exception {
@@ -55,7 +55,7 @@ public class KeggOrthologuesConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "kegg-tgt-items.xml");
 
-        Set expected = readItemSet("KeggOrthologuesConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("KeggOrthologuesConverterTest_tgt.xml");
         assertEquals(expected, itemWriter.getItems());
     }
 }

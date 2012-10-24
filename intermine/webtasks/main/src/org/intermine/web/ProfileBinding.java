@@ -1,7 +1,7 @@
 package org.intermine.web;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,14 +11,19 @@ package org.intermine.web;
  */
 
 import java.io.Reader;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.SharingInvite;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -28,6 +33,7 @@ import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.TagManagerFactory;
 import org.intermine.api.xml.InterMineBagBinding;
 import org.intermine.api.xml.SavedQueryBinding;
+import org.intermine.api.xml.SharedBagBinding;
 import org.intermine.api.xml.TagBinding;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
@@ -88,8 +94,10 @@ public final class ProfileBinding
             writer.writeStartElement("userprofile");
 
             if (writeUserAndPassword) {
-                writer.writeAttribute("password", profile.getPassword());
                 writer.writeAttribute("username", profile.getUsername());
+                if (profile.getPassword() != null) {
+                    writer.writeAttribute("password", profile.getPassword());
+                }
                 if (profile.getApiKey() != null) {
                     writer.writeAttribute("apikey", profile.getApiKey());
                 }
@@ -119,6 +127,11 @@ public final class ProfileBinding
             }
 
             writer.writeCharacters("\n");
+
+            //shared bags
+            SharedBagBinding.marshal(profile, writer);
+
+            //queries
             writer.writeStartElement("queries");
             if (writeQueries) {
                 for (SavedQuery query : profile.getSavedQueries().values()) {
@@ -135,6 +148,8 @@ public final class ProfileBinding
             }
             writer.writeEndElement();
             writer.writeCharacters("\n");
+
+            /* TAGS */
             writer.writeStartElement("tags");
             TagManager tagManager =
                 new TagManagerFactory(profile.getProfileManager()).getTagManager();
@@ -148,11 +163,71 @@ public final class ProfileBinding
             }
             // end <tags>
             writer.writeEndElement();
+
+            /* PREFERENCES */
+            writer.writeStartElement("preferences");
+            for (Entry<String, String> preference: profile.getPreferences().entrySet()) {
+                writer.writeStartElement(preference.getKey());
+                writer.writeCharacters(preference.getValue());
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+
+            /* INVITATIONS */
+            writer.writeStartElement("invitations");
+            Collection<SharingInvite.IntermediateRepresentation> invites =
+                    SharingInvite.getInviteData(profile.getProfileManager(), profile);
+            Map<Integer, String> bagNameCache = new HashMap<Integer, String>();
+            Map<String, InterMineBag> bags = profile.getSavedBags();
+            for (SharingInvite.IntermediateRepresentation invite: invites) {
+                writer.writeStartElement("invite");
+
+                /* EACH INVITE */
+                writer.writeStartElement("bag");
+                writer.writeCharacters(getBagName(bagNameCache, bags, invite.getBagId()));
+                writer.writeEndElement();
+                writer.writeStartElement("invitee");
+                writer.writeCharacters(invite.getInvitee());
+                writer.writeEndElement();
+                writer.writeStartElement("token");
+                writer.writeCharacters(invite.getToken());
+                writer.writeEndElement();
+                writer.writeStartElement("accepted");
+                writer.writeCharacters(String.valueOf(invite.getAccepted()));
+                writer.writeEndElement();
+                writer.writeStartElement("createdAt");
+                writer.writeCharacters(String.valueOf(invite.getCreatedAt().getTime()));
+                writer.writeEndElement();
+                writer.writeStartElement("acceptedAt");
+                if (invite.getAcceptedAt() != null) {
+                    writer.writeCharacters(String.valueOf(invite.getAcceptedAt().getTime()));
+                }
+                writer.writeEndElement();
+
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+
             // end <userprofile>
             writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new RuntimeException("exception while marshalling profile", e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error reading invites.", e);
         }
+    }
+
+    private static String getBagName(
+            Map<Integer, String> cache, Map<String, InterMineBag> bags, Integer id) {
+        if (id != null && !cache.containsKey(id)) {
+            for (String name: bags.keySet()) {
+                if (id.equals(bags.get(name).getSavedBagId())) {
+                    cache.put(id, name);
+                    break;
+                }
+            }
+        }
+        return cache.get(id);
     }
 
     /**
@@ -171,7 +246,7 @@ public final class ProfileBinding
             String password, Set<Tag> tags, ObjectStoreWriter osw, int version) {
         try {
             ProfileHandler profileHandler =
-                new ProfileHandler(profileManager, username, password, tags, osw, version);
+                new ProfileHandler(profileManager, username, password, tags, osw, version, null);
             SAXParser.parse(new InputSource(reader), profileHandler);
             return profileHandler.getProfile();
         } catch (Exception e) {

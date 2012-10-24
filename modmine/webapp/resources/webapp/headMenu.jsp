@@ -16,7 +16,6 @@
   <!-- Header -->
   <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
 
-  <c:if test="${fn:length(headerLinks) > 0}">
     <%-- Menu appearing at the top right (about, etc..) --%>
     <div id="topnav">
       <a href="http://www.modencode.org/" target="_blank"><b>modENCODE</b></a>&nbsp;|&nbsp;
@@ -25,7 +24,6 @@
 
 
     </div>
-  </c:if>
   <div id="header">
     <a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" width="45px" height="43px" alt="Logo" /></a>
     <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
@@ -91,7 +89,14 @@
       </li>
     </ul>
   <ul id="loginbar">
-        <li><im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
+        <li>
+            <p id="contactUsLink" style="display:none;" class="alignleft">
+    <a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a>
+    </p>
+        <%-- removed (not working)
+        <li>
+        <im:popupHelp pageName="tour/start">Take a tour</im:popupHelp></li>
+        --%>
         <c:if test="${PROFILE.loggedIn}">
             <li>
               <!-- display (optionally trimmed) username -->

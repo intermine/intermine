@@ -1,7 +1,7 @@
 package org.intermine.web.logic.query;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -657,9 +657,9 @@ public class DisplayConstraint
      */
     public List<String> getBags() {
         if (ClassKeyHelper.hasKeyFields(classKeys, endCls)
-            && !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)) {
+            /*&& !ClassKeyHelper.isKeyField(classKeys, endCls, fieldName)*/) {
             Map<String, InterMineBag> bags =
-                bagManager.getCurrentUserOrGlobalBagsOfType(profile, endCls);
+                bagManager.getCurrentBagsOfType(profile, endCls);
             if (!bags.isEmpty()) {
                 List<String> bagList = new ArrayList<String>(bags.keySet());
                 Collections.sort(bagList);

@@ -1,7 +1,7 @@
 package org.intermine.template;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -435,6 +435,18 @@ public class TemplateQuery extends PathQuery
      */
     public String getComment() {
         return comment;
+    }
+
+    /**
+     * Return the template's title, or its name if it has no title.
+     */
+    @Override
+    public String getTitle() {
+        String title = super.getTitle();
+        if (title == null || "".equals(title)) {
+            return getName();
+        }
+        return title;
     }
 
     /**

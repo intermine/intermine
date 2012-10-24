@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -53,6 +53,11 @@ final class AnonProfile extends Profile
 
     @Override
     public boolean isSuperuser() {
+        return false;
+    }
+
+    @Override
+    public boolean isLoggedIn() {
         return false;
     }
 

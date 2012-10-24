@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,7 +25,6 @@ import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -38,7 +37,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
 
 /**
  * DataConverter to parse UniProt data into items.  Improved version of UniProtConverter.
@@ -64,7 +62,6 @@ public class UniprotConverter extends BioDirectoryConverter
     private Map<String, String> goterms = new HashMap<String, String>();
     private Map<String, String> goEvidenceCodes = new HashMap<String, String>();
     private Map<String, String> ecNumbers = new HashMap<String, String>();
-    private static final String GENUS_LOOKUP = "Drosophila";
     private static final int POSTGRES_INDEX_SIZE = 2712;
 
     // don't allow duplicate identifiers
@@ -72,13 +69,17 @@ public class UniprotConverter extends BioDirectoryConverter
 
     private boolean createInterpro = false;
     private boolean creatego = false;
-    private boolean loadFragments = false;
+    private boolean loadfragments = false;
     private boolean allowduplicates = false;
+    private boolean loadtrembl = true;
     private Set<String> taxonIds = null;
 
-    protected IdResolverFactory flyResolverFactory;
+    protected IdResolver rslv;
+    private static final String FLY = "7227";
     private String datasourceRefId = null;
+    @SuppressWarnings("unused")
     private OrganismRepository or;
+    private static final Map<String, String> GENE_PREFIXES = new HashMap<String, String>();
 
     /**
      * Constructor
@@ -87,9 +88,11 @@ public class UniprotConverter extends BioDirectoryConverter
      */
     public UniprotConverter(ItemWriter writer, Model model) {
         super(writer, model, "UniProt", "Swiss-Prot data set");
-        // only construct factory here so can be replaced by mock factory in tests
-        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
         or = OrganismRepository.getOrganismRepository();
+    }
+
+    static {
+        GENE_PREFIXES.put("10116", "RGD:");
     }
 
     /**
@@ -106,6 +109,11 @@ public class UniprotConverter extends BioDirectoryConverter
             throw new RuntimeException(e);
         }
         Map<String, File[]> taxonIdToFiles = parseFileNames(dataDir.listFiles());
+
+        // init id resolver
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(FLY);
+        }
 
         if (taxonIds != null) {
             for (String taxonId : taxonIds) {
@@ -126,7 +134,9 @@ public class UniprotConverter extends BioDirectoryConverter
                 if ("uniprot_sprot.xml".equals(filename)) {
                     sortedFiles[0] = file;
                 } else if ("uniprot_trembl.xml".equals(filename)) {
-                    sortedFiles[1] = file;
+                    if (loadtrembl) {
+                        sortedFiles[1] = file;
+                    }
                 }
             }
             processFiles(sortedFiles);
@@ -169,7 +179,7 @@ public class UniprotConverter extends BioDirectoryConverter
      *  [TAXONID]_uniprot_[SOURCE].xml
      *  SOURCE: sprot or trembl
      */
-    private Map<String, File[]> parseFileNames(File[] fileList) {
+    protected Map<String, File[]> parseFileNames(File[] fileList) {
         Map<String, File[]> files = new HashMap<String, File[]>();
         if (fileList == null) {
             return null;
@@ -189,6 +199,11 @@ public class UniprotConverter extends BioDirectoryConverter
                         +  " (" + bits[2] + "), expecting sprot or trembl ");
                 continue;
             }
+
+            if (!loadtrembl && "trembl".equals(source)) {
+                continue;
+            }
+
             int i = ("sprot".equals(source) ? 0 : 1);
             if (!files.containsKey(taxonId)) {
                 File[] sourceFiles = new File[2];
@@ -227,7 +242,19 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     /**
-     * Toggle whether or not to allow duplicate sequences
+     * Toggle whether or not to load trembl data for all given organisms
+     * @param loadtrembl whether or not to load trembl data
+     */
+    public void setLoadtrembl(String loadtrembl) {
+        if ("true".equalsIgnoreCase(loadtrembl)) {
+            this.loadtrembl = true;
+        } else {
+            this.loadtrembl = false;
+        }
+    }
+
+    /**
+     * Toggle whether or not to load trembl data
      * @param allowduplicates whether or not to allow duplicate sequences
      */
     public void setAllowduplicates(String allowduplicates) {
@@ -253,13 +280,13 @@ public class UniprotConverter extends BioDirectoryConverter
     /**
      * Toggle whether or not to load fragments.  default to false.
      *
-     * @param loadFragments if true, will load all proteins even if isFragment = true
+     * @param loadfragments if true, will load all proteins even if isFragment = true
      */
-    public void setLoadfragments(String loadFragments) {
-        if ("true".equalsIgnoreCase(loadFragments)) {
-            this.loadFragments = true;
+    public void setLoadfragments(String loadfragments) {
+        if ("true".equalsIgnoreCase(loadfragments)) {
+            this.loadfragments = true;
         } else {
-            this.loadFragments = false;
+            this.loadfragments = false;
         }
     }
 
@@ -453,9 +480,9 @@ public class UniprotConverter extends BioDirectoryConverter
                         String ellipses = "...";
                         String choppedComment = commentText.substring(
                                 0, POSTGRES_INDEX_SIZE - ellipses.length());
-                        item.setAttribute("text", choppedComment + ellipses);
+                        item.setAttribute("description", choppedComment + ellipses);
                     } else {
-                        item.setAttribute("text", commentText);
+                        item.setAttribute("description", commentText);
                     }
                     String refId = item.getIdentifier();
                     try {
@@ -581,7 +608,7 @@ public class UniprotConverter extends BioDirectoryConverter
             if (uniprotEntry.hasDatasetRefId() && uniprotEntry.hasPrimaryAccession()
                     && !uniprotEntry.isDuplicate()) {
 
-                if (!loadFragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
+                if (!loadfragments && "true".equalsIgnoreCase(uniprotEntry.isFragment())) {
                     return Collections.emptySet();
                 }
 
@@ -894,6 +921,10 @@ public class UniprotConverter extends BioDirectoryConverter
                 if (StringUtils.isEmpty(identifier)) {
                     continue;
                 }
+                if (GENE_PREFIXES.containsKey(taxId)) {
+                    // Prepend RGD:
+                    identifier = GENE_PREFIXES.get(taxId) + identifier;
+                }
                 gene = getGene(protein, uniprotEntry, identifier, taxId,
                         uniqueIdentifierField);
                 // if we only have one gene, store later, we may have other gene fields to update
@@ -902,7 +933,7 @@ public class UniprotConverter extends BioDirectoryConverter
                 }
             }
 
-            if (!hasMultipleGenes && gene != null) {
+            if (gene != null && !hasMultipleGenes) {
                 Set<String> geneFields = getOtherFields(taxId);
                 for (String geneField : geneFields) {
                     geneIdentifiers = getGeneIdentifiers(uniprotEntry, geneField);
@@ -912,6 +943,10 @@ public class UniprotConverter extends BioDirectoryConverter
                     for (String geneIdentifier : geneIdentifiers) {
                         if (StringUtils.isEmpty(geneIdentifier)) {
                             continue;
+                        }
+                        if (GENE_PREFIXES.containsKey(taxId)) {
+                            // Prepend RGD:
+                            geneIdentifier = GENE_PREFIXES.get(taxId) + geneIdentifier;
                         }
                         gene.setAttribute(geneField, geneIdentifier);
                     }
@@ -965,6 +1000,8 @@ public class UniprotConverter extends BioDirectoryConverter
             } else {
                 LOG.error("error processing config for organism " + taxId);
             }
+
+
             return geneIdentifiers;
         }
 
@@ -1049,27 +1086,25 @@ public class UniprotConverter extends BioDirectoryConverter
         }
 
         private String resolveGene(String taxId, String identifier) {
-            OrganismData od = or.getOrganismDataByTaxon(new Integer(taxId));
-            if (od != null && od.getGenus().equals(GENUS_LOOKUP) && flyResolverFactory != null) {
+            if (FLY.equals(taxId)) {
                 return resolveFlyGene(taxId, identifier);
             }
             return identifier;
         }
 
         private String resolveFlyGene(String taxId, String identifier) {
-            IdResolver flyResolver = flyResolverFactory.getIdResolver(false);
-            if (flyResolver == null) {
+            if (rslv == null || !rslv.hasTaxon(taxId)) {
                 // no id resolver available, so return the original identifier
                 return identifier;
             }
-            int resCount = flyResolver.countResolutions(taxId, identifier);
+            int resCount = rslv.countResolutions(taxId, identifier);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                          + identifier + " count: " + resCount + " FBgn: "
-                         + flyResolver.resolveId(taxId, identifier));
+                         + rslv.resolveId(taxId, identifier));
                 return null;
             }
-            return flyResolver.resolveId(taxId, identifier).iterator().next();
+            return rslv.resolveId(taxId, identifier).iterator().next();
         }
     }
 

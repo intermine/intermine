@@ -20,7 +20,7 @@
       <div class="inline-list<c:if test="${list.size == 0}"> gray</c:if>">
         <a name="${list.prefix}" class="anchor"></a>
         <h3>
-          <c:if test="${IS_SUPERUSER}">
+          <c:if test="${SHOW_TAGS}">
             <div class="right">
               <c:set var="descriptor" value="${list.descriptor}" />
               <tiles:insert name="inlineTagEditor.tile">

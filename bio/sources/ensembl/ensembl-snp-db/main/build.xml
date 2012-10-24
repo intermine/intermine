@@ -1,0 +1,4 @@
+<project name="ensembl-snp-db-tasks" default="default" basedir=".">
+  <description>build ensembl-snp-db tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

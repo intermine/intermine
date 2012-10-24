@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,6 +14,8 @@ import static org.apache.commons.collections.CollectionUtils.collect;
 import static org.apache.commons.collections.TransformerUtils.invokerTransformer;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,24 +69,28 @@ public class ListTagService extends AbstractListService
             tags = getTagsForSingleList(listName, profile);
         }
 
-        output.addResultItem(new ArrayList(tags));
+        output.addResultItem(new ArrayList<String>(tags));
     }
 
     private Set<String> getTagsForSingleList(String name, Profile profile) {
         BagManager bagManager = im.getBagManager();
 
-        Map<String, InterMineBag> lists = bagManager.getUserAndGlobalBags(profile);
+        Map<String, InterMineBag> lists = bagManager.getBags(profile);
         InterMineBag list = lists.get(name);
         if (list == null) {
             throw new ResourceNotFoundException(
                     "You do not have access to a list called " + name);
         }
         List<Tag> tags = bagManager.getTagsForBag(list, profile);
-        List<String> tagNames = (List<String>) collect(tags, invokerTransformer("getTagName"));
+        @SuppressWarnings("unchecked")
+        Collection<String> tagNames = collect(tags, invokerTransformer("getTagName"));
         return new HashSet<String>(tagNames);
     }
 
     private Set<String> getAllTags(Profile profile) {
+        if (!this.isAuthenticated()) {
+            return Collections.emptySet();
+        }
         TagManager tm = im.getTagManager();
         return tm.getUserTagNames(TagTypes.BAG, profile.getUsername());
     }

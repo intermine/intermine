@@ -1,7 +1,7 @@
 package org.intermine.api.results;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -451,9 +451,13 @@ public class WebResults extends AbstractList<MultiRow<ResultsRow<MultiRowValue<R
                         // link to report page by default, unless it says otherwise in config
 
                         if (redirector != null) {
-                            String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
-                            if (linkRedirect != null) {
-                                resultElement.setLinkRedirect(linkRedirect);
+                            try {
+                                String linkRedirect = redirector.generateLink(im, (InterMineObject) o);
+                                if (linkRedirect != null) {
+                                    resultElement.setLinkRedirect(linkRedirect);
+                                }
+                            } catch (ClassCastException e) {
+                                // Simple objects cannot be consumed by redirectors.
                             }
                         }
 

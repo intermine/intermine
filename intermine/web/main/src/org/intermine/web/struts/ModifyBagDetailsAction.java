@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -68,7 +68,7 @@ public class ModifyBagDetailsAction extends InterMineAction
         ModifyBagDetailsForm mbdf = (ModifyBagDetailsForm) form;
         BagManager bagManager = im.getBagManager();
 
-        InterMineBag imBag = bagManager.getUserOrGlobalBag(profile, mbdf.getBagName());
+        InterMineBag imBag = bagManager.getBag(profile, mbdf.getBagName());
         String bagIdentifier = "bag." + imBag.getName();
 
         if (request.getParameter("removeFromBag") != null) {
@@ -92,7 +92,7 @@ public class ModifyBagDetailsAction extends InterMineAction
                 .addParameter("table", "open").forward();
 
         } else if (request.getParameter("addToBag") != null) {
-            InterMineBag newBag = bagManager.getUserOrGlobalBag(profile,
+            InterMineBag newBag = bagManager.getBag(profile,
                     mbdf.getExistingBagName());
             String msg = "";
             if (newBag.getType().equals(imBag.getType())) {

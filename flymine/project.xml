@@ -1,8 +1,6 @@
 <project type="bio">
   <property name="target.model" value="genomic"/>
   <property name="source.location" location="../bio/sources/"/>
-  <property name="source.location" location="../bio/sources/flymine"/>
- <property name="source.location" location="../bio/sources/humanmine"/>
   <property name="common.os.prefix" value="common"/>
   <property name="intermine.properties.file" value="flymine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
@@ -38,9 +36,6 @@
     <source name="wormbase-identifiers" type="wormbase-identifiers">
       <property name="src.data.dir" location="/micklem/data/worm-identifiers/current"/>
     </source>
-    <source name="ensembl-hgnc" type="ensembl-hgnc">
-     <property name="src.data.dir" location="/micklem/data/ensembl-ids/current"/>
-    </source> 
    <source name="ncbi-gene" type="ncbi-gene">
      <property name="src.data.dir" location="/micklem/data/ncbi/current/"/>
      <property name="organisms" value="9606"/>
@@ -54,13 +49,15 @@
 
     <!-- uniprot must be processed immediately after chado -->
     <source name="uniprot" type="uniprot" dump="true">
-      <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>
+      <!--<property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238 559292"/>-->
+      <property name="uniprot.organisms" value="7227 6239 7165 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238 559292"/>
       <property name="src.data.dir" location="/micklem/data/uniprot/current"/>
       <property name="createinterpro" value="true"/>
     </source>
 
     <source name="uniprot-fasta" type="fasta">
-      <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>
+     <!-- <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7240 7244 7245 7217 7220 7222 7234 7260 7238"/>-->
+      <property name="fasta.taxonId" value="7227 6239 7165 4932 9606 10090 10116 46245 7230 7244 7217 7220 7222 7238"/>
       <property name="fasta.className" value="org.intermine.model.bio.Protein"/>
       <property name="fasta.classAttribute" value="primaryAccession"/>
       <property name="fasta.dataSetTitle" value="UniProt data set"/>
@@ -98,29 +95,13 @@
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
-
-    <source name="panther" type="panther">
-      <property name="src.data.dir" location="/micklem/data/panther/current"/>
-      <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
-    </source>
-
-<!--
-    <source name="ensembl-compara" type="ensembl-compara">
-      <property name="src.data.dir" location="/micklem/data/ensembl-compara/current"/>
-      <property name="ensemblcompara.organisms" value="7227"/>
-      <property name="ensemblcompara.homologues" value="6239 9606 10090 10116"/>
-    </source>
-
     <source name="treefam" type="treefam">
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 7165"/>
-      <property name="treefam.homologues" value="9606 10090 10116 7955 6239 4932"/>
-    </source>
-
--->
-    <source name="ensembl" type="ensembl">
+      <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
+     </source>
+    <source name="ensembl-core" type="ensembl-core">
      <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
     </source>
@@ -136,12 +117,6 @@
       <property name="src.data.dir" location="/micklem/data/kegg/current"/>
       <property name="kegg.organisms" value="7227"/>
     </source>
-<!--
-    <source name="kegg-orthologues" type="kegg-orthologues">
-      <property name="src.data.dir" location="/micklem/data/kegg/orthologues"/>
-      <property name="kegg.organisms" value="7227 9606 4932 6239 7955 10090 10116"/>
-    </source>
--->
     <source name="flyatlas" type="flyatlas">
       <property name="src.data.dir" location="/micklem/data/flyatlas/current"/>
     </source>
@@ -150,35 +125,29 @@
       <property name="src.data.dir.includes" value="E-TABM-186-processed-data-1343527732.txt"/>
       <property name="geneFile" value="/micklem/data/flymine/anoph-expr/reporter_gene_mappingFile.txt"/>
     </source>
-
-
-
     <source name="anoest" type="anoest">
       <property name="dataSourceName" value="VectorBase"/>
       <property name="dataSetTitle" value="AnoEST clusters"/>
       <property name="source.db.name" value="anoest"/>
     </source>
-<!--
     <source name="pdb" type="pdb">
       <property name="src.data.dir" location="/micklem/data/pdb/current"/>
       <property name="pdb.organisms" value="7227"/>
     </source>
--->
     <source name="psi-mi-ontology" type="psi-mi-ontology">
       <property name="src.data.file" location="/micklem/data/psi/ontology/current/psi-mi.obo"/>
     </source>
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo"/>
     </source>
+    <source name="uberon" type="uberon">
+      <property name="src.data.file" location="/micklem/data/uberon/current/uberon.obo"/>
+    </source>
+
     <source name="go" type="go" dump="true">
       <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
     </source>
-<!--
-    <source name="uberon" type="uberon">
-      <property name="src.data.file" location="/micklem/data/old_shared_data/uberon/uberon.obo"/>
-    </source>
--->
-    <source name="go-annotation" type="ontology-annotation">
+    <source name="go-annotation" type="go-annotation">
       <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
       <property name="src.data.dir" location="/micklem/data/go-annotation/flymine"/>
       <property name="ontologyPrefix" value="GO"/>
@@ -187,6 +156,7 @@
     <source name="flybase-expression" type="flybase-expression">
       <property name="src.data.dir" location="/micklem/data/modMine_flyRNAseq/current"/>
       <property name="flybaseExpressionLevelsFile" location="/micklem/data/modMine_flyRNAseq/BinLOOKUP_modENCODE_FlyAtlas.txt"/>
+      <property name="flybaseStagesFile" location="/micklem/data/modMine_flyRNAseq/stages.txt"/>
     </source>
 
     <source name="flyreg" type="flyreg">
@@ -549,14 +519,6 @@
     <source name="interpro-go" type="interpro-go">
       <property name="src.data.dir" location="/micklem/data/interpro/ontology/current"/>
     </source>
-
-<!-- text files, didn't see a gain from BioPAX 
-    <source name="reactome" type="reactome">
-      <property name="src.data.dir" location="/micklem/data/old_shared_data/reactome/current"/>
-      <property name="reactome.organisms" value="7227 4932 6239"/>
-    </source>
--->
-
     <source name="reactome" type="biopax">
       <property name="src.data.dir" location="/micklem/data/reactome/current"/>
       <property name="biopax.organisms" value="7227"/>
@@ -616,10 +578,6 @@
     </source>
 
     <source name="entrez-organism" type="entrez-organism">
-      <!-- this source finds the taxon ids in the objectstore, retrieves
-           species name and genus from Entrez into an InterMine format XML
-           file, loads that file into a target items DB, then into the final
-           objectstore -->
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
     <source name="flymine-static" type="intermine-items-xml-file">
@@ -631,8 +589,6 @@
   </sources>
 
   <post-processing>
-
-
     <post-process name="create-utr-references"/>
     <post-process name="create-references" />
     <post-process name="make-spanning-locations"/>
@@ -650,20 +606,6 @@
     <post-process name="summarise-objectstore"/>
     <post-process name="create-autocomplete-index"/>
     <post-process name="create-search-index"/>
-
-    <!-- grant-db-production/
-    TODO: Not really post processing but just has to be done sometime...
-  <target name="grant-db-production" depends="prepare" - ->
-    <!- - grant 'public' user select permission on production db - ->
-    <taskdef name="grant" classname="org.intermine.task.GrantTask">
-      <classpath refid="models.class.path"/>
-    </taskdef>
-
-    <grant database="db.production" user="PUBLIC" perm="SELECT"/>
-
-  </target>
-    -->
   </post-processing>
-
 </project>
 

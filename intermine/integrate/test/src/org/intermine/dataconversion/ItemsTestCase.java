@@ -1,7 +1,7 @@
 package org.intermine.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -43,7 +43,7 @@ public abstract class ItemsTestCase extends TestCase
     }
 
 
-    public static void assertEquals(Collection a, Collection b) throws Exception
+    public static void assertEquals(Collection<?> a, Collection<?> b) throws Exception
     {
         compatibleCollections(a, b);
         TestCase.assertEquals(a, b);
@@ -187,7 +187,7 @@ public abstract class ItemsTestCase extends TestCase
 
 
     // fail with helpful message if e.g. we are asserting a Set .equals a List
-    private static void compatibleCollections(Collection a, Collection b) {
+    private static void compatibleCollections(Collection<?> a, Collection<?> b) {
         if (a.getClass().isAssignableFrom(b.getClass())
             || b.getClass().isAssignableFrom(a.getClass())) {
             TestCase.assertEquals(a, b);

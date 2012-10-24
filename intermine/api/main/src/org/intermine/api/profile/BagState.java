@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,9 +13,10 @@ package org.intermine.api.profile;
 /**
  * Enumeration for describing the state of a bag:
  * current
- * not current(= the upgrading process has not been executed yet)
+ * not current (= the upgrading process has not been executed yet)
+ * upgrading (= the upgrading process is upgrading it)
  * to upgrade (= the upgrading process has not been able to upgrade it because there are some
  * conflicts that the user has to solve manually ))
- * @author dbutano
+ * @author Daniela Butano
  */
-public enum BagState { CURRENT, NOT_CURRENT, TO_UPGRADE }
+public enum BagState { CURRENT, NOT_CURRENT, UPGRADING, TO_UPGRADE }

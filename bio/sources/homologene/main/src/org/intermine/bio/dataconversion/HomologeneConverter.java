@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.dataconversion.BioFileConverter;
@@ -34,6 +35,8 @@ import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 /**
+ * HomoloGene data converter, to use symbol and organism to identify a gene
+ *
  * @author Fengyuan Hu
  */
 public class HomologeneConverter extends BioFileConverter
@@ -45,7 +48,9 @@ public class HomologeneConverter extends BioFileConverter
 
     private static final String PROP_FILE = "homologene_config.properties";
     private static final String DEFAULT_IDENTIFIER_FIELD = "symbol";
+
     private Set<String> taxonIds = new HashSet<String>();
+    private Set<String> homologues = new HashSet<String>();
 
     private static final String ORTHOLOGUE = "orthologue";
     private static final String PARALOGUE = "paralogue";
@@ -56,6 +61,8 @@ public class HomologeneConverter extends BioFileConverter
     private Properties props = new Properties();
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
+
+    private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
 
     /**
      * Constructor
@@ -83,10 +90,10 @@ public class HomologeneConverter extends BioFileConverter
      *
      * @param homologues a space-separated list of taxonIds
      */
-//    public void setHomologeneHomologues(String homologues) {
-//        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
-//        LOG.info("Setting list of homologues to " + homologues);
-//    }
+    public void setHomologeneHomologues(String homologues) {
+        this.homologues = new HashSet<String>(Arrays.asList(StringUtil.split(homologues, " ")));
+        LOG.info("Setting list of homologues to " + homologues);
+    }
 
     /**
      * {@inheritDoc}
@@ -113,9 +120,9 @@ public class HomologeneConverter extends BioFileConverter
         if (taxonIds.isEmpty()) {
             LOG.warn("homologene.organisms property not set in project XML file");
         }
-//        if (homologues.isEmpty()) {
-//            LOG.warn("homologene.homologues property not set in project XML file");
-//        }
+        if (homologues.isEmpty()) {
+            LOG.warn("homologene.homologues property not set in project XML file");
+        }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -195,17 +202,24 @@ public class HomologeneConverter extends BioFileConverter
             String taxonId2 = record2.get(0);
             String gene2 = record2.get(1);
 
-            Item homologue = createItem("Homologue");
-            homologue.setReference("gene", gene1);
-            homologue.setReference("homologue", gene2);
-            homologue.addToCollection("evidence", getEvidence());
-            homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
-            homologue.addToCollection(
-                    "crossReferences",
-                    createCrossReference(homologue.getIdentifier(), groupId,
-                            DATA_SOURCE_NAME, true));
-            store(homologue);
+            // Create both way relations
+            createHomologue(gene1, taxonId1, gene2, taxonId2, groupId);
+            createHomologue(gene2, taxonId2, gene1, taxonId1, groupId);
         }
+    }
+
+    private void createHomologue(String gene1, String taxonId1, String gene2,
+            String taxonId2, String groupId) throws ObjectStoreException {
+        Item homologue = createItem("Homologue");
+        homologue.setReference("gene", gene1);
+        homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", getEvidence());
+        homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
+        homologue.addToCollection(
+                "crossReferences",
+                createCrossReference(homologue.getIdentifier(), groupId,
+                        DATA_SOURCE_NAME, true));
+        store(homologue);
     }
 
     // genes (in taxonIDs) are always processed
@@ -219,19 +233,19 @@ public class HomologeneConverter extends BioFileConverter
             // both are organisms of interest
             return true;
         }
-//        if (homologues.isEmpty()) {
-//            // only interested in homologues of interest, so at least one of
-//            // this pair isn't valid
-//            return false;
-//        }
+        if (homologues.isEmpty()) {
+            // only interested in homologues of interest, so at least one of
+            // this pair isn't valid
+            return false;
+        }
         // one gene is from an organism of interest
         // one homologue is from an organism we want
         if (taxonIds.contains(taxonId)) {
             return true;
         }
-//        if (homologues.contains(taxonId)) {
-//            return true;
-//        }
+        if (homologues.contains(taxonId)) {
+            return true;
+        }
         return false;
     }
 
@@ -242,12 +256,18 @@ public class HomologeneConverter extends BioFileConverter
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
 
-        Item item = createItem("Gene");
-        item.setAttribute(identifierType, symbol);
-        item.setReference("organism", getOrganism(taxonId));
-        store(item);
-
-        return item.getIdentifier();
+        // TODO add id resolver here
+        // To avoid duplicated record, use symbol and taxonId as MultiKey
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, symbol));
+        if (refId == null) {
+            Item item = createItem("Gene");
+            item.setAttribute(identifierType, symbol);
+            item.setReference("organism", getOrganism(taxonId));
+            refId = item.getIdentifier();
+            identifiersToGenes.put(new MultiKey(taxonId, symbol), refId);
+            store(item);
+        }
+        return refId;
     }
 
     private String getEvidence() throws ObjectStoreException {

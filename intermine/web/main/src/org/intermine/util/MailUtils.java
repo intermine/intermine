@@ -1,7 +1,7 @@
 package org.intermine.util;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,7 @@ package org.intermine.util;
  *
  */
 
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Properties;
@@ -22,6 +23,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import org.intermine.api.profile.InterMineBag;
 
 /**
  * Mail utilities for the webapp.
@@ -42,7 +45,7 @@ public abstract class MailUtils
      * @param webProperties properties such as the from address
      * @throws Exception if there is a problem creating the email
      */
-    public static void email(String to, final Map webProperties) throws Exception {
+    public static void welcome(String to, final Map webProperties) throws MessagingException {
         String subject = (String) webProperties.get("mail.subject");
         String text = (String) webProperties.get("mail.text");
         email(to, subject, text, webProperties);
@@ -145,7 +148,7 @@ public abstract class MailUtils
      * @param webProperties the web properties
      * @throws Exception when somethign goes wrong
      */
-    public static void subscribe(String email, final Map webProperties) throws Exception {
+    public static void subscribe(String email, final Map webProperties) throws MessagingException {
         String to = (String) webProperties.get("mail.mailing-list");
         String subject = "";
         String body = "";

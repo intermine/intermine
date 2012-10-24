@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,13 +10,15 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Data structure to hold information from one row of an NCBI Entrex gene_info file.
+ * Data structure to hold information from one row of an NCBI Entrez gene_info file.
  *
  * @author Richard Smith
  *
@@ -32,6 +34,8 @@ public class GeneInfoRecord
     protected final String mapLocation;
     protected final String geneType;
     protected final Set<String> ensemblIds = new HashSet<String>();
+    // xrefs: key - DB name, e.g. FLYABSE; value - set of id, e.g. FBgn1234567890
+    protected final Map<String, Set<String>> xrefs = new HashMap<String, Set<String>>();
     protected final Set<String> synonyms = new HashSet<String>();
 
     /**

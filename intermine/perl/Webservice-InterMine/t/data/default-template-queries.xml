@@ -92,6 +92,16 @@
   </query>
 </template>
 
+<template name="RangeQueries" title="Template with a range constraint" longDescription="Many Ranges" comment="">
+  <query  name="RangeQueries" model="testmodel" view="Employee.name Employee.age">
+    <constraint path="Employee.age" op="OVERLAPS" editable="true" code="A" >
+      <value>1..10</value>
+      <value>30..35</value>
+    </constraint>
+  </query>
+</template>
+    
+
 <template name="SubClassContraints" title="Template with subclasses">
     <query name="SubClassContraints" model="testmodel" view="Company.departments.employees.name Company.departments.employees.seniority">
         <constraint path="Company.departments.employees" type="Manager" editable="false"/>

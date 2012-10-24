@@ -27,7 +27,7 @@
   <class name="Chromosome"  extends="SequenceFeature" is-interface="true"/>
 
   <class name="Comment" is-interface="true">
-    <attribute name="text" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
     <attribute name="type" type="java.lang.String"/>
   </class>
 
@@ -35,7 +35,6 @@
     <attribute name="identifier" type="java.lang.String"/>
     <reference name="source" referenced-type="DataSource"/>
     <reference name="subject" referenced-type="BioEntity" reverse-reference="crossReferences" />
-    <collection name="dataSets" referenced-type="DataSet"/>
   </class>
 
   <class name="DataSource" is-interface="true">
@@ -55,8 +54,8 @@
   </class>
 
   <class name="Gene" extends="SequenceFeature" is-interface="true">
-    <attribute name="symbol" type="java.lang.String"/>
-    <attribute name="ncbiGeneNumber" type="java.lang.String"/>
+    <attribute name="description" type="java.lang.String"/>
+    <attribute name="briefDescription" type="java.lang.String"/>
     <collection name="proteins" referenced-type="Protein" reverse-reference="genes"/>
   </class>
 

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,29 +21,42 @@ import org.apache.commons.io.IOUtils;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
+/**
+ * Unit test for TreefamConverter
+ * @author IM
+ *
+ */
 public class TreefamConverterTest extends ItemsTestCase
 {
     private TreefamConverter converter;
     private MockItemWriter itemWriter;
 
+    /**
+     * Constructor
+     * @param arg argument
+     */
     public TreefamConverterTest(String arg) {
         super(arg);
     }
 
+    @Override
     public void setUp() throws Exception {
 
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new TreefamConverter(itemWriter, Model.getInstanceByName("genomic"));
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
-        converter.resolverFactory = resolverFactory;
-
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
 
         super.setUp();
     }
 
+    /**
+     * Test process
+     * @throws Exception e
+     */
     public void testProcess() throws Exception {
 
         File genes = File.createTempFile("genes", "");
@@ -63,7 +76,7 @@ public class TreefamConverterTest extends ItemsTestCase
         // uncomment to write out a new target items file
         //writeItemsFile(itemWriter.getItems(), "treefam-tgt-items.xml");
 
-        Set expected = readItemSet("TreefamConverterTest_tgt.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("TreefamConverterTest_tgt.xml");
 
         assertEquals(expected, itemWriter.getItems());
     }

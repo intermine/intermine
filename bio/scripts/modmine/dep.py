@@ -24,29 +24,38 @@
 import os
 
 live = {}
+dead = []
+count=0
 
 import sys
 for line in sys.stdin:
-    
+    count +=1
     kk = line.split(',')[0:1]
+#    print count, kk
     k = kk[0]
     vv = line.split(',')[1:]
-#    v = vv[0]
     
     if k in live:
         if len(live[k]) < len(vv):
             live[k] = vv
-        #print "KK", k 
+#        print "KK", k 
+    elif k in dead:
+#        print "DEAD ", k
+        continue
     else:
         live[k] = vv
     for e in vv:
-        #print "???", vv, "|", e
-        if e in live:
-           print "AAA", e
+#        print "???", vv, "|", e
+        if e.strip() in live:
+           ii = live[e.strip()]
+#           print "---", ii
+           for a in ii:
+               live[k].append(a)
+           del live[e.strip()]
         else:
            if e not in live[k]: 
-              #print "ADD ", e
-              live[k].append(e) 
+              live[k].append(e)
+           dead.append(e)
 
 for kp,vp in live.items():
     pp=""
@@ -54,3 +63,6 @@ for kp,vp in live.items():
         pp = pp + u.replace('\n', '').lstrip() + ","
     print kp+","+pp.rstrip(',')
       
+
+#print dead
+#print live

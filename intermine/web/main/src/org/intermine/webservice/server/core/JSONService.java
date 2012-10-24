@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -51,12 +51,20 @@ public abstract class JSONService extends WebService
         output.setHeaderAttributes(getHeaderAttributes());
     }
 
+    protected String getResultsKey() {
+    	return null;
+    }
+    
     /**
      * Get the header attributes to apply to the formatter.
      * @return A map from string to object.
      */
     protected Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
+        String resultsKey = getResultsKey();
+        if (resultsKey != null) {
+        	attributes.put(JSONFormatter.KEY_INTRO, "\"" + resultsKey + "\":");
+        }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
         }

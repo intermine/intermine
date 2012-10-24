@@ -1,7 +1,7 @@
 package org.intermine.web.logic.session;
 
 /*
- * Copyright (C) 2002-2011 FlyMine
+ * Copyright (C) 2002-2012 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -529,8 +529,6 @@ public final class SessionMethods
                                     profile.getHistory().keySet());
                             executor.setQueryInfo(pathQuery, pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
-                            recordMessage(messages.getMessage("saveQuery.message", queryName),
-                                          session);
                         }
 
                         // pause because we don't want to remove the monitor from the
@@ -1151,50 +1149,6 @@ public final class SessionMethods
             return true;
         }
         return false;
-    }
-
-    /**
-     * Returns SavedBagsStatus saved in session.
-     * @param session session
-     * @return SavedBagsStatus
-     */
-    public static Map<String, Map<String, Object>> getNotCurrentSavedBagsStatus(HttpSession session) {
-        return (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-    }
-
-    /**
-     * Sets in the session the map containing the status of the bags not current.
-     * A bag not current could be:
-     * not current (= the upgrading process has not started upgrading it yet),
-     * upgrading...(= the upgrading process is upgrading it),
-     * to upgrade (= the upgrading process has not been able to upgrade it because there are some
-     * conflicts that the user has to resolve manually ).
-     * @param session the session
-     * @param profile the profile used to retrieve the savedbags
-     * object to put in the session
-     */
-    public static void setNotCurrentSavedBagsStatus(HttpSession session, Profile profile) {
-        @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> savedBagsStatus = new HashedMap();
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        synchronized (savedBags) {
-            for (InterMineBag bag : savedBags.values()) {
-                if (!bag.isCurrent()) {
-                    Map<String, Object> bagAttributes = new HashMap<String, Object>();
-                    String bagState = bag.getState();
-                    bagAttributes.put("status", bagState);
-                    if (bagState.equals(BagState.CURRENT.toString())) {
-                        try {
-                            bagAttributes.put("size", bag.getSize());
-                        } catch (ObjectStoreException e) {
-                            // nothing serious happens here...
-                        }
-                    }
-                    savedBagsStatus.put(bag.getName(), bagAttributes);
-                }
-            }
-        }
-        session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
     }
 
     /**

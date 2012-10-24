@@ -13,8 +13,9 @@ LOADDIR="$DATADIR/load"
 INTERACT=y
 DOIT=y
 
-#PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
-PRO="henikoff karpen waterstonpiano"
+ALLPRO="lieb henikoff macalpine oliver snyder karpen white celniker lai waterston piano"
+PRO="lieb henikoff macalpine oliver snyder karpen white celnikerlai waterstonpiano"
+#PRO="henikoff karpen waterstonpiano"
 
 progname=$0
 
@@ -226,9 +227,9 @@ cd /home/modmine/.intermine
 #sed 's/modprod0/modalone/g' modmine.properties.r$PREL | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
 sed 's/modprod0/modalone/g' modmine.properties.r$PREL | sed 's/modmine-prod-userprofile/modmine-r'"$PREL"'-userprofile/g' | grep -v 'google.analytics' > modmine.properties.modmine-$PREL
 
-echo; echo "Starting archived webapp r$PREL..."
-cd /data/code/modmine/modmine-$PREL/modmine/webapp
-ant -Drelease=modmine-$PREL default remove-webapp release-webapp
+#echo; echo "Starting archived webapp r$PREL..."
+#cd /data/code/modmine/modmine-$PREL/modmine/webapp
+#ant -Drelease=modmine-$PREL default remove-webapp release-webapp
 
 echo
 echo "IMPORTANT: you are required to manually change:"
@@ -279,7 +280,7 @@ echo "=========================================" >>$LOG
 
 cd $DATADIR
 
-for p in $PRO
+for p in $ALLPRO
 do
 echo "$p.."
 echo "$p project" >> $LOG

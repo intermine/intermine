@@ -237,8 +237,13 @@ sub summarise {
 
     my $it = $self->results_iterator(summaryPath => $path, %opts);
     my @results = $it->get_all();
-    if (@results == 1) {
-        return $results[0];
+    if (@results == 1 || defined $results[0]->{stdev}) {
+        my $summary = $results[0];
+        my $histogram = [map {$_->{count}} @results];
+        delete $summary->{count};
+        delete $summary->{bucket};
+        $summary->{histogram} = $histogram;
+        return $summary;
     } else {
         return {map {$_->{item} => $_->{count}} @results};
     }   

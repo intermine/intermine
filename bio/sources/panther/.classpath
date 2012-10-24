@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-objectstore-test"/>
 	<classpathentry kind="lib" path="main/resources"/>
 	<classpathentry kind="lib" path="test/resources"/>
+	<classpathentry kind="lib" path="/bio-testall-dbmodel/build/model"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
