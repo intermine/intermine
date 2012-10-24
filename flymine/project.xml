@@ -111,7 +111,7 @@
     </source>
 
     <source name="omim" type="omim">
-      <property name="src.data.dir" location="/micklem/data/metabolic/omim/test"/>
+      <property name="src.data.dir" location="/micklem/data/metabolic/omim/current"/>
     </source>
     <source name="kegg-pathway" type="kegg-pathway">
       <property name="src.data.dir" location="/micklem/data/kegg/current"/>
