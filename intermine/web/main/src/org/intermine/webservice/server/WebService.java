@@ -806,8 +806,7 @@ public abstract class WebService
                 output = getDefaultOutput(out, os, separator);
         }
         if (!isUncompressed()) {
-            filename += getExtension();
-            ResponseUtil.setGzippedHeader(response, filename);
+            ResponseUtil.setGzippedHeader(response, filename + getExtension());
             if (isZip()) {
                 try {
                     ((ZipOutputStream) os).putNextEntry(new ZipEntry(filename));
