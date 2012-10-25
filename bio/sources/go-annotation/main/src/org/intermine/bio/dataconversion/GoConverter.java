@@ -168,7 +168,6 @@ public class GoConverter extends BioFileConverter
         // Create resolvers
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
-            rslv = IdResolverService.getGoIdResolver("Go");
         }
 
         initialiseMapsForFile();
@@ -216,13 +215,6 @@ public class GoConverter extends BioFileConverter
             if ("1.0".equals(gaff)) {
                 // type of gene product
                 type = array[11];
-            }
-
-            // Wormbase has some proteins with UniProt accessions and some with WB:WP ids,
-            // hack here to get just the UniProt ones.
-            if (("protein".equalsIgnoreCase(type) && !array[0].startsWith("UniProt"))
-                    || (!"protein".equalsIgnoreCase(type) && array[0].startsWith("UniProt"))) {
-                continue;
             }
 
             // create unique key for go annotation
