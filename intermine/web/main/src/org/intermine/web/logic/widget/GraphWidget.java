@@ -154,7 +154,8 @@ public class GraphWidget extends Widget
         //category constraint
         q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
                                       "%category"));
-        if (!((GraphWidgetConfig) config).isActualExpectedCriteria()) {
+        if (!((GraphWidgetConfig) config).isActualExpectedCriteria()
+        	&& ((GraphWidgetConfig) config).hasSeries()) {
             //series constraint
             q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
                                           "%series"));
@@ -196,8 +197,10 @@ public class GraphWidget extends Widget
         q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
                                       "%category"));
         //series constraint
-        q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
+        if (((GraphWidgetConfig) config).hasSeries()) {
+            q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
                                       "%series"));
+        }
 
         return q;
     }
