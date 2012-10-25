@@ -62,7 +62,34 @@
   <tableExportConfig id="employeeExporter" actionPath="/exportAction?type=employeeExporter"
                      className="org.intermine.model.testmodel.web.EmployeeExporter"/>
 
-     <widgets><!--
+     <widgets>
+<!--            <graphdisplayer id="age_groups"
+                      title="Age Groups Distribution"
+                      description="Demographic distribution of employees by age group"
+                      graphType="ColumnChart"
+                      domainLabel="Age group"
+                      rangeLabel="Count"
+                      startClass="Employee"
+                      typeClass="Employee"
+                      categoryPath="age"
+                      seriesPath=""
+                      seriesValues=""
+                      seriesLabels=""
+                      views="name,age,fullTime,department.name"/> -->
+         <graphdisplayer id="full_part_time"
+                      title="Full-Time Status by Department"
+                      description="For each department associated with an item show the number of workers in that department in full or part-time employment"
+                      graphType="BarChart"
+                      domainLabel="Department"
+                      rangeLabel="Count"
+                      startClass="Employee"
+                      typeClass="Employee"
+                      categoryPath="department.name"
+                      seriesPath="fullTime"
+                      seriesValues="true,false"
+                      seriesLabels="Full-Time,Part-Time"
+                      views="id,name,age,fullTime,department.name"/>
+     <!--
          <graphdisplayer id="age_groups"
                  dataSetLoader="org.intermine.model.testmodel.web.widget.AgeGroupLdr"
                  typeClass="org.intermine.model.testmodel.Employee"
@@ -87,14 +114,6 @@
                  domainLabel="Company"
                  rangeLabel="No. of employees"
                  graphType="PieChart"/>
-         <graphdisplayer id="full_part_time"
-                 dataSetLoader="org.intermine.model.testmodel.web.widget.FullTimeLdr"
-                 typeClass="org.intermine.model.testmodel.CEO,org.intermine.model.testmodel.Company"
-                 title="Full-Time Status by Department"
-                 description="For each department associated with an item show the number of workers in that department in full or part-time employment"
-                 domainLabel="Department"
-                 rangeLabel="No. of employees"
-                 graphType="StackedBarChart"/>
          <graphdisplayer id="age_seniority"
                  dataSetLoader="org.intermine.model.testmodel.web.widget.AgeSeniorityLdr"
                  typeClass="org.intermine.model.testmodel.Manager"
