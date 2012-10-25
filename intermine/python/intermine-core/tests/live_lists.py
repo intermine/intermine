@@ -80,10 +80,10 @@ class LiveListTest(unittest.TestCase):
         t = self.TYPE;
         l = s.create_list(self.GUYS_NAMES, t, description="Id string")
         self.assertEqual(set(), l.tags)
-        self.assertEqual(["a-tag", "b-tag"], s._list_manager.add_tags(l, ["a-tag", "b-tag"]))
+        self.assertEqual(set(["a-tag", "b-tag"]), set(map(str, s._list_manager.add_tags(l, ["a-tag", "b-tag"]))))
         self.assertEqual(set(), l.tags)
         l.update_tags()
-        self.assertEqual(set(["a-tag", "b-tag"]), l.tags)
+        self.assertEqual(set(["a-tag", "b-tag"]), set(map(str, l.tags)))
 
     def testLists(self):
         t = self.TYPE;
