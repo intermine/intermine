@@ -116,12 +116,12 @@ public class QueryToListService extends AbstractQueryService
         PathQuery pq = builder.getQuery();
         if (pq.getView().size() != 1) {
             throw new BadRequestException(
-                    "Queries to the query-to-list service can only have one output column");
+                "Queries to the query-to-list service can only have one output column");
         }
 
         if (!pq.getView().get(0).endsWith(".id")) {
             throw new BadRequestException(
-                    "Queries to the query-to-list service must have ids in their view");
+                "Queries to the query-to-list service must have ids in their view");
         }
         return pq;
     }
@@ -145,7 +145,7 @@ public class QueryToListService extends AbstractQueryService
         String tempName = name + TEMP;
 
         String viewPathString = pq.getView().get(0);
-        Path viewPath = new Path(pq.getModel(), viewPathString);
+        Path viewPath = pq.makePath(viewPathString);
         String type = viewPath.getLastClassDescriptor().getUnqualifiedName();
 
         try {
