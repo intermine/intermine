@@ -50,8 +50,6 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private static String evidenceRefId = null;
-    private static final String ZFIN_TAXON = "7955";
-    private static final String FLY_TAXON = "7227";
 
     protected IdResolver rslv;
 
@@ -170,12 +168,10 @@ public class TreefamConverter extends BioFileConverter
         throws ObjectStoreException {
         String identifierType = type;
         String identifier = ident;
-        if (ZFIN_TAXON.equals(taxonId) || FLY_TAXON.equals(taxonId)) {
-            identifier = resolveGene(taxonId, identifier);
-            identifierType = "primaryIdentifier";
-            if (identifier == null) {
-                return null;
-            }
+        identifier = resolveGene(taxonId, identifier);
+        identifierType = "primaryIdentifier";
+        if (identifier == null) {
+            return null;
         }
         String refId = identifiersToGenes.get(identifier);
         if (refId == null) {
@@ -212,11 +208,16 @@ public class TreefamConverter extends BioFileConverter
             throw new RuntimeException("error reading geneFile", err);
         }
 
-        Set<String> resolveTaxonIds = new HashSet<String>();
-        resolveTaxonIds.add(ZFIN_TAXON);
-        resolveTaxonIds.add(FLY_TAXON);
+        //Create id resolver
+        Set<String> allTaxonIds = new HashSet<String>() {
+            private static final long serialVersionUID = 1L;
+            {
+                addAll(taxonIds);
+                addAll(homologues);
+            }
+        };
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(resolveTaxonIds);
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
