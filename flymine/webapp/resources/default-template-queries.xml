@@ -234,15 +234,6 @@
     <constraint path="Gene.rnaiResults.result" code="C" editable="true" description="with the following result:" op="=" value="Strong Hit"/>
   </query>
 </template>
-<template name="DatasetGiot_ProteinInteractions" title="Dataset [Giot et al] --&gt; High confidence protein interactions (filter on confidence value)." longDescription="Show the set of high-confidence interactions from the Giot et al dataset (or filter this dataset on confidence score). (DataSource:IntAct)." comment="">
-  <query name="DatasetGiot_ProteinInteractions" model="genomic" view="Interaction.experiment.publication.pubMedId Interaction.name Interaction.confidence Interaction.gene.primaryIdentifier Interaction.gene.name Interaction.interactingGenes.primaryIdentifier Interaction.interactingGenes.name" longDescription="Show the set of high-confidence interactions from the Giot et al dataset (or filter this dataset on confidence score). (DataSource:IntAct)." sortOrder="Interaction.experiment.publication.pubMedId asc" constraintLogic="A and B">
-    <pathDescription pathString="Interaction.interactingGenes" description="Interacting gene"/>
-    <pathDescription pathString="Interaction.experiment.publication" description="Experiment publication"/>
-    <pathDescription pathString="Interaction.gene" description="Gene"/>
-    <constraint path="Interaction.experiment.publication.pubMedId" code="A" editable="false" op="=" value="14605208"/>
-    <constraint path="Interaction.confidence" code="B" editable="true" description="Show interactions from the Giot et al dataset which have a confidence score:  (default will give the high-confidence set defined by the authors of this study)." op="&gt;=" value="0.5"/>
-  </query>
-</template>
 <template name="Disease_GeneOrthologue" title="Disease [Human] --&gt; Genes + D. melanogaster homologues." longDescription="For a given human disease, show all human genes that have been annotated with it, and the homologous genes in Drosophila. (Data Source: Homophila)." comment="">
   <query name="Disease_GeneOrthologue" model="genomic" view="Gene.transcripts.protein.blastMatches.hit.genes.omimDiseases.description Gene.transcripts.protein.blastMatches.hit.genes.omimDiseases.omimId Gene.transcripts.protein.blastMatches.hit.genes.symbol Gene.primaryIdentifier Gene.symbol" longDescription="For a given human disease, show all human genes that have been annotated with it, and the homologous genes in Drosophila. (Data Source: Homophila)." sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.transcripts.protein.blastMatches.hit.genes" description="Human gene"/>
@@ -375,15 +366,6 @@
     <constraint path="Gene.mRNAExpressionResults.mRNAExpressionTerms.name" code="D" editable="true" op="=" value="*blastoderm nuclei*"/>
   </query>
 </template>
-<template name="GOInteraction_Genes" title="GO term + Interacting gene [D. melanogaster] --&gt; Genes." longDescription="List all D. melanogaster genes that are associated with a certain GO term and that have been found to interact with a specific gene. (Data Source: GO, BioGRID, IntAct)." comment="">
-  <query name="GOInteraction_Genes" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.name Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.dataSets.name Gene.interactions.experiment.name" longDescription="List all D. melanogaster genes that are associated with a certain GO term and that have been found to interact with a specific gene. (Data Source: GO, BioGRID, IntAct)." sortOrder="Gene.primaryIdentifier asc" constraintLogic="E and A and C and B">
-    <constraint path="Gene.goAnnotation.ontologyTerm" editable="false" type="GOTerm"/>
-    <constraint path="Gene.goAnnotation.qualifier" code="A" editable="false" description="" op="IS NULL"/>
-    <constraint path="Gene.organism.name" code="E" editable="false" description="Organism name" op="=" value="Drosophila melanogaster"/>
-    <constraint path="Gene.goAnnotation.ontologyTerm.name" code="C" editable="true" description="Show genes annotated with GO term:" op="=" value="transcription*"/>
-    <constraint path="Gene.interactions.interactingGenes" code="B" editable="true" description="Which also interact with gene:" op="LOOKUP" value="gl" extraValue="D. melanogaster"/>
-  </query>
-</template>
 <template name="GO_name_Gene" title="GO term name --&gt; Genes in one specific organism." longDescription="Search for genes in a specified organism that is associated with a particular GO annotation." comment="">
   <query name="GO_name_Gene" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.goAnnotation.ontologyTerm.identifier Gene.goAnnotation.ontologyTerm.name Gene.goAnnotation.qualifier" longDescription="Search for genes in a specified organism that is associated with a particular GO annotation." sortOrder="Gene.symbol asc" constraintLogic="A and B">
     <pathDescription pathString="Gene.goAnnotation" description="GO annotation"/>
@@ -432,13 +414,6 @@
     <constraint path="Gene.upstreamIntergenicRegion.adjacentGenes" code="C" editable="false" op="!=" loopPath="Gene"/>
     <constraint path="Gene.downstreamIntergenicRegion.adjacentGenes" code="B" editable="false" op="!=" loopPath="Gene"/>
     <constraint path="Gene" code="A" editable="true" op="LOOKUP" value="CG10007"/>
-  </query>
-</template>
-<template name="Gene1Gene2_Interaction" title="Gene1 + Gene2 --&gt; Interactions." longDescription="Show all known interactions between two specific genes. (Data Source: IntAct, BioGrid). " comment="">
-  <query name="Gene1Gene2_Interaction" model="genomic" view="Gene.primaryIdentifier Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.name Gene.interactions.type.name Gene.interactions.confidenceText Gene.interactions.dataSets.dataSource.name Gene.interactions.experiment.publication.pubMedId" longDescription="Show all known interactions between two specific genes. (Data Source: IntAct, BioGrid). " sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and C and B">
-    <constraint path="Gene.interactions.interactionType" code="B" editable="false" op="=" value="physical"/>
-    <constraint path="Gene" code="A" editable="true" op="LOOKUP" value="wg"/>
-    <constraint path="Gene.interactions.interactingGenes" code="C" editable="true" op="LOOKUP" value="CG14487"/>
   </query>
 </template>
 <template name="GeneHit_RNAiResults" title="Gene [D. melanogaster] + Result type --&gt; RNAi screen results." longDescription="List all DRSC RNAi screens where a specific gene has been found to be certain result type. Result types can be: not screened, not a hit, weak, medium or strong hit. (Data Source: DRSC)." comment="">
@@ -619,27 +594,6 @@
     <constraint path="Gene" editable="true" op="LOOKUP" value="CG4722" extraValue="D. melanogaster"/>
   </query>
 </template>
-<template name="Gene_Interaction" title="Gene --&gt; Interactions" longDescription="For a specified gene show the known physical and genetic interactions.(Datasources - IntAct &amp; BioGrid)." comment="">
-  <query name="Gene_Interaction" model="genomic" view="Gene.symbol Gene.secondaryIdentifier Gene.interactions.interactionType Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.secondaryIdentifier Gene.interactions.dataSets.dataSource.name Gene.interactions.experiment.publication.pubMedId" longDescription="For a specified gene show the known physical and genetic interactions.(Datasources - IntAct &amp; BioGrid)." sortOrder="Gene.interactions.interactionType asc">
-    <join path="Gene.interactions.experiment.publication" style="OUTER"/>
-    <pathDescription pathString="Gene.interactions.dataSets.dataSource" description="Data Source"/>
-    <pathDescription pathString="Gene.interactions.interactingGenes" description="Interacting Gene"/>
-    <pathDescription pathString="Gene.interactions.experiment.publication" description="Publication"/>
-    <constraint path="Gene" editable="true" description="Find interaction for:" op="LOOKUP" value="pros"/>
-  </query>
-</template>
-<template name="Gene_Interactions" title="Gene --&gt; Interactions." longDescription="For a particular gene show all known interactions. Data available for D. melanogaster, C. elegans and S. cerevisiae (Data Source: BioGRID, IntAct)." comment="">
-  <query name="Gene_Interactions" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.type.name Gene.interactions.name Gene.interactions.confidenceText Gene.interactions.experiment.publication.pubMedId Gene.interactions.dataSets.name" longDescription="For a particular gene show all known interactions. Data available for D. melanogaster, C. elegans and S. cerevisiae (Data Source: BioGRID, IntAct)." sortOrder="Gene.primaryIdentifier asc">
-    <constraint path="Gene" editable="true" description="Show genetic interactions for gene:" op="LOOKUP" value="zen" extraValue="D. melanogaster"/>
-  </query>
-</template>
-<template name="Gene_InteractionsOrthologues" title="Gene --&gt; Interacting genes + Orthologues." longDescription="For a particular gene show its interacting genes and their orthologues. (Data Source: IntAct, BioGRID, InParanoid, Drosophila Consortium)." comment="">
-  <query name="Gene_InteractionsOrthologues" model="genomic" view="Gene.primaryIdentifier Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.experiment.publication.pubMedId Gene.interactions.dataSets.dataSource.name Gene.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.interactions.interactingGenes.homologues.type Gene.interactions.interactingGenes.homologues.dataSets.name" longDescription="For a particular gene show its interacting genes and their orthologues. (Data Source: IntAct, BioGRID, InParanoid, Drosophila Consortium)." sortOrder="Gene.primaryIdentifier asc" constraintLogic="A and B and E">
-    <constraint path="Gene.interactions.interactingGenes.homologues.type" code="B" editable="false" op="=" value="orthologue"/>
-    <constraint path="Gene.organism.shortName" code="A" editable="false" op="=" value="D. melanogaster"/>
-    <constraint path="Gene" code="E" editable="true" op="LOOKUP" value="CG3936"/>
-  </query>
-</template>
 <template name="Gene_IntronChromosome" title="Gene --&gt; Introns." longDescription="For a particular gene, list the introns with their intron chromosomal locations and lengths." comment="06.06.07 updated to work from gene class - Philip">
   <query name="Gene_IntronChromosome" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.transcripts.introns.primaryIdentifier Gene.transcripts.introns.length Gene.transcripts.introns.chromosome.primaryIdentifier Gene.transcripts.introns.chromosomeLocation.start Gene.transcripts.introns.chromosomeLocation.end Gene.transcripts.introns.chromosomeLocation.strand" longDescription="For a particular gene, list the introns with their intron chromosomal locations and lengths." sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.transcripts.introns.chromosome" description="Intron &gt; chromosome"/>
@@ -733,11 +687,6 @@
 <template name="Gene_ProteinInterPro" title="Gene --&gt; Protein + Protein domains" longDescription="For a specific gene, show its protein(s) and the domains found in the protein(s). (Data Source: InterPro)." comment="">
   <query name="Gene_ProteinInterPro" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.proteins.primaryIdentifier Gene.proteins.primaryAccession Gene.proteins.proteinDomains.name Gene.proteins.proteinDomains.primaryIdentifier" longDescription="For a specific gene, show its protein(s) and the domains found in the protein(s). (Data Source: InterPro)." sortOrder="Gene.primaryIdentifier asc">
     <constraint path="Gene" editable="true" op="LOOKUP" value="Antp"/>
-  </query>
-</template>
-<template name="Gene_ProteinInteractingproteinPfamdomainStructure" title="Gene --&gt; Protein + Interacting Proteins + Pfam domain with predicted 3-D structure." longDescription="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." comment="07:02:07:Updated to work from gene identifier - Rachel. 06:06:07 updated to work from gene class - Philip.">
-  <query name="Gene_ProteinInteractingproteinPfamdomainStructure" model="genomic" view="Gene.secondaryIdentifier Gene.symbol Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.proteins.primaryAccession Gene.interactions.interactingGenes.proteins.structures.identifier Gene.interactions.interactingGenes.proteins.structures.proteinDomain.primaryIdentifier" longDescription="For the protein product of a particular gene, show any proteins it has been shown to interact with and for these proteins any regions which have a Pfam domain with a predicted 3-D structure." sortOrder="Gene.secondaryIdentifier asc">
-    <constraint path="Gene" editable="true" description="Show protein interactions and Pfam domains with predicted 3-D structures for the protein product of gene:" op="LOOKUP" value="CG8340" extraValue="D. melanogaster"/>
   </query>
 </template>
 <template name="Gene_ProteinPFAMdomain" title="Gene --&gt; Protein + PFam domain" longDescription="For a particular gene or list of genes give the protein and any PFam domains for that protein." comment="">
@@ -1147,12 +1096,6 @@
     <constraint path="Gene.goAnnotation.evidence.code.code" code="C" editable="true" description="and with GO Evidence Code:" op="=" value="IPI"/>
   </query>
 </template>
-<template name="Organism_Interactions" title="Organism --&gt; All interactions." longDescription="Show all interactions (genetic and protein interactions) for a particular organism. Data available for D. melanogaster, C. elegans and S. cerevisiae (Data Source: BioGRID, IntAct, FlyBase)." comment="">
-  <query name="Organism_Interactions" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.name Gene.interactions.type.name Gene.interactions.experiment.publication.pubMedId Gene.interactions.dataSets.name" longDescription="Show all interactions (genetic and protein interactions) for a particular organism. Data available for D. melanogaster, C. elegans and S. cerevisiae (Data Source: BioGRID, IntAct, FlyBase)." sortOrder="Gene.primaryIdentifier asc">
-    <join path="Gene.interactions.type" style="OUTER"/>
-    <constraint path="Gene.organism.name" editable="true" description="Show all interactions for organism:" op="=" value="Drosophila melanogaster"/>
-  </query>
-</template>
 <template name="Organism_Intergenic" title="Organism --&gt; All intergenic regions." longDescription="For a particular organism, show all intergenic regions with their chromosomal locations, lenghts and adjacent genes. (Data Source: FlyMine)." comment="">
   <query name="Organism_Intergenic" model="genomic" view="IntergenicRegion.primaryIdentifier IntergenicRegion.length IntergenicRegion.chromosome.primaryIdentifier IntergenicRegion.chromosomeLocation.start IntergenicRegion.chromosomeLocation.end IntergenicRegion.adjacentGenes.primaryIdentifier IntergenicRegion.dataSets.dataSource.name" longDescription="For a particular organism, show all intergenic regions with their chromosomal locations, lenghts and adjacent genes. (Data Source: FlyMine)." sortOrder="IntergenicRegion.primaryIdentifier asc">
     <pathDescription pathString="IntergenicRegion.dataSets" description="Dataset"/>
@@ -1177,30 +1120,6 @@
 <template name="Organism_Protein" title="Organism --&gt; All proteins." longDescription="Show all the proteins from a particular organism." comment="">
   <query name="Organism_Protein" model="genomic" view="Protein.primaryIdentifier Protein.primaryAccession" longDescription="Show all the proteins from a particular organism." sortOrder="Protein.primaryIdentifier asc">
     <constraint path="Protein.organism.name" editable="true" description="Show all the proteins from the organism:" op="=" value="Drosophila melanogaster"/>
-  </query>
-</template>
-<template name="Organism_interologs" title="Organism --&gt; Interologs" longDescription="For a specified organism, show all pairs of physically interacting genes whose orthologues or inParalogues (co-orthologues) are also been shown to physically interact. (Data Sources: Biogrid, IntAct, Treefam, Inparanoid). " comment="">
-  <query name="Organism_interologs" model="genomic" view="Gene.homologues.homologue.organism.name Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.interactions.interactingGenes.homologues.homologue.symbol Gene.organism.name Gene.primaryIdentifier Gene.symbol Gene.homologues.type Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.interactingGenes.homologues.type" longDescription="For a specified organism, show all pairs of physically interacting genes whose orthologues or inParalogues (co-orthologues) are also been shown to physically interact. (Data Sources: Biogrid, IntAct, Treefam, Inparanoid). " sortOrder="Gene.homologues.homologue.symbol asc" constraintLogic="(B or G) and (I or F) and J and C and D and E and H and K and L and M and A">
-    <pathDescription pathString="Gene.interactions.interactingGenes.homologues" description="Gene 2 homologue"/>
-    <pathDescription pathString="Gene.interactions.interactingGenes" description="Gene 2 homologue"/>
-    <pathDescription pathString="Gene.homologues" description="Gen 1 homologue"/>
-    <pathDescription pathString="Gene.organism" description="Organism 2"/>
-    <pathDescription pathString="Gene.interactions.interactingGenes.homologues.homologue" description="Gene 2"/>
-    <pathDescription pathString="Gene.homologues.homologue" description="Gene 1"/>
-    <pathDescription pathString="Gene.homologues.homologue.organism" description="Organism 1"/>
-    <constraint path="Gene.interactions.interactionType" code="J" editable="false" op="=" value="physical"/>
-    <constraint path="Gene.interactions.interactingGenes.organism" code="K" editable="false" op="=" loopPath="Gene.organism"/>
-    <constraint path="Gene.interactions.interactingGenes.homologues.type" code="F" editable="false" op="=" value="inParalogue"/>
-    <constraint path="Gene.interactions.interactingGenes.homologues.type" code="I" editable="false" op="=" value="orthologue"/>
-    <constraint path="Gene.interactions.interactingGenes.homologues.homologue.organism" code="C" editable="false" op="=" loopPath="Gene.homologues.homologue.organism"/>
-    <constraint path="Gene.homologues.dataSets" code="M" editable="false" op="=" loopPath="Gene.interactions.interactingGenes.homologues.dataSets"/>
-    <constraint path="Gene.homologues.homologue.interactions.interactingGenes" code="E" editable="false" op="=" loopPath="Gene.interactions.interactingGenes.homologues.homologue"/>
-    <constraint path="Gene.homologues.homologue.interactions.interactionType" code="D" editable="false" op="=" value="physical"/>
-    <constraint path="Gene.homologues.type" code="G" editable="false" op="=" value="inParalogue"/>
-    <constraint path="Gene.homologues.type" code="B" editable="false" op="=" value="orthologue"/>
-    <constraint path="Gene.organism" code="H" editable="false" op="!=" loopPath="Gene.homologues.homologue.organism"/>
-    <constraint path="Gene.homologues.homologue.organism.name" code="A" editable="true" description="Organism name:" op="=" value="Drosophila melanogaster"/>
-    <constraint path="Gene.interactions.interactingGenes.homologues.dataSets.name" code="L" editable="true" description="Homology Dataset" op="=" value="TreeFam data set"/>
   </query>
 </template>
 <template name="Organism_transposableElementInsertionSites" title="Organism --&gt; Transposable element insertion sites" longDescription="Show all transposable element insertion sites for a particular organism." comment="">
@@ -1278,22 +1197,6 @@
     <constraint path="Protein.proteinDomains.primaryIdentifier" code="B" editable="true" description="Show whether it contains protein domain(s):" op="=" value="IPR006029"/>
   </query>
 </template>
-<template name="ProteinInteraction_OrthologueOrganism_new" title="All pairs of interacting proteins in organism 1 --&gt; Orthologues in organism 2." longDescription="For a specified organism, show the pairs of physically interacting genes and the corresponding pair of orthologues in another organism. Organism1 can be D. melanogaster, S. cerevisiae, H. sapiens, or C. elegans.(Data sources: BioGrid, IntAct, Inparonoid)" comment="">
-  <query name="ProteinInteraction_OrthologueOrganism_new" model="genomic" view="Gene.organism.name Gene.primaryIdentifier Gene.symbol Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.homologues.homologue.organism.name Gene.homologues.homologue.primaryIdentifier Gene.homologues.homologue.symbol Gene.interactions.interactingGenes.homologues.homologue.primaryIdentifier Gene.interactions.interactingGenes.homologues.homologue.symbol" longDescription="For a specified organism, show the pairs of physically interacting genes and the corresponding pair of orthologues in another organism. Organism1 can be D. melanogaster, S. cerevisiae, H. sapiens, or C. elegans.(Data sources: BioGrid, IntAct, Inparonoid)" sortOrder="Gene.primaryIdentifier asc" constraintLogic="B and I and J and C and D and E and A">
-    <pathDescription pathString="Gene.interactions.interactingGenes" description="Organism 1 &gt; Gene 2"/>
-    <pathDescription pathString="Gene.organism" description="Organism 1"/>
-    <pathDescription pathString="Gene.interactions.interactingGenes.homologues.homologue" description="Organism 2 &gt; Gene 2"/>
-    <pathDescription pathString="Gene.homologues.homologue" description="Organism 2 &gt; Gene 1"/>
-    <pathDescription pathString="Gene.homologues.homologue.organism" description="Organism 2"/>
-    <constraint path="Gene.interactions.interactionType" code="J" editable="false" op="=" value="physical"/>
-    <constraint path="Gene.interactions.interactingGenes.organism" code="D" editable="false" op="=" loopPath="Gene.organism"/>
-    <constraint path="Gene.interactions.interactingGenes.homologues.type" code="I" editable="false" op="=" value="orthologue"/>
-    <constraint path="Gene.interactions.interactingGenes.homologues.homologue.organism" code="C" editable="false" op="=" loopPath="Gene.homologues.homologue.organism"/>
-    <constraint path="Gene.homologues.type" code="B" editable="false" op="=" value="orthologue"/>
-    <constraint path="Gene.organism.name" code="E" editable="true" description="Organism 1. For the following organism, for all pairs of interacting proteins, show the corresponding pair of genes." op="=" value="Caenorhabditis elegans"/>
-    <constraint path="Gene.homologues.homologue.organism.name" code="A" editable="true" description="Organism 2. For the following organism, show the orthologues of the pair of interacting genes in organism 1." op="=" value="Drosophila melanogaster"/>
-  </query>
-</template>
 <template name="Protein_GOterms" title="Protein --&gt; GO terms." longDescription="Show all GO terms that have been associated with the gene that codes for the following protein." comment="06.06.07 updated to work from protein class - Philip">
   <query name="Protein_GOterms" model="genomic" view="Protein.primaryAccession Protein.genes.secondaryIdentifier Protein.genes.symbol Protein.genes.goAnnotation.ontologyTerm.namespace Protein.genes.goAnnotation.ontologyTerm.identifier Protein.genes.goAnnotation.ontologyTerm.name" longDescription="Show all GO terms that have been associated with the gene that codes for the following protein." sortOrder="Protein.primaryAccession asc">
     <join path="Protein.genes.goAnnotation.ontologyTerm" style="OUTER"/>
@@ -1363,11 +1266,6 @@
   <query name="Publication_Genes" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.symbol Gene.publications.pubMedId Gene.publications.title Gene.publications.firstAuthor Gene.publications.year" longDescription="Show all genes that were mentioned in a specific publication. References are loaded from FlyBase for all Drosophila species, and from NCBI for D. melanogaster, C. elegans and S. cerevisiae." sortOrder="Gene.primaryIdentifier asc">
     <pathDescription pathString="Gene.publications" description="Publication"/>
     <constraint path="Gene.publications.pubMedId" editable="true" op="=" value="11875036"/>
-  </query>
-</template>
-<template name="Publication_Interactions" title="Publication [D. melanogaster] --&gt; Interactions." longDescription="Show all interactions from a specified publication. (Note: you need to enter a pubmed id). Data available for D. melanogaster, C. elegans and S. cerevisiae. (Data Source: BioGRID, IntAct)." comment="">
-  <query name="Publication_Interactions" model="genomic" view="Gene.primaryIdentifier Gene.symbol Gene.interactions.role Gene.interactions.interactingGenes.primaryIdentifier Gene.interactions.interactingGenes.symbol Gene.interactions.name Gene.interactions.type.name Gene.interactions.confidenceText Gene.interactions.experiment.publication.firstAuthor Gene.interactions.experiment.publication.year Gene.interactions.dataSets.name" longDescription="Show all interactions from a specified publication. (Note: you need to enter a pubmed id). Data available for D. melanogaster, C. elegans and S. cerevisiae. (Data Source: BioGRID, IntAct)." sortOrder="Gene.primaryIdentifier asc">
-    <constraint path="Gene.interactions.experiment.publication.pubMedId" editable="true" description="Show interactions from publication:" op="=" value="7568156"/>
   </query>
 </template>
 <template name="Publication_RNAi" title="Publication [D. melanogaster] --&gt; RNAi screen results." longDescription="Show all the results from a D. melanogaster RNAi screen published in a particular publication. (Data Source: DRSC)." comment="">
@@ -1674,11 +1572,6 @@
     <constraint path="Gene.homologues.type" code="C" editable="false" op="=" value="orthologue"/>
     <constraint path="Gene.organism.name" code="A" editable="true" description="Show GO anotation for organism:" op="=" value="Drosophila melanogaster"/>
     <constraint path="Gene.homologues.homologue.organism.name" code="B" editable="true" description="for genes which have an orthologue in:" op="=" value="Homo sapiens"/>
-  </query>
-</template>
-<template name="protein_GeneInteractions" title="Protein --&gt; Gene + Interactions." longDescription="For a specific protein, show the corresponding gene and its known interactions. (Data Source: IntAct, BioGRID)." comment="">
-  <query name="protein_GeneInteractions" model="genomic" view="Protein.primaryIdentifier Protein.genes.primaryIdentifier Protein.genes.interactions.role Protein.genes.interactions.interactingGenes.primaryIdentifier Protein.genes.interactions.interactingGenes.symbol Protein.genes.interactions.type.name Protein.genes.interactions.experiment.publication.pubMedId Protein.genes.interactions.dataSets.dataSource.name" longDescription="For a specific protein, show the corresponding gene and its known interactions. (Data Source: IntAct, BioGRID)." sortOrder="Protein.primaryIdentifier asc">
-    <constraint path="Protein" editable="true" op="LOOKUP" value="128UP_DROME"/>
   </query>
 </template>
 <template name="stage_GenesBDGPandflyFishExpressed" title="Stage --&gt; genes expressed according to both FlyFish and BDGP in-situ data." longDescription="Show genes that are expressed at a particular embryonic stage according to both the FlyFish and the BDGP in-situ data. Note: the stages measured by each dataset vary slightly (e.g using stage 8 will return results for stage 7-8 for the BDGP in-situ data and 8-9 for the fly-FISH data)." comment="">
