@@ -535,22 +535,19 @@ public class GoConverter extends BioFileConverter
 
     private String newGoTerm(String identifier, String dataSource,
             String dataSourceCode) throws ObjectStoreException {
-
-        String goId = resolveTerm(identifier);
-
-        if (goId == null) {
+        if (identifier == null) {
             return null;
         }
 
-        String goTermIdentifier = goTerms.get(goId);
+        String goTermIdentifier = goTerms.get(identifier);
         if (goTermIdentifier == null) {
             Item item = createItem(termClassName);
-            item.setAttribute("identifier", goId);
+            item.setAttribute("identifier", identifier);
             item.addToCollection("dataSets", getDataset(dataSource, dataSourceCode));
             store(item);
 
             goTermIdentifier = item.getIdentifier();
-            goTerms.put(goId, goTermIdentifier);
+            goTerms.put(identifier, goTermIdentifier);
         }
         return goTermIdentifier;
     }
