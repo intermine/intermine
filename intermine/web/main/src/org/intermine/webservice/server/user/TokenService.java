@@ -1,14 +1,13 @@
 package org.intermine.webservice.server.user;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
-import org.intermine.webservice.server.output.JSONFormatter;
 
 public class TokenService extends JSONService {
 
@@ -23,9 +22,16 @@ public class TokenService extends JSONService {
     protected void execute() throws Exception {
         final ProfileManager pm = im.getProfileManager();
         Profile profile = getPermission().getProfile();
-
-        String token = pm.generate24hrKey(profile);
-        output.addResultItem(Arrays.asList("\"" + token + "\""));
+        String tokenType = getOptionalParameter("type", "day").toLowerCase();
+        String token = null;
+        if ("day".equals(tokenType)) {
+            token = pm.generate24hrKey(profile);
+        } else if ("perma".equals(tokenType)) {
+            token = pm.generateReadOnlyAccessToken(profile);
+        } else {
+            throw new BadRequestException("Unknown token type: " + tokenType);
+        }
+        addResultValue(token, false);
     }
 
     @Override
@@ -36,10 +42,7 @@ public class TokenService extends JSONService {
     }
 
     @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> retval = super.getHeaderAttributes();
-        retval.put(JSONFormatter.KEY_INTRO, "\"token\":");
-        return retval;
+    protected String getResultsKey() {
+        return "token";
     }
-
 }
