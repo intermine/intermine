@@ -619,6 +619,17 @@ public class ProfileManager
         return false;
     }
 
+    /**
+     * TODO: actually make this return a token!!
+     * This will need storing in a permanent data-store!
+     * 
+     * In fact, scratch that; we need a system for reducing webservice
+     * queries down to tokens themselves, so I can share a result set, and
+     * know that the user cannot just run any query they like...
+     * 
+     * @param profile
+     * @return A token granting read-only access to resources.
+     */
     public String generateReadOnlyAccessToken(Profile profile) {
         return null;
     }
