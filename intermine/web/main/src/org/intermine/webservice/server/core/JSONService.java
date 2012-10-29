@@ -10,6 +10,7 @@ package org.intermine.webservice.server.core;
  *
  */
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
 /**
  * A Service that has specialisations for supplying JSON.
@@ -90,7 +92,26 @@ public abstract class JSONService extends WebService
         JSONObject jo = new JSONObject(mapping);
         addResultItemInternal(jo, hasMore);
     }
-    
+
+    protected void addResultValue(String str, boolean hasMore) {
+        addResultItemInternal("\"" + String.valueOf(str) + "\"", hasMore);
+    }
+
+    protected void addResultValue(Number num, boolean hasMore) {
+        addResultValueInternal(String.valueOf(num), hasMore);
+    }
+
+    protected void addResultValue(Boolean bool, boolean hasMore) {
+        addResultValueInternal(String.valueOf(bool), hasMore);
+    }
+
+    private void addResultValueInternal(String val, boolean hasMore) {
+        List<String> outputStrings = new ArrayList<String>();
+        outputStrings.add(val);
+        if (hasMore) outputStrings.add("");
+        output.addResultItem(outputStrings);
+    }
+
     /**
      * Output a list of objects as a JSON array.
      * @param listing The list of things to output.
