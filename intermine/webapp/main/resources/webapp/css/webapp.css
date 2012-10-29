@@ -1544,7 +1544,12 @@ div.collection-table.column-border-by-2 table tbody tr td.left-column-border { b
 div.collection-table.column-border-by-2 table tbody tr td:nth-child(2n+3) { border-left-width:1px; border-left-style:solid; }
 /* collection table on results pages */
 div.collection-table.nowrap table tbody td { white-space:nowrap; }
-div.collection-table.nomargin { margin-bottom:0; }
+div.collection-table.nomargin {margin-bottom:0;}
+div.results .im-query-display {
+  width: 98%;
+  margin-left: auto;
+  margin-right: auto;
+}
 div.collection-table table thead th div.column-name { display:inline-block; } /* columnName.tag */
 div.collection-table table thead th div.column-name em { font-size:9px; display:block; } /* columnName.tag */
 div.collection-table table thead th img { margin-left:2px; } /* column description info image */
