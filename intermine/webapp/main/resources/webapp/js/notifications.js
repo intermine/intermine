@@ -26,6 +26,9 @@
         },
         appendContent: function() {
         	 this.$el.append(this.options.message);
+        },
+        initialize: function() {
+            _.bindAll(this);
         }
     } );
 	
