@@ -200,7 +200,7 @@ public class UniProtCommentsDisplayer extends ReportDisplayer
      */
     private PathQuery geneCommentsQuery(String geneID, PathQuery query) {
         query.addViews(
-                "Gene.proteins.comments.text",
+                "Gene.proteins.comments.description",
                 "Gene.proteins.primaryIdentifier",
                 "Gene.proteins.id",
                 "Gene.proteins.comments.type",
@@ -223,7 +223,7 @@ public class UniProtCommentsDisplayer extends ReportDisplayer
      */
     private PathQuery proteinCommentsQuery(String proteinID, PathQuery query) {
         query.addViews(
-                "Protein.comments.text",
+                "Protein.comments.description",
                 "Protein.comments.type",
                 "Protein.primaryIdentifier");
         query.addOrderBy("Protein.comments.type", OrderDirection.ASC);
