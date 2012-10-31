@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -47,6 +48,7 @@ import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
@@ -683,7 +685,7 @@ public abstract class WebService
         switch (format) {
         // HTML is a special case
             case HTML_FORMAT:
-                output = new MemoryOutput();
+                output = new StreamedOutput(out, new HTMLTableFormatter(), separator);
                 ResponseUtil.setHTMLContentType(response);
                 break;
             case XML_FORMAT:
@@ -894,6 +896,77 @@ public abstract class WebService
         return EMPTY_FORMAT;
     }
 
+    private static final Map<String, String> ACCEPT_TYPES = new HashMap<String, String>() {
+        private static final long serialVersionUID = -702400895288862953L;
+        {
+            Properties wp = InterMineContext.getWebProperties();
+            Properties subset = PropertiesUtil.getPropertiesStartingWith("ws.accept.", wp);
+            for (Object name: subset.keySet()) {
+                String propName = String.valueOf(name);
+                put(propName.substring(10), subset.getProperty(propName));
+            }
+        }
+    };
+
+    private String parseAcceptHeader() {
+        String accept = request.getHeader("Accept");
+        if (accept == null) {
+            return null;
+        }
+        String[] preferences = accept.split(",");
+        if (preferences == null) {
+            return null;
+        }
+        for (String pref: preferences) {
+            if (pref == null) continue;
+            pref = pref.trim().toLowerCase();
+            String[] parts = pref.split(";");
+            String type = parts[0].trim();
+            if (ACCEPT_TYPES.containsKey(type)) {
+                return ACCEPT_TYPES.get(type);
+            } else if (type.equals("application/json")) {
+                if (parts.length > 1) {
+                    for (int i = 1; i < parts.length; i++) {
+                        String option = parts[i].trim();
+                        if (option.startsWith("type=")) {
+                            String subType = option.substring(5);
+                            if ("objects".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_OBJ;
+                            } else if ("table".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_TABLE;
+                            } else if ("rows".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_ROW;
+                            } else if ("count".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_COUNT;
+                            }
+                        }
+                    }
+                }
+                return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
+            } else if (type.equals("application/jsonp")) {
+                if (parts.length > 1) {
+                    for (int i = 1; i < parts.length; i++) {
+                        String option = parts[i].trim();
+                        if (option.startsWith("type=")) {
+                            String subType = option.substring(5);
+                            if ("objects".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_OBJ;
+                            } else if ("table".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_TABLE;
+                            } else if ("rows".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW;
+                            } else if ("count".equalsIgnoreCase(subType)) {
+                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT;
+                            }
+                        }
+                    }
+                }
+                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns required output format.
      *
@@ -901,8 +974,18 @@ public abstract class WebService
      */
     public int getFormat() {
         String format;
+        String acceptFormat = parseAcceptHeader();
         if (request.getPathInfo() != null) {
             format = parseFormatFromPathInfo();
+            if (StringUtils.isNotBlank(format) && acceptFormat != null) {
+                if (!acceptFormat.equals(format)) {
+                    ServiceException err = new ServiceException("Cannot serve " + acceptFormat);
+                    err.setHttpErrorCode(HttpURLConnection.HTTP_NOT_ACCEPTABLE);
+                    throw err;
+                }
+            }
+        } else if (acceptFormat != null) {
+            format = acceptFormat;
         } else {
             format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
         }
@@ -989,8 +1072,7 @@ public abstract class WebService
             if (!hasCallback()) {
                 return DEFAULT_CALLBACK;
             } else {
-                return request.getParameter(
-                        WebServiceRequestParser.CALLBACK_PARAMETER);
+                return request.getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
             }
         } else {
             return null;

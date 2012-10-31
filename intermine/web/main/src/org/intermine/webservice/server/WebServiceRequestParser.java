@@ -41,6 +41,9 @@ public class WebServiceRequestParser
     /** Value of parameter when user wants tab separated output to be returned. **/
     public static final String FORMAT_PARAMETER_TAB = "tab";
 
+    /** Value of parameter when user wants plain text to be returned. **/
+    public static final String FORMAT_PARAMETER_TEXT = "text";
+
     /** Value of parameter when user wants html output to be returned. **/
     public static final String FORMAT_PARAMETER_HTML = "html";
 
