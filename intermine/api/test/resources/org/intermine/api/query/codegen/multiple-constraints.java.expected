@@ -1,19 +1,20 @@
 package testprojecttitle;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.intermine.metadata.Model;
-import org.intermine.webservice.client.core.ServiceFactory;
-import org.intermine.webservice.client.services.ModelService;
-import org.intermine.webservice.client.services.QueryService;
-import org.intermine.pathquery.PathQuery;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.Constraints;
+import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.client.core.ServiceFactory;
+import org.intermine.webservice.client.services.QueryService;
 
 /**
- * This is an automatically generated Java program to run the TEST_PROJECT_TITLE query.
+ * This is a Java program to run a query from TEST_PROJECT_TITLE.
+ * It was automatically generated at __SOME-DATE__
  *
  * @author TEST_PROJECT_TITLE
  *
@@ -27,44 +28,31 @@ public class QueryClient
      * @param args command line arguments
      * @throws IOException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ServiceFactory factory = new ServiceFactory(ROOT);
-        Model model = factory.getModelService().getModel();
-        QueryService service = factory.getQueryService();
+        Model model = factory.getModel();
         PathQuery query = new PathQuery(model);
 
-        // Add views
-        query.addViews("Gene.primaryIdentifier",
-                "Gene.secondaryIdentifier",
-                "Gene.symbol",
-                "Gene.name",
-                "Gene.organism.shortName");
+        // Select the output columns:
+        query.addViews("Employee.name",
+                "Employee.department.name");
 
-        // Add orderby
-        query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        // Filter the results with the following constraints:
+        query.addConstraint(Constraints.notEqualToLoop("Employee.department.manager", "Employee.department.company.CEO"), "A");
+        query.addConstraint(Constraints.lookup("Employee", "M*", ""), "B");
+        query.addConstraint(Constraints.oneOfValues("Employee.department.name", Arrays.asList("Sales", "Warehouse"));, "C");
+        // Specify how these constraints should be combined.
+        query.setConstraintLogic("(A or C) and B");
 
-        // Add constraints and you can edit the constraint values below
-        query.addConstraint(Constraints.notEqualToLoop("Gene.proteins.genes", "InterMineObject"), "A");
-
-        query.addConstraint(Constraints.lookup("Gene", "zen", ""), "B");
-
-        List<String> values = new ArrayList<String>();
-        values.add("fruit fly");
-        values.add("honey bee");
-        query.addConstraint(Constraints.oneOfValues("Gene.organism.commonName", values), "C");
-
-        // Add constraintLogic
-        query.setConstraintLogic("(A or B) and C");
-
-        List<List<String>> result = service.getAllResults(query);
-        List<String> view = query.getView();
-        System.out.println("Results:");
-        for (List<String> row : result) {
-            for (String cell : row) {
-                System.out.print(cell + " ");
-            }
-            System.out.print("\n");
+        QueryService service = factory.getQueryService();
+        PrintStream out = System.out;
+        String format = "%-47.47s | %-47.47s\n";
+        out.printf(format, query.getView().toArray());
+        Iterator<List<Object>> rows = service.getRowListIterator(query);
+        while (rows.hasNext()) {
+            out.printf(format, rows.next().toArray());
         }
+        out.printf("%d rows\n", service.getCount(query));
     }
 
 }
