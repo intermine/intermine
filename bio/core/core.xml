@@ -90,6 +90,7 @@
     <collection name="ontologyAnnotations" referenced-type="OntologyAnnotation" reverse-reference="ontologyTerm" />
     <collection name="parents" referenced-type="OntologyTerm" />
     <collection name="dataSets" referenced-type="DataSet" />
+    <collection name="crossReferences" referenced-type="OntologyTerm" />
   </class>
 
   <class name="OntologyRelation" is-interface="true">
