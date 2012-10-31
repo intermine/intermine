@@ -61,8 +61,17 @@
     (function($) {
         intermine.css.headerIcon = "fm-header-icon";
         var query = ${query.json};
-
+        var disableTemplate = function() {
+            $('#${elemId} h3').addClass('no-results').unbind('click');
+            $('#${tableContainerId}').remove();
+        };
         $(function() {
+            $SERVICE.query(query).pipe($SERVICE.count).fail(disableTemplate).done(function(c) {
+                $('#${elemId} h3 span.name').after('<span class="count">(' + c + ' rows)</span>');
+                if (c < 1) {
+                    disableTemplate();
+                }
+            });
             $('#${elemId} h3').click(function(e) {
                 var view = new intermine.query.results.CompactView($SERVICE, query, LIST_EVENTS, {pageSize: 10});
                 view.$el.appendTo('#${tableContainerId}');
