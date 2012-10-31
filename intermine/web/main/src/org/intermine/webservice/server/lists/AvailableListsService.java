@@ -10,6 +10,7 @@ package org.intermine.webservice.server.lists;
  *
  */
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.webservice.exceptions.BadRequestException;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
@@ -79,6 +81,9 @@ public class AvailableListsService extends WebService
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
+        } if (getFormat() == WebService.HTML_FORMAT) {
+            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
+                Arrays.asList("Name", "Type", "Description", "Size"));
         }
         return attributes;
     }
@@ -97,6 +102,9 @@ public class AvailableListsService extends WebService
             case (WebService.JSONP_FORMAT): {
                 Profile profile = getPermission().getProfile();
                 return new JSONListFormatter(im, profile, jsDates);
+            }
+            case (WebService.HTML_FORMAT): {
+                return new HtmlListFormatter();
             }
             default: {
                 throw new BadRequestException("Unknown request format");
