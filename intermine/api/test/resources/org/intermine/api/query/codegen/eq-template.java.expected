@@ -22,16 +22,14 @@ public class TemplateImAvailableOrganisms
      * @param args command line arguments
      */
     public static void main(String[] args) {
-
         TemplateService service = new ServiceFactory(ROOT).getTemplateService();
-
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
+
         // You can edit the constraint values below
         parameters.add(new TemplateParameter("Gene.primaryIdentifier", "eq", "zen"));
 
         // Name of template
         String name = "im_available_organisms";
-
         List<List<String>> rows = service.getAllResults(name, parameters);
         System.out.println("Results:");
         for (List<String> row : rows) {
@@ -41,4 +39,5 @@ public class TemplateImAvailableOrganisms
             System.out.print("\n");
         }
     }
+
 }

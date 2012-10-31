@@ -21,16 +21,14 @@ public class TemplateTEMPNAME
      * @param args command line arguments
      */
     public static void main(String[] args) {
-
         TemplateService service = new ServiceFactory(ROOT).getTemplateService();
-
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
+
         // You can edit the constraint values below
         parameters.add(new TemplateParameter("Employee.age", "lt", "10"));
 
         // Name of template
         String name = "TEMP_NAME";
-
         List<List<String>> rows = service.getAllResults(name, parameters);
         System.out.println("Results:");
         for (List<String> row : rows) {
@@ -40,4 +38,5 @@ public class TemplateTEMPNAME
             System.out.print("\n");
         }
     }
+
 }
