@@ -1584,6 +1584,8 @@ div.template h3 img { vertical-align:middle; }
 div.template div.right { display:inline; float:right; }
 div.template h3 div.favorites { display:inline; }
 div.template h3 div.favorites img { vertical-align:middle; margin-bottom:2px; }
+.template .count { margin-left: 1em; margin-right: 1em; }
+.template h3.no-results { opacity: 0.5; }
 /* togglers */
 div.collection-table div.toggle,
 div.collection-of-collections div.toggle,

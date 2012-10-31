@@ -67,7 +67,8 @@
         };
         $(function() {
             $SERVICE.query(query).pipe($SERVICE.count).fail(disableTemplate).done(function(c) {
-                $('#${elemId} h3 span.name').after('<span class="count">(' + c + ' rows)</span>');
+                var cstr = intermine.utils.numToString(c, ",", 3);
+                $('#${elemId} h3 span.name').after('<span class="count">(' + cstr + ' rows)</span>');
                 if (c < 1) {
                     disableTemplate();
                 }
