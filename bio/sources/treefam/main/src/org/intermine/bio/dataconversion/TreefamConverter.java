@@ -365,7 +365,7 @@ public class TreefamConverter extends BioFileConverter
         int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                    + identifier + " count: " + resCount + " "
+                    + identifier + " for taxon ID: " + taxonId + " count: " + resCount + " "
                     + rslv.resolveId(taxonId, identifier));
             return null;
         }
