@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
@@ -51,6 +52,7 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, String> identifiersToGenes = new HashMap<String, String>();
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private static String evidenceRefId = null;
+    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
 
     protected IdResolver rslv;
 
@@ -167,10 +169,10 @@ public class TreefamConverter extends BioFileConverter
 
     private String getGene(String ident, String type, String taxonId)
         throws ObjectStoreException {
-        String identifierType = type;
+        String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
         String identifier = ident;
         identifier = resolveGene(taxonId, identifier);
-        identifierType = "primaryIdentifier";
+
         if (identifier == null) {
             return null;
         }
