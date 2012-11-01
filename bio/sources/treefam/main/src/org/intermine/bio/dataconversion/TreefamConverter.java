@@ -55,6 +55,7 @@ public class TreefamConverter extends BioFileConverter
     private static String evidenceRefId = null;
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
     private static final String DEFAULT_HOMOLOGUE_TYPE = "orthologue";
+    private static final String DEFAULT_IDENTIFIER_COLUMN = "gid";
     protected IdResolver rslv;
 
     /**
@@ -126,65 +127,7 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-    /**
-     * Read genes file.
-     *
-     * Col0 = internal id (eg, 12345)
-     * Col4 = identifier (eg, Fbgn)
-     * Col8 = taxid
-     * @param reader reader
-     * @throws IOException if the file cannot be found/read
-     * @throws ObjectStoreException if the objects cannot be stored to the database
-     * @throws SAXException if something goes horribly wrong
-     */
-    public void readGenes(Reader reader)
-        throws IOException, ObjectStoreException, SAXException {
-        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
-        while (lineIter.hasNext()) {
-            String[] bits = lineIter.next();
-            if (bits.length < 9) {
-                throw new IllegalArgumentException("bad data file, couldn't process:" + bits[0]);
-            }
-            String id = bits[0];
-            String identifier = bits[4];
-            String symbol = bits[6];
-            String taxonId = bits[8];
 
-            if (!taxonIds.contains(taxonId) && !homologues.contains(taxonId)) {
-                // don't create gene object if gene isn't from an organism of interest
-                continue;
-            }
-
-            // default value
-            String identifierType = "primaryIdentifier";
-
-            if (config.containsKey(taxonId)) {
-                String[] configs = config.get(taxonId);
-                identifier = setIdentifier(identifier, symbol, configs[0]);
-                identifierType = configs[1];
-            }
-            idsToGenes.put(id, new GeneHolder(identifier, identifierType, taxonId));
-        }
-    }
-
-    private String getGene(String id, String type, String taxonId)
-        throws ObjectStoreException {
-        String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-        String identifier = resolveGene(taxonId, id);
-        if (identifier == null) {
-            return null;
-        }
-        String refId = identifiersToGenes.get(identifier);
-        if (refId == null) {
-            Item item = createItem("Gene");
-            item.setAttribute(identifierType, identifier);
-            item.setReference("organism", getOrganism(taxonId));
-            refId = item.getIdentifier();
-            identifiersToGenes.put(identifier, refId);
-            store(item);
-        }
-        return refId;
-    }
 
     /**
      * Process the text file
@@ -213,6 +156,7 @@ public class TreefamConverter extends BioFileConverter
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
+
             String[] bits = lineIter.next();
             if (bits.length < 4) {
                 continue;
@@ -224,7 +168,7 @@ public class TreefamConverter extends BioFileConverter
 
             GeneHolder holder1 = idsToGenes.get(gene1id);
             GeneHolder holder2 = idsToGenes.get(gene2id);
-
+            
             // at least one of the genes has to be from an organism of interest
             if (isValidPair(holder1, holder2)) {
                 processHomologues(holder1, holder2, bootstrap);
@@ -257,6 +201,67 @@ public class TreefamConverter extends BioFileConverter
         return false;
     }
 
+    /**
+     * Read genes file.
+     *
+     * Col0 = internal id (eg, 12345)
+     * Col4 = identifier (eg, Fbgn)
+     * Col8 = taxid
+     * @param reader reader
+     * @throws IOException if the file cannot be found/read
+     * @throws ObjectStoreException if the objects cannot be stored to the database
+     * @throws SAXException if something goes horribly wrong
+     */
+    public void readGenes(Reader reader)
+        throws IOException, ObjectStoreException, SAXException {
+        Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        while (lineIter.hasNext()) {
+            String[] bits = lineIter.next();
+            if (bits.length < 9) {
+                throw new IllegalArgumentException("bad data file, couldn't process:" + bits[0]);
+            }
+            String id = bits[0];
+            String identifier = bits[4];
+            String symbol = bits[6];
+            String taxonId = bits[8];
+
+            if (!taxonIds.contains(taxonId) && !homologues.contains(taxonId)) {
+                // don't create gene object if gene isn't from an organism of interest
+                continue;
+            }
+
+            String identifierType = DEFAULT_IDENTIFIER_TYPE;
+            String geneField = DEFAULT_IDENTIFIER_COLUMN;
+            
+            if (config.containsKey(taxonId)) {
+                String[] configs = config.get(taxonId);
+                geneField = configs[0];
+                identifierType = configs[1];
+            } 
+            identifier = setIdentifier(identifier, symbol, geneField);
+            idsToGenes.put(id, new GeneHolder(identifier, identifierType, taxonId));
+        }
+    }
+
+    private String getGene(String id, String type, String taxonId)
+        throws ObjectStoreException {
+        String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
+        String identifier = resolveGene(taxonId, id);
+        if (identifier == null) {
+            return null;
+        }
+        String refId = identifiersToGenes.get(identifier);
+        if (refId == null) {
+            Item item = createItem("Gene");
+            item.setAttribute(identifierType, identifier);
+            item.setReference("organism", getOrganism(taxonId));
+            refId = item.getIdentifier();
+            identifiersToGenes.put(identifier, refId);
+            store(item);
+        }
+        return refId;
+    }
+    
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
         throws ObjectStoreException {
 
@@ -362,6 +367,7 @@ public class TreefamConverter extends BioFileConverter
         String newTaxonId = BioUtil.getStrain(taxonId);
         if (rslv == null || !rslv.hasTaxon(newTaxonId)) {
             // no id resolver available, so return the original identifier
+            LOG.info("ID resolver not used for taxon ID " + taxonId);
             return identifier;
         }
         int resCount = rslv.countResolutions(newTaxonId, identifier);
