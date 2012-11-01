@@ -237,4 +237,13 @@ public final class OrganismRepository
         return getOrganismDataByGenusSpecies(genus, species);
     }
 
+    /**
+     * Get strains for given taxon ID
+     * @param taxonString taxon ID for organism
+     * @return data for strain
+     */
+    public OrganismData getStrain(String taxonString) {
+        return strainMap.get(taxonString);
+    }
+
 }
