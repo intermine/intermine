@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -358,17 +359,19 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        if (rslv == null || !rslv.hasTaxon(taxonId)) {
+        // yeast uses a strain
+        String newTaxonId = BioUtil.getStrain(taxonId);
+        if (rslv == null || !rslv.hasTaxon(newTaxonId)) {
             // no id resolver available, so return the original identifier
             return identifier;
         }
-        int resCount = rslv.countResolutions(taxonId, identifier);
+        int resCount = rslv.countResolutions(newTaxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                    + identifier + " for taxon ID: " + taxonId + " count: " + resCount + " "
+                    + identifier + " for taxon ID " + taxonId + " count: " + resCount + " "
                     + rslv.resolveId(taxonId, identifier));
             return null;
         }
-        return rslv.resolveId(taxonId, identifier).iterator().next();
+        return rslv.resolveId(newTaxonId, identifier).iterator().next();
     }
 }
