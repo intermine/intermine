@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.BuildException;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -53,7 +54,7 @@ public class TreefamConverter extends BioFileConverter
     private Map<String, String[]> config = new HashMap<String, String[]>();
     private static String evidenceRefId = null;
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
-
+    private static final String DEFAULT_HOMOLOGUE_TYPE = "orthologue";
     protected IdResolver rslv;
 
     /**
@@ -106,7 +107,6 @@ public class TreefamConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry: props.entrySet()) {
-
             String key = (String) entry.getKey();
             String value = ((String) entry.getValue()).trim();
 
@@ -167,12 +167,10 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-    private String getGene(String ident, String type, String taxonId)
+    private String getGene(String id, String type, String taxonId)
         throws ObjectStoreException {
         String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-        String identifier = ident;
-        identifier = resolveGene(taxonId, identifier);
-
+        String identifier = resolveGene(taxonId, id);
         if (identifier == null) {
             return null;
         }
@@ -196,31 +194,21 @@ public class TreefamConverter extends BioFileConverter
     @Override
     public void process(Reader reader) throws Exception {
         if (geneFile == null) {
-            throw new NullPointerException("geneFile property not set");
+            throw new BuildException("geneFile property not set");
         }
         if (taxonIds.isEmpty()) {
-            throw new NullPointerException("treefam.organisms property not set in project XML "
-                    + "file");
+            throw new BuildException("treefam.organisms property not set in project XML file");
         }
         if (homologues.isEmpty()) {
-            LOG.warn("treefam.homologues property not set in project XML file");
+            LOG.info("treefam.homologues property not set in project XML file");
         }
+
+        createIDResolver();
+        
         try {
             readGenes(new FileReader(geneFile));
         } catch (IOException err) {
             throw new RuntimeException("error reading geneFile", err);
-        }
-
-        //Create id resolver
-        Set<String> allTaxonIds = new HashSet<String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                addAll(taxonIds);
-                addAll(homologues);
-            }
-        };
-        if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -244,7 +232,16 @@ public class TreefamConverter extends BioFileConverter
             }
         }
     }
-
+    
+    private void createIDResolver() {
+        Set<String> allTaxonIds = new HashSet<String>();
+        allTaxonIds.addAll(taxonIds);
+        allTaxonIds.addAll(homologues);
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+        }
+    }
+    
     // the gene is from an organism we want
     // the homologue is from an organism we want
     private boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
@@ -276,7 +273,7 @@ public class TreefamConverter extends BioFileConverter
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.addToCollection("evidence", getEvidence());
-        String type = "orthologue";
+        String type = DEFAULT_HOMOLOGUE_TYPE;
         if (holder1.taxonId.equals(holder2.taxonId)) {
             type = "paralogue";
         }
