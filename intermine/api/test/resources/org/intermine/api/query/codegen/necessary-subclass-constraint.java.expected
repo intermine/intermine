@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.intermine.metadata.Model;
 import org.intermine.pathquery.Constraints;
-import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.webservice.client.core.ServiceFactory;
 import org.intermine.webservice.client.services.QueryService;
@@ -34,21 +33,16 @@ public class QueryClient
         PathQuery query = new PathQuery(model);
 
         // Select the output columns:
-        query.addViews("Gene.primaryIdentifier",
-                "Gene.secondaryIdentifier",
-                "Gene.symbol",
-                "Gene.name",
-                "Gene.organism.shortName");
-
-        // Add orderby
-        query.addOrderBy("Gene.primaryIdentifier", OrderDirection.ASC);
+        query.addViews("Employee.name",
+                "Employee.age",
+                "Employee.department.manager.salary");
 
         // Filter the results with the following constraints:
-        query.addConstraint(Constraints.eq("Gene.secondaryIdentifier", "zen"));
+        query.addConstraint(Constraints.type("Employee.department.manager", "CEO"));
 
         QueryService service = factory.getQueryService();
         PrintStream out = System.out;
-        String format = "%-17.17s | %-17.17s | %-17.17s | %-17.17s | %-17.17s\n";
+        String format = "%-30.30s | %-30.30s | %-30.30s\n";
         out.printf(format, query.getView().toArray());
         Iterator<List<Object>> rows = service.getRowListIterator(query);
         while (rows.hasNext()) {
