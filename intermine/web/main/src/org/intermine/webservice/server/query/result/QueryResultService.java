@@ -48,6 +48,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
@@ -232,6 +233,10 @@ public class QueryResultService extends AbstractQueryService
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS, pq.getView());
                 }
             }
+        }
+        if (getFormat() == WebService.HTML_FORMAT) {
+            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
+                WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
         }
 
         if (!isBlank(request.getParameter("summaryPath"))) {
