@@ -193,20 +193,24 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             if (resolver.hasTaxon(taxonId)) {
                 continue;
             }
-            String newTaxonId = BioUtil.getStrain(taxonId);
-            Set<GeneInfoRecord> genes = records.get(newTaxonId);
-            processGenes(newTaxonId, genes);
+            String strain = BioUtil.getStrain(taxonId);
+            Set<GeneInfoRecord> genes = records.get(taxonId);
+            processGenes(taxonId, strain, genes);
         }
     }
     
+    private void processGenes(String taxonId, String strain, Set<GeneInfoRecord> genes) {
 
-    
-    private void processGenes(String taxonId, Set<GeneInfoRecord> genes) {
+        // yeast uses a strain ID in the data but in the mine the taxon is the main yeast ID
+        // use strain ID to lookup data but store as main taxon ID
+        String lookupId = (StringUtils.isNotEmpty(strain) ? strain : taxonId);
+        
         for (GeneInfoRecord record : genes) {
-            // primaryIdentifier set according to configuration
             String primaryIdentifier;
-            if (record.xrefs.get(config_xref.get(taxonId)) != null) {
-                primaryIdentifier = (config_prefix.get(taxonId) != null ? config_prefix.get(taxonId) : "") + record.xrefs.get(config_xref.get(taxonId)).iterator().next();
+            String config = config_xref.get(lookupId);
+            if (record.xrefs.get(config) != null) {
+                String prefix = config_prefix.get(taxonId); // eg. RGD:
+                primaryIdentifier = prefix + record.xrefs.get(config).iterator().next();
             } else {
                 primaryIdentifier = record.entrez;
             }
