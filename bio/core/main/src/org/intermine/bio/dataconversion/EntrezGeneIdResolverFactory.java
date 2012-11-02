@@ -28,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.bio.util.OrganismRepository;
-import org.intermine.util.PropertiesUtil;
 
 /**
  * ID resolver for Entrez genes.
@@ -42,6 +41,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private final String propName = "resolver.entrez.file"; // set in .intermine/MINE.properties
 
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
+    private Properties props = new Properties();
     private Map<String, String> config_xref = new HashMap<String, String>();
     private Map<String, String> config_prefix = new HashMap<String, String>();
 
@@ -138,7 +138,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         if (resolver == null) {
             resolver = new IdResolver(clsName);
         }
-        Properties props = PropertiesUtil.getProperties();
+
         String fileName = props.getProperty(propName);
 
         // File path not set in MINE.properties
@@ -222,16 +222,15 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * Read pid configurations from entrezIdResolver_config.properties in resources dir
      */
     private void readConfig() {
-        Properties entrezConfig = new Properties();
         try {
-            entrezConfig.load(getClass().getClassLoader().getResourceAsStream(
+            props.load(getClass().getClassLoader().getResourceAsStream(
                     PROP_FILE));
         } catch (IOException e) {
             throw new RuntimeException("I/O Problem loading properties '"
                     + PROP_FILE + "'", e);
         }
 
-        for (Map.Entry<Object, Object> entry : entrezConfig.entrySet()) {
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
             String key = (String) entry.getKey(); // e.g. 10090.xref
             String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
 
