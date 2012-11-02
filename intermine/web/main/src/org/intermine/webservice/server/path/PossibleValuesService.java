@@ -32,6 +32,7 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -67,9 +68,9 @@ public class PossibleValuesService extends WebService
     @Override
     protected int getDefaultFormat() {
         if (hasCallback()) {
-            return JSONP_OBJ_FORMAT;
+            return Formats.JSONP_OBJ;
         } else {
-            return JSON_OBJ_FORMAT;
+            return Formats.JSON_OBJ;
         }
     }
 
