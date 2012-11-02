@@ -82,4 +82,9 @@ public class GenomicRegionGFF3Service extends AbstractRegionExportService
             throw new InternalErrorException("Service failed:" + e, e);
         }
     }
+
+    @Override
+    protected String getContentType() {
+        return "text/x-gff3";
+    }
 }
