@@ -45,10 +45,23 @@
     } );
 
     /**
+     * Static factory method for notifying of messages.
+     * @param {string} message The message to show to the user.
+     */
+    Notification.notify = function(message) {
+        new Notification({message: message}).render();
+    }
+
+    /**
      * Static factory method for handling errors.
+     * In addition to showing the user a notification, the message
+     * will also be logged to the console if one is available.
+     * @param {?string} error The message to show to the user.
      */
     FailureNotification.notify = function(error) {
-        console.error.apply(console, arguments);
+        if (console) {
+            (console.error || console.log).apply(console, arguments);
+        }
         if (error == null) {
             error = "Unknown error";
         }
