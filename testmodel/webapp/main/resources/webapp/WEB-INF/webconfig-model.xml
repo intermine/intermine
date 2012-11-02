@@ -94,7 +94,7 @@
                  typeClass="Employee"
                  title="Company Affiliation"
                  description="Percentage of employees belonging to each company"
-                 graphType="BarChart"
+                 graphType="PieChart"
                  domainLabel="Company"
                  rangeLabel="No. of employees"
                  categoryPath="department.company.name"
