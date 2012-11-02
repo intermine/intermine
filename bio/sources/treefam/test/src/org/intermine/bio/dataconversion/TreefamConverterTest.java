@@ -47,9 +47,10 @@ public class TreefamConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new TreefamConverter(itemWriter, Model.getInstanceByName("genomic"));
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
-        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG1111"));
-        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG2222"));
-
+        converter.rslv.addResolverEntry("10116", "RGD:2687", Collections.singleton("ENSRNOG00000003858"));  //1060048
+        converter.rslv.addResolverEntry("10116", "RGD:1111", Collections.singleton("ENSRNOG00000003611"));  //1060071
+        converter.rslv.addResolverEntry("10116", "RGD:2222", Collections.singleton("ENSRNOG00000028887"));  //1060083
+        converter.rslv.addResolverEntry("10116", "RGD:3333", Collections.singleton("ENSRNOG00000031952"));               // 1060082
         super.setUp();
     }
 
@@ -61,20 +62,19 @@ public class TreefamConverterTest extends ItemsTestCase
 
         File genes = File.createTempFile("genes", "");
         FileOutputStream out = new FileOutputStream(genes);
-        IOUtils.copy(getClass().getClassLoader().getResourceAsStream("genes.txt.table"), out);
+        IOUtils.copy(getClass().getClassLoader().getResourceAsStream("rat"), out);
         out.close();
 
         ClassLoader loader = getClass().getClassLoader();
         String input = IOUtils.toString(loader.getResourceAsStream("ortholog.txt.table"));
 
-        converter.setTreefamOrganisms("7227");
-        converter.setTreefamHomologues("9606");
+        converter.setTreefamOrganisms("10116");
         converter.setGeneFile(genes);
         converter.process(new StringReader(input));
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "treefam-tgt-items.xml");
+        writeItemsFile(itemWriter.getItems(), "treefam-tgt-items.xml");
 
         Set<org.intermine.xml.full.Item> expected = readItemSet("TreefamConverterTest_tgt.xml");
 

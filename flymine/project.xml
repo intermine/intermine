@@ -99,7 +99,7 @@
       <property name="src.data.dir" location="/micklem/data/treefam/current"/>
       <property name="src.data.dir.includes" value="ortholog.txt.table"/>
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
+      <property name="treefam.organisms" value="10116 7955"/>
      </source>
     <source name="ensembl-core" type="ensembl-core">
      <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
