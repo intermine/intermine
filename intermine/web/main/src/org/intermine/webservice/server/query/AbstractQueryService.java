@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -75,6 +76,14 @@ public abstract class AbstractQueryService extends WebService
         } else {
             return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
         }
+    }
+
+    /**
+     * @return Whether or not the format is for JSON-Objects
+     */
+    protected boolean formatIsJsonObj() {
+        int format = getFormat();
+        return (format == Formats.JSON_OBJ || format == Formats.JSONP_OBJ);
     }
 
 }

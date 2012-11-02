@@ -19,6 +19,7 @@ import java.util.Map;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.metadata.Model;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
@@ -88,7 +89,7 @@ public abstract class JSONService extends WebService
      * @param mapping the mapping of things to output.
      * @param hasMore Whether there is more to come, and thus a comma is required.
      */
-    protected void addResultItem(Map<String, Object> mapping, boolean hasMore) {
+    protected void addResultItem(Map<String, ? extends Object> mapping, boolean hasMore) {
         JSONObject jo = new JSONObject(mapping);
         addResultItemInternal(jo, hasMore);
     }
@@ -117,7 +118,7 @@ public abstract class JSONService extends WebService
      * @param listing The list of things to output.
      * @param hasMore Whether there is more to come, and thus a comma is required.
      */
-    protected void addResultItem(List<Object> listing, boolean hasMore) {
+    protected void addResultItem(List<? extends Object> listing, boolean hasMore) {
         JSONArray ja = new JSONArray(listing);
         addResultItemInternal(ja, hasMore);
     }
@@ -134,9 +135,9 @@ public abstract class JSONService extends WebService
     @Override
     protected int getDefaultFormat() {
         if (hasCallback()) {
-            return WebService.JSONP_FORMAT;
+            return Formats.JSONP;
         } else {
-            return WebService.JSON_FORMAT;
+            return Formats.JSON;
         }
     }
 }
