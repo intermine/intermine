@@ -127,8 +127,6 @@ public class TreefamConverter extends BioFileConverter
         }
     }
 
-
-
     /**
      * Process the text file
      * @param reader the Reader
@@ -176,6 +174,50 @@ public class TreefamConverter extends BioFileConverter
             }
         }
     }
+    
+    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
+            throws ObjectStoreException {
+        
+        String gene1 = getGene(holder1.identifier, holder1.identifierType, holder1.taxonId);
+        String gene2 = getGene(holder2.identifier, holder2.identifierType, holder2.taxonId);
+        
+        // resolver didn't resolve
+        if (gene1 == null || gene2 == null) {
+            return;
+        }
+        
+        Item homologue = createItem("Homologue");
+        homologue.setAttribute("bootstrapScore", bootstrap);
+        homologue.setReference("gene", gene1);
+        homologue.setReference("homologue", gene2);
+        homologue.addToCollection("evidence", getEvidence());
+        String type = DEFAULT_HOMOLOGUE_TYPE;
+        if (holder1.taxonId.equals(holder2.taxonId)) {
+            type = "paralogue";
+        }
+        homologue.setAttribute("type", type);
+        
+        store(homologue);
+    }
+    
+    private String getGene(String id, String type, String taxonId)
+            throws ObjectStoreException {
+        String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
+        String identifier = resolveGene(taxonId, id);
+        if (identifier == null) {
+            return null;
+        }
+        String refId = identifiersToGenes.get(identifier);
+        if (refId == null) {
+            Item item = createItem("Gene");
+            item.setAttribute(identifierType, identifier);
+            item.setReference("organism", getOrganism(taxonId));
+            refId = item.getIdentifier();
+            identifiersToGenes.put(identifier, refId);
+            store(item);
+        }
+        return refId;
+    }    
     
     private void createIDResolver() {
         Set<String> allTaxonIds = new HashSet<String>();
@@ -241,50 +283,6 @@ public class TreefamConverter extends BioFileConverter
             identifier = setIdentifier(identifier, symbol, geneField);
             idsToGenes.put(id, new GeneHolder(identifier, identifierType, taxonId));
         }
-    }
-
-    private String getGene(String id, String type, String taxonId)
-        throws ObjectStoreException {
-        String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-        String identifier = resolveGene(taxonId, id);
-        if (identifier == null) {
-            return null;
-        }
-        String refId = identifiersToGenes.get(identifier);
-        if (refId == null) {
-            Item item = createItem("Gene");
-            item.setAttribute(identifierType, identifier);
-            item.setReference("organism", getOrganism(taxonId));
-            refId = item.getIdentifier();
-            identifiersToGenes.put(identifier, refId);
-            store(item);
-        }
-        return refId;
-    }
-    
-    private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
-        throws ObjectStoreException {
-
-        String gene1 = getGene(holder1.identifier, holder1.identifierType, holder1.taxonId);
-        String gene2 = getGene(holder2.identifier, holder2.identifierType, holder2.taxonId);
-
-        // resolver didn't resolve
-        if (gene1 == null || gene2 == null) {
-            return;
-        }
-
-        Item homologue = createItem("Homologue");
-        homologue.setAttribute("bootstrapScore", bootstrap);
-        homologue.setReference("gene", gene1);
-        homologue.setReference("homologue", gene2);
-        homologue.addToCollection("evidence", getEvidence());
-        String type = DEFAULT_HOMOLOGUE_TYPE;
-        if (holder1.taxonId.equals(holder2.taxonId)) {
-            type = "paralogue";
-        }
-        homologue.setAttribute("type", type);
-
-        store(homologue);
     }
 
     private String getEvidence()
