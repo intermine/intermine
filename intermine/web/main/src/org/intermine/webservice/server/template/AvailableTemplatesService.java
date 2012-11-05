@@ -24,6 +24,7 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.template.TemplateHelper;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
@@ -55,7 +56,7 @@ public class AvailableTemplatesService extends WebService
 
     @Override
     protected int getDefaultFormat() {
-        return XML_FORMAT;
+        return Formats.XML;
     }
 
     @Override

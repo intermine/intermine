@@ -63,4 +63,9 @@ public class GenomicRegionFastaService extends AbstractRegionExportService
         }
     }
 
+    @Override
+    protected String getContentType() {
+        return "text/x-fasta";
+    }
+
 }

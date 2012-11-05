@@ -39,6 +39,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.webservice.server.ColumnHeaderStyle;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.WebServiceRequestParser;
@@ -101,9 +102,11 @@ public class QueryResultService extends AbstractQueryService
                 input, null, input.getLayout());
     }
 
+
+
     @Override
     protected int getDefaultFormat() {
-        return TSV_FORMAT;
+        return Formats.TSV;
     }
 
     /**
@@ -151,7 +154,7 @@ public class QueryResultService extends AbstractQueryService
             try {
                 attributes.put(JSONResultFormatter.KEY_ROOT_CLASS, pq.getRootClass());
             } catch (PathException e) {
-                throw new RuntimeException(e);
+                throw new ServiceException(e);
             }
             String summaryPath = request.getParameter("summaryPath");
             if (!isBlank(summaryPath)) {
@@ -168,12 +171,7 @@ public class QueryResultService extends AbstractQueryService
             }
         }
         int f = getFormat();
-        if (f == WebService.JSON_TABLE_FORMAT || f == WebService.JSONP_TABLE_FORMAT) {
-            String csvUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_CSV);
-            String tsvUrl =  getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_TAB);
-            String pageUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW);
-            String countUrl = getLinkPath(pq, WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT);
-            String mineResLink = getMineResultsLinkPath(pq);
+        if (f == Formats.JSON_TABLE) {
             List<String> viewTypes = new ArrayList<String>();
             for (String v: pq.getView()) {
                 try {
@@ -185,43 +183,14 @@ public class QueryResultService extends AbstractQueryService
                 }
             }
             String title = pq.getTitle();
-            String description;
-            if (pq.getDescription() == null) {
-                description = pq.toString();
-            } else {
-                description = pq.getDescription();
-            }
+            String description = StringUtils.defaultString(pq.getDescription(), pq.toString());
             attributes.put("viewTypes", viewTypes);
             attributes.put("size", String.valueOf(size));
-            attributes.put("pagePath", pageUrl);
-            attributes.put("mineResultsLink", mineResLink);
-            attributes.put(JSONTableFormatter.KEY_CURRENT_PAGE, pageUrl);
-            attributes.put(JSONTableFormatter.KEY_EXPORT_CSV_URL, csvUrl);
-            attributes.put(JSONTableFormatter.KEY_EXPORT_TSV_URL, tsvUrl);
             attributes.put(JSONTableFormatter.KEY_TITLE, title);
             attributes.put(JSONTableFormatter.KEY_DESCRIPTION, description);
-            attributes.put(JSONTableFormatter.KEY_COUNT, countUrl);
-        }
-        if (f == JSON_DATA_TABLE_FORMAT || f == JSONP_DATA_TABLE_FORMAT) {
-            attributes.put("sEcho", request.getParameter("sEcho"));
-            attributes.put("sColumns", StringUtils.join(pq.getView(), ","));
-            //attributes.put("sColumns", StringUtils.join(
-            //        WebUtil.formatPathQueryView(pq, request), ","));
-            PathQueryExecutor executor = getPathQueryExecutor();
-            int count;
-            try {
-                count = executor.count(pq);
-            } catch (ObjectStoreException e) {
-                throw new ServiceException("Problem getting count.", e);
-            }
-            attributes.put("iTotalRecords", count);
-            attributes.put("iTotalDisplayRecords", count);
         }
         if (formatIsJSONP()) {
-            String callback = getCallback();
-            if (callback == null) {
-                callback = "makeInterMineResultsTable";
-            }
+            String callback = StringUtils.defaultString(getCallback(), "makeResultsTable");
             attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
         }
         if (formatIsFlatFile()) {
@@ -234,7 +203,7 @@ public class QueryResultService extends AbstractQueryService
                 }
             }
         }
-        if (getFormat() == WebService.HTML_FORMAT) {
+        if (getFormat() == Formats.HTML) {
             attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
                 WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
         }
@@ -271,31 +240,6 @@ public class QueryResultService extends AbstractQueryService
         }
 
         output.setHeaderAttributes(attributes);
-    }
-
-    private String createBaseLink() {
-        String baseLink = request.getRequestURL().toString() + "?";
-        List<String> names = EnumerationUtils.toList(request.getParameterNames());
-        while (names.contains(WebServiceRequestParser.START_PARAMETER)) {
-            names.remove(WebServiceRequestParser.START_PARAMETER);
-        }
-        while (names.contains(WebServiceRequestParser.LIMIT_PARAMETER)) {
-            names.remove(WebServiceRequestParser.LIMIT_PARAMETER);
-        }
-        boolean firstParameter = true;
-        for (String name : names) {
-            String[] values = request.getParameterValues(name);
-            for (String value : values) {
-                if (firstParameter) {
-                    // don't place ampersand
-                    firstParameter = false;
-                } else {
-                    baseLink += "&";
-                }
-                baseLink += name + "=" + encode(value);
-            }
-        }
-        return baseLink;
     }
 
     @Override
@@ -399,47 +343,24 @@ public class QueryResultService extends AbstractQueryService
 
     private ResultProcessor makeResultProcessor() {
         ResultProcessor processor;
-        boolean summarising = !StringUtils.isBlank(request.getParameter("summaryPath"));
+        boolean summarising = StringUtils.isNotBlank(request.getParameter("summaryPath"));
         switch(getFormat()) {
-            case WebService.JSON_FORMAT:
+            case Formats.JSON:
                 processor
                     = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
                 break;
-            case WebService.JSONP_FORMAT:
-                processor
-                    = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
-                break;
-            case WebService.JSON_OBJ_FORMAT:
+            case Formats.JSON_OBJ:
                 processor = new JSONObjResultProcessor();
                 break;
-            case WebService.JSONP_OBJ_FORMAT:
-                processor = new JSONObjResultProcessor();
-                break;
-            case WebService.JSON_TABLE_FORMAT:
+            case Formats.JSON_TABLE:
                 processor = new JSONTableResultProcessor();
                 break;
-            case WebService.JSONP_TABLE_FORMAT:
-                processor = new JSONTableResultProcessor();
-                break;
-            case WebService.JSON_ROW_FORMAT:
+            case Formats.JSON_ROW:
                 if (summarising) {
                     processor = new JSONSummaryProcessor();
                 } else {
                     processor = new JSONRowResultProcessor(im);
                 }
-                break;
-            case WebService.JSONP_ROW_FORMAT:
-                if (summarising) {
-                    processor = new JSONSummaryProcessor();
-                } else {
-                    processor = new JSONRowResultProcessor(im);
-                }
-                break;
-            case WebService.JSON_DATA_TABLE_FORMAT:
-                processor = new JSONRowResultProcessor(im);
-                break;
-            case WebService.JSONP_DATA_TABLE_FORMAT:
-                processor = new JSONRowResultProcessor(im);
                 break;
             default:
                 processor = new ResultProcessor();
