@@ -103,4 +103,9 @@ public class GenomicRegionBedService extends AbstractRegionExportService
         }
     }
 
+    @Override
+    protected String getContentType() {
+        return "text/x-ucsc-bed";
+    }
+
 }

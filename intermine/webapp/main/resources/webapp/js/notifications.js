@@ -1,5 +1,12 @@
 (function($, Backbone) {
 	
+    if (typeof this.console === 'undefined') {
+        this.console = {log: function() {}};
+    }
+    if (typeof this.console.error === 'undefined') {
+        this.console.error = this.console.log;
+    }
+
 	var Notification = Backbone.View.extend( {
         tagName: 'div',
         className: 'im-event-notification topBar messages',
@@ -36,6 +43,30 @@
         className: "im-event-notification topBar errors",
         title: 'Oops!'
     } );
+
+    /**
+     * Static factory method for notifying of messages.
+     * @param {string} message The message to show to the user.
+     */
+    Notification.notify = function(message) {
+        new Notification({message: message}).render();
+    }
+
+    /**
+     * Static factory method for handling errors.
+     * In addition to showing the user a notification, the message
+     * will also be logged to the console if one is available.
+     * @param {?string} error The message to show to the user.
+     */
+    FailureNotification.notify = function(error) {
+        if (console) {
+            (console.error || console.log).apply(console, arguments);
+        }
+        if (error == null) {
+            error = "Unknown error";
+        }
+        new FailureNotification({message: error}).render();
+    };
 	
 	this.Notification = Notification;
 	this.FailureNotification = FailureNotification;

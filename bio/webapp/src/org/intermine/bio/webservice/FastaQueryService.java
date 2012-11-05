@@ -14,6 +14,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -64,8 +65,8 @@ public class FastaQueryService extends AbstractQueryService
     }
 
     @Override
-    public int getFormat() {
-        return UNKNOWN_FORMAT;
+    public int getDefaultFormat() {
+        return Formats.UNKNOWN;
     }
 
     @Override
