@@ -26,6 +26,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.util.BioUtil;
+import org.intermine.bio.util.OrganismRepository;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -40,7 +42,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private final String propName = "resolver.entrez.file"; // set in .intermine/MINE.properties
 
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
-    private Properties props = new Properties();
     private Map<String, String> config_xref = new HashMap<String, String>();
     private Map<String, String> config_prefix = new HashMap<String, String>();
 
@@ -50,6 +51,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     public EntrezGeneIdResolverFactory() {
         readConfig();
     }
+    
     /**
      * Return an IdResolver by taxon id, if not already built then create it.
      * @return a specific IdResolver
@@ -129,14 +131,13 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     /**
      * Build an IdResolver from Entrez Gene gene_info file
+     * @param taxonIds list of taxon IDs
      * @return an IdResolver for Entrez Gene
      */
     protected void createIdResolver(Collection<String> taxonIds) {
-
         if (resolver == null) {
             resolver = new IdResolver(clsName);
         }
-
         Properties props = PropertiesUtil.getProperties();
         String fileName = props.getProperty(propName);
 
@@ -187,55 +188,54 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                         + taxonIdsCopy);
             }
         }
-
+       
         for (String taxonId : records.keySet()) {
-
             if (resolver.hasTaxon(taxonId)) {
                 continue;
             }
-
-            for (GeneInfoRecord record : records.get(taxonId)) {
-                // primaryIdentifier set according to configuration
-                String primaryIdentifier;
-                if (record.xrefs.get(config_xref.get(taxonId)) != null) {
-                    primaryIdentifier =
-                            (config_prefix.get(taxonId) != null ? config_prefix
-                                    .get(taxonId) : "")
-                                    + record.xrefs.get(config_xref.get(taxonId))
-                                            .iterator().next();
-                } else {
-                    primaryIdentifier = record.entrez;
-                }
-
-                resolver.addMainIds(taxonId, primaryIdentifier, record.getMainIds());
-                resolver.addSynonyms(taxonId, primaryIdentifier,
-                        flattenCollections(record.xrefs.values()));
-                resolver.addSynonyms(taxonId, primaryIdentifier, record.synonyms);
-            }
+            String strain = BioUtil.getStrain(taxonId);
+            Set<GeneInfoRecord> genes = records.get(taxonId);
+            processGenes(taxonId, strain, genes);
         }
     }
+    
+    private void processGenes(String taxonId, String strain, Set<GeneInfoRecord> genes) {
 
-//    private Set<String> lowerCase(Set<String> input) {
-//        Set<String> lower = new HashSet<String>();
-//        for (String s : input) {
-//            lower.add(s.toLowerCase());
-//        }
-//        return lower;
-//    }
+        // yeast uses a strain ID in the data but in the mine the taxon is the main yeast ID
+        // use strain ID to lookup data but store as main taxon ID
+        String lookupId = (StringUtils.isNotEmpty(strain) ? strain : taxonId);
+        
+        for (GeneInfoRecord record : genes) {
+            String primaryIdentifier;
+            String config = config_xref.get(lookupId);
+            if (record.xrefs.get(config) != null) {
+                String prefix = config_prefix.get(taxonId); // eg. RGD:
+                primaryIdentifier = prefix + record.xrefs.get(config).iterator().next();
+            } else {
+                primaryIdentifier = record.entrez;
+            }
+
+            resolver.addMainIds(taxonId, primaryIdentifier, record.getMainIds());
+            resolver.addSynonyms(taxonId, primaryIdentifier,
+                    flattenCollections(record.xrefs.values()));
+            resolver.addSynonyms(taxonId, primaryIdentifier, record.synonyms);
+        }
+    }
 
     /**
      * Read pid configurations from entrezIdResolver_config.properties in resources dir
      */
     private void readConfig() {
+        Properties entrezConfig = new Properties();
         try {
-            props.load(getClass().getClassLoader().getResourceAsStream(
+            entrezConfig.load(getClass().getClassLoader().getResourceAsStream(
                     PROP_FILE));
         } catch (IOException e) {
             throw new RuntimeException("I/O Problem loading properties '"
                     + PROP_FILE + "'", e);
         }
 
-        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+        for (Map.Entry<Object, Object> entry : entrezConfig.entrySet()) {
             String key = (String) entry.getKey(); // e.g. 10090.xref
             String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
 
@@ -251,7 +251,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             } else if ("prefix".equals(attributes[1])) {
                 config_prefix.put(taxonId, value);
             }
-
         }
     }
 

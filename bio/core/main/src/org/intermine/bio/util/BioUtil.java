@@ -269,4 +269,18 @@ public final class BioUtil
         }
         return new Integer(od.getTaxonId());
     }
+    
+    /**
+     * Returns strains for given taxon Id
+     *
+     * @param taxonId original taxon ID
+     * @return taxonId for strain or original taxon if no strain exists
+     */
+    public static String getStrain(String taxonId) {
+        String strain = OR.getStrain(taxonId);
+        if (strain == null) {
+            return taxonId;
+        }
+        return strain; 
+    }
 }
