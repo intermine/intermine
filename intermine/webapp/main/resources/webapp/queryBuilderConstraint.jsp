@@ -317,7 +317,7 @@
 <!--
    NULL OR NOT NULL CONSTRAINT
 -->
-  <c:if test="${(dec.path.attribute && !dec.path.primitive) || dec.path.reference || dec.path.collection}">
+  <c:if test="${(dec.path.attribute && !dec.path.primitive)}">
   <br/>
   <FIELDSET class="constraintFieldset">
     <LEGEND>
