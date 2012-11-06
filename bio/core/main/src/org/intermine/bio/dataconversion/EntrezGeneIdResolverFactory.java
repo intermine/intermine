@@ -210,7 +210,11 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             String config = config_xref.get(lookupId);
             if (record.xrefs.get(config) != null) {
                 String prefix = config_prefix.get(taxonId); // eg. RGD:
-                primaryIdentifier = prefix + record.xrefs.get(config).iterator().next();
+                primaryIdentifier = record.xrefs.get(config).iterator().next();
+                if (StringUtils.isNotEmpty(prefix)) {
+                    primaryIdentifier = prefix + primaryIdentifier;
+                }
+                
             } else {
                 primaryIdentifier = record.entrez;
             }
