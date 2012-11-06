@@ -95,12 +95,6 @@
       <property name="gff3.seqClsName" value="MRNA"/>
       <property name="src.data.dir" location="/micklem/data/flymine/long-oligo"/>
     </source>
-    <source name="treefam" type="treefam">
-      <property name="src.data.dir" location="/micklem/data/treefam/current"/>
-      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
-      <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
-      <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
-     </source>
     <source name="ensembl-core" type="ensembl-core">
      <property name="src.data.dir" location="/micklem/data/ensembl/anopheles_gambiae/current_core"/>
      <property name="src.data.dir.includes" value="7165.xml"/>
@@ -565,7 +559,12 @@
       <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
       <property name="intact.organisms" value="7227 6239 46245 7240 7244 7245 4932"/>
     </source>
-
+    <source name="treefam" type="treefam">
+      <property name="src.data.dir" location="/micklem/data/treefam/current"/>
+      <property name="src.data.dir.includes" value="ortholog.txt.table"/>
+      <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
+      <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
+     </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
