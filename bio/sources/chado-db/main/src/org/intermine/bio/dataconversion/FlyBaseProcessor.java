@@ -71,6 +71,8 @@ public class FlyBaseProcessor extends SequenceProcessor
     // a pattern the matches attribute stored in FlyBase properties, eg. "@FBcv0000289:hypomorph@"
     private static final String FLYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
 
+    private static final String RELATIONSHIP_TYPE = "MI:0499";
+    
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
      * (like "@FBcv0000289:hypomorph@") to text like: "hypomorph"
@@ -934,6 +936,10 @@ public class FlyBaseProcessor extends SequenceProcessor
         throws SQLException, ObjectStoreException {
         Map<MultiKey, String> seenInteractions = new HashMap<MultiKey, String>();
         ResultSet res = getInteractionResultSet(connection);
+        
+
+        String typeId = getRelationshipType();
+        
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             Integer otherFeatureId = new Integer(res.getInt("other_feature_id"));
@@ -949,12 +955,18 @@ public class FlyBaseProcessor extends SequenceProcessor
             OrganismData od = otherFeatureData.getOrganismData();
             Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
             String publicationItemId = makePublication(pubmedId);
-            createDetail(dataSetItem, pubTitle, publicationItemId, interactionRefId, name);
+            createDetail(dataSetItem, pubTitle, publicationItemId, interactionRefId, name, typeId);
         }
     }
 
+    private String getRelationshipType() {
+        Item item = getChadoDBConverter().createItem("InteractionTerm");
+        item.setAttribute("identifier", RELATIONSHIP_TYPE);
+        return item.getIdentifier();
+    }
+    
     private void createDetail(Item dataSetItem, String pubTitle, 
-    		String publicationItemId, String interactionRefId, String name) 
+    		String publicationItemId, String interactionRefId, String name, String typeId) 
     	throws SQLException, ObjectStoreException {
 		Item detail = getChadoDBConverter().createItem("InteractionDetail");
         detail.setAttribute("name", name);
@@ -964,6 +976,7 @@ public class FlyBaseProcessor extends SequenceProcessor
             makeInteractionExperiment(pubTitle, publicationItemId);
         detail.setReference("experiment", experimentItemIdentifier);
         detail.addToCollection("dataSets", dataSetItem);
+        detail.setReference("relationshipType", typeId);
         getChadoDBConverter().store(detail);
     }
     
