@@ -959,9 +959,10 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
     }
 
-    private String getRelationshipType() {
+    private String getRelationshipType() throws ObjectStoreException {
         Item item = getChadoDBConverter().createItem("InteractionTerm");
         item.setAttribute("identifier", RELATIONSHIP_TYPE);
+        getChadoDBConverter().store(item);
         return item.getIdentifier();
     }
     
