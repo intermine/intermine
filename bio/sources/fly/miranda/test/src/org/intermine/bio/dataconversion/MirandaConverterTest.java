@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -46,13 +47,10 @@ public class MirandaConverterTest extends ItemsTestCase
         super.setUp();
         tgtModel = Model.getInstanceByName("genomic");
         handler = new MirandaGFF3RecordHandler(tgtModel);
-        MockIdResolverFactory geneResolverFactory = new MockIdResolverFactory("Gene");
-        geneResolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
-        geneResolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
-        handler.geneResolverFactory = geneResolverFactory;
-        MockIdResolverFactory mrnaResolverFactory = new MockIdResolverFactory("Gene");
-        mrnaResolverFactory.addResolverEntry("7227", "FBtr0089256", Collections.singleton("CG11023-RA"));
-        handler.mrnaResolverFactory = mrnaResolverFactory;
+        handler.rslv = IdResolverService.getMockIdResolver("Gene");
+        handler.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
+        handler.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
+        handler.rslv.addResolverEntry("7227", "FBtr0089256", Collections.singleton("CG11023-RA"));
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
                                       dataSetTitle, tgtModel, handler, null);
     }
