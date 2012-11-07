@@ -71,7 +71,9 @@ public class FlyBaseProcessor extends SequenceProcessor
     // a pattern the matches attribute stored in FlyBase properties, eg. "@FBcv0000289:hypomorph@"
     private static final String FLYBASE_PROP_ATTRIBUTE_PATTERN = "@([^@]+)@";
 
+    // interactions use this - UKNOWN
     private static final String RELATIONSHIP_TYPE = "MI:0499";
+    private static final String DEFAULT_ROLE = "unspecified";
     
     /**
      * A ConfigAction that overrides processValue() to change FlyBase attribute tags
@@ -936,10 +938,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         throws SQLException, ObjectStoreException {
         Map<MultiKey, String> seenInteractions = new HashMap<MultiKey, String>();
         ResultSet res = getInteractionResultSet(connection);
-        
-
         String typeId = getRelationshipType();
-        
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             Integer otherFeatureId = new Integer(res.getInt("other_feature_id"));
@@ -971,13 +970,15 @@ public class FlyBaseProcessor extends SequenceProcessor
     	throws SQLException, ObjectStoreException {
 		Item detail = getChadoDBConverter().createItem("InteractionDetail");
         detail.setAttribute("name", name);
-        detail.setReference("interaction", interactionRefId);
         detail.setAttribute("type", "genetic");
+        detail.setAttribute("role1", DEFAULT_ROLE);
+        detail.setAttribute("role2", DEFAULT_ROLE);
         String experimentItemIdentifier =
             makeInteractionExperiment(pubTitle, publicationItemId);
         detail.setReference("experiment", experimentItemIdentifier);
-        detail.addToCollection("dataSets", dataSetItem);
+        detail.setReference("interaction", interactionRefId);
         detail.setReference("relationshipType", typeId);
+        detail.addToCollection("dataSets", dataSetItem);
         getChadoDBConverter().store(detail);
     }
     
