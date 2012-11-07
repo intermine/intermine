@@ -10,6 +10,7 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -92,6 +93,15 @@ public class IdResolverService
     public static IdResolver getFlyIdResolver(String clsName) {
         return new FlyBaseIdResolverFactory(clsName).getIdResolver(false);
     }
+    
+    /**
+     * Create a fly id resolver
+     * @param clsName SO term collection
+     * @return an IdResolver
+     */
+    public static IdResolver getFlyIdResolver(Collection<String> clsCol) {
+        return new FlyBaseIdResolverFactory(clsCol).getIdResolver(false);
+    }
 
     /**
      * Create a fly id resolver
@@ -101,6 +111,16 @@ public class IdResolverService
      */
     public static IdResolver getFlyIdResolver(String clsName, boolean failOnError) {
         return new FlyBaseIdResolverFactory(clsName).getIdResolver(failOnError);
+    }
+    
+    /**
+     * Create a fly id resolver
+     * @param clsName SO term collection
+     * @param failOnError if false swallow any exceptions and return null
+     * @return an IdResolver
+     */
+    public static IdResolver getFlyIdResolver(Collection<String> clsCol, boolean failOnError) {
+        return new FlyBaseIdResolverFactory(clsCol).getIdResolver(failOnError);
     }
 
     /**
