@@ -27,7 +27,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioUtil;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -44,7 +43,13 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
     private Map<String, String> config_xref = new HashMap<String, String>();
     private Map<String, String> config_prefix = new HashMap<String, String>();
+    private static final Set<String> ignoredTaxonIds = new HashSet<String>();
 
+    static {
+        // temporary hack. put this in config file
+        ignoredTaxonIds.add("7165");
+    }
+    
     /**
      * Constructor read pid configuration
      */
@@ -135,6 +140,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for Entrez Gene
      */
     protected void createIdResolver(Collection<String> taxonIds) {
+        taxonIds.removeAll(ignoredTaxonIds);
+
         if (resolver == null) {
             resolver = new IdResolver(clsName);
         }
