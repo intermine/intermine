@@ -420,7 +420,6 @@ public final class DatabaseUtil
         "TRIGGER",
         "TRIM",
         "TRUE",
-        "TYPE",
         "UESCAPE",
         "UNDER",
         "UNION",
