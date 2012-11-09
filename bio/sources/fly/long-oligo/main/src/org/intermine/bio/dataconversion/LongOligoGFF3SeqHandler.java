@@ -11,6 +11,8 @@ package org.intermine.bio.dataconversion;
  */
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.xml.full.Item;
 
 /**
@@ -19,8 +21,8 @@ import org.intermine.xml.full.Item;
  */
 public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
 {
-    protected IdResolverFactory resolverFactory = null;
-    private IdResolver resolver = null;
+    private static final String TAXON_FLY = "7227";
+    private IdResolver rslv;
     protected static final Logger LOG = Logger.getLogger(LongOligoGFF3SeqHandler.class);
 
 
@@ -28,7 +30,7 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      * Construct the seq handler.
      */
     public LongOligoGFF3SeqHandler() {
-        resolverFactory = new FlyBaseIdResolverFactory("mRNA");
+        rslv = IdResolverService.getFlyIdResolver("mRNA");
     }
 
 
@@ -37,20 +39,18 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      */
     @Override
     public String getSeqIdentifier(String id) {
-        // resolve id from file to valid FlyBase primaryIdentifier
-        if (resolver == null) {
-            resolver = resolverFactory.getIdResolver();
+    	if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
         }
 
         String updatedId = null;
-        int resCount = resolver.countResolutions("7227", id);
+        int resCount = resolver.countResolutions(TAXON_FLY, id);
         if (resCount == 1) {
-            updatedId = resolver.resolveId("7227", id).iterator().next();
+            updatedId = resolver.resolveId(TAXON_FLY, id).iterator().next();
         }
 
         return updatedId;
     }
-
 
     /**
      * {@inheritDoc}
