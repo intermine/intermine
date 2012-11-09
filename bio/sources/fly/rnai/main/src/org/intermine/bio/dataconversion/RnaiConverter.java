@@ -12,20 +12,21 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
-
 /**
- *
  * @author Julie Sullivan
  */
 public class RnaiConverter extends BioFileConverter
@@ -38,9 +39,10 @@ public class RnaiConverter extends BioFileConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> publications = new HashMap<String, String>();
     private Map<String, String> screens = new HashMap<String, String>();
-    private static final String TAXON_ID = "7227";
-    protected IdResolverFactory resolverFactory;
+    private static final String TAXON_FLY = "7227";
     private Item screen;
+    
+    private IdResolver rslv;
 
     /**
      * Constructor
@@ -49,7 +51,6 @@ public class RnaiConverter extends BioFileConverter
      */
     public RnaiConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -57,6 +58,9 @@ public class RnaiConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
+    	if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
         BufferedReader bufferedReader = new BufferedReader(reader);
         String line;
         while ((line = bufferedReader.readLine()) != null) {
@@ -178,26 +182,23 @@ public class RnaiConverter extends BioFileConverter
         if (identifier == null) {
             throw new RuntimeException("geneSymbol can't be null");
         }
-        if (resolverFactory == null) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return identifier;
         }
-        IdResolver resolver = resolverFactory.getIdResolver();
-        if (resolver == null) {
-            return identifier;
-        }
-        int resCount = resolver.countResolutions(TAXON_ID, identifier);
+
+        int resCount = rslv.countResolutions(TAXON_FLY, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                     + identifier + " count: " + resCount + " FBgn: "
-                    + resolver.resolveId(TAXON_ID, identifier));
+                    + rslv.resolveId(TAXON_FLY, identifier));
             return null;
         }
-        String primaryIdentifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+        String primaryIdentifier = rslv.resolveId(TAXON_FLY, identifier).iterator().next();
         String refId = genes.get(primaryIdentifier);
         if (refId == null) {
             Item item = createItem("Gene");
             item.setAttribute("primaryIdentifier", primaryIdentifier);
-            item.setReference("organism", getOrganism(TAXON_ID));
+            item.setReference("organism", getOrganism(TAXON_FLY));
             refId = item.getIdentifier();
             store(item);
             genes.put(primaryIdentifier, refId);
