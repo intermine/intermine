@@ -35,7 +35,6 @@ public class MirandaConverterTest extends ItemsTestCase
     private GFF3Converter converter;
     private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
     private String seqClsName = "Chromosome";
-    private String taxonId = "7227";
     private String dataSourceName = "Sanger Institute";
     private String dataSetTitle = "miRanda";
 
