@@ -48,11 +48,11 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-    	// Id resolver
-    	if (rslv == null) {
+        // Id resolver
+        if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver(Arrays.asList(new String[]{"gene", "mRNA"}));
         }
-    	
+        
         Item feature = getFeature();
         feature.setClassName("MiRNATarget");
         String geneName = record.getAttributes().get("Name").iterator().next();
