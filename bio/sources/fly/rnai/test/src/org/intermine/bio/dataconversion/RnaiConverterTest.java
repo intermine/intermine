@@ -37,7 +37,6 @@ public class RnaiConverterTest extends ItemsTestCase
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
         converter.rslv.addResolverEntry("7227", "FBgn0015806", Collections.singleton("FBgn001"));
         converter.rslv.addResolverEntry("7227", "FBgn0053207", Collections.singleton("FBgn002"));
-        converter.resolverFactory = resolverFactory;
     }
 
     public void testProcess() throws Exception {
