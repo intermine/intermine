@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -46,11 +47,11 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         tgtModel = Model.getInstanceByName("genomic");
 
         handler = new FlyRegGFF3RecordHandler(tgtModel);
+        
+        handler.rslv = IdResolverService.getMockIdResolver("Gene");
+        handler.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
+        handler.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
 
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
-        handler.resolverFactory = resolverFactory;
         converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
                                       dataSetTitle, tgtModel, handler, null);
 
