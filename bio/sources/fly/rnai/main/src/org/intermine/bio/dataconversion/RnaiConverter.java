@@ -58,7 +58,7 @@ public class RnaiConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-    	if (rslv == null) {
+        if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
         BufferedReader bufferedReader = new BufferedReader(reader);
