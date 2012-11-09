@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -43,18 +44,15 @@ public class RedFlyGFF3RecordHandlerTest extends ItemsTestCase
         super(arg);
     }
 
-
     public void setUp() throws Exception {
         tgtModel = Model.getInstanceByName("genomic");
         handler = new RedFlyGFF3RecordHandler(tgtModel);
         // call the GFF3Converter constructor to initialise the handler
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
                           dataSetTitle, tgtModel, handler, null);
-
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
-        resolverFactory.addResolverEntry("7227", "FBgn0002", Collections.singleton("FBgn0003339"));
-        handler.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn0001", Collections.singleton("FBgn0003145"));
+        converter.rslv.addResolverEntry("7227", "FBgn0002", Collections.singleton("FBgn0003339"));
     }
 
     public void tearDown() throws Exception {
