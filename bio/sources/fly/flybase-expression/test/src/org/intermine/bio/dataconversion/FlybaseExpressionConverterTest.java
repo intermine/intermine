@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -34,9 +35,8 @@ public class FlybaseExpressionConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap());
         converter = new FlybaseExpressionConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0000003", Collections.singleton("FBgn0000003"));
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn0000003", Collections.singleton("FBgn0000003"));
     }
 
     public void testProcess() throws Exception {

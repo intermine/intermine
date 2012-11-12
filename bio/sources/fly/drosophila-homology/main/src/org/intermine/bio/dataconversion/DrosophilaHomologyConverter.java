@@ -35,7 +35,6 @@ public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub, evidence;
     private Map<String, String> genes = new HashMap<String, String>();
-    protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
     private OrganismRepository or;
     private static final String EVIDENCE_CODE_ABBR = "AA";
