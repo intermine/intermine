@@ -152,7 +152,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getGene(String geneId) {
         if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
-            return geneId;
+            return null;
         }
 
         int resCount = resolver.countResolutions(TAXON_FLY, geneId);

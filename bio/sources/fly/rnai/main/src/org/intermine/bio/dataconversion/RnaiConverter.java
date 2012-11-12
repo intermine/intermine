@@ -183,7 +183,7 @@ public class RnaiConverter extends BioFileConverter
             throw new RuntimeException("geneSymbol can't be null");
         }
         if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
-            return identifier;
+            return null;
         }
 
         int resCount = rslv.countResolutions(TAXON_FLY, identifier);
