@@ -32,4 +32,5 @@ query.add_constraint("length", ">=", "1024", "A")
 # query.set_logic("A")
 
 for row in query.rows():
-    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"], row["organism.shortName"]
+    print row["primaryIdentifier"], row["secondaryIdentifier"], row["symbol"], row["name"],
+        row["organism.shortName"]
