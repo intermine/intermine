@@ -16,7 +16,7 @@ ant clean
 ant
 chmod -R a+rX build/javadoc/
 if test "`find build/javadoc | wc -l`" -gt "1000" ; then
-    rsync -avc --delete build/javadoc/ flymine@web0:/var/www/html/api/
+    rsync -avc --delete build/javadoc/ flymine@web0:/var/www/flymine/api/
 else
     echo "Error with API documentation - see log file $LOGFILE for details" | mail -s "API Documentation failed" fh293@cam.ac.uk
 fi
