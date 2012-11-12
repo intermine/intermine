@@ -39,14 +39,14 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      */
     @Override
     public String getSeqIdentifier(String id) {
-    	if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }
 
         String updatedId = null;
-        int resCount = resolver.countResolutions(TAXON_FLY, id);
+        int resCount = rslv.countResolutions(TAXON_FLY, id);
         if (resCount == 1) {
-            updatedId = resolver.resolveId(TAXON_FLY, id).iterator().next();
+            updatedId = rslv.resolveId(TAXON_FLY, id).iterator().next();
         }
 
         return updatedId;
