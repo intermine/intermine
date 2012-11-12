@@ -32,6 +32,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     private Map<String, Item> miRNAgenes = new HashMap<String, Item>();
     private Set<String> problems = new HashSet<String>();
     private IdResolver rslv;
+    private static final String TAXON_FLY = "7227";
 
     protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
 
@@ -48,11 +49,11 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
-    	// Id resolver
-    	if (rslv == null) {
+        // Id resolver
+        if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver(Arrays.asList(new String[]{"gene", "mRNA"}));
         }
-    	
+        
         Item feature = getFeature();
         feature.setClassName("MiRNATarget");
         String geneName = record.getAttributes().get("Name").iterator().next();
@@ -69,11 +70,16 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     }
 
     private Item getTarget(String targetName) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
+        
         Item target = null;
         String primaryIdentifier = null;
-        int resCount = rslv.countResolutions("7227", "mRNA", targetName);
+        
+        int resCount = rslv.countResolutions(TAXON_FLY, "mRNA", targetName);
         if (resCount == 1) {
-            primaryIdentifier = rslv.resolveId("7227", "mRNA", targetName).iterator().next();
+            primaryIdentifier = rslv.resolveId(TAXON_FLY, "mRNA", targetName).iterator().next();
             target = targets.get(primaryIdentifier);
             if (target == null) {
                 target = converter.createItem("MRNA");
@@ -90,23 +96,25 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     }
 
     private Item getMiRNAGene(String geneName) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
         String geneNameToUse = (geneName.startsWith("dme")) ? geneName.substring(geneName
                         .indexOf("-") + 1) : geneName;
         // in FlyBase symbols are e.g. mir-5 not miR-5
         String symbol = geneNameToUse.toLowerCase();
-        String taxonId = getOrganism().getAttribute("taxonId").getValue();
-        if (rslv.hasTaxon(taxonId)) {
-            int resCount = rslv.countResolutions(taxonId, "gene", symbol);
+        if (rslv.hasTaxon(TAXON_FLY)) {
+            int resCount = rslv.countResolutions(TAXON_FLY, "gene", symbol);
             if (resCount != 1) {
                 if (!problems.contains(symbol)) {
                     LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                              + symbol + " count: " + resCount + " FBgn: "
-                             + rslv.resolveId(taxonId, "gene", symbol));
+                             + rslv.resolveId(TAXON_FLY, "gene", symbol));
                     problems.add(symbol);
                 }
                 return null;
             }
-            String primaryIdentifier = rslv.resolveId(taxonId, "gene", symbol).iterator().next();
+            String primaryIdentifier = rslv.resolveId(TAXON_FLY, "gene", symbol).iterator().next();
             Item gene = miRNAgenes.get(primaryIdentifier);
             if (gene == null) {
                 gene = converter.createItem("Gene");
