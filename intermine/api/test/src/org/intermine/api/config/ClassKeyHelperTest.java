@@ -40,6 +40,9 @@ public class ClassKeyHelperTest extends TestCase {
         ClassDescriptor cldCon = model.getClassDescriptorByName(pkg + "Contractor");
         ClassDescriptor cldEmb = model.getClassDescriptorByName(pkg + "Employable");
         ClassDescriptor cldDep = model.getClassDescriptorByName(pkg + "Department");
+        ClassDescriptor cldSec = model.getClassDescriptorByName(pkg + "Secretary");
+        ClassDescriptor cldSO = model.getClassDescriptorByName(pkg + "SimpleObject");
+        ClassDescriptor cldBank = model.getClassDescriptorByName(pkg + "Bank");
 
         ClassKeyHelper.addKey(expected, "Employable", cldEmb.getFieldDescriptorByName("name"));
         ClassKeyHelper.addKey(expected, "Employee", cldEmp.getFieldDescriptorByName("name"));
@@ -52,6 +55,9 @@ public class ClassKeyHelperTest extends TestCase {
         ClassKeyHelper.addKey(expected, "Company", cldCom.getFieldDescriptorByName("vatNumber"));
         ClassKeyHelper.addKey(expected, "Address", cldAdd.getFieldDescriptorByName("address"));
         ClassKeyHelper.addKey(expected, "Department", cldDep.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Secretary", cldSec.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "SimpleObject", cldSO.getFieldDescriptorByName("name"));
+        ClassKeyHelper.addKey(expected, "Bank", cldBank.getFieldDescriptorByName("name"));
         assertEquals(expected, ClassKeyHelper.readKeys(model, props));
     }
 
@@ -70,7 +76,7 @@ public class ClassKeyHelperTest extends TestCase {
         Map<String, List<FieldDescriptor>> classKeys = getClassKeys();
         assertTrue(ClassKeyHelper.hasKeyFields(classKeys, "Company"));
         assertTrue(ClassKeyHelper.hasKeyFields(classKeys, "Employee"));
-        assertFalse(ClassKeyHelper.hasKeyFields(classKeys, "Bank"));
+        assertFalse(ClassKeyHelper.hasKeyFields(classKeys, "Test"));
     }
 
     public void testGetKeyFieldValue() throws Exception {
