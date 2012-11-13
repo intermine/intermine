@@ -125,8 +125,12 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         // if file doesn't contain classes, revisit db
         Set<String> existedClsSet = resolver.getClassNames();
         if (!existedClsSet.containsAll(clsCol)) {
+            System.out .println("FlyBaseIdResolver resolver has class names: " 
+                    + existedClsSet + "but doesn't contain some classes in " + clsCol);
             existedClsSet.addAll(clsCol);
+            System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
             createFromDb(existedClsSet, db);
+            System.out .println("FlyBaseIdResolver caching in file: " + f.getName());
             resolver.writeToFile(f);
         }
     }
