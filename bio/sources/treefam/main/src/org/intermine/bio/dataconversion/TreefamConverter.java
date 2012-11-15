@@ -178,8 +178,10 @@ public class TreefamConverter extends BioFileConverter
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
             throws ObjectStoreException {
         
-        String gene1 = getGene(holder1.identifier, holder1.symbol, holder1.identifierType, holder1.taxonId);
-        String gene2 = getGene(holder2.identifier, holder2.symbol, holder2.identifierType, holder2.taxonId);
+        String gene1 = getGene(holder1.identifier, holder1.symbol,
+                holder1.identifierType, holder1.taxonId);
+        String gene2 = getGene(holder2.identifier, holder2.symbol,
+                holder2.identifierType, holder2.taxonId);
         
         // resolver didn't resolve
         if (gene1 == null || gene2 == null) {
@@ -365,13 +367,15 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier, String symbol) {
+        LOG.info("identifer : " + identifier + ", symbol: " + symbol);
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             LOG.info("ID resolver not used for taxon ID " + taxonId);
             return identifier;
         }
         
-        Map<String, Set<String>> resolvedIdMap = rslv.resolveIds(taxonId, new HashSet<String>(Arrays.asList(identifier, symbol)));
+        Map<String, Set<String>> resolvedIdMap = rslv.resolveIds(taxonId,
+                new HashSet<String>(Arrays.asList(identifier, symbol)));
         for (Entry<String, Set<String>> e : resolvedIdMap.entrySet()) {
             if (e.getValue() != null && e.getValue().size() == 1) {
                 return e.getValue().iterator().next();
