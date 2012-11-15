@@ -19,13 +19,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -178,8 +178,8 @@ public class TreefamConverter extends BioFileConverter
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
             throws ObjectStoreException {
         
-        String gene1 = getGene(holder1.identifier, holder1.identifierType, holder1.taxonId);
-        String gene2 = getGene(holder2.identifier, holder2.identifierType, holder2.taxonId);
+        String gene1 = getGene(holder1.identifier, holder1.symbol, holder1.identifierType, holder1.taxonId);
+        String gene2 = getGene(holder2.identifier, holder2.symbol, holder2.identifierType, holder2.taxonId);
         
         // resolver didn't resolve
         if (gene1 == null || gene2 == null) {
@@ -200,10 +200,10 @@ public class TreefamConverter extends BioFileConverter
         store(homologue);
     }
     
-    private String getGene(String id, String type, String taxonId)
+    private String getGene(String id, String symbol, String type, String taxonId)
             throws ObjectStoreException {
         String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-        String identifier = resolveGene(taxonId, id);
+        String identifier = resolveGene(taxonId, id, symbol);
         if (identifier == null) {
             return null;
         }
@@ -223,7 +223,9 @@ public class TreefamConverter extends BioFileConverter
         Set<String> allTaxonIds = new HashSet<String>();
         allTaxonIds.addAll(taxonIds);
         allTaxonIds.addAll(homologues);
-        if (rslv == null) {
+        if (rslv == null) { 
+            // gene_info doesn't have WBGene at the moment
+            rslv = IdResolverService.getWormIdResolver();
             rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
         LOG.info("Taxons in resolver:" + rslv.getTaxons());
@@ -282,7 +284,7 @@ public class TreefamConverter extends BioFileConverter
                 identifierType = configs[1];
             } 
             identifier = setIdentifier(identifier, symbol, geneField);
-            idsToGenes.put(id, new GeneHolder(identifier, identifierType, taxonId));
+            idsToGenes.put(id, new GeneHolder(identifier, symbol, identifierType, taxonId));
         }
     }
 
@@ -314,21 +316,22 @@ public class TreefamConverter extends BioFileConverter
     }
 
     /**
-     * temporary object that holds the id, identifier, and gene for each record
+     * temporary object that holds the id, identifier, symbol, and gene for each record
      * @author julie
      *
      */
     public class GeneHolder
     {
-        protected String identifier, taxonId, identifierType;
+        protected String identifier, symbol, taxonId, identifierType;
 
         /**
          * @param identifier gene identifier, eg FBgn
          * @param identifierType which field to set, eg. primaryIdentifier or symbol
          * @param taxonId organism for this gene
          */
-        public GeneHolder(String identifier, String identifierType, String taxonId) {
+        public GeneHolder(String identifier, String symbol, String identifierType, String taxonId) {
             this.identifier = identifier;
+            this.symbol = symbol;
             this.taxonId = taxonId;
             this.identifierType = identifierType;
         }
@@ -361,19 +364,25 @@ public class TreefamConverter extends BioFileConverter
         return identifier;
     }
 
-    private String resolveGene(String taxonId, String identifier) {
+    private String resolveGene(String taxonId, String identifier, String symbol) {
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             LOG.info("ID resolver not used for taxon ID " + taxonId);
             return identifier;
         }
-        int resCount = rslv.countResolutions(taxonId, identifier);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                    + identifier + " for taxon ID " + taxonId + " count: " + resCount + " "
-                    + rslv.resolveId(taxonId, identifier));
-            return null;
+        
+        Map<String, Set<String>> resolvedIdMap = rslv.resolveIds(taxonId, new HashSet<String>(Arrays.asList(identifier, symbol)));
+        for (Entry<String, Set<String>> e : resolvedIdMap.entrySet()) {
+            if (e.getValue() != null && e.getValue().size() == 1) {
+                return e.getValue().iterator().next();
+            }
+            
+            LOG.info("Resolve id: " + e.getKey() + " with resolution: " + e.getValue());
         }
-        return rslv.resolveId(taxonId, identifier).iterator().next();
+        
+      LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+      + identifier + " for taxon ID " + taxonId);
+      
+      return null;
     }
 }
