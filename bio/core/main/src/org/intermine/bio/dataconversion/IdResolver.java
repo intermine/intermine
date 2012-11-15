@@ -190,6 +190,18 @@ public class IdResolver
     }
     
     /**
+     * Return a set of taxon id.
+     * @return all taxon ids in resolver
+     */
+    public Set<String> getTaxons() {
+    	Set<String> taxonIdSet = new HashSet<String>();
+        for (MultiKey key : orgIdMaps.keySet()) {
+        	taxonIdSet.add((String) key.getKey(0));
+        }
+        return taxonIdSet;
+    }
+    
+    /**
      * Return true if the idResolver contains information about this class name.
      * @param clsName an go term to check for
      * @return true if has this term

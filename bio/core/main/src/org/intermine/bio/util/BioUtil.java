@@ -13,9 +13,9 @@ package org.intermine.bio.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
@@ -290,18 +290,19 @@ public final class BioUtil
      * Returns strains for given collection of taxon Ids
      *
      * @param taxonIdCol a collection of original taxon ID 
-     * @return strainCol for strain or original taxon if no strain exists in a set
+     * @return strainMap for strain or original taxon if no strain exists in a map 
+     *         (key:strain, value:original taxon)
      */
-    public static Set<String> getStrain(Collection<String> taxonIdCol) {
-        Set<String> strainCol = new HashSet<String>();
+    public static Map<String, String> getStrain(Collection<String> taxonIdCol) {
+        Map<String, String> strainMap = new HashMap<String, String>();
         for (String taxonId : taxonIdCol) {
             String strain = OR.getStrain(taxonId);
             if (strain == null) {
-            	strainCol.add(taxonId);
+            	strainMap.put(taxonId, taxonId);
             }
-            strainCol.add(strain);
+            strainMap.put(strain, taxonId);
     	}
 
-        return strainCol; 
+        return strainMap; 
     }
 }

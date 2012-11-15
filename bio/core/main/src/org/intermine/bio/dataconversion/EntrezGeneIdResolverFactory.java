@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -135,8 +134,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for Entrez Gene
      */
     protected void createIdResolver(Collection<String> taxonIds) {
-        System.out. println("Igore taxons: " + ignoredTaxonIds);
         taxonIds.removeAll(ignoredTaxonIds);
+        LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
 
         if (resolver == null) {
             resolver = new IdResolver(clsName);
@@ -166,7 +165,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         }
     }
 
-
     @Override
     // Not implemented. TaxonId is needed as argument
     protected void createIdResolver() {
@@ -174,17 +172,21 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     private void createFromFile(BufferedReader reader,
             Collection<String> taxonIds) throws IOException {
+        // yeast uses a strain
+        Map<String, String> newTaxonIds = BioUtil.getStrain(taxonIds);
+        LOG.info("New taxons: " + newTaxonIds.keySet() + ", original taxons: "
+                + newTaxonIds.values());
 
         NcbiGeneInfoParser parser = new NcbiGeneInfoParser(reader,
-                new HashSet<String>(taxonIds));
+                new HashSet<String>(newTaxonIds.keySet()));
         Map<String, Set<GeneInfoRecord>> records = parser.getGeneInfoRecords();
         if (records == null) {
             throw new IllegalArgumentException("Failed to read any records from gene_info file.");
         }
 
         // Some species are not found in gene_info
-        if (taxonIds.size() > records.size()) {
-            Set<String> taxonIdsCopy = new HashSet<String>(taxonIds);
+        if (newTaxonIds.size() > records.size()) {
+            Set<String> taxonIdsCopy = new HashSet<String>(newTaxonIds.keySet());
             taxonIdsCopy.removeAll(records.keySet());
             if (taxonIdsCopy.size() > 0) {
                 LOG.warn("No records in gene_info file for species: "
@@ -192,25 +194,22 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             }
         }
        
-        for (String taxonId : records.keySet()) {
-            if (resolver.hasTaxon(taxonId)) {
+        for (String newTaxon : records.keySet()) {
+            // resolver still uses original taxon
+            if (resolver.hasTaxon(newTaxonIds.get(newTaxon))) {
                 continue;
             }
-            String strain = BioUtil.getStrain(taxonId);
-            Set<GeneInfoRecord> genes = records.get(taxonId);
-            processGenes(taxonId, strain, genes);
+            Set<GeneInfoRecord> genes = records.get(newTaxon);
+            // use original taxon id in resolver
+            // no need to lookup strain in converter
+            processGenes(newTaxonIds.get(newTaxon), genes);
         }
     }
     
-    private void processGenes(String taxonId, String strain, Set<GeneInfoRecord> genes) {
-
-        // yeast uses a strain ID in the data but in the mine the taxon is the main yeast ID
-        // use strain ID to lookup data but store as main taxon ID
-        String lookupId = (StringUtils.isNotEmpty(strain) ? strain : taxonId);
-        
+    private void processGenes(String taxonId, Set<GeneInfoRecord> genes) {
         for (GeneInfoRecord record : genes) {
             String primaryIdentifier;
-            String config = config_xref.get(lookupId);
+            String config = config_xref.get(taxonId);
             if (record.xrefs.get(config) != null) {
                 String prefix = config_prefix.get(taxonId); // eg. RGD:
                 primaryIdentifier = record.xrefs.get(config).iterator().next();
