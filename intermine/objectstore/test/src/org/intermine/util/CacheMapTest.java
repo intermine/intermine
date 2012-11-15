@@ -27,7 +27,7 @@ public class CacheMapTest extends TestCase
 
         assertTrue(cm.size() < 1500);
         assertTrue("Expected first two to be missing",!(cm.containsKey(new Integer(2)) && cm.containsKey(new Integer(1))));
-        assertTrue("Expected last two to be present", cm.containsKey(new Integer(298)) || cm.containsKey(new Integer(297)));
+        assertTrue("Expected last two to be present", cm.containsKey(new Integer(298)) || cm.containsKey(new Integer(299)));
     }
 
     public void test2() throws Exception {
