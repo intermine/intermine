@@ -675,8 +675,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
 
     private void doTemplateComparison(TemplateQuery templateQuery, String resource) {
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
-        String expected = readExpected(resource);
-        assertEquals(expected, cg.generate(wsCodeGenInfo));
+        String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
+        assertEquals(expected, cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim());
     }
 
     /**

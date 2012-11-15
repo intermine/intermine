@@ -1,4 +1,0 @@
-<project name="ontology-annotation" default="default" basedir=".">
-  <description>build, test, package ontology-annotation</description>
-  <import file="../../../imbuild/source.xml"/>
-</project>
