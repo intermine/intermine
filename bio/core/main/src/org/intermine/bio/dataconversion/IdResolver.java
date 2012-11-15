@@ -42,16 +42,16 @@ public class IdResolver
 
     private String clsName;
 
-	@SuppressWarnings("unchecked")
-	protected Map<MultiKey, Map<String, Set<String>>> orgIdMaps = new MultiKeyMap();
     @SuppressWarnings("unchecked")
-	protected Map<MultiKey, Map<String, Set<String>>> orgSynMaps = new MultiKeyMap();
+    protected Map<MultiKey, Map<String, Set<String>>> orgIdMaps = new MultiKeyMap();
     @SuppressWarnings("unchecked")
-	protected Map<MultiKey, Map<String, Set<String>>> orgMainMaps = new MultiKeyMap();
+    protected Map<MultiKey, Map<String, Set<String>>> orgSynMaps = new MultiKeyMap();
     @SuppressWarnings("unchecked")
-	private Map<MultiKey, Map<String, Set<String>>> orgIdMainMaps = new MultiKeyMap();
+    protected Map<MultiKey, Map<String, Set<String>>> orgMainMaps = new MultiKeyMap();
     @SuppressWarnings("unchecked")
-	private Map<MultiKey, Map<String, Set<String>>> orgIdSynMaps = new MultiKeyMap();
+    private Map<MultiKey, Map<String, Set<String>>> orgIdMainMaps = new MultiKeyMap();
+    @SuppressWarnings("unchecked")
+    private Map<MultiKey, Map<String, Set<String>>> orgIdSynMaps = new MultiKeyMap();
 
     /**
      * Construct and empty IdResolver
@@ -86,7 +86,7 @@ public class IdResolver
      * @return true if id is a primaryIdentifier
      */
     public boolean isPrimaryIdentifier(String taxonId, String id) {
-    	return isPrimaryIdentifier(taxonId, this.clsName, id);
+        return isPrimaryIdentifier(taxonId, this.clsName, id);
     }
 
     /**
@@ -115,6 +115,23 @@ public class IdResolver
     }
     
     /**
+     * For the given set of ids return a map of matching primary identifiers in the given
+     * taxonId.  In many cases the set will have just one element. Some will have
+     * zero element.
+     * @param taxonId the organism to search within
+     * @param clsName go term
+     * @param ids the identifier set to resolve
+     * @return a map of matching primary identifiers
+     */
+    public Map<String, Set<String>> resolveIds(String taxonId, String clsName, Set<String> ids) {
+        Map<String, Set<String>> resolvedIdMap = new HashMap<String, Set<String>>();
+        for (String id : ids) {
+            resolvedIdMap.put(id, resolveId(taxonId, clsName, id));
+        }
+        return resolvedIdMap;
+    }
+    
+    /**
      * For the given id return a set of matching primary identifiers in the given
      * taxonId.  In many cases the set will have just one element. Some will have
      * zero element.
@@ -124,6 +141,18 @@ public class IdResolver
      */
     public Set<String> resolveId(String taxonId, String id) {
         return resolveId(taxonId, this.clsName, id);
+    }
+    
+    /**
+     * For the given id set return a map of matching primary identifiers in the given
+     * taxonId.  In many cases the set will have just one element. Some will have
+     * zero element.
+     * @param taxonId the organism to search within
+     * @param ids the identifier set to resolve
+     * @return a map of matching primary identifiers
+     */
+    public Map<String, Set<String>> resolveIds(String taxonId, Set<String> ids) {
+        return resolveIds(taxonId, this.clsName, ids);
     }
 
     /**
@@ -182,9 +211,9 @@ public class IdResolver
      * @return true if data about this taxon id
      */
     public boolean hasTaxon(String taxonId) {
-    	Set<String> taxonIdSet = new HashSet<String>();
+        Set<String> taxonIdSet = new HashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
-        	taxonIdSet.add((String) key.getKey(0));
+            taxonIdSet.add((String) key.getKey(0));
         }
         return taxonIdSet.contains(taxonId);
     }
@@ -194,9 +223,9 @@ public class IdResolver
      * @return all taxon ids in resolver
      */
     public Set<String> getTaxons() {
-    	Set<String> taxonIdSet = new HashSet<String>();
+        Set<String> taxonIdSet = new HashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
-        	taxonIdSet.add((String) key.getKey(0));
+            taxonIdSet.add((String) key.getKey(0));
         }
         return taxonIdSet;
     }
@@ -207,9 +236,9 @@ public class IdResolver
      * @return true if has this term
      */
     public boolean hasClassName(String clsName) {
-    	Set<String> clsNameSet = new HashSet<String>();
+        Set<String> clsNameSet = new HashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
-        	clsNameSet.add((String) key.getKey(1));
+            clsNameSet.add((String) key.getKey(1));
         }
         return clsNameSet.contains(clsName);
     }
@@ -219,9 +248,9 @@ public class IdResolver
      * @return a set of class names
      */
     public Set<String> getClassNames() {
-    	Set<String> clsNameSet = new HashSet<String>();
+        Set<String> clsNameSet = new HashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
-        	clsNameSet.add((String) key.getKey(1));
+            clsNameSet.add((String) key.getKey(1));
         }
         return clsNameSet;
     }
@@ -244,7 +273,7 @@ public class IdResolver
      * @param ids a set of alternative main identifiers
      */
     protected void addMainIds(String taxonId, String primaryIdentifier, Set<String> ids) {
-    	addMainIds(taxonId, this.clsName, primaryIdentifier, ids);
+        addMainIds(taxonId, this.clsName, primaryIdentifier, ids);
     }
 
     /**
@@ -265,7 +294,7 @@ public class IdResolver
      * @param ids a set synonyms
      */
     protected void addSynonyms(String taxonId, String primaryIdentifier, Set<String> ids) {
-    	addSynonyms(taxonId, this.clsName, primaryIdentifier, ids);
+        addSynonyms(taxonId, this.clsName, primaryIdentifier, ids);
     }
 
     /**
@@ -288,7 +317,7 @@ public class IdResolver
      * @param synonyms synonyms for the main identifier
      */
     public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-    	addResolverEntry(taxonId, this.clsName, primaryId, synonyms);
+        addResolverEntry(taxonId, this.clsName, primaryId, synonyms);
     }
 
     /**
