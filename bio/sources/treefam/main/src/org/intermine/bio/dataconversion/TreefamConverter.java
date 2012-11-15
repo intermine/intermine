@@ -377,11 +377,10 @@ public class TreefamConverter extends BioFileConverter
         Map<String, Set<String>> resolvedIdMap = rslv.resolveIds(taxonId,
                 new HashSet<String>(Arrays.asList(identifier, symbol)));
         for (Entry<String, Set<String>> e : resolvedIdMap.entrySet()) {
+            LOG.info("Resolve id: " + e.getKey() + " with resolution: " + e.getValue());
             if (e.getValue() != null && e.getValue().size() == 1) {
                 return e.getValue().iterator().next();
             }
-            
-            LOG.info("Resolve id: " + e.getKey() + " with resolution: " + e.getValue());
         }
         
       LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
