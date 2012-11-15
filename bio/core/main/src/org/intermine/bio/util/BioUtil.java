@@ -295,7 +295,6 @@ public final class BioUtil
      *         (key:strain, value:original taxon)
      */
     public static Map<String, String> getStrain(Set<String> taxonIdSet) {
-    	LOG.info("Input taxonids: " + taxonIdSet);
         Map<String, String> strainMap = new HashMap<String, String>();
         for (String taxonId : taxonIdSet) {
             String strain = OR.getStrain(taxonId);
@@ -305,7 +304,7 @@ public final class BioUtil
                 strainMap.put(strain, taxonId);
             }
     	}
-        LOG.info("strain Map: " + strainMap);
+        
         return strainMap; 
     }
 }

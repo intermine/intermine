@@ -170,9 +170,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     protected void createIdResolver() {
     }
 
-    private void createFromFile(BufferedReader reader,
-            Set<String> taxonIds) throws IOException {
-        // yeast uses a strain
+    private void createFromFile(BufferedReader reader, Set<String> taxonIds) throws IOException {
+        // in ncbi gene_info, some organisms use strain taxon id, e.g.yeast
         Map<String, String> newTaxonIds = BioUtil.getStrain(taxonIds);
         LOG.info("New taxons: " + newTaxonIds.keySet() + ", original taxons: "
                 + newTaxonIds.values());
@@ -209,7 +208,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private void processGenes(String taxonId, Set<GeneInfoRecord> genes) {
         for (GeneInfoRecord record : genes) {
             String primaryIdentifier;
-            String config = config_xref.get(taxonId);
+            String config = config_xref.get(taxonId); // the original taxon id, not strain
             if (record.xrefs.get(config) != null) {
                 String prefix = config_prefix.get(taxonId); // eg. RGD:
                 primaryIdentifier = record.xrefs.get(config).iterator().next();
