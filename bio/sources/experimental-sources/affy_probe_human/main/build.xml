@@ -1,4 +1,0 @@
-<project name="affy_probe_human-tasks" default="default" basedir=".">
-  <description>build affy_probe_human tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

@@ -1,4 +1,0 @@
-<project name="mp-annotation-tasks" default="default" basedir=".">
-  <description>build mp-annotation tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

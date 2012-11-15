@@ -1,4 +1,0 @@
-<project name="unimine-postprocess" default="default" basedir=".">
-  <description>perform post processing for unimine</description>
-  <import file="../../imbuild/postprocess.xml"/>
-</project>

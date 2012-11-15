@@ -500,7 +500,20 @@
                       constraints="organism.name=[Organism]"
                       views="primaryIdentifier, organism.shortName, locations.locatedOn.primaryIdentifier,
                              locations.start, locations.end, locations.strand"/>
-
+      <graphdisplayer id="mouse_human_orthologue_pair"
+                      title="Mouse-human orthologue pair"
+                      description="dots would be where there is a mouse-human orthologue pair "
+                      graphType="ScatterChart"
+                      domainLabel="Chromosome location for humans"
+                      rangeLabel="Chromosome location for mouses"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      correlation="chromosomeLocation.locatedOn.primaryIdentifier,homologues.homologue.chromosomeLocation.locatedOn.primaryIdentifier"
+                      seriesPath=""
+                      seriesValues=""
+                      seriesLabels=""
+                      constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>
       <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
                                  description="GO terms enriched for items in this list."
