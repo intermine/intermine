@@ -45,11 +45,6 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private Map<String, String> config_prefix = new HashMap<String, String>();
     private static final Set<String> ignoredTaxonIds = new HashSet<String>();
 
-    static {
-        // temporary hack. put this in config file
-        ignoredTaxonIds.add("7165");
-    }
-    
     /**
      * Constructor read pid configuration
      */
@@ -140,6 +135,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return an IdResolver for Entrez Gene
      */
     protected void createIdResolver(Collection<String> taxonIds) {
+        System.out. println("Igore taxons: " + ignoredTaxonIds);
         taxonIds.removeAll(ignoredTaxonIds);
 
         if (resolver == null) {
@@ -247,20 +243,26 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         }
 
         for (Map.Entry<Object, Object> entry : entrezConfig.entrySet()) {
-            String key = (String) entry.getKey(); // e.g. 10090.xref
-            String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
+            if ("taxon.ignored".equals(entry.getKey())) {  // taxon to ignore
+                if (entry.getValue() != null) {
+                    String[] ignoredTaxons = ((String) entry.getValue()).trim().split("\\s*,\\s*");
+                    ignoredTaxonIds.addAll(Arrays.asList(ignoredTaxons));
+                }
+            } else {
+                String key = (String) entry.getKey(); // e.g. 10090.xref
+                String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
+                String[] attributes = key.split("\\.");
+                if (attributes.length == 0) {
+                    throw new RuntimeException("Problem loading properties '"
+                            + PROP_FILE + "' on line " + key);
+                }
 
-            String[] attributes = key.split("\\.");
-            if (attributes.length == 0) {
-                throw new RuntimeException("Problem loading properties '"
-                        + PROP_FILE + "' on line " + key);
-            }
-
-            String taxonId = attributes[0];
-            if ("xref".equals(attributes[1])) {
-                config_xref.put(taxonId, value);
-            } else if ("prefix".equals(attributes[1])) {
-                config_prefix.put(taxonId, value);
+                String taxonId = attributes[0];
+                if ("xref".equals(attributes[1])) {
+                    config_xref.put(taxonId, value);
+                } else if ("prefix".equals(attributes[1])) {
+                    config_prefix.put(taxonId, value);
+                }
             }
         }
     }

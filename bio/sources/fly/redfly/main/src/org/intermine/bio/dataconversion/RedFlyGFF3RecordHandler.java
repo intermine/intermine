@@ -152,10 +152,10 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
     private Item getGene(String geneId) {
         if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
-            return geneId;
+            return null;
         }
 
-        int resCount = resolver.countResolutions(TAXON_FLY, geneId);
+        int resCount = rslv.countResolutions(TAXON_FLY, geneId);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + geneId + " count: " + resCount + " FBgn: "

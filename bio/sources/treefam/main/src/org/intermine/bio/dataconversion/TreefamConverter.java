@@ -223,8 +223,10 @@ public class TreefamConverter extends BioFileConverter
         Set<String> allTaxonIds = new HashSet<String>();
         allTaxonIds.addAll(taxonIds);
         allTaxonIds.addAll(homologues);
+        // yeast uses a strain
+        Set<String> newTaxonIds = BioUtil.getStrain(allTaxonIds);
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
+            rslv = IdResolverService.getIdResolverByOrganism(newTaxonIds);
         }
     }
     
@@ -361,18 +363,17 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier) {
-        // yeast uses a strain
         String newTaxonId = BioUtil.getStrain(taxonId);
         if (rslv == null || !rslv.hasTaxon(newTaxonId)) {
             // no id resolver available, so return the original identifier
-            LOG.info("ID resolver not used for taxon ID " + taxonId);
+            LOG.info("ID resolver not used for taxon ID " + newTaxonId);
             return identifier;
         }
         int resCount = rslv.countResolutions(newTaxonId, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                    + identifier + " for taxon ID " + taxonId + " count: " + resCount + " "
-                    + rslv.resolveId(taxonId, identifier));
+                    + identifier + " for taxon ID " + newTaxonId + " count: " + resCount + " "
+                    + rslv.resolveId(newTaxonId, identifier));
             return null;
         }
         return rslv.resolveId(newTaxonId, identifier).iterator().next();

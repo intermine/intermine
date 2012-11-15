@@ -188,6 +188,31 @@ public class IdResolver
         }
         return taxonIdSet.contains(taxonId);
     }
+    
+    /**
+     * Return true if the idResolver contains information about this class name.
+     * @param clsName an go term to check for
+     * @return true if has this term
+     */
+    public boolean hasClassName(String clsName) {
+    	Set<String> clsNameSet = new HashSet<String>();
+        for (MultiKey key : orgIdMaps.keySet()) {
+        	clsNameSet.add((String) key.getKey(1));
+        }
+        return clsNameSet.contains(clsName);
+    }
+    
+    /**
+     * Return a set of class names the reslover holds
+     * @return a set of class names
+     */
+    public Set<String> getClassNames() {
+    	Set<String> clsNameSet = new HashSet<String>();
+        for (MultiKey key : orgIdMaps.keySet()) {
+        	clsNameSet.add((String) key.getKey(1));
+        }
+        return clsNameSet;
+    }
 
     /**
      * Add alternative main identifiers for a primary identifier to the IdResolver.

@@ -19,6 +19,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
@@ -58,7 +59,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     }
     
     public FlyBaseIdResolverFactory(Collection<String> clsCol) {
-    	this.clsCol = clsCol;
+        this.clsCol = clsCol;
     }
 
     /**
@@ -69,11 +70,11 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     protected void createIdResolver() {
 
         if (resolver == null) {
-        	if (this.clsCol.isEmpty() || this.clsCol == null) {
+            if (this.clsCol == null || this.clsCol.isEmpty()) {
                 resolver = new IdResolver(clsName);
-        	} else {
+            } else {
                 resolver = new IdResolver();
-        	}
+            }
         }
 
         if (resolver.hasTaxon(taxonId)) {
@@ -83,22 +84,21 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         try {
             db = DatabaseFactory.getDatabase(propName);
 
-            String cacheFileName = "build/" + db.getName() + "." + clsName
-                + ((taxonId != null) ? "." + taxonId : "");
+            String cacheFileName = "build/" + db.getName() + ".idresolver.cache";
             File f = new File(cacheFileName);
             if (f.exists()) {
                 System.out .println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
-                if (this.clsCol.isEmpty() || this.clsCol == null) {
-                	createFromFile(clsName, f);
+                if (this.clsCol == null || this.clsCol.isEmpty()) {
+                    createFromFile(clsName, f);
                 } else {
-                	createFromFile(this.clsCol, f);
+                    createFromFile(this.clsCol, f);
                 }
             } else {
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
-                if (this.clsCol.isEmpty() || this.clsCol == null) {
-                	createFromDb(clsName, db);
+                if (this.clsCol == null || this.clsCol.isEmpty()) {
+                    createFromDb(clsName, db);
                 } else {
-                	createFromDb(this.clsCol, db);
+                    createFromDb(this.clsCol, db);
                 }
                 resolver.writeToFile(f);
                 System.out .println("FlyBaseIdResolver caching in file: " + cacheFileName);
@@ -110,30 +110,42 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     
     @Override
     protected void createFromFile(String clsName, File f) throws IOException {
-    	createFromFile(Arrays.asList(new String[]{clsName}), f);
+        createFromFile(Arrays.asList(new String[]{clsName}), f);
     }
     
     protected void createFromFile(Collection<String> clsCol, File f) throws IOException {
-    	if (clsCol.size() > 1) {
-    		resolver = new IdResolver();
-    	} else {
-    		resolver = new IdResolver(clsCol.iterator().next());
-    	}
-    	
+        if (clsCol.size() > 1) {
+            resolver = new IdResolver();
+        } else {
+            resolver = new IdResolver(clsCol.iterator().next());
+        }
+        
         resolver.populateFromFile(f);
+        
+        // if file doesn't contain classes, revisit db
+        Set<String> existedClsSet = resolver.getClassNames();
+        if (!existedClsSet.containsAll(clsCol)) {
+            System.out .println("FlyBaseIdResolver resolver has class names: " 
+                    + existedClsSet + "but doesn't contain some classes in " + clsCol);
+            existedClsSet.addAll(clsCol);
+            System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
+            createFromDb(existedClsSet, db);
+            System.out .println("FlyBaseIdResolver caching in file: " + f.getName());
+            resolver.writeToFile(f);
+        }
     }
 
     @Override
     protected void createFromDb(String clsName, Database db) {
-    	createFromDb(Arrays.asList(new String[]{clsName}), db);
+        createFromDb(Arrays.asList(new String[]{clsName}), db);
     }
     
     protected void createFromDb(Collection<String> clsCol, Database db) {
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
-        	conn = db.getConnection();
-        	for (String clsName : clsCol) {
+            conn = db.getConnection();
+            for (String clsName : clsCol) {
                 String query = "select c.cvterm_id"
                     + " from cvterm c, cv"
                     + " where c.cv_id = cv.cv_id"
@@ -257,7 +269,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 }
                 stmt.close();
                 LOG.info("dbxref query returned " + i + " rows.");
-        	}
+            }
         } catch (Exception e) {
             LOG.error(e);
             throw new RuntimeException(e);
