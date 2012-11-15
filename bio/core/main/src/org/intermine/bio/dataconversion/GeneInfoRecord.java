@@ -78,6 +78,9 @@ public class GeneInfoRecord
         if (defaultSymbol != null) {
             ids.add(defaultSymbol);
         }
+        if (locusTag != null) {
+            ids.add(locusTag);
+        }
         return ids;
     }
 
