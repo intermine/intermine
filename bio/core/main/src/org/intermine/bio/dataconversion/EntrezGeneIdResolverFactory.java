@@ -66,7 +66,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * Return an IdResolver by a list of taxon id, if not already built then create it.
      * @return a specific IdResolver
      */
-    public IdResolver getIdResolver(Collection<String> taxonIds) {
+    public IdResolver getIdResolver(Set<String> taxonIds) {
         if (taxonIds == null | taxonIds.isEmpty()) {
             return null;
         }
@@ -101,7 +101,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @param failOnError if false swallow any exceptions and return null
      * @return a specific IdResolver
      */
-    public IdResolver getIdResolver(Collection<String> taxonIds, boolean failOnError) {
+    public IdResolver getIdResolver(Set<String> taxonIds, boolean failOnError) {
         if (!caughtError) {
             try {
                 createIdResolver(taxonIds);
@@ -124,7 +124,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         if (taxonId == null) {
             createIdResolver(new HashSet<String>());
         } else {
-            createIdResolver(Arrays.asList(taxonId));
+            createIdResolver(new HashSet<String>(Arrays.asList(taxonId)));
         }
     }
 
@@ -133,7 +133,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @param taxonIds list of taxon IDs
      * @return an IdResolver for Entrez Gene
      */
-    protected void createIdResolver(Collection<String> taxonIds) {
+    protected void createIdResolver(Set<String> taxonIds) {
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
 
@@ -171,7 +171,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     }
 
     private void createFromFile(BufferedReader reader,
-            Collection<String> taxonIds) throws IOException {
+            Set<String> taxonIds) throws IOException {
         // yeast uses a strain
         Map<String, String> newTaxonIds = BioUtil.getStrain(taxonIds);
         LOG.info("New taxons: " + newTaxonIds.keySet() + ", original taxons: "
