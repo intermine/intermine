@@ -53,7 +53,7 @@ public class TemplatePrecomputeHelperTest extends TestCase {
     }
 
     public void testBugWhereTrue() throws Exception {
-        Reader reader = new StringReader("<template name=\"flibble\" title=\"flobble\" longDescription=\"wurble\" comment=\"wibble\" >"
+        Reader reader = new StringReader("<template name=\"flibble\" title=\"flobble\" comment=\"wibble\" >"
                 + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" constraintLogic=\"A and B and C and D\">"
                 + "<node path=\"Employee\" type=\"Employee\"></node>"
                 + "<node path=\"Employee.age\" type=\"Integer\">"
@@ -67,8 +67,8 @@ public class TemplatePrecomputeHelperTest extends TestCase {
         TemplateQuery tc = t.cloneWithoutEditableConstraints();
         System.out.println(t.getConstraintLogic() + " -> " + tc.getConstraintLogic());
         System.out.println(TemplateQueryBinding.marshal(t, 2));
-        String expected = "<template name=\"flibble\" title=\"flobble\" longDescription=\"\" comment=\"wibble\">"
-            + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" constraintLogic=\"A and B and C and D\">"
+        String expected = "<template name=\"flibble\" title=\"flobble\" comment=\"wibble\">"
+            + "<query name=\"flibble\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\" constraintLogic=\"A and B and C and D\">"
             + "<constraint path=\"Employee.age\" code=\"C\" editable=\"false\" description=\"c\" op=\"!=\" value=\"30\"/>"
             + "<constraint path=\"Employee.age\" code=\"A\" editable=\"false\" description=\"a\" op=\"!=\" value=\"10\"/>"
             + "<constraint path=\"Employee.age\" code=\"B\" editable=\"true\" description=\"b\" op=\"!=\" value=\"20\"/>"

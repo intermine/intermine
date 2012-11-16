@@ -168,7 +168,8 @@ public class GFF3Exporter implements Exporter
             }
 
             if (writtenResultsCount == 0) {
-                out.println("Nothing was found for export");
+                out.println("Nothing to export. Sequence features might miss some information, " +
+                        "e.g. chromosome location, etc.");
             }
 
             out.flush();

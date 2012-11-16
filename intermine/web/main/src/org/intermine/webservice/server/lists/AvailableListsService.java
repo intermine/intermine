@@ -10,6 +10,7 @@ package org.intermine.webservice.server.lists;
  *
  */
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +19,10 @@ import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.exceptions.BadRequestException;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
@@ -65,9 +68,9 @@ public class AvailableListsService extends WebService
     @Override
     protected int getDefaultFormat() {
         if (hasCallback()) {
-            return JSONP_FORMAT;
+            return Formats.JSONP;
         } else {
-            return JSON_FORMAT;
+            return Formats.JSON;
         }
     }
 
@@ -79,6 +82,9 @@ public class AvailableListsService extends WebService
         }
         if (formatIsJSONP()) {
             attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
+        } if (getFormat() == Formats.HTML) {
+            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
+                Arrays.asList("Name", "Type", "Description", "Size"));
         }
         return attributes;
     }
@@ -86,22 +92,17 @@ public class AvailableListsService extends WebService
     private ListFormatter getFormatter() {
         int format = getFormat();
         boolean jsDates = Boolean.parseBoolean(request.getParameter("jsDates"));
-        switch(format) {
-            case (WebService.TSV_FORMAT): {
-                return new FlatListFormatter();
-            }
-            case (WebService.JSON_FORMAT): {
-                Profile profile = getPermission().getProfile();
-                return new JSONListFormatter(im, profile, jsDates);
-            }
-            case (WebService.JSONP_FORMAT): {
-                Profile profile = getPermission().getProfile();
-                return new JSONListFormatter(im, profile, jsDates);
-            }
-            default: {
-                throw new BadRequestException("Unknown request format");
-            }
+        if (formatIsJSON()) { // Most common - test this first.
+            Profile profile = getPermission().getProfile();
+            return new JSONListFormatter(im, profile, jsDates);
         }
+        if (formatIsFlatFile() || Formats.TEXT == format) {
+            return new FlatListFormatter(); // One name per line, so tsv and csv is the same
+        }
+        if (Formats.HTML == format) {
+            return new HtmlListFormatter();
+        }
+        throw new BadRequestException("Unknown request format");
     }
 
 }

@@ -317,7 +317,7 @@
 <!--
    NULL OR NOT NULL CONSTRAINT
 -->
-  <c:if test="${(dec.path.attribute && !dec.path.primitive) || dec.path.reference || dec.path.collection}">
+  <c:if test="${(dec.path.attribute && !dec.path.primitive)}">
   <br/>
   <FIELDSET class="constraintFieldset">
     <LEGEND>
@@ -330,7 +330,7 @@
         <c:if test="${dec.nullSelected}">
           <c:set var="selectedValue" value="${dec.selectedValue}" />
         </c:if>
-        <input type="radio" name="nullConstraint" id="empty1" value="NULL" disabled <c:if test="${selectedValue == 'IS NULL'}">checked</c:if>/>
+        <input type="radio" name="nullConstraint" id="empty1" value="NULL" disabled <c:if test="${selectedValue == 'IS NULL' || !dec.nullSelected}">checked</c:if>/>
           <label for="empty1">
             <fmt:message key="query.constraint.null"/>
           </label>

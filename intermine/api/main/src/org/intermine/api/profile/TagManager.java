@@ -488,11 +488,11 @@ public class TagManager
             throw new TagNamePermissionException();
         }
 
-        if (tagNameNeedsPermission(tagName) && profile.isSuperuser()
-            && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null) {
-            throw new TagNamePermissionException("You cannot add a tag starting with "
-                + TagNames.IM_PREFIX + ", you are not the owner.");
-        }
+        //if (tagNameNeedsPermission(tagName) && profile.isSuperuser()
+        //    && type.equals(TagTypes.BAG) && profile.getSavedBags().get(objectIdentifier) == null) {
+        //    throw new TagNamePermissionException("You cannot add a tag starting with "
+        //        + TagNames.IM_PREFIX + ", you are not the owner.");
+        //}
         if (!isValidTagName(tagName)) {
             throw new TagNameException();
         }

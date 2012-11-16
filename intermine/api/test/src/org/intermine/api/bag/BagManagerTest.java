@@ -39,14 +39,15 @@ public class BagManagerTest extends InterMineAPITestCase
         super(arg);
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        superUser = im.getProfileManager().getSuperuserProfile();
-        emptyUser = im.getProfileManager().getProfile("emptyUser");
-        tagManager = im.getProfileManager().getTagManager();
-        bagManager = im.getBagManager();
-
         ProfileManager pm = im.getProfileManager();
+        superUser = pm.getSuperuserProfile();
+        emptyUser = pm.getProfile("emptyUser");
+        tagManager = pm.getTagManager();
+        bagManager = im.getBagManager();
+        
         bobProfile = new Profile(pm, "bob", 101, "bob_pass", new HashMap(), new HashMap(),
                 new HashMap(), true, false);
         pm.createProfile(bobProfile);

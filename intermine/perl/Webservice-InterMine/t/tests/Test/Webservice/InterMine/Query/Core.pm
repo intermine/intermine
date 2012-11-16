@@ -331,7 +331,30 @@ sub add_multi_value_constraint:Test(10) {
     isa_ok($con, 'Webservice::InterMine::Constraint::Multi', ".. and it");
     is($con->op, 'NONE OF');
     is_deeply($con->values, [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
+}
 
+sub add_range_constraint:Test(6) {
+    my $test = shift;
+    my $obj = $test->{object};
+    my $con;
+    lives_ok(
+        sub {
+            $con = $obj->add_constraint(
+                path => 'Employee.age',
+                op => 'OVERLAPS',
+                values => ['1..10', '30..35'],
+                $test->extra_constraint_args,
+            );
+        },
+        "Makes a range constraint"
+    );
+    isa_ok($con, 'Webservice::InterMine::Constraint::Range', '..and it');
+
+    lives_ok {$con = $obj->add_constraint(age => {overlaps => ['2..20', '40..45']})} "Can use DBIx-ish sugar";
+    isa_ok($con, 'Webservice::InterMine::Constraint::Range', '..and it');
+
+    is($con->op, 'OVERLAPS');
+    is_deeply($con->values, ['2..20', '40..45']);
 }
 
 sub add_subclass_problem:Test(5) {

@@ -15,6 +15,12 @@ class WebserviceTest(unittest.TestCase): # pragma: no cover
     MAX_ATTEMPTS = 50
     maxDiff = None
 
+    def assertIsNotNone(self, expr, msg = None):
+        try:
+            return unittest.TestCase.assertIsNotNone(self, expr, msg)
+        except AttributeError:
+            return self.assertTrue(expr is not None, msg)
+
     def get_test_root(self):
         return "http://localhost:" + str(WebserviceTest.TEST_PORT) + "/testservice/service"
 
@@ -133,9 +139,10 @@ class TestQuery(WebserviceTest): # pragma: no cover
 
     model = None
     service = None
-    expected_unary = '[<UnaryConstraint: Employee.age IS NULL>, <UnaryConstraint: Employee.name IS NOT NULL>]'
+    expected_unary = '[<UnaryConstraint: Employee.age IS NULL>, <UnaryConstraint: Employee.name IS NOT NULL>, <UnaryConstraint: Employee.address IS NULL>]'
     expected_binary = '[<BinaryConstraint: Employee.age > 50000>, <BinaryConstraint: Employee.name = John>, <BinaryConstraint: Employee.end != 0>]'
     expected_multi = "[<MultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry']>, <MultiConstraint: Employee.name NONE OF ['Sue', 'Jane', 'Helen']>]"
+    expected_range = "[<RangeConstraint: Employee.age OVERLAPS ['1..10', '30..35']>]"
     expected_list = '[<ListConstraint: Employee IN my-list>, <ListConstraint: Employee.department.manager NOT IN my-list>]'
     expected_loop = '[<LoopConstraint: Employee IS Employee.department.manager>, <LoopConstraint: Employee.department.manager IS NOT Employee.department.company.CEO>]'
     expected_ternary = '[<TernaryConstraint: Employee LOOKUP Susan>, <TernaryConstraint: Employee.department.manager LOOKUP John IN Wernham-Hogg>]'
@@ -221,12 +228,30 @@ class TestQuery(WebserviceTest): # pragma: no cover
     CONSTRAINTS_COUNT_3 = 2
 
     XML_8 = '''
-        <query nampe="codesNotInOrder" model="testmodel" view="Employee.name Employee.age">
+        <query name="codesNotInOrder" model="testmodel" view="Employee.name Employee.age">
             <constraint path="Employee.name" op="=" value="foo" code="X"/>
             <constraint path="Employee.name" op="=" value="bar" code="Y"/>
             <constraint path="Employee.name" op="=" value="baz" code="Z"/>
         </query>
           '''
+
+    XML_9 = '''
+        <query name="ranges" model="testmodel" view="Employee.name Employee.age">
+          <constraint path="Employee.age" op="OVERLAPS" code="A">
+            <value>1..10</value>
+            <value>30..35</value>
+          </constraint>
+        </query>
+        '''
+
+    XML_10 = '''
+        <query name="ranges" model="testmodel" view="Employee.name Employee.age">
+          <constraint path="Employee.name" op="ONE OF" code="A">
+            <value>foo</value>
+            <value>bar</value>
+          </constraint>
+        </query>
+        '''
 
     def setUp(self):
         if self.service is None:
@@ -282,6 +307,16 @@ class TestQuery(WebserviceTest): # pragma: no cover
 
         self.assertIsNotNone(v, "query should have a constraint with the code 'X', but it only has the codes: %s" % map(lambda x: x.code, q8.constraints))
         self.assertEqual("foo", v, "And it has the right value")
+
+        q9 = self.service.new_query(xml = TestQuery.XML_9)
+        self.assertEqual(len(q9.constraints), 1)
+        self.assertEqual(q9.get_constraint('A').op, 'OVERLAPS')
+        self.assertEqual(q9.get_constraint('A').values, ['1..10', '30..35'])
+
+        q10 = self.service.new_query(xml = TestQuery.XML_10)
+        self.assertEqual(len(q10.constraints), 1)
+        self.assertEqual(q10.get_constraint('A').op, 'ONE OF')
+        self.assertEqual(q10.get_constraint('A').values, ['foo', 'bar'])
 
     def testAddViews(self):
         """Queries should be able to add legal views, and complain about illegal ones"""
@@ -478,6 +513,7 @@ class TestQuery(WebserviceTest): # pragma: no cover
         """Queries should be fine with NULL/NOT NULL constraints"""
         self.q.add_constraint('Employee.age', 'IS NULL')
         self.q.add_constraint('Employee.name', 'IS NOT NULL')
+        self.q.add_constraint('Employee.address', 'IS NULL')
         self.assertEqual(self.q.constraints.__repr__(), self.expected_unary)
 
     def testUnaryConstraintsSugar(self):
@@ -486,6 +522,7 @@ class TestQuery(WebserviceTest): # pragma: no cover
 
         self.q.add_constraint(Employee.age == None)
         self.q.add_constraint(Employee.name != None)
+        self.q.add_constraint(Employee.address == None)
         self.assertEqual(self.q.constraints.__repr__(), self.expected_unary)
 
     def testAddBinaryConstraints(self):
@@ -542,6 +579,13 @@ class TestQuery(WebserviceTest): # pragma: no cover
         self.assertEqual(self.q.constraints.__repr__(), self.expected_multi)
         self.q.add_constraint(Employee.name == "Tom, Dick, Harry") # This method does not throw an error in this form!!
         self.assertRaises(ConstraintError, self.q.add_constraint, Employee == ["Tom", "Dick", "Harry"])
+
+    def testRangeConstraint(self):
+        """Queries should be OK with range constraints"""
+        self.q.add_constraint('Employee.age', 'OVERLAPS', ['1..10', '30..35'])
+        self.assertEqual(self.q.constraints.__repr__(), self.expected_range)
+        self.assertRaises(TypeError, self.q.add_constraint, "Employee.age", "OVERLAPS", "Tom, Dick, Harry")
+        self.q.add_constraint('Employee', 'OVERLAPS', ['1..10', '30..35'])
 
     def testListConstraint(self):
         """Queries should be ok with list constraints"""
@@ -686,11 +730,12 @@ class TestQuery(WebserviceTest): # pragma: no cover
             ["John", "Paul", "Mary"])
         self.q.add_constraint("Employee.department.manager", "IS", "Employee")
         self.q.add_constraint("Employee", "IN", "some list of employees")
+        self.q.add_constraint("Employee.age", "OVERLAPS", ["1..10", "30..35"])
         self.q.add_constraint("Employee.department.employees", "Manager")
         self.q.add_join("Employee.department", "outer")
         self.q.add_sort_order("Employee.age")
-        self.q.set_logic("(A and B) or (A and C and D) and (E or F)")
-        expected ='<query constraintLogic="((A and B) or (A and C and D)) and (E or F)" longDescription="" model="testmodel" name="" sortOrder="Employee.age asc" view="Employee.name Employee.age Employee.department.name"><join path="Employee.department" style="OUTER"/><constraint code="A" op="IS NOT NULL" path="Employee.name"/><constraint code="B" op="&gt;" path="Employee.age" value="10"/><constraint code="C" extraValue="Wernham-Hogg" op="LOOKUP" path="Employee.department" value="Sales"/><constraint code="D" op="ONE OF" path="Employee.department.employees.name"><value>John</value><value>Paul</value><value>Mary</value></constraint><constraint code="E" loopPath="Employee" op="=" path="Employee.department.manager"/><constraint code="F" op="IN" path="Employee" value="some list of employees"/><constraint path="Employee.department.employees" type="Manager"/></query>'
+        self.q.set_logic("(A and B) or (A and C and D) and (E or F or G)")
+        expected ='<query constraintLogic="((A and B) or (A and C and D)) and (E or F or G)" longDescription="" model="testmodel" name="" sortOrder="Employee.age asc" view="Employee.name Employee.age Employee.department.name"><join path="Employee.department" style="OUTER"/><constraint code="A" op="IS NOT NULL" path="Employee.name"/><constraint code="B" op="&gt;" path="Employee.age" value="10"/><constraint code="C" extraValue="Wernham-Hogg" op="LOOKUP" path="Employee.department" value="Sales"/><constraint code="D" op="ONE OF" path="Employee.department.employees.name"><value>John</value><value>Paul</value><value>Mary</value></constraint><constraint code="E" loopPath="Employee" op="=" path="Employee.department.manager"/><constraint code="F" op="IN" path="Employee" value="some list of employees"/><constraint code="G" op="OVERLAPS" path="Employee.age"><value>1..10</value><value>30..35</value></constraint><constraint path="Employee.department.employees" type="Manager"/></query>'
         self.assertEqual(expected, self.q.to_xml())
         self.assertEqual(expected, self.q.clone().to_xml()) # Clones must produce identical XML
 
@@ -780,9 +825,10 @@ class TestQuery(WebserviceTest): # pragma: no cover
 
 class TestTemplate(TestQuery): # pragma: no cover
 
-    expected_unary = '[<TemplateUnaryConstraint: Employee.age IS NULL (editable, locked)>, <TemplateUnaryConstraint: Employee.name IS NOT NULL (editable, locked)>]'
+    expected_unary = '[<TemplateUnaryConstraint: Employee.age IS NULL (editable, locked)>, <TemplateUnaryConstraint: Employee.name IS NOT NULL (editable, locked)>, <TemplateUnaryConstraint: Employee.address IS NULL (editable, locked)>]'
     expected_binary = '[<TemplateBinaryConstraint: Employee.age > 50000 (editable, locked)>, <TemplateBinaryConstraint: Employee.name = John (editable, locked)>, <TemplateBinaryConstraint: Employee.end != 0 (editable, locked)>]'
     expected_multi = "[<TemplateMultiConstraint: Employee.name ONE OF ['Tom', 'Dick', 'Harry'] (editable, locked)>, <TemplateMultiConstraint: Employee.name NONE OF ['Sue', 'Jane', 'Helen'] (editable, locked)>]"
+    expected_range = "[<TemplateRangeConstraint: Employee.age OVERLAPS ['1..10', '30..35'] (editable, locked)>]"
     expected_ternary = '[<TemplateTernaryConstraint: Employee LOOKUP Susan (editable, locked)>, <TemplateTernaryConstraint: Employee.department.manager LOOKUP John IN Wernham-Hogg (editable, locked)>]'
     expected_subclass = '[<TemplateSubClassConstraint: Department.employees ISA Manager (editable, locked)>]'
     expected_list = '[<TemplateListConstraint: Employee IN my-list (editable, locked)>, <TemplateListConstraint: Employee.department.manager NOT IN my-list (editable, locked)>]'

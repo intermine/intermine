@@ -730,7 +730,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
-            assertEquals("Reference ?.extras is not in the model - fields available in class org.intermine.objectstore.intermine.SqlGeneratorTest$3 are [fullTime, age, end, department, departmentThatRejectedMe, simpleObjects, address, id, name]", e.getMessage());
+            assertEquals("Reference ?.extras is not in the model - fields available in class org.intermine.objectstore.intermine.SqlGeneratorTest$3 are [fullTime, age, end, department, departmentThatRejectedMe, employmentPeriod, simpleObjects, address, id, name]", e.getMessage());
         }
     }
 

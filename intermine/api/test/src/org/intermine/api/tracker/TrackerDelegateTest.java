@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.intermine.api.InterMineAPITestCase;
+import org.intermine.api.profile.BadTemplateException;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
@@ -58,7 +59,7 @@ public class TrackerDelegateTest extends InterMineAPITestCase
         super.tearDown();
     }
 
-    private void createTemplates() {
+    private void createTemplates() throws BadTemplateException {
         Model model = os.getModel();
         ApiTemplate template1 = new ApiTemplate("template1", "template1", "",
                 new PathQuery(model));

@@ -3,6 +3,7 @@ import urllib
 
 from intermine.results import JSONIterator, EnrichmentLine
 from intermine.model import ConstraintNode
+from intermine.errors import ServiceError
 
 class List(object):
     """
@@ -313,9 +314,34 @@ class List(object):
             return self._do_append(appendix)
 
     def calculate_enrichment(self, widget, background = None, correction = "Holm-Bonferroni", maxp = 0.05, filter = ''):
-        """Perform an enrichment calculation on this list"""
+        """
+        Perform an enrichment calculation on this list
+        ==============================================
+
+        example::
+
+            >>> for item in service.get_list("some list").calculate_enrichment("thingy_enrichment"):
+            ...     print item.identifier, item.p_value
+
+        Gets an iterator over the rows for an enrichment calculation. Each row represents
+        a record with the following properties:
+            * identifier {str}
+            * p-value {float}
+            * matches {int}
+            * description {str}
+
+        The enrichment row object may be treated as an object with property access, or as
+        a dictionary, supporting key lookup with the [] operator:
+
+            >>> p_value = row['p-value']
+
+        """
+        if self._service.version < 8:
+            raise ServiceError("This service does not support enrichment requests")
         params = dict(list = self.name, widget = widget, correction = correction, maxp = maxp, filter = filter)
         if background is not None:
+            if self._service.version < 11:
+                raise ServiceError("This service does not support custom background populations")
             params["population"] = background
         form = urllib.urlencode(params)
         uri = self._service.root + self._service.LIST_ENRICHMENT_PATH

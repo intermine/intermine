@@ -61,6 +61,7 @@ import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.profile.TagManager;
 import org.intermine.api.profile.UserAlreadyShareBagException;
 import org.intermine.api.profile.UserNotFoundException;
+import org.intermine.api.profile.UserPreferences;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.results.WebTable;
 import org.intermine.api.search.SearchRepository;
@@ -87,10 +88,12 @@ import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
+import org.intermine.util.Emailer;
 import org.intermine.util.MailUtils;
 import org.intermine.util.StringUtil;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.autocompletion.AutoCompleter;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.web.displayer.InterMineLinkGenerator;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.PortalHelper;
@@ -271,7 +274,7 @@ public class AjaxServices
                 try {
                     profile.fixInvalidBag(name, newName);
                     InterMineAPI im = SessionMethods.getInterMineAPI(session);
-                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner(), session))
+                    new Thread(new UpgradeBagList(profile, im.getBagQueryRunner()))
                         .start();
                 } catch (UnknownBagTypeException e) {
                     return "<i>" + e.getMessage() + "</i>";
@@ -919,13 +922,6 @@ public class AjaxServices
                         return msg;
                     }
                 }
-                for (int i = 0; i < selectedBags.length; i++) {
-                    Map allBags = profile.getAllBags();
-                    if (!allBags.containsKey(selectedBags[i])) {
-                        return "List `" + selectedBags[i] + "` cannot be deleted as it is a shared "
-                            + "list";
-                    }
-                }
             } else if (!"copy".equals(operation)) {
                 Properties properties = SessionMethods.getWebProperties(servletContext);
                 String defaultName = properties.getProperty("lists.input.example");
@@ -1388,22 +1384,25 @@ public class AjaxServices
     public String getSavedBagStatus() throws JSONException {
         HttpSession session = WebContextFactory.get().getSession();
         @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> savedBagStatus =
-            (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-
+        Map<String, InterMineBag> savedBags = SessionMethods.getProfile(session).getSavedBags();
         // this is where my lists go
         Collection<JSONObject> lists = new HashSet<JSONObject>();
         try {
-            for (Map.Entry<String, Map<String, Object>> entry : savedBagStatus.entrySet()) {
-                Map<String, Object> listAttributes = entry.getValue();
+            for (Map.Entry<String, InterMineBag> entry : savedBags.entrySet()) {
+                InterMineBag bag = entry.getValue();
                 // save to the resulting JSON object only if these are 'actionable' lists
-                if (listAttributes.get("status").equals(BagState.CURRENT.toString())
-                        || listAttributes.get("status").equals(BagState.TO_UPGRADE.toString())) {
+                if (bag.isCurrent() || bag.isToUpgrade()) {
                     JSONObject list = new JSONObject();
                     list.put("name", entry.getKey());
-                    list.put("status", listAttributes.get("status"));
-                    if (listAttributes.containsKey("size")) {
-                        list.put("size", listAttributes.get("size"));
+                    list.put("status", bag.getState());
+                    if (bag.isCurrent()) {
+                        try {
+                            list.put("size", bag.getSize());
+                        } catch (ObjectStoreException os) {
+                            LOG.error("Problems retrieving size of bag " + bag.getName(), os);
+                        }
+                    } else {
+                        list.put("size", 0);
                     }
                     lists.add(list);
                 }
@@ -1445,22 +1444,34 @@ public class AjaxServices
     public String addUserToShareBag(String userName, String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        Profile profile = SessionMethods.getProfile(session);
-        BagManager bagManager = im.getBagManager();
+        final Profile profile = SessionMethods.getProfile(session);
+        final BagManager bagManager = im.getBagManager();
+        final Emailer emailer = InterMineContext.getEmailer();
+        final ProfileManager pm = profile.getProfileManager();
+
+        InterMineBag bag = profile.getSavedBags().get(bagName);
+        Profile invitee = pm.getProfile(userName);
+        if (bag == null) {
+            return "This is not one of your lists";
+        }
+        if (invitee == null || invitee.getPreferences().containsKey(Constants.HIDDEN)) {
+            return "User not found."; // Users can request not to be found.
+        }
         if (profile.getUsername().equals(userName)) {
-            return "The user already shares the bag.";
+            return "You are trying to share this with yourself.";
         }
         try {
-            bagManager.shareBagWithUser(bagName, profile.getUsername(), userName);
+            bagManager.shareBagWithUser(bag, invitee);
         } catch (UserNotFoundException e1) {
-            return "User not found.";
+            return "User not found."; // Shouldn't happen now, but, hey ho.
         } catch (UserAlreadyShareBagException e2) {
             return "The user already shares the bag.";
         }
-        Properties webProperties = SessionMethods.getWebProperties(session.getServletContext());
-        InterMineBag bag = profile.getSavedBags().get(bagName);
+
         try {
-            MailUtils.emailSharingList(userName, profile.getUsername(), bag, webProperties);
+            if (!invitee.getPreferences().containsKey(Constants.NO_SPAM)) {
+                emailer.informUserOfNewSharedBag(invitee.getEmailAddress(), profile, bag);
+            }
         } catch (Exception ex) {
             LOG.warn("Problems sending sharing list mail.", ex);
         }
@@ -1483,17 +1494,21 @@ public class AjaxServices
         } catch (UserNotFoundException unfe) {
             return "User not found.";
         } catch (BagDoesNotExistException bnee) {
-            return "Tha list does not exist.";
+            return "That list does not exist.";
         }
         return "ok";
     }
 
     /**
-     * Return the list of userssharign the bag in input
+     * Return the list of users who have access to this bag because it has been
+     * shared with them.
+     *
+     * TODO: present pretty names for open-id users.
+     *
      * @param bagName the bag name that the users share
      * @return the list of users
      */
-    public List<String> getUsersSharingBag(String bagName) {
+    public Collection<String> getUsersSharingBag(String bagName) {
         HttpSession session = WebContextFactory.get().getSession();
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);

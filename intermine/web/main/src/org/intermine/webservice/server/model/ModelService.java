@@ -31,6 +31,7 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -70,7 +71,7 @@ public class ModelService extends WebService
 
     @Override
     protected int getDefaultFormat() {
-        return XML_FORMAT;
+        return Formats.XML;
     }
 
     @Override
@@ -79,7 +80,7 @@ public class ModelService extends WebService
         if (format != null) {
             return format;
         }
-        String pathInfo = request.getPathInfo();
+        String pathInfo = StringUtils.defaultString(request.getPathInfo(), "");
         pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         if (StringUtils.isBlank(pathInfo)) {
             return null;

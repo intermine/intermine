@@ -10,10 +10,30 @@ package org.intermine.webservice.server;
  *
  */
 
+import static org.intermine.webservice.server.Formats.COUNT;
+import static org.intermine.webservice.server.Formats.CSV;
+import static org.intermine.webservice.server.Formats.HTML;
+import static org.intermine.webservice.server.Formats.JSON;
+import static org.intermine.webservice.server.Formats.JSONP;
+import static org.intermine.webservice.server.Formats.JSONP_COUNT;
+import static org.intermine.webservice.server.Formats.JSONP_OBJ;
+import static org.intermine.webservice.server.Formats.JSONP_ROW;
+import static org.intermine.webservice.server.Formats.JSONP_TABLE;
+import static org.intermine.webservice.server.Formats.JSON_COUNT;
+import static org.intermine.webservice.server.Formats.JSON_OBJ;
+import static org.intermine.webservice.server.Formats.JSON_ROW;
+import static org.intermine.webservice.server.Formats.JSON_TABLE;
+import static org.intermine.webservice.server.Formats.TSV;
+import static org.intermine.webservice.server.Formats.UNKNOWN;
+import static org.intermine.webservice.server.Formats.XML;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.intermine.webservice.server.exceptions.BadRequestException;
-
 
 /**
  * Base request parser that is used by advanced web service parsers.
@@ -40,6 +60,9 @@ public class WebServiceRequestParser
 
     /** Value of parameter when user wants tab separated output to be returned. **/
     public static final String FORMAT_PARAMETER_TAB = "tab";
+
+    /** Value of parameter when user wants plain text to be returned. **/
+    public static final String FORMAT_PARAMETER_TEXT = "text";
 
     /** Value of parameter when user wants html output to be returned. **/
     public static final String FORMAT_PARAMETER_HTML = "html";
@@ -166,5 +189,37 @@ public class WebServiceRequestParser
             }
         }
         return ret;
+    }
+
+    private static final Map<String, Integer> formatCodes = new HashMap<String, Integer>() {
+        private static final long serialVersionUID = -2791706714042933771L;
+    {
+        put(FORMAT_PARAMETER_XML, XML);
+        put(FORMAT_PARAMETER_HTML, HTML);
+        put(FORMAT_PARAMETER_TAB, TSV);
+        put(FORMAT_PARAMETER_CSV, CSV);
+        put(FORMAT_PARAMETER_COUNT, COUNT);
+        put(FORMAT_PARAMETER_JSON_OBJ, JSON_OBJ);
+        put(FORMAT_PARAMETER_JSONP_OBJ, JSONP_OBJ);
+        put(FORMAT_PARAMETER_JSON_TABLE, JSON_TABLE);
+        put(FORMAT_PARAMETER_JSONP_TABLE, JSONP_TABLE);
+        put(FORMAT_PARAMETER_JSON_ROW, JSON_ROW);
+        put(FORMAT_PARAMETER_JSONP_ROW, JSONP_ROW);
+        put(FORMAT_PARAMETER_JSONP, JSONP);
+        put(FORMAT_PARAMETER_JSON, JSON);
+        put(FORMAT_PARAMETER_JSONP_COUNT, JSONP_COUNT);
+        put(FORMAT_PARAMETER_JSON_COUNT, JSON_COUNT);
+    }};
+
+    protected static int interpretFormat(String format, int defaultValue) {
+        if (StringUtils.isBlank(format)) {
+            return defaultValue;
+        }
+        Integer code = formatCodes.get(format);
+        if (code == null) {
+            return UNKNOWN;
+        } else {
+            return code.intValue();
+        }
     }
 }

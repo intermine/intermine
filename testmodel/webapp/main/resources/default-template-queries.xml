@@ -235,6 +235,7 @@
     <tag name="im:converter" objectIdentifier="convertEmployeeToManager" type="template"/>
     <tag name="im:public" objectIdentifier="fourConstraints" type="template"/>
     <tag name="im:public" objectIdentifier="Employee_Colleagues" type="template"/>
+    <tag name="im:aspect:People" objectIdentifier="Employee_Colleagues" type="template"/>
     <tag name="im:public" objectIdentifier="Department_Employees" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Departments" type="template"/>
     <tag name="im:public" objectIdentifier="Company_Employees" type="template"/>

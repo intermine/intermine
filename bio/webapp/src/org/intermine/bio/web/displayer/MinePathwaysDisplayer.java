@@ -131,7 +131,12 @@ public class MinePathwaysDisplayer extends ReportDisplayer
         Map<String, Set<String>> orthologues = new HashMap<String, Set<String>>();
         ProfileManager profileManager = im.getProfileManager();
         PathQueryExecutor executor = im.getPathQueryExecutor(profileManager.getSuperuserProfile());
-        PathQuery q = getQuery(gene);
+        PathQuery q = null;
+        try {
+            q = getQuery(gene);
+        } catch (Exception e) {
+            return Collections.emptyMap();
+        }
         if (!q.isValid()) {
             return Collections.emptyMap();
         }

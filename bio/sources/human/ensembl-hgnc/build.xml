@@ -1,0 +1,5 @@
+<project name="ensembl-hgnc" default="default" basedir=".">
+  <description>build, test, package ensembl-hgnc</description>
+  
+  <import file="../../../../imbuild/source.xml"/>
+</project>

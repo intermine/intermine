@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.profile.BagDoesNotExistException;
@@ -230,6 +229,23 @@ public class BagManager
 
     /**
      * Return true if there is at least one user bag for the given profile in
+     * the 'not_current' state or 'upgrading'.
+     * @param profile the user to fetch bags for
+     * @return a map from bag name to bag
+     */
+    public boolean isAnyBagNotCurrentOrUpgrading(Profile profile) {
+        Map<String, InterMineBag> savedBags = profile.getSavedBags();
+        for (InterMineBag bag : savedBags.values()) {
+            if (bag.getState().equals(BagState.NOT_CURRENT.toString())
+                || bag.getState().equals(BagState.UPGRADING.toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Return true if there is at least one user bag for the given profile in
      * the 'to_upgrade' state.
      * @param profile the user to fetch bags for
      * @return a map from bag name to bag
@@ -257,7 +273,7 @@ public class BagManager
      * Share the bag given in input with the user which userName input
      * @param bagName the bag name to share
      * @param bagOwnerUserName the owner of the bag to share
-     * @param userName the user which the bag is shared with
+     * @param userName the user with whom the bag is shared
      * @throws UserNotFoundException if the user does't exist
      * @throws UserAlreadyShareBagException if the bag is already shared by the user
      */
@@ -271,6 +287,20 @@ public class BagManager
         }
         sharedBagManager.shareBagWithUser(bag, userName);
     }
+
+    /**
+     * Let the recipient gain access to this bag in future uses of the application.
+     * @param bag the bag to share
+     * @param recipient the user with whom which the bag is shared
+     * @throws UserNotFoundException if the user does't exist
+     * @throws UserAlreadyShareBagException if the bag is already shared by the user
+     */
+    public void shareBagWithUser(InterMineBag bag, Profile recipient)
+            throws UserNotFoundException, UserAlreadyShareBagException {
+        if (recipient == null) throw new UserNotFoundException("recipient is null");
+        sharedBagManager.shareBagWithUser(bag, recipient.getUsername());
+    }
+
     /**
      * Unshare the bag with the user given in input
      * @param bagName the bag to un-share
@@ -288,6 +318,17 @@ public class BagManager
         }
         sharedBagManager.unshareBagWithUser(bag, userName);
     }
+    
+    /**
+     * Unshare the bag with the user given in input
+     * @param bag the bag to un-share
+     * @param profile the user sharing the bag
+     * @throws UserNotFoundException if the user does't exist
+     * @throws BagDoesNotExistException if the bag does't exist
+     */
+    public void unshareBagWithUser(InterMineBag bag, Profile profile) {
+        sharedBagManager.unshareBagWithUser(bag, profile.getUsername());
+    }
 
     /**
      * Return the users sharing the list given in input, not the owner
@@ -295,7 +336,7 @@ public class BagManager
      * @param bagOwnerUserName the name of the bag owner
      * @return the list of users sharing the bag
      */
-    public List<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
+    public Set<String> getUsersSharingBag(String bagName, String bagOwnerUserName) {
         Profile ownerBagProfile = superProfile.getProfileManager().getProfile(bagOwnerUserName);
         StorableBag bag = ownerBagProfile.getSavedBags().get(bagName);
         if (bag == null) {
@@ -304,7 +345,7 @@ public class BagManager
                 throw new BagDoesNotExistException("The bag " + bagName + " doesn't exist");
             }
         }
-        return sharedBagManager.getUsersSharingBag(bag);
+        return sharedBagManager.getUsersWithAccessToBag(bag);
     }
 
     /**
@@ -616,5 +657,6 @@ public class BagManager
             return aK.toLowerCase().compareTo(bK.toLowerCase());
         }
     }
+
 
 }

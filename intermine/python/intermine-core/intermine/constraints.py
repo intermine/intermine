@@ -9,7 +9,7 @@ class Constraint(PathFeature):
     ===========================================
 
     All constraints inherit from this class, which
-    simply defines the type of element for the 
+    simply defines the type of element for the
     purposes of serialisation.
     """
     child_type = "constraint"
@@ -19,9 +19,9 @@ class LogicNode(object):
     A class representing nodes in a logic graph
     ===========================================
 
-    Objects which can be represented as nodes 
+    Objects which can be represented as nodes
     in the AST of a constraint logic graph should
-    inherit from this class, which defines 
+    inherit from this class, which defines
     methods for overloading built-in operations.
     """
 
@@ -116,13 +116,13 @@ class LogicGroup(LogicNode):
 
     def __str__(self):
         """
-        Provide a human readable version of the group. The 
+        Provide a human readable version of the group. The
         string version should be able to be parsed back into the
         original logic group.
         """
         core = ' '.join(map(str, [self.left, self.op.lower(), self.right]))
         if self.parent and self.op != self.parent.op:
-            return '(' + core + ')' 
+            return '(' + core + ')'
         else:
             return core
 
@@ -157,7 +157,7 @@ class LogicParser(object):
 
     Instances of this class are used to parse logic strings into
     abstract syntax trees, and then logic groups. This aims to provide
-    robust parsing of logic strings, with the ability to identify syntax 
+    robust parsing of logic strings, with the ability to identify syntax
     errors in such strings.
     """
 
@@ -185,7 +185,7 @@ class LogicParser(object):
         @see: intermine.query.Query.get_constraint
         @rtype: intermine.constraints.CodedConstraint
         """
-        return self._query.get_constraint(code) 
+        return self._query.get_constraint(code)
 
     def get_priority(self, op):
         """
@@ -194,12 +194,12 @@ class LogicParser(object):
 
         Operators have a specific precedence, from highest
         to lowest:
-          - () 
-          - AND 
+          - ()
+          - AND
           - OR
 
-        This method returns an integer which can be 
-        used to compare operator priorities. 
+        This method returns an integer which can be
+        used to compare operator priorities.
 
         @rtype: int
         """
@@ -276,7 +276,7 @@ class LogicParser(object):
         Check the syntax for errors before parsing
         ==========================================
 
-        Syntax is checked before parsing to provide better errors, 
+        Syntax is checked before parsing to provide better errors,
         which should hopefully lead to more informative error messages.
 
         This checks for:
@@ -325,13 +325,13 @@ class LogicParser(object):
             else:
                 message = "Unmatched opening bracket in: "
             raise LogicParseError(message + '"' + ' '.join(infix_tokens) + '"')
-        
+
     def infix_to_postfix(self, infix_tokens):
         """
         Convert a list of infix tokens to postfix notation
         ==================================================
 
-        Take in a set of infix tokens and return the set parsed 
+        Take in a set of infix tokens and return the set parsed
         to a postfix sequence.
 
         @param infix_tokens: The list of tokens
@@ -356,7 +356,7 @@ class LogicParser(object):
                                 previous_op = stack.pop()
                                 if previous_op != "(": postfix_tokens.append(previous_op)
                                 break
-                        else: 
+                        else:
                             postfix_tokens.append(last_op)
                 else:
                     while stack and self.get_priority(stack[-1]) <= self.get_priority(op):
@@ -404,7 +404,7 @@ class CodedConstraint(Constraint, LogicNode):
     A parent class for all constraints that have codes
     ==================================================
 
-    Constraints that have codes are the principal logical 
+    Constraints that have codes are the principal logical
     filters on queries, and need to be refered to individually
     (hence the codes). They will all have a logical operation they
     embody, and so have a reference to an operator.
@@ -442,7 +442,7 @@ class CodedConstraint(Constraint, LogicNode):
         return self.code
     def to_string(self):
         """
-        Provide a human readable representation of the logic. 
+        Provide a human readable representation of the logic.
         This method is called by repr.
         """
         s = super(CodedConstraint, self).to_string()
@@ -450,20 +450,20 @@ class CodedConstraint(Constraint, LogicNode):
 
     def to_dict(self):
         """
-        Return a dict object which can be used to construct a 
+        Return a dict object which can be used to construct a
         DOM element with the appropriate attributes.
         """
         d = super(CodedConstraint, self).to_dict()
         d.update(op=self.op, code=self.code)
         return d
-    
+
 class UnaryConstraint(CodedConstraint):
     """
     Constraints which have just a path and an operator
     ==================================================
 
-    These constraints are simple assertions about the 
-    object/value refered to by the path. The set of valid 
+    These constraints are simple assertions about the
+    object/value refered to by the path. The set of valid
     operators is:
      - IS NULL
      - IS NOT NULL
@@ -478,7 +478,7 @@ class BinaryConstraint(CodedConstraint):
 
     These constraints assert a relationship between the
     value represented by the path (it must be a representation
-    of a value, ie an Attribute) and another value - ie. the 
+    of a value, ie an Attribute) and another value - ie. the
     operator takes two parameters.
 
     In all case the 'left' side of the relationship is the path,
@@ -519,14 +519,14 @@ class BinaryConstraint(CodedConstraint):
 
     def to_string(self):
         """
-        Provide a human readable representation of the logic. 
+        Provide a human readable representation of the logic.
         This method is called by repr.
         """
         s = super(BinaryConstraint, self).to_string()
         return " ".join([s, str(self.value)])
     def to_dict(self):
         """
-        Return a dict object which can be used to construct a 
+        Return a dict object which can be used to construct a
         DOM element with the appropriate attributes.
         """
         d = super(BinaryConstraint, self).to_dict()
@@ -540,14 +540,14 @@ class ListConstraint(CodedConstraint):
 
     These constraints assert a membership relationship between the
     object represented by the path (it must always be an object, ie.
-    a Reference or a Class) and a List. Lists are collections of 
-    objects in the database which are stored in InterMine 
+    a Reference or a Class) and a List. Lists are collections of
+    objects in the database which are stored in InterMine
     datawarehouses. These lists must be set up before the query is run, either
-    manually in the webapp or by using the webservice API list 
+    manually in the webapp or by using the webservice API list
     upload feature.
 
     Valid operators are:
-     - IN 
+     - IN
      - NOT IN
 
      """
@@ -565,14 +565,14 @@ class ListConstraint(CodedConstraint):
 
     def to_string(self):
         """
-        Provide a human readable representation of the logic. 
+        Provide a human readable representation of the logic.
         This method is called by repr.
         """
         s = super(ListConstraint, self).to_string()
         return " ".join([s, str(self.list_name)])
     def to_dict(self):
         """
-        Return a dict object which can be used to construct a 
+        Return a dict object which can be used to construct a
         DOM element with the appropriate attributes.
         """
         d = super(ListConstraint, self).to_dict()
@@ -585,7 +585,7 @@ class LoopConstraint(CodedConstraint):
     =========================================
 
     These constraints assert that two paths refer to the same
-    object. 
+    object.
 
     Valid operators:
      - IS
@@ -619,20 +619,20 @@ class LoopConstraint(CodedConstraint):
 
     def to_string(self):
         """
-        Provide a human readable representation of the logic. 
+        Provide a human readable representation of the logic.
         This method is called by repr.
         """
         s = super(LoopConstraint, self).to_string()
         return " ".join([s, self.loopPath])
     def to_dict(self):
         """
-        Return a dict object which can be used to construct a 
+        Return a dict object which can be used to construct a
         DOM element with the appropriate attributes.
         """
         d = super(LoopConstraint, self).to_dict()
         d.update(loopPath=self.loopPath, op=self.SERIALISED_OPS[self.op])
         return d
-    
+
 class TernaryConstraint(BinaryConstraint):
     """
     Constraints for broad, general searching over all fields
@@ -645,7 +645,7 @@ class TernaryConstraint(BinaryConstraint):
     Valid operators:
      - LOOKUP
 
-    To aid disambiguation, Ternary constaints accept an extra_value as 
+    To aid disambiguation, Ternary constaints accept an extra_value as
     well as the main value.
     """
     OPS = set(['LOOKUP'])
@@ -665,7 +665,7 @@ class TernaryConstraint(BinaryConstraint):
 
         @param extra_value: A further value for disambiguation. The meaning of this value varies by class
                             and configuration. For example, if the class of the object is Gene, then
-                            extra_value will refer to the Organism. 
+                            extra_value will refer to the Organism.
         @type extra_value: string
 
         @param code: The code for this constraint (default = "A")
@@ -676,7 +676,7 @@ class TernaryConstraint(BinaryConstraint):
 
     def to_string(self):
         """
-        Provide a human readable representation of the logic. 
+        Provide a human readable representation of the logic.
         This method is called by repr.
         """
         s = super(TernaryConstraint, self).to_string()
@@ -686,7 +686,7 @@ class TernaryConstraint(BinaryConstraint):
             return " ".join([s, 'IN', self.extra_value])
     def to_dict(self):
         """
-        Return a dict object which can be used to construct a 
+        Return a dict object which can be used to construct a
         DOM element with the appropriate attributes.
         """
         d = super(TernaryConstraint, self).to_dict()
@@ -739,36 +739,66 @@ class MultiConstraint(CodedConstraint):
 
     def to_string(self):
         """
-        Provide a human readable representation of the logic. 
+        Provide a human readable representation of the logic.
         This method is called by repr.
         """
         s = super(MultiConstraint, self).to_string()
         return ' '.join([s, str(self.values)])
     def to_dict(self):
         """
-        Return a dict object which can be used to construct a 
+        Return a dict object which can be used to construct a
         DOM element with the appropriate attributes.
         """
         d = super(MultiConstraint, self).to_dict()
         d.update(value=self.values)
         return d
 
+class RangeConstraint(MultiConstraint):
+    """
+    Constraints for testing where a value lies relative to a set of ranges
+    ======================================================================
+
+    These constraints require that the value of the path they constrain
+    should lie in relationship to the set of values passed according to
+    the specific operator.
+
+    Valid operators:
+     - OVERLAPS : The value overlaps at least one of the given ranges
+     - WITHIN : The value is wholly outside the given set of ranges
+     - CONTAINS : The value contains all the given ranges
+     - DOES NOT CONTAIN : The value does not contain all the given ranges
+     - OUTSIDE : Some part is outside the given set of ranges
+     - DOES NOT OVERLAP : The value does not overlap with any of the ranges
+
+    For example:
+
+        4 WITHIN [1..5, 20..25] => True
+
+    The format of the ranges depends on the value being constrained and what range
+    parsers have been configured on the target server. A common range parser for
+    biological mines is the one for Locations:
+
+        Gene.chromosomeLocation OVERLAPS [2X:54321..67890, 3R:12345..456789]
+
+    """
+    OPS = set(['OVERLAPS', 'DOES NOT OVERLAP', 'WITHIN', 'OUTSIDE', 'CONTAINS', 'DOES NOT CONTAIN'])
+
 class SubClassConstraint(Constraint):
     """
     Constraints on the class of a reference
     =======================================
 
-    If an object has a reference X to another object of type A, 
-    and type B extends type A, then any object of type B may be 
+    If an object has a reference X to another object of type A,
+    and type B extends type A, then any object of type B may be
     the value of the reference X. If you only want to see X's
-    which are B's, this may be achieved with subclass constraints, 
-    which allow the type of an object to be limited to one of the 
-    subclasses (at any depth) of the class type required 
+    which are B's, this may be achieved with subclass constraints,
+    which allow the type of an object to be limited to one of the
+    subclasses (at any depth) of the class type required
     by the attribute.
 
-    These constraints do not use operators. Since they cannot be 
+    These constraints do not use operators. Since they cannot be
     conditional (eg. "A is a B or A is a C" would not be possible
-    in an InterMine query), they do not have codes 
+    in an InterMine query), they do not have codes
     and cannot be referenced in logic expressions.
     """
     def __init__(self, path, subclass):
@@ -788,18 +818,18 @@ class SubClassConstraint(Constraint):
         super(SubClassConstraint, self).__init__(path)
     def to_string(self):
        """
-       Provide a human readable representation of the logic. 
+       Provide a human readable representation of the logic.
        This method is called by repr.
        """
        s = super(SubClassConstraint, self).to_string()
        return s + ' ISA ' + self.subclass
     def to_dict(self):
        """
-       Return a dict object which can be used to construct a 
+       Return a dict object which can be used to construct a
        DOM element with the appropriate attributes.
        """
        d = super(SubClassConstraint, self).to_dict()
-       d.update(type=self.subclass) 
+       d.update(type=self.subclass)
        return d
 
 
@@ -824,7 +854,7 @@ class TemplateConstraint(object):
 
         @param editable: Whether or not this constraint should accept new values.
         @type editable: bool
-        
+
         @param optional: Whether a value for this constraint must be provided when running.
         @type optional: "locked", "on" or "off"
         """
@@ -870,7 +900,7 @@ class TemplateConstraint(object):
                 return "on"
             else:
                 return "off"
-    
+
     def switch_on(self):
         """
         Make sure this constraint is active
@@ -897,17 +927,17 @@ class TemplateConstraint(object):
 
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
         if self.editable:
-            editable = "editable" 
+            editable = "editable"
         else:
             editable = "non-editable"
         return '(' + editable + ", " + self.get_switchable_status() + ')'
     def separate_arg_sets(self, args):
         """
-        A static function to use when building template constraints. 
+        A static function to use when building template constraints.
         ============================================================
 
         dict -> (dict, dict)
@@ -919,9 +949,9 @@ class TemplateConstraint(object):
         c_args = {}
         t_args = {}
         for k, v in args.items():
-            if k == "editable": 
+            if k == "editable":
                 t_args[k] = v == "true"
-            elif k == "optional": 
+            elif k == "optional":
                 t_args[k] = v
             else:
                 c_args[k] = v
@@ -934,10 +964,10 @@ class TemplateUnaryConstraint(UnaryConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(UnaryConstraint.to_string(self) 
+        return(UnaryConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class TemplateBinaryConstraint(BinaryConstraint, TemplateConstraint):
@@ -947,10 +977,10 @@ class TemplateBinaryConstraint(BinaryConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(BinaryConstraint.to_string(self) 
+        return(BinaryConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class TemplateListConstraint(ListConstraint, TemplateConstraint):
@@ -960,10 +990,10 @@ class TemplateListConstraint(ListConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(ListConstraint.to_string(self) 
+        return(ListConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class TemplateLoopConstraint(LoopConstraint, TemplateConstraint):
@@ -973,10 +1003,10 @@ class TemplateLoopConstraint(LoopConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(LoopConstraint.to_string(self) 
+        return(LoopConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class TemplateTernaryConstraint(TernaryConstraint, TemplateConstraint):
@@ -986,10 +1016,10 @@ class TemplateTernaryConstraint(TernaryConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(TernaryConstraint.to_string(self) 
+        return(TernaryConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class TemplateMultiConstraint(MultiConstraint, TemplateConstraint):
@@ -999,10 +1029,23 @@ class TemplateMultiConstraint(MultiConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(MultiConstraint.to_string(self) 
+        return(MultiConstraint.to_string(self)
+                + " " + TemplateConstraint.to_string(self))
+
+class TemplateRangeConstraint(RangeConstraint, TemplateConstraint):
+    def __init__(self, *a, **d):
+        (c_args, t_args) = self.separate_arg_sets(d)
+        RangeConstraint.__init__(self, *a, **c_args)
+        TemplateConstraint.__init__(self, **t_args)
+    def to_string(self):
+        """
+        Provide a template specific human readable representation of the
+        constraint. This method is called by repr.
+        """
+        return(RangeConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class TemplateSubClassConstraint(SubClassConstraint, TemplateConstraint):
@@ -1012,10 +1055,10 @@ class TemplateSubClassConstraint(SubClassConstraint, TemplateConstraint):
         TemplateConstraint.__init__(self, **t_args)
     def to_string(self):
         """
-        Provide a template specific human readable representation of the 
+        Provide a template specific human readable representation of the
         constraint. This method is called by repr.
         """
-        return(SubClassConstraint.to_string(self) 
+        return(SubClassConstraint.to_string(self)
                 + " " + TemplateConstraint.to_string(self))
 
 class ConstraintFactory(object):
@@ -1024,13 +1067,13 @@ class ConstraintFactory(object):
     ===========================================================
 
     A constraint factory is responsible for finding an appropriate
-    constraint class for the given arguments and instantiating the 
+    constraint class for the given arguments and instantiating the
     constraint.
     """
     CONSTRAINT_CLASSES = set([
-        UnaryConstraint, BinaryConstraint, TernaryConstraint, 
+        UnaryConstraint, BinaryConstraint, TernaryConstraint,
         MultiConstraint, SubClassConstraint, LoopConstraint,
-        ListConstraint])
+        ListConstraint, RangeConstraint])
 
     def __init__(self):
         """
@@ -1040,7 +1083,7 @@ class ConstraintFactory(object):
         Creates a new ConstraintFactory
         """
         self._codes = iter(string.ascii_uppercase)
-    
+
     def get_next_code(self):
         """
         Return the available constraint code.
@@ -1067,22 +1110,22 @@ class ConstraintFactory(object):
                 return c
             except TypeError, e:
                 pass
-        raise TypeError("No matching constraint class found for " 
+        raise TypeError("No matching constraint class found for "
             + str(args) + ", " + str(kwargs))
-    
+
 class TemplateConstraintFactory(ConstraintFactory):
     """
     A factory for creating constraints with template specific characteristics.
     ==========================================================================
 
     A constraint factory is responsible for finding an appropriate
-    constraint class for the given arguments and instantiating the 
-    constraint. TemplateConstraintFactories make constraints with the 
+    constraint class for the given arguments and instantiating the
+    constraint. TemplateConstraintFactories make constraints with the
     extra set of TemplateConstraint qualities.
     """
     CONSTRAINT_CLASSES = set([
-        TemplateUnaryConstraint, TemplateBinaryConstraint, 
+        TemplateUnaryConstraint, TemplateBinaryConstraint,
         TemplateTernaryConstraint, TemplateMultiConstraint,
-        TemplateSubClassConstraint, TemplateLoopConstraint, 
-        TemplateListConstraint
+        TemplateSubClassConstraint, TemplateLoopConstraint,
+        TemplateListConstraint, TemplateRangeConstraint
     ])

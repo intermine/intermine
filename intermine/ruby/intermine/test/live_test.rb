@@ -6,7 +6,7 @@ require "intermine/service"
 class LiveDemoTest <  Test::Unit::TestCase
 
     def setup
-        @service = Service.new("http://localhost/intermine-test", "Z1a3D3U16cicCdS0T6y4bdN1SQh")
+        @service = Service.new("http://localhost/intermine-test", "test-user-token")
         @temp_lists = []
     end
 
@@ -48,42 +48,42 @@ class LiveDemoTest <  Test::Unit::TestCase
     def testListEnumerability
         list = @service.list("My-Favourite-Employees")
         names = list.map {|emp| emp.name }
-        exp = ["Bernd Stromberg", "David Brent", "Neil Godwin", "Timo Becker"]
+        exp = [ "David Brent", "Neil Godwin", "Bernd Stromberg", "Timo Becker"]
         assert_equal(exp, names)
 
-        old = list.select {|emp| emp.age > 55}
+        old = list.select {|emp| emp.age > 43}
         assert_equal(1, old.size)
-        assert_equal("David Brent", old.first.name)
+        assert_equal("Neil Godwin", old.first.name)
 
         sum = list.reduce(0) {|m, i| m + i.age}
-        assert_equal(185, sum)
+        assert_equal(159, sum)
     end
 
     def testLazyReferenceFetching
         list = @service.list("My-Favourite-Employees")
 
         deps = list.map {|emp| emp.department.name }
-        exp = ["Schadensregulierung M-Z", "Sales", 
-            "Human Resources", "Schadensregulierung"]
+        exp = ["Sales", "Human Resources", "Schadensregulierung M-Z", "Schadensregulierung"]
         assert_equal(exp, deps)
 
         comps = list.map {|emp| emp.department.company.name }
-        exp = ["Capitol Versicherung AG", "Wernham-Hogg",
-              "Wernham-Hogg", "Capitol Versicherung AG"]
+        exp = ["Wernham-Hogg", "Wernham-Hogg", "Capitol Versicherung AG", "Capitol Versicherung AG"]
         assert_equal(exp, comps)
     end
 
     def testLazyCollectionFetching
         list = @service.list("My-Favourite-Employees")
         emps = list.map {|manager| manager.department.employees.map {|employee| employee.age} }
-        exp = [[42, 28, 29, 46, 28, 48],
-            [62, 64, 58, 35, 36, 46],
-            [41, 57, 36],
-            [63, 37, 61, 55, 58, 45]]
+        exp = [
+            [34, 36, 41, 55, 61, 61],
+            [44, 49, 62],
+            [30, 37, 45, 46, 58, 64],
+            [36, 37, 39, 49, 57, 59]
+        ]
         assert_equal(exp, emps)
 
         sum = list.reduce(0) {|m, manager| m + manager.department.employees.reduce(0) {|n, emp| n + emp.age}}
-        assert_equal(975, sum)
+        assert_equal(1000, sum)
     end
 
     def testListCreation
@@ -128,6 +128,12 @@ class LiveDemoTest <  Test::Unit::TestCase
         assert_equal([], new_list.tags)
         new_list.update_tags
         assert_equal(tags.sort, new_list.tags.sort)
+    end
+
+    def testEnrichment
+        l = @service.list("My-Favourite-Employees")
+        contractors = l.calculate_enrichment :contractor_enrichment, :maxp => 1.0
+        assert_equal("Vikram", contractors.first[:identifier])
     end
 
 end

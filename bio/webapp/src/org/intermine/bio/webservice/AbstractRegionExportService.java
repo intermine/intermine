@@ -31,7 +31,9 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.lists.ListInput;
+import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.output.TabFormatter;
@@ -114,21 +116,26 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
     protected PrintWriter pw;
     protected OutputStream os;
 
+    protected abstract String getContentType();
+
+    protected Formatter getFormatter() {
+        return new TabFormatter();
+    }
+
     @Override
     protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
         this.pw = out;
         this.os = os;
-        output = new StreamedOutput(out, new TabFormatter(), separator);
+        output = new StreamedOutput(out, getFormatter(), separator);
         if (isUncompressed()) {
-            ResponseUtil.setPlainTextHeader(response,
-                    getDefaultFileName());
+            ResponseUtil.setCustomTypeHeader(response, getDefaultFileName(), getContentType());
         }
         return output;
     }
 
     @Override
-    public int getFormat() {
-        return UNKNOWN_FORMAT;
+    public int getDefaultFormat() {
+        return Formats.UNKNOWN;
     }
 
 

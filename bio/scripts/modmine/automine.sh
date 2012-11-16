@@ -250,7 +250,8 @@ function setProjectFile {
 #------------------------------------------------------------------------
 RETURNDIR=$PWD
 
-if [ -n "$P" -o "$FULL" = "y" ]
+#if [ -n "$P" -o "$FULL" = "y" ]
+if [ "$FULL" = "y" ]
 then
 return
 fi

@@ -1,4 +1,26 @@
 <userprofile username="intermine-test-user" password="intermine-test-user-password" apikey="test-user-token">
+    <preferences>
+        <alias>The Great Tester</alias>
+        <foo>bar</foo>
+    </preferences>
+    <invitations>
+        <invite>
+            <bag>My-Favourite-Employees</bag>
+            <invitee>foo@bar.com</invitee>
+            <token>aaaaaaaaaaaaaaaaaaaa</token>
+            <accepted></accepted>
+            <createdAt>1350000000000</createdAt>
+            <acceptedAt></acceptedAt>
+        </invite>
+        <invite>
+            <bag>Umlaut holders</bag>
+            <invitee>bar@foo.com</invitee>
+            <token>bbbbbbbbbbbbbbbbbbbb</token>
+            <accepted>true</accepted>
+            <createdAt>1310000000000</createdAt>
+            <acceptedAt>1320000000000</acceptedAt>
+        </invite>
+    </invitations>
     <bags>
         <bag name="My-Favourite-Employees" type="Manager">
             <bagValue value="David Brent"/>
