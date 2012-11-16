@@ -305,7 +305,8 @@ public class IdResolver
      * @param primaryId main identifier
      * @param synonyms synonyms for the main identifier
      */
-    public void addResolverEntry(String taxonId, String clsName, String primaryId, Set<String> synonyms) {
+    public void addResolverEntry(String taxonId, String clsName,
+            String primaryId, Set<String> synonyms) {
         addSynonyms(taxonId, clsName, primaryId, synonyms);
     }
     
@@ -318,17 +319,6 @@ public class IdResolver
      */
     public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
         addResolverEntry(taxonId, this.clsName, primaryId, synonyms);
-    }
-
-    /**
-     * Create entries for the IdResolver, these will be added when getIdResolver
-     * is called.
-     * @param taxonId the organism of identifiers
-     * @param primaryId main identifier
-     * @param synonyms synonyms for the main identifier
-     */
-    public void addResolverEntry(String taxonId, String primaryId, Set<String> synonyms) {
-        addSynonyms(taxonId, primaryId, synonyms);
     }
 
     /**
