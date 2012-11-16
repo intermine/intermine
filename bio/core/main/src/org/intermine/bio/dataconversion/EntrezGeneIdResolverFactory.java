@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.BioUtil;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -42,6 +41,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
     private Map<String, String> config_xref = new HashMap<String, String>();
     private Map<String, String> config_prefix = new HashMap<String, String>();
+    private Map<String, String> config_strains = new HashMap<String, String>();
     private static final Set<String> ignoredTaxonIds = new HashSet<String>();
 
     /**
@@ -172,7 +172,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     private void createFromFile(BufferedReader reader, Set<String> taxonIds) throws IOException {
         // in ncbi gene_info, some organisms use strain taxon id, e.g.yeast
-        Map<String, String> newTaxonIds = BioUtil.getStrain(taxonIds);
+        Map<String, String> newTaxonIds = getStrain(taxonIds);
         LOG.info("New taxons: " + newTaxonIds.keySet() + ", original taxons: "
                 + newTaxonIds.values());
 
@@ -242,10 +242,17 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
         for (Map.Entry<Object, Object> entry : entrezConfig.entrySet()) {
             if ("taxon.ignored".equals(entry.getKey())) {  // taxon to ignore
-                if (entry.getValue() != null) {
+                if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
                     String[] ignoredTaxons = ((String) entry.getValue()).trim().split("\\s*,\\s*");
                     ignoredTaxonIds.addAll(Arrays.asList(ignoredTaxons));
                 }
+            } else if (entry.getKey().toString().contains("strains")) { // use strain
+                if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
+					config_strains.put(
+							entry.getKey().toString().split("\\.")[0],
+							((String) entry.getValue()).trim());
+                }
+
             } else {
                 String key = (String) entry.getKey(); // e.g. 10090.xref
                 String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
@@ -276,5 +283,20 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             all.addAll(col);
         }
         return all;
+    }
+    
+    /**
+     * Get strain taxons
+     */
+    private Map<String, String> getStrain(Set<String> taxonIds) {
+        Map<String, String> newTaxons = new HashMap<String, String>();
+        for (String taxon : taxonIds) {
+            if (config_strains.containsKey(taxon)) {
+                newTaxons.put(config_strains.get(taxon), taxon);
+            } else {
+                newTaxons.put(taxon, taxon);
+            }
+        }
+        return newTaxons;
     }
 }

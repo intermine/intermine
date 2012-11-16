@@ -23,6 +23,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -57,6 +59,8 @@ public class TreefamConverter extends BioFileConverter
     private static final String DEFAULT_HOMOLOGUE_TYPE = "orthologue";
     private static final String DEFAULT_IDENTIFIER_COLUMN = "gid";
     protected IdResolver rslv;
+    @SuppressWarnings("unchecked")
+    private Map<MultiKey, String> resolvedIds = new MultiKeyMap();
 
     /**
      * Constructor
@@ -205,7 +209,17 @@ public class TreefamConverter extends BioFileConverter
     private String getGene(String id, String symbol, String type, String taxonId)
             throws ObjectStoreException {
         String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-        String identifier = resolveGene(taxonId, id, symbol);
+        
+        String identifier;
+        // test if id has been solved
+        if (resolvedIds.get(new MultiKey(taxonId, id, symbol)) != null) {
+            identifier = resolvedIds.get(new MultiKey(taxonId, id, symbol));
+            LOG.info("This id: " + taxonId + "-" + id + "-" + symbol
+                    + " has been solved to: " + identifier);
+        } else {
+            identifier = resolveGene(taxonId, id, symbol);
+        }
+        
         if (identifier == null) {
             return null;
         }
@@ -379,7 +393,9 @@ public class TreefamConverter extends BioFileConverter
         for (Entry<String, Set<String>> e : resolvedIdMap.entrySet()) {
             LOG.info("Resolve id: " + e.getKey() + " with resolution: " + e.getValue());
             if (e.getValue() != null && e.getValue().size() == 1) {
-                return e.getValue().iterator().next();
+                String resolvedId = e.getValue().iterator().next();
+                resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
+                return resolvedId;
             }
         }
         
