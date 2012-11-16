@@ -210,12 +210,14 @@ public class TreefamConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
         
-        String identifier;
-        // test if id has been solved
-        if (resolvedIds.get(new MultiKey(taxonId, id, symbol)) != null) {
-            identifier = resolvedIds.get(new MultiKey(taxonId, id, symbol));
-            LOG.info("This id: " + taxonId + "-" + id + "-" + symbol
-                    + " has been solved to: " + identifier);
+        String identifier = null;
+        // test if id has been resolved
+        if (resolvedIds.containsKey(new MultiKey(taxonId, id, symbol))) {
+            if (resolvedIds.get(new MultiKey(taxonId, id, symbol)) != null) {
+                identifier = resolvedIds.get(new MultiKey(taxonId, id, symbol));
+                LOG.info("This id: " + taxonId + "-" + id + "-" + symbol
+                        + " has been resolved as: " + identifier);
+            }
         } else {
             identifier = resolveGene(taxonId, id, symbol);
         }
@@ -399,9 +401,10 @@ public class TreefamConverter extends BioFileConverter
             }
         }
         
-      LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-      + identifier + " for taxon ID " + taxonId);
-      
-      return null;
+        resolvedIds.put(new MultiKey(taxonId, identifier, symbol), null);
+        LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                + identifier + " for taxon ID " + taxonId);
+
+        return null;
     }
 }
