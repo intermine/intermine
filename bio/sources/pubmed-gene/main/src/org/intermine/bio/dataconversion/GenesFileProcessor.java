@@ -31,6 +31,8 @@ import org.intermine.xml.full.Item;
 
 
 /**
+ * CLASS NOT IN USE SINCE IM 1.1
+ *
  * Processor of file with information about genes. Format of file:
  * <tt>
  * tax_id GeneID Symbol LocusTag Synonyms dbXrefs chromosome map_location description
@@ -42,14 +44,13 @@ import org.intermine.xml.full.Item;
  **/
 public class GenesFileProcessor
 {
-
     private BufferedReader infoReader;
     private int lineCounter = 0;
     private Map<String, Item> genes = new HashMap<String, Item>();
     private String lastLine = null;
     private DataConverter converter;
     private Set<String> genesToRemove = new TreeSet<String>();
-    private IdResolver resolver;
+    private IdResolver rslv;
     private static final Logger LOG = Logger.getLogger(GenesFileProcessor.class);
     private String datasetRefId;
     private static final String DUMMY = "NEWENTRY";
@@ -63,14 +64,14 @@ public class GenesFileProcessor
      * @param resolverFactory the FlyBase id resolver factory
      */
     public GenesFileProcessor(Reader fileReader, DataConverter converter, String datasetRefId,
-                              IdResolverFactory resolverFactory) {
+                              IdResolver rslv) {
         // converter is needed  for creating items method
         // all converters must used one central converter for creating items because
         // to be sure, that created items will have unique id
         this.converter = converter;
         this.datasetRefId = datasetRefId;
         initReader(fileReader);
-        resolver = resolverFactory.getIdResolver(false);
+        this.rslv = rslv;
 
     }
 
@@ -123,9 +124,9 @@ public class GenesFileProcessor
             }
 
             //String identifier = parts[3].trim();
-            String pubMedId = parts[5].trim();
+            String xrefs = parts[5].trim();
             if (orgToProcessId.intValue() == organismId.intValue()) {
-                processGeneInfo(ncbiGeneId, organismId, pubMedId, geneToPub.get(ncbiGeneId),
+                processGeneInfo(ncbiGeneId, organismId, xrefs, geneToPub.get(ncbiGeneId),
                         organismRefId);
                 geneToPub.remove(ncbiGeneId);
             } else {
@@ -185,10 +186,10 @@ public class GenesFileProcessor
         converter.store(genes2);
     }
 
-    private void processGeneInfo(Integer ncbiGeneId, Integer taxonId, String primaryIdentifier,
+    private void processGeneInfo(Integer ncbiGeneId, Integer taxonId, String xrefs,
                                  List<String> publications, String organismRefId) {
 
-        String primIdentifier = primaryIdentifier;
+        String primIdentifier = xrefs;
         Integer organismId = BioUtil.replaceStrain(taxonId);
 
         // If gene was already mentioned in gene info file then is skipped
@@ -200,21 +201,20 @@ public class GenesFileProcessor
         // any publications then the gene is skipped
         // if there isn't primary identifier gene is skipped
         if (publications != null) {
-
             if (setPrimaryIdentifier(organismId.toString()) && !"-".equals(primIdentifier)) {
                 primIdentifier = removeDatabasePrefix(primIdentifier);
                 if (StringUtils.isEmpty(primIdentifier) || !isValidPrimIdentifier(primIdentifier)) {
                     return;
                 }
 
-                if (isDrosophilaMelanogaster(organismId.toString()) && resolver != null) {
+                if (isDrosophilaMelanogaster(organismId.toString()) && rslv != null) {
                     primIdentifier = resolvePrimIdentifier(organismId.toString(), primIdentifier);
                 }
 
                 if (primIdentifier == null) {
                     LOG.warn("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                            + primaryIdentifier + ". Number of matched ids: "
-                            + resolver.countResolutions(organismId.toString(), primIdentifier));
+                            + xrefs + ". Number of matched ids: "
+                            + rslv.countResolutions(organismId.toString(), primIdentifier));
                     return;
                 }
             } else {
@@ -240,7 +240,7 @@ public class GenesFileProcessor
         }
     }
 
-    // don't set primaryidentifier for mouse or people
+    // don't set primaryidentifier for mouse or people <- why???
     private boolean setPrimaryIdentifier(String taxonId) {
         if (isHomoSapiens(taxonId) || isMusMusculus(taxonId)) {
             return false;
@@ -253,11 +253,11 @@ public class GenesFileProcessor
     }
 
     private String resolvePrimIdentifier(String taxonId, String primIdentifier) {
-        int resCount = resolver.countResolutions(taxonId, primIdentifier);
+        int resCount = rslv.countResolutions(taxonId, primIdentifier);
         if (resCount != 1) {
             return null;
         }
-        return resolver.resolveId(taxonId, primIdentifier).iterator().next();
+        return rslv.resolveId(taxonId, primIdentifier).iterator().next();
     }
 
     private boolean isDrosophilaMelanogaster(String taxonId) {
@@ -274,7 +274,6 @@ public class GenesFileProcessor
 
     private Item createGene(Integer ncbiGeneId, String primaryIdentifier, String organismRefId) {
         Item gene = createItem("Gene");
-        gene.setAttribute("ncbiGeneNumber", ncbiGeneId.toString());
         if (primaryIdentifier != null) {
             gene.setAttribute("primaryIdentifier", primaryIdentifier);
         }
