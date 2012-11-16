@@ -66,11 +66,11 @@ INSTALLATION AND DEPENDENCIES
 
     Simply import the module:
 
-        use Webservice::InterMine;
+        use Webservice::InterMine; 
 
     Import the module, and specify the default service as FlyMine (the url
     will be looked up at the central mine registry
-    <http://www.intermine.org/registry>.
+    http://www.intermine.org/registry.
 
         use Webservice::InterMine 'flymine';
 
@@ -91,8 +91,8 @@ INSTALLATION AND DEPENDENCIES
     The same, with explicit, named parameters:
 
         use Webservice::InterMine root => 'flymine', user => 'username', pass => 'password';
-
-    Calling "use Webservice::InterMine" without any parameters simply means
+  
+    Calling `use Webservice::InterMine' without any parameters simply means
     you need to either specify the webservice url on every call, or call the
     methods on a service directly.
 
@@ -153,19 +153,13 @@ IMPORTS
     The following functions are imported into the callers namespace. This
     can be prevented by "require"-ing the module instead.
 
-    *   get_service
-
-    *   new_query
-
-    *   resultset
-
-    *   get_template
-
-    *   get_list
-
-    *   new_list
-
-    *   load_query
+    * get_service
+    * new_query
+    * resultset
+    * get_template
+    * get_list
+    * new_list
+    * load_query
 
 METHODS
   new_query( [from => \@service_args], [%query_args] )
@@ -174,14 +168,12 @@ METHODS
 
     Parameters:
 
-    *   from => [url, user, pass]
-
+    * from => [url, user, pass]
         An array ref of arguments to pass to get_service. This information
         can be used to specify a different service than the one named on
         import, or to specify one when none was named on import.
 
-    *   %query_args
-
+    * %query_args
         Key value pairs of arguments to pass to the query constructor in
         Webservice::InterMine::Service. This methid serves as sugar for the
         factory method in that class.
@@ -190,19 +182,17 @@ METHODS
 
   new_list( %list_args, [from => \@service_args] )
     Creates a new list with the content specified by the list arguments. The
-    "content" key-word parameter will always be required. For a full
+    `content' key-word parameter will always be required. For a full
     specification of creating lists, see: Webservice::InterMine::Service.
 
     Parameters:
 
-    *   from => [url, user, pass]
-
+    * from => [url, user, pass]
         An array ref of arguments to pass to get_service. This information
         can be used to specify a different service than the one named on
         import, or to specify one when none was named on import.
 
-    *   %list_args
-
+    * %list_args
         Key value pairs of arguments to pass to the list constructor in
         Webservice::InterMine::Service. This methid serves as sugar for the
         factory method in that class.
@@ -239,7 +229,7 @@ METHODS
     Please see Webservice::InterMine::Query::Template
 
   get_template
-    Alias for "template"
+    Alias for `template'
 
   saved_query( $name, [from => \@service_args], %options ) NOT IMPLEMENTED YET
     returns the named saved_query (if it exists - if not it returns undef).
@@ -255,7 +245,7 @@ METHODS
     returns a webservice object, which is used to construct queries and
     fetch templates and saved queries. If a url is passed, the webservice
     for that url is returned, otherwise the service for the url given to
-    "use" is returned.
+    `use' is returned.
 
     Get the default service defined at import:
 
@@ -279,11 +269,9 @@ METHODS
 
     Parameters:
 
-    *   $root - The base url for the service.
-
-    *   $token - An API access key
-
-    *   $username, $password - A user's login credentials
+    * $root - The base url for the service.
+    * $token - An API access key
+    * $username, $password - A user's login credentials
 
     InterMine webservices support two authentication mechanisms to provide
     access to private data. The recommended method is to use API access
@@ -294,9 +282,9 @@ METHODS
     the older mechanism for passing along username and password credentials
     has been retained.
 
-    If three arguments are supplied, they will be interpreted as "($root,
-    $user, $pass)", but if two are supplied, they will be intepreted as
-    "($root, $token)".
+    If three arguments are supplied, they will be interpreted as `($root,
+    $user, $pass)', but if two are supplied, they will be intepreted as
+    `($root, $token)'.
 
     These arguments may also be passed in a keyword/hash style, either as a
     list or a hash reference, in which case the full list will be passed to
@@ -318,26 +306,20 @@ METHODS
     name, and an attempt will be made to return a service with that name.
 
 SEE ALSO
-    *   Webservice::InterMine::Cookbook for a guide on how to use these
-        modules.
-
-    *   Webservice::InterMine::Query
-
-    *   Webservice::InterMine::Service
-
-    *   Webservice::InterMine::List
-
-    *   Webservice::InterMine::Query::Template
-
-    *   Webservice::InterMine::Query::Saved
-
-    *   Webservice::InterMine::Bio Biologically specific roles.
+    * Webservice::InterMine::Cookbook for a guide on how to use these
+    modules.
+    * Webservice::InterMine::Query
+    * Webservice::InterMine::Service
+    * Webservice::InterMine::List
+    * Webservice::InterMine::Query::Template
+    * Webservice::InterMine::Query::Saved
+    * Webservice::InterMine::Bio Biologically specific roles.
 
 AUTHOR
-    Alex Kalderimis "<dev@intermine.org>"
+    Alex Kalderimis `<dev@intermine.org>'
 
 BUGS
-    Please report any bugs or feature requests to "dev@intermine.org".
+    Please report any bugs or feature requests to `dev@intermine.org'.
 
 SUPPORT
     You can find documentation for this module with the perldoc command.
@@ -346,13 +328,11 @@ SUPPORT
 
     You can also look for information at:
 
-    *   InterMine
+    * InterMine
+        http://www.intermine.org
 
-        <http://www.intermine.org>
-
-    *   Documentation
-
-        <http://www.intermine.org/perlapi>
+    * Documentation
+        http://www.intermine.org/perlapi
 
 COPYRIGHT AND LICENSE
     Copyright 2006 - 2011 FlyMine, all rights reserved.

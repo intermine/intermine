@@ -37,7 +37,9 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.query.PathQueryExecutor;
 import org.intermine.api.query.WebResultsExecutor;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.api.results.WebResults;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.template.ApiTemplate;
@@ -508,18 +510,19 @@ public final class SessionMethods
                     final Profile profile = (Profile) session.getAttribute(Constants.PROFILE);
                     final InterMineAPI im = getInterMineAPI(session);
                     try {
-                        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-                        final PagedTable pr = new PagedTable((executor.execute(pathQuery)));
+
+                        final PathQueryExecutor pqe = im.getPathQueryExecutor(profile);
+                        
                         Action action = new Action() {
                             @Override
                             public void process() {
-                                pr.getRows();
+                                pqe.execute(pathQuery);
                             }
                         };
                         CompletionCallBack completionCallBack = new CompletionCallBack() {
                             @Override
                             public void complete() {
-                                SessionMethods.setResultsTable(session, "results." + qid, pr);
+                                // Do nothing...
                             }
                         };
                         SessionMethods.runQuery(session, messages, qid, action, completionCallBack);
@@ -527,7 +530,6 @@ public final class SessionMethods
                         if (saveQuery) {
                             String queryName = NameUtil.findNewQueryName(
                                     profile.getHistory().keySet());
-                            executor.setQueryInfo(pathQuery, pr.getWebTable().getInfo());
                             saveQueryToHistory(session, queryName, pathQuery);
                         }
 
@@ -1149,50 +1151,6 @@ public final class SessionMethods
             return true;
         }
         return false;
-    }
-
-    /**
-     * Returns SavedBagsStatus saved in session.
-     * @param session session
-     * @return SavedBagsStatus
-     */
-    public static Map<String, Map<String, Object>> getNotCurrentSavedBagsStatus(HttpSession session) {
-        return (Map<String, Map<String, Object>>) session.getAttribute(Constants.SAVED_BAG_STATUS);
-    }
-
-    /**
-     * Sets in the session the map containing the status of the bags not current.
-     * A bag not current could be:
-     * not current (= the upgrading process has not started upgrading it yet),
-     * upgrading...(= the upgrading process is upgrading it),
-     * to upgrade (= the upgrading process has not been able to upgrade it because there are some
-     * conflicts that the user has to resolve manually ).
-     * @param session the session
-     * @param profile the profile used to retrieve the savedbags
-     * object to put in the session
-     */
-    public static void setNotCurrentSavedBagsStatus(HttpSession session, Profile profile) {
-        @SuppressWarnings("unchecked")
-        Map<String, Map<String, Object>> savedBagsStatus = new HashedMap();
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        synchronized (savedBags) {
-            for (InterMineBag bag : savedBags.values()) {
-                if (!bag.isCurrent()) {
-                    Map<String, Object> bagAttributes = new HashMap<String, Object>();
-                    String bagState = bag.getState();
-                    bagAttributes.put("status", bagState);
-                    if (bagState.equals(BagState.CURRENT.toString())) {
-                        try {
-                            bagAttributes.put("size", bag.getSize());
-                        } catch (ObjectStoreException e) {
-                            // nothing serious happens here...
-                        }
-                    }
-                    savedBagsStatus.put(bag.getName(), bagAttributes);
-                }
-            }
-        }
-        session.setAttribute(Constants.SAVED_BAG_STATUS, savedBagsStatus);
     }
 
     /**

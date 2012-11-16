@@ -61,7 +61,12 @@
 </c:if>
 <c:if test="${showTitles}">
     <html:link styleClass="templateTitle" action="/template?name=${webSearchable.name}&amp;scope=${scope}"
-                 titleKey="history.action.execute.hover">${webSearchable.title}</html:link>
+                 titleKey="history.action.execute.hover">
+                 <c:choose>
+                   <c:when test="${!empty webSearchable.title}">${webSearchable.title}</c:when>
+                   <c:otherwise>${webSearchable.name}</c:otherwise>
+                 </c:choose>
+     </html:link>
 </c:if>
 
 <tiles:insert name="setFavourite.tile">
@@ -76,7 +81,7 @@
    <div id="${wsListId}_${type}_item_description_${webSearchable.name}_highlight" style="display:none" class="description"></div>
 </c:if>
 
-  <c:if test="${IS_SUPERUSER && webSearchable.valid}">
+  <c:if test="${IS_SUPERUSER && webSearchable.valid && !empty userWebSearchables[wsName]}">
 <br><u>Superuser actions</u>:
     <html:link action="/editTemplate?name=${webSearchable.name}&amp;scope=${scope}"
              titleKey="history.action.edit.hover">

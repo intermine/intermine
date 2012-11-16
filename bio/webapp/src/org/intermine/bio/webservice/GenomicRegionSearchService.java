@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -97,7 +98,8 @@ public class GenomicRegionSearchService extends ListMakerService
      * @throws UnknownBagTypeException
      */
     protected InterMineBag doListCreation(GenomicRegionSearchListInput input, Profile profile,
-        String type) throws ObjectStoreException, UnknownBagTypeException {
+        String type) throws ObjectStoreException, ClassKeysNotFoundException,
+        UnknownBagTypeException {
         final InterMineBag tempBag = profile.createBag(
                 input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
         Map<GenomicRegion, Query> queries = createQueries(input.getSearchInfo());

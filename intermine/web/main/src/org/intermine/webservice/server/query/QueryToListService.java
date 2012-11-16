@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryResult;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
@@ -115,12 +116,12 @@ public class QueryToListService extends AbstractQueryService
         PathQuery pq = builder.getQuery();
         if (pq.getView().size() != 1) {
             throw new BadRequestException(
-                    "Queries to the query-to-list service can only have one output column");
+                "Queries to the query-to-list service can only have one output column");
         }
 
         if (!pq.getView().get(0).endsWith(".id")) {
             throw new BadRequestException(
-                    "Queries to the query-to-list service must have ids in their view");
+                "Queries to the query-to-list service must have ids in their view");
         }
         return pq;
     }
@@ -144,7 +145,7 @@ public class QueryToListService extends AbstractQueryService
         String tempName = name + TEMP;
 
         String viewPathString = pq.getView().get(0);
-        Path viewPath = new Path(pq.getModel(), viewPathString);
+        Path viewPath = pq.makePath(viewPathString);
         String type = viewPath.getLastClassDescriptor().getUnqualifiedName();
 
         try {
@@ -168,6 +169,8 @@ public class QueryToListService extends AbstractQueryService
         } catch (UnknownBagTypeException e) {
             output.addResultItem(Arrays.asList("0"));
             throw new InternalErrorException(e.getMessage(), e);
+        } catch (ClassKeysNotFoundException cke) {
+            throw new BadRequestException("Bag has not class key set", cke);
         } finally {
             if (profile.getSavedBags().containsKey(tempName)) {
                 profile.deleteBag(tempName);

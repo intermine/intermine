@@ -5,8 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="http://flymine.org/imutil" prefix="imutil"%>
-<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1"
-  prefix="str"%>
+<%@ taglib uri="http://jakarta.apache.org/taglibs/string-1.1" prefix="str"%>
 
 
 <tiles:importAttribute />
@@ -55,32 +54,43 @@ An individual 'submission' is a single instance of an experiment which tests var
 </c:if>
 
 <tr>
+<%--
   <td >
     <c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
       <c:if test="${organism eq 'D. melanogaster'}">
         <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
       </c:if>
+
       <c:if test="${organism eq 'C. elegans'}">
         <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
       </c:if>
     </c:forEach>
   </td>
+--%>
 
-  <%-- FIX for experiments with + in the name (needs to be encoded)   --%>
-  <td><h4>  
-    <c:choose>
-     <c:when test="${fn:contains(exp.name, '+')}">
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${fn:replace(exp.name, '+', '%2B')}">
+<td>
+<c:forEach items="${exp.organisms}" var="organism" varStatus="orgStatus">
+<c:if test="${fn:startsWith(organism, 'D.')}">
+<c:if test="${orgStatus.first }">
+        <img border="0" class="arrow" src="model/images/f_vvs.png" title="fly"/><br>
+        </c:if>
+</c:if>
+<c:if test="${fn:startsWith(organism, 'C.')}">
+<c:if test="${orgStatus.first }">
+        <img border="0" class="arrow" src="model/images/w_vvs.png" title="worm"/><br>
+</c:if>
+</c:if>
+</c:forEach>
+
+</td>
+
+
+  <td><h4>
+      <c:set var="nameForURL"/>
+      <str:encodeUrl var="nameForURL">${exp.name}</str:encodeUrl>
+  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${nameForURL}">
   ${exp.name}
   </html:link></h4>
-    </c:when>
-    <c:otherwise>
-  <html:link href="/${WEB_PROPERTIES['webapp.path']}/experiment.do?experiment=${exp.name}">${exp.name}
-  </html:link></h4>
-    </c:otherwise>
-   </c:choose>
-  <%-- END FIX --%>
-
 
 <%-- LABS Note: linking with surname only, 2 Green and Kim--%>
 Project:${exp.projectName } &nbsp;&nbsp;(${exp.pi })&nbsp;&nbsp;
@@ -103,7 +113,7 @@ Labs:
 
 <%-- REPOSITORY ENTRIES --%>
 <c:if test="${exp.repositedCount > 0}">
-It has produced 
+It has produced
 <c:if test="${exp.repositedCount == 1}">
 <b>${exp.repositedCount} entry in public repositories</b>.
     </c:if>
@@ -213,8 +223,8 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 <table cellspacing="4"><tr>
 <td>
 <im:querylink text="Fly" showArrow="true" skipBuilder="true">
-<query name="" model="genomic" 
-    view="Submission.DCCid Submission.title Submission.experimentType" 
+<query name="" model="genomic"
+    view="Submission.DCCid Submission.title Submission.experimentType"
     sortOrder="Submission.DCCid asc" constraintLogic="A and B">
 <constraint path="Submission.organism.genus" code="A" op="=" value="Drosophila"/>
 <constraint path="Submission.experiment.category" code="B" op="=" value="${category}"/>
@@ -223,8 +233,8 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 </td>
 <td>
 <im:querylink text="Worm" showArrow="true" skipBuilder="true">
-<query name="" model="genomic" 
-    view="Submission.DCCid Submission.title Submission.experimentType" 
+<query name="" model="genomic"
+    view="Submission.DCCid Submission.title Submission.experimentType"
     sortOrder="Submission.DCCid asc" constraintLogic="A and B">
 <constraint path="Submission.organism.genus" code="A" op="=" value="Caenorhabditis"/>
 <constraint path="Submission.experiment.category" code="B" op="=" value="${category}"/>
@@ -233,8 +243,8 @@ ${fc.featureType}:&nbsp;${fc.featureCounts}
 </td>
 <td>
 <im:querylink text="All submissions" showArrow="true" skipBuilder="true">
-<query name="" model="genomic" 
-    view="Submission.DCCid Submission.title Submission.experimentType" 
+<query name="" model="genomic"
+    view="Submission.DCCid Submission.title Submission.experimentType"
     sortOrder="Submission.DCCid asc">
 <constraint path="Submission.experiment.category" code="B" op="=" value="${category}"/>
 </query>

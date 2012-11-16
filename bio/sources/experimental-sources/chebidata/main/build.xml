@@ -1,4 +1,0 @@
-<project name="chebidata-tasks" default="default" basedir=".">
-  <description>build chebidata tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

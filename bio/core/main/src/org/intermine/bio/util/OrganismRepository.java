@@ -35,7 +35,8 @@ public final class OrganismRepository
     private Map<String, OrganismData> abbreviationMap = new HashMap<String, OrganismData>();
     private Map<String, OrganismData> shortNameMap = new HashMap<String, OrganismData>();
     private Map<MultiKey, OrganismData> genusSpeciesMap = new HashMap<MultiKey, OrganismData>();
-    private Map<Integer, OrganismData> strainMap = new HashMap<Integer, OrganismData>();
+    private Map<Integer, OrganismData> strains = new HashMap<Integer, OrganismData>();
+    private Map<String, String> organismsWithStrains = new HashMap<String, String>();
     private static Map<String, OrganismData> uniprotToTaxon = new HashMap<String, OrganismData>();
 
     private static final String PROP_FILE = "organism_config.properties";
@@ -99,7 +100,8 @@ public final class OrganismRepository
                             String[] strains = attributeValue.split(" ");
                             for (String strain : strains) {
                                 try {
-                                    or.strainMap.put(Integer.valueOf(strain), od);
+                                    or.strains.put(Integer.valueOf(strain), od);
+                                    or.organismsWithStrains.put(taxonIdString, strain);
                                 } catch (NumberFormatException e) {
                                     throw new NumberFormatException("taxon ID must be a number");
                                 }
@@ -169,7 +171,7 @@ public final class OrganismRepository
     public OrganismData getOrganismDataByTaxon(int taxonId) {
         OrganismData od = taxonMap.get(new Integer(taxonId));
         if (od == null) {
-            od = strainMap.get(taxonId);
+            od = strains.get(taxonId);
         }
         return od;
     }
@@ -235,6 +237,15 @@ public final class OrganismRepository
         String genus = fullName.split(" ", 2)[0];
         String species = fullName.split(" ", 2)[1];
         return getOrganismDataByGenusSpecies(genus, species);
+    }
+
+    /**
+     * Get strains for given taxon ID
+     * @param taxonString taxon ID for organism
+     * @return taxonId for strain
+     */
+    public String getStrain(String taxonString) {
+        return organismsWithStrains.get(taxonString);
     }
 
 }

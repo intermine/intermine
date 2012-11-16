@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -31,8 +32,10 @@ import org.apache.log4j.Logger;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.template.ApiTemplate;
+import org.intermine.api.util.TextUtil;
 import org.intermine.api.xml.SavedQueryBinding;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.SavedQuery;
@@ -267,7 +270,38 @@ public class ProfileManager
      * @return the Profile, or null if one doesn't exist
      */
     public synchronized Profile getProfile(String username) {
-        return getProfile(username, new HashMap<String, List<FieldDescriptor>>());
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
+        return getProfile(username, classKeys);
+    }
+    
+    public Profile getProfile(int id) {
+        Map<String, List<FieldDescriptor>> classKeys = getClassKeys(os.getModel());
+        UserProfile up;
+        try {
+            up = (UserProfile) uosw.getObjectById(id, UserProfile.class);
+        } catch (ObjectStoreException e) {
+            throw new RuntimeException("Error retrieving profile", e);
+        }
+        if (up != null && profileCache.containsKey(up.getUsername())) {
+            return profileCache.get(up.getUsername());
+        }
+        return wrapUserProfile(up, classKeys);
+    }
+
+    /**
+     * Load keys that describe how objects should be uniquely identified
+     */
+    private Map<String, List<FieldDescriptor>> getClassKeys(Model model) {
+        Properties classKeyProps = new Properties();
+        try {
+            classKeyProps.load(getClass().getClassLoader()
+                    .getResourceAsStream("class_keys.properties"));
+        } catch (Exception e) {
+            LOG.error("Error loading class descriptions", e);
+        }
+        Map<String, List<FieldDescriptor>>  classKeys =
+            ClassKeyHelper.readKeys(model, classKeyProps);
+        return classKeys;
     }
 
     /**
@@ -289,9 +323,32 @@ public class ProfileManager
         UserProfile userProfile = getUserProfile(username);
 
         if (userProfile == null) {
+            // See if we can resolve the user by an alias.
+            Integer trueId;
+            try {
+                // See if this is one of the unique mappings.
+                for (String pref: UserPreferences.UNIQUE_KEYS) {
+                    trueId = getPreferencesManager().getUserWithUniqueMapping(pref, username);
+                    if (trueId != null) {
+                        return getProfile(trueId);
+                    }
+                }
+            } catch (DuplicateMappingException e) {
+                LOG.error("DB in in an illegal state", e);
+            } catch (SQLException e) {
+                LOG.warn(e);
+            }
             return null;
         }
-
+        
+        return wrapUserProfile(userProfile, classKeys);
+    }
+    
+    private synchronized Profile wrapUserProfile(UserProfile userProfile,
+            Map<String, List<FieldDescriptor>> classKeys) {
+        if (userProfile == null) {
+            return null;
+        }
         Map<String, InterMineBag> savedBags = new HashMap<String, InterMineBag>();
         Map<String, InvalidBag> savedInvalidBags = new HashMap<String, InvalidBag>();
         Query q = new Query();
@@ -310,7 +367,7 @@ public class ProfileManager
                 SavedBag savedBag = (SavedBag) row.get(1);
                 String bagName = savedBag.getName();
                 if (StringUtils.isBlank(bagName)) {
-                    LOG.warn("Failed to load bag with blank name on login for user: " + username);
+                    LOG.warn("Failed to load bag with blank name on login for user: " + userProfile.getUsername());
                 } else {
                     try {
                         InterMineBag bag = new InterMineBag(os, bagId, uosw);
@@ -318,7 +375,8 @@ public class ProfileManager
                                              classKeys, bag.getType()));
                         savedBags.put(bagName, bag);
                     } catch (UnknownBagTypeException e) {
-                        LOG.warn("The bag '" + bagName + "' for user '" + username + "'"
+                        LOG.warn("The bag '" + bagName + "' for user '" +
+                                userProfile.getUsername() + "'"
                                 + " with type: " + savedBag.getType()
                                 + " is not in the model. It will be saved into invalidBags", e);
                         InvalidBag bag = new InvalidBag(savedBag, userProfile.getId(), os, uosw);
@@ -376,10 +434,10 @@ public class ProfileManager
             }
         }
         BagSet bags = new BagSet(savedBags, savedInvalidBags);
-        profile = new Profile(this, username, userProfile.getId(), userProfile.getPassword(),
+        Profile profile = new Profile(this, userProfile.getUsername(), userProfile.getId(), userProfile.getPassword(),
                 savedQueries, bags, savedTemplates, userProfile.getApiKey(),
                 userProfile.getLocalAccount(), userProfile.getSuperuser());
-        profileCache.put(username, profile);
+        profileCache.put(userProfile.getUsername(), profile);
         //only after saving the profile in the cache,
         //we can update the user repository with shared bags
         //if we do in the constructor we could generate loops
@@ -515,7 +573,7 @@ public class ProfileManager
      * @return A new API access key
      */
     public synchronized String generateApiKey(Profile profile) {
-        String newApiKey = generateApiKey();
+        String newApiKey = TextUtil.generateRandomUniqueString();
         profile.setApiKey(newApiKey);
         return newApiKey;
     }
@@ -526,7 +584,7 @@ public class ProfileManager
      * @return the generated key
      */
     public synchronized String generateSingleUseKey(Profile profile) {
-        String key = generateApiKey();
+        String key = TextUtil.generateRandomUniqueString();
         LimitedAccessToken token = new SingleAccessToken(profile);
         limitedAccessTokens.put(key, token);
         return key;
@@ -538,7 +596,7 @@ public class ProfileManager
      * @return the token
      */
     public synchronized String generate24hrKey(Profile profile) {
-        String key = generateApiKey();
+        String key = TextUtil.generateRandomUniqueString();
         LimitedAccessToken token = new DayToken(profile);
         limitedAccessTokens.put(key, token);
         return key;
@@ -561,28 +619,17 @@ public class ProfileManager
         return false;
     }
 
-    private static String generateApiKey() {
-        String timePrefix = Long.toHexString(new Date().getTime());
-        String randomSuffix = RandomStringUtils.randomAlphanumeric(16);
-
-        StringBuilder sb = new StringBuilder();
-
-        // Interleave the random and predictable portions so that
-        // the time string isn't so obvious.
-        int tpl = timePrefix.length();
-        int rsl = randomSuffix.length();
-        for (int i = 0; i < tpl || i < rsl; i++) {
-            if (i < randomSuffix.length()) {
-                sb.append(randomSuffix.charAt(i));
-            }
-            if (i < timePrefix.length()) {
-                sb.append(timePrefix.charAt(i));
-            }
-        }
-
-        return sb.toString();
-    }
-
+    /**
+     * TODO: actually make this return a token!!
+     * This will need storing in a permanent data-store!
+     * 
+     * In fact, scratch that; we need a system for reducing webservice
+     * queries down to tokens themselves, so I can share a result set, and
+     * know that the user cannot just run any query they like...
+     * 
+     * @param profile
+     * @return A token granting read-only access to resources.
+     */
     public String generateReadOnlyAccessToken(Profile profile) {
         return null;
     }
@@ -668,24 +715,21 @@ public class ProfileManager
     }
 
     /**
-     * Return a List of the usernames in all of the stored profiles.
+     * Return the name of the user with the given internal DB id.
+     * 
+     * If no user with that name exists, returns null.
      *
-     * @return the usernames
+     * @return the name of the user, or null.
      */
     public synchronized String getProfileUserName(int profileId) {
-        UserProfile profile = new UserProfile();
-        profile.setId(profileId);
-        Set<String> fieldNames = new HashSet<String>();
-        fieldNames.add("id");
         try {
-            profile = (UserProfile) uosw.getObjectByExample(profile, fieldNames);
+            UserProfile profile = (UserProfile) uosw.getObjectById(profileId, UserProfile.class);
+            return profile.getUsername();
         } catch (ObjectStoreException e) {
-            return null; // Could not be found.
+            return null; // Not in DB.
+        } catch (NullPointerException e) {
+            return null; // profile was null (impossible!)
         }
-        if (profile == null) {
-            return null;
-        }
-        return profile.getUsername();
     }
 
     /**
@@ -731,7 +775,7 @@ public class ProfileManager
     public synchronized String createPasswordChangeToken(String username) {
         if (hasProfile(username)) {
             Date expiry = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
-            String token = generateApiKey();
+            String token = TextUtil.generateRandomUniqueString();
             passwordChangeTokens.put(token, new PasswordChangeToken(username, expiry));
             return token;
         } else {
@@ -1077,16 +1121,12 @@ public class ProfileManager
     }
 
     /**
-     * Check if the profile, which username is given in input, has been cached by the profile cache
+     * Check if the profile, whose username is given in input, has been cached by the profile cache
      * @param username the user name
      * @return true if the profile is in the cache
      */
     public boolean isProfileCached(String username) {
-        Profile profile = profileCache.get(username);
-        if (profile != null) {
-            return true;
-        }
-        return false;
+        return profileCache.containsKey(username);
     }
 
     /**
@@ -1145,4 +1185,27 @@ public class ProfileManager
         }
 
     }
+
+    /**
+     * Get the preferences for a profile.
+     * @param profile The profile to retrieve preferences for.
+     * @return A user-preferences map.
+     */
+    protected UserPreferences getPreferences(Profile profile) {
+        try {
+            return new UserPreferences(getPreferencesManager(), profile);
+        } catch (SQLException e) {
+            throw new RuntimeException("Could not retrieve user-preferences", e);
+        }
+    }
+
+    private PreferencesManager preferencesManager = null;
+
+    private PreferencesManager getPreferencesManager() {
+        if (preferencesManager == null) {
+            preferencesManager = new PreferencesManager(uosw);
+        }
+        return preferencesManager;
+    }
+
 }

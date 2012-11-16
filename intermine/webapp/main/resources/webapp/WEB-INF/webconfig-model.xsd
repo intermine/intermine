@@ -128,7 +128,6 @@
                 <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="domainLabel" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="rangeLabel" type="xsd:string"></xsd:attribute>
-                <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="graphType" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="extraAttributeClass" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="listPath" type="xsd:string"></xsd:attribute>
@@ -143,7 +142,6 @@
         <xsd:complexContent>
             <xsd:extension base="widgetType">
                 <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
-                <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="label" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="externalLink" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="startClassDisplay" type="xsd:string"></xsd:attribute>

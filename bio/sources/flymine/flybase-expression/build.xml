@@ -1,5 +1,0 @@
-<project name="flybase-expression" default="default" basedir=".">
-  <description>build, test, package flybase-expression</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

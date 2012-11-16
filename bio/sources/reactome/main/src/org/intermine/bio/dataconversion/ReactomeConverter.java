@@ -47,10 +47,10 @@ public class ReactomeConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "Reactome";
     private Map<String, Item> pathways = new HashMap<String, Item>();
     private Map<String, String> genes = new HashMap<String, String>();
-    protected IdResolverFactory resolverFactory;
-    private IdResolver resolver;
     private Map<String, String> config = new HashMap<String, String>();
     private static final String DEFAULT_IDENTIFIER = "primaryIdentifier";
+    protected IdResolver rslv;
+    private static final String FLY = "7227";
 
     /**
      * Constructor
@@ -60,8 +60,6 @@ public class ReactomeConverter extends BioFileConverter
     public ReactomeConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         readConfig();
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
-        resolver = resolverFactory.getIdResolver(false);
     }
 
     /**
@@ -111,6 +109,10 @@ public class ReactomeConverter extends BioFileConverter
     public void process(Reader reader) throws Exception {
         if (taxonIds == null || taxonIds.isEmpty()) {
             throw new IllegalArgumentException("No organism data provided for reactome");
+        }
+
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(FLY);
         }
 
         String fileName = getCurrentFile().getName();
@@ -198,7 +200,7 @@ public class ReactomeConverter extends BioFileConverter
     private String getGene(String identifier, String taxonId)
         throws ObjectStoreException {
         String newIdentifier = identifier;
-        if ("7227".equals(taxonId)) {
+        if (FLY.equals(taxonId)) {
             newIdentifier = resolveGene(taxonId, identifier);
             if (newIdentifier == null) {
                 return null;
@@ -219,15 +221,15 @@ public class ReactomeConverter extends BioFileConverter
 
     private String resolveGene(String taxonId, String identifier) {
         String id = identifier;
-        if ("7227".equals(taxonId) && resolver != null) {
-            int resCount = resolver.countResolutions(taxonId, identifier);
+        if (FLY.equals(taxonId) && rslv != null && rslv.hasTaxon(FLY)) {
+            int resCount = rslv.countResolutions(taxonId, identifier);
             if (resCount != 1) {
                 LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                          + identifier + " count: " + resCount + " FBgn: "
-                         + resolver.resolveId(taxonId, identifier));
+                         + rslv.resolveId(taxonId, identifier));
                 return null;
             }
-            id = resolver.resolveId(taxonId, identifier).iterator().next();
+            id = rslv.resolveId(taxonId, identifier).iterator().next();
         }
         return id;
     }

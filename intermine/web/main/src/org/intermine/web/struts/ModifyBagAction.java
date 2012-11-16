@@ -37,6 +37,7 @@ import org.intermine.api.bag.BagOperations;
 import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.util.NameUtil;
@@ -258,10 +259,26 @@ public class ModifyBagAction extends InterMineAction
         Profile profile = SessionMethods.getProfile(session);
         ModifyBagForm mbf = (ModifyBagForm) form;
         for (int i = 0; i < mbf.getSelectedBags().length; i++) {
-            InterMineBag bag = profile.getSavedBags().get(mbf.getSelectedBags()[i]);
-            deleteQueriesThatMentionBag(profile, bag.getName());
-            deleteBag(session, profile, bag);
+            String bagName = mbf.getSelectedBags()[i];
+            InterMineBag bag = profile.getSavedBags().get(bagName);
+            if (bag != null) {
+                deleteQueriesThatMentionBag(profile, bag.getName());
+                deleteBag(session, profile, bag);
+            } else {
+                bag = profile.getSharedBags().get(bagName);
+                if (bag == null) {
+                    LOG.error("Asked to delete a bag this user does not have access to.");
+                } else {
+                    unshareBag(session, profile, bag);
+                }
+            }
         }
+    }
+
+    private void unshareBag(HttpSession session, Profile profile, InterMineBag bag) {
+        InterMineAPI api = SessionMethods.getInterMineAPI(session);
+        BagManager bm = api.getBagManager();
+        bm.unshareBagWithUser(bag, profile);
     }
 
     // Remove a bag from userprofile database and session cache

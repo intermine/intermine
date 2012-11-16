@@ -187,7 +187,68 @@ public class PubMedGeneConverter extends BioFileConverter
         } catch (ObjectStoreException e) {
             throw new RuntimeException("storing organism failed", e);
         }
-        return organism.getIdentifier();
+        refId = organism.getIdentifier();
+        organisms.put(taxonId, refId);
+        return refId;
+    }
+
+    private Item createGene(String ncbiGeneId, String taxonId, String organismRefId) {
+        Item gene = createItem("Gene");
+        String pid = resolveToPrimIdentifier(taxonId, ncbiGeneId);
+        if (pid == null) {
+            return null;
+        }
+        // Case where a gene has multiple NCBI id mapping to one single pid
+        if (genes.keySet().contains(pid)) {
+            genesToRemove.add(pid);
+            return null;
+        }
+        gene.setAttribute("primaryIdentifier", pid);
+        gene.setReference("organism", organismRefId);
+        gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
+        return gene;
+    }
+
+    private String resolveToPrimIdentifier(String taxonId, String identifier) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
+            return identifier;
+        }
+        int resCount = rslv.countResolutions(taxonId, identifier);
+        if (resCount != 1) { // not process
+            return null;
+        }
+        return rslv.resolveId(taxonId, identifier).iterator().next();
+    }
+
+    private void storeGenes() {
+        for (String id : genesToRemove) {
+            genes.remove(id);
+        }
+        try {
+            List<Item> gs = new ArrayList<Item>();
+            for (String id : genes.keySet()) {
+                gs.add(genes.get(id));
+            }
+            store(gs);
+        } catch (ObjectStoreException e) {
+            throw new GenesProcessorException(e);
+        }
+        genes = new HashMap<String, Item>();
+    }
+
+    private void processGene(Integer ncbiGeneId, List<String> publications, Integer taxonId,
+            String organismRefId) {
+
+        taxonId = BioUtil.replaceStrain(taxonId);
+
+        Item gene = createGene(ncbiGeneId.toString(), taxonId.toString(), organismRefId);
+        if (gene == null) {
+            return;
+        }
+        for (String pubRefId : publications) {
+            gene.addToCollection("publications", pubRefId);
+        }
+        genes.put(gene.getAttribute("primaryIdentifier").getValue(), gene);
     }
 
     private Item createGene(String ncbiGeneId, String taxonId, String organismRefId) {

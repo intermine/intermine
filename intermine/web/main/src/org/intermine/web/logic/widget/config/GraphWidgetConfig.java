@@ -156,7 +156,14 @@ public class GraphWidgetConfig extends WidgetConfig
     }
 
     public boolean isActualExpectedCriteria() {
-        if (this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA)) {
+        if (hasSeries() && this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean hasSeries() {
+        if (this.seriesPath != null && !"".equals(this.seriesPath)) {
             return true;
         }
         return false;

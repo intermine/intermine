@@ -20,6 +20,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.Formats;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.core.Either;
 import org.intermine.webservice.server.core.EitherVisitor;
@@ -43,7 +44,7 @@ public class TableRowService extends QueryResultService
 
     @Override
     protected int getDefaultFormat() {
-        return JSON_FORMAT;
+        return Formats.JSON;
     }
     
     @Override

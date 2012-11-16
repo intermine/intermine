@@ -18,6 +18,7 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplateQuery;
+import org.intermine.web.logic.template.TemplateHelper.TemplateValueParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -107,7 +108,7 @@ public class TemplateHelperTest {
     }
 
     @Test
-    public void parseSingleConstraintTemplateParameters() {
+    public void parseSingleConstraintTemplateParameters() throws TemplateValueParseException {
 
         HttpServletRequest one = new MockHttpRequest("GET", emptyHeaders, oneConstraint);
         Map<String, List<ConstraintInput>> ret = TemplateHelper.parseConstraints(one);
@@ -121,7 +122,7 @@ public class TemplateHelperTest {
     }
 
     @Test
-    public void parseMultipleConstraintTemplateParameters() {
+    public void parseMultipleConstraintTemplateParameters() throws TemplateValueParseException {
         HttpServletRequest many = new MockHttpRequest("GET", emptyHeaders, severalConstraints);
         Map<String, List<ConstraintInput>> ret = TemplateHelper.parseConstraints(many);
         assertEquals("I expect two pairs from this map", 2, ret.size());
@@ -144,13 +145,13 @@ public class TemplateHelperTest {
         HttpServletRequest toomany = new MockHttpRequest("GET", emptyHeaders, parametersWithTooManyConstraints);
         try {
             TemplateHelper.parseConstraints(toomany);
-        } catch (IllegalArgumentException e) {
+        } catch (TemplateValueParseException e) {
             assertTrue("The error message should be informative", e.getMessage().contains("Maximum number"));
         }
     }
 
     @Test
-    public void parseMaximumNumberOfConstraints() {
+    public void parseMaximumNumberOfConstraints() throws TemplateValueParseException {
         HttpServletRequest lots = new MockHttpRequest("GET", emptyHeaders, parametersWithLotsOfConstraints);
         Map<String, List<ConstraintInput>> ret = TemplateHelper.parseConstraints(lots);
         assertEquals("There is only one pair", 1, ret.size());
@@ -162,7 +163,7 @@ public class TemplateHelperTest {
         HttpServletRequest missingparts = new MockHttpRequest("GET", emptyHeaders, incompleteParameters);
         try {
             TemplateHelper.parseConstraints(missingparts);
-        } catch (IllegalArgumentException e) {
+        } catch (TemplateValueParseException e) {
             assertTrue("The error message should be informative", e.getMessage().contains("no path was provided"));
         }
     }

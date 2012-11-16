@@ -1,4 +1,0 @@
-<project name="adineta-gff-tasks" default="default" basedir=".">
-  <description>build adineta-gff tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

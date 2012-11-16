@@ -16,6 +16,8 @@ import org.intermine.webservice.client.services.QueryService;
  * This is a Java program to run a query from TEST_PROJECT_TITLE.
  * It was automatically generated at __SOME-DATE__
  *
+ * @author TEST_PROJECT_TITLE
+ *
  */
 public class QueryClient
 {
@@ -46,12 +48,11 @@ public class QueryClient
 
         QueryService service = factory.getQueryService();
         PrintStream out = System.out;
-        String viewFormat = "%-17.17s | %-17.17s | %-17.17s | %-17.17s | %-17.17s\n";
-        String dataFormat = "%-17.17s | %-17.17s | %-17.17s | %-17.17s | %-17.17s\n";
-        out.printf(viewFormat, query.getView().toArray());
+        String format = "%-17.17s | %-17.17s | %-17.17s | %-17.17s | %-17.17s\n";
+        out.printf(format, query.getView().toArray());
         Iterator<List<Object>> rows = service.getRowListIterator(query);
         while (rows.hasNext()) {
-            out.printf(dataFormat, rows.next().toArray());
+            out.printf(format, rows.next().toArray());
         }
         out.printf("%d rows\n", service.getCount(query));
     }

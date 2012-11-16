@@ -78,7 +78,7 @@ public class CreateTemplateAction extends InterMineAction
         TemplateSettingsForm tsf = (TemplateSettingsForm) form;
         ActionErrors errors = tsf.validate(mapping, request);
         saveErrors(request, (ActionMessages) errors);
-        if (errors != null) {
+        if (!errors.isEmpty()) {
             return mapping.findForward("query");
         }
         template.setDescription(tsf.getDescription());

@@ -16,7 +16,7 @@ sub test_get_constraint_class {
 }
 
 
-sub make_constraint : Test(15) {
+sub make_constraint : Test(18) {
     my $test = shift;
     $test->SUPER::make_constraint;
 }

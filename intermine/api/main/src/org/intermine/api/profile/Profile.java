@@ -23,18 +23,19 @@ import java.util.TreeMap;
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.ClassKeysNotFoundException;
 import org.intermine.api.bag.SharedBagManager;
 import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.search.CreationEvent;
 import org.intermine.api.search.DeletionEvent;
-import org.intermine.api.search.GlobalRepository;
 import org.intermine.api.search.SearchRepository;
 import org.intermine.api.search.UserRepository;
 import org.intermine.api.search.WebSearchable;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.api.tracker.TrackerDelegate;
+import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.model.userprofile.Tag;
 import org.intermine.model.userprofile.UserProfile;
@@ -70,6 +71,7 @@ public class Profile
     protected boolean savingDisabled;
     private SearchRepository searchRepository;
     private String token;
+    private Map<String, String> preferences;
 
     /**
      * True if this account is purely local. False if it was created
@@ -111,6 +113,13 @@ public class Profile
         }
         searchRepository = new UserRepository(this);
         this.token = token;
+        if (this.userId != null) {
+            // preferences backed by DB.
+            this.preferences = manager.getPreferences(this);
+        } else {
+            // preferences just stored in memory.
+            this.preferences = new HashMap<String, String>();
+        }
     }
 
     /**
@@ -198,6 +207,17 @@ public class Profile
     }
 
     /**
+     * Get this user's preferred email address.
+     * @return This user's email address.
+     */
+    public String getEmailAddress() {
+        if (preferences.containsKey(UserPreferences.EMAIL)) {
+            return preferences.get(UserPreferences.EMAIL);
+        }
+        return getUsername();
+    }
+
+    /**
      * Return a first part of the username before the "@" sign (used in metabolicMine)
      * @author radek
      *
@@ -265,7 +285,14 @@ public class Profile
      * @param userId an Integer
      */
     public void setUserId(Integer userId) {
+        Integer oldId = getUserId();
         this.userId = userId;
+        if (this.userId != null && !this.userId.equals(oldId)) { // Need to update the preferences
+            Map<String, String> oldPrefs = preferences;
+            this.preferences = manager.getPreferences(this);
+            preferences.putAll(oldPrefs);
+            oldPrefs.clear(); // Delete them now that they are copied over.
+        }
     }
 
     /**
@@ -314,7 +341,10 @@ public class Profile
      * @param name the template name
      * @param template the template
      */
-    public void saveTemplate(String name, ApiTemplate template) {
+    public void saveTemplate(String name, ApiTemplate template) throws BadTemplateException {
+        if (!NameUtil.isValidName(template.getName())) {
+            throw new BadTemplateException("Invalid name.");
+        }
         savedTemplates.put(name, template);
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
@@ -489,6 +519,7 @@ public class Profile
         result.put("NOT_CURRENT", new HashMap<String, InterMineBag>());
         result.put("TO_UPGRADE", new HashMap<String, InterMineBag>());
         result.put("CURRENT", new HashMap<String, InterMineBag>());
+        result.put("UPGRADING", new HashMap<String, InterMineBag>());
 
         for (InterMineBag bag : savedBags.values()) {
             String state = bag.getState();
@@ -551,11 +582,12 @@ public class Profile
      * @param classKeys the classKeys used to obtain  the primary identifier field
      * @return the new bag
      * @throws UnknownBagTypeException if the bag type is wrong
+     * @throws ClassKeysNotFoundException if the classKeys is empty
      * @throws ObjectStoreException if something goes wrong
      */
     public InterMineBag createBag(String name, String type, String description,
         Map<String, List<FieldDescriptor>> classKeys)
-        throws UnknownBagTypeException, ObjectStoreException {
+        throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
         ObjectStore os = manager.getProductionObjectStore();
         ObjectStoreWriter uosw = manager.getProfileObjectStoreWriter();
         List<String> keyFielNames = ClassKeyHelper.getKeyFieldNames(
@@ -657,7 +689,8 @@ public class Profile
      * @param template the new template
      * @throws ObjectStoreException if problems storing
      */
-    public void updateTemplate(String oldName, ApiTemplate template) throws ObjectStoreException {
+    public void updateTemplate(String oldName, ApiTemplate template)
+        throws ObjectStoreException, BadTemplateException {
         if (oldName == null) {
             throw new IllegalArgumentException("oldName may not be null");
         }
@@ -667,9 +700,13 @@ public class Profile
                     + " exist: " + oldName);
         }
 
-        savedTemplates.remove(oldName);
-
-        saveTemplate(template.getName(), template);
+        ApiTemplate oldTemplate = savedTemplates.remove(oldName);
+        try {
+            saveTemplate(template.getName(), template);
+        } catch (BadTemplateException bte) {
+            savedTemplates.put(oldName, oldTemplate);
+            throw bte;
+        }
         if (!oldName.equals(template.getName())) {
             searchRepository.receiveEvent(new DeletionEvent(old));
             moveTagsToNewObject(oldName, template.getName(), TagTypes.TEMPLATE);
@@ -790,5 +827,25 @@ public class Profile
         if (searchRepository instanceof UserRepository) {
             ((UserRepository) searchRepository).updateUserRepositoryWithSharedBags();
         }
+    }
+
+    /**
+     * Get the object representing the preferences of this user.
+     *
+     * Changes to this user's preferences can be written directly into
+     * this object.
+     * @return A representation of the preferences of a user.
+     */
+    public Map<String, String> getPreferences() {
+        return preferences;
+    }
+
+    /**
+     * Determine whether a user perfers a certain thing or not.
+     * @param The name of the preference.
+     * @return Whether this preference is set by this user.
+     */
+    public boolean prefers(String preference) {
+        return preferences.containsKey(preference);
     }
 }

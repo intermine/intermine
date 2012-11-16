@@ -145,7 +145,7 @@
     <fields>
       <fieldconfig fieldExpr="secondaryIdentifier"/>
       <fieldconfig fieldExpr="symbol"/>
-      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="primaryIdentifier"/>
       <fieldconfig fieldExpr="organism.name"/>
     </fields>
     <bagdisplayers>
@@ -734,8 +734,8 @@
                              chromosomeLocation.start, chromosomeLocation.end, chromosomeLocation.strand"/>
 
       <graphdisplayer id="flyatlas_for_gene"
-                      title="Gene Expression in the Adult Fly (FlyAtlas)"
-                      description="For each tissue in the adult fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
+                      title="Gene Expression in the Fly (FlyAtlas)"
+                      description="For each tissue in the fly, the number of genes from this list for which the levels of expression are significantly high (Up) or low (Down) according to &lt;a href=&quot;http://www.flyatlas.org/&quot; target=&quot;_new&quot;&gt;FlyAtlas&lt;/a&gt; AffyCall."
                       graphType="BarChart"
                       domainLabel="Tissue"
                       rangeLabel="Up (+) or Down (-) gene count"
@@ -781,6 +781,21 @@
                       constraints="mRNAExpressionResults.dataSet.name=fly-Fish data set"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name,
                              mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
+                             
+<!--       <graphdisplayer id="mouse_human_orthologue_pair"
+                      title="Mouse-human orthologue pair"
+                      description="dots would be where there is a mouse-human orthologue pair "
+                      graphType="ScatterChart"
+                      domainLabel="Chromosome location for humans"
+                      rangeLabel="Chromosome location for mouses"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      categoryPath="organism.name"
+                      seriesPath="homologues.homologue.organism.name"
+                      seriesValues=""
+                      seriesLabels=""
+                      constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>        -->                      
 
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
