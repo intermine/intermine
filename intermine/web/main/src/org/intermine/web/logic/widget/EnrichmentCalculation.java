@@ -27,6 +27,7 @@ import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
  *
  * @author Julie Sullivan
  * @author Richard Smith
+ * @author Daniela Butano
  */
 public final class EnrichmentCalculation
 {
@@ -46,7 +47,9 @@ public final class EnrichmentCalculation
             String errorCorrection) {
 
         int sampleSize = input.getSampleSize();
-        int populationSize = input.getPopulationSize();
+        PopulationInfo population = input.getPopulationInfo();
+        int populationSize = population.getSize();
+        float geneLengthAverage = population.getGeneLengthAverage();
 
         Map<String, Integer> sampleCounts = input.getAnnotatedCountsInSample();
         Map<String, Integer> populationCounts = input.getAnnotatedCountsInPopulation();

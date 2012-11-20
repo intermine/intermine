@@ -20,16 +20,17 @@ import java.util.Map;
  * departments) and the sample is a subset of interest of those companies.
  *
  * @author Richard Smith
+ * @author Daniela Butano
  */
 public interface EnrichmentInput
 {
 
     /**
-     * The population size, N.  In our example this is the total number of companies, or possibly
-     * the total number of companies that have at least one Department.
-     * @return the population size
+     * Return a population info instance contanining the population size, N (In our example this is the total number of companies, or possibly
+     * the total number of companies that have at least one Department) and the average length of the genes in the whole population.
+     * @return the population info instance
      */
-    int getPopulationSize();
+    PopulationInfo getPopulationInfo();
 
     /**
      * The sample size, n.  The number of items from the whole population that are in the sample, in
@@ -68,5 +69,11 @@ public interface EnrichmentInput
      * @return the number of tests to be performed
      */
     int getTestCount();
+
+    /**
+     * Return the average gene length of genes associated with a term in the whole population
+     * @return the map of term with average
+     */
+    Map<String, Long> getAnnotatedGeneLengthAverageInPopulation();
 
 }
