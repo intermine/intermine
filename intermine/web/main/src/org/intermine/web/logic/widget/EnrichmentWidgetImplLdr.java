@@ -131,6 +131,11 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         mainQuery.setDistinct(false);
 
         QueryFunction qfCount = new QueryFunction();
+        QueryField qfGeneLength = null;
+        QueryFunction qfAverage = null;
+        if (isGeneLengthCorrectionRelevant()) {
+            qfGeneLength = new QueryField(startClass, "length");
+        }
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {
             subQ.addToSelect(qfEnrichId);
@@ -147,6 +152,13 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             subQ.addToSelect(qfStartClassId);
             mainQuery.addFrom(subQ);
             mainQuery.addToSelect(qfCount);
+            // and for the whole population the average length
+            if (action.startsWith("population") && qfGeneLength != null) {
+                subQ.addToSelect(qfGeneLength);
+                QueryField outerQfGenelength = new QueryField(subQ, qfGeneLength);
+                qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
+                mainQuery.addToSelect(qfAverage);
+            }
         // enrichment queries
         } else {
             subQ.addToSelect(qfStartClassId);
@@ -168,6 +180,11 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 } else {
                     mainQuery.addToSelect(outerQfEnrichId);
                 }
+            } else if ("population".equals(action) && qfGeneLength != null) {
+                subQ.addToSelect(qfGeneLength);
+                QueryField outerQfGenelength = new QueryField(subQ, qfGeneLength);
+                qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
+                mainQuery.addToSelect(qfAverage);
             }
         }
         return mainQuery;
@@ -284,5 +301,10 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         return getQuery("export", keys);
     }
 
-
+    private boolean isGeneLengthCorrectionRelevant() {
+        if (startClass.getType().getSimpleName().equals("Gene")) {
+            return true;
+        }
+        return false;
+    }
 }

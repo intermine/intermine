@@ -38,7 +38,7 @@ import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 /**
  * @author "Xavier Watkins"
- * @author dbutano
+ * @author Daniela Butano
  *
  */
 public class EnrichmentWidget extends Widget
