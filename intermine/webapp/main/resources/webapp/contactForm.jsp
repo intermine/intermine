@@ -40,7 +40,7 @@
 
 <script language="JavaScript">
 <!--
-jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\"/>');
+jQuery('#monkey').html('<input type=\"text\" name=\"monkey\" size=\"40\" value=\"${PROFILE.username}\"/>');
 
 // append browser version into the message area
 var browser = navigator.userAgent;

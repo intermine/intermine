@@ -76,7 +76,7 @@
                                 '<span class="tab export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');"></a></span>' +
                                 '<span class="csv export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');"></a></span>' +
                                 '<span class="gff3 export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');"></a></span>' +
-                                '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
+//                                '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
                                 '<span class="bed export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'bed\');"></a></span>' +
                                 createListHtml);
                     } else {
@@ -84,9 +84,9 @@
                                 '<span class="tab export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'tab\');"></a></span>' +
                                 '<span class="csv export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'csv\');"></a></span>' +
                                 '<span class="gff3 export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'gff3\');"></a></span>' +
-                                '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
+//                                '<span class="fasta export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'sequence\');"></a></span>' +
                                 '<span class="bed export-region"><a href="javascript: exportFeatures(\'all\', \'SequenceFeature\', \'bed\');"></a></span>' +
-                                '<span class="export-region"><a href="javascript: exportFeatures(\'all\', \'\', \'chrSeg\');"><img title="export all chromosome regions as FASTA" class="fasta" style="margin-top: 0px;" src="model/images/fasta.gif"></a></span>' +
+                                 '<span class="export-region"><a href="javascript: exportFeatures(\'all\', \'\', \'chrSeg\');"><img title="export all chromosome regions as FASTA" class="fasta" style="margin-top: 0px;" src="model/images/fasta.gif"></a></span>' +
                                 createListHtml);
                     }
 

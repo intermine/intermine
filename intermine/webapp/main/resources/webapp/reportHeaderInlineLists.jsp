@@ -65,7 +65,7 @@
           </c:when>
           <c:otherwise>
             <c:forEach items="${list.items}" var="item" varStatus="status">
-              <li>${item.value}<c:if test="${status.count < list.size}">, </c:if></li>
+              <li><c:out value="${item.value}"/><c:if test="${status.count < list.size}">, </c:if></li>
             </c:forEach>
           </c:otherwise>
         </c:choose>
