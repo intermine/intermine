@@ -167,8 +167,12 @@ public class TableWidgetLdr extends WidgetLdr
                         }
                         flattenedRow.add(o.getId());
                     } else if (select instanceof QueryField) {
-                        String fieldValue = String.valueOf(resRow.get(i));
-                        flattenedRow.add(fieldValue);
+                        Object queryFieldObj = resRow.get(i);
+                        if (queryFieldObj instanceof Integer) {
+                            flattenedRow.add((Integer) queryFieldObj);
+                        } else {
+                            flattenedRow.add(String.valueOf(resRow.get(i)));
+                        }
                     }
                 }
 
@@ -305,12 +309,10 @@ public class TableWidgetLdr extends WidgetLdr
                 } else if (!calcTotal) {
                     Query mainQuery = new Query();
                     mainQuery.setDistinct(false);
-                    mainQuery.addToSelect(qfCount);
                     Query subQ = q;
                     subQ.setDistinct(true);
                     subQ.addToSelect(qfStartId);
                     mainQuery.addFrom(subQ);
-                    mainQuery.addToOrderBy(qfCount, "desc");
                     QueryField outerQfEnd = null;
                     if (origPath.endIsAttribute()) {
                         QueryField qfEnd = new QueryField(qcEnd, origPath.getLastElement());
@@ -326,8 +328,14 @@ public class TableWidgetLdr extends WidgetLdr
                             mainQuery.addToSelect(outerQfEnd);
                             mainQuery.addToGroupBy(outerQfEnd);
                         }
+                        QueryField qfId = new QueryField(qcEnd, "id");
+                        subQ.addToSelect(qfId);
+                        QueryField outerQfId = new QueryField(subQ, qfId);
+                        mainQuery.addToSelect(outerQfId);
+                        mainQuery.addToGroupBy(outerQfId);
                     }
-
+                    mainQuery.addToSelect(qfCount);
+                    mainQuery.addToOrderBy(qfCount, "desc");
                     return mainQuery;
 
                 } else {
