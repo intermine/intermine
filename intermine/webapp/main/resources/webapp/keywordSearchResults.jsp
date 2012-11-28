@@ -407,7 +407,7 @@ input.submit {
   </c:otherwise>
 </c:choose>
                   
-    <html:link action="${detailsLink}" title="${detailsLink}" target="${extlink}">
+    <a href="${detailsLink}" ${extlink}>
                 
                 
                 <c:if test="${empty searchResult.keyFields}">
@@ -444,7 +444,7 @@ input.submit {
                   </c:choose> </span>
                   <c:if test="${! status.last }"><span class="divider">|</span></c:if>
                   </c:forEach>
-                    </html:link>
+                    </a>
                 </div>
 
               <%-- print each field configured for this object --%>
