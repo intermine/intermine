@@ -39,13 +39,13 @@ input.submit {
           if (this.checked) {ids.push(this.value);}
        });
 
-        if (ids.length < 1)
-        { alert("Please select some ${searchFacetValues['Category']}s...");
-          return false;
+        if (ids.length < 1) { 
+        	alert("Please select some ${searchFacetValues['Category']}s...");
+            return false;
         } else {
-          jQuery("#ids").val(ids);
-          return true;
-          }
+            jQuery("#ids").val(ids);
+            return true;
+        }
     });
   });
 
@@ -347,20 +347,16 @@ input.submit {
           </c:if>
         </c:forEach></div>
 
-        <div class="resultTableContainer"><c:if
-          test="${!empty searchFacetValues['Category']}">
-          <form
-            action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do"
-            id="saveFromIdsToBagForm" method="POST"><input
-            type="hidden" id="type" name="type"
-            value="${searchFacetValues['Category']}" /> <input type="hidden"
-            id="ids" name="ids" value="" /> <input type="hidden"
-            name="source" value="keywordSearchResults" /> <input
-            type="hidden" name="newBagName"
-            value="new_${searchFacetValues['Category']}_list" />
-          <div align="left"
-            style="position: relative; top: 1em; padding-bottom: 5px;"><input
-            type="submit" class="submit" value="CREATE LIST" /></div>
+        <div class="resultTableContainer">
+        <c:if test="${!empty searchFacetValues['Category']}">
+          <form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
+            <input type="hidden" id="type" name="type" value="${searchFacetValues['Category']}" /> 
+            <input type="hidden" id="ids" name="ids" value="" />
+            <input type="hidden" id="allChecked" name="allChecked" value="" />
+            <input type="hidden" id="searchIds" name="searchIds" value="${searchIds}" />  
+            <input type="hidden" name="source" value="keywordSearchResults" /> 
+            <input type="hidden" name="newBagName" value="new_${searchFacetValues['Category']}_list" />
+            <div align="left" style="position: relative; top: 1em; padding-bottom: 5px;"><input type="submit" class="submit" value="CREATE LIST" /></div>
           </form>
         </c:if>
 
