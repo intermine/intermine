@@ -12,6 +12,9 @@ package org.intermine.bio.dataconversion;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.intermine.sql.Database;
 
@@ -23,13 +26,16 @@ import org.intermine.sql.Database;
  */
 public abstract class IdResolverFactory
 {
-    protected static IdResolver resolver = null; // static to cache
+    protected static IdResolver resolver = null;
 
     protected boolean caughtError = false;
 
-    // ResolverFactory takes in a SO term/Class name, by default, "gene" is used
-    protected final String defaultClsName = "gene";
-    protected String clsName;
+    // ResolverFactory takes in a SO term/Class name (as a collection), "gene" is used by default
+    protected final Set<String> defaultClsCol = new HashSet<String>(
+            Arrays.asList(new String[] { "gene" }));
+    protected Set<String> clsCol;
+    
+    protected static final String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
 
     /**
      * Return an IdResolver, if not already built then create it.
@@ -63,38 +69,97 @@ public abstract class IdResolverFactory
     /**
      * Read IdResolver contents from a file, allows for caching during build.
      *
-     * @param clsName the class name to resolve
      * @param f the file to read from
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected void createFromFile(String clsName, File f)
+    protected boolean retrieveFromFile(File f)
         throws IOException {
-        resolver = new IdResolver(clsName);
-        resolver.populateFromFile(f);
+        return retrieveFromFile(defaultClsCol, f);
     }
-
+    
     /**
      * Read IdResolver contents from a file, allows for caching during build.
      *
+     * @param clsName the class name to resolve
      * @param f the file to read from
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected void createFromFile(File f)
+    protected boolean retrieveFromFile(String clsName, File f)
         throws IOException {
-        resolver = new IdResolver(defaultClsName);
-        resolver.populateFromFile(f);
+        return retrieveFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})), f);
     }
-
+    
     /**
-     * Read IdResolver contents from a database.
+     * Read IdResolver contents from a file, allows for caching during build.
+     *
+     * @param clsCol a collection of class name to resolve
+     * @param f the file to read from
+     * @return a created IdResolver
+     * @throws IOException if problem reading from file
+     */
+    protected boolean retrieveFromFile(Set<String> clsCol, File f)
+        throws IOException {
+        if (clsCol.size() > 1) {
+            resolver = new IdResolver();
+        } else {
+            resolver = new IdResolver(clsCol.iterator().next());
+        }
+        
+        if (f.exists()) {
+            resolver.populateFromFile(f);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Read IdResolver contents from a file, allows for caching during build. Use default file name.
+     *
+     * @return a created IdResolver
+     * @throws IOException if problem reading from file
+     */
+    protected boolean retrieveFromFile()
+        throws IOException {
+        return retrieveFromFile(defaultClsCol);
+    }
+    
+    /**
+     * Read IdResolver contents from a file, allows for caching during build. Use default file name.
      *
      * @param clsName the class name to resolve
-     * @param db the file to read from
-     * @return null, need strictly override
+     * @return a created IdResolver
+     * @throws IOException if problem reading from file
      */
-    protected void createFromDb(String clsName, Database db) {
+    protected boolean retrieveFromFile(String clsName)
+        throws IOException {
+        return retrieveFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})));
+    }
+    
+    /**
+     * Read IdResolver contents from a file, allows for caching during build. Use default file name.
+     *
+     * @param clsCol a collection of class name to resolve
+     * @return a created IdResolver
+     * @throws IOException if problem reading from file
+     */
+    protected boolean retrieveFromFile(Set<String> clsCol)
+        throws IOException {
+        if (clsCol.size() > 1) {
+            resolver = new IdResolver();
+        } else {
+            resolver = new IdResolver(clsCol.iterator().next());
+        }
+        
+        File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
+        if (f.exists()) {
+            resolver.populateFromFile(f);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -104,6 +169,28 @@ public abstract class IdResolverFactory
      * @return null, need strictly override
      */
     protected void createFromDb(Database db) {
+        createFromDb(defaultClsCol, db);
+    }
+    
+    /**
+     * Read IdResolver contents from a database.
+     *
+     * @param clsName the class name to resolve
+     * @param db the file to read from
+     * @return null, need strictly override
+     */
+    protected void createFromDb(String clsName, Database db) {
+        createFromDb(new HashSet<String>(Arrays.asList(new String[]{clsName})), db);
+    }
+    
+    /**
+     * Read IdResolver contents from a database.
+     *
+     * @param clsCol a collection of class name to resolve
+     * @param db the file to read from
+     * @return null, need strictly override
+     */
+    protected void createFromDb(Set<String> clsCol, Database db) {
     }
 
     /**

@@ -211,11 +211,20 @@ public class IdResolver
      * @return true if data about this taxon id
      */
     public boolean hasTaxon(String taxonId) {
+        return hasTaxons(new HashSet<String>(Arrays.asList(new String[]{taxonId})));
+    }
+    
+    /**
+     * Return true if the idResolver contains information about a collection of taxon id.
+     * @param taxonIds a collection of organism to check for
+     * @return true if data about this taxon id
+     */
+    public boolean hasTaxons(Set<String> taxonIds) {
         Set<String> taxonIdSet = new HashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
             taxonIdSet.add((String) key.getKey(0));
         }
-        return taxonIdSet.contains(taxonId);
+        return taxonIdSet.containsAll(taxonIds);
     }
     
     /**
@@ -262,7 +271,8 @@ public class IdResolver
      * @param primaryIdentifier the main identifier
      * @param ids a set of alternative main identifiers
      */
-    protected void addMainIds(String taxonId, String clsName, String primaryIdentifier, Set<String> ids) {
+    protected void addMainIds(String taxonId, String clsName, String primaryIdentifier, 
+            Set<String> ids) {
         addEntry(taxonId, clsName, primaryIdentifier, ids, Boolean.TRUE);
     }
     
@@ -283,7 +293,8 @@ public class IdResolver
      * @param primaryIdentifier the main identifier
      * @param ids a set synonyms
      */
-    protected void addSynonyms(String taxonId, String clsName, String primaryIdentifier, Set<String> ids) {
+    protected void addSynonyms(String taxonId, String clsName, String primaryIdentifier, 
+            Set<String> ids) {
         addEntry(taxonId, clsName, primaryIdentifier, ids, Boolean.FALSE);
     }
     
@@ -329,8 +340,8 @@ public class IdResolver
      * @param synonyms a set of synonyms
      * @param mainId if true these are main ids, otherwise synonms
     */
-    private void addEntry(String taxonId, String clsName, String primaryIdentifier, Collection<String> ids,
-            Boolean mainId) {
+    private void addEntry(String taxonId, String clsName, String primaryIdentifier, 
+            Collection<String> ids, Boolean mainId) {
         Map<String, Set<String>> idMap = orgIdMaps.get(new MultiKey(taxonId, clsName));
         if (idMap == null) {
             idMap = new HashMap<String, Set<String>>();
@@ -382,7 +393,7 @@ public class IdResolver
      * @throws IOException if fail to write
      */
     public void writeToFile(File f) throws IOException {
-        FileWriter fw = new FileWriter(f);
+        FileWriter fw = new FileWriter(f, true);
         for (MultiKey key : orgIdMaps.keySet()) {
 
             // get maps for this organism
