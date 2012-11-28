@@ -959,16 +959,9 @@
                                 homologues.homologue.symbol,
                                 homologues.homologue.organism.shortName,
                                 homologues.type"/>
-      <bagtabledisplayer id="orthologues_for_protein" title="Orthologues" pathStrings="Protein.genes.homologues[type=orthologue].homologue.organism"
-                  description="Counts of orthologues for the genes in this list."
-                  displayFields="name"
-                  exportField="primaryIdentifier"
-                  typeClass="Protein"
-                  columnTitle="Orthologues"
-                  views="primaryIdentifier, primaryAccession, organism.shortName"/>
      <bagtabledisplayer id="orthologues_for_protein" title="Orthologues" pathStrings="Protein.genes.homologues[type=orthologue].homologue.organism"
            description="Counts of orthologues for the genes in this list."
-           displayFields="name"
+           displayFields="name, shortName"
            exportField="primaryIdentifier"
            typeClass="Protein"
            columnTitle="Orthologues"
