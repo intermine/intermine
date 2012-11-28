@@ -407,7 +407,7 @@ input.submit {
   </c:otherwise>
 </c:choose>
                   
-                      <!-- <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">-->
+    <html:link action="${detailsLink}" title="${detailsLink}" target="${extlink}">
                 
                 
                 <c:if test="${empty searchResult.keyFields}">
