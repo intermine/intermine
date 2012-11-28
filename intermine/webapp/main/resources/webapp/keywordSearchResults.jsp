@@ -406,8 +406,9 @@ input.submit {
     <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}&amp;trail=${param.trail}|${searchResult.id}" scope="request" />
   </c:otherwise>
 </c:choose>
-                  
-                      <!-- <html:link href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">-->
+
+    <a href="${detailsLink}" ${extlink}>
+
                 
                 
                 <c:if test="${empty searchResult.keyFields}">
@@ -444,7 +445,7 @@ input.submit {
                   </c:choose> </span>
                   <c:if test="${! status.last }"><span class="divider">|</span></c:if>
                   </c:forEach>
-                    </html:link>
+                    </a>
                 </div>
 
               <%-- print each field configured for this object --%>
