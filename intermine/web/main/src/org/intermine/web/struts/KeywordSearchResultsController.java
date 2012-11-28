@@ -140,11 +140,13 @@ public class KeywordSearchResultsController extends TilesAction
         request.setAttribute("searchTerm", searchTerm);
         request.setAttribute("searchBag", searchBag);
         request.setAttribute("searchFacetValues", facetValues);
+        request.setAttribute("searchIds", objectIds);
 
         context.putAttribute("searchResults", request.getAttribute("searchResults"));
         context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
         context.putAttribute("searchBag", request.getAttribute("searchBag"));
         context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
+        context.putAttribute("searchIds", request.getAttribute("searchIds"));
 
         // pagination
         context.putAttribute("searchOffset", new Integer(offset));
