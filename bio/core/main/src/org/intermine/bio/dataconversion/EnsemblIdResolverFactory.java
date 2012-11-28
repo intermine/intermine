@@ -44,40 +44,47 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
      * @param soTerm the feature type to resolve
      */
     public EnsemblIdResolverFactory() {
-        this.clsName = this.defaultClsName;
+    	this.clsCol = this.defaultClsCol;
     }
 
     @Override
     protected void createIdResolver() {
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
         if (resolver.hasTaxon(taxonId)) {
             return;
         }
 
-        Properties props = PropertiesUtil.getProperties();
-        String fileName = props.getProperty(propName);
-
-        if (StringUtils.isBlank(fileName)) {
-            String message = "Ensembl resolver has no file name specified, set " + propName
-                + " to the file location.";
-            LOG.error(message);
-            return;
-        }
-
-        BufferedReader reader;
         try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            createFromFile(reader);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open Ensembl identifiers file: "
-                    + fileName, e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from Ensembl identifiers file: "
-                    + fileName, e);
+            if (!retrieveFromFile(this.clsCol)) {
+                Properties props = PropertiesUtil.getProperties();
+                String fileName = props.getProperty(propName);
+
+                if (StringUtils.isBlank(fileName)) {
+                    String message = "Ensembl resolver has no file name specified, set " + propName
+                        + " to the file location.";
+                    LOG.error(message);
+                    return;
+                }
+
+                try {
+                    createFromFile(new BufferedReader(new FileReader(new File(fileName))));
+                } catch (FileNotFoundException e) {
+                    throw new IllegalArgumentException("Failed to open Ensembl identifiers file: "
+                            + fileName, e);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error reading from Ensembl identifiers " +
+                            "file: " + fileName, e);
+                }
+                
+                try {
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error writing resolver cache file: "
+                            + ID_RESOLVER_CACHED_FILE_NAME, e);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -11,14 +11,15 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -39,26 +40,28 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     private Database db;
     private final String propName = "db.flybase";
     private final String taxonId = "7227";
-    
-    private Collection<String> clsCol;
 
     /**
-     * Construct without SO term of the feature type to read from chado database.
+     * Construct with class name/feature type to read from chado database or file.
      * @param soTerm the feature type to resolve
      */
     public FlyBaseIdResolverFactory() {
-        this.clsName = this.defaultClsName;
+        this.clsCol = this.defaultClsCol;
     }
     
     /**
-     * Construct with SO term of the feature type to read from chado database.
-     * @param soTerm the feature type to resolve
+     * Construct with class name/feature type to read from chado database or file.
+     * @param clsName the feature type to resolve
      */
     public FlyBaseIdResolverFactory(String clsName) {
-        this.clsName = clsName;
+        this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
     }
     
-    public FlyBaseIdResolverFactory(Collection<String> clsCol) {
+    /**
+     * Construct with class name/feature type to read from chado database or file.
+     * @param clsCol a collection of feature type to resolve
+     */
+    public FlyBaseIdResolverFactory(Set<String> clsCol) {
         this.clsCol = clsCol;
     }
 
@@ -68,40 +71,18 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-
-        if (resolver == null) {
-            if (this.clsCol == null || this.clsCol.isEmpty()) {
-                resolver = new IdResolver(clsName);
-            } else {
-                resolver = new IdResolver();
-            }
-        }
-
         if (resolver.hasTaxon(taxonId)) {
             return;
         }
 
         try {
-            db = DatabaseFactory.getDatabase(propName);
-
-            String cacheFileName = "build/" + db.getName() + ".idresolver.cache";
-            File f = new File(cacheFileName);
-            if (f.exists()) {
-                System.out .println("FlyBaseIdResolver reading from cache file: " + cacheFileName);
-                if (this.clsCol == null || this.clsCol.isEmpty()) {
-                    createFromFile(clsName, f);
-                } else {
-                    createFromFile(this.clsCol, f);
-                }
-            } else {
+            if (!retrieveFromFile(this.clsCol)) {
+                db = DatabaseFactory.getDatabase(propName);
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
-                if (this.clsCol == null || this.clsCol.isEmpty()) {
-                    createFromDb(clsName, db);
-                } else {
-                    createFromDb(this.clsCol, db);
-                }
-                resolver.writeToFile(f);
-                System.out .println("FlyBaseIdResolver caching in file: " + cacheFileName);
+                createFromDb(clsCol, db);
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                System.out .println("FlyBaseIdResolver caching to file: " 
+                        + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -109,38 +90,44 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     }
     
     @Override
-    protected void createFromFile(String clsName, File f) throws IOException {
-        createFromFile(Arrays.asList(new String[]{clsName}), f);
-    }
-    
-    protected void createFromFile(Collection<String> clsCol, File f) throws IOException {
+    protected boolean retrieveFromFile(Set<String> clsCol) throws FileNotFoundException,
+        IOException {
         if (clsCol.size() > 1) {
             resolver = new IdResolver();
         } else {
             resolver = new IdResolver(clsCol.iterator().next());
         }
         
-        resolver.populateFromFile(f);
-        
-        // if file doesn't contain classes, revisit db
-        Set<String> existedClsSet = resolver.getClassNames();
-        if (!existedClsSet.containsAll(clsCol)) {
-            System.out .println("FlyBaseIdResolver resolver has class names: " 
-                    + existedClsSet + "but doesn't contain some classes in " + clsCol);
-            existedClsSet.addAll(clsCol);
-            System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
-            createFromDb(existedClsSet, db);
-            System.out .println("FlyBaseIdResolver caching in file: " + f.getName());
-            resolver.writeToFile(f);
+        File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
+        if (f.exists()) {
+            System.out .println("FlyBaseIdResolver retrieving from cache file: " 
+                    + ID_RESOLVER_CACHED_FILE_NAME);
+            
+            resolver.populateFromFile(f);
+            
+            // if file doesn't contain classes, revisit db
+            Set<String> existedClsSet = resolver.getClassNames();
+            if (!existedClsSet.containsAll(clsCol)) {
+                System.out .println("FlyBaseIdResolver resolver has class names: " 
+                        + existedClsSet + "but doesn't contain some classes in " + clsCol);
+                existedClsSet.addAll(clsCol);
+                System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
+                createFromDb(existedClsSet, db);
+                System.out .println("FlyBaseIdResolver caching in file: " 
+                    + ID_RESOLVER_CACHED_FILE_NAME);
+                
+                resolver.writeToFile(f);
+                System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
+            }
+            return true;
+        } else {
+        	return false;
         }
+
     }
 
     @Override
-    protected void createFromDb(String clsName, Database db) {
-        createFromDb(Arrays.asList(new String[]{clsName}), db);
-    }
-    
-    protected void createFromDb(Collection<String> clsCol, Database db) {
+    protected void createFromDb(Set<String> clsCol, Database db) {
         Connection conn = null;
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
@@ -159,7 +146,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
 
                 String orgConstraint = "";
                 if (taxonId != null) {
-                    String abbrev = or.getOrganismDataByTaxon(new Integer(taxonId)).getAbbreviation();
+                    String abbrev = or.getOrganismDataByTaxon(
+                            new Integer(taxonId)).getAbbreviation();
                     query = "select organism_id"
                         + " from organism"
                         + " where abbreviation = \'" + abbrev + "\'";
@@ -228,9 +216,11 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     boolean isCurrent = res.getBoolean("is_current");
                     String type = res.getString("type");
                     if (isCurrent && "symbol".equals(type)) {
-                        resolver.addMainIds(taxId, clsName, uniquename, Collections.singleton(synonym));
+                        resolver.addMainIds(taxId, clsName, uniquename,
+                                Collections.singleton(synonym));
                     } else {
-                        resolver.addSynonyms(taxId, clsName, uniquename, Collections.singleton(synonym));
+                        resolver.addSynonyms(taxId, clsName, uniquename,
+                                Collections.singleton(synonym));
                     }
                 }
                 stmt.close();
@@ -262,9 +252,11 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     boolean isCurrent = res.getBoolean("is_current");
                     String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
                     if (isCurrent && "FlyBase Annotation IDs".equals(dbName)) {
-                        resolver.addMainIds(taxId, clsName, uniquename, Collections.singleton(accession));
+                        resolver.addMainIds(taxId, clsName, uniquename,
+                                Collections.singleton(accession));
                     } else {
-                        resolver.addSynonyms(taxId, clsName, uniquename, Collections.singleton(accession));
+                        resolver.addSynonyms(taxId, clsName, uniquename,
+                                Collections.singleton(accession));
                     }
                 }
                 stmt.close();

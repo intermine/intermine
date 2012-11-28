@@ -10,7 +10,6 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -99,7 +98,7 @@ public class IdResolverService
      * @param clsName SO term collection
      * @return an IdResolver
      */
-    public static IdResolver getFlyIdResolver(Collection<String> clsCol) {
+    public static IdResolver getFlyIdResolver(Set<String> clsCol) {
         return new FlyBaseIdResolverFactory(clsCol).getIdResolver(false);
     }
 
@@ -119,7 +118,7 @@ public class IdResolverService
      * @param failOnError if false swallow any exceptions and return null
      * @return an IdResolver
      */
-    public static IdResolver getFlyIdResolver(Collection<String> clsCol, boolean failOnError) {
+    public static IdResolver getFlyIdResolver(Set<String> clsCol, boolean failOnError) {
         return new FlyBaseIdResolverFactory(clsCol).getIdResolver(failOnError);
     }
 
