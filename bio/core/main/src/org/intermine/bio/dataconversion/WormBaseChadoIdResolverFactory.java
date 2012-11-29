@@ -34,7 +34,6 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(WormBaseChadoIdResolverFactory.class);
 
-    private Database db;
     private final String propName = "db.wormbase";
     private final String taxonId = "6239";
 
@@ -72,12 +71,9 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxon(taxonId))) {
-                db = DatabaseFactory.getDatabase(propName);
-                System.out .println("WormBaseIdResolver reading from database: " + db.getName());
-                createFromDb(db);
+                LOG.info("Creating id resolver from database and caching it.");
+                createFromDb(DatabaseFactory.getDatabase(propName));
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                System.out .println("OntologyIdResolver caching in file: "
-                        + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
