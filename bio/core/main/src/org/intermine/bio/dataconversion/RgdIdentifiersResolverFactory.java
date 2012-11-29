@@ -43,53 +43,61 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Construct with SO term of the feature type.
+     */
+    public RgdIdentifiersResolverFactory() {
+        this.clsCol = this.defaultClsCol;
+    }
+    
+    /**
+     * Construct with SO term of the feature type.
      * @param soTerm the feature type to resolve
      */
     public RgdIdentifiersResolverFactory(String clsName) {
-        this.clsName = clsName;
-    }
-
-    /**
-     * Construct without SO term of the feature type.
-     * @param soTerm the feature type to resolve
-     */
-    public RgdIdentifiersResolverFactory() {
-        this.clsName = this.defaultClsName;
+        this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
     }
 
     @Override
     protected void createIdResolver() {
-        Properties props = PropertiesUtil.getProperties();
-        String fileName = props.getProperty(propName);
-
-        if (StringUtils.isBlank(fileName)) {
-            String message = "RGD gene resolver has no file name specified, set " + propName
-                + " to the location of the gene_info file.";
-            LOG.warn(message);
+        if (resolver.hasTaxon(taxonId)) {
             return;
         }
-
+        
         try {
-            createFromFile(new BufferedReader(new FileReader(new File(fileName))));
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open RGD id mapping file: "
-                    + fileName, e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from RGD id mapping file: "
-                    + fileName, e);
+            if (!retrieveFromFile(this.clsCol)) {
+                Properties props = PropertiesUtil.getProperties();
+                String fileName = props.getProperty(propName);
+
+                if (StringUtils.isBlank(fileName)) {
+                    String message = "RGD gene resolver has no file name specified, set " + propName
+                        + " to the location of the gene_info file.";
+                    LOG.warn(message);
+                    return;
+                }
+
+                try {
+                    createFromFile(new BufferedReader(new FileReader(new File(fileName))));
+                } catch (FileNotFoundException e) {
+                    throw new IllegalArgumentException("Failed to open RGD id mapping file: "
+                            + fileName, e);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error reading from RGD id mapping file: "
+                            + fileName, e);
+                }
+                
+                try {
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error writing resolver cache file: "
+                            + ID_RESOLVER_CACHED_FILE_NAME, e);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     private void createFromFile(BufferedReader reader) throws IOException {
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(taxonId)) {
-            return;
-        }
-
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();

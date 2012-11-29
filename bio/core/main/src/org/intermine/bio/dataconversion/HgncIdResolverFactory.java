@@ -42,7 +42,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
      * @param soTerm the feature type to resolve
      */
     public HgncIdResolverFactory() {
-        this.clsName = this.defaultClsName;
+        this.clsCol = this.defaultClsCol;
     }
 
     /**
@@ -51,51 +51,46 @@ public class HgncIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        Properties props = PropertiesUtil.getProperties();
-        String fileName = props.getProperty(propName);
-
-        if (StringUtils.isBlank(fileName)) {
-            String message = "HGNC resolver has no file name specified, set " + propName
-                + " to the file location.";
-            LOG.warn(message);
-            return;
-        }
-
-        BufferedReader reader;
-        try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            createFromFile(reader);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open HGNC identifiers file: "
-                    + fileName, e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from HGNC identifiers file: "
-                    + fileName, e);
-        }
-
-        // Creating the resolver is fast so we don't really need to cache
-//        String cacheFileName = "build/hgnc_resolver.cache";
-//        try {
-//            resolver.writeToFile(new File(cacheFileName));
-//            System.out. println("Written cache file: " + cacheFileName);
-//        } catch (IOException e) {
-//            throw new IllegalArgumentException("Error writing HGNC resolver cache file: "
-//                    + cacheFileName, e);
-//        }
-
-    }
-
-    private void createFromFile(BufferedReader reader) throws IOException {
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
         if (resolver.hasTaxon(taxonId)) {
             return;
         }
+        
+        try {
+            if (!retrieveFromFile(this.clsCol)) {
+                Properties props = PropertiesUtil.getProperties();
+                String fileName = props.getProperty(propName);
 
+                if (StringUtils.isBlank(fileName)) {
+                    String message = "HGNC resolver has no file name specified, set " + propName
+                        + " to the file location.";
+                    LOG.warn(message);
+                    return;
+                }
+
+                try {
+                    createFromFile(new BufferedReader(new FileReader(new File(fileName))));
+                } catch (FileNotFoundException e) {
+                    throw new IllegalArgumentException("Failed to open HGNC identifiers file: "
+                            + fileName, e);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error reading from HGNC identifiers file: "
+                            + fileName, e);
+                }
+                
+                try {
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                    System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Error writing resolver cache file: "
+                            + ID_RESOLVER_CACHED_FILE_NAME, e);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createFromFile(BufferedReader reader) throws IOException {
         // HGNC ID | Approved Symbol | Approved Name | Status | Previous Symbols | Aliases
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
