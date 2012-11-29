@@ -73,9 +73,9 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean retrieveFromFile(File f)
+    protected boolean restoreFromFile(File f)
         throws IOException {
-        return retrieveFromFile(defaultClsCol, f);
+        return restoreFromFile(defaultClsCol, f);
     }
     
     /**
@@ -86,9 +86,9 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean retrieveFromFile(String clsName, File f)
+    protected boolean restoreFromFile(String clsName, File f)
         throws IOException {
-        return retrieveFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})), f);
+        return restoreFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})), f);
     }
     
     /**
@@ -99,7 +99,7 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean retrieveFromFile(Set<String> clsCol, File f)
+    protected boolean restoreFromFile(Set<String> clsCol, File f)
         throws IOException {
         if (clsCol.size() > 1) {
             resolver = new IdResolver();
@@ -121,9 +121,9 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean retrieveFromFile()
+    protected boolean restoreFromFile()
         throws IOException {
-        return retrieveFromFile(defaultClsCol);
+        return restoreFromFile(defaultClsCol);
     }
     
     /**
@@ -133,9 +133,9 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean retrieveFromFile(String clsName)
+    protected boolean restoreFromFile(String clsName)
         throws IOException {
-        return retrieveFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})));
+        return restoreFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})));
     }
     
     /**
@@ -145,7 +145,7 @@ public abstract class IdResolverFactory
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean retrieveFromFile(Set<String> clsCol)
+    protected boolean restoreFromFile(Set<String> clsCol)
         throws IOException {
         if (clsCol.size() > 1) {
             resolver = new IdResolver();

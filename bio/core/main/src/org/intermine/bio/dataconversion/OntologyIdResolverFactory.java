@@ -81,7 +81,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
         }
 
         try {
-            if (!retrieveFromFile(ontology)) {
+            if (!restoreFromFile(ontology)) {
                 db = DatabaseFactory.getDatabase(propName);
                 System.out .println("OntologyIdResolver creating from database: " + db.getName());
                 createFromDb(db);

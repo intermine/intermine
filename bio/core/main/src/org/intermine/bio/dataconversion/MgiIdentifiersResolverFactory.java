@@ -65,7 +65,7 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
         }
         
         try {
-            if (!retrieveFromFile(this.clsCol)) {
+            if (!restoreFromFile(this.clsCol)) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 

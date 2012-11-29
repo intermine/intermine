@@ -61,7 +61,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
         }
 
         try {
-            if (!retrieveFromFile(this.clsCol)) {
+            if (!restoreFromFile(this.clsCol)) {
                 db = DatabaseFactory.getDatabase(propName);
                 System.out .println("WormBaseIdResolver reading from database: " + db.getName());
                 createFromDb(db);
