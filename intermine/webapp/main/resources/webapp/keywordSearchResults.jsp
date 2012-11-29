@@ -39,8 +39,8 @@ input.submit {
           if (this.checked) {ids.push(this.value);}
        });
 
-        if (ids.length < 1) { 
-        	alert("Please select some ${searchFacetValues['Category']}s...");
+        if (ids.length < 1) {
+            alert("Please select some ${searchFacetValues['Category']}s...");
             return false;
         } else {
             jQuery("#ids").val(ids);
@@ -402,8 +402,9 @@ input.submit {
     <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}&amp;trail=${param.trail}|${searchResult.id}" scope="request" />
   </c:otherwise>
 </c:choose>
-                  
+
     <a href="${detailsLink}" ${extlink}>
+
                 
                 
                 <c:if test="${empty searchResult.keyFields}">
