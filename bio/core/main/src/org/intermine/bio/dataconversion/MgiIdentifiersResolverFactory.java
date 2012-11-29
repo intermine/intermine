@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -86,23 +85,9 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
                     return;
                 }
 
-                try {
-                    createFromFile(new BufferedReader(new FileReader(new File(fileName))));
-                } catch (FileNotFoundException e) {
-                    throw new IllegalArgumentException("Failed to open MGI id mapping file: "
-                            + fileName, e);
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Error reading from MGI id mapping file: "
-                            + fileName, e);
-                }
-
-                try {
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                    System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Error writing resolver cache file: "
-                            + ID_RESOLVER_CACHED_FILE_NAME, e);
-                }
+                LOG.info("Creating id resolver from data file and caching it.");
+                createFromFile(new BufferedReader(new FileReader(new File(fileName))));
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

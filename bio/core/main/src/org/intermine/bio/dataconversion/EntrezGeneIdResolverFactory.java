@@ -121,7 +121,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @throws IOException
      * @throws FileNotFoundException
      */
-    protected void createIdResolver(String taxonId) throws FileNotFoundException, IOException {
+    protected void createIdResolver(String taxonId) {
         // Don't pass null to asList - java bug (SUN already fixed it???)
         if (taxonId == null) {
             createIdResolver(new HashSet<String>());
@@ -135,7 +135,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @param taxonIds list of taxon IDs
      * @return an IdResolver for Entrez Gene
      */
-    protected void createIdResolver(Set<String> taxonIds) throws FileNotFoundException, IOException{
+    protected void createIdResolver(Set<String> taxonIds) {
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
 
@@ -166,9 +166,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                     return;
                 }
 
+                LOG.info("Creating id resolver from data file and caching it.");
                 createFromFile(new BufferedReader(new FileReader(new File(fileName))), taxonIds);
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

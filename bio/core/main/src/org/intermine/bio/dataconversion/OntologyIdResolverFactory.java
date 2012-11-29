@@ -27,7 +27,7 @@ import org.intermine.sql.DatabaseFactory;
 public class OntologyIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(OntologyIdResolverFactory.class);
-    private Database db;
+
     private String ontology = null;
     private static final String MOCK_TAXON_ID = "0";
     private final String propName = "db.production";
@@ -92,12 +92,9 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(ontology);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxon(MOCK_TAXON_ID))) {
-                db = DatabaseFactory.getDatabase(propName);
-                System.out .println("OntologyIdResolver creating from database: " + db.getName());
-                createFromDb(db);
+                LOG.info("Creating id resolver from database and caching it.");
+                createFromDb(DatabaseFactory.getDatabase(propName));
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                System.out .println("OntologyIdResolver caching in file: "
-                        + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
