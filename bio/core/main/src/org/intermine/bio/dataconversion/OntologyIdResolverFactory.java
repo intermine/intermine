@@ -32,7 +32,6 @@ public class OntologyIdResolverFactory extends IdResolverFactory
     private static final String MOCK_TAXON_ID = "0";
     private final String propName = "db.production";
 
-
     /**
      * Construct with SO term of the feature type to read from chado database.
      *
@@ -77,29 +76,18 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
         if (resolver.hasTaxon(MOCK_TAXON_ID)) {
             return;
         }
 
         try {
-            // TODO we already know this database, right?
-            db = DatabaseFactory.getDatabase(propName);
-
-            String cacheFileName = "build/" + db.getName() + "." + ontology;
-            File f = new File(cacheFileName);
-            if (f.exists()) {
-                System.out .println("OntologyIdResolver reading from cache file: " + cacheFileName);
-                createFromFile(ontology, f);
-            } else {
+            if (!retrieveFromFile(ontology)) {
+                db = DatabaseFactory.getDatabase(propName);
                 System.out .println("OntologyIdResolver creating from database: " + db.getName());
                 createFromDb(db);
-                resolver.writeToFile(f);
-                System.out .println("OntologyIdResolver caching in file: " + cacheFileName);
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                System.out .println("OntologyIdResolver caching in file: " 
+                        + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -108,7 +96,6 @@ public class OntologyIdResolverFactory extends IdResolverFactory
 
     @Override
     protected void createFromDb(Database database) {
-
         Connection conn = null;
         try {
             conn = database.getConnection();

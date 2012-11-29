@@ -118,8 +118,10 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     /**
      * Build an IdResolver from Entrez Gene gene_info file
      * @return an IdResolver for Entrez Gene
+     * @throws IOException 
+     * @throws FileNotFoundException 
      */
-    protected void createIdResolver(String taxonId) {
+    protected void createIdResolver(String taxonId) throws FileNotFoundException, IOException {
         // Don't pass null to asList - java bug (SUN already fixed it???)
         if (taxonId == null) {
             createIdResolver(new HashSet<String>());
@@ -133,41 +135,34 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @param taxonIds list of taxon IDs
      * @return an IdResolver for Entrez Gene
      */
-    protected void createIdResolver(Set<String> taxonIds) {
+    protected void createIdResolver(Set<String> taxonIds) throws FileNotFoundException, IOException{
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-        Properties props = PropertiesUtil.getProperties();
-        String fileName = props.getProperty(propName);
-
-        // File path not set in MINE.properties
-        if (StringUtils.isBlank(fileName)) {
-            String message = "Entrez gene resolver has no file name specified, set " + propName
-                + " to the location of the gene_info file.";
-            LOG.warn(message);
+        
+        if (resolver.hasTaxons(taxonIds)) {
             return;
         }
-
-        BufferedReader reader;
+        
         try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            createFromFile(reader, taxonIds);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open gene_info file: "
-                    + fileName, e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from gene_info file: "
-                    + fileName, e);
-        }
-    }
+            if (!retrieveFromFile()) {
+                Properties props = PropertiesUtil.getProperties();
+                String fileName = props.getProperty(propName);
 
-    @Override
-    // Not implemented. TaxonId is needed as argument
-    protected void createIdResolver() {
+                // File path not set in MINE.properties
+                if (StringUtils.isBlank(fileName)) {
+                    String message = "Entrez gene resolver has no file name specified, set " 
+                        + propName + " to the location of the gene_info file.";
+                    LOG.warn(message);
+                    return;
+                }
+
+                createFromFile(new BufferedReader(new FileReader(new File(fileName))), taxonIds);
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void createFromFile(BufferedReader reader, Set<String> taxonIds) throws IOException {
@@ -248,9 +243,9 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
             } else if (entry.getKey().toString().contains("strains")) { // use strain
                 if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
-					config_strains.put(
-							entry.getKey().toString().split("\\.")[0],
-							((String) entry.getValue()).trim());
+                    config_strains.put(
+                            entry.getKey().toString().split("\\.")[0],
+                            ((String) entry.getValue()).trim());
                 }
 
             } else {
@@ -298,5 +293,10 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             }
         }
         return newTaxons;
+    }
+
+    @Override
+    // Not implemented. TaxonId is needed as argument
+    protected void createIdResolver() {
     }
 }
