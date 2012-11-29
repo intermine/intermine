@@ -41,7 +41,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
     public WormBaseChadoIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
     }
-    
+
     /**
      * Construct with SO term of the feature type to read from chado database.
      * @param clsName the feature type to resolve
@@ -56,17 +56,27 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver.hasTaxon(taxonId)) {
+        if (resolver != null && resolver.hasTaxon(taxonId)) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
 
         try {
-            if (!restoreFromFile(this.clsCol)) {
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxon(taxonId))) {
                 db = DatabaseFactory.getDatabase(propName);
                 System.out .println("WormBaseIdResolver reading from database: " + db.getName());
                 createFromDb(db);
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                System.out .println("OntologyIdResolver caching in file: " 
+                System.out .println("OntologyIdResolver caching in file: "
                         + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {

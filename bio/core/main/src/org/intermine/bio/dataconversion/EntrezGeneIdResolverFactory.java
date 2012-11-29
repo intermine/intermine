@@ -50,7 +50,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     public EntrezGeneIdResolverFactory() {
         readConfig();
     }
-    
+
     /**
      * Return an IdResolver by taxon id, if not already built then create it.
      * @return a specific IdResolver
@@ -118,8 +118,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     /**
      * Build an IdResolver from Entrez Gene gene_info file
      * @return an IdResolver for Entrez Gene
-     * @throws IOException 
-     * @throws FileNotFoundException 
+     * @throws IOException
+     * @throws FileNotFoundException
      */
     protected void createIdResolver(String taxonId) throws FileNotFoundException, IOException {
         // Don't pass null to asList - java bug (SUN already fixed it???)
@@ -138,19 +138,29 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     protected void createIdResolver(Set<String> taxonIds) throws FileNotFoundException, IOException{
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
-        
-        if (resolver.hasTaxons(taxonIds)) {
+
+        if (resolver != null && resolver.hasTaxons(taxonIds)) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
-        
+
         try {
-            if (!restoreFromFile()) {
+            boolean isCachedIdResolverRestored = restoreFromFile();
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxons(taxonIds))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
                 // File path not set in MINE.properties
                 if (StringUtils.isBlank(fileName)) {
-                    String message = "Entrez gene resolver has no file name specified, set " 
+                    String message = "Entrez gene resolver has no file name specified, set "
                         + propName + " to the location of the gene_info file.";
                     LOG.warn(message);
                     return;
@@ -187,7 +197,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                         + taxonIdsCopy);
             }
         }
-       
+
         for (String newTaxon : records.keySet()) {
             // resolver still uses original taxon
             if (resolver.hasTaxon(newTaxonIds.get(newTaxon))) {
@@ -199,7 +209,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             processGenes(newTaxonIds.get(newTaxon), genes);
         }
     }
-    
+
     private void processGenes(String taxonId, Set<GeneInfoRecord> genes) {
         for (GeneInfoRecord record : genes) {
             String primaryIdentifier;
@@ -210,7 +220,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 if (StringUtils.isNotEmpty(prefix)) {
                     primaryIdentifier = prefix + primaryIdentifier;
                 }
-                
+
             } else {
                 primaryIdentifier = record.entrez;
             }
@@ -279,7 +289,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         }
         return all;
     }
-    
+
     /**
      * Get strain taxons
      */

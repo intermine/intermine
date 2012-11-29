@@ -101,12 +101,6 @@ public abstract class IdResolverFactory
      */
     protected boolean restoreFromFile(Set<String> clsCol, File f)
         throws IOException {
-        if (clsCol.size() > 1) {
-            resolver = new IdResolver();
-        } else {
-            resolver = new IdResolver(clsCol.iterator().next());
-        }
-        
         if (f.exists()) {
             resolver.populateFromFile(f);
             return true;
@@ -147,12 +141,6 @@ public abstract class IdResolverFactory
      */
     protected boolean restoreFromFile(Set<String> clsCol)
         throws IOException {
-        if (clsCol.size() > 1) {
-            resolver = new IdResolver();
-        } else {
-            resolver = new IdResolver(clsCol.iterator().next());
-        }
-        
         File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
         if (f.exists()) {
             resolver.populateFromFile(f);
