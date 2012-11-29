@@ -76,7 +76,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         }
 
         try {
-            if (!retrieveFromFile(this.clsCol)) {
+            if (!restoreFromFile(this.clsCol)) {
                 db = DatabaseFactory.getDatabase(propName);
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
                 createFromDb(clsCol, db);
@@ -90,7 +90,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     }
     
     @Override
-    protected boolean retrieveFromFile(Set<String> clsCol) throws FileNotFoundException,
+    protected boolean restoreFromFile(Set<String> clsCol) throws FileNotFoundException,
         IOException {
         if (clsCol.size() > 1) {
             resolver = new IdResolver();

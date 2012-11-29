@@ -144,7 +144,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         }
         
         try {
-            if (!retrieveFromFile()) {
+            if (!restoreFromFile()) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
