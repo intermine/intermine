@@ -20,12 +20,11 @@ public class PopulationInfo {
     private float geneLengthAverage;
 
     public PopulationInfo(int size, float geneLengthAverage) {
-		super();
-		this.size = size;
-		this.geneLengthAverage = geneLengthAverage;
-	}
+        this.size = size;
+        this.geneLengthAverage = geneLengthAverage;
+    }
 
-	public int getSize() {
+    public int getSize() {
         return size;
     }
 
