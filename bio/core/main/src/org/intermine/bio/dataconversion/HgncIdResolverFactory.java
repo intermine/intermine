@@ -51,12 +51,22 @@ public class HgncIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver.hasTaxon(taxonId)) {
+        if (resolver != null && resolver.hasTaxon(taxonId)) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
-        
+
         try {
-            if (!restoreFromFile(this.clsCol)) {
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxon(taxonId))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
@@ -76,7 +86,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
                     throw new IllegalArgumentException("Error reading from HGNC identifiers file: "
                             + fileName, e);
                 }
-                
+
                 try {
                     resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
                     System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);

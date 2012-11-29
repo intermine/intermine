@@ -48,7 +48,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     public FlyBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
     }
-    
+
     /**
      * Construct with class name/feature type to read from chado database or file.
      * @param clsName the feature type to resolve
@@ -56,7 +56,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
     public FlyBaseIdResolverFactory(String clsName) {
         this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
     }
-    
+
     /**
      * Construct with class name/feature type to read from chado database or file.
      * @param clsCol a collection of feature type to resolve
@@ -71,57 +71,61 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver.hasTaxon(taxonId)) {
-            return;
-        }
+         if (resolver != null && resolver.hasTaxon(taxonId)) {
+             return;
+         } else {
+             if (resolver == null) {
+                 if (clsCol.size() > 1) {
+                     resolver = new IdResolver();
+                 } else {
+                     resolver = new IdResolver(clsCol.iterator().next());
+                 }
+             }
+         }
 
         try {
-            if (!restoreFromFile(this.clsCol)) {
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxon(taxonId))) {
                 db = DatabaseFactory.getDatabase(propName);
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
                 createFromDb(clsCol, db);
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                System.out .println("FlyBaseIdResolver caching to file: " 
+                System.out .println("FlyBaseIdResolver caching to file: "
                         + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     @Override
     protected boolean restoreFromFile(Set<String> clsCol) throws FileNotFoundException,
         IOException {
-        if (clsCol.size() > 1) {
-            resolver = new IdResolver();
-        } else {
-            resolver = new IdResolver(clsCol.iterator().next());
-        }
-        
         File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
         if (f.exists()) {
-            System.out .println("FlyBaseIdResolver retrieving from cache file: " 
+            System.out .println("FlyBaseIdResolver retrieving from cache file: "
                     + ID_RESOLVER_CACHED_FILE_NAME);
-            
+
             resolver.populateFromFile(f);
-            
+
             // if file doesn't contain classes, revisit db
             Set<String> existedClsSet = resolver.getClassNames();
             if (!existedClsSet.containsAll(clsCol)) {
-                System.out .println("FlyBaseIdResolver resolver has class names: " 
+                System.out .println("FlyBaseIdResolver resolver has class names: "
                         + existedClsSet + "but doesn't contain some classes in " + clsCol);
                 existedClsSet.addAll(clsCol);
                 System.out .println("FlyBaseIdResolver creating from database: " + db.getName());
                 createFromDb(existedClsSet, db);
-                System.out .println("FlyBaseIdResolver caching in file: " 
+                System.out .println("FlyBaseIdResolver caching in file: "
                     + ID_RESOLVER_CACHED_FILE_NAME);
-                
+
                 resolver.writeToFile(f);
                 System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
             }
             return true;
         } else {
-        	return false;
+            return false;
         }
 
     }

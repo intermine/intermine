@@ -76,17 +76,27 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver.hasTaxon(MOCK_TAXON_ID)) {
+        if (resolver != null && resolver.hasTaxon(MOCK_TAXON_ID)) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
 
         try {
-            if (!restoreFromFile(ontology)) {
+            boolean isCachedIdResolverRestored = restoreFromFile(ontology);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxon(MOCK_TAXON_ID))) {
                 db = DatabaseFactory.getDatabase(propName);
                 System.out .println("OntologyIdResolver creating from database: " + db.getName());
                 createFromDb(db);
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                System.out .println("OntologyIdResolver caching in file: " 
+                System.out .println("OntologyIdResolver caching in file: "
                         + ID_RESOLVER_CACHED_FILE_NAME);
             }
         } catch (Exception e) {

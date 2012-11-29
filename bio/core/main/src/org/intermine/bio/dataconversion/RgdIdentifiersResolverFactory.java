@@ -47,7 +47,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
     public RgdIdentifiersResolverFactory() {
         this.clsCol = this.defaultClsCol;
     }
-    
+
     /**
      * Construct with SO term of the feature type.
      * @param soTerm the feature type to resolve
@@ -58,18 +58,28 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     @Override
     protected void createIdResolver() {
-        if (resolver.hasTaxon(taxonId)) {
+        if (resolver != null && resolver.hasTaxon(taxonId)) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
-        
+
         try {
-            if (!restoreFromFile(this.clsCol)) {
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxon(taxonId))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
                 if (StringUtils.isBlank(fileName)) {
-                    String message = "RGD gene resolver has no file name specified, set " + propName
-                        + " to the location of the gene_info file.";
+                    String message = "RGD gene resolver has no file name specified, set "
+                            + propName + " to the location of the gene_info file.";
                     LOG.warn(message);
                     return;
                 }
@@ -83,7 +93,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                     throw new IllegalArgumentException("Error reading from RGD id mapping file: "
                             + fileName, e);
                 }
-                
+
                 try {
                     resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
                     System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
