@@ -12,7 +12,6 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
     private final String taxonId = "7955";
 
     private static final String GENE_PATTERN = "ZDB-GENE";
-    
+
     /**
      * Construct without SO term of the feature type.
      * @param soTerm the feature type to resolve
@@ -65,39 +64,35 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver.hasTaxon(taxonId)) {
+        if (resolver != null && resolver.hasTaxon(taxonId)) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
-        
+
         try {
-            if (!restoreFromFile(this.clsCol)) {
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxon(taxonId))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
                 if (StringUtils.isBlank(fileName)) {
-                    String message = "ZFIN gene resolver has no file name specified, set " 
+                    String message = "ZFIN gene resolver has no file name specified, set "
                         + propName + " to the location of the gene_info file.";
                     LOG.warn(message);
                     return;
                 }
 
-                try {
-                    createFromFile(new BufferedReader(new FileReader(new File(fileName))));
-                } catch (FileNotFoundException e) {
-                    throw new IllegalArgumentException("Failed to open ZFIN id mapping file: "
-                            + fileName, e);
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Error reading from ZFIN id mapping file: "
-                            + fileName, e);
-                }
-                
-                try {
-                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
-                    System.out. println("Written cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
-                } catch (IOException e) {
-                    throw new IllegalArgumentException("Error writing resolver cache file: "
-                            + ID_RESOLVER_CACHED_FILE_NAME, e);
-                }
+                LOG.info("Creating id resolver from data file and caching it.");
+                createFromFile(new BufferedReader(new FileReader(new File(fileName))));
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -105,7 +100,6 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
     }
 
     private void createFromFile(BufferedReader reader) throws IOException {
-
         // data is in format:
         // ZDBID	ID1|ID2
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
