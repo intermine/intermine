@@ -60,10 +60,10 @@ public final class ErrorCorrection
         } else {
             adjustedResults = calculate(results, max);
         }
-        return sortMap(adjustedResults);
+        return adjustedResults;
     }
 
-    private static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
+    public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
         SortableMap sortedMap = new SortableMap(originalMap);
         // sort ascending, smallest values first
         sortedMap.sortValues(false, true);
@@ -230,5 +230,20 @@ public final class ErrorCorrection
             i++;
         }
         return adjustedResults;
+    }
+
+    public static void applyLenghtCorrection(Map<String, BigDecimal> pValuesPerTerm,
+        float geneLengthAverage, int populationSize, Map<String,
+        PopulationInfo> annotatedPopulationInfo) {
+        BigDecimal pValue, pValueCorrected;
+        String term;
+        for (Map.Entry<String, BigDecimal> pValuePerTerm : pValuesPerTerm.entrySet()) {
+            pValue = pValuePerTerm.getValue();
+            term = pValuePerTerm.getKey();
+            float geneLengthPerTerm = annotatedPopulationInfo.get(term).getGeneLengthAverage();
+            int populationPerTerm = annotatedPopulationInfo.get(term).getSize();
+            float correctionCoefficient = (geneLengthPerTerm / geneLengthAverage) / (populationPerTerm / populationSize);
+            //pValueCorrected = pValue * correctionCoefficient;
+        }
     }
 }
