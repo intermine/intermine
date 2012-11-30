@@ -393,8 +393,24 @@ input.submit {
               <td><c:out value="${imf:formatPathStr(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out></td>
               <td>
                   <div class="objectKeys">
-                      <html:link
-                href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">
+                  
+<%-- link in results should go to object details unless other link is in config --%>
+<c:set var="extlink" value="" />
+
+<c:choose>
+  <c:when test="${!empty searchResult.linkRedirect}">
+    <c:set var="detailsLink" value="${searchResult.linkRedirect}" scope="request" />
+    <c:set var="extlink" value="class='extlink' target='_blank'" />
+  </c:when>
+  <c:otherwise>
+    <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}&amp;trail=${param.trail}|${searchResult.id}" scope="request" />
+  </c:otherwise>
+</c:choose>
+
+    <a href="${detailsLink}" ${extlink}>
+
+                
+                
                 <c:if test="${empty searchResult.keyFields}">
                   <c:out value="${imf:formatPathStr(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out>
                 </c:if>
@@ -429,7 +445,7 @@ input.submit {
                   </c:choose> </span>
                   <c:if test="${! status.last }"><span class="divider">|</span></c:if>
                   </c:forEach>
-                    </html:link>
+                    </a>
                 </div>
 
               <%-- print each field configured for this object --%>
