@@ -52,14 +52,15 @@ public final class EnrichmentCalculation
         float geneLengthAverage = population.getGeneLengthAverage();
 
         Map<String, Integer> sampleCounts = input.getAnnotatedCountsInSample();
-        Map<String, Integer> populationCounts = input.getAnnotatedCountsInPopulation();
+        Map<String, PopulationInfo> annotatedPopulationInfo =
+            input.getAnnotatedCountsInPopulation();
 
         Map<String, BigDecimal> rawResults = new HashMap<String, BigDecimal>();
         for (Map.Entry<String, Integer> entry : sampleCounts.entrySet()) {
             String attribute = entry.getKey();
 
             Integer sampleCount = entry.getValue();
-            Integer populationCount = populationCounts.get(attribute);
+            Integer populationCount = annotatedPopulationInfo.get(attribute).getSize();
             if (populationCount == null) {
                 populationCount = 0;
             }
@@ -72,11 +73,14 @@ public final class EnrichmentCalculation
 
         Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
                 rawResults, maxValue, input.getTestCount());
-
+        //if selected option and gene have length......
+        /*correctedResults = ErrorCorrection.applyLenghtCorrection(correctedResults,
+            geneLengthAverage, populationSize, annotatedPopulationInfo);*/
+        Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
         // record the number of items in the sample that had any values for the attribute
         int widgetTotal = rawResults.isEmpty() ? 0 : sampleSize;
 
-        EnrichmentResults results = new EnrichmentResults(correctedResults,
+        EnrichmentResults results = new EnrichmentResults(sortedCorrectedResults,
                 input.getAnnotatedCountsInSample(), input.getLabels(), widgetTotal);
 
         return results;

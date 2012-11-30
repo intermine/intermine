@@ -53,7 +53,7 @@ public interface EnrichmentInput
      * the department.
      * @return a map from attribute value to the count of items in the population with that value
      */
-    Map<String, Integer> getAnnotatedCountsInPopulation();
+    Map<String, PopulationInfo> getAnnotatedCountsInPopulation();
 
     /**
      * Get additional display labels for attribute values in the enrichment analysis, these may be
