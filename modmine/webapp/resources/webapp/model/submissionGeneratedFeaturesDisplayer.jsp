@@ -268,7 +268,7 @@ Features
     var $table = $('#${tableContainerId}');
     var modifyQuery = function (query) {
         return function (model) {
-            var table = model.classes["${fc.key}"];
+            var table = model.classes[query.from];
             if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
                 query.select.push('chromosome.primaryIdentifier');
                 query.select.push('chromosomeLocation.start');
