@@ -266,10 +266,12 @@ Features
 //<![CDATA[
 (function($) {
     var $table = $('#${tableContainerId}');
+    var NO_OP = function () {};
     var modifyQuery = function (query) {
         return function (model) {
+            console.log(query.from);
             var table = model.classes[query.from];
-            if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
+            if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
                 query.select.push('chromosome.primaryIdentifier');
                 query.select.push('chromosomeLocation.start');
                 query.select.push('chromosomeLocation.end');
@@ -294,7 +296,7 @@ Features
                 where: {"submissions.DCCid": dccId}
             };
             e.preventDefault();
-            $SERVICE.fetchModel(function() {}).pipe(modifyQuery(query)).done(function(modded) {
+            $SERVICE.fetchModel(NO_OP).pipe(modifyQuery(query)).done(function(modded) {
                 $table.empty().imWidget({
                     type: "table",
                     url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
