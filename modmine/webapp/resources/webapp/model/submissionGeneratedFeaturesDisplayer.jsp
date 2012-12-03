@@ -121,7 +121,8 @@ Features
             </td>
 
             <td align="middle" style="padding-left: 6px;" class="submission-features-count">
-                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}"
+                   style="text-decoration: none;" data-featureType="${fc.key}" data-dccID="${object.dCCid}">
                     ${fc.value}
                 </a>
             </td>
@@ -264,21 +265,8 @@ Features
   <script type="text/javascript">
     (function($) {
         var $table = $('#${tableContainerId}');
-        var query = {
-            select: ["primaryIdentifier", "score", "scoreProtocol.name"],
-            from: "${fc.key}",
-            joins: ["scoreProtocol"],
-            where: {"submissions.DCCid": "${object.dCCid}"}
-        };
-        var disableTable = function() {
-            $('.submission-features-count a').addClass('no-results').unbind('click');
-            $table.remove();
-        };
-        if (!${fc.value}) {
-            disableTable();
-        }
-        $(function() {
-            $SERVICE.fetchModel(function(model) {
+        var modifyQuery = function (query) {
+            return function (model) {
                 var table = model.classes["${fc.key}"];
                 if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
                     query.select.push('chromosome.primaryIdentifier');
@@ -290,23 +278,31 @@ Features
                 query.select.push('submissions.DCCid');
                 query.select.push('submissions.experimentalFactors.name');
                 query.joins.push('submissions.experimentalFactors');
-            });
+                return query;
+            };
+        };
+        $(function() {
             $('.submission-features-count a').click(function(e) {
                 var $link = $(this);
+                var dccId = $link.data("dccID");
+                var featureType = $link.data("featureType");
+                var query = {
+                    select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                    from: featureType,
+                    joins: ["scoreProtocol"],
+                    where: {"submissions.DCCid": dccId}
+                };
                 e.preventDefault();
-                $table.imWidget({
-                    type: "table",
-                    url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
-                    token: "${PROFILE.dayToken}",
-                    error: FailureNotification.notify,
-                    query: query,
-                    events: LIST_EVENTS,
-                    properties: {pageSize: ${pageSize} }
-                });
-                $link.unbind('click').click(function(e) {
-                    e.preventDefault();
-                    $table.slideToggle('fast');
-                    return false;
+                $SERVICE.fetchModel().pipe(modifyQuery(query)).done(function(modded) {
+                    $table.empty().imWidget({
+                        type: "table",
+                        url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
+                        token: "${PROFILE.dayToken}",
+                        error: FailureNotification.notify,
+                        query: modded,
+                        events: LIST_EVENTS,
+                        properties: {pageSize: ${pageSize} }
+                    });
                 });
             });
             return false;
