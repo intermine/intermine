@@ -49,6 +49,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Construct with SO term of the feature type.
+     * TODO as class name is fixed as gene, this method is not useful
      * @param soTerm the feature type to resolve
      */
     public RgdIdentifiersResolverFactory(String clsName) {
