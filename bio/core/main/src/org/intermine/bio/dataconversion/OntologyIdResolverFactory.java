@@ -76,7 +76,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver != null && resolver.hasTaxon(MOCK_TAXON_ID)) {
+        if (resolver != null && resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology)) {
             return;
         } else {
             if (resolver == null) {
@@ -91,7 +91,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile(ontology);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxon(MOCK_TAXON_ID))) {
+                    && !resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology))) {
                 LOG.info("Creating id resolver from database and caching it.");
                 createFromDb(DatabaseFactory.getDatabase(propName));
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
