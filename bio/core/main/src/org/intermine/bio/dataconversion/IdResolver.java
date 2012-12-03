@@ -286,6 +286,22 @@ public class IdResolver
     }
 
     /**
+     * Check if resolver has taxon id and class name
+     * @param taxonId taxon id as string
+     * @param clsName class name as string
+     */
+    public boolean hasTaxonsAndClassName(Set<String> taxonIds, String clsName) {
+        Map<String, Set<String>> taxonIdAndClsNameMap = new HashMap<String, Set<String>>();
+        for (String taxonId : taxonIds) {
+            taxonIdAndClsNameMap
+                    .put(taxonId,
+                            new HashSet<String>(Arrays
+                                    .asList(new String[] { clsName })));
+        }
+        return hasTaxonsAndClassNames(taxonIdAndClsNameMap);
+    }
+
+    /**
      * Check if resolver has a set of keys (taxon id + class name)
      * @param taxonIdAndClsNameMap data structure to hold keys
      * @return boolean value
@@ -314,7 +330,7 @@ public class IdResolver
                 taxonIdAndClsNameMap.put(
                         taxonId,
                         new HashSet<String>(Arrays
-                                .asList((new String[] { taxonId }))));
+                                .asList(new String[] { taxonId })));
             } else {
                 taxonIdAndClsNameMap.get(taxonId).add(clsName);
             }

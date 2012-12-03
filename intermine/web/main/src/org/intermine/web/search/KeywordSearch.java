@@ -1370,7 +1370,10 @@ public final class KeywordSearch
                     .getClass());
             ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass.getName());
             InterMineObject o = keywordSearchHit.getObject();
-            String linkRedirect = redirector.generateLink(im, o);
+            String linkRedirect = null;
+            if (redirector != null) {
+                linkRedirect = redirector.generateLink(im, o);
+            }
             KeywordSearchResult ksr = new KeywordSearchResult(webconfig, o, classKeys, 
                     classDescriptor, keywordSearchHit.getScore(), null, linkRedirect);
             searchResultsParsed.add(ksr);
