@@ -69,7 +69,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-         if (resolver != null && resolver.hasTaxon(taxonId)) {
+         if (resolver != null && resolver.hasTaxonAndClassNames(taxonId, this.clsCol)) {
              return;
          } else {
              if (resolver == null) {
@@ -84,7 +84,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxon(taxonId))) {
+                    && !resolver.hasTaxonAndClassNames(taxonId, this.clsCol))) {
                 db = DatabaseFactory.getDatabase(propName);
                 LOG.info("Creating id resolver from database: " + db.getName()
                         + "and caching id resolver to file: " + ID_RESOLVER_CACHED_FILE_NAME);
