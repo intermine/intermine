@@ -13,6 +13,17 @@
 
 <style type="text/css">
 
+<c:if test="${empty pageSize}">
+    <c:set var="pageSize" value="10"/>
+</c:if>
+
+<c:set var="initValue" value="0"/>
+<c:if test="${empty currentUniqueId}">
+    <c:set var="currentUniqueId" value="${initValue}" scope="application"/>
+</c:if>
+<c:set var="tableContainerId" value="_submission-features_${currentUniqueId}" scope="request"/>
+<c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
+
 input.query {
     -moz-background-clip: border;
     -moz-background-origin: padding;
@@ -80,12 +91,12 @@ Features
 </h3>
   <table cellpadding="5" cellspacing="5" border="0" class="resultstables" width="100%">
   <thead>
-  <tr>
-  <td>Feature type</td>
-  <td align="right">View data</td>
-  <td colspan="4" >Export</td>
-  <td>Action</td>
-  </tr>
+    <tr>
+        <td>Feature type</td>
+        <td align="right">View data</td>
+        <td colspan="4" >Export</td>
+        <td>Action</td>
+    </tr>
 </thead>
 <tbody>
 <%--
@@ -109,10 +120,12 @@ Features
                 </c:forEach>
             </td>
 
-            <td align="middle" style="padding-left: 6px;">
-            <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">${fc.value} </a>
-
+            <td align="middle" style="padding-left: 6px;" class="submission-features-count">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">
+                    ${fc.value}
+                </a>
             </td>
+
             <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
             </td>
@@ -244,6 +257,62 @@ Features
 
       <!-- end submission loop -->
   </table>
+
+  <%-- JS target for the results table --%>
+  <div class="collection-table" id="${tableContainerId}"></div>
+
+  <script type="text/javascript">
+    (function($) {
+        var $table = $('#${tableContainerId}');
+        var query = {
+            select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+            from: "${fc.key}",
+            joins: ["scoreProtocol"],
+            where: {"submissions.DCCid": "${object.dCCid}"}
+        };
+        var disableTable = function() {
+            $('.submission-features-count a').addClass('no-results').unbind('click');
+            $table.remove();
+        };
+        if (!${fc.value}) {
+            disableTable();
+        }
+        $(function() {
+            $SERVICE.fetchModel(function(model) {
+                var table = model.classes["${fc.key}"];
+                if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
+                    query.select.push('chromosome.primaryIdentifier');
+                    query.select.push('chromosomeLocation.start');
+                    query.select.push('chromosomeLocation.end');
+                    query.select.push('chromosomeLocation.strand');
+                    query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+                }
+                query.select.push('submissions.DCCid');
+                query.select.push('submissions.experimentalFactors.name');
+                query.joins.push('submissions.experimentalFactors');
+            });
+            $('.submission-features-count a').click(function(e) {
+                var $link = $(this);
+                e.preventDefault();
+                $table.imWidget({
+                    type: "table",
+                    url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
+                    token: "${PROFILE.dayToken}",
+                    error: FailureNotification.notify,
+                    query: query,
+                    events: LIST_EVENTS,
+                    properties: {pageSize: ${pageSize} }
+                });
+                $link.unbind('click').click(function(e) {
+                    e.preventDefault();
+                    $table.slideToggle('fast');
+                    return false;
+                });
+            });
+            return false;
+        });
+    }).call(window, jQuery);
+  </script>
 
 <%-- OVERLAPPING GENES
 
