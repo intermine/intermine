@@ -299,7 +299,7 @@ Features
             $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
                 $table.empty().imWidget({
                     type: "table",
-                    url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
+                    url: window.location.host + "/${WEB_PROPERTIES['webapp.path']}",
                     token: "${PROFILE.dayToken}",
                     error: FailureNotification.notify,
                     query: modded,
