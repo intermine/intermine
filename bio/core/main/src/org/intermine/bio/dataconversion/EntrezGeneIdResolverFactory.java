@@ -139,11 +139,13 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         taxonIds.removeAll(ignoredTaxonIds);
         LOG.info("Ignore taxons: " + ignoredTaxonIds + ", remain taxons: " + taxonIds);
 
-        if (resolver != null && resolver.hasTaxons(taxonIds)) {
+        if (resolver != null
+                && resolver.hasTaxonsAndClassName(taxonIds, this.clsCol
+                        .iterator().next())) {
             return;
         } else {
             if (resolver == null) {
-                if (clsCol.size() > 1) {
+                if (clsCol.size() > 1) { // Not the case, Entrez has gene only
                     resolver = new IdResolver();
                 } else {
                     resolver = new IdResolver(clsCol.iterator().next());
@@ -154,7 +156,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxons(taxonIds))) {
+                    && !resolver.hasTaxonsAndClassName(taxonIds, this.clsCol.iterator().next()))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
@@ -200,7 +202,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
         for (String newTaxon : records.keySet()) {
             // resolver still uses original taxon
-            if (resolver.hasTaxon(newTaxonIds.get(newTaxon))) {
+            if (resolver.hasTaxonAndClassName(newTaxonIds.get(newTaxon),
+                    this.clsCol.iterator().next())) {
                 continue;
             }
             Set<GeneInfoRecord> genes = records.get(newTaxon);
