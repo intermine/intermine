@@ -48,6 +48,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * Constructor read pid configuration
      */
     public EntrezGeneIdResolverFactory() {
+        this.clsCol = this.defaultClsCol;
         readConfig();
     }
 
