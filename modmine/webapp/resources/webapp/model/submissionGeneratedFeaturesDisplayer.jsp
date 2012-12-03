@@ -265,12 +265,19 @@ Features
 <script type="text/javascript">
 //<![CDATA[
 (function($) {
-    var $table = $('#${tableContainerId}');
-    var NO_OP = function () {};
-    var modifyQuery = function (query) {
+    var $table  = $('#${tableContainerId}');
+    var NO_OP   = function () {};
+    var querier = function (featureType, dccId) {
         return function (model) {
-            console.log(query.from);
-            var table = model.classes[query.from];
+            var query = {
+                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                from: featureType,
+                joins: ["scoreProtocol"],
+                where: {"submissions.DCCid": dccId}
+            };
+            console.log(featureType);
+            console.log(query);
+            var table = model.classes[featureType];
             if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
                 query.select.push('chromosome.primaryIdentifier');
                 query.select.push('chromosomeLocation.start');
@@ -286,17 +293,10 @@ Features
     };
     $(function() {
         $('.submission-features-count a').click(function(e) {
-            var $link = $(this);
-            var dccId = $link.data("dccID");
-            var featureType = $link.data("featureType");
-            var query = {
-                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
-                from: featureType,
-                joins: ["scoreProtocol"],
-                where: {"submissions.DCCid": dccId}
-            };
+            var $link     = $(this);
+            var makeQuery = querier($link.data("featureType"), $link.data("dccId"));
             e.preventDefault();
-            $SERVICE.fetchModel(NO_OP).pipe(modifyQuery(query)).done(function(modded) {
+            $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
                 $table.empty().imWidget({
                     type: "table",
                     url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
