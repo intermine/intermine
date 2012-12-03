@@ -262,53 +262,55 @@ Features
   <%-- JS target for the results table --%>
   <div class="collection-table" id="${tableContainerId}"></div>
 
-  <script type="text/javascript">
-    (function($) {
-        var $table = $('#${tableContainerId}');
-        var modifyQuery = function (query) {
-            return function (model) {
-                var table = model.classes["${fc.key}"];
-                if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
-                    query.select.push('chromosome.primaryIdentifier');
-                    query.select.push('chromosomeLocation.start');
-                    query.select.push('chromosomeLocation.end');
-                    query.select.push('chromosomeLocation.strand');
-                    query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
-                }
-                query.select.push('submissions.DCCid');
-                query.select.push('submissions.experimentalFactors.name');
-                query.joins.push('submissions.experimentalFactors');
-                return query;
-            };
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+    var $table = $('#${tableContainerId}');
+    var modifyQuery = function (query) {
+        return function (model) {
+            var table = model.classes["${fc.key}"];
+            if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
+                query.select.push('chromosome.primaryIdentifier');
+                query.select.push('chromosomeLocation.start');
+                query.select.push('chromosomeLocation.end');
+                query.select.push('chromosomeLocation.strand');
+                query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+            }
+            query.select.push('submissions.DCCid');
+            query.select.push('submissions.experimentalFactors.name');
+            query.joins.push('submissions.experimentalFactors');
+            return query;
         };
-        $(function() {
-            $('.submission-features-count a').click(function(e) {
-                var $link = $(this);
-                var dccId = $link.data("dccID");
-                var featureType = $link.data("featureType");
-                var query = {
-                    select: ["primaryIdentifier", "score", "scoreProtocol.name"],
-                    from: featureType,
-                    joins: ["scoreProtocol"],
-                    where: {"submissions.DCCid": dccId}
-                };
-                e.preventDefault();
-                $SERVICE.fetchModel().pipe(modifyQuery(query)).done(function(modded) {
-                    $table.empty().imWidget({
-                        type: "table",
-                        url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
-                        token: "${PROFILE.dayToken}",
-                        error: FailureNotification.notify,
-                        query: modded,
-                        events: LIST_EVENTS,
-                        properties: {pageSize: ${pageSize} }
-                    });
+    };
+    $(function() {
+        $('.submission-features-count a').click(function(e) {
+            var $link = $(this);
+            var dccId = $link.data("dccID");
+            var featureType = $link.data("featureType");
+            var query = {
+                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                from: featureType,
+                joins: ["scoreProtocol"],
+                where: {"submissions.DCCid": dccId}
+            };
+            e.preventDefault();
+            $SERVICE.fetchModel(function() {}).pipe(modifyQuery(query)).done(function(modded) {
+                $table.empty().imWidget({
+                    type: "table",
+                    url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
+                    token: "${PROFILE.dayToken}",
+                    error: FailureNotification.notify,
+                    query: modded,
+                    events: LIST_EVENTS,
+                    properties: {pageSize: ${pageSize} }
                 });
             });
-            return false;
         });
-    }).call(window, jQuery);
-  </script>
+        return false;
+    });
+}).call(window, jQuery);
+//]]>
+</script>
 
 <%-- OVERLAPPING GENES
 
