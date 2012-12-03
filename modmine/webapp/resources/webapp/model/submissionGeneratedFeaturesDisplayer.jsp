@@ -122,7 +122,7 @@ Features
 
             <td align="middle" style="padding-left: 6px;" class="submission-features-count">
                 <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}"
-                   style="text-decoration: none;" data-featureType="${fc.key}" data-dccID="${object.dCCid}">
+                   style="text-decoration: none;" data-feature-type="${fc.key}" data-dcc-id="${object.dCCid}">
                     ${fc.value}
                 </a>
             </td>
@@ -294,7 +294,7 @@ Features
     $(function() {
         $('.submission-features-count a').click(function(e) {
             var $link     = $(this);
-            var makeQuery = querier($link.data("featureType"), $link.data("dccId"));
+            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"));
             e.preventDefault();
             $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
                 $table.empty().imWidget({
