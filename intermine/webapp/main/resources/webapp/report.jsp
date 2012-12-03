@@ -56,10 +56,10 @@
     <h1 class="title">
         <im:displaypath path="${object.type}"/>:
         <c:forEach var="title" varStatus="status" items="${object.titleMain}">
-          <c:if test="${status.count > 0}"> </c:if><strong><c:out escapeXml="false" value="${title.value.formatted}" /></strong>
+          <c:if test="${status.count > 0}"> </c:if><strong><c:out escapeXml="true" value="${title.value.formatted}" /></strong>
         </c:forEach>
         <c:forEach var="title" varStatus="status" items="${object.titleSub}">
-          <c:if test="${status.count > 0}"> </c:if><c:out escapeXml="false" value="${title.value.formatted}" />
+          <c:if test="${status.count > 0}"> </c:if><c:out escapeXml="true" value="${title.value.formatted}" />
         </c:forEach>
     </h1>
     </a>

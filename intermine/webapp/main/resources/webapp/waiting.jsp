@@ -25,6 +25,7 @@
       <p>
         <img border="0" src="model/images/progress${imgnum}.gif" title="Please wait, your query is running..."/>
       </p>
+      To cancel your query use the back arrow or simply close your browser window.
     </div>
     </div>
     <script language="JavaScript">

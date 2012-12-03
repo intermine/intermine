@@ -64,14 +64,14 @@
                             <c:choose>
                               <c:when test="${resultElementColumn.isKeyField}">
                                 <td>
-                                <a href="report.do?id=${resultElementColumn.id}">${resultElementColumn.field}</a>
+                                <a href="report.do?id=${resultElementColumn.id}"><c:out value="${resultElementColumn.field}"/></a>
                                 </td>
                               </c:when>
                               <c:otherwise>
                                 <td>
                                   <c:choose>
                                     <c:when test="${resultElementColumn.field != null}">
-                                      ${resultElementColumn.field}
+                                      <c:out value="${resultElementColumn.field}" />
                                     </c:when>
                                     <c:otherwise>
                                       &nbsp;

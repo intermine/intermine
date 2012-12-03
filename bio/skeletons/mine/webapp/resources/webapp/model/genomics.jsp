@@ -19,17 +19,13 @@
     <td>
       <div class="body">
         <p>
-          <a href="/malariamine">MalariaMine</a> contains <i>Plasmodium falciparum 3D7</i> genome
-          data from:
+          <a href="/mousemine">MouseMine</a> contains genomic data for the laboratory mouse.
         </p>
         <ul>
           <li>
-            <a href="http://www.genedb.org/">
-              Fasta sequences for <i>P. falciparum 3D7</i></a>
-          </li>
-          <li>
-            <a href="http://www.genedb.org/">
-              GFF3 for <i>P. falciparum 3D7</i> genome features</a>
+            <a href="http://www.informatics.jax.org/">
+              Mouse genome features, nomenclature, functional annotations from MGI.
+	      </a>
           </li>
         </ul>
       </div>
@@ -38,8 +34,9 @@
       <div class="body">
         <ul>
           <li>
-            <im:querylink text="All <i>P. falciparum 3D7</i> genes identifiers, chromosome positions and chromosome identifiers" skipBuilder="true">
-<query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier Gene.organism.shortName Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
+            <im:querylink text="All mouse Genes (identifiers, symbols, genomic coordinates" skipBuilder="true">
+<query name="" model="genomic" view="Gene.primaryIdentifier Gene.organism.shortName Gene.chromosome.primaryIdentifier Gene.chromosomeLocation.start Gene.chromosomeLocation.end" sortOrder="Gene.primaryIdentifier asc">
+<constraint path="Gene.organism.shortName" op="=" value="M. musculus"/>
 </query>
             </im:querylink>
           </li>

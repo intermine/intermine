@@ -3,12 +3,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 
-<tiles:importAttribute/>
+<tiles:importAttribute/> 
 
 <!-- error.jsp -->
 <html:xhtml/>
-
-<c:set var="msg" value="I found this error on ${pageContext.request.requestURL}.%0D%0A%0D%0A---- Error Found ----%0D%0A%0D%0A${stacktrace}"/>
+<%
+String trace = ((String) request.getAttribute("stacktrace")).substring(0,1700);
+pageContext.setAttribute("trace",trace);
+%>
+<c:set var="msg" value="I found this error on ${pageContext.request.requestURL}.%0D%0A%0D%0A---- Error Found ----%0D%0A%0D%0A "/>
 <c:set var="subject" value="Error found on ${WEB_PROPERTIES['project.title']} website"/>
 <c:set var="rec" value="${WEB_PROPERTIES['mail.from']}"/>
 <div id="generic_error">
@@ -16,7 +19,7 @@
     <p>
       There has been an internal error while processing your request.  The
       problem has been logged and will be investigated.  You may also
-      <html:link href="mailto:${rec}?body=${msg}&subject=${subject}">send us an email</html:link>
+      <html:link href="mailto:${rec}?body=${msg}${trace}&subject=${subject}">send us an email</html:link>
       describing how you encountered this error.
     </p>
     <p>

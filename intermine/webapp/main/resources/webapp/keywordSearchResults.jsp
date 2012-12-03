@@ -434,7 +434,7 @@ input.submit {
                       test="${!empty fieldConfig && !empty fieldConfig.fieldExpr}">
                       <c:set var="outVal"
                         value="${searchResult.fieldValues[fieldConfig.fieldExpr]}" />
-                      <span class="value">${outVal}</span>
+                      <span class="value"><c:out value="${outVal}" /></span>
                       <c:if test="${empty outVal}">
                             -
                           </c:if>

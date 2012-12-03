@@ -16,6 +16,7 @@
 
   <!-- Header -->
   <c:set value="${WEB_PROPERTIES['header.links']}" var="headerLinks"/>
+  <c:set value="${WEB_PROPERTIES['logo']==null ? 'logo.png' : WEB_PROPERTIES['logo']}" var="logoFile"/>
 
   <c:if test="${fn:length(headerLinks) > 0}">
     <%-- Menu appearing at the top right (about, etc..) --%>
@@ -35,10 +36,11 @@
     </div>
   </c:if>
   <div id="header">
-    <a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/logo.png" width="45px" height="43px" alt="Logo" /></a>
+    <a href="${WEB_PROPERTIES['project.sitePrefix']}" alt="Home" rel="NOFOLLOW"><img id="logo" src="model/images/${logoFile}" width="45px" height="43px" alt="Logo" /></a>
     <h1><html:link href="${WEB_PROPERTIES['project.sitePrefix']}/"><c:out value="${WEB_PROPERTIES['project.title']}" escapeXml="false"/></html:link></h1>
     <p id="version"><fmt:message key="header.version"/> <c:out value="${WEB_PROPERTIES['project.releaseVersion']}" escapeXml="false"/></span>
-    <p><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
+    <p id="subtitle"><c:out value="${WEB_PROPERTIES['project.subTitle']}" escapeXml="false"/></p>
+    <p id="installation"><c:out value="${WEB_PROPERTIES['project.installation']}" escapeXml="false"/></p>
   </div>
 
     <!-- Tab Menu -->
