@@ -1425,9 +1425,6 @@ public final class KeywordSearch
                 Document doc = browseHit.getStoredFields();
                 if (doc != null) {
                     objectIds.add(Integer.valueOf(doc.getFieldable("id").stringValue()));
-                    LOG.error("doc is NOT null for browseHit " + Integer.valueOf(doc.getFieldable("id").stringValue()));
-                } else {
-                    LOG.error("doc is null for browseHit " + browseHit);
                 }
             } catch (NumberFormatException e) {
                 LOG.info("Invalid id '" + browseHit.getField("id") + "' for hit '"
