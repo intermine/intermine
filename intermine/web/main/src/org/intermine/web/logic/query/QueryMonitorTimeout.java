@@ -125,4 +125,15 @@ public class QueryMonitorTimeout implements QueryMonitor
     public void queryCancelled() {
         cancelled = true;
     }
+
+    private PathQuery query = null;
+
+    public void setQuery(PathQuery query) {
+        this.query = (PathQuery) query.clone();
+    }
+
+    public PathQuery getQuery() {
+        return this.query;
+    }
+
 }
