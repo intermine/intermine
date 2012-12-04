@@ -132,7 +132,11 @@ public class PollQueryAction extends InterMineAction
             } else {
                 trail = "|results." + qid;
             }
-            SessionMethods.setQuery(session, pr.getPathQuery());
+            if (pr == null) {
+                LOG.info("PagedTable is null for '" + qid + "', umm, wat?");
+            } else {
+                request.setAttribute(Constants.QUERY, pr.getPathQuery());
+            }
             ForwardParameters fp =  new ForwardParameters(mapping.findForward("results"))
                                     .addParameter("trail", trail)
                                     .addParameter("table", "results." + qid);
