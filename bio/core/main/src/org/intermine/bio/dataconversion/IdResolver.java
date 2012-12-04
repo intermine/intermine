@@ -38,7 +38,6 @@ import org.apache.log4j.Logger;
  */
 public class IdResolver
 {
-    @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(IdResolver.class);
 
     private String clsName;
@@ -468,7 +467,9 @@ public class IdResolver
      * @throws IOException if fail to write
      */
     public void writeToFile(File f) throws IOException {
-        FileWriter fw = new FileWriter(f, true);
+        LOG.info("Writing id resolver to file: " + f.getName());
+//        FileWriter fw = new FileWriter(f, true); // append if true
+        FileWriter fw = new FileWriter(f);
         for (MultiKey key : orgIdMaps.keySet()) {
 
             // get maps for this organism
