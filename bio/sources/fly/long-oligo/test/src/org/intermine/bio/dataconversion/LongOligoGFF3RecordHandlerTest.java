@@ -40,9 +40,8 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new LongOligoGFF3RecordHandler(tgtModel);
         LongOligoGFF3SeqHandler seqHandler = new LongOligoGFF3SeqHandler();
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("mRNA");
-        resolverFactory.addResolverEntry("7227", "FBtr0075391", Collections.singleton("CG4314-RA"));
-        seqHandler.resolverFactory = resolverFactory;
+        seqHandler.rslv = IdResolverService.getMockIdResolver("mRNA");
+        seqHandler.rslv.addResolverEntry("7227", "FBtr0075391", Collections.singleton("CG4314-RA"));
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName, dataSetTitle,
                                       tgtModel, handler, seqHandler);
     }
