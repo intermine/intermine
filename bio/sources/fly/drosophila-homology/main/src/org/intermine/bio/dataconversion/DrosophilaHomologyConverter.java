@@ -11,12 +11,15 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
@@ -36,10 +39,25 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     private Item pub, evidence;
     private Map<String, String> genes = new HashMap<String, String>();
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
-    private OrganismRepository or;
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-
+    private Set<String> taxonIds = new HashSet<String>();
+    private static final Map<String, String> DROSOPHILAS = new HashMap<String, String>();
+    
+    static  {
+        DROSOPHILAS.put("Dana", "7217");
+        DROSOPHILAS.put("Dere", "7220");
+        DROSOPHILAS.put("Dgri", "7222");
+        DROSOPHILAS.put("Dmoj", "7230");
+        DROSOPHILAS.put("Dper", "7234");
+        DROSOPHILAS.put("Dpse", "7237");
+        DROSOPHILAS.put("Dsec", "7238");
+        DROSOPHILAS.put("Dsim", "7240");
+        DROSOPHILAS.put("Dvir", "7244");
+        DROSOPHILAS.put("Dwil", "7260");
+        DROSOPHILAS.put("Dyak", "7245");        
+    }
+    
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -62,15 +80,24 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         evidence.setReference("evidenceCode", evidenceCode);
         evidence.addToCollection("publications", pub);
         store(evidence);
-        or = OrganismRepository.getOrganismRepository();
     }
 
-
+    /**
+     * Sets the list of taxonIds that should be imported if using split input files.
+     *
+     * @param taxonIds a space-separated list of taxonIds
+     */
+    public void setDrosophilaHomologyOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
+        LOG.info("Setting list of organisms to " + this.taxonIds);
+    }
+    
     /**
      * Read each line from flat file, create genes and synonyms.
      *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -79,17 +106,19 @@ public class DrosophilaHomologyConverter extends BioFileConverter
                 continue;
             }
             String geneIdentifier = line[0];
-            String geneOrganismRefId = parseSymbol(line[1]);
+            String geneOrganismRefId = getOrganism("7227");
             String homologue = line[5];
             String homoOrganismRefId = parseSymbol(line[6]);
-            createHomologue(getGene(geneIdentifier, geneOrganismRefId),
-                            getGene(homologue, homoOrganismRefId));
-            createHomologue(getGene(homologue, homoOrganismRefId),
-                    getGene(geneIdentifier, geneOrganismRefId));
+            // NULL if not a fly of interest 
+            if (homoOrganismRefId != null) {
+                String gene1 = getGene(geneIdentifier, geneOrganismRefId);
+                String gene2 = getGene(homologue, homoOrganismRefId);
+                createHomologue(gene1, gene2);
+                createHomologue(gene2, gene1);
+            }
         }
     }
 
-    // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene)
         throws ObjectStoreException {
         // if no genes created then ids could not be resolved, don't create a homologue
@@ -120,11 +149,11 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     private String parseSymbol(String symbol)  {
-        if (!symbol.contains("\\")) {
-            return getOrganism("7227");
+        String species = symbol.substring(0, 4);
+        String taxonId = DROSOPHILAS.get(species); 
+        if (taxonId != null & (taxonIds.contains(taxonId) || taxonIds.isEmpty())) {
+            return getOrganism(taxonId);
         }
-        String[] bits = symbol.split("\\\\");
-        OrganismData od = or.getOrganismDataByAbbreviation(bits[0]);
-        return getOrganism(String.valueOf(od.getTaxonId()));
+        return null;
     }
 }
