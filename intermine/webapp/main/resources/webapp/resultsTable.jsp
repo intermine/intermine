@@ -46,20 +46,22 @@
         </c:otherwise>
     </c:choose>
 
-    var $container = jQuery('#${tableContainerId}');
+    jQuery(function() {
+        var $container = jQuery('#${tableContainerId}');
 
-    if (query && query.select && query.select.length > 0) {
-        $container.empty().imWidget({
-            type: 'table',
-            service: $SERVICE,
-            query: query,
-            events: LIST_EVENTS,
-            properties: {pageSize: ${pageSize} },
-            error: FailureNotification.notify
-        });
-    } else {
-        $container.html('<p>Query has not been specified, failing...</p>');
-    }
+        if (query && query.select && query.select.length > 0) {
+            $container.empty().imWidget({
+                type: 'table',
+                service: $SERVICE,
+                query: query,
+                events: LIST_EVENTS,
+                properties: {pageSize: ${pageSize} },
+                error: FailureNotification.notify
+            });
+        } else {
+            $container.html('<p>Query has not been specified, failing...</p>');
+        }
+    });
 })();
 </script>
 
