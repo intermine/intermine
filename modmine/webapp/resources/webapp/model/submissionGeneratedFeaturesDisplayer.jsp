@@ -275,8 +275,6 @@ Features
                 joins: ["scoreProtocol"],
                 where: {"submissions.DCCid": dccId}
             };
-            console.log(featureType);
-            console.log(query);
             var table = model.classes[featureType];
             if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
                 query.select.push('chromosome.primaryIdentifier');
