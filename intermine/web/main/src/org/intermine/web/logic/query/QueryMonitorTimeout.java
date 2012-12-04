@@ -1,5 +1,7 @@
 package org.intermine.web.logic.query;
 
+import org.intermine.pathquery.PathQuery;
+
 /*
  * Copyright (C) 2002-2012 FlyMine
  *
