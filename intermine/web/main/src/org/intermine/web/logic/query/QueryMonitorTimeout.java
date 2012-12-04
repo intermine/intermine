@@ -130,11 +130,11 @@ public class QueryMonitorTimeout implements QueryMonitor
 
     private PathQuery query = null;
 
-    public void setQuery(PathQuery query) {
+    public void setPathQuery(PathQuery query) {
         this.query = (PathQuery) query.clone();
     }
 
-    public PathQuery getQuery() {
+    public PathQuery getPathQuery() {
         return this.query;
     }
 
