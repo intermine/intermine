@@ -477,6 +477,7 @@ public final class SessionMethods
             final boolean saveQuery, final PathQuery pathQuery) {
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        clientState.setQuery(pathQuery);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         return startQuery(clientState, request.getSession(), messages, saveQuery, pathQuery);
     }
