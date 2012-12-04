@@ -26,6 +26,7 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 
@@ -83,13 +84,11 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     }
 
     /**
-     * Sets the list of taxonIds that should be imported if using split input files.
-     *
-     * @param taxonIds a space-separated list of taxonIds
+     * Set the organisms to include by a space separated list of taxon ids.
+     * @param taxonIds the organisms to include
      */
-    public void setDrosophilaHomologyOrganisms(String taxonIds) {
-        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtils.split(taxonIds, " ")));
-        LOG.info("Setting list of organisms to " + this.taxonIds);
+    public void setOrganisms(String taxonIds) {
+        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
     }
     
     /**
