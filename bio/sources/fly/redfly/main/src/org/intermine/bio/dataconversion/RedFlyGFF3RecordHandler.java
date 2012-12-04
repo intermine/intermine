@@ -39,7 +39,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     private Map<String, Item> geneMap = new HashMap<String, Item>();
     private Map<String, Item> publications = new HashMap<String, Item>();
     private static final String TAXON_FLY = "7227";
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     protected static final Logger LOG = Logger.getLogger(RedFlyGFF3RecordHandler.class);
 
@@ -59,7 +59,7 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
-        
+
         Item feature = getFeature();
 
         feature.setClassName("CRM");

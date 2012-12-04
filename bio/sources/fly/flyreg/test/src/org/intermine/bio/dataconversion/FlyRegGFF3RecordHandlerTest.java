@@ -33,7 +33,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
     private Model tgtModel;
     private FlyRegGFF3RecordHandler handler;
     private String seqClsName = "Chromosome";
-    private String orgAbbrev = "DM";
+    private String taxonId = "7227";
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
     private GFF3Converter converter;
@@ -47,12 +47,12 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
         tgtModel = Model.getInstanceByName("genomic");
 
         handler = new FlyRegGFF3RecordHandler(tgtModel);
-        
+
         handler.rslv = IdResolverService.getMockIdResolver("Gene");
         handler.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
         handler.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
 
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
+        converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
                                       dataSetTitle, tgtModel, handler, null);
 
     }

@@ -34,7 +34,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
     private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
     private final Map<String, Item> geneIdMap = new HashMap<String, Item>();
     private static final String TAXON_FLY = "7227";
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     protected static final Logger LOG = Logger.getLogger(FlyRegGFF3RecordHandler.class);
 
@@ -54,7 +54,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
         if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
-        
+
         getFeature().setClassName("TFBindingSite");
 
         Item bindingSite = getFeature();
@@ -135,7 +135,7 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
     }
 
     private Item getGene(String symbol) {
-    	if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }
         int resCount = rslv.countResolutions(TAXON_FLY, symbol);

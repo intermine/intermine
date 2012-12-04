@@ -43,7 +43,7 @@ public class AffyProbesConverter extends BioFileConverter
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeSetHolder> holders = new HashMap<String, ProbeSetHolder>();
     private List<Item> delayedItems = new LinkedList<Item>();
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -67,7 +67,7 @@ public class AffyProbesConverter extends BioFileConverter
     @Override
     public void process(Reader reader)
         throws Exception {
-    	if (rslv == null) {
+        if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
 
@@ -215,7 +215,7 @@ public class AffyProbesConverter extends BioFileConverter
 
     private String createGene(String id)
         throws ObjectStoreException {
-    	if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }
         String identifier = id;

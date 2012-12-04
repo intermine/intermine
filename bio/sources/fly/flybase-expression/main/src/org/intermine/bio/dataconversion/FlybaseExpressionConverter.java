@@ -46,7 +46,7 @@ public class FlybaseExpressionConverter extends BioFileConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, Stage> stages = new HashMap<String, Stage>();
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
