@@ -12,16 +12,13 @@ package org.intermine.bio.dataconversion;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
@@ -128,11 +125,11 @@ public class HomologeneConverter extends BioFileConverter
         Set<String> allTaxonIds = new HashSet<String>();
         allTaxonIds.addAll(taxonIds);
         allTaxonIds.addAll(homologues);
-        
+
         if (rslv == null) {
             rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
-        
+
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
@@ -148,12 +145,12 @@ public class HomologeneConverter extends BioFileConverter
                 if (genes.size() >= 2) {
                     processHomologues(genes);
                 }
-                genes = new HashSet<GeneRecord>(); 
+                genes = new HashSet<GeneRecord>();
             }
 
             previousGroup = groupId;
-            
-            String taxonId = bits[1];            
+
+            String taxonId = bits[1];
             if (!isValid(taxonId)) {
                 // not an organism of interest, skip
                 continue;
@@ -162,7 +159,7 @@ public class HomologeneConverter extends BioFileConverter
             String ncbiId = bits[2];
             String symbol = bits[3];
             String gene = getGene(ncbiId, symbol, taxonId);
-                        
+
             if (gene == null) {
                 // invalid gene
                 continue;
@@ -206,7 +203,7 @@ public class HomologeneConverter extends BioFileConverter
         }
     }
 
-    private void createHomologue(String gene1, String taxonId1, String gene2, String taxonId2) 
+    private void createHomologue(String gene1, String taxonId1, String gene2, String taxonId2)
             throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
@@ -215,7 +212,7 @@ public class HomologeneConverter extends BioFileConverter
         homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
         store(homologue);
     }
-    
+
     // genes (in taxonIDs) are always processed
     // homologues are only processed if they are of an organism of interest
     private boolean isValid(String taxonId) {
@@ -237,20 +234,20 @@ public class HomologeneConverter extends BioFileConverter
         }
         return false;
     }
-    
+
     private String getGene(String ncbiId, String symbol, String taxonId)
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
-        
+
         String identifier = resolveGene(taxonId, symbol);
-        
+
         if (identifier == null) {
             return null;
         }
-        
+
         String refId = identifiersToGenes.get(new MultiKey(taxonId, identifier));
         if (refId == null) {
             Item item = createItem("Gene");
@@ -262,7 +259,7 @@ public class HomologeneConverter extends BioFileConverter
         }
         return refId;
     }
-    
+
     private String getEvidence() throws ObjectStoreException {
         if (evidenceRefId == null) {
             Item item = createItem("OrthologueEvidenceCode");
@@ -287,7 +284,7 @@ public class HomologeneConverter extends BioFileConverter
         }
         return evidenceRefId;
     }
-    
+
     private String resolveGene(String taxonId, String identifier) {
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
@@ -302,7 +299,7 @@ public class HomologeneConverter extends BioFileConverter
         }
         return rslv.resolveId(taxonId, identifier).iterator().next();
     }
-    
+
     protected class GeneRecord {
         protected String geneRefId;
         protected String taxonId;

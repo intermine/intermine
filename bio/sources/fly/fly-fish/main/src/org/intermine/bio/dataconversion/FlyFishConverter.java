@@ -43,7 +43,7 @@ public class FlyFishConverter extends BioFileConverter
     private Item pub, ontology;
     private String[] stages;
     private static final String TAXON_FLY = "7227";
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Construct a new instance of flyfishconverter.
@@ -85,7 +85,7 @@ public class FlyFishConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
-    	if (rslv == null) {
+        if (rslv == null) {
             rslv = IdResolverService.getFlyIdResolver();
         }
         BufferedReader br = new BufferedReader(reader);
@@ -212,7 +212,7 @@ public class FlyFishConverter extends BioFileConverter
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
-    	if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }
         int resCount = rslv.countResolutions(TAXON_FLY, geneCG);
