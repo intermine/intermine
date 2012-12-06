@@ -44,7 +44,7 @@ public final class EnrichmentCalculation
      * @return results of the enrichment calculation
      */
     public static EnrichmentResults calculate(EnrichmentInput input, Double maxValue,
-            String errorCorrection) {
+            String errorCorrection, boolean applyGeneLengthCorrection) {
 
         int sampleSize = input.getSampleSize();
         PopulationInfo population = input.getPopulationInfo();
@@ -73,9 +73,10 @@ public final class EnrichmentCalculation
 
         Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
                 rawResults, maxValue, input.getTestCount());
-        //if selected option and gene have length......
-        /*correctedResults = ErrorCorrection.applyLenghtCorrection(correctedResults,
-            geneLengthAverage, populationSize, annotatedPopulationInfo);*/
+        if (applyGeneLengthCorrection) {
+            ErrorCorrection.applyLenghtCorrection(correctedResults,
+                geneLengthAverage, populationSize, annotatedPopulationInfo);
+        }
         Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
         // record the number of items in the sample that had any values for the attribute
         int widgetTotal = rawResults.isEmpty() ? 0 : sampleSize;

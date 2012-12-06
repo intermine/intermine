@@ -32,27 +32,35 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
+/**
+ * Implement methods to access data an enrichment calculation needs to be provided with.
+ * @author Daniela Butano
+ *
+ */
 public class EnrichmentWidgetImplLdr extends WidgetLdr
 {
     private EnrichmentWidgetConfig config;
     private String action;
     private InterMineBag populationBag;
+    private boolean applyGeneLenghCoefficient;
 
     /**
      * Construct an Enrichment widget loader, which performs the queries needed for
      * enrichment statistics.
-     * 
+     *
      * @param bag The bag containing the items we are interested in examining.
-     * @param populationBag The bag containing the background population for this test (MAY BE NULL).
+     * @param populationBag The bag containing the background population for
+     * this test (MAY BE NULL).
      * @param os The connection to the Object Store database.
      * @param config The configuration detailing the kind of enrichment to do.
      * @param filter An optional filter value.
      */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
                                    ObjectStore os, EnrichmentWidgetConfig config,
-                                   String filter) {
+                                   String filter, boolean applyGeneLenghCoefficient) {
         super(bag, os, filter, config);
         this.populationBag = populationBag;
+        this.applyGeneLenghCoefficient = applyGeneLenghCoefficient;
         this.config = config;
     }
 
@@ -133,7 +141,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         QueryFunction qfCount = new QueryFunction();
         QueryField qfGeneLength = null;
         QueryFunction qfAverage = null;
-        if (isGeneLengthCorrectionRelevant()) {
+        if (applyGeneLenghCoefficient) {
             qfGeneLength = new QueryField(startClass, "length");
         }
         // which columns to return when the user clicks on 'export'
@@ -299,12 +307,5 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      */
     public Query getExportQuery(List<String> keys) {
         return getQuery("export", keys);
-    }
-
-    private boolean isGeneLengthCorrectionRelevant() {
-        if (startClass.getType().getSimpleName().equals("Gene")) {
-            return true;
-        }
-        return false;
     }
 }

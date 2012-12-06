@@ -870,7 +870,8 @@
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
+                                 normaliseByGeneLength="true"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
@@ -912,7 +913,8 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
                                         mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"
-                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"/>
+                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
+                                 normaliseByGeneLength="true"/>
 
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"

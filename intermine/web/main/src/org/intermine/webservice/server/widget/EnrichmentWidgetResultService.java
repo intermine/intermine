@@ -24,6 +24,7 @@ import org.intermine.api.profile.TagManager.TagNamePermissionException;
 import org.intermine.api.tag.TagNames;
 import org.intermine.api.tag.TagTypes;
 import org.intermine.model.userprofile.Tag;
+import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
@@ -118,6 +119,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputPathQuery(widget, widgetConfig);
+        addOutputGeneLengthCorrection(input, widget);
 
         addOutputResult(widget);
     }
@@ -140,6 +142,35 @@ public class EnrichmentWidgetResultService extends WidgetService
             addOutputAttribute("is_logged", "true");
         } else {
             addOutputAttribute("is_logged", "false");
+        }
+    }
+
+    /*
+     * Set in the output the gene_lenth_correction attribute.
+     * The attribute is null if the gene length coefficient correction can't be applicable
+     * true if the gene length coefficient correction is selected, false if not selected
+     */
+    private void addOutputGeneLengthCorrection(WidgetsServiceInput input,
+        EnrichmentWidget widget) {
+        String geneLengthCorrectionInput = input.getExtraAttributes().get(3);
+        if (widget.isGeneLengthCorrectionApplicable()) {
+            try {
+                addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL,
+                    Double.toString(widget.getPercentageGeneWithLengthNull()) + "%");
+            } catch (ObjectStoreException os) {
+                addOutputInfo(WidgetsRequestParser.GENE_LENGTH_CORRECTION, null);
+                addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+                return;
+            }
+            if (geneLengthCorrectionInput == null) {
+                addOutputInfo(WidgetsRequestParser.GENE_LENGTH_CORRECTION, "false");
+            } else {
+                addOutputInfo(WidgetsRequestParser.GENE_LENGTH_CORRECTION,
+                              geneLengthCorrectionInput);
+            }
+        } else {
+            addOutputInfo(WidgetsRequestParser.GENE_LENGTH_CORRECTION, null);
+            addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
         }
     }
 
