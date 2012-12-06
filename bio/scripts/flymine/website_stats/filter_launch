@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if true
-then
-    ./filter1
-    ./filter2
-fi
-
-./filter.pl
