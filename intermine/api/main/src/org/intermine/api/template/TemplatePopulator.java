@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Path;
@@ -34,7 +35,6 @@ import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
-import org.intermine.template.TemplateValue.ValueType;
 import org.intermine.util.DynamicUtil;
 
 
@@ -175,7 +175,8 @@ public final class TemplatePopulator
 
         PathConstraint constraint = template.getEditableConstraints().get(0);
         Path path = getPathOfClass(template, constraint.getPath());
-        if (!bag.isOfType(path.getLastClassDescriptor().getName())) {
+        ClassDescriptor cld = path.getLastClassDescriptor();
+        if (!cld.getAllSuperclassNames().contains(bag.getType())) {
             throw new TemplatePopulatorException("The constraint of type "
                     + path.getNoConstraintsString()
                     + " can't be set to a bag (list) of type " + bag.getType()
