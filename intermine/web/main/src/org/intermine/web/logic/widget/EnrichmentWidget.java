@@ -47,20 +47,19 @@ public class EnrichmentWidget extends Widget
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
     private int notAnalysed = 0;
     private InterMineBag bag;
+    private Integer countItemsWithLengthNotNull = null;
     private InterMineBag populationBag;
     private ObjectStore os;
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
+    private boolean isGeneLenghtCorrectionSelected;
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
     private ClassDescriptor typeDescriptor;
 
 
     /**
-import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-
      * @param config widget config
      * @param interMineBag bag for this widget
      * @param os object store
@@ -70,7 +69,8 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
                             InterMineBag populationBag, ObjectStore os,
-                            String filter, String max, String errorCorrection) {
+                            String filter, String max, String errorCorrection,
+                            boolean isGeneLenghtCorrectionSelected) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
@@ -79,6 +79,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
+        this.isGeneLenghtCorrectionSelected = isGeneLenghtCorrectionSelected;
         validateBagType();
         process();
     }
@@ -110,11 +111,16 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     @Override
     public void process() {
         try {
+            boolean applyGeneLengthCorrection = false;
+            if (isGeneLenghtCorrectionSelected && isGeneLengthCorrectionApplicable()) {
+                applyGeneLengthCorrection = true;
+            }
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
-                (EnrichmentWidgetConfig) config, filter);
+                (EnrichmentWidgetConfig) config, filter, applyGeneLengthCorrection);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
-            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection);
+            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection,
+                applyGeneLengthCorrection);
             setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
@@ -369,5 +375,38 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
             }
         }
         return pathQuery;
+    }
+
+    /*
+     * Return true if the gene length correction is applicable
+     * 1- normaliseByGeneLength set to true in webconfig-model.xml file
+     * 2- The typeClass, set in the conf file, is any class extending SequenceFeature (with length)
+     * 3- gene.length is not always empty
+     */
+    public boolean isGeneLengthCorrectionApplicable() {
+        if (countItemsWithLengthNotNull != null) {
+            if (countItemsWithLengthNotNull != 0) {
+                return true;
+            }
+            return false;
+        } else {
+            ClassDescriptor sequenceFeatureCd = os.getModel()
+                .getClassDescriptorByName("SequenceFeature");
+            if (((EnrichmentWidgetConfig) config).isNormaliseByGeneLength()
+                && typeDescriptor.getAllSuperDescriptors().contains(sequenceFeatureCd)) {
+                //if there are at least one gene in the bag with length not null
+                countItemsWithLengthNotNull = bag.getCountItemsWithLengthNotNull();
+                if (countItemsWithLengthNotNull != 0) {
+                    return true;
+                }
+            }
+           return false;
+        }
+    }
+
+    public double getPercentageGeneWithLengthNull() throws ObjectStoreException {
+        int bagSize = bag.getSize();
+        double rate = (double) (bagSize - countItemsWithLengthNotNull) / bagSize;
+        return rate * 100;
     }
 }

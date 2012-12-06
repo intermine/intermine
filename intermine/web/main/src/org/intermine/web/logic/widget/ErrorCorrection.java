@@ -242,8 +242,11 @@ public final class ErrorCorrection
             term = pValuePerTerm.getKey();
             float geneLengthPerTerm = annotatedPopulationInfo.get(term).getGeneLengthAverage();
             int populationPerTerm = annotatedPopulationInfo.get(term).getSize();
-            float correctionCoefficient = (geneLengthPerTerm / geneLengthAverage) / (populationPerTerm / populationSize);
-            //pValueCorrected = pValue * correctionCoefficient;
+            float geneLenghtProbability = (geneLengthPerTerm / geneLengthAverage);
+            float populationCountProbability = (float) populationPerTerm / populationSize;
+            float correctionCoefficient =  geneLenghtProbability / populationCountProbability;
+            pValueCorrected = pValue.multiply(new BigDecimal(correctionCoefficient));
+            pValuesPerTerm.put(term, pValueCorrected);
         }
     }
 }
