@@ -172,11 +172,16 @@ public final class TemplatePopulator
             throw new TemplatePopulatorException("Template must have exactly one editable "
                     + "constraint to be configured with a bag.");
         }
-
+        Set<String> allClasses = new HashSet<String>();
+        allClasses.add(bag.getType());
+        for (ClassDescriptor cld : bag.getClassDescriptors()) {            
+            allClasses.add(cld.getUnqualifiedName());
+        }
         PathConstraint constraint = template.getEditableConstraints().get(0);
         Path path = getPathOfClass(template, constraint.getPath());
         ClassDescriptor cld = path.getLastClassDescriptor();
-        if (!cld.getAllSuperclassNames().contains(bag.getType())) {
+        if (!cld.getUnqualifiedName().equals(bag.getType()) && 
+                !allClasses.contains(cld.getUnqualifiedName())) {
             throw new TemplatePopulatorException("The constraint of type "
                     + path.getNoConstraintsString()
                     + " can't be set to a bag (list) of type " + bag.getType()
