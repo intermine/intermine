@@ -1,4 +1,0 @@
-<project name="plant-identifiers-tasks" default="default" basedir=".">
-  <description>build plant-identifiers tasks</description>
-  <import file="../../../../../imbuild/library.xml"/> 
-</project>

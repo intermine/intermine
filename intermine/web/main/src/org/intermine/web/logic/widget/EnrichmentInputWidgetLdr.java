@@ -10,8 +10,10 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.intermine.objectstore.ObjectStore;
@@ -24,6 +26,7 @@ import org.intermine.util.CacheMap;
  * Executes queries and summarises data for a specific EnrichmentWidgetLdr ready for calculation.
  *
  * @author Richard Smith
+ * @author Daniela Butano
  */
 public class EnrichmentInputWidgetLdr implements EnrichmentInput
 {
@@ -35,9 +38,13 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     private static final int BATCH_SIZE = 20000;
 
     // population queries that don't involve bags can be cached between widget executions
-    private static CacheMap<String, Integer> populationSizeCache = new CacheMap<String, Integer>();
+    private static CacheMap<String, PopulationInfo> populationCache = new CacheMap<String,
+        PopulationInfo>();
     private static CacheMap<String, Map<String, Integer>> populationCountsCache =
         new CacheMap<String, Map<String, Integer>>();
+
+    private static CacheMap<String, Map<String, Long>> annotatedGeneLengthAverageInPopulation =
+            new CacheMap<String, Map<String, Long>>();
 
     // TODO population counts and sizes are no longer cached
 
@@ -124,15 +131,22 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     }
 
     @Override
-    public int getPopulationSize() {
-        // TODO this should use os.count() but needs to be backwards compatible with widgets
+    public PopulationInfo getPopulationInfo() {
         Query q = ldr.getPopulationQuery(true);
-        Integer populationSize = populationSizeCache.get(q.toString());
-        if (populationSize == null) {
-            populationSize = new Integer(calcTotal(q));
-            populationSizeCache.put(q.toString(), populationSize);
+        PopulationInfo populationInfo = populationCache.get(q.toString());
+        if (populationInfo == null) {
+            int size = 0;
+            float geneLengthAverage = 0;
+            Results res = os.execute(q);
+            List<Object> info = (List<Object>) res.get(0);
+            size = ((Long) info.get(0)).intValue();
+            if (info.size() > 1) {
+            	geneLengthAverage = ((BigDecimal) info.get(1)).floatValue();
+            }
+            populationInfo = new PopulationInfo(size, geneLengthAverage);
+            populationCache.put(q.toString(), populationInfo);
         }
-        return populationSize.intValue();
+        return populationInfo;
     }
 
     @Override
@@ -154,5 +168,10 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
             return  0;
         }
         return  ((java.lang.Long) o[0]).intValue();
+    }
+
+    @Override
+    public Map<String, Long> getAnnotatedGeneLengthAverageInPopulation() {
+        return new HashMap<String, Long>();
     }
 }

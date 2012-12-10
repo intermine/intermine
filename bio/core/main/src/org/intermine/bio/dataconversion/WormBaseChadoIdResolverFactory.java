@@ -10,43 +10,53 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;
 import org.intermine.sql.DatabaseFactory;
+import org.intermine.util.FormattedTextParser;
+import org.intermine.util.PropertiesUtil;
 
 /**
  * Create an IdResolver for Worm genes by querying tables in a WormBase
  * chado database.
  *
  * @author Richard Smith
- *
  */
 public class WormBaseChadoIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(WormBaseChadoIdResolverFactory.class);
 
-    private Database db;
     private final String propName = "db.wormbase";
     private final String taxonId = "6239";
+
+    // HACK
+    private final String propNameExt = "resolver.wb2ncbi.file";
+
+    public WormBaseChadoIdResolverFactory() {
+        this.clsCol = this.defaultClsCol;
+    }
 
     /**
      * Construct with SO term of the feature type to read from chado database.
      * @param clsName the feature type to resolve
      */
     public WormBaseChadoIdResolverFactory(String clsName) {
-        this.clsName = clsName;
-    }
-
-    public WormBaseChadoIdResolverFactory() {
-        this.clsName = this.defaultClsName;
+        this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
     }
 
     /**
@@ -55,27 +65,41 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(taxonId)) {
+        if (resolver != null
+                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
+                        .iterator().next())) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
 
         try {
-            db = DatabaseFactory.getDatabase(propName);
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
+                LOG.info("Creating id resolver from WormBase Chado database and caching it.");
+                System.out. println("Creating id resolver from WormBase Chado database and " +
+                        "caching it.");
+                createFromDb(DatabaseFactory.getDatabase(propName));
 
-            String cacheFileName = "build/" + db.getName() + "." + clsName
-                + ((taxonId != null) ? "." + taxonId : "");
-            File f = new File(cacheFileName);
-            if (f.exists()) {
-                System.out .println("WormBaseIdResolver reading from cache file: " + cacheFileName);
-                createFromFile(clsName, f);
-            } else {
-                System.out .println("WormBaseIdResolver reading from database: " + db.getName());
-                createFromDb(db);
-                resolver.writeToFile(f);
+                // HACK - Additionally, load WB2NCBI to have ncbi ids
+                LOG.info("To process WB2NCBI file");
+                try {
+                    createFromFile(new BufferedReader(new FileReader(
+                            new File(PropertiesUtil.getProperties().getProperty(
+                                    propNameExt)))));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                // END OF HACK
+
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -92,7 +116,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 + " from cvterm c, cv"
                 + " where c.cv_id = cv.cv_id"
                 + " and cv.name = \'sequence\'"
-                + " and c.name =\'" + clsName + "\'";
+                + " and c.name =\'" + this.clsCol.iterator().next() + "\'";
             Statement stmt = conn.createStatement();
             ResultSet res = stmt.executeQuery(query);
             String soTermId = null;
@@ -181,6 +205,28 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    // HACK
+    private void createFromFile(BufferedReader reader) throws IOException {
+        Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(reader, ' ');
+        LOG.info("Parsing WB2NCBI file...");
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+
+            if (line[0].startsWith("#")) {
+                continue;
+            }
+
+            String wbId = line[0];
+            String entrez = line[1];
+
+            if (!StringUtils.isBlank(entrez)) {
+                resolver.addSynonyms(taxonId, wbId, Collections.singleton(entrez));
+            }
+
+            LOG.info("WB2NCBI - " + resolver.getSynonyms(taxonId, wbId));
         }
     }
 }

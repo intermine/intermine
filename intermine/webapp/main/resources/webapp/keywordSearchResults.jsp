@@ -39,13 +39,18 @@ input.submit {
           if (this.checked) {ids.push(this.value);}
        });
 
-        if (ids.length < 1)
-        { alert("Please select some ${searchFacetValues['Category']}s...");
-          return false;
+        if (ids.length < 1) { 
+        	alert("Please select some ${searchFacetValues['Category']}s...");
+            return false;
         } else {
-          jQuery("#ids").val(ids);
-          return true;
-          }
+        	if (jQuery('#allItems').is(':checked')) {
+        	    jQuery("#allChecked").val('true');
+        	} else {
+        		jQuery("#allChecked").val('false');
+        	}
+        	jQuery("#ids").val(ids);
+            return true;
+        }
     });
   });
 
@@ -347,20 +352,19 @@ input.submit {
           </c:if>
         </c:forEach></div>
 
-        <div class="resultTableContainer"><c:if
-          test="${!empty searchFacetValues['Category']}">
-          <form
-            action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do"
-            id="saveFromIdsToBagForm" method="POST"><input
-            type="hidden" id="type" name="type"
-            value="${searchFacetValues['Category']}" /> <input type="hidden"
-            id="ids" name="ids" value="" /> <input type="hidden"
-            name="source" value="keywordSearchResults" /> <input
-            type="hidden" name="newBagName"
-            value="new_${searchFacetValues['Category']}_list" />
-          <div align="left"
-            style="position: relative; top: 1em; padding-bottom: 5px;"><input
-            type="submit" class="submit" value="CREATE LIST" /></div>
+        <div class="resultTableContainer">
+        <c:if test="${!empty searchFacetValues['Category']}">
+          <form action="/${WEB_PROPERTIES['webapp.path']}/saveFromIdsToBag.do" id="saveFromIdsToBagForm" method="POST">
+            <input type="hidden" id="type" name="type" value="${searchFacetValues['Category']}" /> 
+            <input type="hidden" id="ids" name="ids" value="" />
+            <input type="hidden" id="allChecked" name="allChecked" value="false" />
+            <input type="hidden" name="source" value="keywordSearchResults" /> 
+            
+            <input type="hidden" id="searchTerm" name="searchTerm" value="${searchTerm}" />
+            <input type="hidden" id="jsonFacets" name="jsonFacets" value="<c:out value="${jsonFacets}"/>" />
+            
+            <input type="hidden" name="newBagName" value="new_${searchFacetValues['Category']}_list" />
+            <div align="left" style="position: relative; top: 1em; padding-bottom: 5px;"><input type="submit" class="submit" value="CREATE LIST" /></div>
           </form>
         </c:if>
 
@@ -393,8 +397,23 @@ input.submit {
               <td><c:out value="${imf:formatPathStr(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out></td>
               <td>
                   <div class="objectKeys">
-                      <html:link
-                href="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}">
+                  
+<%-- link in results should go to object details unless other link is in config --%>
+<c:set var="extlink" value="" />
+
+<c:choose>
+  <c:when test="${!empty searchResult.linkRedirect}">
+    <c:set var="detailsLink" value="${searchResult.linkRedirect}" scope="request" />
+    <c:set var="extlink" value="class='extlink' target='_blank'" />
+  </c:when>
+  <c:otherwise>
+    <c:set var="detailsLink" value="/${WEB_PROPERTIES['webapp.path']}/report.do?id=${searchResult.id}&amp;trail=${param.trail}|${searchResult.id}" scope="request" />
+  </c:otherwise>
+</c:choose>
+                  
+    <a href="${detailsLink}" ${extlink}>
+                
+                
                 <c:if test="${empty searchResult.keyFields}">
                   <c:out value="${imf:formatPathStr(searchResult.type, INTERMINE_API, WEBCONFIG)}"></c:out>
                 </c:if>
@@ -429,7 +448,7 @@ input.submit {
                   </c:choose> </span>
                   <c:if test="${! status.last }"><span class="divider">|</span></c:if>
                   </c:forEach>
-                    </html:link>
+                    </a>
                 </div>
 
               <%-- print each field configured for this object --%>

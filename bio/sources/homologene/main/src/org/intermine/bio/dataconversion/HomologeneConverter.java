@@ -12,21 +12,18 @@ package org.intermine.bio.dataconversion;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.BioFileConverter;
+import org.apache.tools.ant.BuildException;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -42,12 +39,12 @@ import org.intermine.xml.full.Item;
 public class HomologeneConverter extends BioFileConverter
 {
     private static final Logger LOG = Logger.getLogger(HomologeneConverter.class);
-
+    private IdResolver rslv;
     private static final String DATASET_TITLE = "HomoloGene data set";
     private static final String DATA_SOURCE_NAME = "HomoloGene";
 
     private static final String PROP_FILE = "homologene_config.properties";
-    private static final String DEFAULT_IDENTIFIER_FIELD = "symbol";
+    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -71,7 +68,8 @@ public class HomologeneConverter extends BioFileConverter
      */
     public HomologeneConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        readConfig();
+        // I don't know what this is for
+//        readConfig();
     }
 
     /**
@@ -115,13 +113,21 @@ public class HomologeneConverter extends BioFileConverter
         String previousGroup = null;
 
         // flat structure of homologue info
-        List<List<String>> homologueList = new ArrayList<List<String>>();
+        Set<GeneRecord> genes = new HashSet<GeneRecord>();
 
         if (taxonIds.isEmpty()) {
-            LOG.warn("homologene.organisms property not set in project XML file");
+            throw new BuildException("homologene.organisms property not set in project XML file");
         }
         if (homologues.isEmpty()) {
             LOG.warn("homologene.homologues property not set in project XML file");
+        }
+
+        Set<String> allTaxonIds = new HashSet<String>();
+        allTaxonIds.addAll(taxonIds);
+        allTaxonIds.addAll(homologues);
+
+        if (rslv == null) {
+            rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -136,16 +142,17 @@ public class HomologeneConverter extends BioFileConverter
 
             // at a different groupId, process previous homologue group
             if (previousGroup != null && !currentGroup.equals(previousGroup)) {
-                if (homologueList.size() >= 2) {
-                    processHomologues(homologueList, previousGroup);
+                if (genes.size() >= 2) {
+                    processHomologues(genes);
                 }
-                homologueList = new ArrayList<List<String>>(); // reset the list
+                genes = new HashSet<GeneRecord>();
             }
+
+            previousGroup = groupId;
 
             String taxonId = bits[1];
             if (!isValid(taxonId)) {
                 // not an organism of interest, skip
-                previousGroup = groupId;
                 continue;
             }
 
@@ -153,12 +160,11 @@ public class HomologeneConverter extends BioFileConverter
             String symbol = bits[3];
             String gene = getGene(ncbiId, symbol, taxonId);
 
-            List<String> recordList = new ArrayList<String>();
-            recordList.add(taxonId);
-            recordList.add(gene);
-            homologueList.add(recordList);
-
-            previousGroup = groupId;
+            if (gene == null) {
+                // invalid gene
+                continue;
+            }
+            genes.add(new GeneRecord(gene, taxonId));
         }
     }
 
@@ -185,40 +191,25 @@ public class HomologeneConverter extends BioFileConverter
         }
     }
 
-    private void processHomologues(List<List<String>> homologueList, String groupId)
+    private void processHomologues(Set<GeneRecord> genes)
             throws ObjectStoreException {
-        int m = 2;
-        Vector<List<String>> data = new Vector<List<String>>(homologueList);
-        @SuppressWarnings("unchecked")
-        Vector<Vector<List<String>>> combns = getAllCombinations(data, m);
-
-        for (int i=0; i<combns.size(); i++) {
-            List<String> record1 = combns.elementAt(i).elementAt(0);
-            List<String> record2 = combns.elementAt(i).elementAt(1);
-
-            String taxonId1 = record1.get(0);
-            String gene1 = record1.get(1);
-
-            String taxonId2 = record2.get(0);
-            String gene2 = record2.get(1);
-
-            // Create both way relations
-            createHomologue(gene1, taxonId1, gene2, taxonId2, groupId);
-            createHomologue(gene2, taxonId2, gene1, taxonId1, groupId);
+        Set<GeneRecord> notProcessed = new HashSet<GeneRecord>(genes);
+        for (GeneRecord gene : genes) {
+            notProcessed.remove(gene);
+            for (GeneRecord homologue : notProcessed) {
+                createHomologue(gene.geneRefId, gene.taxonId, homologue.geneRefId, homologue.taxonId);
+                createHomologue(homologue.geneRefId, homologue.taxonId, gene.geneRefId, gene.taxonId);
+            }
         }
     }
 
-    private void createHomologue(String gene1, String taxonId1, String gene2,
-            String taxonId2, String groupId) throws ObjectStoreException {
+    private void createHomologue(String gene1, String taxonId1, String gene2, String taxonId2)
+            throws ObjectStoreException {
         Item homologue = createItem("Homologue");
         homologue.setReference("gene", gene1);
         homologue.setReference("homologue", gene2);
         homologue.addToCollection("evidence", getEvidence());
         homologue.setAttribute("type", taxonId1.equals(taxonId2)? PARALOGUE : ORTHOLOGUE);
-        homologue.addToCollection(
-                "crossReferences",
-                createCrossReference(homologue.getIdentifier(), groupId,
-                        DATA_SOURCE_NAME, true));
         store(homologue);
     }
 
@@ -238,11 +229,6 @@ public class HomologeneConverter extends BioFileConverter
             // this pair isn't valid
             return false;
         }
-        // one gene is from an organism of interest
-        // one homologue is from an organism we want
-        if (taxonIds.contains(taxonId)) {
-            return true;
-        }
         if (homologues.contains(taxonId)) {
             return true;
         }
@@ -256,15 +242,19 @@ public class HomologeneConverter extends BioFileConverter
             identifierType = DEFAULT_IDENTIFIER_FIELD;
         }
 
-        // TODO add id resolver here
-        // To avoid duplicated record, use symbol and taxonId as MultiKey
-        String refId = identifiersToGenes.get(new MultiKey(taxonId, symbol));
+        String identifier = resolveGene(taxonId, symbol);
+
+        if (identifier == null) {
+            return null;
+        }
+
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, identifier));
         if (refId == null) {
             Item item = createItem("Gene");
-            item.setAttribute(identifierType, symbol);
+            item.setAttribute(identifierType, identifier);
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
-            identifiersToGenes.put(new MultiKey(taxonId, symbol), refId);
+            identifiersToGenes.put(new MultiKey(taxonId, identifier), refId);
             store(item);
         }
         return refId;
@@ -295,45 +285,27 @@ public class HomologeneConverter extends BioFileConverter
         return evidenceRefId;
     }
 
-    @SuppressWarnings({ "rawtypes" })
-    private static Vector getAllCombinations(Vector data, int length)
-    {
-        Vector allCombinations = new Vector();
-        Vector initialCombination = new Vector();
-        combination(allCombinations, data, initialCombination, length);
-        return allCombinations;
+    private String resolveGene(String taxonId, String identifier) {
+        if (rslv == null || !rslv.hasTaxon(taxonId)) {
+            // no id resolver available, so return the original identifier
+            return identifier;
+        }
+        int resCount = rslv.countResolutions(taxonId, identifier);
+        if (resCount != 1) {
+            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " FBgn: "
+                     + rslv.resolveId(taxonId, identifier));
+            return null;
+        }
+        return rslv.resolveId(taxonId, identifier).iterator().next();
     }
 
-    /**
-     * combination algorithm, return all combinations of n from m
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static void combination(Vector allCombinations, Vector data,
-        Vector initialCombination, int length)
-    {
-        if(length == 1)
-        {
-            for(int i=0; i<data.size(); i++)
-            {
-                Vector newCombination = new Vector(initialCombination);
-                newCombination.add(data.elementAt(i));
-                allCombinations.add(newCombination);
-            }
-        }
-
-        if(length > 1)
-        {
-            for(int i=0; i<data.size(); i++)
-            {
-                Vector newCombination = new Vector(initialCombination);
-                newCombination.add(data.elementAt(i));
-
-                Vector newData = new Vector(data);
-                for(int j=0; j<=i; j++)
-                    newData.remove(data.elementAt(j));
-
-                combination(allCombinations, newData, newCombination, length - 1);
-            }
+    protected class GeneRecord {
+        protected String geneRefId;
+        protected String taxonId;
+        public GeneRecord(String geneRefId, String taxonId) {
+            this.geneRefId = geneRefId;
+            this.taxonId = taxonId;
         }
     }
 }

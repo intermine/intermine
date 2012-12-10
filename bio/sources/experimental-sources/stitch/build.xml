@@ -1,5 +1,0 @@
-<project name="stitch" default="default" basedir=".">
-  <description>build, test, package stitch</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>
