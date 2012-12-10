@@ -23,21 +23,18 @@ public class JobStatusService extends JSONService
     protected void execute() throws Exception {
         Job job = Job.getJobById(jobId);
         if (job != null) {
-        	if (job.getStatus() == JobStatus.ERROR) {
-        		this.addOutputInfo("message", job.getError().getMessage());
-        	}
-            output.addResultItem(Arrays.asList(job.getStatus().name()));
+            if (job.getStatus() == JobStatus.ERROR) {
+                this.addOutputInfo("message", job.getError().getMessage());
+            }
+            addResultValue(job.getStatus().name(), false);
         } else {
             throw new ResourceNotFoundException("No such job: " + jobId);
         }
     }
-    
+
     @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = super.getHeaderAttributes();
-        attributes.put(JSONFormatter.KEY_INTRO, "\"status\":");
-        attributes.put(JSONFormatter.KEY_QUOTE, true);
-        return attributes;
+    protected String getResultsKey() {
+        return "status";
     }
 
 }

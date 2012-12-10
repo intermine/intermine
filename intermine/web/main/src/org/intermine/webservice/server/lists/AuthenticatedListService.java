@@ -30,6 +30,7 @@ public abstract class AuthenticatedListService extends AbstractListService
 
     @Override
     protected void validateState() {
+        super.validateState();
         if (!isAuthenticated()) {
             throw new ServiceForbiddenException("All requests to list operation services must"
                     + " be authenticated.");

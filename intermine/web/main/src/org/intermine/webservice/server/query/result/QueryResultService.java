@@ -18,12 +18,14 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.BagNotFound;
@@ -39,7 +41,7 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.webservice.server.ColumnHeaderStyle;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceInput;
 import org.intermine.webservice.server.WebServiceRequestParser;
@@ -50,6 +52,8 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.FlatFileFormatter;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
+import org.intermine.webservice.server.output.JSONCountFormatter;
+import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjResultProcessor;
 import org.intermine.webservice.server.output.JSONResultFormatter;
 import org.intermine.webservice.server.output.JSONRowResultProcessor;
@@ -60,6 +64,8 @@ import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.ResultsIterator;
 import org.intermine.webservice.server.output.StreamedOutput;
 import org.intermine.webservice.server.query.AbstractQueryService;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Executes query and returns results. Other parameters in request can specify
@@ -77,6 +83,7 @@ import org.intermine.webservice.server.query.AbstractQueryService;
 public class QueryResultService extends AbstractQueryService
 {
 
+    private static final Logger LOG = Logger.getLogger(QueryResultService.class);
     /** Batch size to use **/
     public static final int BATCH_SIZE = 5000;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
@@ -98,42 +105,39 @@ public class QueryResultService extends AbstractQueryService
         PathQueryBuilder builder = getQueryBuilder(input.getXml());
         PathQuery query = builder.getQuery();
         setHeaderAttributes(query, input.getStart(), input.getMaxCount());
-        runPathQuery(query, input.getStart(), input.getMaxCount(), null, null,
-                input, null, input.getLayout());
+        runPathQuery(query, input.getStart(), input.getMaxCount());
     }
 
-
+    private boolean wantsCount = false;
 
     @Override
-    protected int getDefaultFormat() {
-        return Formats.TSV;
+    protected void initState() {
+        super.initState();
+        wantsCount = WebServiceRequestParser.isCountRequest(request);
     }
 
-    /**
-     * Returns the path portion of a link to the results for
-     * this query in its originating mine, in the given format.
-     * @param pq The PathQuery
-     * @param format The desired format
-     * @return The path portion of the link.
-     */
-    protected String getLinkPath(PathQuery pq, String format) {
-        QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
-        String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
-        return linkGen.getLinkPath(xml, format);
+    @Override
+    protected Format getDefaultFormat() {
+        return Format.TSV;
     }
 
-    /**
-     * Returns the path portion of the link to the results for this query in
-     * its originating mine.
-     * @param pq The query
-     * @return The path section of the link
-     */
-    protected String getMineResultsLinkPath(PathQuery pq) {
-        QueryResultLinkGenerator linkGen = new QueryResultLinkGenerator();
-        String xml = pq.toXml(PathQuery.USERPROFILE_VERSION);
-        return linkGen.getMineResultsPath(xml);
+    private static final Set<Format> MENU = new HashSet<Format>() {{
+        addAll(Format.BASIC_FORMATS);
+        addAll(Format.FLAT_FILES);
+        addAll(Format.JSON_FORMATS);
+    }};
+    private PathQueryExecutor executor;
+
+    @Override
+    protected boolean canServe(Format format) {
+        return MENU.contains(format);
     }
-    
+
+    @Override
+    protected void postInit() {
+        executor = getPathQueryExecutor();
+    }
+
     /**
      * Set the header attributes of the output based on the values of the PathQuery
      *
@@ -158,7 +162,6 @@ public class QueryResultService extends AbstractQueryService
             }
             String summaryPath = request.getParameter("summaryPath");
             if (!isBlank(summaryPath)) {
-                PathQueryExecutor executor = getPathQueryExecutor();
                 int count;
                 try {
                     count = executor.uniqueColumnValues(pq, summaryPath);
@@ -169,31 +172,11 @@ public class QueryResultService extends AbstractQueryService
                 }
                 attributes.put("uniqueValues", count);
             }
-        }
-        int f = getFormat();
-        if (f == Formats.JSON_TABLE) {
-            List<String> viewTypes = new ArrayList<String>();
-            for (String v: pq.getView()) {
-                try {
-                    Path p = pq.makePath(v);
-                    AttributeDescriptor ad = (AttributeDescriptor) p.getEndFieldDescriptor();
-                    viewTypes.add(ad.getType());
-                } catch (PathException e) {
-                    throw new ServiceException(e);
-                }
+            if (formatIsJSONP()) {
+                String callback = StringUtils.defaultString(getCallback(), "makeResultsTable");
+                attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
             }
-            String title = pq.getTitle();
-            String description = StringUtils.defaultString(pq.getDescription(), pq.toString());
-            attributes.put("viewTypes", viewTypes);
-            attributes.put("size", String.valueOf(size));
-            attributes.put(JSONTableFormatter.KEY_TITLE, title);
-            attributes.put(JSONTableFormatter.KEY_DESCRIPTION, description);
-        }
-        if (formatIsJSONP()) {
-            String callback = StringUtils.defaultString(getCallback(), "makeResultsTable");
-            attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
-        }
-        if (formatIsFlatFile()) {
+        } else if (formatIsFlatFile()) {
             if (wantsColumnHeaders()) {
                 if (ColumnHeaderStyle.FRIENDLY == getColumnHeaderStyle()) {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS,
@@ -203,37 +186,59 @@ public class QueryResultService extends AbstractQueryService
                 }
             }
         }
-        if (getFormat() == Formats.HTML) {
-            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
-                WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
+
+        switch(getFormat()) {
+            case TABLE:
+                List<String> viewTypes = new ArrayList<String>();
+                for (String v: pq.getView()) {
+                    try {
+                        Path p = pq.makePath(v);
+                        AttributeDescriptor ad = (AttributeDescriptor) p.getEndFieldDescriptor();
+                        viewTypes.add(ad.getType());
+                    } catch (PathException e) {
+                        throw new ServiceException(e);
+                    }
+                }
+                String title = pq.getTitle();
+                String description = StringUtils.defaultString(pq.getDescription(), pq.toString());
+                attributes.put("viewTypes", viewTypes);
+                attributes.put("size", String.valueOf(size));
+                attributes.put(JSONTableFormatter.KEY_TITLE, title);
+                attributes.put(JSONTableFormatter.KEY_DESCRIPTION, description);
+                break;
+            case HTML:
+                attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS,
+                        WebUtil.formatPathQueryView(pq, InterMineContext.getWebConfig()));
+                break;
         }
 
-        if (!isBlank(request.getParameter("summaryPath"))) {
-            String summaryPath = request.getParameter("summaryPath");
-            Path p;
-            try {
-                p = pq.makePath(summaryPath);
-            } catch (PathException e) {
-                throw new BadRequestException("Summary path is invalid");
-            }
-            if (!p.endIsAttribute()) {
-                throw new BadRequestException("Summary path is invalid");
-            }
-            AttributeDescriptor ad = (AttributeDescriptor) p.getEndFieldDescriptor();
-            String type = ad.getType();
-            List<String> colHeaders = new ArrayList<String>();
-            if ("int".equals(type) || "Integer".equals(type) || "Float".equals(type)
-                    || "float".equals(type) || "Double".equals(type)
-                    || "double".equals(type) || "long".equals(type)
-                    || "Long".equals(type) || "Math.BigDecimal".equals(type)) {
-                colHeaders.addAll(Arrays.asList("min", "max", "average", "standard-dev"));
-            } else {
-                colHeaders.addAll(Arrays.asList("item", "count"));
-            }
-            if (formatIsJSON()) {
-                attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, colHeaders);
-            } else {
-                if (formatIsFlatFile() && wantsColumnHeaders()) {
+        if (!wantsCount) { // mutually exclusive options.
+            String summaryPath = getOptionalParameter("summaryPath");
+            if (isNotBlank(summaryPath)) {
+                Path p;
+                try {
+                    p = pq.makePath(summaryPath);
+                } catch (PathException e) {
+                    throw new BadRequestException("Summary path is invalid");
+                }
+                if (!p.endIsAttribute()) {
+                    throw new BadRequestException("Summary path is invalid");
+                }
+                AttributeDescriptor ad = (AttributeDescriptor) p.getEndFieldDescriptor();
+                String type = ad.getType();
+                List<String> colHeaders = new ArrayList<String>();
+                if ("int".equals(type) || "Integer".equals(type) || "Float".equals(type)
+                        || "float".equals(type) || "Double".equals(type)
+                        || "double".equals(type) || "long".equals(type)
+                        || "Long".equals(type) || "Math.BigDecimal".equals(type)) {
+                    colHeaders.addAll(Arrays.asList("min", "max", "average", "standard-dev"));
+                } else {
+                    colHeaders.addAll(Arrays.asList("item", "count"));
+                }
+    
+                if (formatIsJSON()) {
+                    attributes.put(JSONTableFormatter.KEY_COLUMN_HEADERS, colHeaders);
+                } else if (formatIsFlatFile() && wantsColumnHeaders()) {
                     attributes.put(FlatFileFormatter.COLUMN_HEADERS, colHeaders);
                 }
             }
@@ -244,6 +249,9 @@ public class QueryResultService extends AbstractQueryService
 
     @Override
     protected Output makeJSONOutput(PrintWriter out, String separator) {
+        if (wantsCount) {
+            return new StreamedOutput(out, new JSONCountFormatter(), separator);
+        }
         return new StreamedOutput(out, new JSONTableFormatter(), separator);
     }
 
@@ -266,6 +274,16 @@ public class QueryResultService extends AbstractQueryService
         }
     }
 
+    private void runCount(PathQuery pathquery) {
+        int count;
+        try {
+            count = executor.count(pathquery);
+        } catch (ObjectStoreException e) {
+            throw new ServiceException("Problem getting count.", e);
+        }
+        CountProcessor processor = new CountProcessor();
+        processor.writeCount(count, output);
+    }
 
     /**
      * Runs path query and returns to output obtained results.
@@ -276,66 +294,49 @@ public class QueryResultService extends AbstractQueryService
      *            index of first result, that should be returned
      * @param maxResults
      *            maximum number of results
-     * @param title
-     *            title displayed in html output, can be null
-     * @param description
-     *            description displayed in html output, can be null
-     * @param input
-     *            input of web service
-     * @param mineLink
-     *            link pointing results of this query (template) in InterMine,
-     *            can be null
-     * @param layout
-     *            results table layout string, can be null
      */
-    public void runPathQuery(PathQuery pathQuery, int firstResult,
-            int maxResults, String title, String description,
-            WebServiceInput input, String mineLink, String layout) {
-        PathQueryExecutor executor = getPathQueryExecutor();
-
-        if (formatIsCount()) {
-            int count;
-            try {
-                count = executor.count(pathQuery);
-            } catch (ObjectStoreException e) {
-                throw new ServiceException("Problem getting count.", e);
-            }
-            CountProcessor processor = new CountProcessor();
-            processor.writeCount(count, output);
+    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults) {
+        if (wantsCount) {
+            runCount(pathQuery);
         } else {
-            boolean canGoFaster = false;
-            Iterator<List<ResultElement>> it;
-            String summaryPath = request.getParameter("summaryPath");
-            if (!StringUtils.isBlank(summaryPath)) {
-            	Integer uniqs = (Integer) attributes.get("uniqueValues");
-            	boolean occurancesOnly = (uniqs == null) || (uniqs < 2);
-                try {
-                    String filterTerm = request.getParameter("filterTerm");
-                    Results r = executor.summariseQuery(pathQuery, summaryPath, filterTerm, occurancesOnly);
-                    if (StringUtils.isNotBlank(filterTerm)) {
-                        attributes.put("filteredCount", r.size());
-                    }
-                    it = new ResultsIterator(r, firstResult, maxResults, filterTerm);
-                } catch (ObjectStoreException e) {
-                    throw new ServiceException("Problem getting summary.", e);
-                }
-            } else {
-                canGoFaster = true;
-                executor.setBatchSize(BATCH_SIZE);
-                it = executor.execute(pathQuery, firstResult, maxResults);
-            }
+            runResults(pathQuery, firstResult, maxResults);
+        }
+    }
 
-            ResultProcessor processor = makeResultProcessor();
-            if (it.hasNext()) { // Prime the batch fetching pumps
-                try {
-                    if (canGoFaster) {
-                        ((ExportResultsIterator) it).goFaster();
-                    }
-                    processor.write(it, output);
-                } finally {
-                    if (canGoFaster) {
-                        ((ExportResultsIterator) it).releaseGoFaster();
-                    }
+    private void runResults(PathQuery pq,  int firstResult, int maxResults) {
+        boolean canGoFaster = false;
+        Iterator<List<ResultElement>> it;
+        String summaryPath = getOptionalParameter("summaryPath");
+        if (isNotBlank(summaryPath)) {
+            Integer uniqs = (Integer) attributes.get("uniqueValues");
+            boolean occurancesOnly = (uniqs == null) || (uniqs < 2);
+            try {
+                String filterTerm = getOptionalParameter("filterTerm");
+                Results r = executor.summariseQuery(pq, summaryPath, filterTerm, occurancesOnly);
+                if (filterTerm != null) {
+                    attributes.put("filteredCount", r.size());
+                }
+                it = new ResultsIterator(r, firstResult, maxResults, filterTerm);
+            } catch (ObjectStoreException e) {
+                throw new ServiceException("Problem getting summary.", e);
+            }
+        } else {
+            // Going faster means writing to the DB. Don't do this if it is pointless.
+            canGoFaster = firstResult > BATCH_SIZE || maxResults > BATCH_SIZE;
+            executor.setBatchSize(BATCH_SIZE);
+            it = executor.execute(pq, firstResult, maxResults);
+        }
+
+        ResultProcessor processor = makeResultProcessor();
+        if (it.hasNext()) { // Prime the batch fetching pumps
+            try {
+                if (canGoFaster) {
+                    ((ExportResultsIterator) it).goFaster();
+                }
+                processor.write(it, output);
+            } finally {
+                if (canGoFaster) {
+                    ((ExportResultsIterator) it).releaseGoFaster();
                 }
             }
         }
@@ -345,17 +346,17 @@ public class QueryResultService extends AbstractQueryService
         ResultProcessor processor;
         boolean summarising = StringUtils.isNotBlank(request.getParameter("summaryPath"));
         switch(getFormat()) {
-            case Formats.JSON:
+            case JSON:
                 processor
                     = new JSONRowResultProcessor(im, JSONRowResultProcessor.Verbosity.MINIMAL);
                 break;
-            case Formats.JSON_OBJ:
+            case OBJECTS:
                 processor = new JSONObjResultProcessor();
                 break;
-            case Formats.JSON_TABLE:
+            case TABLE:
                 processor = new JSONTableResultProcessor();
                 break;
-            case Formats.JSON_ROW:
+            case ROWS:
                 if (summarising) {
                     processor = new JSONSummaryProcessor();
                 } else {

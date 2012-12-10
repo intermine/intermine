@@ -10,29 +10,18 @@ package org.intermine.webservice.server;
  *
  */
 
-import static org.intermine.webservice.server.Formats.COUNT;
-import static org.intermine.webservice.server.Formats.CSV;
-import static org.intermine.webservice.server.Formats.HTML;
-import static org.intermine.webservice.server.Formats.JSON;
-import static org.intermine.webservice.server.Formats.JSONP;
-import static org.intermine.webservice.server.Formats.JSONP_COUNT;
-import static org.intermine.webservice.server.Formats.JSONP_OBJ;
-import static org.intermine.webservice.server.Formats.JSONP_ROW;
-import static org.intermine.webservice.server.Formats.JSONP_TABLE;
-import static org.intermine.webservice.server.Formats.JSON_COUNT;
-import static org.intermine.webservice.server.Formats.JSON_OBJ;
-import static org.intermine.webservice.server.Formats.JSON_ROW;
-import static org.intermine.webservice.server.Formats.JSON_TABLE;
-import static org.intermine.webservice.server.Formats.TSV;
-import static org.intermine.webservice.server.Formats.UNKNOWN;
-import static org.intermine.webservice.server.Formats.XML;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
+import org.intermine.web.context.InterMineContext;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
@@ -151,6 +140,8 @@ public class WebServiceRequestParser
     /** The parameter for requesting column headers **/
     public static final String ADD_HEADER_PARAMETER = "columnheaders";
 
+    public static final String FORMAT_PARAMETER_ANY = "*";
+
     /**
      * Parses common parameters for all web services. Must be called from parseRequest
      * method in subclass else the parameters won't be set.
@@ -191,35 +182,193 @@ public class WebServiceRequestParser
         return ret;
     }
 
-    private static final Map<String, Integer> formatCodes = new HashMap<String, Integer>() {
+    private static final Map<String, Format> formatMapping= new HashMap<String, Format>() {
         private static final long serialVersionUID = -2791706714042933771L;
     {
-        put(FORMAT_PARAMETER_XML, XML);
-        put(FORMAT_PARAMETER_HTML, HTML);
-        put(FORMAT_PARAMETER_TAB, TSV);
-        put(FORMAT_PARAMETER_CSV, CSV);
-        put(FORMAT_PARAMETER_COUNT, COUNT);
-        put(FORMAT_PARAMETER_JSON_OBJ, JSON_OBJ);
-        put(FORMAT_PARAMETER_JSONP_OBJ, JSONP_OBJ);
-        put(FORMAT_PARAMETER_JSON_TABLE, JSON_TABLE);
-        put(FORMAT_PARAMETER_JSONP_TABLE, JSONP_TABLE);
-        put(FORMAT_PARAMETER_JSON_ROW, JSON_ROW);
-        put(FORMAT_PARAMETER_JSONP_ROW, JSONP_ROW);
-        put(FORMAT_PARAMETER_JSONP, JSONP);
-        put(FORMAT_PARAMETER_JSON, JSON);
-        put(FORMAT_PARAMETER_JSONP_COUNT, JSONP_COUNT);
-        put(FORMAT_PARAMETER_JSON_COUNT, JSON_COUNT);
+        put(FORMAT_PARAMETER_ANY, Format.EMPTY);
+        put(FORMAT_PARAMETER_XML, Format.XML);
+        put(FORMAT_PARAMETER_HTML, Format.HTML);
+        put(FORMAT_PARAMETER_TAB, Format.TSV);
+        put(FORMAT_PARAMETER_CSV, Format.CSV);
+        put(FORMAT_PARAMETER_COUNT, Format.TEXT);
+        put(FORMAT_PARAMETER_JSON_OBJ, Format.OBJECTS);
+        put(FORMAT_PARAMETER_JSONP_OBJ, Format.OBJECTS);
+        put(FORMAT_PARAMETER_JSON_TABLE, Format.TABLE);
+        put(FORMAT_PARAMETER_JSONP_TABLE, Format.TABLE);
+        put(FORMAT_PARAMETER_JSON_ROW, Format.ROWS);
+        put(FORMAT_PARAMETER_JSONP_ROW, Format.ROWS);
+        put(FORMAT_PARAMETER_JSONP, Format.JSON);
+        put(FORMAT_PARAMETER_JSON, Format.JSON);
+        put(FORMAT_PARAMETER_JSONP_COUNT, Format.JSON);
+        put(FORMAT_PARAMETER_JSON_COUNT, Format.JSON);
     }};
 
-    protected static int interpretFormat(String format, int defaultValue) {
+    protected static Format interpretFormat(String format) {
         if (StringUtils.isBlank(format)) {
-            return defaultValue;
+            return Format.EMPTY;
         }
-        Integer code = formatCodes.get(format);
-        if (code == null) {
-            return UNKNOWN;
-        } else {
-            return code.intValue();
+        Format mapped = formatMapping.get(format);
+        if (mapped== null) {
+            return Format.UNKNOWN;
+        }  else {
+            return mapped;
         }
+    }
+
+    /**
+     * Work out if this a JSON-P request.
+     * @param request
+     * @return Whether or not it is a JSON-P request.
+     */
+    public static boolean isJsonP(HttpServletRequest request) {
+        if (!"GET".equals(request.getMethod())) {
+            // All JSON-P request are via the GET method.
+            return false;
+        }
+        String accept = request.getHeader("Accept");
+        if (StringUtils.isNotBlank(accept)) {
+            if (accept.startsWith("application/jsonp")) {
+                return true;
+            }
+        }
+        String formatParam = request.getParameter("format");
+        if (StringUtils.isNotBlank(formatParam)) {
+            if (formatParam.contains("jsonp")) {
+                return true;
+            }
+        }
+        String callback = request.getParameter("callback");
+        return StringUtils.isNotBlank(callback);
+    }
+
+    private static final Map<String, String> ACCEPT_TYPES = new HashMap<String, String>() {
+        private static final long serialVersionUID = -702400895288862953L;
+        {
+            Properties wp = InterMineContext.getWebProperties();
+            Properties subset = PropertiesUtil.getPropertiesStartingWith(
+                    "ws.accept.", wp);
+            for (Object name : subset.keySet()) {
+                String propName = String.valueOf(name);
+                put(propName.substring(10), subset.getProperty(propName));
+            }
+        }
+    };
+
+    private static List<Format> parseAcceptHeader(HttpServletRequest request) {
+        List<Format> areAcceptable = new ArrayList<Format>();
+
+        String accept = request.getHeader("Accept");
+        if (accept != null) {
+            String[] preferences = accept.split(",");
+            if (preferences != null) {
+                for (String pref : preferences) {
+                    if (pref == null) {
+                        areAcceptable.add(Format.EMPTY);
+                        continue;
+                    }
+                    pref = pref.trim().toLowerCase();
+                    if (pref.startsWith("*")) {
+                        areAcceptable.add(Format.EMPTY);
+                        continue;
+                    }
+                    String[] parts = pref.split(";");
+                    String type = parts[0].trim();
+                    if (ACCEPT_TYPES.containsKey(type)) {
+                        areAcceptable.add(Format.valueOf(ACCEPT_TYPES.get(type)));
+                    } else if (type.equals("application/json") || type.equals("text/javascript")
+                            || type.equals("application/javascript") || type.equals("application/jsonp")) {
+                        if (parts.length > 1) {
+                            for (int i = 1; i < parts.length; i++) {
+                                String option = parts[i].trim();
+                                if (option.startsWith("type=")) {
+                                    String subType = option.substring(5);
+                                    if ("objects".equalsIgnoreCase(subType)) {
+                                        areAcceptable.add(Format.OBJECTS);
+                                        continue;
+                                    } else if ("table".equalsIgnoreCase(subType)) {
+                                        areAcceptable.add(Format.TABLE);
+                                        continue;
+                                    } else if ("rows".equalsIgnoreCase(subType)) {
+                                        areAcceptable.add(Format.ROWS);
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                        areAcceptable.add(Format.JSON);
+                        continue;
+                    } else {
+                        areAcceptable.add(Format.UNKNOWN);
+                    }
+                }
+            }
+        }
+        return areAcceptable;
+    }
+
+    /**
+     * Parse a format from the path-info of the request. By default, if the
+     * path-info is one of "xml", "json", "jsonp", "tsv" or "csv", then an
+     * appropriate format will be returned. All other values will cause null to
+     * be returned.
+     * 
+     * @return A format string.
+     */
+    protected static Format parseFormatFromPathInfo(HttpServletRequest request) {
+        String pathInfo = request.getPathInfo();
+        pathInfo = StringUtil.trimSlashes(pathInfo);
+        if (pathInfo != null) {
+            if (!pathInfo.contains("/")) {
+                // This just helps with cases where the path-info
+                // carries other information.
+                pathInfo = "/" + pathInfo;
+            }
+            if (pathInfo.endsWith("/xml")) {
+                return Format.XML;
+            } else if (pathInfo.endsWith("/json")) {
+                return Format.JSON;
+            } else if (pathInfo.endsWith("/jsonp")) {
+                return Format.JSON;
+            } else if (pathInfo.endsWith("/tsv")) {
+                return Format.TSV;
+            } else if (pathInfo.endsWith("/csv")) {
+                return Format.CSV;
+            }
+        }
+        return null;
+    }
+
+
+    public static List<Format> getAcceptableFormats(HttpServletRequest request) {
+        List<Format> areAcceptable = new ArrayList<Format>();
+
+        Format fromPathInfo = parseFormatFromPathInfo(request);
+        if (fromPathInfo != null) {
+            areAcceptable.add(fromPathInfo);
+        }
+        String fromParameter = request.getParameter(OUTPUT_PARAMETER);
+        if (StringUtils.isNotBlank(fromParameter)) {
+            areAcceptable.add(interpretFormat(fromParameter));
+        }
+        areAcceptable.addAll(parseAcceptHeader(request));
+        return areAcceptable;
+    }
+
+    public static boolean isCountRequest(HttpServletRequest request) {
+        String doCount = request.getParameter("count");
+        boolean count = Boolean.parseBoolean(doCount);
+        if (!count) {
+            String param = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+            if (param != null && param.contains("count")) {
+                count = true;
+            }
+        }
+        if (!count) {
+            String accept = request.getHeader("Accept");
+            if (accept != null && accept.contains("type=count")) {
+                count = true;
+            }
+        }
+        return count;
     }
 }

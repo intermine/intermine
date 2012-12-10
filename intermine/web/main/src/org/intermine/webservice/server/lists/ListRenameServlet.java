@@ -1,42 +1,19 @@
 package org.intermine.webservice.server.lists;
 
-import java.io.IOException;
+import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.core.NoServiceException;
+import org.intermine.webservice.server.core.WebServiceServlet;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+public class ListRenameServlet extends WebServiceServlet {
 
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
-
-public class ListRenameServlet extends HttpServlet {
-
-    /**
-     * Constructor.
-     */
-    public ListRenameServlet() {
-        // empty constructor
-    }
+    private static final long serialVersionUID = 1890719122988401641L;
 
     @Override
-    public void doGet(HttpServletRequest request,
-        HttpServletResponse response)
-        throws ServletException, IOException {
-        renameList(request, response);
-    }
-
-    @Override
-    public void doPost(HttpServletRequest request,
-         HttpServletResponse response)
-        throws ServletException, IOException {
-        renameList(request, response);
-    }
-
-    private void renameList(HttpServletRequest request,
-        HttpServletResponse response) {
-        final InterMineAPI im = InterMineContext.getInterMineAPI();
-        new ListRenameService(im).service(request, response);
+    protected WebService getService(Method method) throws NoServiceException {
+        if (Method.DELETE == method) {
+            throw new NoServiceException();
+        }
+        return new ListRenameService(api);
     }
 
 }
