@@ -10,26 +10,25 @@ package org.intermine.webservice.server.user;
  *
  */
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
+import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.core.NoServiceException;
+import org.intermine.webservice.server.core.WebServiceServlet;
 
 /**
  * Servlet for handing off requests to the a NewUserService.
  * @author Alex Kalderimis.
  *
  */
-public class NewUserServlet extends HttpServlet
+public class NewUserServlet extends WebServiceServlet
 {
 
     private static final long serialVersionUID = 2247791931782821682L;
 
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        final InterMineAPI api = InterMineContext.getInterMineAPI();
-        new NewUserService(api).service(req, resp);
+    protected WebService getService(Method method) throws NoServiceException {
+        switch (method) {
+            case POST: return new NewUserService(api);
+            default: throw new NoServiceException();
+        }
     }
 }

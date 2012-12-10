@@ -13,6 +13,7 @@ package org.intermine.webservice.server.lists;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.Format;
 
 /**
  * A service for renaming lists.
@@ -57,4 +58,5 @@ public class ListRenameService extends AuthenticatedListService
         addOutputInfo(LIST_SIZE_KEY, "" + list.size());
 
     }
+
 }

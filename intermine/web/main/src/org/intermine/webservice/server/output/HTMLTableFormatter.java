@@ -35,7 +35,7 @@ public class HTMLTableFormatter extends XMLFormatter {
 
     protected void handleHeaderAttributes(Map<String, Object> attributes, StringBuilder sb) {
         sb.append(">");
-        if (attributes.containsKey(KEY_COLUMN_HEADERS)) {
+        if (attributes != null && attributes.containsKey(KEY_COLUMN_HEADERS)) {
             List<String> headers = (List<String>) attributes.get(KEY_COLUMN_HEADERS);
             sb.append("<thead><tr>");
             for (String header: headers) {

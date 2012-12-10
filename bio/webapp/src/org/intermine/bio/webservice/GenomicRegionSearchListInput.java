@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
@@ -47,14 +48,21 @@ public class GenomicRegionSearchListInput extends ListInput {
      */
     public GenomicRegionSearchListInput(HttpServletRequest request,
             BagManager bagManager, Profile profile, InterMineAPI im)
-        throws JSONException {
+        throws Exception {
         super(request, bagManager, profile);
         api = im;
         info = parseRegionRequest();
     }
 
-    private GenomicRegionSearchInfo parseRegionRequest() throws JSONException {
-        JSONObject jsonRequest = new JSONObject(request.getParameter("query"));
+    private GenomicRegionSearchInfo parseRegionRequest() throws Exception {
+        String input = "";
+        if ("application/x-www-form-urlencoded".equals(request.getContentType())
+                || "GET".equalsIgnoreCase(request.getMethod())) {
+            input = request.getParameter("query");
+        } else {
+            input = IOUtils.toString(request.getInputStream());
+        }
+        JSONObject jsonRequest = new JSONObject(input);
         GenomicRegionSearchInfo parsed = new GenomicRegionSearchInfo();
         parsed.setOrganism(jsonRequest.getString("organism"));
         if (!jsonRequest.isNull("isInterbase")) {

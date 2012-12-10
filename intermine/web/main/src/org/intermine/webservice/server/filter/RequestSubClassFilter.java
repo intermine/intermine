@@ -14,7 +14,10 @@ import org.intermine.webservice.server.core.Request;
 
 /**
  * Filter to wrap all web service requests in a custom delegating wrapper that
- * prevents sessions being created.
+ * prevents sessions being created. Any attempts to create a session on such a wrapped
+ * object will cause a runtime exception.
+ * 
+ * @see org.intermine.webservice.server.core.Request
  * 
  * @author Alex Kalderimis
  */
