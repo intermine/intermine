@@ -1,4 +1,0 @@
-<project name="snpmine-postprocess" default="default" basedir=".">
-  <description>perform post processing for heightmine</description>
-  <import file="../../imbuild/postprocess.xml"/>
-</project>

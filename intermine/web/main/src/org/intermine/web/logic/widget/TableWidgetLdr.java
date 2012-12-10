@@ -56,7 +56,7 @@ import org.intermine.web.logic.widget.config.TableWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 /**
  * @author Xavier Watkins
- * @author dbutano
+ * @author Daniela Butano
  *
  */
 public class TableWidgetLdr extends WidgetLdr
@@ -65,11 +65,9 @@ public class TableWidgetLdr extends WidgetLdr
     private List<List<Object>> flattenedResults;
     private String title, description;
     private int widgetTotal = 0;
-    //private InterMineBag bag;
     private String pathString;
     private Model model;
     private String displayFields, exportField;
-    //private ObjectStore os;
     private Path origPath;
     private String type;
     private TableWidgetConfig config;
@@ -169,8 +167,12 @@ public class TableWidgetLdr extends WidgetLdr
                         }
                         flattenedRow.add(o.getId());
                     } else if (select instanceof QueryField) {
-                        String fieldValue = String.valueOf(resRow.get(i));
-                        flattenedRow.add(fieldValue);
+                        Object queryFieldObj = resRow.get(i);
+                        if (queryFieldObj instanceof Integer) {
+                            flattenedRow.add((Integer) queryFieldObj);
+                        } else {
+                            flattenedRow.add(String.valueOf(resRow.get(i)));
+                        }
                     }
                 }
 
@@ -305,19 +307,37 @@ public class TableWidgetLdr extends WidgetLdr
                     }
                     q.addToSelect(new QueryField(qcExport, exportField));
                 } else if (!calcTotal) {
-                    q.setDistinct(false);
-
+                    Query mainQuery = new Query();
+                    mainQuery.setDistinct(false);
+                    Query subQ = q;
+                    subQ.setDistinct(true);
+                    subQ.addToSelect(qfStartId);
+                    mainQuery.addFrom(subQ);
+                    QueryField outerQfEnd = null;
                     if (origPath.endIsAttribute()) {
                         QueryField qfEnd = new QueryField(qcEnd, origPath.getLastElement());
-                        q.addToSelect(qfEnd);
-                        q.addToGroupBy(qfEnd);
+                        subQ.addToSelect(qfEnd);
+                        outerQfEnd = new QueryField(subQ, qfEnd);
+                        //subQ.addToGroupBy(qfEnd);
                     } else {
-                        q.addToSelect(qcEnd);
-                        q.addToGroupBy(qcEnd);
+                        String[] fields = displayFields.split("[, ]+");
+                        for (String field : fields) {
+                            QueryField qf = new QueryField(qcEnd, field);
+                            subQ.addToSelect(qf);
+                            outerQfEnd = new QueryField(subQ, qf);
+                            mainQuery.addToSelect(outerQfEnd);
+                            mainQuery.addToGroupBy(outerQfEnd);
+                        }
+                        QueryField qfId = new QueryField(qcEnd, "id");
+                        subQ.addToSelect(qfId);
+                        QueryField outerQfId = new QueryField(subQ, qfId);
+                        mainQuery.addToSelect(outerQfId);
+                        mainQuery.addToGroupBy(outerQfId);
                     }
+                    mainQuery.addToSelect(qfCount);
+                    mainQuery.addToOrderBy(qfCount, "desc");
+                    return mainQuery;
 
-                    q.addToSelect(qfCount);
-                    q.addToOrderBy(qfCount, "desc");
                 } else {
                     Query subQ = new Query();
                     subQ = q;

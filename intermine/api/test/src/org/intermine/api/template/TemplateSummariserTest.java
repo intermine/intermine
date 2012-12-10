@@ -120,14 +120,6 @@ public class TemplateSummariserTest extends StoreDataTestCase
         return buildSuite(TemplateSummariserTest.class);
     }
 
-    public void testMaxValues() throws Exception {
-        Properties ossConfig = new Properties();
-        ossConfig.put("max.field.values", "10");
-        ObjectStoreSummary oss = new ObjectStoreSummary(ossConfig);
-        TemplateSummariser summariser = new TemplateSummariser(os, uosw, oss);
-        assertEquals(10, summariser.maxSummaryValues);
-    }
-
     public void test1() throws Exception {
         Properties ossConfig = new Properties();
         ObjectStoreSummary oss = new ObjectStoreSummary(ossConfig);

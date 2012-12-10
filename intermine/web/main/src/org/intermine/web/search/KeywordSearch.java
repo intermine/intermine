@@ -64,6 +64,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -915,7 +916,7 @@ public final class KeywordSearch
     private static Vector<KeywordSearchFacetData> facets;
     private static boolean debugOutput;
     private static Map<String, String> attributePrefixes = null;
-
+    
     private KeywordSearch() {
         //don't
     }
@@ -1363,18 +1364,18 @@ public final class KeywordSearch
         Model model = im.getModel();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
+        LinkRedirectManager redirector = im.getLinkRedirector();
         for (KeywordSearchHit keywordSearchHit : searchHits) {
             Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
                     .getClass());
-            ClassDescriptor classDescriptor =
-                model.getClassDescriptorByName(objectClass.getName());
-
-            KeywordSearchResult ksr =
-                new KeywordSearchResult(webconfig, keywordSearchHit.getObject(),
-                        classKeys, classDescriptor, keywordSearchHit.getScore(),
-                        // templatesForClass.get(classDescriptor)
-                        null);
-
+            ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass.getName());
+            InterMineObject o = keywordSearchHit.getObject();
+            String linkRedirect = null;
+            if (redirector != null) {
+                linkRedirect = redirector.generateLink(im, o);
+            }
+            KeywordSearchResult ksr = new KeywordSearchResult(webconfig, o, classKeys, 
+                    classDescriptor, keywordSearchHit.getScore(), null, linkRedirect);
             searchResultsParsed.add(ksr);
         }
         LOG.debug("Parsing search hits took " + (System.currentTimeMillis() - time)  + " ms");
@@ -1424,8 +1425,6 @@ public final class KeywordSearch
                 Document doc = browseHit.getStoredFields();
                 if (doc != null) {
                     objectIds.add(Integer.valueOf(doc.getFieldable("id").stringValue()));
-                } else {
-                    LOG.error("doc is null for browseHit " + browseHit);
                 }
             } catch (NumberFormatException e) {
                 LOG.info("Invalid id '" + browseHit.getField("id") + "' for hit '"
@@ -1446,6 +1445,20 @@ public final class KeywordSearch
      */
     public static BrowseResult runBrowseSearch(String searchString, int offset,
             Map<String, String> facetValues, List<Integer> ids) {
+        return runBrowseSearch(searchString, offset, facetValues, ids, true);
+    }
+    
+    /**
+     * perform a keyword search using bobo-browse for faceting and pagination
+     * @param searchString string to search for
+     * @param offset display offset
+     * @param facetValues map of 'facet field name' to 'value to restrict field to' (optional)
+     * @param ids ids to research the search to (for search in list)
+     * @param pagination if TRUE only return 100
+     * @return bobo browse result or null if failed
+     */
+    public static BrowseResult runBrowseSearch(String searchString, int offset,
+            Map<String, String> facetValues, List<Integer> ids, boolean pagination) {
         BrowseResult result = null;
         if (index == null) {
             return result;
@@ -1494,7 +1507,13 @@ public final class KeywordSearch
 
             // pagination
             browseRequest.setOffset(offset);
-            browseRequest.setCount(PER_PAGE);
+            if (pagination) {
+                // used on keywordsearch results page
+                browseRequest.setCount(PER_PAGE);
+            } else {
+                // hack when creating lists from results
+                browseRequest.setCount(10000);
+            }
 
             // add faceting selections
             for (Entry<String, String> facetValue : facetValues.entrySet()) {

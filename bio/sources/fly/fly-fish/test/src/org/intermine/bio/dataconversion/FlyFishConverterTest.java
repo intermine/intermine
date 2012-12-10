@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -42,12 +43,11 @@ public class FlyFishConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlyFishConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn0037874", Collections.singleton("CG4800"));
-        resolverFactory.addResolverEntry("7227", "FBgn0020415", Collections.singleton("CG4475"));
-        resolverFactory.addResolverEntry("7227", "FBgn0039830", Collections.singleton("CG1746"));
-        resolverFactory.addResolverEntry("7227", "FBgn0019830", Collections.singleton("CG3057"));
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn0037874", Collections.singleton("CG4800"));
+        converter.rslv.addResolverEntry("7227", "FBgn0020415", Collections.singleton("CG4475"));
+        converter.rslv.addResolverEntry("7227", "FBgn0039830", Collections.singleton("CG1746"));
+        converter.rslv.addResolverEntry("7227", "FBgn0019830", Collections.singleton("CG3057"));
     }
 
     public void testConstruct() throws Exception {

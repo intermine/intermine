@@ -1,4 +1,0 @@
-<project name="biogrid_human-tasks" default="default" basedir=".">
-  <description>build biogrid_human tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

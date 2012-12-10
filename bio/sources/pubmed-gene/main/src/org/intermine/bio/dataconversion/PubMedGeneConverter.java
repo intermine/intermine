@@ -198,11 +198,6 @@ public class PubMedGeneConverter extends BioFileConverter
         if (pid == null) {
             return null;
         }
-        // Case where a gene has multiple NCBI id mapping to one single pid
-        if (genes.keySet().contains(pid)) {
-            genesToRemove.add(pid);
-            return null;
-        }
         gene.setAttribute("primaryIdentifier", pid);
         gene.setReference("organism", organismRefId);
         gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
@@ -221,9 +216,6 @@ public class PubMedGeneConverter extends BioFileConverter
     }
 
     private void storeGenes() {
-        for (String id : genesToRemove) {
-            genes.remove(id);
-        }
         try {
             List<Item> gs = new ArrayList<Item>();
             for (String id : genes.keySet()) {
@@ -248,7 +240,6 @@ public class PubMedGeneConverter extends BioFileConverter
         for (String pubRefId : publications) {
             gene.addToCollection("publications", pubRefId);
         }
-        genes.put(gene.getAttribute("primaryIdentifier").getValue(), gene);
+        genes.put("" + ncbiGeneId, gene);
     }
 }
-
