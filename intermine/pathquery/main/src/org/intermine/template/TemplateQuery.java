@@ -520,6 +520,7 @@ public class TemplateQuery extends PathQuery
         return res;
     }
 
+    // Only switched-on constraints are relevant.
     public synchronized Map<PathConstraint, String> getRelevantConstraints() {
         Map<PathConstraint, String> retVal
             = new LinkedHashMap<PathConstraint, String>(getConstraints());
