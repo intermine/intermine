@@ -4,6 +4,13 @@
   <description>build, test, package flymine-webapp</description>
   <import file="../../imbuild/application.xml"/>
   
+  <target name="-add-struts-config"
+    description="Append the struts config modifications to the webapp"
+    depends="-pre-init">
+    <loadfile property="bio.web" srcFile="resources/webapp/WEB-INF/bio-web.xml"/>
+    <replace file="${build.dir}/webapp/WEB-INF/web.xml" value="${bio.web}">
+      <!-- can't use normal token as xml must be parseable before this replacement -->
+      <replacetoken><![CDATA[<!--@PLUGIN_INCLUDE@-->]]></replacetoken>
+    </replace>
+  </target>
 </project>
-
-        
