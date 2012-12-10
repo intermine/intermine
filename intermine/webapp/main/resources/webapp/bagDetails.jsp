@@ -322,7 +322,7 @@
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/css/widget.css'/>"/>
 
 <script type="text/javascript">
-  window.widgets = new intermine.widgets(window.service, "${PROFILE.dayToken}");
+  //window.widgets = new intermine.widgets(window.service, "${PROFILE.dayToken}");
 </script>
 
 <c:forEach items="${widgets}" var="widget">
