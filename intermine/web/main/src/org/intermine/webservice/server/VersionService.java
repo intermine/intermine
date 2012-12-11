@@ -53,11 +53,11 @@ public class VersionService extends JSONService
     }
 
     @Override
-    protected int getDefaultFormat() {
+    protected Format getDefaultFormat() {
         if (hasCallback()) {
-            return Formats.JSONP;
+            return Format.JSON;
         } else {
-            return Formats.TEXT;
+            return Format.TEXT;
         }
     }
 
@@ -67,14 +67,8 @@ public class VersionService extends JSONService
     }
 
     @Override
-    protected String parseFormatFromPathInfo() {
-        String pi = defaultString(request.getPathInfo(), "");
-        if (pi.endsWith("json")) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
-        } else if (pi.endsWith("jsonp")) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
-        }
-        return null;
+    protected boolean canServe(Format format) {
+        return format == Format.JSON || format == Format.TEXT; 
     }
 
 }

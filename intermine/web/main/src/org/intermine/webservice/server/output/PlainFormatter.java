@@ -35,10 +35,10 @@ public class PlainFormatter extends Formatter
         StringBuilder sb = new StringBuilder();
         boolean needsComma = false;
         for (String item: resultRow) {
-            sb.append(item);
             if (needsComma) {
                 sb.append(",");
             }
+            sb.append(item);
             needsComma = true;
         }
         return sb.toString();

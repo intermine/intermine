@@ -49,7 +49,7 @@ public class JSONRowResultProcessor extends JSONResultProcessor
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
         Iterator<JSONArray> jsonIter;
         if (verbosity == Verbosity.MINIMAL) {
-            jsonIter = new MinimalJsonIterator((ExportResultsIterator) it, im);
+            jsonIter = new MinimalJsonIterator(it, im);
         } else {
             jsonIter = new JSONRowIterator((ExportResultsIterator) it, im);
         }

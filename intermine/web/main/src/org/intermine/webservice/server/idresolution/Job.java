@@ -12,6 +12,7 @@ import org.intermine.webservice.server.idresolution.IdResolutionService.Input;
 public class Job implements Runnable
 {
     public enum JobStatus {PENDING, RUNNING, SUCCESS, ERROR};
+
     @SuppressWarnings("unchecked")
     public static final Map<String, Job> JOBS = MapUtils.synchronizedMap(
             new HashMap<String, Job>());

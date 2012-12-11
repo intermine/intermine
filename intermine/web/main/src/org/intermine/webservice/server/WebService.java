@@ -18,6 +18,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
@@ -45,6 +46,7 @@ import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
+import org.intermine.webservice.server.exceptions.NotAcceptableException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.CSVFormatter;
@@ -218,6 +220,39 @@ public abstract class WebService {
     }
 
     /**
+     * Get the value of a parameter that should be interpreted as an integer.
+     * 
+     * @param name The name of the parameter.
+     * @return An integer
+     * @throws BadRequestException if The value is absent or mal-formed.
+     */
+    protected Integer getIntParameter(String name) {
+        String value = getRequiredParameter(name);
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            String msg = String.format("%s should be a valid number. Got %s", name, value);
+            throw new BadRequestException(msg, e);
+        }
+    }
+
+    /**
+     * Get the value of a parameter that should be interpreted as an integer.
+     * 
+     * @param name The name of the parameter.
+     * @param defaultValue The value to return if none is provided by the user.
+     * @return An integer
+     * @throw BadRequestException if the user provided a mal-formed value.
+     */
+    protected Integer getIntParameter(String name, Integer defaultValue) {
+        try {
+            return getIntParameter(name);
+        } catch (MissingParameterException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
      * Set the default name-space for configuration property look-ups.
      * 
      * If a value is set, it must be provided before any actions are taken. This
@@ -281,8 +316,8 @@ public abstract class WebService {
      * </pre>
      * 
      * Ensures initialisation of web service and makes steps common for all web
-     * services and after that executes the <tt>execute</tt> method, that should
-     * be overwritten with each web service.
+     * services and after that executes the <tt>execute</tt> method, for which
+     * each subclass must provide an implementation.
      * 
      * @param request
      *            The request, as received by the servlet.
@@ -296,11 +331,12 @@ public abstract class WebService {
         if (!agentIsRobot()) {
             try {
                 setHeaders();
+                initState();
                 initOutput();
                 checkEnabled();
                 authenticate();
-                initState();
                 initialised = true;
+                postInit();
                 validateState();
                 execute();
             } catch (Throwable t) {
@@ -383,6 +419,14 @@ public abstract class WebService {
      */
     protected void validateState() {
         // No-op stub
+    }
+
+    /**
+     * Subclasses can hook in here to do common behaviour that needs to happen
+     * after initialisation.
+     */
+    protected void postInit() {
+        // No-op stub;
     }
 
     /**
@@ -511,8 +555,7 @@ public abstract class WebService {
      *         formats.
      */
     protected final boolean formatIsJSON() {
-        int format = getFormat();
-        return (format >= Formats.JSON_RANGE_START && format < Formats.JSON_RANGE_END);
+        return Format.JSON_FORMATS.contains(getFormat());
     }
 
     /**
@@ -520,7 +563,7 @@ public abstract class WebService {
      */
     protected final boolean formatIsJSONP() {
         if (isJsonP == null) {
-            getFormat();
+            isJsonP = WebServiceRequestParser.isJsonP(request);
         }
         return isJsonP;
     }
@@ -529,8 +572,7 @@ public abstract class WebService {
      * @return Whether or not the format is a flat-file format
      */
     protected final boolean formatIsFlatFile() {
-        int format = getFormat();
-        return (format == Formats.TSV || format == Formats.CSV);
+        return Format.FLAT_FILES.contains(getFormat());
     }
 
     /**
@@ -539,16 +581,17 @@ public abstract class WebService {
      * 
      * @return a truth value
      */
-    public boolean formatIsCount() {
-        int format = getFormat();
-        return (format == Formats.COUNT || format == Formats.JSON_COUNT);
-    }
+    // This should not be in the general case.
+    //public boolean formatIsCount() {
+    //    int format = getFormat();
+    //    return (format == Formats.COUNT || format == Formats.JSON_COUNT);
+    //}
 
     /**
      * @return Whether or not the format is XML.
      */
     public boolean formatIsXML() {
-        return (getFormat() == Formats.XML);
+        return (getFormat() == Format.XML);
     }
 
     /**
@@ -615,7 +658,7 @@ public abstract class WebService {
         } else {
             separator = Exporter.UNIX_SEPARATOR;
         }
-        int format = getFormat();
+        Format format = getFormat();
 
         PrintWriter out;
         OutputStream os;
@@ -632,18 +675,18 @@ public abstract class WebService {
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
-
+        // TODO: retrieve the content types from the formats.
         String filename = getDefaultFileName();
         switch (format) {
-        case Formats.HTML:
+        case HTML:
             output = new StreamedOutput(out, new HTMLTableFormatter(),
                     separator);
             ResponseUtil.setHTMLContentType(response);
             break;
-        case Formats.XML:
+        case XML:
             output = makeXMLOutput(out, separator);
             break;
-        case Formats.TSV:
+        case TSV:
             output = new StreamedOutput(out, new TabFormatter(
                     StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
                     separator);
@@ -652,21 +695,14 @@ public abstract class WebService {
                 ResponseUtil.setTabHeader(response, filename);
             }
             break;
-        case Formats.CSV:
+        case CSV:
             output = new StreamedOutput(out, new CSVFormatter(), separator);
             filename = "result.csv";
             if (isUncompressed()) {
                 ResponseUtil.setCSVHeader(response, filename);
             }
             break;
-        case Formats.COUNT:
-            output = new StreamedOutput(out, new PlainFormatter(), separator);
-            filename = "count.txt";
-            if (isUncompressed()) {
-                ResponseUtil.setPlainTextHeader(response, filename);
-            }
-            break;
-        case Formats.TEXT:
+        case TEXT:
             output = new StreamedOutput(out, new PlainFormatter(), separator);
             if (filename == null) {
                 filename = "result.txt";
@@ -676,14 +712,14 @@ public abstract class WebService {
                 ResponseUtil.setPlainTextHeader(response, filename);
             }
             break;
-        case Formats.JSON:
+        case JSON:
             output = makeJSONOutput(out, separator);
             filename = "result.json";
             if (isUncompressed()) {
                 ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
             }
             break;
-        case Formats.JSON_OBJ:
+        case OBJECTS:
             output = new StreamedOutput(out, new JSONObjectFormatter(),
                     separator);
             filename = "result.json";
@@ -691,7 +727,7 @@ public abstract class WebService {
                 ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
             }
             break;
-        case Formats.JSON_TABLE:
+        case TABLE:
             output = new StreamedOutput(out, new JSONTableFormatter(),
                     separator);
             filename = "resulttable.json";
@@ -699,18 +735,10 @@ public abstract class WebService {
                 ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
             }
             break;
-        case Formats.JSON_ROW:
+        case ROWS:
             output = new StreamedOutput(out, new JSONRowFormatter(), separator);
             if (isUncompressed()) {
                 ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
-            }
-            break;
-        case Formats.JSON_COUNT:
-            output = new StreamedOutput(out, new JSONCountFormatter(),
-                    separator);
-            filename = "resultcount.json";
-            if (isUncompressed()) {
-                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
             }
             break;
         default:
@@ -786,147 +814,59 @@ public abstract class WebService {
     }
 
     /**
-     * Parse a format from the path-info of the request. By default, if the
-     * path-info is one of "xml", "json", "jsonp", "tsv" or "csv", then an
-     * appropriate format will be returned. All other values will cause null to
-     * be returned.
-     * 
-     * @return A format string.
-     */
-    protected String parseFormatFromPathInfo() {
-        String pathInfo = request.getPathInfo();
-        pathInfo = StringUtil.trimSlashes(pathInfo);
-        if ("xml".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_XML;
-        } else if ("json".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
-        } else if ("jsonp".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
-        } else if ("tsv".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_TAB;
-        } else if ("csv".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_CSV;
-        }
-        return null;
-    }
-
-    /**
      * @return The default format constant for this service.
      */
-    protected int getDefaultFormat() {
-        return Formats.EMPTY;
+    protected Format getDefaultFormat() {
+        return Format.EMPTY;
     }
 
-    private static final Map<String, String> ACCEPT_TYPES = new HashMap<String, String>() {
-        private static final long serialVersionUID = -702400895288862953L;
-        {
-            Properties wp = InterMineContext.getWebProperties();
-            Properties subset = PropertiesUtil.getPropertiesStartingWith(
-                    "ws.accept.", wp);
-            for (Object name : subset.keySet()) {
-                String propName = String.valueOf(name);
-                put(propName.substring(10), subset.getProperty(propName));
-            }
-        }
-    };
 
-    private String parseAcceptHeader() {
-        String accept = request.getHeader("Accept");
-        if (accept == null) {
-            return null;
-        }
-        String[] preferences = accept.split(",");
-        if (preferences == null) {
-            return null;
-        }
-        for (String pref : preferences) {
-            if (pref == null)
-                continue;
-            pref = pref.trim().toLowerCase();
-            String[] parts = pref.split(";");
-            String type = parts[0].trim();
-            if (ACCEPT_TYPES.containsKey(type)) {
-                return ACCEPT_TYPES.get(type);
-            } else if (type.equals("application/json")) {
-                if (parts.length > 1) {
-                    for (int i = 1; i < parts.length; i++) {
-                        String option = parts[i].trim();
-                        if (option.startsWith("type=")) {
-                            String subType = option.substring(5);
-                            if ("objects".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_OBJ;
-                            } else if ("table".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_TABLE;
-                            } else if ("rows".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_ROW;
-                            } else if ("count".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSON_COUNT;
-                            }
-                        }
-                    }
-                }
-                return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
-            } else if (type.equals("text/javascript")) {
-                if (parts.length > 1) {
-                    for (int i = 1; i < parts.length; i++) {
-                        String option = parts[i].trim();
-                        if (option.startsWith("type=")) {
-                            String subType = option.substring(5);
-                            if ("objects".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_OBJ;
-                            } else if ("table".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_TABLE;
-                            } else if ("rows".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW;
-                            } else if ("count".equalsIgnoreCase(subType)) {
-                                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT;
-                            }
-                        }
-                    }
-                }
-                return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
-            }
-        }
-        return null;
-    }
-
-    private String getDeclaredFormat() {
-        String format;
-        format = parseFormatFromPathInfo(); // priority 1
-        if (StringUtils.isBlank(format)) {
-            // priority 2
-            format = getOptionalParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
-        }
-        if (StringUtils.isBlank(format)) {
-            // priority 3
-            format = parseAcceptHeader();
-        }
-        return format;
-    }
-
-    private Integer formatCode = null;
+    private Format format = null;
     private Boolean isJsonP = null;
 
     /**
      * Returns required output format.
      * 
+     * Cannot be overridden.
+     * 
      * @return format
      */
-    public final int getFormat() {
-        // Memoized where possible. Cannot be overriden.
-        if (formatCode == null) {
-            String format = getDeclaredFormat();
-            int code = WebServiceRequestParser.interpretFormat(format, getDefaultFormat());
-            isJsonP = (code >= Formats.JSON_RANGE_START
-                    && code < Formats.JSON_RANGE_END
-                    && (code % 2 == 1));
-            if (isJsonP) {
-                code -= 1;
+    public final Format getFormat() {
+        if (format == null) {
+            List<Format> askedFor = WebServiceRequestParser.getAcceptableFormats(request);
+            if (askedFor.isEmpty()) {
+                format = getDefaultFormat();
+            } else {
+                for (Format acceptable: askedFor) {
+                    // Serve the first acceptable format.
+                    if (canServe(acceptable)) {
+                        format = acceptable;
+                        break;
+                    }
+                }
+                // Nothing --> NotAcceptable
+                if (format == null) {
+                    throw new NotAcceptableException();
+                }
+                // But empty --> default
+                if (format == Format.EMPTY) {
+                    format = getDefaultFormat();
+                }
             }
-            formatCode = Integer.valueOf(code);
         }
 
-        return formatCode.intValue();
+        return format;
+    }
+
+    /**
+     * For very picky services, you can just set it yourself, and say "s****w you requester".
+     *
+     * Use this with caution, and fall-back to getFormat(). Please.
+     *
+     * @param format The format you have decided this request really wants.
+     */
+    protected void setFormat(Format format) {
+        this.format = format;
     }
 
     /**
@@ -948,9 +888,7 @@ public abstract class WebService {
      * @return Whether or not a callback was supplied.
      */
     public boolean hasCallback() {
-        String cb = request
-                .getParameter(WebServiceRequestParser.CALLBACK_PARAMETER);
-        return (cb != null && !"".equals(cb));
+        return getOptionalParameter(WebServiceRequestParser.CALLBACK_PARAMETER) != null;
     }
 
     /**
@@ -973,4 +911,17 @@ public abstract class WebService {
     public boolean isAuthenticated() {
         return getPermission().getProfile() != ANON_PROFILE;
     }
+
+    /**
+     * Check whether the format is acceptable.
+     *
+     * By default returns true. Services with a particular set of accepted
+     * formats should override this and check.
+     * @param format The format to check.
+     * @return whether or not this format is acceptable.
+     */
+    protected boolean canServe(Format format) {
+        return format == getDefaultFormat();
+    }
+ 
 }
