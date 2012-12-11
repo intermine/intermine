@@ -35,7 +35,6 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(FlyBaseIdResolverFactory.class);
 
-    private Database db;
     private final String propName = "db.flybase";
     private final String taxonId = "7227";
 
@@ -69,7 +68,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-         if (resolver != null && resolver.hasTaxon(taxonId)) {
+         if (resolver != null && resolver.hasTaxonAndClassNames(taxonId, this.clsCol)) {
              return;
          } else {
              if (resolver == null) {
@@ -84,11 +83,12 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxon(taxonId))) {
-                db = DatabaseFactory.getDatabase(propName);
-                LOG.info("Creating id resolver from database: " + db.getName()
-                        + "and caching id resolver to file: " + ID_RESOLVER_CACHED_FILE_NAME);
-                createFromDb(clsCol, db);
+                    && !resolver.hasTaxonAndClassNames(taxonId, this.clsCol))) {
+                LOG.info("Creating id resolver from database and caching id resolver to file: "
+                        + ID_RESOLVER_CACHED_FILE_NAME);
+                System.out. println("Creating id resolver from database and " +
+                        "caching id resolver to file: " + ID_RESOLVER_CACHED_FILE_NAME);
+                createFromDb(clsCol, DatabaseFactory.getDatabase(propName));
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
@@ -102,6 +102,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
             File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
             if (f.exists()) {
                 LOG.info("Restoring id resolver from cache file: " + ID_RESOLVER_CACHED_FILE_NAME);
+                System.out. println("Restoring id resolver from cache file: "
+                        + ID_RESOLVER_CACHED_FILE_NAME);
                 resolver.populateFromFile(f);
 
                 // if file doesn't contain classes, revisit db
@@ -111,7 +113,9 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                             + existedClsSet + ", but doesn't contain some classes in "
                             + clsCol + ". Creating and caching id resolver.");
                     existedClsSet.addAll(clsCol);
-                    createFromDb(existedClsSet, db);
+                    LOG.info("Query from database for: " + existedClsSet
+                            + " and caching id resolver to file.");
+                    createFromDb(existedClsSet, DatabaseFactory.getDatabase(propName));
                     resolver.writeToFile(f);
                 }
                 return true;
@@ -129,6 +133,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         OrganismRepository or = OrganismRepository.getOrganismRepository();
         try {
             conn = db.getConnection();
+            LOG.info("Querying FlyBase DB: " + db.getName());
+            System.out. println("Querying FlyBase DB: " + db.getName());
             for (String clsName : clsCol) {
                 String query = "select c.cvterm_id"
                     + " from cvterm c, cv"
@@ -140,7 +146,6 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 String soTermId = null;
                 res.next();
                 soTermId = res.getString("cvterm_id");
-
                 String orgConstraint = "";
                 if (taxonId != null) {
                     String abbrev = or.getOrganismDataByTaxon(

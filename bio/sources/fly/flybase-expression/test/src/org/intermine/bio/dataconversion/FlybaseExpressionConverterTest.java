@@ -15,10 +15,10 @@ import java.io.FileReader;
 import java.util.Collections;
 import java.util.HashMap;
 
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 public class FlybaseExpressionConverterTest extends ItemsTestCase
 {
@@ -33,7 +33,7 @@ public class FlybaseExpressionConverterTest extends ItemsTestCase
 
     public void setUp() throws Exception {
         super.setUp();
-        itemWriter = new MockItemWriter(new HashMap());
+        itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlybaseExpressionConverter(itemWriter, model);
         converter.rslv = IdResolverService.getMockIdResolver("Gene");
         converter.rslv.addResolverEntry("7227", "FBgn0000003", Collections.singleton("FBgn0000003"));

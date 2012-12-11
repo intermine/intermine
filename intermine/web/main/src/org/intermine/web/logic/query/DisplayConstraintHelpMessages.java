@@ -43,7 +43,7 @@ public class DisplayConstraintHelpMessages
             sb.append(getBagMessage(con));
         } else if (con.getPossibleValues() != null && !con.getPossibleValues().isEmpty()) {
             sb.append("Choose a value from the dropdown.  To choose multiple values set the"
-                    + " operation to IN or NOT IN.");
+                    + " operation to ONE OF or NONE OF.");
             if (con.getPath().isAttribute() && "String".equals(con.getPath().getType())) {
                 sb.append(" To type text set the operation to LIKE or NOT LIKE");
                 sb.append(", you can use * as a wildcard");

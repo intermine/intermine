@@ -54,7 +54,6 @@ public class QuickSearch extends JSONService
         super(im);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void execute() throws Exception {
         javax.servlet.ServletContext servletContext = request.getSession().getServletContext();
@@ -64,8 +63,6 @@ public class QuickSearch extends JSONService
         QuickSearchRequest input = new QuickSearchRequest();
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
-
-        int totalHits = 0;
 
         long searchTime = System.currentTimeMillis();
         BrowseResult result = KeywordSearch.runBrowseSearch(input.searchTerm, input.offset,
@@ -77,7 +74,6 @@ public class QuickSearch extends JSONService
 
         Set<Integer> objectIds = new HashSet<Integer>();
         if (result != null) {
-            totalHits = result.getNumHits();
             LOG.debug("Browse found " + result.getNumHits() + " hits");
             BrowseHit[] browseHits = result.getHits();
             objectIds = KeywordSearch.getObjectIds(browseHits);

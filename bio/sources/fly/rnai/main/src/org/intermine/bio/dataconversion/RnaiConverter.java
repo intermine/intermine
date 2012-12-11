@@ -12,14 +12,11 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.dataconversion.IdResolver;
-import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,9 +37,10 @@ public class RnaiConverter extends BioFileConverter
     private Map<String, String> publications = new HashMap<String, String>();
     private Map<String, String> screens = new HashMap<String, String>();
     private static final String TAXON_FLY = "7227";
+    private static final String NCBI = "NCBI Entrez Gene identifiers";
     private Item screen;
-    
-    private IdResolver rslv;
+
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -132,18 +130,18 @@ public class RnaiConverter extends BioFileConverter
         String screenId = line[0];
         String geneRefId = null;
         String fbgn = line[2];    // FBgn
+        String ncbi = line[1];
+
         if (StringUtils.isEmpty(fbgn)) {
             // some only have entrez IDs and no FBgns.  try both
-            geneRefId = getGene(line[1]);
+            geneRefId = getGene(ncbi);
         } else {
             geneRefId = getGene(fbgn);
         }
         String reagentId = line[4];
         String score = line[5];
-
         String phenotype = line[6];
         String conditions = line[7];
-
         storeScreen(screenId);
 
         Item result = createItem("RNAiResult");
@@ -161,6 +159,7 @@ public class RnaiConverter extends BioFileConverter
         }
         if (geneRefId != null) {
             result.setReference("gene", geneRefId);
+            createCrossReference(geneRefId, ncbi, NCBI, true);
         }
         result.setReference("rnaiScreen", screen);
         store(result);
@@ -182,7 +181,7 @@ public class RnaiConverter extends BioFileConverter
         if (identifier == null) {
             throw new RuntimeException("geneSymbol can't be null");
         }
-        
+
         if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }

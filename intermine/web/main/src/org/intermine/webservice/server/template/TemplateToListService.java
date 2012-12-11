@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
@@ -50,7 +49,6 @@ public class TemplateToListService extends QueryToListService
     private static final String NEW_VIEW_PARAM = "path";
 
     private final TemplateManager templateManager;
-    private static final Logger LOG = Logger.getLogger(TemplateToListService.class);
 
     /**
      * Constructor

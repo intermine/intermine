@@ -916,19 +916,17 @@ public class FlyBaseProcessor extends SequenceProcessor
         }
     }
 
-    private String getInteraction(Map<MultiKey, String> interactions, String refId,
+    private Item getInteraction(Map<MultiKey, Item> interactions, String refId,
     		String gene2RefId) throws ObjectStoreException {
     	MultiKey key = new MultiKey(refId, gene2RefId);
-    	String interactionRefId = interactions.get(key);
-    	if (interactionRefId == null) {
-    		Item interaction = getChadoDBConverter().createItem("Interaction");
-    		interaction.setReference("gene1", refId);
-    		interaction.setReference("gene2", gene2RefId);
-    		getChadoDBConverter().store(interaction);
-    		interactionRefId = interaction.getIdentifier();
-    		interactions.put(key, interactionRefId);
+    	Item item = interactions.get(key);
+    	if (item == null) {
+    	    item = getChadoDBConverter().createItem("Interaction");
+    	    item.setReference("gene1", refId);
+    	    item.setReference("gene2", gene2RefId);
+    		interactions.put(key, item);
     	}
-    	return refId;
+    	return item;
     }
 
     /**
@@ -936,9 +934,10 @@ public class FlyBaseProcessor extends SequenceProcessor
      */
     private void createInteractions(Connection connection)
         throws SQLException, ObjectStoreException {
-        Map<MultiKey, String> seenInteractions = new HashMap<MultiKey, String>();
+        Map<MultiKey, Item> seenInteractions = new HashMap<MultiKey, Item>();
         ResultSet res = getInteractionResultSet(connection);
         String typeId = getRelationshipType();
+        
         while (res.next()) {
             Integer featureId = new Integer(res.getInt("feature_id"));
             Integer otherFeatureId = new Integer(res.getInt("other_feature_id"));
@@ -947,14 +946,24 @@ public class FlyBaseProcessor extends SequenceProcessor
             FeatureData featureData = getFeatureMap().get(featureId);
             FeatureData otherFeatureData = getFeatureMap().get(otherFeatureId);
 
-            String name = "FlyBase" + ":" + featureData.getChadoFeatureUniqueName() + "_"
-                    + otherFeatureData.getChadoFeatureUniqueName();
-            String interactionRefId = getInteraction(seenInteractions,
-            		featureData.getItemIdentifier(), otherFeatureData.getItemIdentifier());
             OrganismData od = otherFeatureData.getOrganismData();
             Item dataSetItem = getChadoDBConverter().getDataSetItem(od.getTaxonId());
             String publicationItemId = makePublication(pubmedId);
-            createDetail(dataSetItem, pubTitle, publicationItemId, interactionRefId, name, typeId);
+            String name = "FlyBase:" + featureData.getChadoFeatureUniqueName() + "_"
+                    + otherFeatureData.getChadoFeatureUniqueName();
+
+            Item interaction = getInteraction(seenInteractions, featureData.getItemIdentifier(), 
+                    otherFeatureData.getItemIdentifier());
+            createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name, typeId);
+
+            name = "FlyBase:" + otherFeatureData.getChadoFeatureUniqueName() + "_"
+                    + featureData.getChadoFeatureUniqueName();
+            interaction = getInteraction(seenInteractions, otherFeatureData.getItemIdentifier(), 
+                    featureData.getItemIdentifier());
+            createDetail(dataSetItem, pubTitle, publicationItemId, interaction, name, typeId);
+        }
+        for (Item item : seenInteractions.values()) {
+            getChadoDBConverter().store(item);
         }
     }
 
@@ -966,7 +975,7 @@ public class FlyBaseProcessor extends SequenceProcessor
     }
     
     private void createDetail(Item dataSetItem, String pubTitle, 
-    		String publicationItemId, String interactionRefId, String name, String typeId) 
+    		String publicationItemId, Item interaction, String name, String typeId) 
     	throws SQLException, ObjectStoreException {
 		Item detail = getChadoDBConverter().createItem("InteractionDetail");
         detail.setAttribute("name", name);
@@ -976,7 +985,7 @@ public class FlyBaseProcessor extends SequenceProcessor
         String experimentItemIdentifier =
             makeInteractionExperiment(pubTitle, publicationItemId);
         detail.setReference("experiment", experimentItemIdentifier);
-        detail.setReference("interaction", interactionRefId);
+        detail.setReference("interaction", interaction);
         detail.setReference("relationshipType", typeId);
         detail.addToCollection("dataSets", dataSetItem);
         getChadoDBConverter().store(detail);

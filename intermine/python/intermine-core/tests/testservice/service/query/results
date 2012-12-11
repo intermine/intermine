@@ -1,5 +1,0 @@
-{"results":[
-["foo","bar","baz"],
-[123,1.23,-1.23],
-[true,false,null]
-],"executionTime":"2011.04.02 14:41::10","wasSuccessful":true,"error":null,"statusCode":200}

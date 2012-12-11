@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -68,11 +69,24 @@ public class GraphWidget extends Widget
      * Throws a ResourceNotFoundException if it's not valid
      */
     private void validateBagType() {
-        String typeClass = config.getTypeClass();
-        if (!typeClass.equals(bag.getType())) {
-            throw new ResourceNotFoundException("Could not find a graph widget called \""
-                    + config.getId() + "\" with type " + bag.getType());
+        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
+        ClassDescriptor accepted = os.getModel().getClassDescriptorByName(config.getTypeClass());
+        if (bagType == null) {
+            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
         }
+        if (accepted == null) {
+            throw new IllegalStateException("This widget is configured incorrectly. Its type is not in the model: " + config.getTypeClass());
+        }
+        if ("InterMineObject".equals(accepted.getUnqualifiedName())) {
+            return; // This widget accepts anything, however useless.
+        } else if (bagType.equals(accepted)) {
+            return; // Exact match.
+        } else if (bagType.getAllSuperDescriptors().contains(accepted)) {
+            return; // Sub-class.
+        }
+        throw new IllegalArgumentException(
+            String.format("The %s chart widget only accepts lists of %s, but you provided a list of %s",
+                config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**

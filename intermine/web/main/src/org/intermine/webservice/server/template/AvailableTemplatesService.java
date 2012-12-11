@@ -24,8 +24,9 @@ import org.intermine.api.template.TemplateManager;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.template.TemplateHelper;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.Output;
 import org.intermine.webservice.server.output.PlainFormatter;
@@ -55,8 +56,13 @@ public class AvailableTemplatesService extends WebService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        return Formats.XML;
+    protected Format getDefaultFormat() {
+        return Format.XML;
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        return Format.BASIC_FORMATS.contains(format);
     }
 
     @Override
@@ -77,12 +83,12 @@ public class AvailableTemplatesService extends WebService
                             : templateManager.getWorkingTemplates();
         }
 
-        if (formatIsXML()) {
-            ResponseUtil.setXMLHeader(response, FILE_BASE_NAME + ".xml");
+        switch (getFormat()) {
+        case XML:
             output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToXml(templates,
                     PathQuery.USERPROFILE_VERSION)));
-        } else if (formatIsJSON()) {
-            ResponseUtil.setJSONHeader(response,  FILE_BASE_NAME + ".json");
+            break;
+        case JSON:
             Map<String, Object> attributes = new HashMap<String, Object>();
             if (formatIsJSONP()) {
                 attributes.put(JSONFormatter.KEY_CALLBACK, getCallback());
@@ -90,12 +96,14 @@ public class AvailableTemplatesService extends WebService
             attributes.put(JSONFormatter.KEY_INTRO, "\"templates\":");
             output.setHeaderAttributes(attributes);
             output.addResultItem(Arrays.asList(TemplateHelper.apiTemplateMapToJson(templates)));
-        } else {
-            ResponseUtil.setPlainTextHeader(response, FILE_BASE_NAME + ".txt");
+            break;
+        case TEXT:
             Set<String> templateNames = new TreeSet<String>(templates.keySet());
             for (String templateName : templateNames) {
                 output.addResultItem(Arrays.asList(templateName));
             }
+        case HTML:
+            throw new ServiceException("Not implemented: " + Format.HTML);
         }
     }
 }

@@ -49,6 +49,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     /**
      * Construct with SO term of the feature type.
+     * TODO as class name is fixed as gene, this method is not useful
      * @param soTerm the feature type to resolve
      */
     public RgdIdentifiersResolverFactory(String clsName) {
@@ -57,7 +58,9 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     @Override
     protected void createIdResolver() {
-        if (resolver != null && resolver.hasTaxon(taxonId)) {
+        if (resolver != null
+                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
+                        .iterator().next())) {
             return;
         } else {
             if (resolver == null) {
@@ -72,7 +75,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxon(taxonId))) {
+                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 
