@@ -10,6 +10,8 @@
 	<classpathentry kind="lib" path="lib/obo.jar" sourcepath="/Users/watkins/Documents/FlyMine/src/obo/src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bio-testall-dbmodel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/intermine-api-main"/>
-	<classpathentry exported="true" kind="lib" path="lib/biojava-1.7.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/biojava3-core-3.0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/biojava3-alignment-3.0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/biojava3-structure-3.0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
