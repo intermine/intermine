@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.output.JSONFormatter;
@@ -17,8 +17,8 @@ public class DisplayerService extends WebService {
     }
 
     @Override
-    protected int getDefaultFormat() {
-        return Formats.TEXT;
+    protected Format getDefaultFormat() {
+        return Format.TEXT;
     }
 
     @Override

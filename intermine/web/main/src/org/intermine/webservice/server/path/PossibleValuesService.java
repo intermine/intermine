@@ -32,8 +32,9 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
@@ -66,19 +67,23 @@ public class PossibleValuesService extends WebService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        if (hasCallback()) {
-            return Formats.JSONP_OBJ;
-        } else {
-            return Formats.JSON_OBJ;
-        }
+    protected Format getDefaultFormat() {
+        return Format.JSON;
+    }
+
+    private boolean count = false;
+
+    @Override
+    protected void initState() {
+        super.initState();
+        count = WebServiceRequestParser.isCountRequest(request);
     }
 
     private Map<String, Object> getHeaderAttributes() {
         Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("path", "UNKNOWN");
         kvPairs.put("path", "UNKNOWN");
-        if (formatIsCount()) {
+        if (count) {
             attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
         }
         if (formatIsJSONP()) {
@@ -147,12 +152,12 @@ public class PossibleValuesService extends WebService
         q.addToSelect(qf);
         q.addToGroupBy(qf1);
 
-        int count = im.getObjectStore().count(q, ObjectStore.SEQUENCE_IGNORE);
+        int total = im.getObjectStore().count(q, ObjectStore.SEQUENCE_IGNORE);
 
-        if (formatIsCount()) {
-            output.addResultItem(Arrays.asList(String.valueOf(count)));
+        if (count) {
+            output.addResultItem(Arrays.asList(String.valueOf(total)));
         } else {
-            attributes.put("count", count);
+            attributes.put("count", total);
 
             Results results = im.getObjectStore().execute(q, DEFAULT_BATCH_SIZE, true, true, false);
             Iterator<Object> iter = results.iterator();

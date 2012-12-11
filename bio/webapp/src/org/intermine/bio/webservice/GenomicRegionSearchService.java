@@ -135,6 +135,8 @@ public class GenomicRegionSearchService extends ListMakerService
                 throw new BadRequestException("Error parsing region search input");
             }
             throw new BadRequestException("Error parsing region search input: " + e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Could not read input: " + e.getMessage(), e);
         }
     }
 

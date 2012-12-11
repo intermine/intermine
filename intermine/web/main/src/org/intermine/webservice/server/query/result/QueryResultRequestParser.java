@@ -62,12 +62,5 @@ public class QueryResultRequestParser extends QueryRequestParser
         }
         input.setXml(xmlQuery);
 
-        String totalCount = req.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
-        if (totalCount != null) {
-            throw new BadRequestException("Parameter " + COMPUTE_TOTAL_COUNT_PARAMETER
-                    + " is not now supported. It is not possible to retrieve number of results.");
-        }
-
-        input.setLayout(req.getParameter(LAYOUT_PARAMETER));
     }
 }
