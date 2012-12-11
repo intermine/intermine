@@ -11,6 +11,8 @@ package org.intermine.webservice.server.widget;
  */
 
 import java.io.PrintWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,11 +157,23 @@ public class EnrichmentWidgetResultService extends WidgetService
         String geneLengthCorrectionInput = input.getExtraAttributes().get(3);
         if (widget.isGeneLengthCorrectionApplicable()) {
             try {
-                addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL,
-                    Double.toString(widget.getPercentageGeneWithLengthNull()) + "%");
+                double percentageGeneWithLengthNull = widget.getPercentageGeneWithLengthNull();
+                if (percentageGeneWithLengthNull != 0) {
+                    DecimalFormat df = new DecimalFormat("##.##");
+                    df.setRoundingMode(RoundingMode.DOWN);
+                    addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL,
+                        df.format(percentageGeneWithLengthNull) + "%");
+                    addOutputInfo("pathQueryGeneLengthNull",
+                        widget.getPathQueryForGenesWithLengthNull(
+                            InterMineContext.getWebConfig()).toJson());
+                } else {
+                    addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+                    addOutputInfo("pathQueryGeneLengthNull", null);
+                }
             } catch (ObjectStoreException os) {
                 addOutputInfo(WidgetsRequestParser.GENE_LENGTH_CORRECTION, null);
                 addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+                addOutputInfo("pathQueryGeneLengthNull", null);
                 return;
             }
             if (geneLengthCorrectionInput == null) {
@@ -171,6 +185,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         } else {
             addOutputInfo(WidgetsRequestParser.GENE_LENGTH_CORRECTION, null);
             addOutputInfo(WidgetsRequestParser.PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
+            addOutputInfo("pathQueryGeneLengthNull", null);
         }
     }
 
