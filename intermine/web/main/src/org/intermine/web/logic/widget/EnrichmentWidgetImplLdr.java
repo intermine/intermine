@@ -126,7 +126,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
         } else if (populationBag != null) {
-            cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, populationBag.getOsb()));
+            cs.addConstraint(new BagConstraint(qfStartClassId,
+                             ConstraintOp.IN, populationBag.getOsb()));
         }
 
         for (PathConstraint pathConstraint : config.getPathConstraints()) {
@@ -174,12 +175,13 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             if (qfEnrichId != qfEnrich) {
                 subQ.addToSelect(qfEnrich);
             }
-
-            QueryField outerQfEnrichId = new QueryField(subQ, qfEnrichId);
             mainQuery.addFrom(subQ);
+            QueryField outerQfEnrichId = new QueryField(subQ, qfEnrichId);
             mainQuery.addToSelect(outerQfEnrichId);
             mainQuery.addToGroupBy(outerQfEnrichId);
+            //mainQuery.addToOrderBy(outerQfEnrichId);
             mainQuery.addToSelect(qfCount);
+            //mainQuery.addToOrderBy(qfCount);
             if ("sample".equals(action)) {
                 if (qfEnrichId != qfEnrich) {
                     QueryField outerQfEnrich = new QueryField(subQ, qfEnrich);
@@ -193,6 +195,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 QueryField outerQfGenelength = new QueryField(subQ, qfGeneLength);
                 qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
                 mainQuery.addToSelect(qfAverage);
+                //mainQuery.addToOrderBy(qfAverage);
             }
         }
         return mainQuery;

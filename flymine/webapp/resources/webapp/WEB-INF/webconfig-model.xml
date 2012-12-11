@@ -885,7 +885,8 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="
+                                 normaliseByGeneLength="true"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
@@ -929,7 +930,8 @@
                                  views="secondaryIdentifier, symbol, organism.name,
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 normaliseByGeneLength="true"/>
 
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"

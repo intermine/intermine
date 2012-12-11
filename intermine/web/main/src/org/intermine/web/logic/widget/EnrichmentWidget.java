@@ -13,6 +13,7 @@ package org.intermine.web.logic.widget;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,6 +34,8 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -338,12 +341,12 @@ public class EnrichmentWidget extends Widget
         String subClassType = "";
         String subClassPath = "";
         EnrichmentWidgetConfig ewc = ((EnrichmentWidgetConfig) config);
-        if (((EnrichmentWidgetConfig) config).getEnrichIdentifier() != null) {
+        if (ewc.getEnrichIdentifier() != null) {
             enrichIdentifier = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
+                + ewc.getEnrichIdentifier();
         } else {
             String enrichPath = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrich();
+                + ewc.getEnrich();
             if (WidgetConfigUtil.isPathContainingSubClass(model, enrichPath)) {
                 subClassContraint = true;
                 subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
@@ -356,7 +359,7 @@ public class EnrichmentWidget extends Widget
         }
 
         String startClassDisplayView = config.getStartClass() + "."
-            + ((EnrichmentWidgetConfig) config).getStartClassDisplay();
+            + ewc.getStartClassDisplay();
         pathQuery.addView(enrichIdentifier);
         pathQuery.addView(startClassDisplayView);
         pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
@@ -368,7 +371,7 @@ public class EnrichmentWidget extends Widget
         }
         //constraints for view
         List<PathConstraint> pathConstraintsForView =
-            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
+            ewc.getPathConstraintsForView();
         if (pathConstraintsForView != null) {
             for (PathConstraint pc : pathConstraintsForView) {
                 pathQuery.addConstraint(pc);
@@ -400,7 +403,7 @@ public class EnrichmentWidget extends Widget
                     return true;
                 }
             }
-           return false;
+            return false;
         }
     }
 
@@ -408,5 +411,30 @@ public class EnrichmentWidget extends Widget
         int bagSize = bag.getSize();
         double rate = (double) (bagSize - countItemsWithLengthNotNull) / bagSize;
         return rate * 100;
+    }
+
+    /**
+     * Returns the pathquery for genes length null based on the views set in config file
+     * and the bag constraint
+     * Executed when the user selects the peercentage of element in the gab with length null.
+     * @return the query generated
+     */
+    public PathQuery getPathQueryForGenesWithLengthNull(WebConfig webConfig) {
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
+        String startClassSimpleName = config.getStartClass();
+        String startClass = model.getPackageName() + "." + startClassSimpleName;
+        Collection<FieldConfig> fieldConfigs = webConfig.getFieldConfigs(startClass);
+        for (FieldConfig fieldConfig : fieldConfigs) {
+            if (fieldConfig.getShowInSummary()) {
+                q.addView(startClassSimpleName + "." + fieldConfig.getFieldExpr());
+            }
+        }
+        // bag constraint
+        q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        //constraints for gene length
+        q.addConstraint(Constraints.isNull(config.getStartClass() + ".length"));
+
+        return q;
     }
 }
