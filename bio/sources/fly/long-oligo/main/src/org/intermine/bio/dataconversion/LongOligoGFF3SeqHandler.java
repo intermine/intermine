@@ -22,7 +22,8 @@ import org.intermine.xml.full.Item;
 public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
 {
     private static final String TAXON_FLY = "7227";
-    private IdResolver rslv;
+    private static final String CLASS_NAME = "mRNA";
+    protected IdResolver rslv;
     protected static final Logger LOG = Logger.getLogger(LongOligoGFF3SeqHandler.class);
 
 
@@ -30,7 +31,7 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      * Construct the seq handler.
      */
     public LongOligoGFF3SeqHandler() {
-        rslv = IdResolverService.getFlyIdResolver("mRNA");
+        rslv = IdResolverService.getFlyIdResolver(CLASS_NAME);
     }
 
 
@@ -39,7 +40,7 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      */
     @Override
     public String getSeqIdentifier(String id) {
-        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv == null || !rslv.hasTaxonAndClassName(TAXON_FLY, CLASS_NAME)) {
             return null;
         }
 

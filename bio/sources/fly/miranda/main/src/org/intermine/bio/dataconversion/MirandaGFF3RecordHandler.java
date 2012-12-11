@@ -31,7 +31,7 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     private Map<String, Item> targets = new HashMap<String, Item>();
     private Map<String, Item> miRNAgenes = new HashMap<String, Item>();
     private Set<String> problems = new HashSet<String>();
-    private IdResolver rslv;
+    protected IdResolver rslv;
     private static final String TAXON_FLY = "7227";
 
     protected static final Logger LOG = Logger.getLogger(MirandaGFF3RecordHandler.class);
@@ -51,9 +51,10 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
     public void process(GFF3Record record) {
         // Id resolver
         if (rslv == null) {
-            rslv = IdResolverService.getFlyIdResolver(Arrays.asList(new String[]{"gene", "mRNA"}));
+            rslv = IdResolverService.getFlyIdResolver(new HashSet<String>(
+                    Arrays.asList(new String[] { "gene", "mRNA" })));
         }
-        
+
         Item feature = getFeature();
         feature.setClassName("MiRNATarget");
         String geneName = record.getAttributes().get("Name").iterator().next();
@@ -73,10 +74,10 @@ public class MirandaGFF3RecordHandler extends GFF3RecordHandler
         if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }
-        
+
         Item target = null;
         String primaryIdentifier = null;
-        
+
         int resCount = rslv.countResolutions(TAXON_FLY, "mRNA", targetName);
         if (resCount == 1) {
             primaryIdentifier = rslv.resolveId(TAXON_FLY, "mRNA", targetName).iterator().next();

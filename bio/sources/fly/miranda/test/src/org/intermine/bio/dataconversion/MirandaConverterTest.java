@@ -20,6 +20,7 @@ import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Test for data from miRanda
@@ -33,7 +34,7 @@ public class MirandaConverterTest extends ItemsTestCase
 
     private Model tgtModel;
     private GFF3Converter converter;
-    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
     private String seqClsName = "Chromosome";
     private String dataSourceName = "Sanger Institute";
     private String dataSetTitle = "miRanda";
@@ -50,7 +51,7 @@ public class MirandaConverterTest extends ItemsTestCase
         handler.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
         handler.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
         handler.rslv.addResolverEntry("7227", "FBtr0089256", Collections.singleton("CG11023-RA"));
-        converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
+        converter = new GFF3Converter(writer, seqClsName, "7227", dataSourceName,
                                       dataSetTitle, tgtModel, handler, null);
     }
 
@@ -72,7 +73,7 @@ public class MirandaConverterTest extends ItemsTestCase
         // uncomment to write a new tgt items file
         //writeItemsFile(writer.getItems(), "miranda-tgt-items.xml");
 
-        Set expected = readItemSet("miranda-tgt-items.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("miranda-tgt-items.xml");
         assertEquals(expected, writer.getItems());
     }
 

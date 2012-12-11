@@ -59,7 +59,9 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
 
     @Override
     protected void createIdResolver() {
-        if (resolver != null && resolver.hasTaxon(taxonId)) {
+        if (resolver != null
+                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
+                        .iterator().next())) {
             return;
         } else {
             if (resolver == null) {
@@ -74,7 +76,7 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
         try {
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
-                    && !resolver.hasTaxon(taxonId))) {
+                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
                 Properties props = PropertiesUtil.getProperties();
                 String fileName = props.getProperty(propName);
 

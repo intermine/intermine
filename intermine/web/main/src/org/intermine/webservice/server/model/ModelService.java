@@ -31,7 +31,7 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.WebUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -70,22 +70,26 @@ public class ModelService extends WebService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        return Formats.XML;
+    protected Format getDefaultFormat() {
+        return Format.XML;
     }
 
+    private static final String formatEndings = "^/?(xml|tsv|csv|json|jsonp)$";
+
     @Override
-    protected String parseFormatFromPathInfo() {
-        String format = super.parseFormatFromPathInfo();
-        if (format != null) {
-            return format;
-        }
+    protected void initState() {
+        super.initState();
         String pathInfo = StringUtils.defaultString(request.getPathInfo(), "");
-        pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         if (StringUtils.isBlank(pathInfo)) {
-            return null;
+            return;
         }
+        if (pathInfo.matches(formatEndings)) {
+            return;
+        }
+        setFormat(Format.JSON);
+        pathInfo = StringUtil.trimSlashes(pathInfo).replace('/', '.');
         try {
+            
             Map<String, String> subclasses = new HashMap<String, String>();
             for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
                 String param = e.nextElement();
@@ -93,11 +97,14 @@ public class ModelService extends WebService
             }
             Path p = new Path(im.getModel(), pathInfo, subclasses);
             node = p;
-            String ret = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
-            return StringUtils.isBlank(ret) ? WebServiceRequestParser.FORMAT_PARAMETER_JSON : ret;
         } catch (PathException e) {
             throw new ResourceNotFoundException("Could not find a node with the id: " + pathInfo);
         }
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        return format == Format.XML || format == Format.JSON;
     }
 
     /**
@@ -108,7 +115,7 @@ public class ModelService extends WebService
         final Model model = this.im.getModel();
         final WebConfig config = InterMineContext.getWebConfig();
         if (formatIsJSON()) {
-            ResponseUtil.setJSONHeader(response, FILE_BASE_NAME + ".json");
+            ResponseUtil.setJSONHeader(response, FILE_BASE_NAME + ".json", formatIsJSONP());
             Map<String, Object> attributes = new HashMap<String, Object>();
             if (formatIsJSONP()) {
                 String callback = getCallback();

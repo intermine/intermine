@@ -33,8 +33,8 @@ public abstract class IdResolverFactory
     // ResolverFactory takes in a SO term/Class name (as a collection), "gene" is used by default
     protected final Set<String> defaultClsCol = new HashSet<String>(
             Arrays.asList(new String[] { "gene" }));
-    protected Set<String> clsCol;
-    
+    protected Set<String> clsCol  = new HashSet<String>();
+
     protected static final String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
 
     /**
@@ -77,7 +77,7 @@ public abstract class IdResolverFactory
         throws IOException {
         return restoreFromFile(defaultClsCol, f);
     }
-    
+
     /**
      * Read IdResolver contents from a file, allows for caching during build.
      *
@@ -90,7 +90,7 @@ public abstract class IdResolverFactory
         throws IOException {
         return restoreFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})), f);
     }
-    
+
     /**
      * Read IdResolver contents from a file, allows for caching during build.
      *
@@ -108,7 +108,7 @@ public abstract class IdResolverFactory
             return false;
         }
     }
-    
+
     /**
      * Read IdResolver contents from a file, allows for caching during build. Use default file name.
      *
@@ -119,7 +119,7 @@ public abstract class IdResolverFactory
         throws IOException {
         return restoreFromFile(defaultClsCol);
     }
-    
+
     /**
      * Read IdResolver contents from a file, allows for caching during build. Use default file name.
      *
@@ -131,7 +131,7 @@ public abstract class IdResolverFactory
         throws IOException {
         return restoreFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})));
     }
-    
+
     /**
      * Read IdResolver contents from a file, allows for caching during build. Use default file name.
      *
@@ -159,7 +159,7 @@ public abstract class IdResolverFactory
     protected void createFromDb(Database db) {
         createFromDb(defaultClsCol, db);
     }
-    
+
     /**
      * Read IdResolver contents from a database.
      *
@@ -170,7 +170,7 @@ public abstract class IdResolverFactory
     protected void createFromDb(String clsName, Database db) {
         createFromDb(new HashSet<String>(Arrays.asList(new String[]{clsName})), db);
     }
-    
+
     /**
      * Read IdResolver contents from a database.
      *
