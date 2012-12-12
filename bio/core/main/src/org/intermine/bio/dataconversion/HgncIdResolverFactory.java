@@ -79,7 +79,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName))));
+                createFromFile(new BufferedReader(new FileReader(new File(fileName.trim()))));
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
