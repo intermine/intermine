@@ -40,6 +40,7 @@ public final class EnrichmentCalculation
      * the type multiple hypothesis error correction specified before returning the results.
      * @param input details of the sample and population
      * @param maxValue the maximum p-value to return, for display purposes
+     * @param applyGeneLengthCorrection if true correction coefficient is applied
      * @param errorCorrection the type of error correction to perform or None
      * @return results of the enrichment calculation
      */
