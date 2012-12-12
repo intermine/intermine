@@ -37,9 +37,9 @@ import org.intermine.util.PropertiesUtil;
  *
  * @author Richard Smith
  */
-public class WormBaseChadoIdResolverFactory extends IdResolverFactory
+public class WormBaseIdResolverFactory extends IdResolverFactory
 {
-    protected static final Logger LOG = Logger.getLogger(WormBaseChadoIdResolverFactory.class);
+    protected static final Logger LOG = Logger.getLogger(WormBaseIdResolverFactory.class);
 
     private final String propName = "db.wormbase";
     private final String taxonId = "6239";
@@ -47,7 +47,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
     // HACK
     private final String propNameExt = "resolver.wb2ncbi.file";
 
-    public WormBaseChadoIdResolverFactory() {
+    public WormBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
     }
 
@@ -55,7 +55,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
      * Construct with SO term of the feature type to read from chado database.
      * @param clsName the feature type to resolve
      */
-    public WormBaseChadoIdResolverFactory(String clsName) {
+    public WormBaseIdResolverFactory(String clsName) {
         this.clsCol = new HashSet<String>(Arrays.asList(new String[] {clsName}));
     }
 
@@ -93,7 +93,7 @@ public class WormBaseChadoIdResolverFactory extends IdResolverFactory
                 try {
                     createFromFile(new BufferedReader(new FileReader(
                             new File(PropertiesUtil.getProperties().getProperty(
-                                    propNameExt)))));
+                                    propNameExt).trim()))));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
