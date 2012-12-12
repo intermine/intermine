@@ -24,7 +24,7 @@ import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
  * @author Julie Sullivan
- * @author dbutano
+ * @author Daniela Butano
  */
 public class EnrichmentWidgetConfig extends WidgetConfig
 {
@@ -33,6 +33,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     private String enrichIdentifier;
     private String startClassDisplay;
     private String externalLink;
+    private boolean normaliseByGeneLength;
     private List<PathConstraint> pathConstraintsForView = new ArrayList<PathConstraint>();
 
     /**
@@ -111,13 +112,26 @@ public class EnrichmentWidgetConfig extends WidgetConfig
         return pathConstraintsForView;
     }
 
+    public boolean isNormaliseByGeneLength() {
+        return normaliseByGeneLength;
+    }
+
+    public void setNormaliseByGeneLength(boolean normaliseByGeneLength) {
+        this.normaliseByGeneLength = normaliseByGeneLength;
+    }
+
     /**
      * {@inheritDoc}
      */
     public EnrichmentWidget getWidget(InterMineBag imBag, InterMineBag populationBag,
                                       ObjectStore os, List<String> attributes) {
+        String geneLenghtInput = attributes.get(3);
+        boolean isGeneLengthCorrectionSelected = false;
+        if (geneLenghtInput != null && "true".equalsIgnoreCase(geneLenghtInput)) {
+            isGeneLengthCorrectionSelected = true;
+        }
         return new EnrichmentWidget(this, imBag, populationBag, os, attributes.get(0),
-                attributes.get(1), attributes.get(2));
+                attributes.get(1), attributes.get(2), isGeneLengthCorrectionSelected);
     }
 
 }
