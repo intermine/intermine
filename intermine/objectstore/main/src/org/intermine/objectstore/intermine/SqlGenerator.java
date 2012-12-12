@@ -2518,6 +2518,11 @@ public final class SqlGenerator
                             // HACK!!! TODO: work out why this was producing screwed up
                             // precompute queries.
                             && ((QueryFunction) node).getOperation() != QueryFunction.COUNT) {
+                        //don't add average in the orderby because in the QueryOptimise.optimiseWith
+                        //in originalQuery = new Query(query); the originalQuery is not parsed correcty!!!
+                        if (((QueryFunction) node).getOperation() == QueryFunction.AVERAGE) {
+                            continue;
+                        }
                         String alias = q.getAliases().get(node);
                         buffer.append(alias);
                     } else {
