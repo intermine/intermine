@@ -80,8 +80,7 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
                 String fileName = props.getProperty(propName);
 
                 if (StringUtils.isBlank(fileName)) {
-                    String message = "RGD gene resolver has no file name specified, set "
-                            + propName + " to the location of the gene_info file.";
+                    String message = "RGD gene resolver has no file name specified: " + propName;
                     LOG.warn(message);
                     return;
                 }

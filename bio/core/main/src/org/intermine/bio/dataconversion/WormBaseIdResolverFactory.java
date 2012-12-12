@@ -89,14 +89,17 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 createFromDb(DatabaseFactory.getDatabase(propName));
 
                 // HACK - Additionally, load WB2NCBI to have ncbi ids
-                LOG.info("To process WB2NCBI file");
-                try {
-                    createFromFile(new BufferedReader(new FileReader(
-                            new File(PropertiesUtil.getProperties().getProperty(
-                                    propNameExt).trim()))));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                String fileName = PropertiesUtil.getProperties().getProperty(propNameExt);
+
+                if (StringUtils.isBlank(fileName)) {
+                    String message = "WormBase gene resolver has no file name specified: "
+                            + propNameExt;
+                    LOG.warn(message);
+                    return;
                 }
+
+                LOG.info("To process WB2NCBI file");
+                createFromFile(new BufferedReader(new FileReader(new File(fileName.trim()))));
                 // END OF HACK
 
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
