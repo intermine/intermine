@@ -468,8 +468,8 @@ public class IdResolver
      */
     public void writeToFile(File f) throws IOException {
         LOG.info("Writing id resolver to file: " + f.getName());
-//        FileWriter fw = new FileWriter(f, true); // append if true
-        FileWriter fw = new FileWriter(f);
+        FileWriter fw = new FileWriter(f, true); // append if true
+//        FileWriter fw = new FileWriter(f);
         for (MultiKey key : orgIdMaps.keySet()) {
 
             // get maps for this organism
