@@ -88,7 +88,9 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
 
                     float geneLengthAverage = 0;
                     if (row.size() > 2) {
-                        geneLengthAverage = ((BigDecimal) row.get(2)).floatValue();
+                        if (row.get(2) != null) {
+                            geneLengthAverage = ((BigDecimal) row.get(2)).floatValue();
+                        }
                     }
                     populationCounts.put(identifier, new PopulationInfo(count, geneLengthAverage));
                 }
