@@ -316,7 +316,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processEFactor(connection);
 
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
+        wormResolverFactory = new WormBaseIdResolverFactory("gene");
         processSubmissionProperties(connection);
         createRelatedSubmissions(connection);
         setSubmissionProtocolsRefs(connection);

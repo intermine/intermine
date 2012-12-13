@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -56,6 +58,14 @@ public class IdResolverService
         return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
     }
 
+    public static IdResolver getIdResolverForMOD() {
+        // String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
+        String[] modTaxonIdsWithoutWorm = {"9606", "7227", "7955", "10090","10116", "4932"};
+        IdResolverService.getWormIdResolver(); // HACK for worm in ncbi
+        return new EntrezGeneIdResolverFactory()
+                .getIdResolver(new HashSet<String>(Arrays.asList(modTaxonIdsWithoutWorm)));
+    }
+
     /**
      * Create a Entrez Gene Id Resolver by given taxonId
      * @param taxonId taxon id as a string
@@ -92,7 +102,7 @@ public class IdResolverService
     public static IdResolver getFlyIdResolver(String clsName) {
         return new FlyBaseIdResolverFactory(clsName).getIdResolver(false);
     }
-    
+
     /**
      * Create a fly id resolver
      * @param clsName SO term collection
@@ -111,7 +121,7 @@ public class IdResolverService
     public static IdResolver getFlyIdResolver(String clsName, boolean failOnError) {
         return new FlyBaseIdResolverFactory(clsName).getIdResolver(failOnError);
     }
-    
+
     /**
      * Create a fly id resolver
      * @param clsName SO term collection
@@ -127,7 +137,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getWormIdResolver() {
-        return new WormBaseChadoIdResolverFactory().getIdResolver(false);
+        return new WormBaseIdResolverFactory().getIdResolver(false);
     }
 
     /**
@@ -136,7 +146,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getWormIdResolver(String clsName) {
-        return new WormBaseChadoIdResolverFactory(clsName).getIdResolver(false);
+        return new WormBaseIdResolverFactory(clsName).getIdResolver(false);
     }
 
     /**
@@ -146,7 +156,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getWormIdResolver(String clsName, boolean failOnError) {
-        return new WormBaseChadoIdResolverFactory(clsName).getIdResolver(failOnError);
+        return new WormBaseIdResolverFactory(clsName).getIdResolver(failOnError);
     }
 
     /**
