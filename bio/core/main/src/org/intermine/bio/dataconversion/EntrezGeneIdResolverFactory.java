@@ -170,7 +170,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName))), taxonIds);
+                createFromFile(new BufferedReader(new FileReader(new File(
+                        fileName.trim()))), taxonIds);
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
