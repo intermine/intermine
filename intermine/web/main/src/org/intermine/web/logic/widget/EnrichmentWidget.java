@@ -94,7 +94,8 @@ public class EnrichmentWidget extends Widget
     private void validateBagType() {
         ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
         if (bagType == null) {
-            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
+            throw new IllegalArgumentException("This bag has a type not found in the current "
+                                              + "model: " + bag.getType());
         }
         if ("InterMineObject".equals(typeDescriptor.getName())) {
             return; // This widget accepts anything, however useless.
@@ -380,7 +381,7 @@ public class EnrichmentWidget extends Widget
         return pathQuery;
     }
 
-    /*
+    /**
      * Return true if the gene length correction is applicable
      * 1- normaliseByGeneLength set to true in webconfig-model.xml file
      * 2- The typeClass, set in the conf file, is any class extending SequenceFeature (with length)
@@ -417,6 +418,7 @@ public class EnrichmentWidget extends Widget
      * Returns the pathquery for genes length null based on the views set in config file
      * and the bag constraint
      * Executed when the user selects the peercentage of element in the gab with length null.
+     * @param webConfig the web configuration
      * @return the query generated
      */
     public PathQuery getPathQueryForGenesWithLengthNull(WebConfig webConfig) {

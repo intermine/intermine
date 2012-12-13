@@ -179,9 +179,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             QueryField outerQfEnrichId = new QueryField(subQ, qfEnrichId);
             mainQuery.addToSelect(outerQfEnrichId);
             mainQuery.addToGroupBy(outerQfEnrichId);
-            //mainQuery.addToOrderBy(outerQfEnrichId);
             mainQuery.addToSelect(qfCount);
-            //mainQuery.addToOrderBy(qfCount);
             if ("sample".equals(action)) {
                 if (qfEnrichId != qfEnrich) {
                     QueryField outerQfEnrich = new QueryField(subQ, qfEnrich);
@@ -195,7 +193,6 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 QueryField outerQfGenelength = new QueryField(subQ, qfGeneLength);
                 qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
                 mainQuery.addToSelect(qfAverage);
-                //mainQuery.addToOrderBy(qfAverage);
             }
         }
         return mainQuery;

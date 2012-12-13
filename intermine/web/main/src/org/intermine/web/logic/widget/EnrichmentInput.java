@@ -26,8 +26,10 @@ public interface EnrichmentInput
 {
 
     /**
-     * Return a population info instance contanining the population size, N (In our example this is the total number of companies, or possibly
-     * the total number of companies that have at least one Department) and the average length of the genes in the whole population.
+     * Return a population info instance contanining the population size,
+     * N (In our example this is the total number of companies, or possibly
+     * the total number of companies that have at least one Department)
+     * and the average length of the genes in the whole population.
      * @return the population info instance
      */
     PopulationInfo getPopulationInfo();
