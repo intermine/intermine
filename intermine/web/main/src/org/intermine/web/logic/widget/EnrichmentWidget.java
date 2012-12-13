@@ -46,13 +46,9 @@ import org.intermine.web.logic.widget.config.WidgetConfigUtil;
  */
 public class EnrichmentWidget extends Widget
 {
-
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
-    private int notAnalysed = 0;
-    private InterMineBag bag;
     private Integer countItemsWithLengthNotNull = null;
     private InterMineBag populationBag;
-    private ObjectStore os;
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
@@ -65,6 +61,7 @@ public class EnrichmentWidget extends Widget
     /**
      * @param config widget config
      * @param interMineBag bag for this widget
+     * @param populationBag the reference population
      * @param os object store
      * @param errorCorrection which error correction to use (Bonferroni, etc)
      * @param max maximum value to display (0 - 1)
@@ -148,20 +145,6 @@ public class EnrichmentWidget extends Widget
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List getElementInList() {
         return new Vector();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getNotAnalysed() {
-        return notAnalysed;
-    }
-
-    /**
-    * {@inheritDoc}
-     */
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
     }
 
     /**
@@ -386,6 +369,7 @@ public class EnrichmentWidget extends Widget
      * 1- normaliseByGeneLength set to true in webconfig-model.xml file
      * 2- The typeClass, set in the conf file, is any class extending SequenceFeature (with length)
      * 3- gene.length is not always empty
+     * @return true if the correction coefficient can be applied
      */
     public boolean isGeneLengthCorrectionApplicable() {
         if (countItemsWithLengthNotNull != null) {

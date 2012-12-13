@@ -32,10 +32,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 public class GraphWidget extends Widget
 {
     private static final Logger LOG = Logger.getLogger(GraphWidget.class);
-    private int notAnalysed = 0;
     private GraphWidgetLoader grapgWidgetLdr;
-    private InterMineBag bag;
-    private ObjectStore os;
     private String filter;
 
 
@@ -125,22 +122,6 @@ public class GraphWidget extends Widget
         return (grapgWidgetLdr != null
                 && grapgWidgetLdr.getResults() != null
                 && grapgWidgetLdr.getResults().size() > 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNotAnalysed() {
-        return notAnalysed;
     }
 
     @Override
