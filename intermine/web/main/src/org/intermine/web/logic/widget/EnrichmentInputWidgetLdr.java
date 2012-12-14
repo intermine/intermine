@@ -147,7 +147,9 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
             List<Object> info = (List<Object>) res.get(0);
             size = ((Long) info.get(0)).intValue();
             if (info.size() > 1) {
-                geneLengthAverage = ((BigDecimal) info.get(1)).floatValue();
+                if (info.get(1) != null) {
+                    geneLengthAverage = ((BigDecimal) info.get(1)).floatValue();
+                }
             }
             populationInfo = new PopulationInfo(size, geneLengthAverage);
             populationCache.put(q.toString(), populationInfo);
@@ -174,10 +176,5 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
             return  0;
         }
         return  ((java.lang.Long) o[0]).intValue();
-    }
-
-    @Override
-    public Map<String, Long> getAnnotatedGeneLengthAverageInPopulation() {
-        return new HashMap<String, Long>();
     }
 }
