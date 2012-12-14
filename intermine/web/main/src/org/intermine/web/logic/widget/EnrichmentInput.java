@@ -71,11 +71,4 @@ public interface EnrichmentInput
      * @return the number of tests to be performed
      */
     int getTestCount();
-
-    /**
-     * Return the average gene length of genes associated with a term in the whole population
-     * @return the map of term with average
-     */
-    Map<String, Long> getAnnotatedGeneLengthAverageInPopulation();
-
 }
