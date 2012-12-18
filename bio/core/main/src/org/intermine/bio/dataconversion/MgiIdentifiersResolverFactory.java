@@ -123,10 +123,10 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
                 resolver.addMainIds(taxonId, identifier, Collections.singleton(identifier));
 
                 if (!NULL_STRING.equals(symbol)) {
-                    resolver.addSynonyms(taxonId, identifier, Collections.singleton(symbol));
+                    resolver.addMainIds(taxonId, identifier, Collections.singleton(symbol));
                 }
                 if (!NULL_STRING.equals(name)) {
-                    resolver.addSynonyms(taxonId, identifier, Collections.singleton(name));
+                    resolver.addMainIds(taxonId, identifier, Collections.singleton(name));
                 }
                 if (!NULL_STRING.equals(entrez)) {
                     resolver.addSynonyms(taxonId, identifier, Collections.singleton(entrez));

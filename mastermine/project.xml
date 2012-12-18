@@ -5,7 +5,6 @@
   <property name="intermine.properties.file" value="mastermine.properties"/>
   <property name="default.intermine.properties.file" location="../default.intermine.integrate.properties"/>
   <sources>
-
   <!--
     <source name="flybase-identifiers" type="flybase-identifiers">
       <property name="src.data.dir" location="/micklem/data/flybase-identifiers/current"/>
@@ -37,6 +36,15 @@
      <property name="organisms" value="9606 7227 7955 10090 10116 4932"/>
     </source>
 
+    <source name="go" type="go" dump="true">
+      <property name="src.data.file" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+    </source>
+    <source name="go-annotation" type="go-annotation">
+      <property name="ontologyfile" location="/micklem/data/go-annotation/current/gene_ontology.obo"/>
+      <property name="src.data.dir" location="/micklem/data/go-annotation/mastermine"/>
+      <property name="ontologyPrefix" value="GO"/>
+    </source>
+
     <source name="panther" type="panther" dump="true">
       <property name="src.data.dir" location="/micklem/data/panther/current"/>
       <property name="panther.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
@@ -51,6 +59,12 @@
       <property name="src.data.dir" location="/micklem/data/orthodb/current"/>
       <property name="orthodb.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>  
+    
+    <source name="pubmed-gene" type="pubmed-gene" >
+        <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
+        <property name="pubmed.organisms" value="7227 9606 10090 10116 7955 6239 4932"/>
+        <property name="src.data.dir.includes" value="gene2pubmed"/>
+    </source>
 
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>

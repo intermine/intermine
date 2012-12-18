@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 
@@ -41,11 +40,12 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(WormBaseIdResolverFactory.class);
 
-    private final String propName = "db.wormbase";
     private final String taxonId = "6239";
-
+    @SuppressWarnings("unused")
+    private final String propNameDb = "db.wormbase";
+    private final String propNameWormId = "resolver.wormid.file";
     // HACK
-    private final String propNameExt = "resolver.wb2ncbi.file";
+    private final String propNameWb2Ncbi = "resolver.wb2ncbi.file";
 
     public WormBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -83,23 +83,40 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                LOG.info("Creating id resolver from WormBase Chado database and caching it.");
-                System.out. println("Creating id resolver from WormBase Chado database and " +
-                        "caching it.");
-                createFromDb(DatabaseFactory.getDatabase(propName));
+//                LOG.info("Creating id resolver from WormBase Chado database and caching it.");
+//                System.out. println("Creating id resolver from WormBase Chado database and " +
+//                        "caching it.");
+//                createFromDb(DatabaseFactory.getDatabase(propNameDb));
+
+                // Create resolver from worm identifier file
+                String WormIdFileName = PropertiesUtil.getProperties()
+                        .getProperty(propNameWormId);
+
+                if (StringUtils.isBlank(WormIdFileName)) {
+                    String message = "WormBase gene resolver has no file name specified: "
+                            + propNameWormId;
+                    LOG.warn(message);
+                    return;
+                }
+
+                LOG.info("To process WormId file");
+                createFromWormIdFile(new BufferedReader(new FileReader(new File(
+                        WormIdFileName.trim()))));
 
                 // HACK - Additionally, load WB2NCBI to have ncbi ids
-                String fileName = PropertiesUtil.getProperties().getProperty(propNameExt);
+                String Wb2NcbiFileName = PropertiesUtil.getProperties()
+                        .getProperty(propNameWb2Ncbi);
 
-                if (StringUtils.isBlank(fileName)) {
+                if (StringUtils.isBlank(Wb2NcbiFileName)) {
                     String message = "WormBase gene resolver has no file name specified: "
-                            + propNameExt;
+                            + propNameWb2Ncbi;
                     LOG.warn(message);
                     return;
                 }
 
                 LOG.info("To process WB2NCBI file");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName.trim()))));
+                createFromWb2NcbiFile(new BufferedReader(new FileReader(new File(
+                        Wb2NcbiFileName.trim()))));
                 // END OF HACK
 
                 resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
@@ -211,8 +228,31 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
+    private void createFromWormIdFile(BufferedReader reader) throws IOException {
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        //WormBase id \t symbol \t secondaryIdentifier
+        LOG.info("Parsing WormId file...");
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+
+            String wbId = line[0];
+            String symbol = line[1];
+            String secId = line[2];
+
+            resolver.addMainIds(taxonId, wbId, Collections.singleton(wbId));
+
+            if (!StringUtils.isBlank(symbol)) {
+                resolver.addMainIds(taxonId, wbId, Collections.singleton(symbol));
+            }
+
+            if (!StringUtils.isBlank(secId)) {
+                resolver.addMainIds(taxonId, wbId, Collections.singleton(secId));
+            }
+        }
+    }
+
     // HACK
-    private void createFromFile(BufferedReader reader) throws IOException {
+    private void createFromWb2NcbiFile(BufferedReader reader) throws IOException {
         Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(reader, ' ');
         LOG.info("Parsing WB2NCBI file...");
         while (lineIter.hasNext()) {
@@ -228,8 +268,6 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
             if (!StringUtils.isBlank(entrez)) {
                 resolver.addSynonyms(taxonId, wbId, Collections.singleton(entrez));
             }
-
-            LOG.info("WB2NCBI - " + resolver.getSynonyms(taxonId, wbId));
         }
     }
 }
