@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +36,8 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
 
     // data file path set in ~/.intermine/MINE.properties
     // e.g. resolver.zfin.file=/micklem/data/rgd-identifiers/current/GENES_RAT.txt
-    private final String propName = "resolver.rgd.file";
+    private final String propKey = "resolver.file.rootpath";
+    private final String resolverFileSymbo = "rgd";
     private final String taxonId = "10116";
 
     /**
@@ -76,18 +76,24 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                Properties props = PropertiesUtil.getProperties();
-                String fileName = props.getProperty(propName);
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey).trim();
 
-                if (StringUtils.isBlank(fileName)) {
-                    String message = "RGD gene resolver has no file name specified: " + propName;
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
                     LOG.warn(message);
                     return;
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName))));
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                String resolverFileName = resolverFileRoot + resolverFileSymbo;
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(new BufferedReader(new FileReader(f)));
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

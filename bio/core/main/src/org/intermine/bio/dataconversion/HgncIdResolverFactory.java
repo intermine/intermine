@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,7 +32,8 @@ import org.intermine.util.PropertiesUtil;
 public class HgncIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
-    private final String propName = "resolver.hgnc.file";
+    private final String propKey = "resolver.file.rootpath";
+    private final String resolverFileSymbo = "hgnc";
     private final String taxonId = "9606";
 
     /**
@@ -68,19 +68,24 @@ public class HgncIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                Properties props = PropertiesUtil.getProperties();
-                String fileName = props.getProperty(propName);
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey).trim();
 
-                if (StringUtils.isBlank(fileName)) {
-                    String message = "HGNC resolver has no file name specified, set " + propName
-                        + " to the file location.";
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
                     LOG.warn(message);
                     return;
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName.trim()))));
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                String resolverFileName = resolverFileRoot + resolverFileSymbo;
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(new BufferedReader(new FileReader(f)));
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
