@@ -42,10 +42,12 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
     private final String taxonId = "6239";
     @SuppressWarnings("unused")
-    private final String propNameDb = "db.wormbase";
-    private final String propNameWormId = "resolver.wormid.file";
+    private final String propKeyDb = "db.wormbase";
+
+    private final String propKeyFile = "resolver.file.rootpath";
+    private final String resolverFileSymboWormId = "wormid";
     // HACK
-    private final String propNameWb2Ncbi = "resolver.wb2ncbi.file";
+    private final String resolverFileSymboWb2Ncbi = "wb2ncbi";
 
     public WormBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -86,40 +88,42 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 //                LOG.info("Creating id resolver from WormBase Chado database and caching it.");
 //                System.out. println("Creating id resolver from WormBase Chado database and " +
 //                        "caching it.");
-//                createFromDb(DatabaseFactory.getDatabase(propNameDb));
+//                createFromDb(DatabaseFactory.getDatabase(propKeyDb));
 
                 // Create resolver from worm identifier file
-                String WormIdFileName = PropertiesUtil.getProperties()
-                        .getProperty(propNameWormId);
+                String resolverFileRoot = PropertiesUtil.getProperties()
+                        .getProperty(propKeyFile).trim();
 
-                if (StringUtils.isBlank(WormIdFileName)) {
-                    String message = "WormBase gene resolver has no file name specified: "
-                            + propNameWormId;
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified.";
                     LOG.warn(message);
                     return;
                 }
 
                 LOG.info("To process WormId file");
-                createFromWormIdFile(new BufferedReader(new FileReader(new File(
-                        WormIdFileName.trim()))));
+                String WormIdFileName =  resolverFileRoot + resolverFileSymboWormId;
+                File wormIdDataFile = new File(WormIdFileName);
 
-                // HACK - Additionally, load WB2NCBI to have ncbi ids
-                String Wb2NcbiFileName = PropertiesUtil.getProperties()
-                        .getProperty(propNameWb2Ncbi);
+                if (wormIdDataFile.exists()) {
+                    createFromWormIdFile(new BufferedReader(new FileReader(wormIdDataFile)));
 
-                if (StringUtils.isBlank(Wb2NcbiFileName)) {
-                    String message = "WormBase gene resolver has no file name specified: "
-                            + propNameWb2Ncbi;
-                    LOG.warn(message);
-                    return;
+                    // HACK - Additionally, load WB2NCBI to have ncbi ids
+                    LOG.info("To process WB2NCBI file");
+                    String Wb2NcbiFileName = resolverFileRoot + resolverFileSymboWb2Ncbi;
+                    File wb2NcbiDataFile = new File(Wb2NcbiFileName);
+
+                    if (wb2NcbiDataFile.exists()) {
+                        createFromWb2NcbiFile(new BufferedReader(new FileReader(wb2NcbiDataFile)));
+                    } else {
+                        LOG.warn("Resolver file not exists: " + Wb2NcbiFileName);
+                    }
+                    // END OF HACK
+
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + WormIdFileName);
                 }
 
-                LOG.info("To process WB2NCBI file");
-                createFromWb2NcbiFile(new BufferedReader(new FileReader(new File(
-                        Wb2NcbiFileName.trim()))));
-                // END OF HACK
-
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
