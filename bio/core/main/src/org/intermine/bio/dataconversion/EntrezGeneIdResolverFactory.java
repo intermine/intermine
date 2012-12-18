@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -230,6 +231,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 primaryIdentifier = record.entrez;
             }
 
+            resolver.addMainIds(taxonId, primaryIdentifier,
+                    Collections.singleton(primaryIdentifier));
             resolver.addMainIds(taxonId, primaryIdentifier, record.getMainIds());
             resolver.addSynonyms(taxonId, primaryIdentifier,
                     flattenCollections(record.xrefs.values()));

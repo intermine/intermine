@@ -110,13 +110,13 @@ public class RgdIdentifiersResolverFactory extends IdResolverFactory
             String ensembl = line[37];
 
             resolver.addMainIds(taxonId, rgdId, Collections.singleton(rgdId));
-            resolver.addSynonyms(taxonId, rgdId, Collections.singleton(symbol));
+            resolver.addMainIds(taxonId, rgdId, Collections.singleton(symbol));
 
             Set<String> ensemblIds = parseEnsemblIds(ensembl);
             resolver.addSynonyms(taxonId, rgdId, ensemblIds);
 
             if (!StringUtils.isBlank(name)) {
-                resolver.addSynonyms(taxonId, rgdId, Collections.singleton(name));
+                resolver.addMainIds(taxonId, rgdId, Collections.singleton(name));
             }
 
             if (!StringUtils.isBlank(entrez)) {
