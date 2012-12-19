@@ -121,7 +121,8 @@ Features
             </td>
 
             <td align="middle" style="padding-left: 6px;" class="submission-features-count">
-                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}"
+                   style="text-decoration: none;" data-feature-type="${fc.key}" data-dcc-id="${object.dCCid}">
                     ${fc.value}
                 </a>
             </td>
@@ -261,58 +262,61 @@ Features
   <%-- JS target for the results table --%>
   <div class="collection-table" id="${tableContainerId}"></div>
 
-  <script type="text/javascript">
-    (function($) {
-        var $table = $('#${tableContainerId}');
-        var query = {
-            select: ["primaryIdentifier", "score", "scoreProtocol.name"],
-            from: "${fc.key}",
-            joins: ["scoreProtocol"],
-            where: {"submissions.DCCid": "${object.dCCid}"}
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+    var $table  = $('#${tableContainerId}');
+    var NO_OP   = function () {};
+    var querier = function (featureType, dccId) {
+        return function (model) {
+            var query = {
+                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                from: featureType,
+                joins: ["scoreProtocol"],
+                where: {"submissions.DCCid": dccId}
+            };
+            var table = model.classes[featureType];
+            if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
+                query.select.push('chromosome.primaryIdentifier');
+                query.select.push('chromosomeLocation.start');
+                query.select.push('chromosomeLocation.end');
+                query.select.push('chromosomeLocation.strand');
+                query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+            }
+            query.select.push('submissions.DCCid');
+            query.select.push('submissions.experimentalFactors.name');
+            query.joins.push('submissions.experimentalFactors');
+            return query;
         };
-        var disableTable = function() {
-            $('.submission-features-count a').addClass('no-results').unbind('click');
-            $table.remove();
-        };
-        if (!${fc.value}) {
-            disableTable();
-        }
-        $(function() {
-            $SERVICE.fetchModel(function(model) {
-                var table = model.classes["${fc.key}"];
-                if (table.fields['chromosomeLocation'] && table.fields['chromosome']) {
-                    query.select.push('chromosome.primaryIdentifier');
-                    query.select.push('chromosomeLocation.start');
-                    query.select.push('chromosomeLocation.end');
-                    query.select.push('chromosomeLocation.strand');
-                    query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
-                }
-                query.select.push('submissions.DCCid');
-                query.select.push('submissions.experimentalFactors.name');
-                query.joins.push('submissions.experimentalFactors');
-            });
-            $('.submission-features-count a').click(function(e) {
-                var $link = $(this);
-                e.preventDefault();
-                $table.imWidget({
+    };
+    $(function() {
+        $('.submission-features-count a').click(function(e) {
+            var $link     = $(this);
+            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"));
+            e.preventDefault();
+            $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
+                $table.empty().imWidget({
                     type: "table",
-                    url: window.location.host + ':' + window.location.port + "/${WEB_PROPERTIES['webapp.path']}",
-                    token: "${PROFILE.dayToken}",
+                    service: $SERVICE,
+                    query: modded,
                     error: FailureNotification.notify,
-                    query: query,
                     events: LIST_EVENTS,
-                    properties: {pageSize: ${pageSize} }
+                    properties: { pageSize: ${pageSize} }
                 });
-                $link.unbind('click').click(function(e) {
-                    e.preventDefault();
-                    $table.slideToggle('fast');
-                    return false;
-                });
+                $('#submission-features-toggler').unbind('click').remove();
+                $table.before($('<button class="btn" id="submission-features-toggler">').text('Hide Table').click(function() {
+                    var $this = $(this);
+                    $table.slideToggle().promise().done(function() {
+                        $this.text($table.is(':visible') ? 'Hide Table' : 'Show Table');
+                    });
+                }));
             });
-            return false;
         });
-    }).call(window, jQuery);
-  </script>
+        return false;
+    });
+}).call(window, jQuery);
+//]]>
+</script>
 
 <%-- OVERLAPPING GENES
 

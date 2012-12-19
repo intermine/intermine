@@ -871,6 +871,7 @@
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+<<<<<<< HEAD
                                  
       <enrichmentwidgetdisplayer id="go_enrichment_for_protein"
                                  title="Gene Ontology Enrichment"
@@ -892,6 +893,8 @@
                                        genes.goAnnotation.ontologyTerm.identifier, genes.goAnnotation.ontologyTerm.name,
                                        genes.goAnnotation.ontologyTerm.parents.identifier,genes.goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+=======
+>>>>>>> modmine-tables-fix
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
