@@ -132,8 +132,9 @@ public class PollQueryAction extends InterMineAction
             } else {
                 trail = "|results." + qid;
             }
-            LOG.debug("Finished running " + controller.getPathQuery());
-            request.setAttribute(Constants.QUERY, controller.getPathQuery());
+            if (pr != null && pr.getPathQuery() != null) {
+                request.setAttribute("query", pr.getPathQuery());
+            }
             ForwardParameters fp = new ForwardParameters(mapping.findForward("results"))
                                     .addParameter("trail", trail)
                                     .addParameter("table", "results." + qid);
