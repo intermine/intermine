@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +37,8 @@ import org.intermine.util.PropertiesUtil;
 public class EntrezGeneIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
-    private final String propName = "resolver.entrez.file"; // set in .intermine/MINE.properties
+    private final String propKey = "resolver.file.rootpath"; // set in .intermine/MINE.properties
+    private final String resolverFileSymbo = "entrez";
 
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
     private Map<String, String> config_xref = new HashMap<String, String>();
@@ -48,6 +50,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * Constructor read pid configuration
      */
     public EntrezGeneIdResolverFactory() {
+        this.clsCol = this.defaultClsCol;
         readConfig();
     }
 
@@ -157,20 +160,25 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonsAndClassName(taxonIds, this.clsCol.iterator().next()))) {
-                Properties props = PropertiesUtil.getProperties();
-                String fileName = props.getProperty(propName);
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey).trim();
 
                 // File path not set in MINE.properties
-                if (StringUtils.isBlank(fileName)) {
-                    String message = "Entrez gene resolver has no file name specified, set "
-                        + propName + " to the location of the gene_info file.";
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
                     LOG.warn(message);
                     return;
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName))), taxonIds);
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                String resolverFileName = resolverFileRoot + resolverFileSymbo;
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(new BufferedReader(new FileReader(f)), taxonIds);
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -228,6 +236,8 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 primaryIdentifier = record.entrez;
             }
 
+            resolver.addMainIds(taxonId, primaryIdentifier,
+                    Collections.singleton(primaryIdentifier));
             resolver.addMainIds(taxonId, primaryIdentifier, record.getMainIds());
             resolver.addSynonyms(taxonId, primaryIdentifier,
                     flattenCollections(record.xrefs.values()));

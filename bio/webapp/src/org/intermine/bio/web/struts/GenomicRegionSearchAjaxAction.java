@@ -11,6 +11,7 @@ package org.intermine.bio.web.struts;
  */
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -360,8 +361,10 @@ public class GenomicRegionSearchAjaxAction extends Action
                 response.setHeader("Content-Disposition",
                         "attachment; filename=\"" + exportFileName + "\"");
 
-                GenomicRegionSequenceExporter grse = new GenomicRegionSequenceExporter(
-                        api.getObjectStore(), response);
+                ResponseUtil.setCustomContentType(response, "text/x-fasta");
+                OutputStream out = response.getOutputStream();
+                GenomicRegionSequenceExporter grse =
+                        new GenomicRegionSequenceExporter(api.getObjectStore(), out);
                 grse.export(grList);
             } else {
                 boolean doGzip = false;

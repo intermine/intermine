@@ -34,7 +34,7 @@ public class FlyAtlasConverterTest extends ItemsTestCase
         String input = "Oligo\tbrain vs whole fly - T-Test_Change Direction\tBrainMean\tBrainSEM\tBrainCall\tBrain:fly\thead vs whole fly  - T-Test_Change Direction\tHeadMean\tHeadSEM\tHeadCall\tHead:fly\tFlyMean\tFlySEM\tFlyCall" + ENDL
             + "1616608_a_at\tDown\t1016.15\t23.17392572\t4\t0.696947874\tUp\t1874.55\t85.33788237\t4\t1.285699588\t1458\t127.7786302\t4" + ENDL;
 
-        MockItemWriter itemWriter = new MockItemWriter(new HashMap());
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, org.intermine.model.fulldata.Item>());
 
         FlyAtlasConverter converter = new FlyAtlasConverter(itemWriter,
                                                         Model.getInstanceByName("genomic"));

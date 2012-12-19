@@ -118,6 +118,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("identifier");
                 String synonym = res.getString("name");
+                resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(uniquename));
                 resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(synonym));
             }
             stmt.close();

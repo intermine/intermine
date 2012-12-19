@@ -13,6 +13,7 @@ package org.intermine.web.logic.widget;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,6 +34,8 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.web.logic.config.FieldConfig;
+import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
@@ -43,26 +46,22 @@ import org.intermine.web.logic.widget.config.WidgetConfigUtil;
  */
 public class EnrichmentWidget extends Widget
 {
-
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
-    private int notAnalysed = 0;
-    private InterMineBag bag;
+    private Integer countItemsWithLengthNotNull = null;
     private InterMineBag populationBag;
-    private ObjectStore os;
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
+    private boolean isGeneLenghtCorrectionSelected;
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
     private ClassDescriptor typeDescriptor;
 
 
     /**
-import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-
      * @param config widget config
      * @param interMineBag bag for this widget
+     * @param populationBag the reference population
      * @param os object store
      * @param errorCorrection which error correction to use (Bonferroni, etc)
      * @param max maximum value to display (0 - 1)
@@ -70,7 +69,8 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
                             InterMineBag populationBag, ObjectStore os,
-                            String filter, String max, String errorCorrection) {
+                            String filter, String max, String errorCorrection,
+                            boolean isGeneLenghtCorrectionSelected) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
@@ -79,6 +79,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
+        this.isGeneLenghtCorrectionSelected = isGeneLenghtCorrectionSelected;
         validateBagType();
         process();
     }
@@ -90,7 +91,8 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     private void validateBagType() {
         ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
         if (bagType == null) {
-            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
+            throw new IllegalArgumentException("This bag has a type not found in the current "
+                                              + "model: " + bag.getType());
         }
         if ("InterMineObject".equals(typeDescriptor.getName())) {
             return; // This widget accepts anything, however useless.
@@ -110,11 +112,16 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     @Override
     public void process() {
         try {
+            boolean applyGeneLengthCorrection = false;
+            if (isGeneLenghtCorrectionSelected && isGeneLengthCorrectionApplicable()) {
+                applyGeneLengthCorrection = true;
+            }
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
-                (EnrichmentWidgetConfig) config, filter);
+                (EnrichmentWidgetConfig) config, filter, applyGeneLengthCorrection);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
-            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection);
+            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection,
+                applyGeneLengthCorrection);
             setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
@@ -138,20 +145,6 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List getElementInList() {
         return new Vector();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getNotAnalysed() {
-        return notAnalysed;
-    }
-
-    /**
-    * {@inheritDoc}
-     */
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
     }
 
     /**
@@ -332,12 +325,12 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         String subClassType = "";
         String subClassPath = "";
         EnrichmentWidgetConfig ewc = ((EnrichmentWidgetConfig) config);
-        if (((EnrichmentWidgetConfig) config).getEnrichIdentifier() != null) {
+        if (ewc.getEnrichIdentifier() != null) {
             enrichIdentifier = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
+                + ewc.getEnrichIdentifier();
         } else {
             String enrichPath = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrich();
+                + ewc.getEnrich();
             if (WidgetConfigUtil.isPathContainingSubClass(model, enrichPath)) {
                 subClassContraint = true;
                 subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
@@ -350,7 +343,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         }
 
         String startClassDisplayView = config.getStartClass() + "."
-            + ((EnrichmentWidgetConfig) config).getStartClassDisplay();
+            + ewc.getStartClassDisplay();
         pathQuery.addView(enrichIdentifier);
         pathQuery.addView(startClassDisplayView);
         pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
@@ -362,12 +355,72 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         }
         //constraints for view
         List<PathConstraint> pathConstraintsForView =
-            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
+            ewc.getPathConstraintsForView();
         if (pathConstraintsForView != null) {
             for (PathConstraint pc : pathConstraintsForView) {
                 pathQuery.addConstraint(pc);
             }
         }
         return pathQuery;
+    }
+
+    /**
+     * Return true if the gene length correction is applicable
+     * 1- normaliseByGeneLength set to true in webconfig-model.xml file
+     * 2- The typeClass, set in the conf file, is any class extending SequenceFeature (with length)
+     * 3- gene.length is not always empty
+     * @return true if the correction coefficient can be applied
+     */
+    public boolean isGeneLengthCorrectionApplicable() {
+        if (countItemsWithLengthNotNull != null) {
+            if (countItemsWithLengthNotNull != 0) {
+                return true;
+            }
+            return false;
+        } else {
+            ClassDescriptor sequenceFeatureCd = os.getModel()
+                .getClassDescriptorByName("SequenceFeature");
+            if (((EnrichmentWidgetConfig) config).isNormaliseByGeneLength()
+                && typeDescriptor.getAllSuperDescriptors().contains(sequenceFeatureCd)) {
+                //if there are at least one gene in the bag with length not null
+                countItemsWithLengthNotNull = bag.getCountItemsWithLengthNotNull();
+                if (countItemsWithLengthNotNull != 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public double getPercentageGeneWithLengthNull() throws ObjectStoreException {
+        int bagSize = bag.getSize();
+        double rate = (double) (bagSize - countItemsWithLengthNotNull) / bagSize;
+        return rate * 100;
+    }
+
+    /**
+     * Returns the pathquery for genes length null based on the views set in config file
+     * and the bag constraint
+     * Executed when the user selects the peercentage of element in the gab with length null.
+     * @param webConfig the web configuration
+     * @return the query generated
+     */
+    public PathQuery getPathQueryForGenesWithLengthNull(WebConfig webConfig) {
+        Model model = os.getModel();
+        PathQuery q = new PathQuery(model);
+        String startClassSimpleName = config.getStartClass();
+        String startClass = model.getPackageName() + "." + startClassSimpleName;
+        Collection<FieldConfig> fieldConfigs = webConfig.getFieldConfigs(startClass);
+        for (FieldConfig fieldConfig : fieldConfigs) {
+            if (fieldConfig.getShowInSummary()) {
+                q.addView(startClassSimpleName + "." + fieldConfig.getFieldExpr());
+            }
+        }
+        // bag constraint
+        q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
+        //constraints for gene length
+        q.addConstraint(Constraints.isNull(config.getStartClass() + ".length"));
+
+        return q;
     }
 }

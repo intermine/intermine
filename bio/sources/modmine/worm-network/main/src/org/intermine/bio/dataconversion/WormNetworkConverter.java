@@ -76,7 +76,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
      */
     public WormNetworkConverter(ItemWriter writer, Model model) {
         super(writer, model, WORM_DATA_SOURCE_NAME, WORM_DATASET_TITLE);
-        resolverFactory = new WormBaseChadoIdResolverFactory("gene");
+        resolverFactory = new WormBaseIdResolverFactory("gene");
         orgRefId = getOrganism(WORM_TAXON_ID);
     }
 

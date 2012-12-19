@@ -69,7 +69,9 @@ public class TemplateListController extends TilesAction
         Set<String> allClasses = new HashSet<String>();
         if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
-                allClasses.add(interMineIdBag.getType());
+                for (ClassDescriptor cld : interMineIdBag.getClassDescriptors()) {
+                    allClasses.add(cld.getUnqualifiedName());
+                }
                 templates = templateManager.getReportPageTemplatesForAspect(aspect, allClasses);
             } else if (object != null) {
                 ClassDescriptor thisCld = model.getClassDescriptorByName(DynamicUtil

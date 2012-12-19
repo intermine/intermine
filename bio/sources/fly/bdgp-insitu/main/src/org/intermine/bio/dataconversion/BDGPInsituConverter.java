@@ -49,7 +49,7 @@ public class BDGPInsituConverter extends BioFileConverter
     private String[] stages;
     private static final String TAXON_FLY = "7227";
     private Item ontology = null;
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     static final String[] STAGE_LABELS; static {
         STAGE_LABELS = new String[7];

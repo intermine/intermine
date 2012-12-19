@@ -19,7 +19,7 @@ import java.util.Map;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.metadata.Model;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
@@ -50,7 +50,7 @@ public abstract class JSONService extends WebService
     }
 
     @Override
-    protected void initState() {
+    protected void postInit() {
         output.setHeaderAttributes(getHeaderAttributes());
     }
 
@@ -133,11 +133,7 @@ public abstract class JSONService extends WebService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        if (hasCallback()) {
-            return Formats.JSONP;
-        } else {
-            return Formats.JSON;
-        }
+    protected Format getDefaultFormat() {
+        return Format.JSON;
     }
 }
