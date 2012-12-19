@@ -262,7 +262,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput cell-based RNAi screens</td>
-    <td> <a href="http://genomernai.org" target="_new" class="extlink">GenomeRNAi</a> - Version 8.0</td>
+    <td> <a href="http://genomernai.org" target="_new" class="extlink">GenomeRNAi</a> - Version 9.0</td>
     <td> Gilsdorf et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/19910367" target="_new" class="extlink">PubMed: 19910367</a></td>
     <td> &nbsp;</td>
   </tr>

@@ -196,6 +196,8 @@ public final class Constants
      * Current version of the InterMine WebService.
      * This constant must changed every time the API changes, either by addition
      * or deletion of features.
+     * 
+     * 12 - Added ability to filter lists from AvailableListsService
      */
     public static final int WEB_SERVICE_VERSION = 12;
 

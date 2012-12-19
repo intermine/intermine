@@ -26,8 +26,10 @@ public interface EnrichmentInput
 {
 
     /**
-     * Return a population info instance contanining the population size, N (In our example this is the total number of companies, or possibly
-     * the total number of companies that have at least one Department) and the average length of the genes in the whole population.
+     * Return a population info instance contanining the population size,
+     * N (In our example this is the total number of companies, or possibly
+     * the total number of companies that have at least one Department)
+     * and the average length of the genes in the whole population.
      * @return the population info instance
      */
     PopulationInfo getPopulationInfo();
@@ -53,7 +55,7 @@ public interface EnrichmentInput
      * the department.
      * @return a map from attribute value to the count of items in the population with that value
      */
-    Map<String, Integer> getAnnotatedCountsInPopulation();
+    Map<String, PopulationInfo> getAnnotatedCountsInPopulation();
 
     /**
      * Get additional display labels for attribute values in the enrichment analysis, these may be
@@ -69,11 +71,4 @@ public interface EnrichmentInput
      * @return the number of tests to be performed
      */
     int getTestCount();
-
-    /**
-     * Return the average gene length of genes associated with a term in the whole population
-     * @return the map of term with average
-     */
-    Map<String, Long> getAnnotatedGeneLengthAverageInPopulation();
-
 }

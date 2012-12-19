@@ -22,6 +22,7 @@ import org.intermine.api.LinkRedirectManager;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
+import org.intermine.model.bio.DataSource;
 import org.intermine.model.bio.Organism;
 import org.intermine.util.TypeUtil;
 
@@ -75,6 +76,63 @@ public class BioLinkRedirectManager extends LinkRedirectManager
             geneOrgKey += "(\\.(" + organismReference.getTaxonId() + "|\\*))";
         }
         String url = null;
+
+        { // CrossReference
+            if (geneOrgKey.contains("CrossReference")) {
+                String xrefId = null;
+                try {
+                    xrefId = (String) imo.getFieldValue("identifier");
+                } catch (IllegalAccessException e1) {
+                    return url;
+                }
+
+                if (xrefId == null) {
+                    return url;
+                }
+
+                DataSource ds = null;
+                try {
+                    ds = (DataSource) imo.getFieldValue("source");
+                } catch (IllegalAccessException e) {
+                    return url;
+                }
+
+                if (ds == null) {
+                    return url;
+                }
+
+                String dataSourceName = null;
+                String dataSourceUrl = null;
+                try {
+                    dataSourceName = (String) ds.getFieldValue("name");
+                     dataSourceUrl = (String) ds.getFieldValue("url");
+                } catch (IllegalAccessException e) {
+                    // Do nothing
+                }
+
+                // xreflink.*.url in web.properties has higher priority than source.url
+                if (dataSourceName != null) {
+                    String xrefUrl = webPropertiesHasXrefUrl(dataSourceName);
+                    if (xrefUrl != null) {
+                        if (xrefUrl.contains(ATTR_MARKER_RE)) {
+                            url = xrefUrl.replaceAll(ATTR_MARKER_RE, xrefId);
+                        } else {
+                            url = xrefUrl + xrefId;
+                        }
+                    } else {
+                        if (dataSourceUrl != null) {
+                            if (dataSourceUrl.contains(ATTR_MARKER_RE)) {
+                                url = dataSourceUrl.replaceAll(ATTR_MARKER_RE, xrefId);
+                            } else {
+                                url = dataSourceUrl;
+                            }
+                        }
+                    }
+                    return url;
+                }
+            }
+        }
+
         // externalLink.flybaseLink.Gene.7227.primaryIdentifier.url = http://google.com
         final String regexp = "externallink\\.([^.]+)\\." + geneOrgKey
             + "\\.([^.]+)(\\.list)?\\.(url)";
@@ -99,5 +157,19 @@ public class BioLinkRedirectManager extends LinkRedirectManager
             }
         }
         return url;
+    }
+
+    private String webPropertiesHasXrefUrl(String dataSourceName) {
+        final String xrefexp = "xreflink." + dataSourceName + ".url";
+        Pattern xrefp = Pattern.compile(xrefexp);
+        for (Map.Entry<Object, Object> entry: webProperties.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            Matcher matcher = xrefp.matcher(key);
+            if (matcher.matches()) {
+                return value;
+            }
+        }
+        return null;
     }
 }

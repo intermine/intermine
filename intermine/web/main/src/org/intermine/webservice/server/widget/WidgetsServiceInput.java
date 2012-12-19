@@ -28,6 +28,7 @@ public class WidgetsServiceInput extends WebServiceInput
     private String bagName;
     private String populationBagName;
     private boolean savePopulation = false;
+    private String geneLengthCorrection;
     private List<String> extraAttributes = new ArrayList<String>();
 
     /**
@@ -101,5 +102,4 @@ public class WidgetsServiceInput extends WebServiceInput
     public void setSavePopulation(boolean savePopulation) {
         this.savePopulation = savePopulation;
     }
-
 }

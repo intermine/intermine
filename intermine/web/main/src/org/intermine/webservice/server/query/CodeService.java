@@ -33,7 +33,7 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.util.URLGenerator;
-import org.intermine.webservice.server.Formats;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
@@ -56,8 +56,20 @@ public class CodeService extends AbstractQueryService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        return Formats.TEXT;
+    protected Format getDefaultFormat() {
+        return Format.TEXT;
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        switch (getFormat()) {
+        case JSON:
+            return true;
+        case TEXT:
+            return true;
+        default:
+            return false;
+        }
     }
 
     @Override

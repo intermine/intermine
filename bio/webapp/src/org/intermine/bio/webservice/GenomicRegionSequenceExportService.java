@@ -1,13 +1,23 @@
 package org.intermine.bio.webservice;
 
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.export.GenomicRegionSequenceExporter;
 import org.intermine.bio.web.logic.GenomicRegionSearchUtil;
 import org.intermine.bio.web.model.GenomicRegion;
+import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
+import org.intermine.webservice.server.output.StreamedOutput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +30,8 @@ import org.json.JSONObject;
  */
 public class GenomicRegionSequenceExportService extends WebService
 {
+    private OutputStream out;
+
     /**
      * Constructor.
      *
@@ -30,27 +42,53 @@ public class GenomicRegionSequenceExportService extends WebService
     }
 
     @Override
-    protected void execute() throws Exception {
-        doExport();
+    public Format getDefaultFormat() {
+        return Format.UNKNOWN;
     }
 
-    private void doExport() {
-        GenomicRegionSequenceExporter exporter = new GenomicRegionSequenceExporter(
-                im.getObjectStore(), response);
-        try {
-            exporter.export(parseRegionRequest());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Override
+    public String getDefaultFileName() {
+        return "results" + StringUtil.uniqueString() + ".fa";
+    }
+
+    @Override
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String sep) {
+        this.out = os;
+        output = new StreamedOutput(out, new PlainFormatter(), sep);
+        if (isUncompressed()) {
+            ResponseUtil.setCustomTypeHeader(response, getDefaultFileName(), getContentType());
         }
+        return output;
+    }
+
+    private String getContentType() {
+        return "text/x-fasta";
+    }
+
+    @Override
+    protected void execute() throws Exception {
+        GenomicRegionSequenceExporter exporter = new GenomicRegionSequenceExporter(
+                im.getObjectStore(), out);
+        exporter.export(parseRegionRequest());
     }
 
     /**
      * Derived from GenomicRegionSearchListInput.java
      */
-    private List<GenomicRegion> parseRegionRequest() throws JSONException {
-        JSONObject jsonRequest = new JSONObject(request.getParameter("query"));
+    private List<GenomicRegion> parseRegionRequest() throws Exception {
+        String input = "";
+        if ("application/x-www-form-urlencoded".equals(request.getContentType())
+                || "GET".equalsIgnoreCase(request.getMethod())) {
+            input = getRequiredParameter("query");
+        } else {
+            input = IOUtils.toString(request.getInputStream());
+        }
+        JSONObject jsonRequest;
+        try {
+            jsonRequest = new JSONObject(input);
+        } catch (JSONException e) {
+            throw new BadRequestException("Invalid query: " + input);
+        }
 
         String org = jsonRequest.getString("organism");
 

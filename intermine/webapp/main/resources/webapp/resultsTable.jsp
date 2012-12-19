@@ -86,8 +86,7 @@ jQuery(function() {
     intermine.css.headerIcon = "fm-header-icon";
     var opts = {
         type: 'table',
-        url: "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
-        token: "${PROFILE.dayToken}",
+        service: $SERVICE,
         error: FailureNotification.notify,
         query: ${queryJson},
         events: LIST_EVENTS,

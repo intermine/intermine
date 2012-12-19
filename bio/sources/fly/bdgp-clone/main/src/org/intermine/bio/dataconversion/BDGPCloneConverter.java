@@ -32,7 +32,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
 //    protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
     private Map<String, Item> genes = new HashMap<String, Item>();
     private static final String TAXON_FLY = "7227";
-    private IdResolver rslv;
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -84,7 +84,7 @@ public class BDGPCloneConverter extends CDNACloneConverter
     }
 
     private Item getGene(String identifier) throws ObjectStoreException {
-    	if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
             return null;
         }
         int resCount = rslv.countResolutions(TAXON_FLY, identifier);

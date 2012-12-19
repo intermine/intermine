@@ -32,6 +32,7 @@ import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
+ * NOTE: RETIRED
  *
  * @author Kim Rutherford
  * @author Richard Smith

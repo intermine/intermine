@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.map.ListOrderedMap;
@@ -42,6 +43,7 @@ import org.intermine.model.userprofile.UserProfile;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.pathquery.PathQuery;
 
 /**
  * Class to represent a user of the webapp
@@ -407,6 +409,30 @@ public class Profile
      */
     public void saveQuery(String name, SavedQuery query) {
         savedQueries.put(name, query);
+        if (manager != null && !savingDisabled) {
+            manager.saveProfile(this);
+        }
+    }
+
+    /**
+     * Save the map of queries as given to the user's profile, avoiding all possible name
+     * collisions. This method will not overwrite any existing user data.
+     * @param toSave
+     */
+    public void saveQueries(
+            Map<? extends String, ? extends PathQuery> toSave,
+            Set<? super String> successes) {
+        Date now = new Date();
+        for (Entry<? extends String, ? extends PathQuery> pair: toSave.entrySet()) {
+            String name = pair.getKey();
+            int c = 1;
+            while (savedQueries.containsKey(name)) {
+                name = pair.getKey() + "_"  + c++; 
+            }
+            SavedQuery sq = new SavedQuery(pair.getKey(), now, pair.getValue());
+            savedQueries.put(name, sq);
+            successes.add(name);
+        }
         if (manager != null && !savingDisabled) {
             manager.saveProfile(this);
         }
@@ -848,4 +874,5 @@ public class Profile
     public boolean prefers(String preference) {
         return preferences.containsKey(preference);
     }
+
 }

@@ -1,3 +1,0 @@
-Generate tour with:
-   ../../../common/scripts/process_help.pl tour.txt 'FlyMine Tour' tour
-
