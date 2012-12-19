@@ -216,7 +216,7 @@
       <!-- implicitly cancelled by user -->
       <forward name="cancelled" redirect="true" path="/query.do"/>
       <!-- forward to results page -->
-      <forward name="results" redirect="true" path="/results.do"/>
+      <forward name="results" path="/results.do"/>
       <!-- continue waiting -->
       <forward name="waiting" path="waiting.page"/>
     </action>
