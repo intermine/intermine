@@ -871,7 +871,7 @@
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
-                                 normaliseByGeneLength="true"/>
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="go_enrichment_for_protein"
                                  title="Gene Ontology Enrichment"
@@ -907,7 +907,7 @@
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="
-                                 normaliseByGeneLength="true"/>
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
@@ -936,7 +936,7 @@
                                  views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
                                         mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"
                                  constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
-                                 normaliseByGeneLength="true"/>
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
@@ -952,7 +952,7 @@
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 normaliseByGeneLength="true"/>
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"

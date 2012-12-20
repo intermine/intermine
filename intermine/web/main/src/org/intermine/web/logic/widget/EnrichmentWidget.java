@@ -10,10 +10,10 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -34,9 +34,9 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.web.logic.config.FieldConfig;
-import org.intermine.web.logic.config.WebConfig;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 /**
@@ -47,12 +47,12 @@ import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 public class EnrichmentWidget extends Widget
 {
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
-    private Integer countItemsWithLengthNotNull = null;
     private InterMineBag populationBag;
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
-    private boolean isGeneLenghtCorrectionSelected;
+    private boolean extraCorrectionCoefficient = false;
+    private CorrectionCoefficient correctionCoefficient = null;
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
     private ClassDescriptor typeDescriptor;
@@ -62,15 +62,16 @@ public class EnrichmentWidget extends Widget
      * @param config widget config
      * @param interMineBag bag for this widget
      * @param populationBag the reference population
-     * @param os object store
+     * @param os object storegene
      * @param errorCorrection which error correction to use (Bonferroni, etc)
+     * @param extraCorrectionCoefficient if true correction coefficient has been selected
      * @param max maximum value to display (0 - 1)
      * @param filter filter to use (ie Ontology)
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
                             InterMineBag populationBag, ObjectStore os,
                             String filter, String max, String errorCorrection,
-                            boolean isGeneLenghtCorrectionSelected) {
+                            String extraCorrectionCoefficient) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
@@ -79,8 +80,26 @@ public class EnrichmentWidget extends Widget
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
-        this.isGeneLenghtCorrectionSelected = isGeneLenghtCorrectionSelected;
+
         validateBagType();
+        String correctionCoefficientClassName = (config.getCorrectionCoefficient() != null)
+                                               ? config.getCorrectionCoefficient().trim()
+                                               : "";
+        if (!correctionCoefficientClassName.isEmpty()) {
+            try {
+                Class<?> clazz = Class.forName(correctionCoefficientClassName);
+                Constructor<?> c = clazz.getConstructor(new Class[] {WidgetConfig.class,
+                    ObjectStore.class, InterMineBag.class});
+                correctionCoefficient =  (CorrectionCoefficient) c.newInstance(new Object[] {
+                    config, os, bag});
+                this.extraCorrectionCoefficient = correctionCoefficient
+                    .isSelected(extraCorrectionCoefficient);
+            } catch (ClassNotFoundException cnfe) {
+                LOG.error(cnfe);
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+        }
         process();
     }
 
@@ -102,8 +121,8 @@ public class EnrichmentWidget extends Widget
             return; // Sub-class.
         }
         throw new IllegalArgumentException(
-            String.format("The %s enrichment query only accepts lists of %s, but you provided a list of %s",
-                config.getId(), config.getTypeClass(), bag.getType()));
+            String.format("The %s enrichment query only accepts lists of %s, but you provided a "
+                + "list of %s " + config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**
@@ -112,16 +131,13 @@ public class EnrichmentWidget extends Widget
     @Override
     public void process() {
         try {
-            boolean applyGeneLengthCorrection = false;
-            if (isGeneLenghtCorrectionSelected && isGeneLengthCorrectionApplicable()) {
-                applyGeneLengthCorrection = true;
-            }
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
-                (EnrichmentWidgetConfig) config, filter, applyGeneLengthCorrection);
+                  (EnrichmentWidgetConfig) config, filter, extraCorrectionCoefficient,
+                  correctionCoefficient);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
             results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection,
-                applyGeneLengthCorrection);
+                                           extraCorrectionCoefficient, correctionCoefficient);
             setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
@@ -365,62 +381,10 @@ public class EnrichmentWidget extends Widget
     }
 
     /**
-     * Return true if the gene length correction is applicable
-     * 1- normaliseByGeneLength set to true in webconfig-model.xml file
-     * 2- The typeClass, set in the conf file, is any class extending SequenceFeature (with length)
-     * 3- gene.length is not always empty
-     * @return true if the correction coefficient can be applied
+     * Return the correction coefficient used by the widget
+     * @return
      */
-    public boolean isGeneLengthCorrectionApplicable() {
-        if (countItemsWithLengthNotNull != null) {
-            if (countItemsWithLengthNotNull != 0) {
-                return true;
-            }
-            return false;
-        } else {
-            ClassDescriptor sequenceFeatureCd = os.getModel()
-                .getClassDescriptorByName("SequenceFeature");
-            if (((EnrichmentWidgetConfig) config).isNormaliseByGeneLength()
-                && typeDescriptor.getAllSuperDescriptors().contains(sequenceFeatureCd)) {
-                //if there are at least one gene in the bag with length not null
-                countItemsWithLengthNotNull = bag.getCountItemsWithLengthNotNull();
-                if (countItemsWithLengthNotNull != 0) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public double getPercentageGeneWithLengthNull() throws ObjectStoreException {
-        int bagSize = bag.getSize();
-        double rate = (double) (bagSize - countItemsWithLengthNotNull) / bagSize;
-        return rate * 100;
-    }
-
-    /**
-     * Returns the pathquery for genes length null based on the views set in config file
-     * and the bag constraint
-     * Executed when the user selects the peercentage of element in the gab with length null.
-     * @param webConfig the web configuration
-     * @return the query generated
-     */
-    public PathQuery getPathQueryForGenesWithLengthNull(WebConfig webConfig) {
-        Model model = os.getModel();
-        PathQuery q = new PathQuery(model);
-        String startClassSimpleName = config.getStartClass();
-        String startClass = model.getPackageName() + "." + startClassSimpleName;
-        Collection<FieldConfig> fieldConfigs = webConfig.getFieldConfigs(startClass);
-        for (FieldConfig fieldConfig : fieldConfigs) {
-            if (fieldConfig.getShowInSummary()) {
-                q.addView(startClassSimpleName + "." + fieldConfig.getFieldExpr());
-            }
-        }
-        // bag constraint
-        q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
-        //constraints for gene length
-        q.addConstraint(Constraints.isNull(config.getStartClass() + ".length"));
-
-        return q;
+    public CorrectionCoefficient getExtraCorrectionCoefficient() {
+        return correctionCoefficient;
     }
 }

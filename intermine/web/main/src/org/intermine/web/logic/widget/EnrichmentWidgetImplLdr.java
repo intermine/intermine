@@ -42,7 +42,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     private EnrichmentWidgetConfig config;
     private String action;
     private InterMineBag populationBag;
-    private boolean applyGeneLenghCoefficient;
+    private boolean extraCorrectionCoefficient;
+    private CorrectionCoefficient correctionCoefficient;
 
     /**
      * Construct an Enrichment widget loader, which performs the queries needed for
@@ -54,13 +55,18 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
      * @param os The connection to the Object Store database.
      * @param config The configuration detailing the kind of enrichment to do.
      * @param filter An optional filter value.
+     * @param extraCorrectionCoefficient if true correction coefficient has been selected
+     * @param correctionCoefficient a instance of correction coefficient
+     * @param applyCorrectionCoefficient
      */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
                                    ObjectStore os, EnrichmentWidgetConfig config,
-                                   String filter, boolean applyGeneLenghCoefficient) {
+                                   String filter, boolean extraCorrectionCoefficient,
+                                   CorrectionCoefficient correctionCoefficient) {
         super(bag, os, filter, config);
         this.populationBag = populationBag;
-        this.applyGeneLenghCoefficient = applyGeneLenghCoefficient;
+        this.extraCorrectionCoefficient = extraCorrectionCoefficient;
+        this.correctionCoefficient = correctionCoefficient;
         this.config = config;
     }
 
@@ -140,10 +146,10 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         mainQuery.setDistinct(false);
 
         QueryFunction qfCount = new QueryFunction();
-        QueryField qfGeneLength = null;
-        QueryFunction qfAverage = null;
-        if (applyGeneLenghCoefficient) {
-            qfGeneLength = new QueryField(startClass, "length");
+        QueryField qfCorrection = null;
+        if (extraCorrectionCoefficient
+            && correctionCoefficient.isApplicable()) {
+            qfCorrection = correctionCoefficient.getQueryField(startClass);
         }
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {
@@ -162,11 +168,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             mainQuery.addFrom(subQ);
             mainQuery.addToSelect(qfCount);
             // and for the whole population the average length
-            if (action.startsWith("population") && qfGeneLength != null) {
-                subQ.addToSelect(qfGeneLength);
-                QueryField outerQfGenelength = new QueryField(subQ, qfGeneLength);
-                qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
-                mainQuery.addToSelect(qfAverage);
+            if (action.startsWith("population") && qfCorrection != null) {
+                correctionCoefficient.updatePopulationTotalQuery(mainQuery, subQ, qfCorrection);
             }
         // enrichment queries
         } else {
@@ -188,11 +191,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 } else {
                     mainQuery.addToSelect(outerQfEnrichId);
                 }
-            } else if ("population".equals(action) && qfGeneLength != null) {
-                subQ.addToSelect(qfGeneLength);
-                QueryField outerQfGenelength = new QueryField(subQ, qfGeneLength);
-                qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
-                mainQuery.addToSelect(qfAverage);
+            } else if ("population".equals(action) && qfCorrection != null) {
+                correctionCoefficient.updatePopulationQuery(mainQuery, subQ, qfCorrection);
             }
         }
         return mainQuery;

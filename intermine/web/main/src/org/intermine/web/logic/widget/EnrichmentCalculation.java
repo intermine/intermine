@@ -40,17 +40,18 @@ public final class EnrichmentCalculation
      * the type multiple hypothesis error correction specified before returning the results.
      * @param input details of the sample and population
      * @param maxValue the maximum p-value to return, for display purposes
-     * @param applyGeneLengthCorrection if true correction coefficient is applied
      * @param errorCorrection the type of error correction to perform or None
+     * @param extraCorrectionCoefficient if true correction coefficient has been selected
+     * @param correctionCoefficient a instance of correction coefficient
      * @return results of the enrichment calculation
      */
     public static EnrichmentResults calculate(EnrichmentInput input, Double maxValue,
-            String errorCorrection, boolean applyGeneLengthCorrection) {
+            String errorCorrection, boolean extraCorrectionCoefficient,
+            CorrectionCoefficient correctionCoefficient) {
 
         int sampleSize = input.getSampleSize();
         PopulationInfo population = input.getPopulationInfo();
         int populationSize = population.getSize();
-        float geneLengthAverage = population.getGeneLengthAverage();
 
         Map<String, Integer> sampleCounts = input.getAnnotatedCountsInSample();
         Map<String, PopulationInfo> annotatedPopulationInfo =
@@ -74,9 +75,9 @@ public final class EnrichmentCalculation
 
         Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
                 rawResults, maxValue, input.getTestCount());
-        if (applyGeneLengthCorrection) {
-            ErrorCorrection.applyLenghtCorrection(correctedResults,
-                geneLengthAverage, populationSize, annotatedPopulationInfo);
+        if (extraCorrectionCoefficient && correctionCoefficient.isApplicable()) {
+            correctionCoefficient.apply(correctedResults,
+                population, annotatedPopulationInfo);
         }
         Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
         // record the number of items in the sample that had any values for the attribute
