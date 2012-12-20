@@ -142,16 +142,16 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
         PopulationInfo populationInfo = populationCache.get(q.toString());
         if (populationInfo == null) {
             int size = 0;
-            float geneLengthAverage = 0;
+            Object extraAttribute = 0;
             Results res = os.execute(q);
             List<Object> info = (List<Object>) res.get(0);
             size = ((Long) info.get(0)).intValue();
             if (info.size() > 1) {
                 if (info.get(1) != null) {
-                    geneLengthAverage = ((BigDecimal) info.get(1)).floatValue();
+                    extraAttribute = info.get(1);
                 }
             }
-            populationInfo = new PopulationInfo(size, geneLengthAverage);
+            populationInfo = new PopulationInfo(size, extraAttribute);
             populationCache.put(q.toString(), populationInfo);
         }
         return populationInfo;

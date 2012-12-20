@@ -270,8 +270,9 @@ public abstract class WidgetConfig
 
     /**
      * @param imBag the bag for this widget
+     * @param populationBag the population bag
      * @param os objectstore
-     * @param attributes extra attribute - like organism
+     * @param attributes extra attribute - like organism or gene length correction coefficient
      * @return the widget
      */
     public abstract Widget getWidget(InterMineBag imBag, InterMineBag populationBag,ObjectStore os,
