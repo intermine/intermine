@@ -136,7 +136,7 @@ public class PantherConverter extends BioFileConverter
                 String[] attributes = key.split("\\.");
                 if (attributes.length == 4) {
                     String taxonId = attributes[0];
-                    if (geneIdPolymorphism.get(taxonId).isEmpty()) {
+                    if (geneIdPolymorphism.isEmpty() || geneIdPolymorphism.get(taxonId).isEmpty()) {
                         Map<String, String> patternMap = new HashMap<String, String>();
                         patternMap.put(attributes[3].trim(), value);
                         geneIdPolymorphism.put(taxonId, patternMap);
