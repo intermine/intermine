@@ -115,9 +115,9 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     $SERVICE.fetchVersion().fail(notification.render).done(function(v) {
         console.log("Webservice is at version " + v);
     });
-    if (intermine.widgets != null) {
-        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
-    }
+    //if (intermine.widgets != null) {
+        //window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
+    //}
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua.msie && parseInt(ua.version, 10) < 9) {
         new Notification({message: '<fmt:message key="old.browser"/>'}).render();
