@@ -473,10 +473,13 @@ public final class SessionMethods
      * @param pathQuery query to start
      * @return the new query id created
      */
-    public static String startQueryWithTimeout(final HttpServletRequest request,
-            final boolean saveQuery, final PathQuery pathQuery) {
+    public static String startQueryWithTimeout(
+            final HttpServletRequest request,
+            final boolean saveQuery,
+            final PathQuery pathQuery) {
         QueryMonitorTimeout clientState
             = new QueryMonitorTimeout(Constants.QUERY_TIMEOUT_SECONDS * 1000);
+        clientState.setPathQuery(pathQuery);
         MessageResources messages = (MessageResources) request.getAttribute(Globals.MESSAGES_KEY);
         return startQuery(clientState, request.getSession(), messages, saveQuery, pathQuery);
     }

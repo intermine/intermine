@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.sql.Database;
-import org.intermine.sql.DatabaseFactory;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
 
@@ -41,11 +40,14 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(WormBaseIdResolverFactory.class);
 
-    private final String propName = "db.wormbase";
     private final String taxonId = "6239";
+    @SuppressWarnings("unused")
+    private final String propKeyDb = "db.wormbase";
 
+    private final String propKeyFile = "resolver.file.rootpath";
+    private final String resolverFileSymboWormId = "wormid";
     // HACK
-    private final String propNameExt = "resolver.wb2ncbi.file";
+    private final String resolverFileSymboWb2Ncbi = "wb2ncbi";
 
     public WormBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -83,26 +85,45 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                LOG.info("Creating id resolver from WormBase Chado database and caching it.");
-                System.out. println("Creating id resolver from WormBase Chado database and " +
-                        "caching it.");
-                createFromDb(DatabaseFactory.getDatabase(propName));
+//                LOG.info("Creating id resolver from WormBase Chado database and caching it.");
+//                System.out. println("Creating id resolver from WormBase Chado database and " +
+//                        "caching it.");
+//                createFromDb(DatabaseFactory.getDatabase(propKeyDb));
 
-                // HACK - Additionally, load WB2NCBI to have ncbi ids
-                String fileName = PropertiesUtil.getProperties().getProperty(propNameExt);
+                // Create resolver from worm identifier file
+                String resolverFileRoot = PropertiesUtil.getProperties()
+                        .getProperty(propKeyFile).trim();
 
-                if (StringUtils.isBlank(fileName)) {
-                    String message = "WormBase gene resolver has no file name specified: "
-                            + propNameExt;
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified.";
                     LOG.warn(message);
                     return;
                 }
 
-                LOG.info("To process WB2NCBI file");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName.trim()))));
-                // END OF HACK
+                LOG.info("To process WormId file");
+                String WormIdFileName =  resolverFileRoot + resolverFileSymboWormId;
+                File wormIdDataFile = new File(WormIdFileName);
 
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                if (wormIdDataFile.exists()) {
+                    createFromWormIdFile(new BufferedReader(new FileReader(wormIdDataFile)));
+
+                    // HACK - Additionally, load WB2NCBI to have ncbi ids
+                    LOG.info("To process WB2NCBI file");
+                    String Wb2NcbiFileName = resolverFileRoot + resolverFileSymboWb2Ncbi;
+                    File wb2NcbiDataFile = new File(Wb2NcbiFileName);
+
+                    if (wb2NcbiDataFile.exists()) {
+                        createFromWb2NcbiFile(new BufferedReader(new FileReader(wb2NcbiDataFile)));
+                    } else {
+                        LOG.warn("Resolver file not exists: " + Wb2NcbiFileName);
+                    }
+                    // END OF HACK
+
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + WormIdFileName);
+                }
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -211,8 +232,31 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
+    private void createFromWormIdFile(BufferedReader reader) throws IOException {
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        //WormBase id \t symbol \t secondaryIdentifier
+        LOG.info("Parsing WormId file...");
+        while (lineIter.hasNext()) {
+            String[] line = (String[]) lineIter.next();
+
+            String wbId = line[0];
+            String symbol = line[1];
+            String secId = line[2];
+
+            resolver.addMainIds(taxonId, wbId, Collections.singleton(wbId));
+
+            if (!StringUtils.isBlank(symbol)) {
+                resolver.addMainIds(taxonId, wbId, Collections.singleton(symbol));
+            }
+
+            if (!StringUtils.isBlank(secId)) {
+                resolver.addMainIds(taxonId, wbId, Collections.singleton(secId));
+            }
+        }
+    }
+
     // HACK
-    private void createFromFile(BufferedReader reader) throws IOException {
+    private void createFromWb2NcbiFile(BufferedReader reader) throws IOException {
         Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(reader, ' ');
         LOG.info("Parsing WB2NCBI file...");
         while (lineIter.hasNext()) {
@@ -228,8 +272,6 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
             if (!StringUtils.isBlank(entrez)) {
                 resolver.addSynonyms(taxonId, wbId, Collections.singleton(entrez));
             }
-
-            LOG.info("WB2NCBI - " + resolver.getSynonyms(taxonId, wbId));
         }
     }
 }
