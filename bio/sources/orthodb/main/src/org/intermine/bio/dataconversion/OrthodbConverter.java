@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
@@ -47,7 +48,7 @@ public class OrthodbConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "OrthoDB";
 
     private static final String PROP_FILE = "orthodb_config.properties";
-    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
+    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -64,7 +65,7 @@ public class OrthodbConverter extends BioFileConverter
     private OrganismRepository or;
     private Map<String, String> organismNameVisitedMap = new HashMap<String, String>();
 
-    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
 
     private IdResolver rslv;
 
@@ -280,7 +281,7 @@ public class OrthodbConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_IDENTIFIER_FIELD;
+            identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
 
         {
@@ -312,18 +313,19 @@ public class OrthodbConverter extends BioFileConverter
             }
         }
 
+        // Resolver always returns primaryIdentifier, this behaviour could adjust in id resolver.
         String resolvedGenePid = resolveGene(taxonId, geneId);
         if (resolvedGenePid == null) {
             return null;
         }
 
         // Id resolver always resolve ids to pids.
-        String refId = identifiersToGenes.get(resolvedGenePid);
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item gene = createItem("Gene");
-            gene.setAttribute(DEFAULT_IDENTIFIER_FIELD, resolvedGenePid);
+            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
 
-            if (!identifierType.equals(DEFAULT_IDENTIFIER_FIELD)) {
+            if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
                 if ("crossReferences".equals(identifierType)) {
                     gene.addToCollection(identifierType,
                             createCrossReference(gene.getIdentifier(), geneId,
@@ -335,7 +337,7 @@ public class OrthodbConverter extends BioFileConverter
 
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
-            identifiersToGenes.put(resolvedGenePid, refId);
+            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
             store(gene);
         }
         return refId;
@@ -433,8 +435,8 @@ public class OrthodbConverter extends BioFileConverter
         }
         int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " FBgn: "
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " Resolved: "
                      + rslv.resolveId(taxonId, identifier));
             return null;
         }
