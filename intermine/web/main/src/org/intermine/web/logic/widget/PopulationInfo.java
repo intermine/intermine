@@ -11,17 +11,22 @@ package org.intermine.web.logic.widget;
  */
 
 /**
- * Container for size and gene length average (only for genes) for the whole population
+ * Container for size and extra attribute (e.g. gene length average) for the whole population
  * @author Daniela Butano
  *
  */
 public class PopulationInfo {
     private int size;
-    private float geneLengthAverage;
+    private Object extraAttribute;
 
-    public PopulationInfo(int size, float geneLengthAverage) {
+    /**
+     * Constructor
+     * @param size
+     * @param extraAttribute
+     */
+    public PopulationInfo(int size, Object extraAttribute) {
         this.size = size;
-        this.geneLengthAverage = geneLengthAverage;
+        this.extraAttribute = extraAttribute;
     }
 
     public int getSize() {
@@ -32,11 +37,11 @@ public class PopulationInfo {
         this.size = size;
     }
 
-    public float getGeneLengthAverage() {
-        return geneLengthAverage;
+    public Object getExtraAttribute() {
+        return extraAttribute;
     }
 
-    public void setGeneLengthAverage(float geneLengthAverage) {
-        this.geneLengthAverage = geneLengthAverage;
+    public void setExtraAttribute(float extraAttribute) {
+        this.extraAttribute = extraAttribute;
     }
 }
