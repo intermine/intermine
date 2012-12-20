@@ -126,12 +126,16 @@ public class PollQueryAction extends InterMineAction
                 }
             }
 
+            // Send us off to see the results in a table.
             if (trail != null) {
                 trail += "|results." + qid;
             } else {
                 trail = "|results." + qid;
             }
-            ForwardParameters fp =  new ForwardParameters(mapping.findForward("results"))
+            if (pr != null && pr.getPathQuery() != null) {
+                request.setAttribute("query", pr.getPathQuery());
+            }
+            ForwardParameters fp = new ForwardParameters(mapping.findForward("results"))
                                     .addParameter("trail", trail)
                                     .addParameter("table", "results." + qid);
             if (queryBuilder != null) {

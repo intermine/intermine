@@ -41,6 +41,7 @@
     <attribute name="name" type="java.lang.String"/>
     <attribute name="url" type="java.lang.String"/>
     <attribute name="description" type="java.lang.String"/>
+    <collection name="publications" referenced-type="Publication"/>
     <collection name="dataSets" referenced-type="DataSet" reverse-reference="dataSource"/>
   </class>
 

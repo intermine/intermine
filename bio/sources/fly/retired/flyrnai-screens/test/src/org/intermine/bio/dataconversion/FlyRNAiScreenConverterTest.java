@@ -36,8 +36,6 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlyRNAiScreenConverter(itemWriter, model);
         MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG31973"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
         converter.resolverFactory = resolverFactory;
     }
 
