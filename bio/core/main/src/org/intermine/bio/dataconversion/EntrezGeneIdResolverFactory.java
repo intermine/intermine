@@ -225,13 +225,19 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         for (GeneInfoRecord record : genes) {
             String primaryIdentifier;
             String config = config_xref.get(taxonId); // the original taxon id, not strain
-            if (record.xrefs.get(config) != null) {
-                String prefix = config_prefix.get(taxonId); // eg. RGD:
-                primaryIdentifier = record.xrefs.get(config).iterator().next();
-                if (StringUtils.isNotEmpty(prefix)) {
-                    primaryIdentifier = prefix + primaryIdentifier;
+            // Strictly filter out entrez ids as for ZFIN, some of the genes don't have ZFIN id, 
+            // ignore them
+            if (!config.isEmpty() && config != null) {
+                if (record.xrefs.get(config) != null) {
+                    String prefix = config_prefix.get(taxonId); // eg. RGD:
+                    primaryIdentifier = record.xrefs.get(config).iterator().next();
+                    if (StringUtils.isNotEmpty(prefix)) {
+                        primaryIdentifier = prefix + primaryIdentifier;
+                    }
+                } else {
+                    LOG.info("Gene " + record.entrez + " does not have xref pattern: " + config);
+                    continue;
                 }
-
             } else {
                 primaryIdentifier = record.entrez;
             }
