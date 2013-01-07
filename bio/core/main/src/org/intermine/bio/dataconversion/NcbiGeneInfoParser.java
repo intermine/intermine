@@ -60,6 +60,7 @@ public class NcbiGeneInfoParser
 
             String entrez = line[1].trim();
             String defaultSymbol = line[2].trim();
+            String locusTag = line[3].trim();
             String synonyms = line[4].trim();
             String xrefs = line[5].trim(); // db Identifiers
             String mapLocation = line[7].trim();
@@ -69,7 +70,7 @@ public class NcbiGeneInfoParser
             String officialName = line[11].trim();
 
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
-                    defaultSymbol, officialName, defaultName, mapLocation, geneType);
+                    defaultSymbol, officialName, defaultName, mapLocation, geneType, locusTag);
 
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
             record.xrefs.putAll(parseXrefs(xrefs));
