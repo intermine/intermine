@@ -35,8 +35,9 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlyRNAiScreenConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG31973"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
     }
 
     public void testProcess() throws Exception {
