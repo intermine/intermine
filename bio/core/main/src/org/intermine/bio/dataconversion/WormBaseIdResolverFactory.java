@@ -46,8 +46,10 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
     private final String propKeyFile = "resolver.file.rootpath";
     private final String resolverFileSymboWormId = "wormid";
+    private final String FilePathKeyWormId = "resolver.wormid.file";
     // HACK
     private final String resolverFileSymboWb2Ncbi = "wb2ncbi";
+    private final String FilePathKeyWb2Ncbi = "resolver.wb2ncbi.file";
 
     public WormBaseIdResolverFactory() {
         this.clsCol = this.defaultClsCol;
@@ -91,17 +93,28 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 //                createFromDb(DatabaseFactory.getDatabase(propKeyDb));
 
                 // Create resolver from worm identifier file
-                String resolverFileRoot = PropertiesUtil.getProperties()
-                        .getProperty(propKeyFile).trim();
 
-                if (StringUtils.isBlank(resolverFileRoot)) {
-                    String message = "Resolver data file root path is not specified.";
+                String WormIdFileName =
+                        PropertiesUtil.getProperties().getProperty(FilePathKeyWormId).trim();
+
+                if (StringUtils.isBlank(WormIdFileName)) {
+                    String message = "Resolver data file path is not specified";
                     LOG.warn(message);
-                    return;
+
+                    String resolverFileRoot =
+                            PropertiesUtil.getProperties().getProperty(propKeyFile).trim();
+
+                    // File path not set in MINE.properties
+                    if (StringUtils.isBlank(resolverFileRoot)) {
+                        String msg = "Resolver data file root path is not specified";
+                        LOG.warn(msg);
+                        return;
+                    }
+
+                    LOG.info("Creating id resolver from data file and caching it.");
+                    WormIdFileName = resolverFileRoot + resolverFileSymboWormId;
                 }
 
-                LOG.info("To process WormId file");
-                String WormIdFileName =  resolverFileRoot + resolverFileSymboWormId;
                 File wormIdDataFile = new File(WormIdFileName);
 
                 if (wormIdDataFile.exists()) {
@@ -109,7 +122,17 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
-                    String Wb2NcbiFileName = resolverFileRoot + resolverFileSymboWb2Ncbi;
+                    String Wb2NcbiFileName = PropertiesUtil.getProperties().
+                            getProperty(FilePathKeyWb2Ncbi).trim();
+                    if (StringUtils.isBlank(WormIdFileName)) {
+                        String message = "Resolver data file path is not specified";
+                        LOG.warn(message);
+
+                        String resolverFileRoot =
+                                PropertiesUtil.getProperties().getProperty(propKeyFile).trim();
+                        Wb2NcbiFileName = resolverFileRoot + resolverFileSymboWb2Ncbi;
+                    }
+
                     File wb2NcbiDataFile = new File(Wb2NcbiFileName);
 
                     if (wb2NcbiDataFile.exists()) {
