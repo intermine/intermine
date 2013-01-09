@@ -34,6 +34,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
     private final String propKey = "resolver.file.rootpath";
     private final String resolverFileSymbo = "hgnc";
+    private final String FilePathKey = "resolver.hgnc.file";
     private final String taxonId = "9606";
 
     /**
@@ -68,17 +69,28 @@ public class HgncIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                String resolverFileRoot =
-                        PropertiesUtil.getProperties().getProperty(propKey).trim();
 
-                if (StringUtils.isBlank(resolverFileRoot)) {
-                    String message = "Resolver data file root path is not specified";
+                String resolverFileName =
+                        PropertiesUtil.getProperties().getProperty(FilePathKey).trim();
+
+                if (StringUtils.isBlank(resolverFileName)) {
+                    String message = "Resolver data file path is not specified";
                     LOG.warn(message);
-                    return;
+
+                    String resolverFileRoot =
+                            PropertiesUtil.getProperties().getProperty(propKey).trim();
+
+                    // File path not set in MINE.properties
+                    if (StringUtils.isBlank(resolverFileRoot)) {
+                        String msg = "Resolver data file root path is not specified";
+                        LOG.warn(msg);
+                        return;
+                    }
+
+                    LOG.info("Creating id resolver from data file and caching it.");
+                    resolverFileName = resolverFileRoot + resolverFileSymbo;
                 }
 
-                LOG.info("Creating id resolver from data file and caching it.");
-                String resolverFileName = resolverFileRoot + resolverFileSymbo;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
                     createFromFile(new BufferedReader(new FileReader(f)));
