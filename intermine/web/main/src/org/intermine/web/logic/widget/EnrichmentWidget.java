@@ -122,7 +122,7 @@ public class EnrichmentWidget extends Widget
         }
         throw new IllegalArgumentException(
             String.format("The %s enrichment query only accepts lists of %s, but you provided a "
-                + "list of %s " + config.getId(), config.getTypeClass(), bag.getType()));
+                + "list of %s ", config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**
