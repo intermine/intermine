@@ -85,14 +85,14 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
 
                 String resolverFileName =
-                        PropertiesUtil.getProperties().getProperty(FilePathKey).trim();
+                        PropertiesUtil.getProperties().getProperty(FilePathKey);
 
                 if (StringUtils.isBlank(resolverFileName)) {
                     String message = "Resolver data file path is not specified";
                     LOG.warn(message);
 
                     String resolverFileRoot =
-                            PropertiesUtil.getProperties().getProperty(propKey).trim();
+                            PropertiesUtil.getProperties().getProperty(propKey);
 
                     // File path not set in MINE.properties
                     if (StringUtils.isBlank(resolverFileRoot)) {
@@ -102,10 +102,10 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
                     }
 
                     LOG.info("Creating id resolver from data file and caching it.");
-                    resolverFileName = resolverFileRoot + resolverFileSymbo;
+                    resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
                 }
 
-                File f = new File(resolverFileName);
+                File f = new File(resolverFileName.trim());
                 if (f.exists()) {
                     createFromFile(new BufferedReader(new FileReader(f)));
                     resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
