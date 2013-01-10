@@ -95,14 +95,14 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 // Create resolver from worm identifier file
 
                 String WormIdFileName =
-                        PropertiesUtil.getProperties().getProperty(FilePathKeyWormId).trim();
+                        PropertiesUtil.getProperties().getProperty(FilePathKeyWormId);
 
                 if (StringUtils.isBlank(WormIdFileName)) {
                     String message = "Resolver data file path is not specified";
                     LOG.warn(message);
 
                     String resolverFileRoot =
-                            PropertiesUtil.getProperties().getProperty(propKeyFile).trim();
+                            PropertiesUtil.getProperties().getProperty(propKeyFile);
 
                     // File path not set in MINE.properties
                     if (StringUtils.isBlank(resolverFileRoot)) {
@@ -112,10 +112,10 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                     }
 
                     LOG.info("Creating id resolver from data file and caching it.");
-                    WormIdFileName = resolverFileRoot + resolverFileSymboWormId;
+                    WormIdFileName = resolverFileRoot.trim() + resolverFileSymboWormId;
                 }
 
-                File wormIdDataFile = new File(WormIdFileName);
+                File wormIdDataFile = new File(WormIdFileName.trim());
 
                 if (wormIdDataFile.exists()) {
                     createFromWormIdFile(new BufferedReader(new FileReader(wormIdDataFile)));
@@ -123,17 +123,17 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
                     String Wb2NcbiFileName = PropertiesUtil.getProperties().
-                            getProperty(FilePathKeyWb2Ncbi).trim();
+                            getProperty(FilePathKeyWb2Ncbi);
                     if (StringUtils.isBlank(WormIdFileName)) {
                         String message = "Resolver data file path is not specified";
                         LOG.warn(message);
 
                         String resolverFileRoot =
-                                PropertiesUtil.getProperties().getProperty(propKeyFile).trim();
-                        Wb2NcbiFileName = resolverFileRoot + resolverFileSymboWb2Ncbi;
+                                PropertiesUtil.getProperties().getProperty(propKeyFile);
+                        Wb2NcbiFileName = resolverFileRoot.trim() + resolverFileSymboWb2Ncbi;
                     }
 
-                    File wb2NcbiDataFile = new File(Wb2NcbiFileName);
+                    File wb2NcbiDataFile = new File(Wb2NcbiFileName.trim());
 
                     if (wb2NcbiDataFile.exists()) {
                         createFromWb2NcbiFile(new BufferedReader(new FileReader(wb2NcbiDataFile)));
