@@ -11,9 +11,11 @@ package org.intermine.web.struts;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,10 +42,11 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.intermine.ObjectStoreInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
-import org.intermine.template.TemplateQuery;
 import org.intermine.web.logic.Constants;
 import org.intermine.web.logic.results.WebState;
 import org.intermine.web.logic.session.SessionMethods;
+
+import static org.intermine.util.PropertiesUtil.getPropertiesStartingWith;
 
 /**
  * Tiles controller for history tile (page).
@@ -52,6 +55,10 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class MyMineController extends TilesAction
 {
+    private static final String BOOL_PREFS = "BOOLEAN_PREFERENCES";
+    private static final String PREFERENCES = "SPECIAL_PREFERENCES";
+    private static final String USER_PREFS = "webapp.user.preferences.";
+
     /**
      * Set up attributes for the myMine page.
      * {@inheritDoc}
@@ -122,11 +129,42 @@ public class MyMineController extends TilesAction
             saveErrors(request, actionErrors);
         }
 
+        // Add configured user preferences.
         if (onSubTab(request, "account")) {
-            session.setAttribute("SPECIAL_PREFERENCES", UserPreferences.COMMON_KEYS);
-            session.setAttribute("BOOLEAN_PREFERENCES", UserPreferences.BOOLEAN_KEYS);
+            Properties webProperties = SessionMethods.getWebProperties(request);
+            session.setAttribute(PREFERENCES, getConfiguredPreferences(webProperties));
+            session.setAttribute(BOOL_PREFS, getBooleanPreferences(webProperties));
         }
         return null;
+    }
+
+    private Set<String> configuredPreferences = null;
+
+    private Set<String> getConfiguredPreferences(Properties webProperties) {
+        if (configuredPreferences == null) {
+            configuredPreferences = new LinkedHashSet<String>(UserPreferences.COMMON_KEYS);
+            Properties webPrefs = getPropertiesStartingWith(USER_PREFS, webProperties);
+            for (Object key: webPrefs.keySet()) {
+                configuredPreferences.add(webProperties.getProperty(String.valueOf(key)));
+            }
+        }
+        return configuredPreferences;
+    }
+
+    private Set<String> booleanPreferences = null;
+
+    private  Set<String> getBooleanPreferences(Properties webProperties) {
+        if (booleanPreferences == null) {
+            booleanPreferences = new LinkedHashSet<String>(UserPreferences.BOOLEAN_KEYS);
+            Properties webPrefs = getPropertiesStartingWith(USER_PREFS, webProperties);
+            for (Object key: webPrefs.keySet()) {
+                String name = String.valueOf(key);
+                if (name != null && name.contains("bool")) {
+                    booleanPreferences.add(webProperties.getProperty(name));
+                }
+            }
+        }
+        return booleanPreferences;
     }
 
     private static boolean onSubTab(HttpServletRequest request, String inQuestion) {

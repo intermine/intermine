@@ -10,6 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,7 +29,6 @@ import org.apache.log4j.Logger;
  * 3. any instance of resolver should be caching during build
  * 4. data sync issue: NCBI entrez info might be out of sync with other MOD datasets
  * 5. how to add new resolver? By reflection?
- * 6. Resolver is cached within a source? smart caching cross sources?
  *
  * @author Fengyuan Hu
  */
@@ -53,7 +54,17 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getIdResolverByOrganism(Set<String> taxonIds) {
+        // HACK - for worm in ncbi
+        IdResolverService.getWormIdResolver();
         return new EntrezGeneIdResolverFactory().getIdResolver(taxonIds);
+    }
+
+    public static IdResolver getIdResolverForMOD() {
+        String[] modTaxonIds = {"9606", "7227", "7955", "10090","10116", "4932", "6239"};
+        // String[] modTaxonIdsWithoutWorm = {"9606", "7227", "7955", "10090","10116", "4932"};
+        // HACK - In entrezIdResolver_config.properties, 6239 (worm) is disabled.
+        return new EntrezGeneIdResolverFactory()
+                .getIdResolver(new HashSet<String>(Arrays.asList(modTaxonIds)));
     }
 
     /**
@@ -95,6 +106,15 @@ public class IdResolverService
 
     /**
      * Create a fly id resolver
+     * @param clsName SO term collection
+     * @return an IdResolver
+     */
+    public static IdResolver getFlyIdResolver(Set<String> clsCol) {
+        return new FlyBaseIdResolverFactory(clsCol).getIdResolver(false);
+    }
+
+    /**
+     * Create a fly id resolver
      * @param clsName SO term
      * @param failOnError if false swallow any exceptions and return null
      * @return an IdResolver
@@ -104,11 +124,21 @@ public class IdResolverService
     }
 
     /**
+     * Create a fly id resolver
+     * @param clsName SO term collection
+     * @param failOnError if false swallow any exceptions and return null
+     * @return an IdResolver
+     */
+    public static IdResolver getFlyIdResolver(Set<String> clsCol, boolean failOnError) {
+        return new FlyBaseIdResolverFactory(clsCol).getIdResolver(failOnError);
+    }
+
+    /**
      * Create a worm id resolver
      * @return an IdResolver
      */
     public static IdResolver getWormIdResolver() {
-        return new WormBaseChadoIdResolverFactory().getIdResolver(false);
+        return new WormBaseIdResolverFactory().getIdResolver(false);
     }
 
     /**
@@ -117,7 +147,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getWormIdResolver(String clsName) {
-        return new WormBaseChadoIdResolverFactory(clsName).getIdResolver(false);
+        return new WormBaseIdResolverFactory(clsName).getIdResolver(false);
     }
 
     /**
@@ -127,7 +157,7 @@ public class IdResolverService
      * @return an IdResolver
      */
     public static IdResolver getWormIdResolver(String clsName, boolean failOnError) {
-        return new WormBaseChadoIdResolverFactory(clsName).getIdResolver(failOnError);
+        return new WormBaseIdResolverFactory(clsName).getIdResolver(failOnError);
     }
 
     /**

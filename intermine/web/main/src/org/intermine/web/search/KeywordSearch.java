@@ -64,6 +64,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.LinkRedirectManager;
 import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.metadata.ClassDescriptor;
@@ -916,6 +917,8 @@ public final class KeywordSearch
     private static boolean debugOutput;
     private static Map<String, String> attributePrefixes = null;
 
+
+    
     private KeywordSearch() {
         //don't
     }
@@ -1363,18 +1366,18 @@ public final class KeywordSearch
         Model model = im.getModel();
         Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
+        LinkRedirectManager redirector = im.getLinkRedirector();
         for (KeywordSearchHit keywordSearchHit : searchHits) {
             Class<?> objectClass = DynamicUtil.getSimpleClass(keywordSearchHit.getObject()
                     .getClass());
-            ClassDescriptor classDescriptor =
-                model.getClassDescriptorByName(objectClass.getName());
-
-            KeywordSearchResult ksr =
-                new KeywordSearchResult(webconfig, keywordSearchHit.getObject(),
-                        classKeys, classDescriptor, keywordSearchHit.getScore(),
-                        // templatesForClass.get(classDescriptor)
-                        null);
-
+            ClassDescriptor classDescriptor = model.getClassDescriptorByName(objectClass.getName());
+            InterMineObject o = keywordSearchHit.getObject();
+            String linkRedirect = null;
+            if (redirector != null) {
+                linkRedirect = redirector.generateLink(im, o);
+            }
+            KeywordSearchResult ksr = new KeywordSearchResult(webconfig, o, classKeys, 
+                    classDescriptor, keywordSearchHit.getScore(), null, linkRedirect);
             searchResultsParsed.add(ksr);
         }
         LOG.debug("Parsing search hits took " + (System.currentTimeMillis() - time)  + " ms");

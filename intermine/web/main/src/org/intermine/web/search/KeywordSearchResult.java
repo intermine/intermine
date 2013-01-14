@@ -47,6 +47,7 @@ public class KeywordSearchResult
     final Vector<String> keyFields;
     final Vector<String> additionalFields;
     final HashMap<String, Object> fieldValues;
+    String linkRedirect = null;
 
     /**
      * create the container object - automatically reads fields and saves the results in members
@@ -56,10 +57,11 @@ public class KeywordSearchResult
      * @param classDescriptor descriptor for this class
      * @param score score for this hit
      * @param templates templatequeries for this class
+     * @param linkRedirect URL that search result will link to, if not report page
      */
     public KeywordSearchResult(WebConfig webconfig, InterMineObject object,
             Map<String, List<FieldDescriptor>> classKeys, ClassDescriptor classDescriptor,
-            float score, Map<String, TemplateQuery> templates) {
+            float score, Map<String, TemplateQuery> templates, String linkRedirect) {
         super();
 
         List<FieldConfig> fieldConfigList = FieldConfigHelper.getClassFieldConfigs(webconfig,
@@ -96,6 +98,7 @@ public class KeywordSearchResult
         this.score = score;
         this.templates = templates;
         this.points = Math.round(Math.max(0.1F, Math.min(1, getScore())) * 10); // range 1..10
+        this.linkRedirect = linkRedirect;
     }
 
     private Object getValueForField(InterMineObject object, String expression) {
@@ -173,6 +176,15 @@ public class KeywordSearchResult
      */
     public int getPoints() {
         return points;
+    }
+
+    /**
+     * URL set in web.properties.
+     * 
+     * @return the URL the search result will link to. if NULL, link to report page
+     */
+    public String getLinkRedirect() {
+        return linkRedirect;
     }
 
     /**

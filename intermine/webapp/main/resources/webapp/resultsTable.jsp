@@ -46,15 +46,22 @@
         </c:otherwise>
     </c:choose>
 
-    if (query && query.select.length > 0) {
-        jQuery(function() {
-            var view = new intermine.query.results.CompactView($SERVICE, query, LIST_EVENTS, {pageSize: ${pageSize}});
-            view.$el.appendTo('#${tableContainerId}');
-            view.render();
-        });
-    } else {
-        jQuery('#${tableContainerId}').html('<p>Query has not been specified, failing...</p>');
-    }
+    jQuery(function() {
+        var $container = jQuery('#${tableContainerId}');
+
+        if (query && query.select && query.select.length > 0) {
+            $container.empty().imWidget({
+                type: 'table',
+                service: $SERVICE,
+                query: query,
+                events: LIST_EVENTS,
+                properties: {pageSize: ${pageSize} },
+                error: FailureNotification.notify
+            });
+        } else {
+            $container.html('<p>Query has not been specified, failing...</p>');
+        }
+    });
 })();
 </script>
 
