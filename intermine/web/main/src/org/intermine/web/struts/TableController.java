@@ -72,11 +72,6 @@ public class TableController extends TilesAction
             HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ServletContext servletContext = session.getServletContext();
-
-        String pageStr = request.getParameter("page");
-        String sizeStr = request.getParameter("size");
         String trail = request.getParameter("trail");
 
         request.setAttribute("trail", trail);
@@ -87,148 +82,11 @@ public class TableController extends TilesAction
         }
 
         String table = request.getParameter("table");
-        PagedTable pt = SessionMethods.getResultsTable(session, table);
-        if (pt == null) {
-            LOG.error("PagedTable for " + table + " is null");
-            throw new NullPointerException("PagedTable for " + table + " is null");
-        }
 
-        PathQuery query = pt.getWebTable().getPathQuery();
-
-        request.setAttribute("resultsTable", pt);
-        if ((request.getAttribute("lookupResults") != null)) {
-          //Do nothing
-        } else if (pt.getAllRows().getPathToBagQueryResult() != null) {
-            Map<String, BagQueryResult> pathToBagQueryResult = pt.getAllRows()
-                .getPathToBagQueryResult();
-            List<DisplayLookupMessageHandler> lookupResults =
-                new ArrayList<DisplayLookupMessageHandler>();
-            for (Map.Entry<String, BagQueryResult> entry : pathToBagQueryResult.entrySet()) {
-                String path = entry.getKey();
-                String type = TypeUtil.unqualifiedName(query.makePath(path).getEndType().getName());
-                String extraValue = "";
-                for (PathConstraint con : query.getConstraints().keySet()) {
-                    if (con instanceof PathConstraintLookup && con.getPath().equals(path)) {
-                        extraValue = ((PathConstraintLookup) con).getExtraValue();
-                    }
-                }
-                BagQueryResult bqr = entry.getValue();
-                Properties properties = SessionMethods.getWebProperties(servletContext);
-                DisplayLookupMessageHandler.handleMessages(bqr, session, properties, type,
-                                                           extraValue);
-            }
-            request.setAttribute("lookupResults", lookupResults);
-        } else {
-            request.setAttribute("lookupResults", Collections.EMPTY_MAP);
-        }
-
-        if (query != null) {
-            if (query instanceof TemplateQuery) {
-                request.setAttribute("templateQuery", query);
-            }
-        }
-
-        int page = (pageStr == null ? 0 : Integer.parseInt(pageStr));
-
-        int newPageSize;
-        if (sizeStr != null) {
-            newPageSize = Integer.parseInt(sizeStr);
-        } else {
-            if (session.getAttribute(Constants.RESULTS_TABLE_SIZE) != null) {
-                newPageSize = ((Integer)
-                                session.getAttribute(Constants.RESULTS_TABLE_SIZE)).intValue();
-            } else {
-                newPageSize = pt.getPageSize();
-            }
-        }
-        pt.setPageAndPageSize(page, newPageSize);
-        session.setAttribute(Constants.RESULTS_TABLE_SIZE, Integer.valueOf(newPageSize));
-
-        List<Column> columns = pt.getColumns();
-
-        // a Map from column index to List of column indexes - if any element in a column is
-        // selected then all the columns in the coresponding list should be disabled
-        Map<String, List<String>> columnsToDisableMap = new HashMap<String, List<String>>();
-
-        // disable all other columns that have a different type
-        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-            Column column = columns.get(columnIndex);
-            Path columnPath = column.getPath();
-            if (columnPath != null) {
-                Class<?> columnEndType = columnPath.getLastClassDescriptor().getType();
-                if (columnEndType != null) {
-                    List<String> columnsToDisable = new ArrayList<String>();
-                    // find columns that should be disabled if an object from this column is
-                    // selected
-                    for (int otherColumnIndex = 0;
-                        otherColumnIndex < columns.size();
-                        otherColumnIndex++) {
-                        Column otherColumn = columns.get(otherColumnIndex);
-                        if (otherColumn.equals(column) || !otherColumn.isSelectable()) {
-                            continue;
-                        }
-                        Path otherColumnPath = otherColumn.getPath();
-                        if (otherColumnPath != null) {
-                            Class<?> otherColumnEndType =
-                                otherColumnPath.getLastClassDescriptor().getType();
-                            if (otherColumnEndType != null) {
-                                if (!columnEndType.equals(otherColumnEndType)) {
-                                    columnsToDisable.add("" + otherColumnIndex);
-                                }
-                            }
-                        }
-
-                    }
-                    columnsToDisableMap.put("" + columnIndex, columnsToDisable);
-                }
-            }
-        }
-
-        JSONWriter jsonWriter = new JSONWriter();
-        request.setAttribute("columnsToDisable", jsonWriter.write(columnsToDisableMap));
-
-        // a Map from column index to List of column indexes - if an element in row R and column C
-        // is selected then the elements in the columns in the coresponding list should be
-        // highlighted if they are in row R (because they are fields from the object)
-        Map<String, List<String>> columnsToHighlightMap = new HashMap<String, List<String>>();
-
-        for (int columnIndex = 0; columnIndex < columns.size(); columnIndex++) {
-            Column column = columns.get(columnIndex);
-            Path columnPath = column.getPath();
-            if (columnPath != null) {
-                List<String> columnsToHighlight = new ArrayList<String>();
-                for (int otherColumnIndex = 0;
-                     otherColumnIndex < columns.size();
-                     otherColumnIndex++) {
-                    Column otherColumn = columns.get(otherColumnIndex);
-                    Path otherColumnPath = otherColumn.getPath();
-                    if (!columnPath.isRootPath()
-                        && !otherColumnPath.isRootPath()
-                        && columnPath.getPrefix().equals(otherColumnPath.getPrefix())) {
-                        columnsToHighlight.add("" + otherColumnIndex);
-                    }
-                }
-
-                columnsToHighlightMap.put("" + columnIndex, columnsToHighlight);
-            }
-        }
-
-        request.setAttribute("columnsToHighlight", jsonWriter.write(columnsToHighlightMap));
-        request.setAttribute("query", pt.getWebTable().getPathQuery());
         request.setAttribute("table", table);
 
         Map<Path, String> pathNames = new HashMap<Path, String> ();
-        for (Column column : columns) {
-            Path path = column.getPath();
-            if (path != null) {
-                pathNames.put(path, path.toStringNoConstraints());
-            }
-        }
         request.setAttribute("pathNames", pathNames);
-
-        Map<String, List<FieldDescriptor>> classKeys = im.getClassKeys();
-        ObjectStore os = im.getObjectStore();
-        request.setAttribute("firstSelectedFields", pt.getFirstSelectedFields(os, classKeys));
 
         return null;
     }

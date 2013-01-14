@@ -1,9 +1,5 @@
 <?xml version="1.0"?>
 <classes>
-<class name="GOAnnotation" extends="OntologyAnnotation" is-interface="true">
-  <attribute name="withText" type="java.lang.String"/>
-  <collection name="with" referenced-type="BioEntity"/>
-</class>
 <class name="ProteinDomain" is-interface="true">
   <collection name="goAnnotation" referenced-type="GOAnnotation"/>
 </class>

@@ -49,6 +49,7 @@ import org.intermine.objectstore.intermine.ObjectStoreWriterInterMineImpl;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.SingletonResults;
+import org.intermine.sql.DatabaseUtil;
 import org.intermine.util.PropertiesUtil;
 
 /**
@@ -160,11 +161,15 @@ public class InterMineAPITestCase extends TestCase {
         	// Horrible, I know, but necessary.
         	con = ((ObjectStoreWriterInterMineImpl) uosw).getConnection();
 			
-			stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);			
-			stm1.executeUpdate();
+        	if (DatabaseUtil.tableExists(con, SharedBagManager.SHARED_BAGS)) {
+			    stm1 = con.prepareStatement("DROP TABLE " + SharedBagManager.SHARED_BAGS);			
+			    stm1.executeUpdate();
+        	}
 			
-			stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);			
-			stm2.executeUpdate();
+        	if (DatabaseUtil.tableExists(con, SharingInvite.TABLE_NAME)) {
+			    stm2 = con.prepareStatement("DROP TABLE " + SharingInvite.TABLE_NAME);			
+			    stm2.executeUpdate();
+        	}
         } catch (Exception e) {
         	LOG.error("Error dropping extra tables", e);
         } finally {

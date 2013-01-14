@@ -13,6 +13,17 @@
 
 <style type="text/css">
 
+<c:if test="${empty pageSize}">
+    <c:set var="pageSize" value="10"/>
+</c:if>
+
+<c:set var="initValue" value="0"/>
+<c:if test="${empty currentUniqueId}">
+    <c:set var="currentUniqueId" value="${initValue}" scope="application"/>
+</c:if>
+<c:set var="tableContainerId" value="_submission-features_${currentUniqueId}" scope="request"/>
+<c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
+
 input.query {
     -moz-background-clip: border;
     -moz-background-origin: padding;
@@ -80,12 +91,12 @@ Features
 </h3>
   <table cellpadding="5" cellspacing="5" border="0" class="resultstables" width="100%">
   <thead>
-  <tr>
-  <td>Feature type</td>
-  <td align="right">View data</td>
-  <td colspan="4" >Export</td>
-  <td>Action</td>
-  </tr>
+    <tr>
+        <td>Feature type</td>
+        <td align="right">View data</td>
+        <td colspan="4" >Export</td>
+        <td>Action</td>
+    </tr>
 </thead>
 <tbody>
 <%--
@@ -109,10 +120,13 @@ Features
                 </c:forEach>
             </td>
 
-            <td align="middle" style="padding-left: 6px;">
-            <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}" style="text-decoration: none;">${fc.value} </a>
-
+            <td align="middle" style="padding-left: 6px;" class="submission-features-count">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}"
+                   style="text-decoration: none;" data-feature-type="${fc.key}" data-dcc-id="${object.dCCid}">
+                    ${fc.value}
+                </a>
             </td>
+
             <td align="left" style="padding-left: 6px;">
               <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
             </td>
@@ -244,6 +258,65 @@ Features
 
       <!-- end submission loop -->
   </table>
+
+  <%-- JS target for the results table --%>
+  <div class="collection-table" id="${tableContainerId}"></div>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+    var $table  = $('#${tableContainerId}');
+    var NO_OP   = function () {};
+    var querier = function (featureType, dccId) {
+        return function (model) {
+            var query = {
+                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                from: featureType,
+                joins: ["scoreProtocol"],
+                where: {"submissions.DCCid": dccId}
+            };
+            var table = model.classes[featureType];
+            if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
+                query.select.push('chromosome.primaryIdentifier');
+                query.select.push('chromosomeLocation.start');
+                query.select.push('chromosomeLocation.end');
+                query.select.push('chromosomeLocation.strand');
+                query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+            }
+            query.select.push('submissions.DCCid');
+            query.select.push('submissions.experimentalFactors.name');
+            query.joins.push('submissions.experimentalFactors');
+            return query;
+        };
+    };
+    $(function() {
+        $('.submission-features-count a').click(function(e) {
+            var $link     = $(this);
+            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"));
+            e.preventDefault();
+            $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
+                $table.empty().imWidget({
+                    type: "table",
+                    service: $SERVICE,
+                    query: modded,
+                    error: FailureNotification.notify,
+                    events: LIST_EVENTS,
+                    properties: { pageSize: ${pageSize} }
+                });
+                $('#submission-features-toggler').unbind('click').remove();
+                $table.before($('<button class="btn" id="submission-features-toggler">').text('Hide Table').click(function() {
+                    var $this = $(this);
+                    $table.slideToggle().promise().done(function() {
+                        $this.text($table.is(':visible') ? 'Hide Table' : 'Show Table');
+                    });
+                }));
+            });
+        });
+        return false;
+    });
+}).call(window, jQuery);
+//]]>
+</script>
 
 <%-- OVERLAPPING GENES
 
