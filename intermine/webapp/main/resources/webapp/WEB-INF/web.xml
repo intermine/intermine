@@ -84,7 +84,8 @@
 
   <!--@MODEL_INCLUDE@-->
 
-  
+  <!--@PLUGIN_INCLUDE@-->
+
   <servlet>
   <servlet-name>ws-query-results</servlet-name>
   <servlet-class>org.intermine.webservice.server.query.result.QueryResultServlet</servlet-class>
