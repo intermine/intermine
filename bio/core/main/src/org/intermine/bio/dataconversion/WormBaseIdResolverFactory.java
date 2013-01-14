@@ -92,7 +92,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
                 // Create resolver from worm identifier file
                 String resolverFileRoot = PropertiesUtil.getProperties()
-                        .getProperty(propKeyFile).trim();
+                        .getProperty(propKeyFile);
 
                 if (StringUtils.isBlank(resolverFileRoot)) {
                     String message = "Resolver data file root path is not specified.";
@@ -101,7 +101,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 }
 
                 LOG.info("To process WormId file");
-                String WormIdFileName =  resolverFileRoot + resolverFileSymboWormId;
+                String WormIdFileName =  resolverFileRoot.trim() + resolverFileSymboWormId;
                 File wormIdDataFile = new File(WormIdFileName);
 
                 if (wormIdDataFile.exists()) {
@@ -109,7 +109,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
 
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
-                    String Wb2NcbiFileName = resolverFileRoot + resolverFileSymboWb2Ncbi;
+                    String Wb2NcbiFileName = resolverFileRoot.trim() + resolverFileSymboWb2Ncbi;
                     File wb2NcbiDataFile = new File(Wb2NcbiFileName);
 
                     if (wb2NcbiDataFile.exists()) {
