@@ -187,7 +187,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Affymetrix microarray-based atlas of gene expression in larval and adult tissues</td>
-    <td> <a href="http://www.flyatlas.org" target="_new" class="extlink">FlyAtlas</a> - 25th April 2010</td>
+    <td> <a href="http://www.flyatlas.org" target="_new" class="extlink">FlyAtlas</a> - 13th June 2011</td>
     <td> Chintapalli et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17534367" target="_new" class="extlink">PubMed: 17534367</a></td>
     <td> &nbsp;</td>
   </tr>

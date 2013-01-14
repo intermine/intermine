@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -2518,6 +2518,11 @@ public final class SqlGenerator
                             // HACK!!! TODO: work out why this was producing screwed up
                             // precompute queries.
                             && ((QueryFunction) node).getOperation() != QueryFunction.COUNT) {
+                        //don't add average in the orderby because in the QueryOptimise.optimiseWith
+                        //in originalQuery = new Query(query); the originalQuery is not parsed correcty!!!
+                        if (((QueryFunction) node).getOperation() == QueryFunction.AVERAGE) {
+                            continue;
+                        }
                         String alias = q.getAliases().get(node);
                         buffer.append(alias);
                     } else {

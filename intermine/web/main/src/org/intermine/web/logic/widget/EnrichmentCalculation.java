@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,25 +41,28 @@ public final class EnrichmentCalculation
      * @param input details of the sample and population
      * @param maxValue the maximum p-value to return, for display purposes
      * @param errorCorrection the type of error correction to perform or None
+     * @param extraCorrectionCoefficient if true correction coefficient has been selected
+     * @param correctionCoefficient a instance of correction coefficient
      * @return results of the enrichment calculation
      */
     public static EnrichmentResults calculate(EnrichmentInput input, Double maxValue,
-            String errorCorrection) {
+            String errorCorrection, boolean extraCorrectionCoefficient,
+            CorrectionCoefficient correctionCoefficient) {
 
         int sampleSize = input.getSampleSize();
         PopulationInfo population = input.getPopulationInfo();
         int populationSize = population.getSize();
-        float geneLengthAverage = population.getGeneLengthAverage();
 
         Map<String, Integer> sampleCounts = input.getAnnotatedCountsInSample();
-        Map<String, Integer> populationCounts = input.getAnnotatedCountsInPopulation();
+        Map<String, PopulationInfo> annotatedPopulationInfo =
+            input.getAnnotatedCountsInPopulation();
 
         Map<String, BigDecimal> rawResults = new HashMap<String, BigDecimal>();
         for (Map.Entry<String, Integer> entry : sampleCounts.entrySet()) {
             String attribute = entry.getKey();
 
             Integer sampleCount = entry.getValue();
-            Integer populationCount = populationCounts.get(attribute);
+            Integer populationCount = annotatedPopulationInfo.get(attribute).getSize();
             if (populationCount == null) {
                 populationCount = 0;
             }
@@ -72,11 +75,15 @@ public final class EnrichmentCalculation
 
         Map<String, BigDecimal> correctedResults = ErrorCorrection.adjustPValues(errorCorrection,
                 rawResults, maxValue, input.getTestCount());
-
+        if (extraCorrectionCoefficient && correctionCoefficient.isApplicable()) {
+            correctionCoefficient.apply(correctedResults,
+                population, annotatedPopulationInfo);
+        }
+        Map<String, BigDecimal> sortedCorrectedResults = ErrorCorrection.sortMap(correctedResults);
         // record the number of items in the sample that had any values for the attribute
         int widgetTotal = rawResults.isEmpty() ? 0 : sampleSize;
 
-        EnrichmentResults results = new EnrichmentResults(correctedResults,
+        EnrichmentResults results = new EnrichmentResults(sortedCorrectedResults,
                 input.getAnnotatedCountsInSample(), input.getLabels(), widgetTotal);
 
         return results;

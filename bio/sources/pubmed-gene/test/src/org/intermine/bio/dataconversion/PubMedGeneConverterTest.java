@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -67,8 +67,10 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testSimpleFiles() throws Exception {
         process("gene2pubmed");
+        // writeItemsFile(itemWriter.getItems(), "pubmed-tgt-items.xml");
 
         assertEquals(46, itemWriter.getItems().size());
+
         // uncomment to write out a new target items file
         // Set<org.intermine.xml.full.Item> expected = readItemSet("PubMedGeneConverterTest_tgt.xml");
 //        checkGene("4126706", "WBGene308375", "34", new String[]{"16689796", "17573816", "17581122", "17590236"}, new String[]{DATASET}); // type "other", do not create a gene
@@ -92,7 +94,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
     public void testTwoPrimaryIdentifiers() throws Exception {
         process("gene2pubmedTwoPrimaryIdentifiers");
         // FBgn001 which has two NCBI id 1111 and 1112 will be thrown out
-        assertEquals(7, getGenes().size());
+        assertEquals(8, getGenes().size());
     }
 
     /**
@@ -102,7 +104,7 @@ public class PubMedGeneConverterTest extends ItemsTestCase
      */
     public void testStrain() throws Exception {
         process("gene2pubmed_strain");
-        System.out.println(getGenes().toString());
+        // System.out.println(getGenes().toString());
         assertEquals(6, getGenes().size());
 
         checkGene("3111", "4932", new String[]{"2"}, new String[]{DATASET});

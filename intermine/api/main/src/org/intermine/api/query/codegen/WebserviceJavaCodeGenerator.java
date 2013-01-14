@@ -31,7 +31,7 @@ import org.intermine.util.TypeUtil;
 import static java.lang.String.format;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should

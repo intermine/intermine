@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,10 +32,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 public class GraphWidget extends Widget
 {
     private static final Logger LOG = Logger.getLogger(GraphWidget.class);
-    private int notAnalysed = 0;
     private GraphWidgetLoader grapgWidgetLdr;
-    private InterMineBag bag;
-    private ObjectStore os;
     private String filter;
 
 
@@ -125,22 +122,6 @@ public class GraphWidget extends Widget
         return (grapgWidgetLdr != null
                 && grapgWidgetLdr.getResults() != null
                 && grapgWidgetLdr.getResults().size() > 0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNotAnalysed() {
-        return notAnalysed;
     }
 
     @Override

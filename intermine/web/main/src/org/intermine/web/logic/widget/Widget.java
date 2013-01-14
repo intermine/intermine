@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,19 +12,23 @@ package org.intermine.web.logic.widget;
 
 import java.util.List;
 
+import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
-
 /**
  * @author "Xavier Watkins"
+ * @author Daniela Butano
  */
 public abstract class Widget
 {
     protected WidgetConfig config;
+    protected InterMineBag bag;
+    protected ObjectStore os;
+    protected int notAnalysed = 0;
 
     /**
      * The constructor
@@ -44,12 +48,16 @@ public abstract class Widget
     /**
      * @return the number of objects not analysed in this widget
      */
-    public abstract int getNotAnalysed();
+    public int getNotAnalysed() {
+        return notAnalysed;
+    }
 
     /**
      * @param notAnalysed the number of objects not analysed in this widget
      */
-    public abstract void setNotAnalysed(int notAnalysed);
+    public void setNotAnalysed(int notAnalysed) {
+        this.notAnalysed = notAnalysed;
+    }
 
     /**
      *

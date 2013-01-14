@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,10 +11,13 @@ package org.intermine.webservice.server.widget;
  */
 
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
@@ -42,6 +45,7 @@ public class WidgetsRequestParser
     private static final String FILTER = "filter";
     private static final String MAXP = "maxp";
     private static final String ERROR_CORRECTION = "correction";
+    private static final String EXTRA_ATTRIBUTE = "gene_length_correction";
 
     /**
      * ListsRequestProcessor constructor.
@@ -73,6 +77,7 @@ public class WidgetsRequestParser
         String filter = request.getParameter(FILTER);
         String maxP = request.getParameter(MAXP);
         String errorCorrection = request.getParameter(ERROR_CORRECTION);
+        String extraAttribute = request.getParameter(EXTRA_ATTRIBUTE);
 
         if (isBlank(widgetId) || isBlank(bagName)
                 || isBlank(maxP) || isBlank(errorCorrection)) {
@@ -82,13 +87,12 @@ public class WidgetsRequestParser
         }
         ret.setBagName(bagName);
         ret.setWidgetId(widgetId);
-        ret.setExtraAttributes(Arrays.asList(filter, maxP, errorCorrection));
+        ret.setExtraAttributes(Arrays.asList(filter, maxP, errorCorrection, extraAttribute));
         ret.setPopulationBagName(populationBagName);
         
         if (savePopulation != null && "true".equalsIgnoreCase(savePopulation)) {
             ret.setSavePopulation(true);
-         }
-
+        }
         return ret;
     }
 }

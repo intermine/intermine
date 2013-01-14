@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,7 +25,6 @@ import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 
 public class EnrichmentWidgetTest extends WidgetConfigTestCase
 {
@@ -45,28 +44,29 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         InterMineBag employeeList = createEmployeeList();
         bag = employeeList;
-        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, "", MAX, CORRECTION);
+        widget = new EnrichmentWidget((EnrichmentWidgetConfig) config, bag, null, os, "", MAX, CORRECTION, null);
     }
 
     public void testValidateBagType() throws Exception {
         InterMineBag companyList = createCompanyList();
         WidgetConfig config = webConfig.getWidgets().get("contractor_enrichment_with_filter1");
         try {
-            new EnrichmentWidget((EnrichmentWidgetConfig) config, companyList, null, os, "", MAX, CORRECTION);
-            fail("Should raise a ResourceNotFoundException");
-        } catch (ResourceNotFoundException rnfe){
+            new EnrichmentWidget((EnrichmentWidgetConfig) config, companyList, null, os, "", MAX, CORRECTION, null);
+            fail("Should raise a IllegalArgumentException");
+        } catch (IllegalArgumentException iae){
         }
     }
 
     public void testProcess() throws Exception {
         EnrichmentWidgetImplLdr ldr 
-            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter);
+            = new EnrichmentWidgetImplLdr(bag, null, os, (EnrichmentWidgetConfig) config, filter, false, null);
         EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
         Double maxValue = Double.parseDouble(MAX);
-        results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION);
+        results = EnrichmentCalculation.calculate(input, maxValue, CORRECTION, false, null);
         List<List<Object>> exportResults = getResults();
 
-        assertEquals(10, exportResults.size());
+        assertEquals(1, exportResults.size());//there is only one contract
+        assertEquals(2, exportResults.get(0).get(3));//2 employees match with the only contracts
     }
 
     public boolean getHasResults() {
@@ -91,113 +91,32 @@ public class EnrichmentWidgetTest extends WidgetConfigTestCase
         return exportResults;
     }
 
-    /**
-     * Returns the pathquery based on the views set in config file and the bag constraint
-     * Executed when the user selects any item in the matches column in the enrichment widget.
-     * @return the query generated
-     */
-    public PathQuery getPathQuery() {
-        PathQuery q = createPathQueryView();
+    public void testGetPathQuery() {
+        PathQuery q = new PathQuery(os.getModel());
+        q.addView("Employee.name");
+        q.addView("Employee.age");
+        q.addView("Employee.department.name");
         // bag constraint
         q.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
-        //constraints for view (bdgp_enrichment)
-        List<PathConstraint> pathConstraintsForView =
-            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
-        if (pathConstraintsForView != null) {
-            for (PathConstraint pc : pathConstraintsForView) {
-                q.addConstraint(pc);
-            }
-        }
-        //add type constraints for subclasses
-        String enrichIdentifier = ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
-        boolean subClassContraint = false;
-        String subClassType = "";
-        String subClassPath = "";
-        if (enrichIdentifier != null && !"".equals(enrichIdentifier)) {
-            enrichIdentifier = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
-        } else {
-            String enrichPath = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrich();
-            if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), enrichPath)) {
-                subClassContraint = true;
-                subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
-                                                    enrichPath.indexOf("]"));
-                subClassPath = enrichPath.substring(0, enrichPath.indexOf("["));
-                enrichIdentifier = subClassPath + enrichPath.substring(enrichPath.indexOf("]") + 1);
-            } else {
-                enrichIdentifier = enrichPath;
-            }
-        }
-        if (subClassContraint) {
-            q.addConstraint(Constraints.type(subClassPath, subClassType));
-        }
-        return q;
+        assertEquals(q, widget.getPathQuery());
     }
 
-    /**
-     * Returns the pathquery based on the view set in config file in the startClassDisplay
-     * and the bag constraint
-     * Executed when the user click on the matches column in the enrichment widget.
-     * @return the query generated
-     */
-    public PathQuery getPathQueryForMatches() {
+    public void testGetPathQueryForMatches() {
         Model model = os.getModel();
         PathQuery pathQuery = new PathQuery(model);
-        String enrichIdentifier;
-        boolean subClassContraint = false;
-        String subClassType = "";
-        String subClassPath = "";
-        EnrichmentWidgetConfig ewc = ((EnrichmentWidgetConfig) config);
-        if (((EnrichmentWidgetConfig) config).getEnrichIdentifier() != null) {
-            enrichIdentifier = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
-        } else {
-            String enrichPath = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrich();
-            if (WidgetConfigUtil.isPathContainingSubClass(model, enrichPath)) {
-                subClassContraint = true;
-                subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
-                                                    enrichPath.indexOf("]"));
-                subClassPath = enrichPath.substring(0, enrichPath.indexOf("["));
-                enrichIdentifier = subClassPath + enrichPath.substring(enrichPath.indexOf("]") + 1);
-            } else {
-                enrichIdentifier = enrichPath;
-            }
-        }
-
-        String startClassDisplayView = config.getStartClass() + "."
-            + ((EnrichmentWidgetConfig) config).getStartClassDisplay();
-        pathQuery.addView(enrichIdentifier);
-        pathQuery.addView(startClassDisplayView);
-        pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
-        // bag constraint
+        pathQuery.addView("Employee.department.company.contractors.name");
+        pathQuery.addView("Employee.name");
+        pathQuery.addOrderBy("Employee.department.company.contractors.name", OrderDirection.ASC);
         pathQuery.addConstraint(Constraints.in(config.getStartClass(), bag.getName()));
-        //subclass constraint
-        if (subClassContraint) {
-            pathQuery.addConstraint(Constraints.type(subClassPath, subClassType));
-        }
-        //constraints for view
-        List<PathConstraint> pathConstraintsForView =
-            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
-        if (pathConstraintsForView != null) {
-            for (PathConstraint pc : pathConstraintsForView) {
-                pathQuery.addConstraint(pc);
-            }
-        }
-        return pathQuery;
+
+        assertEquals(pathQuery, widget.getPathQueryForMatches());
     }
 
-    private PathQuery createPathQueryView() {
+    public void testCreatePathQueryView() {
         PathQuery pathQuery = new PathQuery(os.getModel());
         pathQuery.addView("Employee.name");
         pathQuery.addView("Employee.age");
         pathQuery.addView("Employee.department.name");
-        return pathQuery;
-    }
-
-    public void testCreatePathQueryView() {
-        PathQuery pathQuery = createPathQueryView();
         assertEquals(pathQuery, widget.createPathQueryView(os,
                 webConfig.getWidgets().get(("contractor_enrichment"))));
     }

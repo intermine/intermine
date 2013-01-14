@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,7 +34,8 @@ import org.intermine.util.PropertiesUtil;
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
-    private final String propName = "resolver.ensembl.file";
+    private final String propKey = "resolver.file.rootpath";
+    private final String resolverFileSymbo = "ensembl";
     private final String taxonId = "9606";
 
     /**
@@ -66,19 +66,24 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
-                Properties props = PropertiesUtil.getProperties();
-                String fileName = props.getProperty(propName);
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey);
 
-                if (StringUtils.isBlank(fileName)) {
-                    String message = "Ensembl resolver has no file name specified, set " + propName
-                        + " to the file location.";
-                    LOG.error(message);
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
+                    LOG.warn(message);
                     return;
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName))));
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(new BufferedReader(new FileReader(f)));
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

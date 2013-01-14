@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +37,8 @@ import org.intermine.util.PropertiesUtil;
 public class EntrezGeneIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EntrezGeneIdResolverFactory.class);
-    private final String propName = "resolver.entrez.file"; // set in .intermine/MINE.properties
+    protected String propKey = "resolver.file.rootpath"; // set in .intermine/MINE.properties
+    protected String resolverFileSymbo = "entrez";
 
     private static final String PROP_FILE = "entrezIdResolver_config.properties";
     private Map<String, String> config_xref = new HashMap<String, String>();
@@ -158,20 +160,25 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
             boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonsAndClassName(taxonIds, this.clsCol.iterator().next()))) {
-                Properties props = PropertiesUtil.getProperties();
-                String fileName = props.getProperty(propName);
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey);
 
                 // File path not set in MINE.properties
-                if (StringUtils.isBlank(fileName)) {
-                    String message = "Entrez gene resolver has no file name specified, set "
-                        + propName + " to the location of the gene_info file.";
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
                     LOG.warn(message);
                     return;
                 }
 
                 LOG.info("Creating id resolver from data file and caching it.");
-                createFromFile(new BufferedReader(new FileReader(new File(fileName))), taxonIds);
-                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(new BufferedReader(new FileReader(f)), taxonIds);
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -218,17 +225,25 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
         for (GeneInfoRecord record : genes) {
             String primaryIdentifier;
             String config = config_xref.get(taxonId); // the original taxon id, not strain
-            if (record.xrefs.get(config) != null) {
-                String prefix = config_prefix.get(taxonId); // eg. RGD:
-                primaryIdentifier = record.xrefs.get(config).iterator().next();
-                if (StringUtils.isNotEmpty(prefix)) {
-                    primaryIdentifier = prefix + primaryIdentifier;
+            // Strictly filter out entrez ids as for ZFIN, some of the genes don't have ZFIN id,
+            // ignore them
+            if (config != null && !config.isEmpty()) {
+                if (record.xrefs.get(config) != null) {
+                    String prefix = config_prefix.get(taxonId); // eg. RGD:
+                    primaryIdentifier = record.xrefs.get(config).iterator().next();
+                    if (StringUtils.isNotEmpty(prefix)) {
+                        primaryIdentifier = prefix + primaryIdentifier;
+                    }
+                } else {
+                    LOG.info("Gene " + record.entrez + " does not have xref pattern: " + config);
+                    continue;
                 }
-
             } else {
                 primaryIdentifier = record.entrez;
             }
 
+            resolver.addMainIds(taxonId, primaryIdentifier,
+                    Collections.singleton(primaryIdentifier));
             resolver.addMainIds(taxonId, primaryIdentifier, record.getMainIds());
             resolver.addSynonyms(taxonId, primaryIdentifier,
                     flattenCollections(record.xrefs.values()));

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,5 +101,4 @@ public class WidgetsServiceInput extends WebServiceInput
     public void setSavePopulation(boolean savePopulation) {
         this.savePopulation = savePopulation;
     }
-
 }

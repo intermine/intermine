@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.bio.util.OrganismData;
@@ -47,7 +48,7 @@ public class OrthodbConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "OrthoDB";
 
     private static final String PROP_FILE = "orthodb_config.properties";
-    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
+    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -62,8 +63,9 @@ public class OrthodbConverter extends BioFileConverter
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
     private OrganismRepository or;
+    private Map<String, String> organismNameVisitedMap = new HashMap<String, String>();
 
-    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
 
     private IdResolver rslv;
 
@@ -164,6 +166,7 @@ public class OrthodbConverter extends BioFileConverter
             }
 
             String taxonId = getTaxon(bits[4]);
+            organismNameVisitedMap.put(bits[4], taxonId);
             if (!isValid(taxonId) || taxonId == null) {
                 // not an organism of interest, skip
                 previousGroup = groupId;
@@ -192,7 +195,7 @@ public class OrthodbConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            String key = (String) entry.getKey(); // e.g. 10090.identifier
+            String key = (String) entry.getKey(); // e.g. 10090.geneid
             String value = ((String) entry.getValue()).trim(); // e.g. symbol
 
             String[] attributes = key.split("\\.");
@@ -278,57 +281,72 @@ public class OrthodbConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_IDENTIFIER_FIELD;
+            identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
 
-        geneId = resolveGene(taxonId, geneId);
-        if (geneId == null) {
+        {
+        /**
+         * !!! Ugly Code Ahead
+         * OrthoDB use secondaryIdentifier for worm gene, in wormbase-identifiers, gene
+         * WBGene00006756 (ZC416.8, unc-17) and WBGene00000481 (ZC416.8, cha-1) have the same
+         * secondaryIdentifier ZC416.8, but OrthoDB points to cha-1 in term of the protein id
+         * ZC416.8b. To fix the issue, set symbol as another key to filter the duplication.
+         * Same for Y105E8A.7 and B0564.1
+         *
+         * For a better fix, load uniprot data, set key to secondaryIdentifier, protein and
+         * organism. But MasterMine does not load protein data.
+         */
+
+            if ("ZC416.8".equals(geneId)) {
+                geneId = "cha-1";
+                identifierType = "symbol";
+            }
+
+            if ("Y105E8A.7".equals(geneId)) {
+                geneId = "lev-10";
+                identifierType = "symbol";
+            }
+
+            if ("B0564.1".equals(geneId)) {
+                geneId = "exos-4.1";
+                identifierType = "symbol";
+            }
+        }
+
+        // Resolver always returns primaryIdentifier, this behaviour could adjust in id resolver.
+        String resolvedGenePid = resolveGene(taxonId, geneId);
+        if (resolvedGenePid == null) {
             return null;
         }
 
-        String refId = identifiersToGenes.get(geneId);
+        // Id resolver always resolve ids to pids.
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
-            Item item = createItem("Gene");
-            item.setAttribute(identifierType, geneId);
+            Item gene = createItem("Gene");
+            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
 
-            {
-            /**
-             * !!! Ugly Code Ahead
-             * OrthoDB use secondaryIdentifier for worm gene, in wormbase-identifiers, gene
-             * WBGene00006756 (ZC416.8, unc-17) and WBGene00000481 (ZC416.8, cha-1) have the same
-             * secondaryIdentifier ZC416.8, but OrthoDB points to cha-1 in term of the protein id
-             * ZC416.8b. To fix the issue, set symbol as another key to filter the duplication.
-             * Same for Y105E8A.7 and B0564.1
-             *
-             * For a better fix, load uniprot data, set key to secondaryIdentifier, protein and
-             * organism. But MasterMine tries to not load protein data.
-             */
-
-                if ("ZC416.8".equals(geneId)) {
-                    item.removeAttribute(identifierType);
-                    item.setAttribute("symbol", "cha-1");
-                }
-
-                if ("Y105E8A.7".equals(geneId)) {
-                    item.removeAttribute(identifierType);
-                    item.setAttribute("symbol", "lev-10");
-                }
-
-                if ("B0564.1".equals(geneId)) {
-                    item.removeAttribute(identifierType);
-                    item.setAttribute("symbol", "exos-4.1");
+            if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+                if ("crossReferences".equals(identifierType)) {
+                    gene.addToCollection(identifierType,
+                            createCrossReference(gene.getIdentifier(), geneId,
+                                    DATA_SOURCE_NAME, true));
+                } else {
+                    gene.setAttribute(identifierType, geneId);
                 }
             }
 
-            item.setReference("organism", getOrganism(taxonId));
-            refId = item.getIdentifier();
-            identifiersToGenes.put(geneId, refId);
-            store(item);
+            gene.setReference("organism", getOrganism(taxonId));
+            refId = gene.getIdentifier();
+            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
+            store(gene);
         }
         return refId;
     }
 
     private String getTaxon(String name) {
+        if (!organismNameVisitedMap.isEmpty() && organismNameVisitedMap.keySet().contains(name)) {
+            return organismNameVisitedMap.get(name);
+        }
         OrganismData od = or.getOrganismDataByFullName(name);
         if (od == null) {
             // Not throw BuildException
@@ -417,8 +435,8 @@ public class OrthodbConverter extends BioFileConverter
         }
         int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " FBgn: "
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " Resolved: "
                      + rslv.resolveId(taxonId, identifier));
             return null;
         }
