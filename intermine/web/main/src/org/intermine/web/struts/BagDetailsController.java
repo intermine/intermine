@@ -230,7 +230,7 @@ public class BagDetailsController extends TilesAction
 
         // Get us token so we can show non-public widgets.
         request.setAttribute("token", profile.getDayToken());
-        LOG.info("API key: " + profile.getDayToken());
+        LOG.debug("API key: " + profile.getDayToken());
 
         return null;
     }
