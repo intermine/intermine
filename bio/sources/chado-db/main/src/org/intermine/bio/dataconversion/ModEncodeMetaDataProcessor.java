@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -316,7 +316,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         processEFactor(connection);
 
         flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
+        wormResolverFactory = new WormBaseIdResolverFactory("gene");
         processSubmissionProperties(connection);
         createRelatedSubmissions(connection);
         setSubmissionProtocolsRefs(connection);

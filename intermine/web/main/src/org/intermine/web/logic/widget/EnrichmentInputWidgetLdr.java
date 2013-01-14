@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,15 +33,15 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     private final EnrichmentWidgetImplLdr ldr;
     private final ObjectStore os;
     private Map<String, Integer> sampleCounts = null;
-    private Map<String, Integer> populationCounts = null;
+    private Map<String, PopulationInfo> populationCounts = null;
     private Map<String, String> labels = null;
     private static final int BATCH_SIZE = 20000;
 
     // population queries that don't involve bags can be cached between widget executions
     private static CacheMap<String, PopulationInfo> populationCache = new CacheMap<String,
         PopulationInfo>();
-    private static CacheMap<String, Map<String, Integer>> populationCountsCache =
-        new CacheMap<String, Map<String, Integer>>();
+    private static CacheMap<String, Map<String, PopulationInfo>> populationCountsCache =
+        new CacheMap<String, Map<String, PopulationInfo>>();
 
     private static CacheMap<String, Map<String, Long>> annotatedGeneLengthAverageInPopulation =
             new CacheMap<String, Map<String, Long>>();
@@ -65,13 +65,13 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
     }
 
     @Override
-    public Map<String, Integer> getAnnotatedCountsInPopulation() {
+    public Map<String, PopulationInfo> getAnnotatedCountsInPopulation() {
         if (populationCounts == null) {
             Query query = ldr.getPopulationQuery(false);
 
             populationCounts = populationCountsCache.get(query.toString());
             if (populationCounts == null) {
-                populationCounts = new HashMap<String, Integer>();
+                populationCounts = new HashMap<String, PopulationInfo>();
 
                 Results results = os.execute(query, BATCH_SIZE, true, true, true);
                 Iterator iter = results.iterator();
@@ -86,7 +86,13 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
                     // TODO should check that casting from a long gives correct result
                     Integer count = ((Long) row.get(1)).intValue();
 
-                    populationCounts.put(identifier, count);
+                    float geneLengthAverage = 0;
+                    if (row.size() > 2) {
+                        if (row.get(2) != null) {
+                            geneLengthAverage = ((BigDecimal) row.get(2)).floatValue();
+                        }
+                    }
+                    populationCounts.put(identifier, new PopulationInfo(count, geneLengthAverage));
                 }
                 populationCountsCache.put(query.toString(), populationCounts);
             }
@@ -136,14 +142,16 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
         PopulationInfo populationInfo = populationCache.get(q.toString());
         if (populationInfo == null) {
             int size = 0;
-            float geneLengthAverage = 0;
+            Object extraAttribute = 0;
             Results res = os.execute(q);
             List<Object> info = (List<Object>) res.get(0);
             size = ((Long) info.get(0)).intValue();
             if (info.size() > 1) {
-            	geneLengthAverage = ((BigDecimal) info.get(1)).floatValue();
+                if (info.get(1) != null) {
+                    extraAttribute = info.get(1);
+                }
             }
-            populationInfo = new PopulationInfo(size, geneLengthAverage);
+            populationInfo = new PopulationInfo(size, extraAttribute);
             populationCache.put(q.toString(), populationInfo);
         }
         return populationInfo;
@@ -168,10 +176,5 @@ public class EnrichmentInputWidgetLdr implements EnrichmentInput
             return  0;
         }
         return  ((java.lang.Long) o[0]).intValue();
-    }
-
-    @Override
-    public Map<String, Long> getAnnotatedGeneLengthAverageInPopulation() {
-        return new HashMap<String, Long>();
     }
 }

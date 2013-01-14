@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -468,8 +468,8 @@ public class IdResolver
      */
     public void writeToFile(File f) throws IOException {
         LOG.info("Writing id resolver to file: " + f.getName());
-//        FileWriter fw = new FileWriter(f, true); // append if true
-        FileWriter fw = new FileWriter(f);
+        FileWriter fw = new FileWriter(f, true); // append if true
+//        FileWriter fw = new FileWriter(f);
         for (MultiKey key : orgIdMaps.keySet()) {
 
             // get maps for this organism

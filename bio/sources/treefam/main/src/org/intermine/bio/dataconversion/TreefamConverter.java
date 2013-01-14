@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -57,7 +57,7 @@ public class TreefamConverter extends BioFileConverter
     private static String evidenceRefId = null;
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
     private static final String DEFAULT_HOMOLOGUE_TYPE = "orthologue";
-    private static final String DEFAULT_IDENTIFIER_COLUMN = "gid";
+    private static final String DEFAULT_IDENTIFIER_COLUMN = "geneid";
     protected IdResolver rslv;
     @SuppressWarnings("unchecked")
     private Map<MultiKey, String> resolvedIds = new MultiKeyMap();
@@ -206,33 +206,44 @@ public class TreefamConverter extends BioFileConverter
         store(homologue);
     }
     
-    private String getGene(String id, String symbol, String type, String taxonId)
+    private String getGene(String geneId, String symbol, String type, String taxonId)
             throws ObjectStoreException {
         String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
         
-        String identifier = null;
+        String resolvedGenePid = null;
         // test if id has been resolved
-        if (resolvedIds.containsKey(new MultiKey(taxonId, id, symbol))) {
-            if (resolvedIds.get(new MultiKey(taxonId, id, symbol)) != null) {
-                identifier = resolvedIds.get(new MultiKey(taxonId, id, symbol));
-                LOG.info("This id: " + taxonId + "-" + id + "-" + symbol
-                        + " has been resolved as: " + identifier);
+        if (resolvedIds.containsKey(new MultiKey(taxonId, geneId, symbol))) {
+            if (resolvedIds.get(new MultiKey(taxonId, geneId, symbol)) != null) {
+            	resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
+                LOG.info("This id: " + taxonId + "-" + geneId + "-" + symbol
+                        + " has been resolved as: " + resolvedGenePid);
             }
         } else {
-            identifier = resolveGene(taxonId, id, symbol);
+        	resolvedGenePid = resolveGene(taxonId, geneId, symbol);
         }
         
-        if (identifier == null) {
+        if (resolvedGenePid == null) {
             return null;
         }
-        String refId = identifiersToGenes.get(identifier);
+        String refId = identifiersToGenes.get(resolvedGenePid);
         if (refId == null) {
-            Item item = createItem("Gene");
-            item.setAttribute(identifierType, identifier);
-            item.setReference("organism", getOrganism(taxonId));
-            refId = item.getIdentifier();
-            identifiersToGenes.put(identifier, refId);
-            store(item);
+            Item gene = createItem("Gene");
+            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            
+            if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+                if ("crossReferences".equals(identifierType)) {
+                    gene.addToCollection(identifierType,
+                            createCrossReference(gene.getIdentifier(), geneId,
+                                    DATA_SOURCE_NAME, true));
+                } else {
+                    gene.setAttribute(identifierType, geneId);
+                }
+            }
+            
+            gene.setReference("organism", getOrganism(taxonId));
+            refId = gene.getIdentifier();
+            identifiersToGenes.put(resolvedGenePid, refId);
+            store(gene);
         }
         return refId;
     }    
@@ -242,8 +253,6 @@ public class TreefamConverter extends BioFileConverter
         allTaxonIds.addAll(taxonIds);
         allTaxonIds.addAll(homologues);
         if (rslv == null) { 
-            // gene_info doesn't have WBGene at the moment
-            rslv = IdResolverService.getWormIdResolver();
             rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
         LOG.info("Taxons in resolver:" + rslv.getTaxons());
@@ -374,7 +383,7 @@ public class TreefamConverter extends BioFileConverter
         String symbol = sym;
         if ("symbol".equals(col)) {
             if (symbol.contains("_")) {
-                // to handle this case:  WBGene00022038_F2
+                // to handle this case:  Y65B4BL.6_F2
                 symbol = symbol.split("_")[0];
             }
             identifier = symbol;

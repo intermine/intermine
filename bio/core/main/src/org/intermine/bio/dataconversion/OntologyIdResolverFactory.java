@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -118,6 +118,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             while (res.next()) {
                 String uniquename = res.getString("identifier");
                 String synonym = res.getString("name");
+                resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(uniquename));
                 resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(synonym));
             }
             stmt.close();

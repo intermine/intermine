@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -44,7 +44,8 @@ public class HomologeneConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "HomoloGene";
 
     private static final String PROP_FILE = "homologene_config.properties";
-    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
+    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
+    private static final String DEFAULT_GENEID_TYPE = "symbol";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -68,8 +69,7 @@ public class HomologeneConverter extends BioFileConverter
      */
     public HomologeneConverter(ItemWriter writer, Model model) throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        // I don't know what this is for
-//        readConfig();
+        readConfig();
     }
 
     /**
@@ -178,7 +178,7 @@ public class HomologeneConverter extends BioFileConverter
         }
 
         for (Map.Entry<Object, Object> entry : props.entrySet()) {
-            String key = (String) entry.getKey(); // e.g. 10090.identifier
+            String key = (String) entry.getKey(); // e.g. 10090.geneid
             String value = ((String) entry.getValue()).trim(); // e.g. symbol
 
             String[] attributes = key.split("\\.");
@@ -239,22 +239,23 @@ public class HomologeneConverter extends BioFileConverter
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_IDENTIFIER_FIELD;
+            identifierType = DEFAULT_GENEID_TYPE;
         }
 
-        String identifier = resolveGene(taxonId, symbol);
+        String resolvedGenePid = resolveGene(taxonId, symbol);
 
-        if (identifier == null) {
+        if (resolvedGenePid == null) {
             return null;
         }
 
-        String refId = identifiersToGenes.get(new MultiKey(taxonId, identifier));
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item item = createItem("Gene");
-            item.setAttribute(identifierType, identifier);
+            item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            item.setAttribute(identifierType, symbol);
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
-            identifiersToGenes.put(new MultiKey(taxonId, identifier), refId);
+            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
             store(item);
         }
         return refId;
@@ -292,8 +293,8 @@ public class HomologeneConverter extends BioFileConverter
         }
         int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " FBgn: "
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " Resolved: "
                      + rslv.resolveId(taxonId, identifier));
             return null;
         }
