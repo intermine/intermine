@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
  * primary identifier(s).
  *
  * @author rns
+ * @author Fengyuan Hu
  */
 public class IdResolver
 {
@@ -108,7 +109,8 @@ public class IdResolver
             && orgMainMaps.get(new MultiKey(taxonId, clsName)).containsKey(id)) {
             return orgMainMaps.get(new MultiKey(taxonId, clsName)).get(id);
         }
-        if (orgSynMaps.containsKey(new MultiKey(taxonId, clsName))) {
+        if (orgSynMaps.containsKey(new MultiKey(taxonId, clsName))
+            && orgSynMaps.get(new MultiKey(taxonId, clsName)).containsKey(id)) {
             return orgSynMaps.get(new MultiKey(taxonId, clsName)).get(id);
         }
         return Collections.emptySet();
@@ -552,7 +554,8 @@ public class IdResolver
     }
 
     // check that the given taxon id has some data for it
-    private void checkTaxonId(String taxonId, String clsName) {
+    // if an exception thrown, there must be something wrong with resolver factory.
+    protected void checkTaxonId(String taxonId, String clsName) {
         if (!orgIdMaps.containsKey(new MultiKey(taxonId, clsName))) {
             throw new IllegalArgumentException(clsName + " IdResolver has "
                                                + "no data for taxonId: "
