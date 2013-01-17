@@ -89,7 +89,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
         }
 
         try {
-            boolean isCachedIdResolverRestored = restoreFromFile(ontology);
+            boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology))) {
                 LOG.info("Creating id resolver from database and caching it.");
