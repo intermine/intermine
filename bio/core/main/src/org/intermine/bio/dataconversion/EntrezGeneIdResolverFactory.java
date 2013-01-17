@@ -70,7 +70,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
      * @return a specific IdResolver
      */
     public IdResolver getIdResolver(Set<String> taxonIds) {
-        if (taxonIds == null | taxonIds.isEmpty()) {
+        if (taxonIds == null || taxonIds.isEmpty()) {
             return null;
         }
         return getIdResolver(taxonIds, true);
@@ -254,7 +254,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
     /**
      * Read pid configurations from entrezIdResolver_config.properties in resources dir
      */
-    private void readConfig() {
+    protected void readConfig() {
         Properties entrezConfig = new Properties();
         try {
             entrezConfig.load(getClass().getClassLoader().getResourceAsStream(

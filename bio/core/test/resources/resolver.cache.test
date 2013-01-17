@@ -1,0 +1,4 @@
+102	gene	Gene1	M1,m1	syn3
+101	mRNA	mRNA1	G1,g1	syn1,syn2
+101	gene	Gene1	G1,g1	syn1,syn2
+101	gene	Gene2		syn1,syn2,syn3
