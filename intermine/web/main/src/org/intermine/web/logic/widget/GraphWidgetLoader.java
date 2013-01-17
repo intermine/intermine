@@ -79,7 +79,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         query.addFrom(startClass);
 
         queryClassInQuery = new HashMap<String, QueryClass>();
-        String key = generateKeyForQueryClassInQuery(startClass, null);
+        String key = startClass.getType().getSimpleName();
         queryClassInQuery.put(key, startClass);
 
         QueryField qfCategoryPath = null;
@@ -194,7 +194,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         QueryClass qc = startClass;
         QueryField qfConstraint = null;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
-        String[] pathsConstraint = pc.getPath().split("\\.");
+        String[] pathConstraintSplitted = pc.getPath().split("\\.");
         boolean isFilterConstraint = WidgetConfigUtil.isFilterConstraint(config, pc);
         QueryValue queryValue = null;
         if (!isFilterConstraint) {
@@ -203,10 +203,9 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         if (isFilterConstraint && !"All".equalsIgnoreCase(filter)) {
             queryValue = new QueryValue(filter);
         }
-
-        for (int index = 0; index < pathsConstraint.length; index++) {
-            if (index == pathsConstraint.length - 1) {
-                qfConstraint = new QueryField(qc, pathsConstraint[index]);
+        for (int index = 0; index < pathConstraintSplitted.length; index++) {
+            if (index == pathConstraintSplitted.length - 1) {
+                qfConstraint = new QueryField(qc, pathConstraintSplitted[index]);
                 if (queryValue != null) {
                     if (!"null".equalsIgnoreCase(queryValue.getValue().toString())) {
                         cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
@@ -219,53 +218,54 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
                     }
                 }
             } else {
-                qc = addReference(query, qc, pathsConstraint[index]);
+                String partialPath = createAttributePath(pathConstraintSplitted, index);
+                qc = addReference(query, qc, pathConstraintSplitted[index], partialPath);
             }
         }
     }
 
     private void buildCategorySeriesMap(
         HashMap<String, long[]> categorySeriesMap) {
-    	if (config.hasSeries()) {
-	        String[] seriesValue = config.getSeriesValues().split("\\,");
-	        for (Iterator<?> it = results.iterator(); it.hasNext();) {
-	            ResultsRow<?> row = (ResultsRow<?>) it.next();
-	            String category = (String) row.get(0);
-	            Object series = row.get(1);
-	            long count = (Long) row.get(2);
-	            if (series != null) {
-	                if (categorySeriesMap.get(category) != null) {
-	                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
-	                        if (isSeriesValue(seriesValue[indexSeries], series)) {
-	                            (categorySeriesMap.get(category))[indexSeries] = count;
-	                            break;
-	                        }
-	                    }
-	                } else {
-	                    long[] counts = new long[seriesValue.length];
-	                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
-	                        if (isSeriesValue(seriesValue[indexSeries], series)) {
-	                            counts[indexSeries] = count;
-	                            break;
-	                        }
-	                    }
-	                    categorySeriesMap.put(category, counts);
-	                }
-	            }
-	        }
+        if (config.hasSeries()) {
+            String[] seriesValue = config.getSeriesValues().split("\\,");
+            for (Iterator<?> it = results.iterator(); it.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) it.next();
+                String category = (String) row.get(0);
+                Object series = row.get(1);
+                long count = (Long) row.get(2);
+                if (series != null) {
+                    if (categorySeriesMap.get(category) != null) {
+                        for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
+                            if (isSeriesValue(seriesValue[indexSeries], series)) {
+                                (categorySeriesMap.get(category))[indexSeries] = count;
+                                break;
+                            }
+                        }
+                    } else {
+                        long[] counts = new long[seriesValue.length];
+                        for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
+                            if (isSeriesValue(seriesValue[indexSeries], series)) {
+                                counts[indexSeries] = count;
+                                break;
+                            }
+                        }
+                        categorySeriesMap.put(category, counts);
+                    }
+                }
+            }
         } else {
-        	for (Iterator<?> it = results.iterator(); it.hasNext();) {
-	            ResultsRow<?> row = (ResultsRow<?>) it.next();
-	            String category;
-	            try {
-	                category = (String) row.get(0);
-	            } catch (ClassCastException cce) {
-	            	category = Integer.toString((Integer) row.get(0));
-	            }
-	            long count = (Long) row.get(1);
-	            long[] counts = {count};
-	            categorySeriesMap.put(category, counts);
-        	}
+            for (Iterator<?> it = results.iterator(); it.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) it.next();
+                String category;
+                try {
+                    category = (String) row.get(0);
+                } catch (ClassCastException cce) {
+                    category = Integer.toString((Integer) row.get(0));
+                }
+                long count = (Long) row.get(1);
+                long[] counts = {count};
+                categorySeriesMap.put(category, counts);
+            }
         }
     }
 
@@ -282,10 +282,10 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         List<Object> dataRow = null;
         headerRow.add(config.getRangeLabel());
         if (config.hasSeries()) {
-	        String[] seriesLabels = config.getSeriesLabels().split(",");
-	        for (String seriesLabel : seriesLabels) {
-	            headerRow.add(seriesLabel);
-	        }
+            String[] seriesLabels = config.getSeriesLabels().split(",");
+            for (String seriesLabel : seriesLabels) {
+                headerRow.add(seriesLabel);
+            }
         }
         resultTable.add(headerRow);
         ArrayList<String> categories = new ArrayList<String>(categorySeriesMap.keySet());

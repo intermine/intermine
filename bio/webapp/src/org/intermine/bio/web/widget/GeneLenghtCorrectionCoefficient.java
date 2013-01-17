@@ -185,8 +185,10 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
-    public Map<String, Map<String, String>> getOutputInfo(String geneLengthCorrectionInput) {
-        Map<String, String> geneLenghtAttributes = new HashMap<String, String>();
+    public Map<String, Map<String, Object>> getOutputInfo(String geneLengthCorrectionInput) {
+        Map<String, Object> geneLenghtAttributes = new HashMap<String, Object>();
+        Map<String, Map<String, Object>> extraAttributes = new HashMap<String,
+                Map<String, Object>>();
         if (isApplicable()) {
             try {
                 double percentageGeneWithLengthNull = getPercentageGeneWithLengthNull();
@@ -206,22 +208,19 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
                 geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, null);
                 geneLenghtAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
                 geneLenghtAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
-                Map<String, Map<String, String>> extraAttributes = new HashMap<String,
-                        Map<String, String>>();
                 extraAttributes.put(GENE_LENGTH, geneLenghtAttributes);
             }
             if (geneLengthCorrectionInput == null) {
-                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, "false");
+                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, false);
             } else {
-                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, geneLengthCorrectionInput);
+                geneLenghtAttributes.put(GENE_LENGTH_CORRECTION,
+                    new Boolean(geneLengthCorrectionInput));
             }
         } else {
             geneLenghtAttributes.put(GENE_LENGTH_CORRECTION, null);
             geneLenghtAttributes.put(PERCENTAGE_GENE_LENGTH_NOT_NULL, null);
             geneLenghtAttributes.put(PATH_QUERY_GENE_LENGTH_NULL, null);
         }
-        Map<String, Map<String, String>> extraAttributes = new HashMap<String,
-                                                           Map<String, String>>();
         extraAttributes.put(GENE_LENGTH, geneLenghtAttributes);
         return extraAttributes;
     }

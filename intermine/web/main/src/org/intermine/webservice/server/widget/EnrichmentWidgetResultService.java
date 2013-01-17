@@ -156,7 +156,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         WidgetResultProcessor processor = getProcessor();
         String extra = input.getExtraAttributes().get(3);
         CorrectionCoefficient cc = widget.getExtraCorrectionCoefficient();
-        Map<String, Map<String, String>> extraAttributes;
+        Map<String, Map<String, Object>> extraAttributes;
         if (cc != null) {
             extraAttributes = cc.getOutputInfo(extra);
             if (processor instanceof EnrichmentJSONProcessor) {

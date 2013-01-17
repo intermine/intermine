@@ -16,6 +16,7 @@
 <c:set var="theme" value="${WEB_PROPERTIES['theme']}"/>
 <link rel="stylesheet" type="text/css" href="<html:rewrite page='/themes/${theme}/theme.css'/>"/>
 <script type="text/javascript" src="<html:rewrite page='/js/jquery-1.5.1.min.js'/>"></script>
+<script type="text/javascript" src="<html:rewrite page='/js/imutils.js'/>"></script>
 
 <body>
 <div align="center" id="headercontainer">
