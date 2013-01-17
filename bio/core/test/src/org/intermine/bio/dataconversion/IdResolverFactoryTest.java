@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 public class IdResolverFactoryTest extends TestCase {
 
     IdResolverFactory factory;
-    String idresolverCache = "idresolver.cache.test";
+    String idresolverCache = "resolver.cache.test";
 
     public IdResolverFactoryTest() {
     }
@@ -42,5 +42,9 @@ public class IdResolverFactoryTest extends TestCase {
                 getResource(idresolverCache).toURI());
         assertTrue(factory.restoreFromFile(testFile));
         assertEquals(2, IdResolverFactory.resolver.getTaxons().size());
+    }
+
+    public void testCreateMultipleResolvers() throws Exception {
+
     }
 }
