@@ -73,5 +73,5 @@ public interface CorrectionCoefficient
      * Return the key value pairs to put in the webservice result
      * @return true/false
      */
-    Map<String, Map<String, String>> getOutputInfo(String correctionCoefficientInput);
+    Map<String, Map<String, Object>> getOutputInfo(String correctionCoefficientInput);
 }
