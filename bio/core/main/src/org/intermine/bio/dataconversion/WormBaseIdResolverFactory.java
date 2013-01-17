@@ -82,7 +82,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
         }
 
         try {
-            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
 //                LOG.info("Creating id resolver from WormBase Chado database and caching it.");

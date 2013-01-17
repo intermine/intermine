@@ -96,7 +96,6 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
-    @Override
     protected boolean restoreFromFile(Set<String> clsCol) {
         try {
             File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
