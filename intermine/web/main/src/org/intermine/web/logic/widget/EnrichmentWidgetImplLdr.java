@@ -107,7 +107,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     public Query getQuery(String action, List<String> keys) {
         this.action = action;
         queryClassInQuery = new HashMap<String, QueryClass>();
-        String key = generateKeyForQueryClassInQuery(startClass, null);
+        String key = startClass.getType().getSimpleName();
         queryClassInQuery.put(key, startClass);
 
         Query query = new Query();
@@ -261,8 +261,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                     qcConstraint = new QueryClass(TypeUtil.getElementType(
                         qc.getType(), pathsConstraint[index]));
                 }
-                if (!isQueryClassInQuery(qcConstraint, qc)) {
-                    String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
+                String partialPath = createAttributePath(pathsConstraint, index);
+                if (!queryClassInQuery.containsKey(partialPath)) {
                     qc = qcConstraint;
                     query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qr,
@@ -271,11 +271,9 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                         csSubQuery.addConstraint(new ContainsConstraint(qr,
                                ConstraintOp.CONTAINS, qc));
                     }
-                    queryClassInQuery.put(key, qc);
+                    queryClassInQuery.put(partialPath, qc);
                 } else {
-                    //retrieve qc from queryClassInQuery map
-                    String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
-                    qc = queryClassInQuery.get(key);
+                    qc = queryClassInQuery.get(partialPath);
                 }
             }
         }
