@@ -248,7 +248,7 @@ public class EmploymentPeriodHelperIntegrationTest {
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStartPeriod(), emp.getEmploymentPeriod().getEndDate());
+            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStartDate(), emp.getEmploymentPeriod().getEndDate());
             assertTrue(emp.getAge() >= 901);
             assertTrue(emp.getAge() <= 968);
         }
