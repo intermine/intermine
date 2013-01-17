@@ -444,7 +444,7 @@
       <fieldconfig fieldExpr="namePI"/>
       <fieldconfig fieldExpr="surnamePI"/>
       <fieldconfig fieldExpr="title"/>
-      <fieldconfig fieldExpr="url"/>
+<!--     <fieldconfig fieldExpr="url"/> -->
     </fields>
   </class>
 
@@ -524,10 +524,23 @@
   <class className="org.intermine.model.bio.RNAiScreen">
     <fields>
       <fieldconfig fieldExpr="name"/>
-      <fieldconfig fieldExpr="publication.title"/>
+      <fieldconfig fieldExpr="publication.title" label="Publication"/>
     </fields>
   </class>
 
+  <class className="org.intermine.model.bio.RNAiResult">
+    <fields>
+      <fieldconfig fieldExpr="rnaiScreen.name" label="Screen" />
+      <fieldconfig fieldExpr="gene.symbol" label="Gene" />
+      <fieldconfig fieldExpr="phenotype"/>
+      <fieldconfig fieldExpr="score"/>
+      <fieldconfig fieldExpr="conditions"/>
+      <fieldconfig fieldExpr="rnaiScreen.publication.pubMedId" label="PubMed ID"/>
+    </fields>
+  </class>
+
+
+<!--
   <class className="org.intermine.model.bio.RNAiScreenHit">
     <fields>
       <fieldconfig fieldExpr="result"/>
@@ -544,6 +557,17 @@
       <fieldconfig fieldExpr="code"/>
     </fields>
   </class>
+-->
+
+  <class className="org.intermine.model.bio.ResultFile">
+  <!-- modMine -->
+    <fields>
+      <fieldconfig fieldExpr="name"/>
+      <fieldconfig fieldExpr="type"/>
+      <fieldconfig fieldExpr="url"/>
+    </fields>
+  </class>
+
 
   <class className="org.intermine.model.bio.Sequence">
     <fields>
@@ -689,58 +713,65 @@
   <tableExportConfig id="gff3" className="org.intermine.bio.web.export.GFF3HttpExporter"/>
   <tableExportConfig id="bed" className="org.intermine.bio.web.export.BEDHttpExporter"/>
 
-  <reportdisplayers>
 
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
+ <reportdisplayers>
+
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
                      jspName="model/cytoscapeNetworkDisplayer.jsp"
                      replacesFields="interactions"
                      placement="Interactions"
                      types="Gene,Protein"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+  <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
+                    jspName="model/drosophilaHomologueDisplayer.jsp"
+                    replacesFields=""
+                    placement="Genomics"
+                    types="Gene"/>
+
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
                      jspName="model/geneOntologyDisplayer.jsp"
                      replacesFields="goAnnotation,ontologyAnnotations"
                      placement="Genomics"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
                      replacesFields="transcripts,exons,CDSs,introns,UTRs,fivePrimeUTR,threePrimeUTR"
                      placement="Genomics"
                      types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
 
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
                      jspName="model/homologueDisplayer.jsp"
                      replacesFields="homologues"
                      placement="Comparative Genomics"
                      parameters="{'dataSets': ['TreeFam data set', 'Ensembl Compara data set', 'Drosophila 12 Genomes Consortium homology']}"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
                      jspName="model/minePathwaysDisplayer.jsp"
                      replacesFields="pathways"
                      placement="Pathways"
                      types="Gene"/>
 
-    <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
+  <reportdisplayer javaClass="org.modmine.web.displayer.ModMineGBrowseDisplayer"
                      jspName="model/modmineGBrowse.jsp"
                      replacesFields="organism"
                      placement="Genomics"
                      types="SequenceFeature"/>
 
-    <reportdisplayer javaClass="org.modmine.web.displayer.ModMineWikiDisplayer"
-                     jspName="model/wikiLink.jsp"
-                     replacesFields="wikiLink,name"
-                     placement="summary"
-                     types="SubmissionProperty,Protocol"/>
+  <reportdisplayer javaClass="org.modmine.web.displayer.ModMineWikiDisplayer"
+                   jspName="model/wikiLink.jsp"
+                   replacesFields="wikiLink,name"
+                   placement="summary"
+                   types="SubmissionProperty,Protocol"/>
 
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
-                     jspName="model/overlappingFeaturesDisplayer.jsp"
-                     replacesFields="overlappingFeatures"
-                     placement="Genomics"
-                     types="SequenceFeature"/>
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.OverlappingFeaturesDisplayer"
+                   jspName="model/overlappingFeaturesDisplayer.jsp"
+                   replacesFields="overlappingFeatures"
+                   placement="Genomics"
+                   types="SequenceFeature"/>
 <!--
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwaysDisplayer"
                      jspName="model/pathwaysDisplayer.jsp"
@@ -748,6 +779,13 @@
                      placement="Pathways"
                      types="Gene"/>
 -->
+
+     <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwayDescriptionDisplayer"
+                     jspName="model/pathwayDescriptionDisplayer.jsp"
+                     showImmediately="true"
+                     replacesFields="description"
+                     placement="top"
+                     types="Pathway"/>
 
     <reportdisplayer javaClass="org.modmine.web.displayer.ProjectDetailsDisplayer"
                      jspName="model/projectDetailsDisplayer.jsp"
@@ -763,12 +801,6 @@
                      parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence,Submission"
                      types="Publication"/>
 
-    <!-- currently only works with classes with publications collection -->
-    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationCountsDisplayer"
-                     jspName="model/publicationCountsDisplayer.jsp"
-                     replacesFields="publications"
-                     placement="summary"
-                     types="BioEntity"/>
 
     <reportdisplayer javaClass="org.intermine.bio.web.displayer.RegulatoryRegionsDisplayer"
                      jspName="model/regulatoryRegionsDisplayer.jsp"
@@ -787,6 +819,14 @@
                      replacesFields="chromosome,chromosomeLocation,sequence,length,sequenceOntologyTerm,locations,cytoLocation"
                      placement="summary"
                      types="SequenceFeature"/>
+
+    <!-- currently only works with classes with publications collection -->
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationCountsDisplayer"
+                     jspName="model/publicationCountsDisplayer.jsp"
+                     replacesFields="publications"
+                     placement="summary"
+                     types="BioEntity"/>
+
 
     <reportdisplayer javaClass="org.modmine.web.displayer.SubmissionDetailsDisplayer"
                      jspName="model/submissionDetailsDisplayer.jsp"
@@ -939,6 +979,27 @@
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
                                  externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
 
+      <enrichmentwidgetdisplayer id="go_enrichment_for_protein"
+                                 title="Gene Ontology Enrichment"
+                                 description="GO terms enriched for items in this list."
+                                 label="GO Term"
+                                 filterLabel="Ontology"
+                                 filters="biological_process,cellular_component,molecular_function"
+                                 startClass="Protein"
+                                 startClassDisplay="primaryAccession"
+                                 enrich="genes.goAnnotation.ontologyTerm.parents.name"
+                                 enrichIdentifier="genes.goAnnotation.ontologyTerm.parents.identifier"
+                                 constraints="genes.goAnnotation.ontologyTerm.parents.namespace=[Ontology],organism.name=[list],
+                                              genes.primaryIdentifier != null, genes.goAnnotation.qualifier = null,
+                                              genes.goAnnotation.ontologyTerm.parents.identifier != go:0008150,
+                                              genes.goAnnotation.ontologyTerm.parents.identifier != go:0003674,
+                                              genes.goAnnotation.ontologyTerm.parents.identifier != go:0005575"
+                                 typeClass="Protein"
+                                 views="primaryAccession, name,organism.name,
+                                       genes.goAnnotation.ontologyTerm.identifier, genes.goAnnotation.ontologyTerm.name,
+                                       genes.goAnnotation.ontologyTerm.parents.identifier,genes.goAnnotation.ontologyTerm.parents.name"
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
                                  description="Protein Domains enriched for items in this list."
@@ -967,6 +1028,21 @@
                                        proteinDomains.name"
                                  externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
+      <enrichmentwidgetdisplayer id="pathway_enrichment"
+                                 title="Pathway Enrichment"
+                                 description="Pathways enriched for genes in this list - data from KEGG and Reactome"
+                                 label="Pathways"
+                                 filterLabel="DataSet"
+                                 filters="All,KEGG pathways data set,Reactome data set"
+                                 startClass="Gene"
+                                 startClassDisplay="primaryIdentifier"
+                                 enrich="pathways.name"
+                                 enrichIdentifier="pathways.identifier"
+                                 constraints="pathways.dataSets.name=[DataSet],organism.taxonId=[list], primaryIdentifier != null"
+                                 typeClass="Gene"
+                                 views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/>
+
+
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
                                  description="Publications enriched for genes in this list."
@@ -981,6 +1057,7 @@
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
                                  externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+
 
       <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
                          description="Counts of orthologues for the genes in this list."
