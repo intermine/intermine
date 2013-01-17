@@ -1,5 +1,7 @@
 package org.intermine.bio.dataconversion;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 /**
@@ -24,7 +26,21 @@ public class IdResolverFactoryTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        factory = new EntrezGeneIdResolverFactory(); // can only test a concrete class
+        factory = new EntrezGeneIdResolverFactory(); // can only test on a concrete class
+        IdResolverFactory.resolver = new IdResolver();
+    }
 
+    public void testGetIdResolver() throws Exception {
+        assertEquals(IdResolverFactory.resolver, factory.getIdResolver(true));
+        assertEquals(IdResolverFactory.resolver, factory.getIdResolver(false));
+    }
+
+    public void testRestoreFromFile() throws Exception {
+        assertFalse(factory.restoreFromFile());
+
+        File testFile = new File(getClass().getClassLoader().
+                getResource(idresolverCache).toURI());
+        assertTrue(factory.restoreFromFile(testFile));
+        assertEquals(2, IdResolverFactory.resolver.getTaxons().size());
     }
 }
