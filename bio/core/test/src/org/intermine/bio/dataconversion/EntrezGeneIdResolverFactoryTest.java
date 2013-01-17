@@ -1,18 +1,13 @@
 package org.intermine.bio.dataconversion;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
-
-import org.apache.commons.io.FileUtils;
 
 /**
  * EntrezGeneIdResolverFactory Unit Tests
