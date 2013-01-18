@@ -297,13 +297,19 @@ Features
             $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
                 $table.empty().imWidget({
                     type: "table",
-                    url: window.location.host + "/${WEB_PROPERTIES['webapp.path']}",
-                    token: "${PROFILE.dayToken}",
-                    error: FailureNotification.notify,
+                    service: $SERVICE,
                     query: modded,
+                    error: FailureNotification.notify,
                     events: LIST_EVENTS,
-                    properties: {pageSize: ${pageSize} }
+                    properties: { pageSize: ${pageSize} }
                 });
+                $('#submission-features-toggler').unbind('click').remove();
+                $table.before($('<button class="btn" id="submission-features-toggler">').text('Hide Table').click(function() {
+                    var $this = $(this);
+                    $table.slideToggle().promise().done(function() {
+                        $this.text($table.is(':visible') ? 'Hide Table' : 'Show Table');
+                    });
+                }));
             });
         });
         return false;

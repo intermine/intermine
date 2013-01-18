@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
@@ -46,13 +47,15 @@ public class PantherConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(PantherConverter.class);
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
-    private Map<String, String> identifiersToGenes = new HashMap<String, String>();
+    private Map<MultiKey, String> identifiersToGenes = new HashMap<MultiKey, String>();
     private Map<String, String> config = new HashMap<String, String>();
     private static String evidenceRefId = null;
     private static final Map<String, String> TYPES = new HashMap<String, String>();
-    private static final String DEFAULT_IDENTIFIER_FIELD = "primaryIdentifier";
+    private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
     private OrganismRepository or;
     private Set<String> databasesNamesToPrepend = new HashSet<String>();
+    private Map<String, Map<String, String>> geneIdPolymorphism = 
+            new HashMap<String, Map<String, String>>();
 
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
@@ -128,6 +131,22 @@ public class PantherConverter extends BioFileConverter
                 }
                 continue;
             }
+            
+            if (key.contains("geneid.polymorphism")) {
+                String[] attributes = key.split("\\.");
+                if (attributes.length == 4) {
+                    String taxonId = attributes[0];
+                    if (geneIdPolymorphism.isEmpty() || geneIdPolymorphism.get(taxonId).isEmpty()) {
+                        Map<String, String> patternMap = new HashMap<String, String>();
+                        patternMap.put(attributes[3].trim(), value);
+                        geneIdPolymorphism.put(taxonId, patternMap);
+                    } else {
+                        geneIdPolymorphism.get(taxonId).put(attributes[3].trim(), value);
+                    }
+                }
+                continue;
+            }
+            
             String[] attributes = key.split("\\.");
             if (attributes.length == 0) {
                 throw new RuntimeException("Problem loading properties '" + PROP_FILE + "' on line "
@@ -138,27 +157,56 @@ public class PantherConverter extends BioFileConverter
         }
     }
 
-    private String getGene(String ident, String taxonId)
+    private String getGene(String geneId, String taxonId)
         throws ObjectStoreException {
         String identifierType = config.get(taxonId);
         if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_IDENTIFIER_FIELD;
+            identifierType = DEFAULT_IDENTIFIER_TYPE;
         }
-        String identifier = parseIdentifier(ident);
 
-        identifier = resolveGene(taxonId, identifier);
-        if (identifier == null) {
+        geneId = parseIdentifier(geneId);
+        String resolvedGenePid = resolveGene(taxonId, geneId);
+        if (resolvedGenePid == null) {
             return null;
         }
 
-        String refId = identifiersToGenes.get(identifier);
+        String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
-            Item item = createItem("Gene");
-            item.setAttribute(identifierType, identifier);
-            item.setReference("organism", getOrganism(taxonId));
-            refId = item.getIdentifier();
-            identifiersToGenes.put(identifier, refId);
-            store(item);
+            Item gene = createItem("Gene");
+            gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            
+            if (geneIdPolymorphism.containsKey(taxonId)) {
+                Map<String, String> patternMap = geneIdPolymorphism.get(taxonId);
+                for (String key : patternMap.keySet()) {
+                    if (geneId.startsWith(key)) {
+                        identifierType = patternMap.get(key);
+                        if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+                            if ("crossReferences".equals(identifierType)) {
+                                gene.addToCollection(identifierType,
+                                        createCrossReference(gene.getIdentifier(), geneId,
+                                                DATA_SOURCE_NAME, true));
+                            } else {
+                                gene.setAttribute(identifierType, geneId);
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+                    if ("crossReferences".equals(identifierType)) {
+                        gene.addToCollection(identifierType,
+                                createCrossReference(gene.getIdentifier(), geneId,
+                                        DATA_SOURCE_NAME, true));
+                    } else {
+                        gene.setAttribute(identifierType, geneId);
+                    }
+                }
+            }
+            
+            gene.setReference("organism", getOrganism(taxonId));
+            refId = gene.getIdentifier();
+            identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);
+            store(gene);
         }
         return refId;
     }
@@ -333,8 +381,8 @@ public class PantherConverter extends BioFileConverter
         }
         int resCount = rslv.countResolutions(taxonId, identifier);
         if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve fly gene to one identifier, ignoring gene: "
-                     + identifier + " count: " + resCount + " FBgn: "
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                     + identifier + " count: " + resCount + " Resolved: "
                      + rslv.resolveId(taxonId, identifier));
             return null;
         }
