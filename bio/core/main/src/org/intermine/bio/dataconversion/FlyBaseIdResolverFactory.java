@@ -223,6 +223,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                         resolver.addSynonyms(taxId, clsName, uniquename,
                                 Collections.singleton(synonym));
                     }
+                    i++;
                 }
                 stmt.close();
                 LOG.info("synonym query returned " + i + " rows.");
@@ -244,22 +245,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 LOG.info("QUERY: " + query);
                 stmt = conn.createStatement();
                 res = stmt.executeQuery(query);
-                i = 0;
-                while (res.next()) {
-                    String uniquename = res.getString("uniquename");
-                    String accession = res.getString("accession");
-                    String organism = res.getString("abbreviation");
-                    String dbName = res.getString("name");
-                    boolean isCurrent = res.getBoolean("is_current");
-                    String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
-                    if (isCurrent && "FlyBase Annotation IDs".equals(dbName)) {
-                        resolver.addMainIds(taxId, clsName, uniquename,
-                                Collections.singleton(accession));
-                    } else {
-                        resolver.addSynonyms(taxId, clsName, uniquename,
-                                Collections.singleton(accession));
-                    }
-                }
+                i = addIdsFromResultSet(res, or, clsName);
                 stmt.close();
                 LOG.info("dbxref query returned " + i + " rows.");
             }
@@ -275,5 +261,26 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    protected int addIdsFromResultSet(ResultSet res, OrganismRepository or, String clsName) throws Exception {
+        int i = 0;
+        while (res.next()) {
+            String uniquename = res.getString("uniquename");
+            String accession = res.getString("accession");
+            String organism = res.getString("abbreviation");
+            String dbName = res.getString("name");
+            boolean isCurrent = res.getBoolean("is_current");
+            String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+            if (isCurrent && "FlyBase Annotation IDs".equals(dbName)) {
+                resolver.addMainIds(taxId, clsName, uniquename,
+                        Collections.singleton(accession));
+            } else {
+                resolver.addSynonyms(taxId, clsName, uniquename,
+                        Collections.singleton(accession));
+            }
+            i++;
+        }
+        return i;
     }
 }
