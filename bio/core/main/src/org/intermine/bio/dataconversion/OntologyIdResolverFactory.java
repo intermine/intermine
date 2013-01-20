@@ -114,13 +114,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             LOG.info("QUERY: " + query);
             Statement stmt = conn.createStatement();
             ResultSet res = stmt.executeQuery(query);
-            int i = 0;
-            while (res.next()) {
-                String uniquename = res.getString("identifier");
-                String synonym = res.getString("name");
-                resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(uniquename));
-                resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(synonym));
-            }
+            int i = addIdsFromResultSet(res);
             stmt.close();
             LOG.info("dbxref query returned " + i + " rows.");
         } catch (Exception e) {
@@ -135,5 +129,17 @@ public class OntologyIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
+    }
+    
+    protected int addIdsFromResultSet(ResultSet res) throws Exception {
+        int i = 0;
+        while (res.next()) {
+            String uniquename = res.getString("identifier");
+            String synonym = res.getString("name");
+            resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(uniquename));
+            resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(synonym));
+            i++;
+        }
+        return i;
     }
 }
