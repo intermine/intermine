@@ -316,7 +316,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
         // create id resolvers
         if (rslv == null) {
-            rslv = IdResolverService.getFishIdResolver();
+            rslv = IdResolverService.getFlyIdResolver();
             rslv = IdResolverService.getWormIdResolver();
         }
 
