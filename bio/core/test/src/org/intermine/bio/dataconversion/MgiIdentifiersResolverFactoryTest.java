@@ -28,7 +28,9 @@ public class MgiIdentifiersResolverFactoryTest extends TestCase {
         super.setUp();
 
         factory = new MgiIdentifiersResolverFactory();
-        IdResolverFactory.resolver = new IdResolver();
+        IdResolverFactory.resolver = null;
+        factory.createIdResolver();
+
     }
 
     public void testCreateFromFile() throws Exception {
@@ -38,10 +40,10 @@ public class MgiIdentifiersResolverFactoryTest extends TestCase {
         }
 
         factory.createFromFile(f);
+//        IdResolverFactory.resolver.writeToFile(new File("build/mgi"));
         assertTrue(IdResolverFactory.resolver.getTaxons().size() == 1);
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"10090"})), IdResolverFactory.resolver.getTaxons());
         assertEquals("MGI:87861", IdResolverFactory.resolver.resolveId("10090", "abn").iterator().next());
-        assertEquals("MGI:87862", IdResolverFactory.resolver.resolveId("10090", "ENSMUSG00000066583").iterator().next());
+        assertEquals("MGI:87862", IdResolverFactory.resolver.resolveId("10090", "gene", "ENSMUSG00000066583").iterator().next());
     }
-
 }

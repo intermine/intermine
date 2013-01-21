@@ -25,10 +25,9 @@ public class MockIdResolverFactoryTest extends TestCase {
 
         factory = new MockIdResolverFactory("gene");
     }
-    
+
     public void testGetIdResolver() throws Exception {
         assertNotNull(factory.getIdResolver());
-        assertTrue(factory.getIdResolver().hasClassName("gene"));
-        assertFalse(factory.getIdResolver().hasClassName("exon"));
+
     }
 }

@@ -1,0 +1,4 @@
+HGNC ID	Approved Symbol	Approved Name	Status	Previous Symbols	Aliases	Entrez Gene ID	Ensembl Gene ID	Entrez Gene ID (mapped data supplied by NCBI)	Ensembl ID (mapped data supplied by Ensembl)
+HGNC:5	A1BG	alpha-1-B glycoprotein	Approved			1	ENSG00000121410	1	ENSG00000121410
+HGNC:37133	A1BG-AS1	A1BG antisense RNA 1 (non-protein coding)	Approved	NCRNA00181, A1BGAS, A1BG-AS	FLJ23569	503538		503538	
+HGNC:24086	A1CF	APOBEC1 complementation factor	Approved		ACF, ASP, ACF64, ACF65, APOBEC1CF	29974	ENSG00000148584	29974	ENSG00000148584

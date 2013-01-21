@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.intermine.bio.util.OrganismRepository;
+import junit.framework.TestCase;
 
 import com.mockrunner.jdbc.StatementResultSetHandler;
 import com.mockrunner.mock.jdbc.MockConnection;
 import com.mockrunner.mock.jdbc.MockResultSet;
-
-import junit.framework.TestCase;
 
 /**
  * OntologyIdResolverFactory Unit Tests
@@ -21,7 +19,7 @@ import junit.framework.TestCase;
  */
 public class OntologyIdResolverFactoryTest extends TestCase {
 
-	OntologyIdResolverFactory factory;
+    OntologyIdResolverFactory factory;
     List<String> resultHeader;
     List<List<Object>> dataList = new ArrayList<List<Object>>();
     ResultSet res;
@@ -39,7 +37,7 @@ public class OntologyIdResolverFactoryTest extends TestCase {
         super.setUp();
 
         factory = new OntologyIdResolverFactory("gene");
-        IdResolverFactory.resolver = new IdResolver();
+        IdResolverFactory.resolver = new IdResolver("gene");
 
         // prepare mocked results
         resultHeader = new ArrayList<String>(Arrays.asList("identifier",
