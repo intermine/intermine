@@ -80,11 +80,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             return;
         } else {
             if (resolver == null) {
-                if (clsCol.size() > 1) {
-                    resolver = new IdResolver();
-                } else {
-                    resolver = new IdResolver(clsCol.iterator().next());
-                }
+                resolver = new IdResolver(this.ontology);
             }
         }
 
@@ -130,7 +126,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             }
         }
     }
-    
+
     protected int addIdsFromResultSet(ResultSet res) throws Exception {
         int i = 0;
         while (res.next()) {
