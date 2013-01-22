@@ -185,6 +185,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     String name = res.getString("name");
                     String organism = res.getString("abbreviation");
                     String taxId = "" + or.getOrganismDataByAbbreviation(organism).getTaxonId();
+                    resolver.addMainIds(taxId, clsName, uniquename,
+                            Collections.singleton(uniquename));
                     resolver.addSynonyms(taxId, clsName, uniquename, Collections.singleton(name));
                     i++;
                 }
@@ -263,7 +265,8 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
-    protected int addIdsFromResultSet(ResultSet res, OrganismRepository or, String clsName) throws Exception {
+    protected int addIdsFromResultSet(ResultSet res, OrganismRepository or,
+            String clsName) throws Exception {
         int i = 0;
         while (res.next()) {
             String uniquename = res.getString("uniquename");

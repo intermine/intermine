@@ -105,7 +105,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                 File wormIdDataFile = new File(WormIdFileName);
 
                 if (wormIdDataFile.exists()) {
-                    createFromWormIdFile(new BufferedReader(new FileReader(wormIdDataFile)));
+                    createFromWormIdFile(wormIdDataFile);
 
                     // HACK - Additionally, load WB2NCBI to have ncbi ids
                     LOG.info("To process WB2NCBI file");
@@ -113,7 +113,7 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
                     File wb2NcbiDataFile = new File(Wb2NcbiFileName);
 
                     if (wb2NcbiDataFile.exists()) {
-                        createFromWb2NcbiFile(new BufferedReader(new FileReader(wb2NcbiDataFile)));
+                        createFromWb2NcbiFile(wb2NcbiDataFile);
                     } else {
                         LOG.warn("Resolver file not exists: " + Wb2NcbiFileName);
                     }
@@ -232,8 +232,10 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
         }
     }
 
-    private void createFromWormIdFile(BufferedReader reader) throws IOException {
-        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+    protected void createFromWormIdFile(File wormIdDataFile) throws IOException {
+        Iterator<?> lineIter = FormattedTextParser
+                .parseTabDelimitedReader(new BufferedReader(new FileReader(
+                        wormIdDataFile)));
         //WormBase id \t symbol \t secondaryIdentifier
         LOG.info("Parsing WormId file...");
         while (lineIter.hasNext()) {
@@ -256,8 +258,9 @@ public class WormBaseIdResolverFactory extends IdResolverFactory
     }
 
     // HACK
-    private void createFromWb2NcbiFile(BufferedReader reader) throws IOException {
-        Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(reader, ' ');
+    protected void createFromWb2NcbiFile(File wb2NcbiDataFile) throws IOException {
+        Iterator<?> lineIter = FormattedTextParser.parseDelimitedReader(
+                new BufferedReader(new FileReader(wb2NcbiDataFile)), ' ');
         LOG.info("Parsing WB2NCBI file...");
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
