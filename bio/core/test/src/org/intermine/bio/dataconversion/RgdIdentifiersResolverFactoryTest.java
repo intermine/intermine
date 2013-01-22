@@ -29,7 +29,8 @@ public class RgdIdentifiersResolverFactoryTest extends TestCase {
         super.setUp();
 
         factory = new RgdIdentifiersResolverFactory();
-        IdResolverFactory.resolver = new IdResolver();
+        IdResolverFactory.resolver = null;
+        factory.createIdResolver();
     }
 
     public void testCreateFromFile() throws Exception {
@@ -39,9 +40,10 @@ public class RgdIdentifiersResolverFactoryTest extends TestCase {
         }
 
         factory.createFromFile(f);
+        // IdResolverFactory.resolver.writeToFile(new File("build/rgd"));
         assertTrue(IdResolverFactory.resolver.getTaxons().size() == 1);
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"10116"})), IdResolverFactory.resolver.getTaxons());
         assertEquals("RGD:1307273", IdResolverFactory.resolver.resolveId("10116", "Abcd4").iterator().next());
-        assertTrue(IdResolverFactory.resolver.resolveId("10116", "ENSRNOG00000011964").iterator().next().startsWith("RGD"));
+        assertTrue(IdResolverFactory.resolver.resolveId("10116", "gene", "ENSRNOG00000011964").iterator().next().startsWith("RGD"));
     }
 }

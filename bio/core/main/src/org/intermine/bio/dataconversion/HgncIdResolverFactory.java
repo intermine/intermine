@@ -81,7 +81,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
                 String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
-                    createFromFile(new BufferedReader(new FileReader(f)));
+                    createFromFile(f);
                     resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
@@ -92,11 +92,17 @@ public class HgncIdResolverFactory extends IdResolverFactory
         }
     }
 
-    private void createFromFile(BufferedReader reader) throws IOException {
+    protected void createFromFile(File f) throws IOException {
         // HGNC ID | Approved Symbol | Approved Name | Status | Previous Symbols | Aliases
-        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser
+                .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
+
+            if (line[0].startsWith("HGNC ID")) {
+                continue;
+            }
+
             String symbol = line[1];
 
             resolver.addMainIds(taxonId, symbol, Collections.singleton(symbol));

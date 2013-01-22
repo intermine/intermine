@@ -76,6 +76,6 @@ public class EntrezGeneIdResolverFactoryTest extends TestCase {
         factory.createFromFile(f, new HashSet<String>(Arrays.asList(new String[] {"7227", "4932", "10090", "7955"})));
         assertTrue(IdResolverFactory.resolver.getTaxons().size() == 5);
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"7955", "102", "4932", "101", "10090"})), IdResolverFactory.resolver.getTaxons());
-        assertTrue(IdResolverFactory.resolver.resolveId("10090", "Abca2").iterator().next().startsWith("MGI"));
+        assertTrue(IdResolverFactory.resolver.resolveId("10090", "gene", "Abca2").iterator().next().startsWith("MGI"));
     }
 }
