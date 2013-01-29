@@ -95,6 +95,8 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         while ((line = bufferedReader.readLine()) != null) {
             sb.append(line);
         }
+        bufferedReader.close();
+
         JSONObject json = new JSONObject(sb.toString());
 
         JSONArray results = json.getJSONArray("results");
