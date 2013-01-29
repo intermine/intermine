@@ -140,18 +140,6 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
-    public void updatePopulationTotalQuery(Query q, Query subQ, QueryField qfCorrection) {
-        if (qfCorrection != null) {
-            subQ.addToSelect(qfCorrection);
-            QueryField outerQfGenelength = new QueryField(subQ, qfCorrection);
-            QueryFunction qfAverage = new QueryFunction(outerQfGenelength, QueryFunction.AVERAGE);
-            q.addToSelect(qfAverage);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void updatePopulationQuery(Query q, Query subQ, QueryField qfCorrection) {
         if (qfCorrection != null) {
             subQ.addToSelect(qfCorrection);
@@ -171,14 +159,23 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
         for (Map.Entry<String, BigDecimal> pValuePerTerm : pValuesPerTerm.entrySet()) {
             pValue = pValuePerTerm.getValue();
             term = pValuePerTerm.getKey();
-            float geneLengthPerTerm = (Float) annotatedPopulationInfo.get(term).getExtraAttribute();
-            int populationPerTerm = annotatedPopulationInfo.get(term).getSize();
-            float geneLength = ((BigDecimal) population.getExtraAttribute()).floatValue();
-            float geneLenghtProbability = (geneLengthPerTerm / geneLength);
-            float populationCountProbability = (float) populationPerTerm / population.getSize();
-            float correctionCoefficient =  geneLenghtProbability / populationCountProbability;
-            pValueCorrected = pValue.multiply(new BigDecimal(correctionCoefficient));
-            pValuesPerTerm.put(term, pValueCorrected);
+            if (pValue.equals(BigDecimal.ZERO)) {
+                pValuesPerTerm.put(term, BigDecimal.ZERO);
+                continue;
+            }
+            PopulationInfo pi = annotatedPopulationInfo.get(term);
+            if (pi != null) {
+                float geneLengthPerTerm = (Float) pi.getExtraAttribute();
+                int populationPerTerm = pi.getSize();
+                float geneLength = ((BigDecimal) population.getExtraAttribute()).floatValue();
+                float geneLenghtProbability = (geneLengthPerTerm / geneLength);
+                float populationCountProbability = (float) populationPerTerm / population.getSize();
+                float correctionCoefficient =  geneLenghtProbability / populationCountProbability;
+                pValueCorrected = pValue.multiply(new BigDecimal(correctionCoefficient));
+                pValuesPerTerm.put(term, pValueCorrected);
+            } else {
+                pValuesPerTerm.put(term, BigDecimal.ZERO);
+            }
         }
     }
 
@@ -260,7 +257,10 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
-    public QueryField getQueryField(QueryClass qc) {
-        return new QueryField(qc, "length");
+    public QueryField updateQueryWithCorrectionCoefficient(Query query, QueryClass qc) {
+        ConstraintSet cs = (ConstraintSet) query.getConstraint();
+        QueryField qfCorrection = new QueryField(qc, "length");
+        cs.addConstraint(new SimpleConstraint(qfCorrection, ConstraintOp.IS_NOT_NULL));
+        return qfCorrection;
     }
 }
