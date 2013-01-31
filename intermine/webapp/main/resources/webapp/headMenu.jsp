@@ -9,6 +9,8 @@
 <!-- headMenu.jsp -->
 <html:xhtml/>
 
+<link rel="shortcut icon" type="image/x-icon" href="model/images/favicon.ico">
+
 <tiles:importAttribute name="fixedLayout" ignore="true" />
 
 <!-- Header container -->
