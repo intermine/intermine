@@ -100,7 +100,7 @@
             <c:otherwise>
               <c:if test="${!field.doNotTruncate && !empty field.value}">
                 <td class="label">${fieldDisplayText}&nbsp;<im:typehelp type="${field.pathString}"/></td>
-                <td><strong><c:out escapeXml="false" value="${field.value}" /></strong></td>
+                <td><strong><c:out escapeXml="${field.escapeXml}" value="${field.value}" /></strong></td>
                 <c:set var="tableCount" value="${tableCount+1}" scope="page" />
               </c:if>
             </c:otherwise>
@@ -115,7 +115,7 @@
           <tr>
             <c:if test="${!empty field.value}">
               <td class="label">${field.name}&nbsp;<im:typehelp type="${field.pathString}"/></td>
-              <td><strong><c:out escapeXml="false" value="${field.value}" /></strong></td>
+              <td><strong><c:out escapeXml="${field.escapeXml}" value="${field.value}" /></strong></td>
             </c:if>
           </tr>
         </c:if>
