@@ -28,6 +28,7 @@ default_sources:
   - "OrthoDB"
   - "TreeFam"
   - "SGDIdentifiers"
+  - "ZFINIdentifiers"
 
 UniProt:
     organisms:
