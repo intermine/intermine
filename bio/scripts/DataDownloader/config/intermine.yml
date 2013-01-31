@@ -26,6 +26,8 @@ default_sources:
   - "WormIdentifiers"
   - "HomoloGene"
   - "OrthoDB"
+  - "TreeFam"
+  - "SGDIdentifiers"
 
 UniProt:
     organisms:
