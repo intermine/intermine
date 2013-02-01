@@ -31,7 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * Read ArrayExpress .json files retrieved from web service.
  * @author Richard Smith
@@ -39,9 +38,11 @@ import org.json.JSONObject;
 public class ArrayexpressAtlasConverter extends BioDirectoryConverter
 {
     //
-    private static final String DATASET_TITLE = "ArrayExpress dataset";
+    private static final String DATASET_TITLE_PREFIX = "ArrayExpress accession: ";
     private static final String DATA_SOURCE_NAME = "ArrayExpress";
     private Map<String, String> genes = new HashMap<String, String>();
+    private boolean isDatasetTitleAssigned = false;
+    private String DATASET_TITLE;
 
     private String taxonId = "9606";
     private static final Logger LOG = Logger.getLogger(ArrayexpressAtlasConverter.class);
@@ -55,12 +56,9 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
      * @param model the Model
      */
     public ArrayexpressAtlasConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(File dataDir) throws Exception {
         List<File> files = readFilesInDir(dataDir);
@@ -72,7 +70,6 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
                 process(new FileReader(f));
             }
         }
-
     }
 
     private List<File> readFilesInDir(File dir) {
@@ -83,11 +80,6 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         return files;
     }
 
-    /**
-     *
-     *
-     * {@inheritDoc}
-     */
     public void process(Reader reader) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(reader);
         StringBuilder sb = new StringBuilder();
@@ -102,6 +94,14 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         JSONArray results = json.getJSONArray("results");
 
         JSONObject result = results.getJSONObject(0);
+
+        if (!isDatasetTitleAssigned) {
+            JSONObject experimentInfo = result.getJSONObject("experimentInfo");
+            String accession = experimentInfo.getString("accession");
+            DATASET_TITLE = DATASET_TITLE_PREFIX + accession;
+            setDataSet(getDataSet(DATASET_TITLE, getDataSource(DATA_SOURCE_NAME)));
+            isDatasetTitleAssigned = true;
+        }
 
         String arrayDesign = result.getString("arrayDesign");
 
