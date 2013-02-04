@@ -52,7 +52,6 @@ public class GFF3Converter extends DataConverter
     private GFF3RecordHandler handler;
     private GFF3SeqHandler sequenceHandler;
     private boolean dontCreateLocations;
-    protected IdResolverFactory resolverFactory;
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
 

@@ -12,13 +12,11 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +32,9 @@ import org.intermine.util.PropertiesUtil;
 public class HgncIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
-    private final String propName = "resolver.hgnc.file";
+    private final String propKey = "resolver.file.rootpath";
+    private final String resolverFileSymbo = "hgnc";
+    private final String FilePathKey = "resolver.hgnc.file";
     private final String taxonId = "9606";
 
     /**
@@ -42,7 +42,7 @@ public class HgncIdResolverFactory extends IdResolverFactory
      * @param soTerm the feature type to resolve
      */
     public HgncIdResolverFactory() {
-        this.clsName = this.defaultClsName;
+        this.clsCol = this.defaultClsCol;
     }
 
     /**
@@ -51,51 +51,60 @@ public class HgncIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-        Properties props = PropertiesUtil.getProperties();
-        String fileName = props.getProperty(propName);
-
-        if (StringUtils.isBlank(fileName)) {
-            String message = "HGNC resolver has no file name specified, set " + propName
-                + " to the file location.";
-            LOG.warn(message);
+        if (resolver != null
+                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
+                        .iterator().next())) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
 
-        BufferedReader reader;
         try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            createFromFile(reader);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open HGNC identifiers file: "
-                    + fileName, e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from HGNC identifiers file: "
-                    + fileName, e);
+            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
+
+                String resolverFileName =
+                        PropertiesUtil.getProperties().getProperty(FilePathKey).trim();
+
+                if (StringUtils.isBlank(resolverFileName)) {
+                    String message = "Resolver data file path is not specified";
+                    LOG.warn(message);
+
+                    String resolverFileRoot =
+                            PropertiesUtil.getProperties().getProperty(propKey).trim();
+
+                    // File path not set in MINE.properties
+                    if (StringUtils.isBlank(resolverFileRoot)) {
+                        String msg = "Resolver data file root path is not specified";
+                        LOG.warn(msg);
+                        return;
+                    }
+
+                    LOG.info("Creating id resolver from data file and caching it.");
+                    resolverFileName = resolverFileRoot + resolverFileSymbo;
+                }
+
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(new BufferedReader(new FileReader(f)));
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
-        // Creating the resolver is fast so we don't really need to cache
-//        String cacheFileName = "build/hgnc_resolver.cache";
-//        try {
-//            resolver.writeToFile(new File(cacheFileName));
-//            System.out. println("Written cache file: " + cacheFileName);
-//        } catch (IOException e) {
-//            throw new IllegalArgumentException("Error writing HGNC resolver cache file: "
-//                    + cacheFileName, e);
-//        }
-
     }
 
     private void createFromFile(BufferedReader reader) throws IOException {
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(taxonId)) {
-            return;
-        }
-
         // HGNC ID | Approved Symbol | Approved Name | Status | Previous Symbols | Aliases
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
