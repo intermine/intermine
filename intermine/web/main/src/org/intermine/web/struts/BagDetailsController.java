@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,7 @@ import org.intermine.api.results.flatouterjoins.MultiRow;
 import org.intermine.api.results.flatouterjoins.MultiRowFirstValue;
 import org.intermine.api.results.flatouterjoins.MultiRowValue;
 import org.intermine.api.search.Scope;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -122,9 +124,16 @@ public class BagDetailsController extends TilesAction
 
         WebConfig webConfig = SessionMethods.getWebConfig(request);
         Model model = os.getModel();
-        Type type = webConfig.getTypes().get(model.getPackageName() + "." + imBag.getType());
-
-        LinkedList<WidgetConfig> widgets = type.getWidgets();
+        Map<String, Type> types = webConfig.getTypes();
+        Type type = null;
+        LinkedList<WidgetConfig> widgets = new LinkedList<WidgetConfig>() ;
+        //add also widgets having type a superclass of bag type
+        ClassDescriptor typeClassDescriptor = model.getClassDescriptorByName(imBag.getType());
+        Set<String> superClasses = typeClassDescriptor.getAllSuperclassNames();
+        for (String superClass : superClasses) {
+            type = types.get(superClass);
+            widgets.addAll(type.getWidgets());
+        }
         Map<String, Map<String, Collection<String>>> widget2extraAttrs = new HashMap<String,
                 Map<String, Collection<String>>>();
         for (WidgetConfig widget2 : widgets) {
