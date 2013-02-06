@@ -11,22 +11,20 @@ package org.intermine.task;
  */
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Constructor;
 
-import org.intermine.metadata.Model;
-import org.intermine.objectstore.ObjectStoreWriterFactory;
-import org.intermine.objectstore.ObjectStoreWriter;
-import org.intermine.dataconversion.ItemWriter;
-import org.intermine.dataconversion.ObjectStoreItemWriter;
-import org.intermine.dataconversion.FileConverter;
-
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileSet;
-
-import org.apache.log4j.Logger;
+import org.intermine.dataconversion.FileConverter;
+import org.intermine.dataconversion.ItemWriter;
+import org.intermine.dataconversion.ObjectStoreItemWriter;
+import org.intermine.metadata.Model;
+import org.intermine.objectstore.ObjectStoreWriter;
+import org.intermine.objectstore.ObjectStoreWriterFactory;
 
 /**
  * Initiates retrieval and conversion of data from a source file.
@@ -89,13 +87,13 @@ public class FileConverterTask extends ConverterTask
             osw = ObjectStoreWriterFactory.getObjectStoreWriter(getOsName());
             writer = new ObjectStoreItemWriter(osw);
 
-            Class c = Class.forName(clsName);
+            Class<?> c = Class.forName(clsName);
             if (!FileConverter.class.isAssignableFrom(c)) {
                 throw new IllegalArgumentException("Class (" + clsName + ") is not a subclass"
                                              + "of org.intermine.dataconversion.FileConverter.");
             }
 
-            Constructor m = c.getConstructor(new Class[] {ItemWriter.class, Model.class});
+            Constructor<?> m = c.getConstructor(new Class[] {ItemWriter.class, Model.class});
             FileConverter converter =
                 (FileConverter) m.newInstance(new Object[] {writer, model});
 

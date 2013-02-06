@@ -106,16 +106,18 @@ public class OrthodbConverter extends BioFileConverter
      */
     public void process(Reader reader) throws Exception {
         /*
-            OrthoDB5_ALL_tabtext is a tab delimited file containing the following
+            OrthoDB6_ALL_* are delimited files containing the following
             columns:
 
-            1) Level
-            2) OG_ID - OrthoDB group id
-            3) Protein_ID
-            4) Gene_ID, e.g. FBgn0162343(fly), ENSMUSG00000027919(mouse)
-            5) Organism - full name
+            0) Level
+            1) OG_ID - OrthoDB group id
+            2) Protein_ID
+            3) Gene_ID, e.g. FBgn0162343(fly), ENSMUSG00000027919(mouse)
+            4) Organism - full name
+            5) UniProt_Species
             6) UniProt_ACC
             7) UniProt_Description
+            8) InterPro_domains
         */
 
         String currentGroup = null;
@@ -145,7 +147,7 @@ public class OrthodbConverter extends BioFileConverter
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
-            if (bits.length < 7) {
+            if (bits.length < 9) {
                 continue;
             }
 
@@ -165,8 +167,8 @@ public class OrthodbConverter extends BioFileConverter
                 homologueList = new ArrayList<List<String>>(); // reset the list
             }
 
-            String taxonId = getTaxon(bits[4]);
-            organismNameVisitedMap.put(bits[4], taxonId);
+            String taxonId = getTaxon(bits[5]); // bits[5] is UniProt name
+            organismNameVisitedMap.put(bits[5], taxonId);
             if (!isValid(taxonId) || taxonId == null) {
                 // not an organism of interest, skip
                 previousGroup = groupId;
@@ -347,7 +349,7 @@ public class OrthodbConverter extends BioFileConverter
         if (!organismNameVisitedMap.isEmpty() && organismNameVisitedMap.keySet().contains(name)) {
             return organismNameVisitedMap.get(name);
         }
-        OrganismData od = or.getOrganismDataByFullName(name);
+        OrganismData od = or.getOrganismDataByUniprot(name);
         if (od == null) {
             // Not throw BuildException
             // TODO add more taxons to organism_config.properties?
