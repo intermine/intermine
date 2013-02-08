@@ -141,7 +141,7 @@
                   </c:forEach>
                 </html:select>
 
-                <html:hidden property="multiValueAttribute" styleId="multiValueAttribute" value=""/>
+                <html:hidden property="multiValueAttribute" styleId="multiValueAttribute" value="${dec.multiValuesAsString}"/>
                 <c:set var="multiValuesDisplay" value="display:none;"/>
                 <c:if test="${dec.multiValuesDisplayed}">
                   <c:set var="multiValuesDisplay" value="display:inline;"/>
