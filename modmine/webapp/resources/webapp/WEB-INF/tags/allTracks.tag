@@ -34,7 +34,7 @@
 <c:if test="${!empty tracks}">
 
 <c:set var="pic" value="fly" />
-<c:if test="${fn:startsWith(organism,'c') || organism='worm'}">
+<c:if test="${fn:startsWith(organism,'c') || organism=='worm'}">
 <c:set var="pic" value="worm" />
 </c:if>
 
