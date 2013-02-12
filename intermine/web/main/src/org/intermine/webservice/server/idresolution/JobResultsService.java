@@ -70,12 +70,7 @@ public class JobResultsService extends JSONService
             throw new ResourceNotFoundException("No such job");
         }
     }
-    
-    @Override
-    protected void cleanUp() {
-        Job.JOBS.remove(jobId);
-    }
-    
+
     private void doDuplicates(Map<String, Object> ret, BagQueryResult bqr, String key) {
         
         Map<String, Map<String, List>> issues = bqr.getIssues().get(key);

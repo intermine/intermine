@@ -190,6 +190,7 @@ public class WebServiceRequestParser
         put(FORMAT_PARAMETER_HTML, Format.HTML);
         put(FORMAT_PARAMETER_TAB, Format.TSV);
         put(FORMAT_PARAMETER_CSV, Format.CSV);
+        put(FORMAT_PARAMETER_TEXT, Format.TEXT);
         put(FORMAT_PARAMETER_COUNT, Format.TEXT);
         put(FORMAT_PARAMETER_JSON_OBJ, Format.OBJECTS);
         put(FORMAT_PARAMETER_JSONP_OBJ, Format.OBJECTS);
@@ -333,6 +334,8 @@ public class WebServiceRequestParser
                 return Format.TSV;
             } else if (pathInfo.endsWith("/csv")) {
                 return Format.CSV;
+            } else if (pathInfo.endsWith("/txt")) {
+                return Format.TEXT;
             }
         }
         return null;
@@ -348,7 +351,7 @@ public class WebServiceRequestParser
         }
         String fromParameter = request.getParameter(OUTPUT_PARAMETER);
         if (StringUtils.isNotBlank(fromParameter)) {
-            areAcceptable.add(interpretFormat(fromParameter));
+            areAcceptable.add(interpretFormat(fromParameter.trim()));
         }
         areAcceptable.addAll(parseAcceptHeader(request));
         return areAcceptable;

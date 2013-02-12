@@ -56,6 +56,7 @@ public class IdResolutionServlet extends WebServiceServlet
     protected WebService getService(Method method) throws NoServiceException {
         switch (method) {
             case POST: return new IdResolutionService(api);
+            case DELETE: return new JobRemovalService(api);
             default: throw new NoServiceException();
         }
     }

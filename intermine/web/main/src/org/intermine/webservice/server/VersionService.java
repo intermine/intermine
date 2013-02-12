@@ -10,17 +10,20 @@ package org.intermine.webservice.server;
  *
  */
 
-import java.util.Collections;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.Constants;
-import org.intermine.webservice.server.core.JSONService;
-
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.lowerCase;
 import static org.intermine.util.StringUtil.trimSlashes;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.intermine.api.InterMineAPI;
+import org.intermine.web.logic.Constants;
+import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 
 /**
  * Service for returning the version of this service.
@@ -29,6 +32,9 @@ import static org.intermine.util.StringUtil.trimSlashes;
  */
 public class VersionService extends JSONService
 {
+
+    private String versionType;
+    private boolean serveReleaseVersion;
 
     /**
      * Constructor
@@ -43,13 +49,30 @@ public class VersionService extends JSONService
         // Serve the webservice version by default, which provides information about
         // server capabilities, rather than the release version, which
         // provides information about the data available.
-        String versionType = lowerCase(trimSlashes(defaultString(request.getPathInfo(), "ws")));
 
-        if (versionType.startsWith("release")) {
-            this.addResultValue(webProperties.getProperty("project.releaseVersion"), false);
+        if (serveReleaseVersion) {
+            addResultValue(webProperties.getProperty("project.releaseVersion"), false);
         } else {
-            this.addResultValue(Constants.WEB_SERVICE_VERSION, false);
+            addResultValue(Constants.WEB_SERVICE_VERSION, false);
         }
+    }
+
+    @Override
+    protected void initState() {
+        super.initState();
+        versionType = lowerCase(trimSlashes(defaultString(request.getPathInfo(), "ws")));
+        serveReleaseVersion = versionType.startsWith("release");
+    }
+
+    @Override
+    protected Map<String, Object> getHeaderAttributes() {
+        Map<String, Object> attributes = super.getHeaderAttributes();
+        if (Format.HTML == getFormat()) {
+            List<String> headers = new ArrayList<String>();
+            headers.add(serveReleaseVersion ? "Release" : "API Version");
+            attributes.put(HTMLTableFormatter.KEY_COLUMN_HEADERS, headers);
+        }
+        return attributes;
     }
 
     @Override
@@ -68,7 +91,9 @@ public class VersionService extends JSONService
 
     @Override
     protected boolean canServe(Format format) {
-        return format == Format.JSON || format == Format.TEXT; 
+        return format == Format.JSON
+            || format == Format.HTML
+            || format == Format.TEXT; 
     }
 
 }

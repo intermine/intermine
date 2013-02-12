@@ -10,6 +10,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.webservice.server.core.JSONService;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
 
 public class ListShareDetailsService extends JSONService {
 
@@ -21,7 +22,15 @@ public class ListShareDetailsService extends JSONService {
         pm = im.getProfileManager();
         sbm = SharedBagManager.getInstance(pm);
     }
-    
+
+    @Override
+    protected void postInit() {
+        super.postInit();
+        if (!this.isAuthenticated()) {
+            throw new UnauthorizedException("Users must authenticate.");
+        }
+    }
+
     @Override
     public String getResultsKey() {
         return "lists";

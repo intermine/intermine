@@ -63,7 +63,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private String getRequiredStringParameter(String name) {
         String param = request.getParameter(name);
         if (param == null || "".equals(param)) {
-            throw new IllegalArgumentException("Missing required parameter: " + name);
+            throw new BadRequestException("Missing required parameter: " + name);
         } else {
             return param;
         }
