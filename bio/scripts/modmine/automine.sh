@@ -29,7 +29,7 @@ PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
 PROPDIR=$HOME/.intermine
-SCRIPTDIR=../bio/scripts/modmine/
+SCRIPTDIR=../bio/scripts/modmine
 
 ARKDIR=/micklem/releases/modmine
 
@@ -931,6 +931,7 @@ setProjectFile
 # 
 # fi
 
+cd $MINEDIR
 
 if [ "$STAG" = "y" ]
 then

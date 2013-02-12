@@ -13,10 +13,14 @@ package org.intermine.bio.dataconversion;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -36,6 +40,7 @@ public class ProteinAtlasConverter extends BioFileConverter
     private static final String DATA_SOURCE_NAME = "Protein Atlas";
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, Item> tissues = new HashMap<String, Item>();
+    private Set<String> storedTissues = new HashSet<String>();
 
     private String taxonId = "9606";
 
@@ -66,18 +71,18 @@ public class ProteinAtlasConverter extends BioFileConverter
 
     private void  processTissueToOrgan(Reader reader) throws ObjectStoreException, IOException {
         // file has two colums:
-        // Tissue name <\t> Tissue group 
-        
-        Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        // Tissue name <\t> Tissue group
+
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         Map<String, Item> tissueGroups = new HashMap<String, Item>();
-        
+
         // Read all lines into gene records
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String tissueName = line[0];
             String tissueGroupName = line[1];
-            
+
             Item tissue = getTissue(tissueName);
             Item tissueGroup = tissueGroups.get(tissueGroupName);
             if (tissueGroup == null) {
@@ -89,9 +94,21 @@ public class ProteinAtlasConverter extends BioFileConverter
             tissue.setAttribute("name", tissueName);
             tissue.setReference("tissueGroup", tissueGroup);
             store(tissue);
+            storedTissues.add(tissueName);
+        }
+
+        // Tissue data is homebrew, it has been out of data after protein-atlas v10, a hacky
+        // way for the new tissue types
+        @SuppressWarnings("unchecked")
+        Collection<String> unstoredTissues = CollectionUtils.subtract(
+                tissues.keySet(), storedTissues);
+        for (String tissueName : unstoredTissues) {
+            Item tissue = getTissue(tissueName);
+            tissue.setAttribute("name", tissueName);
+            store(tissue);
         }
     }
-    
+
     private void processNormalTissue(Reader reader) throws ObjectStoreException, IOException {
         // data has format
         // "Gene","Tissue","Cell type","Level","Expression type","Reliability"
@@ -104,7 +121,7 @@ public class ProteinAtlasConverter extends BioFileConverter
         // 2 - medium/ unsupportive
         // 3 - high/ supportive
 
-        Iterator lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseCsvDelimitedReader(reader);
         lineIter.next();  // discard header
 
         while (lineIter.hasNext()) {
@@ -121,7 +138,7 @@ public class ProteinAtlasConverter extends BioFileConverter
 
             level = alterLevel(level, expressionType);
             reliability = alterReliability(reliability, expressionType);
-            
+
             Item expression = createItem("ProteinAtlasExpression");
             expression.setAttribute("cellType", cellType);
             expression.setAttribute("level", level);
@@ -170,7 +187,7 @@ public class ProteinAtlasConverter extends BioFileConverter
         }
         return level;
     }
-    
+
     private String alterReliability(String reliability, String type) {
         if ("staining".equalsIgnoreCase(type)) {
             if ("supportive".equalsIgnoreCase(reliability)) {
@@ -191,7 +208,7 @@ public class ProteinAtlasConverter extends BioFileConverter
         }
         return reliability;
     }
-    
+
     private String alterExpressionType(String expressionType) {
         if ("APE".equals(expressionType)) {
             return "APE - two or more antibodies";
@@ -201,6 +218,4 @@ public class ProteinAtlasConverter extends BioFileConverter
             return expressionType;
         }
     }
-    
-    
 }

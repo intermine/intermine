@@ -149,7 +149,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         QueryField qfCorrection = null;
         if (extraCorrectionCoefficient
             && correctionCoefficient.isApplicable()) {
-            qfCorrection = correctionCoefficient.getQueryField(startClass);
+            qfCorrection = correctionCoefficient.updateQueryWithCorrectionCoefficient(subQ, startClass);
         }
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {
@@ -169,7 +169,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             mainQuery.addToSelect(qfCount);
             // and for the whole population the average length
             if (action.startsWith("population") && qfCorrection != null) {
-                correctionCoefficient.updatePopulationTotalQuery(mainQuery, subQ, qfCorrection);
+                correctionCoefficient.updatePopulationQuery(mainQuery, subQ, qfCorrection);
             }
         // enrichment queries
         } else {
