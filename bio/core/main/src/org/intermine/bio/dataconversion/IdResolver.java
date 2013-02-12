@@ -253,7 +253,7 @@ public class IdResolver
      * @return all taxon ids in resolver
      */
     public Set<String> getTaxons() {
-        Set<String> taxonIdSet = new HashSet<String>();
+        Set<String> taxonIdSet = new LinkedHashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
             taxonIdSet.add((String) key.getKey(0));
         }
@@ -571,6 +571,9 @@ public class IdResolver
         }
         reader.close();
     }
+
+    // TODO populate part from file with given taxons and classes, what if there
+    // are some data nonexists? Maybe not a good idea...
 
     // add a new list to a map or add elements of set to existing map entry
     private void addToMapList(Map<String, Set<String>> map, String key, Collection<String> values) {

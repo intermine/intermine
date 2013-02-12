@@ -11,6 +11,7 @@ package org.modmine.web;
  */
 
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,10 +29,7 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.actions.TilesAction;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.model.bio.ResultFile;
 import org.intermine.model.bio.Submission;
-import org.intermine.model.bio.SubmissionProperty;
-import org.intermine.util.Util;
 import org.intermine.web.logic.session.SessionMethods;
 import org.modmine.web.GBrowseParser.GBrowseTrack;
 import org.modmine.web.logic.ModMineUtil;
@@ -106,12 +104,22 @@ public class SubListGBrowseTrackController extends TilesAction
             }
         }
 
-        for (Map.Entry<String, Map<String, List<GBrowseTrack>>> entry : tracks.entrySet()) {
+        // to store the list of organisms with no tracks (see below)
+        List<String> noTracks = new ArrayList<String>();       
+        
+        for (Map.Entry<String, Map<String, List<GBrowseTrack>>> entry : tracks.entrySet()) {        	
             if (entry.getValue().isEmpty() || entry.getValue().equals(null)) {
-                tracks.remove(entry.getKey());
+                // tracks.remove(entry.getKey());
+                // it is not possible to remove directly in the main for loop 
+                // (ConcurrentModificationException)
+                noTracks.add(entry.getKey());
             }
         }
-
+        
+        for (String species : noTracks) {
+        	tracks.remove(species);
+        }
+        
         request.setAttribute("tracks", tracks);
 
         String GBROWSE_DEFAULT_URL =

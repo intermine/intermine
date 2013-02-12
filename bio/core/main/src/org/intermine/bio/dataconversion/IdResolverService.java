@@ -17,7 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
- * A facade class to provide IdResolver service.
+ * A wrapper class to provide IdResolver service.
  * Notes:
  * 1. user can configure which resolver they want to use in a properties file?
  *    e.g. NCBI and flybase both can resolver fly genes, set priority?
@@ -29,6 +29,10 @@ import org.apache.log4j.Logger;
  * 3. any instance of resolver should be caching during build
  * 4. data sync issue: NCBI entrez info might be out of sync with other MOD datasets
  * 5. how to add new resolver? By reflection?
+ *
+ * Notes:
+ * Unit tests: as all methods in this class are wrappers, it isn't worth writing tests if those
+ *             wrapped methods are tested.
  *
  * @author Fengyuan Hu
  */

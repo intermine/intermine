@@ -35,7 +35,7 @@ public abstract class IdResolverFactory
             Arrays.asList(new String[] { "gene" }));
     protected Set<String> clsCol = new HashSet<String>();
 
-    protected static final String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
+    protected String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
 
     /**
      * Return an IdResolver, if not already built then create it.
