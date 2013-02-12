@@ -11,7 +11,9 @@ package org.intermine.webservice.server;
  */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
@@ -22,11 +24,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts.util.ResponseUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.util.StringUtil;
 import org.intermine.web.context.InterMineContext;
+import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.Output;
@@ -78,12 +83,23 @@ public class SchemaServlet extends HttpServlet
             }
         } else {
             try {
-                req.getSession().getServletContext()
-                    .getRequestDispatcher("/webservice/" + fileName).forward(req, resp);
-            } catch (ServletException e) {
-                throw new InternalErrorException(e);
-            } catch (IOException e) {
-                LOGGER.error("Could not write response", e);
+                ResponseUtil.setFileName(resp, fileName);
+                if (fileName.endsWith("schema")) {
+                    ResponseUtil.setJSONSchemaContentType(resp);
+                } else if (fileName.endsWith("xsd")) {
+                    ResponseUtil.setXMLContentType(resp);
+                }
+                InputStream in = getServletContext().getResourceAsStream("/webservice/" + fileName);
+                Writer out = resp.getWriter();
+                IOUtils.copy(in, out, "UTF-8");
+            } catch (Throwable t) {
+                LOGGER.error(t);
+                resp.setStatus(Output.SC_INTERNAL_SERVER_ERROR);
+                try {
+                    resp.getWriter().println("Could not serve " + fileName + ": " + t.getMessage());
+                } catch (IOException e) {
+                    LOGGER.error(e);
+                }
             }
         }
     }
