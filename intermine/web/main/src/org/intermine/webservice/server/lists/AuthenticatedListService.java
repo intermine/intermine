@@ -11,7 +11,7 @@ package org.intermine.webservice.server.lists;
  */
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
 
 /**
  * A Class that insists on being authenticated.
@@ -32,9 +32,10 @@ public abstract class AuthenticatedListService extends AbstractListService
     protected void validateState() {
         super.validateState();
         if (!isAuthenticated()) {
-            throw new ServiceForbiddenException("All requests to list operation services must"
-                    + " be authenticated.");
+            throw new UnauthorizedException(
+                "All requests to list operation services must"
+                + " be authenticated."
+            );
         }
     }
 }
-

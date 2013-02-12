@@ -49,6 +49,7 @@ import org.intermine.webservice.server.exceptions.MissingParameterException;
 import org.intermine.webservice.server.exceptions.NotAcceptableException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
 import org.intermine.webservice.server.output.CSVFormatter;
 import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONCountFormatter;
@@ -328,8 +329,10 @@ public abstract class WebService {
         this.request = request;
         this.response = response;
 
-        if (!agentIsRobot()) {
-            try {
+        try {
+            if (agentIsRobot()) {
+                response.sendError(Output.SC_FORBIDDEN);
+            } else {
                 setHeaders();
                 initState();
                 initOutput();
@@ -339,15 +342,15 @@ public abstract class WebService {
                 postInit();
                 validateState();
                 execute();
-            } catch (Throwable t) {
-                sendError(t, response);
             }
-        } else {
-            response.setStatus(403);
+        } catch (Throwable t) {
+            sendError(t, response);
         }
 
         try {
-            if (output != null) {
+            if (output == null) {
+                response.flushBuffer();
+            } else {
                 output.flush();
             }
         } catch (Throwable t) {
@@ -437,40 +440,43 @@ public abstract class WebService {
      */
     private void authenticate() {
 
-        final String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
         final ProfileManager pm = im.getProfileManager();
 
+        if (StringUtils.isEmpty(authToken) && StringUtils.isEmpty(authString)) {
+            return; // Not Authenticated.
+        }
+        // Accept tokens passed in the Authorization header.
+        if (StringUtils.isEmpty(authToken) && StringUtils.startsWith(authString, "Token ")) {
+            authToken = StringUtils.removeStart(authString, "Token ");
+        } 
+
         try {
-            if (StringUtils.isEmpty(authToken)) {
-                final String authString = request
-                        .getHeader(AUTHENTICATION_FIELD_NAME);
-                if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
-                    return; // Not Authenticated.
-                }
-
-                // Strip off the "Basic" part - but don't require it.
-                final String encoded = StringUtils.removeStart(authString,
-                        "Basic ");
-                final String decoded = new String(Base64.decodeBase64(encoded
-                        .getBytes()));
-                final String[] parts = decoded.split(":", 2);
-                if (parts.length != 2) {
-                    throw new BadRequestException(
-                            "Invalid request authentication. "
-                                    + "Authorization field contains invalid value. "
-                                    + "Decoded authorization value: "
-                                    + parts[0]);
-                }
-                final String username = StringUtils.lowerCase(parts[0]);
-                final String password = parts[1];
-
-                permission = pm.getPermission(username, password,
-                        im.getClassKeys());
-            } else {
-                permission = pm.getPermission(authToken, im.getClassKeys());
-            }
+             // Use a token if provided.
+             if (StringUtils.isNotEmpty(authToken)) {
+                 permission = pm.getPermission(authToken, im.getClassKeys());
+             } else {
+                 // Try and read the authString as a basic auth header.
+                 // Strip off the "Basic" part - but don't require it.
+                 final String encoded = StringUtils.removeStart(authString, "Basic ");
+                 final String decoded = new String(Base64.decodeBase64(encoded.getBytes()));
+                 final String[] parts = decoded.split(":", 2);
+                 if (parts.length != 2) {
+                     throw new UnauthorizedException(
+                             "Invalid request authentication. "
+                                     + "Authorization field contains invalid value. "
+                                     + "Decoded authorization value: "
+                                     + parts[0]);
+                 }
+                 final String username = StringUtils.lowerCase(parts[0]);
+                 final String password = parts[1];
+    
+                 permission = pm.getPermission(username, password,
+                         im.getClassKeys());
+             }
         } catch (AuthenticationException e) {
-            throw new ServiceForbiddenException(e.getMessage(), e);
+            throw new UnauthorizedException(e.getMessage());
         }
 
         LoginHandler.setUpPermission(im, permission);
@@ -483,8 +489,7 @@ public abstract class WebService {
 
         int code;
         if (t instanceof ServiceException) {
-            ServiceException ex = (ServiceException) t;
-            code = ex.getHttpErrorCode();
+            code = ((ServiceException) t).getHttpErrorCode();
         } else {
             code = Output.SC_INTERNAL_SERVER_ERROR;
         }
@@ -507,7 +512,9 @@ public abstract class WebService {
             attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
             output.setHeaderAttributes(attributes);
         }
-        output.setError(msg, code);
+        if (output != null) {
+            output.setError(msg, code);
+        }
         LOG.debug("Set error to : " + msg + "," + code);
     }
 
@@ -546,6 +553,7 @@ public abstract class WebService {
     private String getErrorDescription(String msg, int errorCode) {
         StringBuilder sb = new StringBuilder();
         sb.append(StatusDictionary.getDescription(errorCode));
+        sb.append(" ");
         sb.append(msg);
         return sb.toString();
     }
