@@ -24,6 +24,7 @@ import org.intermine.api.profile.Profile;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.xml.TemplateQueryBinding;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
@@ -57,6 +58,18 @@ public class TemplateUploadService extends WebService
         }
         if (!getPermission().isRW()) {
             throw new ServiceForbiddenException("This request does not have RW permission.");
+        }
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        switch (format) {
+            case TEXT:
+            case JSON:
+            case HTML:
+            case XML:
+                return true;
+            default: return false;
         }
     }
 

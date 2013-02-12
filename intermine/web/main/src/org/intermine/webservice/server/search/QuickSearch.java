@@ -208,9 +208,10 @@ public class QuickSearch extends JSONService
                 final BagManager bm = im.getBagManager();
                 final Profile p = getPermission().getProfile();
                 final InterMineBag bag = bm.getBag(p, searchBag);
-                if (bag != null) {
-                    ids.addAll(bag.getContentsAsIds());
+                if (bag == null) {
+                    throw new BadRequestException("You do not have access to a bag named '" + searchBag + "'");
                 }
+                ids.addAll(bag.getContentsAsIds());
             }
             return ids;
         }
