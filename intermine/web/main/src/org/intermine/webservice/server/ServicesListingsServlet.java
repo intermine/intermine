@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -36,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.output.Output;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,8 +54,8 @@ public class ServicesListingsServlet extends HttpServlet
 {
 
     private static final Logger LOGGER = Logger.getLogger(VersionServlet.class);
-    //private static final String FILENAME = "services.json";
-    private static final String FILENAME = "web.xml";
+    private static final String FILENAME = "services.json";
+    private static final String WEB_XML = "web.xml";
     private static final long serialVersionUID = 1L;
 
     private static JSONObject services = null;
@@ -76,7 +79,7 @@ public class ServicesListingsServlet extends HttpServlet
     }
 
     private void parseWebXML() {
-        String path = getServletContext().getRealPath("/WEB-INF/" + FILENAME);
+        String path = getServletContext().getRealPath("/WEB-INF/" + WEB_XML);
         File webxml = new File(path);
         SAXParser parser = getParser();
         DefaultHandler handler = getHandler();
@@ -117,6 +120,9 @@ public class ServicesListingsServlet extends HttpServlet
             private Map<String, Object> currentParam = null;
             private List<Map<String, Object>> returns = null;
             private Map<String, Object> format = null;
+            private List<Map<String, Object>> bodyFormats = null;
+            private String bodyDescription = null;
+            private Map<String, Object> currentContentType = null;
             private Stack<String> path = new Stack<String>();
             private StringBuffer sb = null;
             private Properties webProperties = InterMineContext.getWebProperties();
@@ -130,6 +136,29 @@ public class ServicesListingsServlet extends HttpServlet
                 services = new JSONObject(result);
             }
 
+            private void addToCurrentMethod(String key, Object value) throws SAXException {
+                if (currentMethod == null) {
+                    throw new SAXException("Illegal document structure");
+                }
+                currentMethod.put(key, value);
+            }
+
+            private String deIndent(String input) {
+                if (input == null) {
+                    return null;
+                }
+                input = input.replaceAll("^\\n", "").replaceAll("\\t", "    ");
+                if (!input.startsWith(" ")) {
+                    return input;
+                }
+                int i = 1;
+                while (input.charAt(i) == ' ') {
+                    i++;
+                }
+                String regex = "(?m)^\\s{" + i + "}";
+                return input.replaceAll(regex, "");
+            }
+
             public void startElement(String uri, String localName, String qName,
                     Attributes attrs) throws SAXException {
                 path.push(qName);
@@ -139,37 +168,45 @@ public class ServicesListingsServlet extends HttpServlet
                     currentEndPoint.put("methods", methods);
                 } else if ("returns".equals(qName)) {
                     returns = new ArrayList<Map<String, Object>>();
-                    currentMethod.put("returnFormats", returns);
+                    addToCurrentMethod("returnFormats", returns);
                 } else if ("method".equals(qName)) {
                     currentMethod = new HashMap<String, Object>();
-                    currentMethod.put("URI",
+                    addToCurrentMethod("URI",
                         String.valueOf(currentEndPoint.get("URI")).replaceAll("^/service", ""));
-                    currentMethod.put("HTTPMethod",
+                    addToCurrentMethod("HTTPMethod",
                             attrs.getValue("type"));
-                    currentMethod.put("RequiresAuthentication",
+                    addToCurrentMethod("RequiresAuthentication",
                             attrs.getValue("authenticationRequired"));
-                    if (attrs.getValue("slug") != null) {
-                    	currentMethod.put("URI",
-                    		currentMethod.get("URI") + attrs.getValue("slug"));
+                    final String slug = attrs.getValue("slug");
+                    if (slug != null) {
+                        addToCurrentMethod("URI", currentMethod.get("URI") + slug);
                     }
-                    String also = attrs.getValue("ALSO");
+                    final String also = attrs.getValue("ALSO");
                     if (also != null) {
-                        currentMethod.put("ALSO", also);
+                        addToCurrentMethod("ALSO", also);
                     }
                     params = new ArrayList<Map<String, Object>>();
                     currentMethod.put("parameters", params);
                     methods.add(currentMethod);
+                } else if ("body".equals(qName)) {
+                    bodyDescription = attrs.getValue("description");
+                    bodyFormats = new LinkedList<Map<String, Object>>();
+                } else if ("content".equals(qName)) {
+                    currentContentType = new HashMap<String, Object>();
+                    currentContentType.put("contentType", attrs.getValue("type"));
+                    currentContentType.put("schema", attrs.getValue("schema"));
+                    bodyFormats.add(currentContentType);
                 } else if ("param".equals(qName)) {
                     currentParam = new HashMap<String, Object>();
                     currentParam.put("Required",
                             Boolean.valueOf(attrs.getValue("required")) ? "Y" : "N");
                     currentParam.put("Type", attrs.getValue("type"));
                     currentParam.put("Description", attrs.getValue("description"));
+                    currentParam.put("Schema", attrs.getValue("schema"));
                     String defaultValue = attrs.getValue("default");
                     if (defaultValue != null) {
                         currentParam.put("Default", defaultValue);
                     }
-                    
                     if ("enumerated".equals(currentParam.get("Type"))) {
                         currentParam.put("EnumeratedList",
                                 Arrays.asList(attrs.getValue("values").split(",")));
@@ -200,10 +237,24 @@ public class ServicesListingsServlet extends HttpServlet
                     if (currentEndPoint != null) {
                         currentEndPoint.put("URI", StringUtils.chomp(content, "/*"));
                     }
+                } else if ("content".equals(qName)) {
+                    if (currentContentType != null) {
+                        // Don't trim and reflow text for bodies, but do de-indent it.
+                        currentContentType.put("example", deIndent(sb.toString()));
+                    }
+                    currentContentType = null;
+                } else if ("body".equals(qName)) {
+                    if (bodyFormats != null && !bodyFormats.isEmpty()) {
+                        currentMethod.put("body", bodyFormats);
+                        currentMethod.put("bodyDescription", bodyDescription);
+                    }
+                    bodyFormats = null;
+                    bodyDescription = null;
                 } else if ("servlet-name".equals(qName)) {
                     if (content.startsWith("ws-") && currentEndPoint != null) {
                         endpoints.add(currentEndPoint);
                         currentEndPoint.put("name", content);
+                        currentEndPoint.put("identifier", content);
                     }
                 } else if ("name".equals(qName)) {
                     if (path.contains("method")) {
@@ -241,8 +292,9 @@ public class ServicesListingsServlet extends HttpServlet
                         formatParam.put("Type", "enumerated");
                         formatParam.put("Description", "Output format");
                         List<String> formatValues = new ArrayList<String>();
-                        for (Map<String, Object> obj: returns) {
-                            formatValues.add(String.valueOf(obj.get("Name")));
+                        // TODO: interpret accept info into header options here.
+                        for (Map<String, Object> map: returns) {
+                            formatValues.add(String.valueOf(map.get("Name")));
                         }
                         formatParam.put("EnumeratedList", formatValues);
                         params.add(formatParam);
@@ -271,6 +323,8 @@ public class ServicesListingsServlet extends HttpServlet
         return handler;
     }
 
+    
+
     private void setHeaders(String format, HttpServletRequest request,
             HttpServletResponse response) {
         if ("text".equalsIgnoreCase(format)) {
@@ -279,7 +333,7 @@ public class ServicesListingsServlet extends HttpServlet
             if (!StringUtils.isEmpty(request.getParameter("callback"))) {
                 ResponseUtil.setJSONPHeader(response, FILENAME);
             } else {
-                ResponseUtil.setJSONSchemaHeader(response, FILENAME);
+                ResponseUtil.setJSONHeader(response, FILENAME);
             }
         }
     }
@@ -291,10 +345,23 @@ public class ServicesListingsServlet extends HttpServlet
         setHeaders(format, request, response);
 
         if (services == null) {
-            parseWebXML();
+            try {
+                parseWebXML();
+            } catch (ServiceException e) {
+                response.setStatus(e.getHttpErrorCode());
+                LOGGER.error(e);
+                return;
+            } catch (Throwable t) {
+                response.setStatus(Output.SC_INTERNAL_SERVER_ERROR);
+                LOGGER.error(t);
+                t.printStackTrace();
+                return;
+            }
         }
+        PrintWriter pw = null;
         try {
-            PrintWriter pw = response.getWriter();
+            response.setStatus(Output.SC_OK);
+            pw = response.getWriter();
 
             if ("text".equalsIgnoreCase(format)) {
                 try {
@@ -319,9 +386,17 @@ public class ServicesListingsServlet extends HttpServlet
                     pw.write(");");
                 }
             }
+            pw.flush();
         } catch (IOException e) {
             response.setStatus(Output.SC_INTERNAL_SERVER_ERROR);
             LOGGER.error(e);
+        } catch (Throwable e) {
+            response.setStatus(Output.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error("Unexpected error", e);
+        } finally {
+            if (pw != null) {
+                pw.close();
+            }
         }
     }
 
