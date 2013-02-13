@@ -75,5 +75,22 @@ public class TestFindCommonType extends TestCase {
         String common = ListServiceUtils.findCommonSuperTypeOf(classes);
         assertEquals(common, "RandomInterface");
     }
+    
+    public void testMostSpecificType() {
+        classes.add(testModel.getClassDescriptorByName("Employee"));
+        classes.add(testModel.getClassDescriptorByName("Manager"));
+        classes.add(testModel.getClassDescriptorByName("CEO"));
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertEquals(common, "CEO");
+    }
+    
+    public void testCousinsSpecificType() {
+        classes.add(testModel.getClassDescriptorByName("HasAddress"));
+        classes.add(testModel.getClassDescriptorByName("Employee"));
+        classes.add(testModel.getClassDescriptorByName("Company"));
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertNull(common);
+    }
+
 
 }

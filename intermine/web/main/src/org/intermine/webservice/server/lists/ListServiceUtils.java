@@ -137,6 +137,18 @@ public final class ListServiceUtils
      * @return A class name.
      */
     public static String findCommonSuperTypeOf(Set<ClassDescriptor> classes) {
+        return findCommonClasses(classes).get(0).getUnqualifiedName();
+    }
+
+    public static String findMostSpecificCommonTypeOf(Set<ClassDescriptor> classes) {
+        if (findCommonClasses(classes).isEmpty()) {
+            return null;
+        }
+
+        return sortClassesBySpecificity(classes).get(0).getUnqualifiedName();
+    }
+
+    public static List<ClassDescriptor> findCommonClasses(Set<ClassDescriptor> classes) {
         if (classes == null) {
             throw new IllegalArgumentException("classes is null");
         }
@@ -145,7 +157,7 @@ public final class ListServiceUtils
                     "Class set is empty - no type can be determined");
         }
         if (classes.size() == 1) {
-            return classes.iterator().next().getUnqualifiedName();
+            return new ArrayList<ClassDescriptor>(classes);
         }
 
         Set<String> classNames = new HashSet<String>();
@@ -164,6 +176,8 @@ public final class ListServiceUtils
                 superClasses.retainAll(toIntersect);
             }
         }
+        
+        // Make sure all classes are InterMineObjs
         CollectionUtils.filter(classes, new Predicate() {
             @Override
             public boolean evaluate(Object arg0) {
@@ -174,7 +188,11 @@ public final class ListServiceUtils
         if (superClasses.isEmpty()) {
             throw new BadRequestException("Incompatible types: " + nameString);
         }
-        List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(superClasses);
+        return sortClassesBySpecificity(superClasses);
+    }
+    
+    private static List<ClassDescriptor> sortClassesBySpecificity(Collection<ClassDescriptor> classes) {
+        List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(classes);
 
         Collections.sort(superList, new Comparator<ClassDescriptor>() {
             @Override
@@ -191,7 +209,7 @@ public final class ListServiceUtils
             }
 
         });
-        return superList.get(0).getUnqualifiedName();
+        return superList;
     }
 
 }
