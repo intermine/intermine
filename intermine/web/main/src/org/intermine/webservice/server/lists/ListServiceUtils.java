@@ -141,11 +141,27 @@ public final class ListServiceUtils
     }
 
     public static String findMostSpecificCommonTypeOf(Set<ClassDescriptor> classes) {
-        if (findCommonClasses(classes).isEmpty()) {
-            return null;
+        List<ClassDescriptor> commonTypes = findCommonClasses(classes); 
+        ClassDescriptor commonSuperType = commonTypes.get(0);
+
+        // Determine if this is a lineage.
+        boolean isLineage = true;
+        Set<ClassDescriptor> copyOfClasses = new HashSet<ClassDescriptor>(classes);
+        ClassDescriptor lastCommonType = commonSuperType;
+        while (isLineage) {
+            copyOfClasses.remove(lastCommonType);
+            if (copyOfClasses.isEmpty()) break;
+            ClassDescriptor nextCommonSuperType = findCommonClasses(copyOfClasses).get(0);;
+            isLineage = nextCommonSuperType != lastCommonType;
+            lastCommonType = nextCommonSuperType;
         }
 
-        return sortClassesBySpecificity(classes).get(0).getUnqualifiedName();
+        if (isLineage) {
+            ClassDescriptor mostSpecific = sortClassesBySpecificity(classes).get(0);
+            return mostSpecific.getUnqualifiedName();
+        } else {
+            return commonSuperType.getUnqualifiedName();
+        }
     }
 
     public static List<ClassDescriptor> findCommonClasses(Set<ClassDescriptor> classes) {
