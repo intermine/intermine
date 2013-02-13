@@ -11,10 +11,10 @@ function initConstraint(selectedConstraint) {
         //attribute8 attribute value
         //attribute7 options
         //LIKE or NOT LIKE or CONTAINS or LOOKUP
-        var multiValueAttribute = jQuery('#multiValueAttribute');
-        if (multiValueAttribute.exists()) {
-            multiValueAttribute.val('');
-        }
+        //var multiValueAttribute = jQuery('#multiValueAttribute');
+        //if (multiValueAttribute.exists()) {
+            //multiValueAttribute.val('');
+        //}
 
         var attribute5 = jQuery('#attribute5');
         if (attribute5.exists()) {
