@@ -74,7 +74,6 @@ public class EnrichmentWidgetResultService extends WidgetService
      *
      * @throws Exception an error has occurred
      */
-    @SuppressWarnings("deprecation")
     @Override
     protected void execute() throws Exception {
         WidgetsServiceInput input = getInput();
