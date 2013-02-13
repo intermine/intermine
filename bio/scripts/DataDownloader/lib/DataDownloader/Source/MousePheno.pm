@@ -36,4 +36,15 @@ use constant {
     ],
 };
 
+override make_source => sub {
+    my ($self, $args) = @_;
+    my $_ = $args->{FILE};
+    my $source = super();
+    if (/ontology$/) {
+      s/ontology$/obo/;
+        $source->set_destination($source->get_destination_dir->file($_));
+    }
+    return $source;
+};
+
 1;
