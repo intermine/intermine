@@ -282,9 +282,6 @@ public class OrthodbConverter extends BioFileConverter
     private String getGene(String geneId, String taxonId)
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
-        if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_IDENTIFIER_TYPE;
-        }
 
         {
         /**
@@ -327,13 +324,15 @@ public class OrthodbConverter extends BioFileConverter
             Item gene = createItem("Gene");
             gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
 
-            if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
-                if ("crossReferences".equals(identifierType)) {
-                    gene.addToCollection(identifierType,
-                            createCrossReference(gene.getIdentifier(), geneId,
-                                    DATA_SOURCE_NAME, true));
-                } else {
-                    gene.setAttribute(identifierType, geneId);
+            if (!StringUtils.isEmpty(identifierType)) {
+                if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
+                    if ("crossReferences".equals(identifierType)) {
+                        gene.addToCollection(identifierType,
+                                createCrossReference(gene.getIdentifier(), geneId,
+                                        DATA_SOURCE_NAME, true));
+                    } else {
+                        gene.setAttribute(identifierType, geneId);
+                    }
                 }
             }
 
