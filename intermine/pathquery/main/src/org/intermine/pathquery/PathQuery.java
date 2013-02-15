@@ -808,6 +808,10 @@ public class PathQuery implements Cloneable
         return (logic == null ? "" : logic.toString());
     }
 
+    public synchronized LogicExpression getLogicExpression() {
+        return logic;
+    }
+
     /**
      * Sets the current constraint logic.
      *
