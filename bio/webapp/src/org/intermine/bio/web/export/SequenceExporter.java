@@ -269,10 +269,18 @@ public class SequenceExporter implements Exporter
         // in the header
         Object keyFieldValue =
             ClassKeyHelper.getKeyFieldValue((FastPathObject) object, this.classKeys);
-        if (keyFieldValue != null) {
-            headerBits.add(keyFieldValue.toString());
-        } else {
-            headerBits.add("-");
+//        if (keyFieldValue != null) {
+//            headerBits.add(keyFieldValue.toString());
+//        } else {
+//            headerBits.add("-");
+//        }
+
+        List<Object> keyFieldValues =
+                ClassKeyHelper.getKeyFieldValues((FastPathObject) object, this.classKeys);
+        for (Object key : keyFieldValues) {
+            if (key != null) {
+                headerBits.add(key.toString());
+            }
         }
 
         List<ResultElement> subRow = new ArrayList<ResultElement>();
