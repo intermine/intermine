@@ -198,9 +198,11 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
                 mockResultSet(variationHeader,
                         parseVariationRawData(variationRawDataFileNameChrMT)),
                         chrMT);
+        converter.storeFinalSnps();
 
 //        writeItemsFile(itemWriter.getItems(), "ensembl-snp-db-multiple-chr-tgt-items.xml");
 
+        assertEquals(2, countItemByClass(itemWriter.getItems(), "SNP"));
         assertEquals(readItemSet("EnsemblSnpDbMultipleChr-tgt-items.xml"),
                 itemWriter.getItems());
     }
