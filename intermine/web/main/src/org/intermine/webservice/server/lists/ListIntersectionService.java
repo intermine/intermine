@@ -33,7 +33,7 @@ public class ListIntersectionService extends CommutativeOperationService {
         Collection<InterMineBag> intersectBags = ListServiceUtils.castBagsToCommonType(
                 input.getLists(), type, temporaryBagNamesAccumulator, profile, im.getClassKeys());
 
-        int sizeOfIntersection = BagOperations.intersect(
+        int sizeOfIntersection = BagOperations.intersect(im.getModel(),
                 intersectBags, input.getTemporaryListName(), profile, im.getClassKeys());
         return sizeOfIntersection;
 

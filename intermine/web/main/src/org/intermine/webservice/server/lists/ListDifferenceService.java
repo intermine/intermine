@@ -55,7 +55,7 @@ public class ListDifferenceService extends CommutativeOperationService
         Collection<InterMineBag> diffBags = ListServiceUtils.castBagsToCommonType(
                 input.getLists(), type, temporaryBagNamesAccumulator, profile, im.getClassKeys());
 
-        int sizeOfDifference = subtract(diffBags, tempName, profile, im.getClassKeys());
+        int sizeOfDifference = subtract(im.getModel(), diffBags, tempName, profile, im.getClassKeys());
         return sizeOfDifference;
     }
 
