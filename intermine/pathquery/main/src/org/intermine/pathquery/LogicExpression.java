@@ -370,20 +370,22 @@ public class LogicExpression
     public String getPartialString(List<String> variables) {
         StringBuffer expr = new StringBuffer();
         boolean needComma = false;
-        Set<Node> nodes = ((Operator) root).getChildren();
-        for (Node child : nodes) {
-            String subexpr = child.toString();
-            if (!"".equals(subexpr) && isStringContainingAnyValueInArray(subexpr, variables)) {
-                if (child instanceof Or && root instanceof And) {
-                    subexpr = "(" + subexpr + ")";
-                } else if (child instanceof And && root instanceof Or) {
-                    subexpr = "(" + subexpr + ")";
+        if (root instanceof Operator) {
+            Set<Node> nodes = ((Operator) root).getChildren();
+            for (Node child : nodes) {
+                String subexpr = child.toString();
+                if (!"".equals(subexpr) && isStringContainingAnyValueInArray(subexpr, variables)) {
+                    if (child instanceof Or && root instanceof And) {
+                        subexpr = "(" + subexpr + ")";
+                    } else if (child instanceof And && root instanceof Or) {
+                        subexpr = "(" + subexpr + ")";
+                    }
+                    if (needComma) {
+                        expr.append(" " + ((Operator) root).getOperator() + " ");
+                    }
+                    needComma = true;
+                    expr.append(subexpr);
                 }
-                if (needComma) {
-                    expr.append(" " + ((Operator) root).getOperator() + " ");
-                }
-                needComma = true;
-                expr.append(subexpr);
             }
         }
         return expr.toString();
