@@ -72,22 +72,7 @@ public final class ListServiceUtils
             Set<String> nameAccumulator, Profile profile,
             Map<String, List<FieldDescriptor>> classKeys)
         throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
-        Set<InterMineBag> castBags = new HashSet<InterMineBag>();
-        for (InterMineBag bag: bags) {
-            if (bag.isOfType(type)) {
-                castBags.add(bag);
-            } else {
-                String castName = bag.getName() + CAST + type;
-                InterMineBag castBag
-                    = profile.createBag(castName, type, "", classKeys);
-                Query q = new Query();
-                q.addToSelect(bag.getOsb());
-                castBag.addToBagFromQuery(q);
-                castBags.add(castBag);
-                nameAccumulator.add(castName);
-            }
-        }
-        return castBags;
+        return bags;
     }
 
     /**
