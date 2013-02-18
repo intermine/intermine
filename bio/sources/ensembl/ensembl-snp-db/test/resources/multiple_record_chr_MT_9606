@@ -12,7 +12,7 @@
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	downstream_gene_variant	NULL	ENST00000361624	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000387416	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	downstream_gene_variant	NULL	ENST00000387419	NULL	NULL	NULL	NULL
-19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	stop_retained_variant	NULL	ENST00000361739	NULL	NULL	NULL	NULL
+19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	stop_retained_variant	*	ENST00000361739	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000387421	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000361851	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000361899	NULL	NULL	NULL	NULL
