@@ -29,7 +29,9 @@ import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.DescriptorUtils;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -137,95 +139,28 @@ public final class ListServiceUtils
      * @return A class name.
      */
     public static String findCommonSuperTypeOf(Set<ClassDescriptor> classes) {
-        return findCommonClasses(classes).get(0).getUnqualifiedName();
+        try {
+            return DescriptorUtils.findSumType(classes).getUnqualifiedName();
+        } catch (MetaDataException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
     }
 
     public static String findMostSpecificCommonTypeOf(Set<ClassDescriptor> classes) {
-        List<ClassDescriptor> commonTypes = findCommonClasses(classes); 
-        ClassDescriptor commonSuperType = commonTypes.get(0);
-
-        // Determine if this is a lineage.
-        boolean isLineage = true;
-        Set<ClassDescriptor> copyOfClasses = new HashSet<ClassDescriptor>(classes);
-        ClassDescriptor lastCommonType = commonSuperType;
-        while (isLineage) {
-            copyOfClasses.remove(lastCommonType);
-            if (copyOfClasses.isEmpty()) break;
-            ClassDescriptor nextCommonSuperType = findCommonClasses(copyOfClasses).get(0);;
-            isLineage = nextCommonSuperType != lastCommonType;
-            lastCommonType = nextCommonSuperType;
-        }
-
-        if (isLineage) {
-            ClassDescriptor mostSpecific = sortClassesBySpecificity(classes).get(0);
-            return mostSpecific.getUnqualifiedName();
-        } else {
-            return commonSuperType.getUnqualifiedName();
+        try {
+            return DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
+        } catch (MetaDataException e) {
+            throw new BadRequestException(e.getMessage(), e);
         }
     }
 
     public static List<ClassDescriptor> findCommonClasses(Set<ClassDescriptor> classes) {
-        if (classes == null) {
-            throw new IllegalArgumentException("classes is null");
+        try {
+            return DescriptorUtils.findCommonClasses(classes);
+        } catch (MetaDataException e) {
+            throw new BadRequestException(e.getMessage(), e);
         }
-        if (classes.isEmpty()) {
-            throw new RuntimeException(
-                    "Class set is empty - no type can be determined");
-        }
-        if (classes.size() == 1) {
-            return new ArrayList<ClassDescriptor>(classes);
-        }
-
-        Set<String> classNames = new HashSet<String>();
-        for (ClassDescriptor cd: classes) {
-            classNames.add(cd.getUnqualifiedName());
-        }
-        String nameString = StringUtils.join(classNames, ", ");
-        Set<ClassDescriptor> superClasses = null;
-        for (ClassDescriptor cd: classes) {
-            if (superClasses == null) {
-                superClasses = new HashSet<ClassDescriptor>(cd.getAllSuperDescriptors());
-                superClasses.add(cd);
-            } else {
-                Set<ClassDescriptor> toIntersect = cd.getAllSuperDescriptors();
-                toIntersect.add(cd);
-                superClasses.retainAll(toIntersect);
-            }
-        }
-        
-        // Make sure all classes are InterMineObjs
-        CollectionUtils.filter(classes, new Predicate() {
-            @Override
-            public boolean evaluate(Object arg0) {
-                ClassDescriptor cd = (ClassDescriptor) arg0;
-                return cd.getAllSuperclassNames().contains("org.intermine.model.InterMineObject");
-            }
-        });
-        if (superClasses.isEmpty()) {
-            throw new BadRequestException("Incompatible types: " + nameString);
-        }
-        return sortClassesBySpecificity(superClasses);
     }
     
-    private static List<ClassDescriptor> sortClassesBySpecificity(Collection<ClassDescriptor> classes) {
-        List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(classes);
-
-        Collections.sort(superList, new Comparator<ClassDescriptor>() {
-            @Override
-            public int compare(ClassDescriptor o1, ClassDescriptor o2) {
-                int depth1 = o1.getAllSuperDescriptors().size();
-                int depth2 = o2.getAllSuperDescriptors().size();
-                if (depth1 <= depth2) {
-                    return 1;
-                } else if (depth1 >= depth2) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-
-        });
-        return superList;
-    }
 
 }

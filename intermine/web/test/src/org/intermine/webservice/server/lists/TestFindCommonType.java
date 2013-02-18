@@ -181,7 +181,7 @@ public class TestFindCommonType extends TestCase {
         String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
         assertEquals("HasAddress", common);
     }
-    
+
     /**
      * Test that the most specific common type of cousins is the grandparent
      * 
@@ -205,9 +205,9 @@ public class TestFindCommonType extends TestCase {
      * 
      * ie:
      * <pre>
-     *          [A]
+     *           A
      *           |
-     *           B
+     *          [B]
      *         /   \
      *        C     D
      * </pre>
@@ -215,7 +215,7 @@ public class TestFindCommonType extends TestCase {
     public void testBranchingTreeSpecificType() {
         withClasses("Thing", "Employable", "Employee", "Contractor");
         String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
-        assertEquals("Thing", common);
+        assertEquals("Employable", common);
     }
 
 }
