@@ -173,11 +173,6 @@
 <reference name="transcript" ref_id="11_3"/>
 <collection name="types"><reference ref_id="10_3"/></collection>
 </item>
-<item id="9_17" class="Consequence">
-<attribute name="description" value="stop_retained_variant"/>
-<reference name="transcript" ref_id="11_17"/>
-<collection name="types"><reference ref_id="10_5"/></collection>
-</item>
 <item id="8_1" class="Source">
 <attribute name="name" value="dbSNP"/>
 </item>
@@ -231,6 +226,12 @@
 <attribute name="description" value="downstream_gene_variant"/>
 <reference name="transcript" ref_id="11_9"/>
 <collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="9_17" class="Consequence">
+<attribute name="description" value="stop_retained_variant"/>
+<attribute name="peptideAlleles" value="*"/>
+<reference name="transcript" ref_id="11_17"/>
+<collection name="types"><reference ref_id="10_5"/></collection>
 </item>
 <item id="11_30" class="Transcript">
 <attribute name="primaryIdentifier" value="ENST00000361567"/>
