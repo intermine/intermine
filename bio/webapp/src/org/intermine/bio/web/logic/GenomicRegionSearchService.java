@@ -1015,8 +1015,7 @@ public class GenomicRegionSearchService
             }
         }
 
-        String clHtml = " or <a href=\"javascript: createList('all','all-regions');\">"
-            + "Create List by feature type:</a>"
+        String clHtml = " or Create List by feature type:"
             + "<select id=\"all-regions\" style=\"margin: 4px 3px\">";
 
         for (String ft : ftSet) {
@@ -1026,6 +1025,7 @@ public class GenomicRegionSearchService
         }
 
         clHtml += "</select>";
+        clHtml += "<button onClick=\"javascript: createList('all','all-regions');\">Go</button>";
 
         return clHtml;
     }
@@ -1524,9 +1524,7 @@ public class GenomicRegionSearchService
         if (ftSet == null) {
             return "";
         } else {
-            String ftHtml = "<div>"
-                + "<a href=\"javascript: createList('" + s.getFullRegionInfo()
-                + "', '" + id + "');\">" + "Create List by</a>"
+            String ftHtml = "<div>Create List by"
                 + "<select id=\"" + id + "\" style=\"margin: 4px 3px\">";
 
             for (String ft : ftSet) {
@@ -1535,7 +1533,10 @@ public class GenomicRegionSearchService
                         + "</option>";
             }
 
-            ftHtml += "</select></div>";
+            ftHtml += "</select>";
+            ftHtml += "<button onClick=\"javascript: createList('" + s.getFullRegionInfo()
+                      + "', '" + id + "');\">Go</button>";
+            ftHtml += "</div>";
 
             return ftHtml;
         }

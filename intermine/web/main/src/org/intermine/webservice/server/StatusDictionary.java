@@ -41,6 +41,8 @@ public abstract class StatusDictionary
                 ret = "Resource not found."; break;
             case Output.SC_OK:
                 ret = "OK"; break;
+            case Output.NOT_ACCEPTABLE:
+                ret = "NOT ACCEPTABLE"; break;
             default:
                 ret = "Unknown Status";
         }

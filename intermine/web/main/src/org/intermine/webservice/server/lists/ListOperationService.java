@@ -14,8 +14,12 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagOperationException;
+import org.intermine.api.bag.InternalBagOperationException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 /**
  * A base class for services that perform operations on lists.
@@ -50,7 +54,16 @@ public abstract class ListOperationService extends ListMakerService
     @Override
     protected void makeList(ListInput input, String type, Profile profile,
         Set<String> rubbishbin) throws Exception {
-        int size = doOperation(input, type, profile, rubbishbin);
+
+        int size;
+        try {
+            size = doOperation(input, type, profile, rubbishbin);
+        } catch (InternalBagOperationException e) {
+            throw new ServiceException(e);
+        } catch (BagOperationException e) {
+            throw new BadRequestException(e.getMessage());
+        }
+
         InterMineBag newList;
         if (size == 0) {
             output.addResultItem(Arrays.asList("0"));

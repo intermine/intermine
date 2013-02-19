@@ -297,17 +297,19 @@ public class OmimConverter extends BioDirectoryConverter
         String mimNumber = null;
         while (lineIter.hasNext()) {
             String[] bits = lineIter.next();
-            mimNumber = bits[0];
-            String pos = bits[1];
-            String pubmedId = bits[2];
-            // all the diseases we need are already create from morbidmap file
-            if (diseases.containsKey(mimNumber)) {
-                // are we on the first row for a particular MIM number
-                if ("1".equals(pos)) {
-                    addPubCollection(mimNumber, currentPubs);
-                    currentPubs = new ArrayList<String>();
+            if (bits.length == 3) {
+                mimNumber = bits[0];
+                String pos = bits[1];
+                String pubmedId = bits[2];
+                // all the diseases we need are already create from morbidmap file
+                if (diseases.containsKey(mimNumber)) {
+                    // are we on the first row for a particular MIM number
+                    if ("1".equals(pos)) {
+                        addPubCollection(mimNumber, currentPubs);
+                        currentPubs = new ArrayList<String>();
+                    }
+                    currentPubs.add(getPubId(pubmedId));
                 }
-                currentPubs.add(getPubId(pubmedId));
             }
         }
         if (diseases.containsKey(mimNumber)) {

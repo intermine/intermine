@@ -58,6 +58,12 @@ public class PathQueryHandler extends DefaultHandler
     private static final Logger LOG = Logger.getLogger(PathQueryHandler.class);
 
     /**
+     * Collection of models used for lookup before resorting to Model.getInstanceByName(). This
+     * enables multiple models to be used with the same name.
+     */
+    private final Map<String, Model> models = new HashMap<String, Model>();
+
+    /**
      * Constructor
      * @param queries Map from query name to PathQuery
      * @param version the version of the xml, an attribute on the profile manager
@@ -65,6 +71,11 @@ public class PathQueryHandler extends DefaultHandler
     public PathQueryHandler(Map<String, PathQuery> queries, int version) {
         this.queries = queries;
         this.version = version;
+    }
+
+    public void addModel(Model m) {
+        String name = m.getName();
+        models.put(name, m);
     }
 
     /**
@@ -82,10 +93,15 @@ public class PathQueryHandler extends DefaultHandler
             // Do nothing
         } else if ("query".equals(qName)) {
             queryName = validateName(attrs.getValue("name"));
-            try {
-                model = Model.getInstanceByName(attrs.getValue("model"));
-            } catch (Exception e) {
-                throw new SAXException(e);
+            String modelName = attrs.getValue("model");
+            if (models.containsKey(modelName)) {
+                model = models.get(modelName);
+            } else {
+                try {
+                    model = Model.getInstanceByName(attrs.getValue("model"));
+                } catch (Exception e) {
+                    throw new SAXException(e);
+                }
             }
             query = new PathQuery(model);
 

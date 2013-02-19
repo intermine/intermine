@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Job Submission",
+    "description": "A representation of a job submitted to the ID resolution service.",
+    "type": "object",
+    "required": ["type", "identifiers"],
+    "properties": {
+        "type": {
+            "description": "The type of object that these identifiers identify.",
+            "type": "string"
+        },
+        "identifiers": {
+            "description": "The identifiers to resolve",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "caseSensitive": {
+            "description": "Whether this request expects its identifiers to be treated in a case sensitive manner",
+            "type": "boolean"
+        },
+        "wildCards": {
+            "description": "Whether this request expects the '*' character in identifiers to be treated as a wild-card.",
+            "type": "boolean"
+        },
+        "extra": {
+            "description": "A disambiguating extra-value; for example the organism name for a set of gene identifiers",
+            "type": "string"
+        }
+    }
+}
+
