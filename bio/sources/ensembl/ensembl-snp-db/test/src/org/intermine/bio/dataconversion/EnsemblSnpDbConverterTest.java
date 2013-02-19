@@ -49,9 +49,9 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
                                             "seq_region_strand",
                                             "source_name",
                                             "validation_status",
-                                            "consequence_type",
+                                            "variation_feature_consequence_types",
                                             "cdna_start",
-                                            "consequence_types",
+                                            "transcript_variation_consequence_types",
                                             "pep_allele_string",
                                             "feature_stable_id",
                                             "sift_prediction",
@@ -62,10 +62,12 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
     private String chr1 = "1"; // fixed
     private String chr2 = "2"; // fixed
     private String chrMT = "MT"; // fixed
+    private String chrPt = "Pt"; // fixed
     private String variationRawDataFileNameMultipleRecord = "multiple_record_9606";
     private String variationRawDataFileNameDupConsequence = "dup_consequence_9606";
     private String variationRawDataFileNameMultipleLocationChr1 = "multiple_location_chr_1_9606";
     private String variationRawDataFileNameMultipleLocationChr2 = "multiple_location_chr_2_9606";
+    private String variationRawDataFileNameChrMT = "multiple_record_chr_MT_9606";
 
     public EnsemblSnpDbConverterTest(String arg) {
         super(arg);
@@ -92,7 +94,7 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
      */
     public void testEmptyResults() throws Exception {
         converter.setOrganism(HUMAN);
-        converter.process(mockResultSet(variationHeader, null), chrMT);
+        converter.process(mockResultSet(variationHeader, null), chrPt);
         assertEquals(true, converter.isEmptyResultSet());
     }
 
@@ -174,6 +176,34 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
         assertEquals(2, countItemByClass(itemWriter.getItems(), "ConsequenceType"));
         assertEquals(2, countItemByClass(itemWriter.getItems(), "Chromosome"));
         assertEquals(readItemSet("EnsemblSnpDbMultipleLocation-tgt-items.xml"),
+                itemWriter.getItems());
+    }
+
+    /**
+     * Test case: multiple chromosomes
+     * @throws Exception e
+     */
+    public void testProcessMultipleChromosomes() throws Exception {
+        converter.setOrganism(HUMAN);
+        converter.process(
+                mockResultSet(variationHeader,
+                        parseVariationRawData(variationRawDataFileNameMultipleLocationChr1)),
+                        chr1);
+        converter.process(
+                mockResultSet(variationHeader,
+                        parseVariationRawData(variationRawDataFileNameMultipleLocationChr2)),
+                        chr2);
+        converter.storeFinalSnps();
+        converter.process(
+                mockResultSet(variationHeader,
+                        parseVariationRawData(variationRawDataFileNameChrMT)),
+                        chrMT);
+        converter.storeFinalSnps();
+
+//        writeItemsFile(itemWriter.getItems(), "ensembl-snp-db-multiple-chr-tgt-items.xml");
+
+        assertEquals(2, countItemByClass(itemWriter.getItems(), "SNP"));
+        assertEquals(readItemSet("EnsemblSnpDbMultipleChr-tgt-items.xml"),
                 itemWriter.getItems());
     }
 

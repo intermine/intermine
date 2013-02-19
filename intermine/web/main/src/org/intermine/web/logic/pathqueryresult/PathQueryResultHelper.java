@@ -112,18 +112,54 @@ public final class PathQueryResultHelper
         return view;
     }
 
-
     /**
-     * Alias for getDefaultViewForClass, with the difference that it does not take a starting path.
-     * @param type
-     * @param model
-     * @param webConfig
-     * @param startingPath
-     * @return A view list containing only attributes on the given class
+     * Return a list of string paths that are defined as WebConfig to be shown in results.  This
+     * will include attributes of the given class and follow references. 
+     *
+     * @param type the class name to create a view for
+     * @param model the model
+     * @param webConfig we configuration
+     * @return the configured view paths for the class
      */
-    private static List<String> getAttributeViewForClass(String type, Model model,
-            WebConfig webConfig) {
-        return getDefaultViewForClass(type, model, webConfig, null);
+    public static List<String> getDefaultViewForClass(String type, Model model, WebConfig webConfig) {
+        List<String> view = new ArrayList<String>();
+        ClassDescriptor cld = model.getClassDescriptorByName(type);
+        List<FieldConfig> fieldConfigs = FieldConfigHelper.getClassFieldConfigs(webConfig, cld);
+
+        for (FieldConfig fieldConfig : fieldConfigs) {
+            String relPath = fieldConfig.getFieldExpr();
+            // only add attributes, don't follow references, following references can be problematic
+            // when subclasses get involved.
+            if (fieldConfig.getShowInResults()) {
+                try {
+                    Path path = new Path(model, type + "." + relPath);
+                    // add references
+                    if (path.isRootPath() || path.endIsReference() ) {
+                        for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, path.getEndClassDescriptor())) {
+                            Path pathToAdd =  new Path(model, path.toStringNoConstraints() + "." + fc.getFieldExpr());
+                            if (pathToAdd.endIsAttribute()
+                                    && (!view.contains(pathToAdd.getNoConstraintsString()))
+                                    && (fc.getDisplayer() == null && fc.getShowInSummary())) {
+                                view.add(pathToAdd.getNoConstraintsString());
+                            }
+                        }
+                    // add collections
+                    } else if (!path.endIsCollection()) {
+                        view.add(path.getNoConstraintsString());
+                    }
+                } catch (PathException e) {
+                    LOG.error("Invalid path configured in webconfig for class: " + type);
+                }
+            }
+        }
+        if (view.size() == 0) {
+            for (AttributeDescriptor att : cld.getAllAttributeDescriptors()) {
+                if (!"id".equals(att.getName())) {
+                    view.add(type + "." + att.getName());
+                }
+            }
+        }
+        return view;
     }
 
     /**
@@ -137,7 +173,7 @@ public final class PathQueryResultHelper
     public static PathQuery makePathQueryForBag(InterMineBag imBag, WebConfig webConfig,
             Model model) {
         PathQuery query = new PathQuery(model);
-        query.addViews(getAttributeViewForClass(imBag.getType(), model, webConfig));
+        query.addViews(getDefaultViewForClass(imBag.getType(), model, webConfig));
         query.addConstraint(Constraints.in(imBag.getType(), imBag.getName()));
         return query;
     }

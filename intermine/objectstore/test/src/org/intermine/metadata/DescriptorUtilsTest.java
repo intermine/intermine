@@ -1,21 +1,20 @@
-package org.intermine.webservice.server.lists;
+package org.intermine.metadata;
+
+import static org.junit.Assert.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.intermine.metadata.ClassDescriptor;
-import org.intermine.metadata.Model;
-import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TestFindCommonType extends TestCase {
+public class DescriptorUtilsTest {
 
     private final static Model testModel = Model.getInstanceByName("testmodel");
     private Set<ClassDescriptor> classes;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         classes = new HashSet<ClassDescriptor>();
     }
 
@@ -29,27 +28,30 @@ public class TestFindCommonType extends TestCase {
         }
     }
 
-    public void testSingleMember() {
+    @Test
+    public void testSingleMember() throws MetaDataException {
         withClass("Employee");
-        String common = ListServiceUtils.findCommonSuperTypeOf(classes);
+        String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
         assertEquals(common, "Employee");
     }
-    
-    public void testNull() {
+
+    @Test
+    public void testNull() throws MetaDataException {
         classes = null;
         try {
-            ListServiceUtils.findCommonSuperTypeOf(classes);
+            DescriptorUtils.findSumType(classes);
             fail("No exception thrown");
         } catch (IllegalArgumentException e) {
             // Expected behaviour.
         }
     }
-    
+
+    @Test
     public void testEmptySet() {
         try {
-            ListServiceUtils.findCommonSuperTypeOf(classes);
+            DescriptorUtils.findSumType(classes);
             fail("No exception thrown");
-        } catch (RuntimeException e) {
+        } catch (MetaDataException e) {
             // Expected behaviour.
         }
     }
@@ -64,12 +66,13 @@ public class TestFindCommonType extends TestCase {
      *     A    B
      * </pre>
      */
+    @Test
     public void testIncompatibleTypes() {
         withClasses("Employee", "Department");
         try {
-            String common = ListServiceUtils.findCommonSuperTypeOf(classes);
+            String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
             fail("No exception thrown: " + common);
-        } catch (BadRequestException e) {
+        } catch (MetaDataException e) {
             // Expected behaviour.
         }
     }
@@ -85,9 +88,10 @@ public class TestFindCommonType extends TestCase {
      *        B
      * </pre>
      */
-    public void testDirectSubclass() {
+    @Test
+    public void testDirectSubclass() throws MetaDataException {
         withClasses("Employee", "Manager");
-        String common = ListServiceUtils.findCommonSuperTypeOf(classes);
+        String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
         assertEquals(common, "Employee");
     }
 
@@ -104,9 +108,10 @@ public class TestFindCommonType extends TestCase {
      *          C
      * </pre>
      */
-    public void testDistantSubclass() {
+    @Test
+    public void testDistantSubclass() throws MetaDataException {
         withClasses("Employee", "CEO");
-        String common = ListServiceUtils.findCommonSuperTypeOf(classes);
+        String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
         assertEquals(common, "Employee");
     }
 
@@ -120,9 +125,10 @@ public class TestFindCommonType extends TestCase {
      *        B     C
      * </pre>
      */
-    public void testCommonCousins() {
+    @Test
+    public void testCommonCousins() throws MetaDataException {
         withClasses("Department", "Company");
-        String common = ListServiceUtils.findCommonSuperTypeOf(classes);
+        String common = DescriptorUtils.findSumType(classes).getUnqualifiedName();
         assertEquals(common, "RandomInterface");
     }
 
@@ -139,9 +145,10 @@ public class TestFindCommonType extends TestCase {
      *         [C]
      * </pre>
      */
-    public void testMostSpecificType() {
+    @Test
+    public void testMostSpecificType() throws MetaDataException {
         withClasses("Employee", "Manager", "CEO");
-        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
         assertEquals(common, "CEO");
     }
 
@@ -158,9 +165,10 @@ public class TestFindCommonType extends TestCase {
      *                D
      * </pre>
      */
-    public void testExtendedFamilySpecificType() {
+    @Test
+    public void testExtendedFamilySpecificType() throws MetaDataException {
         withClasses("HasAddress", "Employee", "Manager", "Company");
-        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
         assertEquals("HasAddress", common);
     }
 
@@ -176,9 +184,10 @@ public class TestFindCommonType extends TestCase {
      *                D
      * </pre>
      */
-    public void testCousinsSpecificType() {
+    @Test
+    public void testCousinsSpecificType() throws MetaDataException {
         withClasses("Employee", "Manager", "Company");
-        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
         assertEquals("HasAddress", common);
     }
 
@@ -194,9 +203,10 @@ public class TestFindCommonType extends TestCase {
      *            D
      * </pre>
      */
-    public void testClansSpecificType() {
+    @Test
+    public void testClansSpecificType() throws MetaDataException {
         withClasses("Contractor", "Manager", "CEO", "Address");
-        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
         assertEquals("Thing", common);
     }
 
@@ -212,10 +222,10 @@ public class TestFindCommonType extends TestCase {
      *        C     D
      * </pre>
      */
-    public void testBranchingTreeSpecificType() {
+    @Test
+    public void testBranchingTreeSpecificType() throws MetaDataException {
         withClasses("Thing", "Employable", "Employee", "Contractor");
-        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
         assertEquals("Employable", common);
     }
-
 }
