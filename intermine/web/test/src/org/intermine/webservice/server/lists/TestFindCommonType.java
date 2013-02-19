@@ -18,9 +18,19 @@ public class TestFindCommonType extends TestCase {
         super.setUp();
         classes = new HashSet<ClassDescriptor>();
     }
-    
+
+    private void withClass(String name) {
+        classes.add(testModel.getClassDescriptorByName(name));
+    }
+
+    private void withClasses(String... names) {
+        for (String name: names) {
+            withClass(name);
+        }
+    }
+
     public void testSingleMember() {
-        classes.add(testModel.getClassDescriptorByName("Employee"));
+        withClass("Employee");
         String common = ListServiceUtils.findCommonSuperTypeOf(classes);
         assertEquals(common, "Employee");
     }
@@ -43,10 +53,19 @@ public class TestFindCommonType extends TestCase {
             // Expected behaviour.
         }
     }
-    
+
+    /**
+     * Test that exceptions are thrown for unconnected types.
+     * 
+     * ie:
+     * <pre>
+     *     {BOOM}
+     *     |    |
+     *     A    B
+     * </pre>
+     */
     public void testIncompatibleTypes() {
-        classes.add(testModel.getClassDescriptorByName("Employee"));
-        classes.add(testModel.getClassDescriptorByName("Department"));
+        withClasses("Employee", "Department");
         try {
             String common = ListServiceUtils.findCommonSuperTypeOf(classes);
             fail("No exception thrown: " + common);
@@ -54,26 +73,149 @@ public class TestFindCommonType extends TestCase {
             // Expected behaviour.
         }
     }
-    
+
+    /**
+     * Test that the common type of parent and child is
+     * the ancestor.
+     * 
+     * ie:
+     * <pre>
+     *     [A]
+     *       \
+     *        B
+     * </pre>
+     */
     public void testDirectSubclass() {
-        classes.add(testModel.getClassDescriptorByName("Employee"));
-        classes.add(testModel.getClassDescriptorByName("Manager"));
+        withClasses("Employee", "Manager");
         String common = ListServiceUtils.findCommonSuperTypeOf(classes);
         assertEquals(common, "Employee");
     }
-    
+
+    /**
+     * Test that the common type of grandparent and grand-child is
+     * the ancestor.
+     * 
+     * ie:
+     * <pre>
+     *     [A]
+     *       \
+     *        ?
+     *         \
+     *          C
+     * </pre>
+     */
     public void testDistantSubclass() {
-        classes.add(testModel.getClassDescriptorByName("Employee"));
-        classes.add(testModel.getClassDescriptorByName("CEO"));
+        withClasses("Employee", "CEO");
         String common = ListServiceUtils.findCommonSuperTypeOf(classes);
         assertEquals(common, "Employee");
     }
-    
-    public void testUnmentionedCommonType() {
-        classes.add(testModel.getClassDescriptorByName("Department"));
-        classes.add(testModel.getClassDescriptorByName("Company"));
+
+    /**
+     * Test that the common type of cousins is the grandparent
+     * 
+     * ie:
+     * <pre>
+     *          [?]
+     *         /   \
+     *        B     C
+     * </pre>
+     */
+    public void testCommonCousins() {
+        withClasses("Department", "Company");
         String common = ListServiceUtils.findCommonSuperTypeOf(classes);
         assertEquals(common, "RandomInterface");
+    }
+
+
+    /**
+     * Test that the most specific type of a lineage is the descendent.
+     * 
+     * ie:
+     * <pre>
+     *      A
+     *       \
+     *        B
+     *         \
+     *         [C]
+     * </pre>
+     */
+    public void testMostSpecificType() {
+        withClasses("Employee", "Manager", "CEO");
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertEquals(common, "CEO");
+    }
+
+    /**
+     * Test that the most specific common type of an extended family
+     * is the grandparent.
+     * 
+     * ie:
+     * <pre>
+     *          [A]
+     *         /   \
+     *        B     C
+     *               \
+     *                D
+     * </pre>
+     */
+    public void testExtendedFamilySpecificType() {
+        withClasses("HasAddress", "Employee", "Manager", "Company");
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertEquals("HasAddress", common);
+    }
+
+    /**
+     * Test that the most specific common type of cousins is the grandparent
+     * 
+     * ie:
+     * <pre>
+     *          [?]
+     *         /   \
+     *        B     C
+     *               \
+     *                D
+     * </pre>
+     */
+    public void testCousinsSpecificType() {
+        withClasses("Employee", "Manager", "Company");
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertEquals("HasAddress", common);
+    }
+
+    /**
+     * Test that the most specific common type of cousins is the grandparent
+     * 
+     * ie:
+     * <pre>
+     *           [?]
+     *         /  |  \
+     *        B   C   E
+     *            |
+     *            D
+     * </pre>
+     */
+    public void testClansSpecificType() {
+        withClasses("Contractor", "Manager", "CEO", "Address");
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertEquals("Thing", common);
+    }
+
+    /**
+     * Test that the most specific common type of a branching tree is the root.
+     * 
+     * ie:
+     * <pre>
+     *           A
+     *           |
+     *          [B]
+     *         /   \
+     *        C     D
+     * </pre>
+     */
+    public void testBranchingTreeSpecificType() {
+        withClasses("Thing", "Employable", "Employee", "Contractor");
+        String common = ListServiceUtils.findMostSpecificCommonTypeOf(classes);
+        assertEquals("Employable", common);
     }
 
 }

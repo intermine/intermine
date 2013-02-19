@@ -261,7 +261,7 @@ public class DisplayConstraint
         String multiValuesAsString = "";
         if (getMultiValues() != null) {
             for (String value : getMultiValues()) {
-                multiValuesAsString += value + ", ";
+                multiValuesAsString += value + ",";
             }
             multiValuesAsString = multiValuesAsString.substring(0,
                                   multiValuesAsString.lastIndexOf(","));

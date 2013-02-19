@@ -614,8 +614,7 @@ public class TemplateQuery extends PathQuery
 
     /**
      * Verify templates don't contain non-editable lookup constraints
-     * @param template to validate
-     * @return true id the tempalte is valid
+     * @return true id the template is valid
      */
     public boolean validateLookupConstraints() {
         Map<PathConstraint, String> pathConstraints = getConstraints();
@@ -626,5 +625,18 @@ public class TemplateQuery extends PathQuery
             }
         }
         return true;
+    }
+
+    /**
+    * Return the constraint logic modified to contain only the blocks with editable constraints
+    * @return the string representing the logic expression modified
+    */
+    public synchronized String getConstraintLogicForEditableConstraints() {
+        List<String> editableConstraintCodes = new ArrayList<String>();
+        Map<PathConstraint, String> allConstraints = getConstraints();
+        for (PathConstraint pc : editableConstraints) {
+            editableConstraintCodes.add(allConstraints.get(pc));
+        }
+        return getLogicExpression().getPartialString(editableConstraintCodes);
     }
 }

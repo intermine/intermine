@@ -22,6 +22,7 @@ public class FieldConfig
 {
     private String fieldExpr;
     private boolean doNotTruncate;
+    private boolean escapeXml = true;
     private boolean showInSummary = true;
     private boolean showInInlineCollection = true;
     private boolean showInResults = true;
@@ -139,6 +140,23 @@ public class FieldConfig
     }
 
     /**
+     * If set to true, don't escape the field value on object
+     * details page.
+     * @param escapeXml do not escape if true
+     */
+    public void setEscapeXml(boolean escapeXml) {
+        this.escapeXml = escapeXml;
+    }
+
+    /**
+     * Return the value of the escapeXml flag.
+     * @return the value of the flag
+     */
+    public boolean getEscapeXml() {
+        return escapeXml;
+    }
+
+    /**
      * Set the showInSummary flag.  If true, show this field in the summary section of the object
      * details page.
      * @param showInSummary the new value of the flag
@@ -247,7 +265,7 @@ public class FieldConfig
         return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer
                + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary + "\""
                + " showInInlineCollection=\"" + showInInlineCollection + "\""
-               + " showInResults=\"" + showInResults + "\""
+               + " showInResults=\"" + showInResults + "\"" + " escapeXml=\"" + escapeXml + "\""
                + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"")
                + (label == null ? "" : " label=\"" + label + "\"")
                + "/>";

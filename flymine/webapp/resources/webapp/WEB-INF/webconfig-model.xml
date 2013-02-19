@@ -948,12 +948,12 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/>
 
-      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
-                         description="Counts of orthologues for the genes in this list."
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
+                         description="Counts of genes in list with orthologues."
                          displayFields="name"
                          exportField="primaryIdentifier"
                          typeClass="Gene"
-                         columnTitle="Orthologues"
+                         columnTitle="Genes"
                          views="secondaryIdentifier, symbol, organism.shortName,
                                 homologues.homologue.primaryIdentifier,
                                 homologues.homologue.symbol,

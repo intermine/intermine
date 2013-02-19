@@ -29,6 +29,7 @@ default_sources:
   - "TreeFam"
   - "SGDIdentifiers"
   - "ZFINIdentifiers"
+  - "MousePheno"
 
 UniProt:
     organisms:

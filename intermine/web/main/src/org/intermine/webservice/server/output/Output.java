@@ -61,6 +61,17 @@ public abstract class Output
     public static final int SC_NOT_FOUND = 404;
 
     /**
+     * Request is legal, but requires authentication, which was
+     * either not provided, or failed.
+     */
+    public static final int SC_UNAUTHORIZED = 401;
+
+    /**
+     * Request will only accept content in a format we cannot provide.
+     */
+    public static final int NOT_ACCEPTABLE = 406;
+
+    /**
      * Sets the error message
      * @param message
      */

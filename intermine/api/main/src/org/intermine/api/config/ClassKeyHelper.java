@@ -214,4 +214,33 @@ public final class ClassKeyHelper
         }
         return null;
     }
+
+    /**
+     * Get a list of key field values for the given object.  This will return null if there are no
+     * key fields for the object's class or if there are no non-null values for the key fields.
+     * The key fields are kept in a consistent order with inherited fields appearing before those
+     * defined in a subclass.
+     * @param obj an object from the model
+     * @param classKeys the key field definition for this model
+     * @return the first available key field value or null
+     */
+    public static List<Object> getKeyFieldValues(FastPathObject obj,
+            Map<String, List<FieldDescriptor>> classKeys) {
+        String clsName = DynamicUtil.getSimpleClass(obj).getSimpleName();
+        List<Object> fieldValueList = new ArrayList<Object>();
+
+        try {
+            for (String keyField : getKeyFieldNames(classKeys, clsName)) {
+                Object valueFromObject = obj.getFieldValue(keyField);
+                if (valueFromObject != null) {
+                    fieldValueList.add(valueFromObject);
+                }
+            }
+            return fieldValueList;
+        } catch (IllegalAccessException e) {
+            // this shouldn't happen because objects conform to the model
+            LOG.error("Error fetching a key field value from object: " + obj);
+        }
+        return null;
+    }
 }
