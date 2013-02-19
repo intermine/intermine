@@ -1,5 +1,15 @@
 package org.intermine.metadata;
 
+/*
+ * Copyright (C) 2002-2013 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +22,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 
-public class DescriptorUtils {
+/**
+ *
+ * @author Alex Kalderimis
+ */
+public class DescriptorUtils
+{
 
     /**
      * Find the ClassDescriptor for the type that any random element selected from a collection
@@ -30,7 +45,7 @@ public class DescriptorUtils {
      *   <dd>throws an exception</dd>
      *   <dt>Given <code>[]</code></dt>
      *   <dd>throws an exception</dd>
-     * </dl> 
+     * </dl>
      * @param classes The classes to consider.
      * @return The lowest common denominator.
      * @throws MetaDataException if no such type exists.
@@ -48,17 +63,17 @@ public class DescriptorUtils {
      * In the case where the classes given share a common super type, but do not themselves
      * contain it, then that super type is returned. Where the classes present a lineage (eg.
      * <code>Employee &rarr; Manager &rarr; CEO</code> then the bottom of the lineage is
-     * returned. For cases where the type structure contains a lineage that branches (eg. 
+     * returned. For cases where the type structure contains a lineage that branches (eg.
      * <code>Thing &rarr; Employable &rarr; [Employee, Contractor]</code> the bottom of
      * the lineage before the branch (the last common ancestor) will be returned.
-     * 
+     *
      * @param classes The classes to consider.
      * @return The most specific common type.
      * @throws MetaDataException If no such type exists.
      */
     public static ClassDescriptor findIntersectionType(Collection<ClassDescriptor> classes)
         throws MetaDataException {
-        List<ClassDescriptor> commonTypes = findCommonClasses(classes); 
+        List<ClassDescriptor> commonTypes = findCommonClasses(classes);
         ClassDescriptor commonSuperType = commonTypes.get(0);
 
         // Determine if this is a lineage.
@@ -67,7 +82,9 @@ public class DescriptorUtils {
         ClassDescriptor lastCommonType = commonSuperType;
         while (isLineage) {
             copyOfClasses.remove(lastCommonType);
-            if (copyOfClasses.isEmpty()) break;
+            if (copyOfClasses.isEmpty()) {
+                break;
+            }
             ClassDescriptor nextCommonSuperType = findSumType(copyOfClasses);
             isLineage = nextCommonSuperType != lastCommonType;
             lastCommonType = nextCommonSuperType;
@@ -86,7 +103,7 @@ public class DescriptorUtils {
      * classes. If more than one is returned, they will be sorted so that the most specific one
      * is at the head of the list.
      *
-     * ie:, given <code>Employee, Manager, CEO</code>, this method should return 
+     * ie:, given <code>Employee, Manager, CEO</code>, this method should return
      * a list such as <code>Employee, Employable, HasAddress, Thing</code>. The returned
      * list should never contain <code>InterMineObject</code>. All returned classes are guaranteed
      * to be subclasses of {@link InterMineObject}. The returned list is guaranteed to never
@@ -94,14 +111,20 @@ public class DescriptorUtils {
      *
      * @param classes The classes to investigate.
      * @return A liat of classes common to the inheritance tree of all of them.
-     * @throws MetaDataException If 
+     * @throws MetaDataException If
      */
     public static List<ClassDescriptor> findCommonClasses(Collection<ClassDescriptor> classes)
         throws MetaDataException {
 
-        if (classes == null) throw new IllegalArgumentException("classes is null");
-        if (classes.isEmpty()) throw new MetaDataException("No classes provided");
-        if (classes.size() == 1) return new ArrayList<ClassDescriptor>(classes);
+        if (classes == null) {
+            throw new IllegalArgumentException("classes is null");
+        }
+        if (classes.isEmpty()) {
+            throw new MetaDataException("No classes provided");
+        }
+        if (classes.size() == 1) {
+            return new ArrayList<ClassDescriptor>(classes);
+        }
 
         Set<String> classNames = new HashSet<String>(); // Used for throwing error messages.
         Set<ClassDescriptor> superClasses = null;
@@ -138,7 +161,8 @@ public class DescriptorUtils {
 
     // Return a collection of ClassDescriptors sorted so that the most specific one (ie. the one
     // with the longest inheritance tree) is at index 0.
-    private static List<ClassDescriptor> sortClassesBySpecificity(Collection<ClassDescriptor> classes) {
+    private static List<ClassDescriptor> sortClassesBySpecificity
+    (Collection<ClassDescriptor> classes) {
         List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(classes);
 
         Collections.sort(superList, new Comparator<ClassDescriptor>() {
