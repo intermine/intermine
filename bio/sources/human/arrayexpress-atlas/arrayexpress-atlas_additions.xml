@@ -11,6 +11,7 @@
   <attribute name="tStatistic" type="java.lang.Double"/>
   <reference name="gene" referenced-type="Gene" reverse-reference="atlasExpression"/>
   <reference name="probe" referenced-type="ProbeSet" reverse-reference="atlasExpression"/>
+  <collection name="dataSets" referenced-type="DataSet"/>
 </class>
 <class name="Gene" is-interface="true">
   <collection name="atlasExpression" referenced-type="AtlasExpression"  reverse-reference="gene"/>

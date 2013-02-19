@@ -43,6 +43,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private boolean isDatasetTitleAssigned = false;
     private String DATASET_TITLE;
+    private List<String> datasets = new ArrayList<String>();
 
     private String taxonId = "9606";
     private static final Logger LOG = Logger.getLogger(ArrayexpressAtlasConverter.class);
@@ -99,7 +100,9 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
             JSONObject experimentInfo = result.getJSONObject("experimentInfo");
             String accession = experimentInfo.getString("accession");
             DATASET_TITLE = DATASET_TITLE_PREFIX + accession;
-            setDataSet(getDataSet(DATASET_TITLE, getDataSource(DATA_SOURCE_NAME)));
+            String dataSetRefId = getDataSet(DATASET_TITLE, getDataSource(DATA_SOURCE_NAME));
+            setDataSet(dataSetRefId);
+            datasets.add(dataSetRefId);
             isDatasetTitleAssigned = true;
         }
 
@@ -133,6 +136,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
                         expressionItem.setAttribute("expression", expression);
                         expressionItem.setAttribute("pValue", pValue.toString());
                         expressionItem.setAttribute("tStatistic", tStatistic.toString());
+                        expressionItem.setCollection("dataSets", datasets);
                         store(expressionItem);
                     } catch (JSONException e) {
                         LOG.warn("JSON object missing some values: "
