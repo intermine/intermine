@@ -51,7 +51,7 @@ public class ListUnionService extends CommutativeOperationService
         Set<String> temporaryBagNamesAccumulator) throws Exception {
         Collection<InterMineBag> unionBags = ListServiceUtils.castBagsToCommonType(
                input.getLists(), type, temporaryBagNamesAccumulator, profile, im.getClassKeys());
-        int sizeOfUnion = BagOperations.union(unionBags, input.getTemporaryListName(), profile,
+        int sizeOfUnion = BagOperations.union(im.getModel(), unionBags, input.getTemporaryListName(), profile,
                                         im.getClassKeys());
         return sizeOfUnion;
     }

@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.BagOperations;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
@@ -95,27 +96,9 @@ public class ListSubtractionService extends ListOperationService
         final Collection<InterMineBag> rightBags
             = castBagsToCommonType(input.getLists(), type, temporaryBagNamesAccumulator, profile,
                                   im.getClassKeys());
-        final int leftSize = union(leftBags, input.getListName() + LEFT, profile, im.getClassKeys());
-        final int rightSize = union(rightBags, input.getListName() + RIGHT, profile, im.getClassKeys());
-
-        int finalBagSize = 0;
-
-        if (leftSize + rightSize > 0) {
-            final InterMineBag leftList = profile.getSavedBags().get(input.getListName() + LEFT);
-            final InterMineBag rightList = profile.getSavedBags().get(input.getListName() + RIGHT);
-            final int sizeOfSymDiff
-                = subtract(asList(leftList, rightList), input.getListName() + SYMETRIC_DIFF, profile,
-                           im.getClassKeys());
-
-            if (sizeOfSymDiff != 0) {
-                final InterMineBag diffBag = profile.getSavedBags().get(input.getListName() + SYMETRIC_DIFF);
-
-                finalBagSize
-                    = intersect(asList(diffBag, leftList), input.getTemporaryListName(), profile,
-                                       im.getClassKeys());
-            }
-        }
-        return finalBagSize;
+        
+        return BagOperations.asymmetricSubtract(
+            im.getModel(), leftBags, rightBags, input.getTemporaryListName(), profile, im.getClassKeys());
     }
 
 }

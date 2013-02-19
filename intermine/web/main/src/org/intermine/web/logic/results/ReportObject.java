@@ -224,6 +224,7 @@ public class ReportObject
                             fieldValue,
                             fieldDisplayer,
                             fc.getDoNotTruncate(),
+                            fc.getEscapeXml(),
                             fc.getLabel()
                     );
 
@@ -249,7 +250,8 @@ public class ReportObject
                                 attName,
                                 attributes.get(attName),
                                 null,
-                                false
+                                false,
+				false
                         );
                         objectSummaryFields.add(rof);
                     }
