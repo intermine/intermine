@@ -99,14 +99,7 @@ Features
     </tr>
 </thead>
 <tbody>
-<%--
-     <tr>
-        <th>Feature type</th>
-        <th>View data</th>
-        <th colspan="4" >Export</th>
-        <th>Action</th>
-      </tr>
---%>
+
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>
           <tr>
@@ -169,16 +162,19 @@ Features
         </c:if>
 
 
-
+<%--EXPRESSION LEVELS --%>
 
 <c:forEach items="${subFeatEL}" var="subEL" varStatus="subEL_status">
 <c:if test="${subEL.key == object.dCCid}" >
 <c:forEach items="${subEL.value}" var="subELF" varStatus="subELF_status">
 <c:if test="${subELF.key == fc.key}" >
 <tr><td><i>Expression Levels</i>
-<td>
+<td class="submission-features-count">
 <i>
-<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}">${subELF.value} </html:link>
+<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}" 
+                   style="text-decoration: none;" data-feature-type="${fc.key}"  data-dcc-id="${object.dCCid}" data-isunloc="subEL">
+                   ${subELF.value}</a>
+
 </i>
 </td>
 <td align="left" style="padding-left: 6px;">
@@ -291,34 +287,49 @@ Features
 //             return query;
 //         };
 //     };
-
     
     
     var querier = function (featureType, dccId, isUnloc) {
         return function (model) {
-            var query = {
+        	
+        	var query;
+        	if (isUnloc == "subEL") { // these are expression levels
+                query = {
+                        select: ["primaryIdentifier", "expressionLevels.value", 
+                                 "expressionLevels.readCount", "expressionLevels.dcpm", 
+                                 "expressionLevels.dcpmBases", "expressionLevels.transcribed", 
+                                 "expressionLevels.predictionStatus", "expressionLevels.name"],
+                        from: featureType,
+                        where: {"submissions.DCCid": dccId}
+                    }
+        	} else { // these are normal features
+        	
+            query = {
                 select: ["primaryIdentifier", "score", "scoreProtocol.name"],
                 from: featureType,
                 joins: ["scoreProtocol"],
                 where: {"submissions.DCCid": dccId}
-            };
-            
-            if (isUnloc == "false") {
-            query.select.push('chromosome.primaryIdentifier');
-            query.select.push('chromosomeLocation.start');
-            query.select.push('chromosomeLocation.end');
-            query.select.push('chromosomeLocation.strand');
-
-            query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
             }
-            
-            query.select.push('submissions.DCCid');
-            query.select.push('submissions.experimentalFactors.name');
-            query.joins.push('submissions.experimentalFactors');
+        	
+            if (isUnloc == false) {
+                query.select.push('chromosome.primaryIdentifier');
+                query.select.push('chromosomeLocation.start');
+                query.select.push('chromosomeLocation.end');
+                query.select.push('chromosomeLocation.strand');
+
+                query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+                }
+                
+                query.select.push('submissions.DCCid');
+                query.select.push('submissions.experimentalFactors.name');
+                query.joins.push('submissions.experimentalFactors');
+        	
+        	}
             return query;
         };
     };
 
+    
     $(function() {
         $('.submission-features-count a').click(function(e) {
             var $link     = $(this);
@@ -402,16 +413,6 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
 
                  with a flanking region of
 
-<!--
-              <html:select styleId="typeSelector" property="distance">
-              <html:option value="0">0</html:option>
-              <html:option value="0.5kb">.5kb</html:option>
-              <html:option value="1.0kb">1kb</html:option>
-              <html:option value="2.0kb">2kb</html:option>
-              <html:option value="5.0kb">5kb</html:option>
-              <html:option value="10.0kb">10kb</html:option>
-           </html:select>
--->
             <!-- insert slider -->
             <html:hidden styleId="distance" property="distance" value="0" />
 
