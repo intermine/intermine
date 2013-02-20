@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagOperationException;
-import org.intermine.api.bag.InternalBagOperationException;
+import org.intermine.api.bag.operations.BagOperationException;
+import org.intermine.api.bag.operations.InternalBagOperationException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.webservice.server.exceptions.BadRequestException;
