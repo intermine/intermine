@@ -25,7 +25,7 @@ public class RelativeComplement extends BagOperation
     }
 
     @Override
-    protected String getNewBagType() throws IncompatibleTypes {
+    public String getNewBagType() throws IncompatibleTypes {
         try {
             ClassDescriptor leftType = findSumType(getClasses());
             // We have to check these individually, because of multiple inheritance on the

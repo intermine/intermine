@@ -16,7 +16,7 @@ public class SymmetricDifference extends BagOperation {
     }
 
     @Override
-    protected String getNewBagType() throws IncompatibleTypes {
+    public String getNewBagType() throws IncompatibleTypes {
         try {
             return DescriptorUtils.findSumType(getClasses()).getUnqualifiedName();
         } catch (MetaDataException e) {
