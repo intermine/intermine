@@ -42,6 +42,8 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TableExportForm;
 
 /**
+ * Obsoleted - replaced by new results table
+ *
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
  * feature writers.
  *
