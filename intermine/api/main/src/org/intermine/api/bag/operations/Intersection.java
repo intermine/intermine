@@ -16,7 +16,7 @@ public class Intersection extends BagOperation {
     }
 
     @Override
-    protected String getNewBagType() throws IncompatibleTypes {
+    public String getNewBagType() throws IncompatibleTypes {
         try {
             return DescriptorUtils.findIntersectionType(getClasses()).getUnqualifiedName();
         } catch (MetaDataException e) {

@@ -67,7 +67,7 @@ public abstract class BagOperation implements BagProducer {
         return new HashSet<InterMineBag>(bags);
     }
 
-    protected abstract String getNewBagType() throws IncompatibleTypes;
+    public abstract String getNewBagType() throws IncompatibleTypes;
 
     protected abstract int getOperationCode();
 
@@ -174,7 +174,7 @@ public abstract class BagOperation implements BagProducer {
         newBagName = name;
     }
 
-    protected String getNewBagName() throws BagOperationException {
+    public String getNewBagName() throws BagOperationException {
         if (newBagName == null) {
             String prefix = String.format(nameFormat, getNewBagType(), new Date());
             String name = prefix;
@@ -185,7 +185,7 @@ public abstract class BagOperation implements BagProducer {
             return name;
         } else {
             if (getProfile().getSavedBags().containsKey(newBagName)) {
-                throw new BagOperationException("Bag already exists called " + newBagName);
+                throw new NonUniqueName(newBagName);
             }
             return newBagName;
         }
