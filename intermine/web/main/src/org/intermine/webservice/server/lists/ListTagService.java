@@ -60,10 +60,10 @@ public class ListTagService extends AbstractListService
     @Override
     protected void execute() throws Exception {
         Profile profile = getPermission().getProfile();
-        String listName = request.getParameter("name");
+        String listName = getOptionalParameter("name", null);
 
         Set<String> tags;
-        if (StringUtils.isBlank(listName)) {
+        if (listName == null) {
             tags = getAllTags(profile);
         } else {
             tags = getTagsForSingleList(listName, profile);
