@@ -228,11 +228,19 @@
 
   <servlet>
     <servlet-name>ws-lists</servlet-name>
-    <servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
-    <init-param>
-      <param-name>debug</param-name>
-      <param-value>true</param-value>
-    </init-param>
+    <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListsService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
+  <init-param>
+     <param-name>debug</param-name>
+     <param-value>true</param-value>
+  </init-param>
   </servlet>
 
   <servlet-mapping>
@@ -267,11 +275,19 @@
 
   <servlet>
     <servlet-name>ws-list-append</servlet-name>
-    <servlet-class>org.intermine.webservice.server.lists.ListAppendServlet</servlet-class>
-    <init-param>
+    <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListAppendService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>POST</param-value>
+   </init-param>
+  <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
-    </init-param>
+  </init-param>
   </servlet>
 
   <servlet-mapping>
@@ -307,7 +323,15 @@
 
   <servlet>
   <servlet-name>ws-list-union</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListUnionServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListUnionService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -343,7 +367,15 @@
 
   <servlet>
   <servlet-name>ws-list-subtract</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListSubtractionServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListSubtractionService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -382,8 +414,16 @@
 
   <servlet>
   <servlet-name>ws-list-intersect</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListIntersectionServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
   <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListIntersectionService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
+   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
   </init-param>
@@ -418,7 +458,15 @@
 
   <servlet>
   <servlet-name>ws-list-diff</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListDifferenceServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListDifferenceService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -933,7 +981,19 @@
 
   <servlet>
     <servlet-name>ws-list-tags</servlet-name>
-    <servlet-class>org.intermine.webservice.server.lists.ListTagServlet</servlet-class>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.lists.ListTagService</param-value>
+    </init-param>
+    <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.lists.ListTagAddingService</param-value>
+    </init-param>
+    <init-param>
+        <param-name>DELETE</param-name>
+        <param-value>org.intermine.webservice.server.lists.ListTagRemovalService</param-value>
+    </init-param>
     <init-param>
        <param-name>debug</param-name>
        <param-value>true</param-value>
@@ -1259,6 +1319,14 @@
   <servlet>
     <servlet-name>ws-new-user</servlet-name>
     <servlet-class>org.intermine.webservice.server.user.NewUserServlet</servlet-class>
+    <!--
+    This config should be used when there are some tests set up for it. 
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.user.NewUserService</param-value>
+     </init-param>
+    -->
     <init-param>
        <param-name>debug</param-name>
        <param-value>true</param-value>
@@ -1512,7 +1580,23 @@
    
     <servlet>
      <servlet-name>ws-user-preferences</servlet-name>
-     <servlet-class>org.intermine.webservice.server.user.PreferencesServlet</servlet-class>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.user.ReadPreferencesService</param-value>
+     </init-param>
+     <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.user.SetPreferencesService</param-value>
+     </init-param>
+     <init-param>
+        <param-name>PUT</param-name>
+        <param-value>org.intermine.webservice.server.user.SetPreferencesService</param-value>
+     </init-param>
+     <init-param>
+        <param-name>DELETE</param-name>
+        <param-value>org.intermine.webservice.server.user.DeletePreferencesService</param-value>
+     </init-param>
    </servlet>
    
    <servlet-mapping>

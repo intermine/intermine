@@ -1,4 +1,4 @@
-package org.intermine.api.bag;
+package org.intermine.api.bag.operations;
 
 /**
  * Exceptions that are the fault of underlying infrastructure, and not the way the
