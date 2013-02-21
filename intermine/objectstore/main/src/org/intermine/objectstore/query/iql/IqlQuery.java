@@ -319,7 +319,7 @@ public class IqlQuery
             StringBuffer retval = new StringBuffer();
             ObjectStoreBagCombination osbc = (ObjectStoreBagCombination) qn;
             boolean needComma = false;
-            for (ObjectStoreBag osb : osbc.getBags()) {
+            for (QuerySelectable osb : osbc.getBags()) {
                 if (needComma) {
                     switch(osbc.getOp()) {
                         case ObjectStoreBagCombination.UNION:
