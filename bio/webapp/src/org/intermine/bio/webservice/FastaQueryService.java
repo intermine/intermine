@@ -1,6 +1,7 @@
 package org.intermine.bio.webservice;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.bio.web.export.SequenceExporter;
 import org.intermine.metadata.ClassDescriptor;
@@ -17,9 +18,12 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  */
 public class FastaQueryService extends BioQueryService
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(FastaQueryService.class);
 
     private static final String EXT = "extension";
-    private static final String TOO_MANY_COLUMNS = "Queries for this webservice may only have one output column";
+    private static final String TOO_MANY_COLUMNS =
+            "Queries for this webservice may only have one output column";
     private static final int COLUMN = 0;
 
     /**
@@ -43,7 +47,8 @@ public class FastaQueryService extends BioQueryService
     protected Exporter getExporter(PathQuery pq) {
         int extension = parseExtension(getOptionalParameter(EXT, "0"));
         ObjectStore objStore = im.getObjectStore();
-        return new SequenceExporter(objStore, getOutputStream(), COLUMN, im.getClassKeys(), extension);
+        return new SequenceExporter(objStore, getOutputStream(), COLUMN,
+                im.getClassKeys(), extension, getQueryPaths(pq));
     }
 
     /**
@@ -62,7 +67,9 @@ public class FastaQueryService extends BioQueryService
     }
 
     /**
-     * A method for parsing the value of the extension parameter. Static and protected for testing purposes.
+     * A method for parsing the value of the extension parameter. Static and protected for
+     * testing purposes.
+     *
      * @param extension The extension as provided by the user.
      * @return An integer representing the number of base pairs.
      * @throws BadRequestException If there is a problem interpreting the extension string.
@@ -89,7 +96,8 @@ public class FastaQueryService extends BioQueryService
             throw new BadRequestException("Negative extensions are not allowed.");
         }
         if (number != Math.ceil(number)) {
-            throw new BadRequestException("The extension must be a whole number of base pairs. I got: " + number + "bp");
+            throw new BadRequestException("The extension must be a whole number of base pairs. " +
+                    "I got: " + number + "bp");
         }
         return Math.round(number);
     }
@@ -104,12 +112,11 @@ public class FastaQueryService extends BioQueryService
         ClassDescriptor klazz = path.getLastClassDescriptor();
         ClassDescriptor sf = im.getModel().getClassDescriptorByName("SequenceFeature");
         ClassDescriptor protein = im.getModel().getClassDescriptorByName("Protein");
-        if (sf == klazz || protein == klazz || klazz.getAllSuperDescriptors().contains(sf) || klazz.getAllSuperDescriptors().contains(protein)) {
+        if (sf == klazz || protein == klazz || klazz.getAllSuperDescriptors().contains(sf) ||
+                klazz.getAllSuperDescriptors().contains(protein)) {
             return; // OK
         } else {
             throw new BadRequestException("Unsuitable type for export: " + klazz);
         }
     }
-
-
 }
