@@ -88,6 +88,11 @@ public class DescriptorUtils
             ClassDescriptor nextCommonSuperType = findSumType(copyOfClasses);
             isLineage = nextCommonSuperType != lastCommonType;
             lastCommonType = nextCommonSuperType;
+            if (!(classes.contains(lastCommonType)
+                    || lastCommonType.getAllSuperDescriptors().contains(commonSuperType))) {
+                // This set of classes is disjoint.
+                throw new MetaDataException("Disjoint set.");
+            }
         }
 
         if (isLineage) {
@@ -126,11 +131,9 @@ public class DescriptorUtils
             return new ArrayList<ClassDescriptor>(classes);
         }
 
-        Set<String> classNames = new HashSet<String>(); // Used for throwing error messages.
         Set<ClassDescriptor> superClasses = null;
 
         for (ClassDescriptor cd: classes) {
-            classNames.add(cd.getUnqualifiedName());
             Set<ClassDescriptor> ancestry = cd.getAllSuperDescriptors();
             ancestry.add(cd);
             // If this is the first one, initialise superClasses with this class and all its parents
@@ -153,8 +156,7 @@ public class DescriptorUtils
         });
 
         if (superClasses.isEmpty()) {
-            String nameString = StringUtils.join(classNames, ", ");
-            throw new MetaDataException("Incompatible types: " + nameString);
+            throw new MetaDataException("No common type");
         }
         return sortClassesBySpecificity(superClasses);
     }

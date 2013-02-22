@@ -1,4 +1,4 @@
-package org.intermine.api.bag;
+package org.intermine.api.bag.operations;
 
 import java.util.Collection;
 import java.util.Date;
@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.ClassKeysNotFoundException;
+import org.intermine.api.bag.UnknownBagTypeException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
@@ -19,7 +21,7 @@ import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 import org.intermine.objectstore.query.Query;
 
-public abstract class BagOperation {
+public abstract class BagOperation implements BagProducer {
 
     protected static final Logger LOG = Logger.getLogger(BagOperation.class);
     private final Profile profile;
@@ -27,11 +29,11 @@ public abstract class BagOperation {
     private String nameFormat = "%s List (%tc)";
     private Map<String, List<FieldDescriptor>> classKeys = new HashMap<String, List<FieldDescriptor>>();
     private String newBagName = null;
-    private final Model model;
+    protected final Model model;
     private InterMineBag combined;
     private Set<ClassDescriptor> classes = new HashSet<ClassDescriptor>();
 
-    public BagOperation(Model model, Collection<InterMineBag> bags, Profile profile) {
+    public BagOperation(Model model, Profile profile, Collection<InterMineBag> bags) {
         this.model = model;
         this.bags = bags;
         this.profile = profile;
@@ -65,7 +67,7 @@ public abstract class BagOperation {
         return new HashSet<InterMineBag>(bags);
     }
 
-    protected abstract String getNewBagType() throws MetaDataException;
+    public abstract String getNewBagType() throws IncompatibleTypes;
 
     protected abstract int getOperationCode();
 
@@ -76,7 +78,7 @@ public abstract class BagOperation {
      * @return The new bag. Guaranteed to not be null.
      * @throws BagOperationException
      */
-    public synchronized InterMineBag operate() throws BagOperationException, MetaDataException {
+    public synchronized InterMineBag operate() throws BagOperationException {
         if (combined != null) {
             return combined;
         }
@@ -97,7 +99,7 @@ public abstract class BagOperation {
         try {
             if (combined.size() < 1) {
                 cleanUp();
-                throw new BagOperationException("No content.");
+                throw new NoContent();
             }
         } catch (ObjectStoreException e) {
             cleanUp();
@@ -112,15 +114,12 @@ public abstract class BagOperation {
             if (!allAreCurrent) break;
         }
         if (!allAreCurrent) {
-            throw new BagOperationException("Not all bags are current");
+            throw new NotCurrent();
         }
     }
 
     private void buildBag() throws InternalBagOperationException {
-        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(getOperationCode());
-        for (InterMineBag bag : bags) {
-            osbc.addBag(bag.getOsb());
-        }
+        ObjectStoreBagCombination osbc = combineBags();
         Query q = new Query();
         q.addToSelect(osbc);
         LOG.info(q.toString());
@@ -130,6 +129,14 @@ public abstract class BagOperation {
             cleanUp();
             throw new InternalBagOperationException("Error constructing bag", e);
         }
+    }
+
+    protected ObjectStoreBagCombination combineBags() {
+        ObjectStoreBagCombination osbc = new ObjectStoreBagCombination(getOperationCode());
+        for (InterMineBag bag : bags) {
+            osbc.addBag(bag.getOsb());
+        }
+        return osbc;
     }
 
     private void initCombined(String type, String name) throws InternalBagOperationException {
@@ -167,7 +174,7 @@ public abstract class BagOperation {
         newBagName = name;
     }
 
-    protected String getNewBagName() throws BagOperationException, MetaDataException {
+    public String getNewBagName() throws BagOperationException {
         if (newBagName == null) {
             String prefix = String.format(nameFormat, getNewBagType(), new Date());
             String name = prefix;
@@ -178,7 +185,7 @@ public abstract class BagOperation {
             return name;
         } else {
             if (getProfile().getSavedBags().containsKey(newBagName)) {
-                throw new BagOperationException("Bag already exists called " + newBagName);
+                throw new NonUniqueName(newBagName);
             }
             return newBagName;
         }

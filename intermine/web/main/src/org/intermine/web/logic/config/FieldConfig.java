@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
  * The webapp configuration for one field of a class.
  *
  * @author Kim Rutherford
+ * @author Daniela Butano
  */
 
 public class FieldConfig
@@ -24,6 +25,7 @@ public class FieldConfig
     private boolean doNotTruncate;
     private boolean escapeXml = true;
     private boolean showInSummary = true;
+    private boolean outerInSummary = false;
     private boolean showInInlineCollection = true;
     private boolean showInResults = true;
     private boolean sectionOnRight;
@@ -173,6 +175,14 @@ public class FieldConfig
         return showInSummary;
     }
 
+    public boolean getOuterInSummary() {
+        return outerInSummary;
+    }
+
+    public void setOuterInSummary(boolean outerInSummary) {
+        this.outerInSummary = outerInSummary;
+    }
+
     /**
      * Set the showInInlineCollection flag.  If true, show this field in inline collections on the
      * object details page.
@@ -244,6 +254,7 @@ public class FieldConfig
 
             return otherFc.fieldExpr.equals(fieldExpr)
                 && otherFc.showInSummary == showInSummary
+                && otherFc.outerInSummary == outerInSummary
                 && otherFc.showInInlineCollection == showInInlineCollection
                 && otherFc.showInResults == showInResults;
         } else {
@@ -263,7 +274,8 @@ public class FieldConfig
      */
     public String toString() {
         return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer
-               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary + "\""
+               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary
+               + "\" outerInSummary=\"" + outerInSummary + "\""
                + " showInInlineCollection=\"" + showInInlineCollection + "\""
                + " showInResults=\"" + showInResults + "\"" + " escapeXml=\"" + escapeXml + "\""
                + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"")

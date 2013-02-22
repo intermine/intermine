@@ -1,4 +1,4 @@
-package org.intermine.api.bag;
+package org.intermine.api.bag.operations;
 
 import java.util.Collection;
 
@@ -9,16 +9,19 @@ import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.query.ObjectStoreBagCombination;
 
-public class UnionOperation extends BagOperation {
+public class Union extends BagOperation {
 
-    public UnionOperation(Model model, Collection<InterMineBag> bags,
-            Profile profile) {
-        super(model, bags, profile);
+    public Union(Model model, Profile profile, Collection<InterMineBag> bags) {
+        super(model, profile, bags);
     }
 
     @Override
-    protected String getNewBagType() throws MetaDataException {
-        return DescriptorUtils.findSumType(getClasses()).getUnqualifiedName();
+    public String getNewBagType() throws IncompatibleTypes {
+        try {
+            return DescriptorUtils.findSumType(getClasses()).getUnqualifiedName();
+        } catch (MetaDataException e) {
+            throw new IncompatibleTypes(e);
+        }
     }
 
     @Override
