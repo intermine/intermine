@@ -10,20 +10,14 @@ import org.junit.Test;
 
 public class BioQueryServiceTest {
 
-    String geneView;
-    String ProteinView;
-    String nullView;
-    String emptyView;
-    String badView;
+    String[] geneView = {"Gene.secondaryIdentifier", "Gene.symbol", "Gene.primaryIdentifier", "Gene.organism.name"};
+    String[] ProteinView = {"Protein.primaryIdentifier", "Protein.primaryAccession", "Protein.organism.name", "Protein.genes.secondaryIdentifier", "Protein.genes.symbol", "Protein.genes.primaryIdentifier", "Protein.genes.organism.name"};
+    String[] nullView = null;
+    String[] emptyView = {};
+    String[] badView = {"abc;d"};
 
     @Before
     public void setup() {
-        geneView = "Gene.secondaryIdentifier,Gene.symbol,Gene.primaryIdentifier,Gene.organism.name";
-        ProteinView = "Protein.primaryIdentifier,Protein.primaryAccession,Protein.organism.name,Protein.genes.secondaryIdentifier,Protein.genes.symbol,Protein.genes.primaryIdentifier,Protein.genes.organism.name";
-        nullView = null;
-        emptyView = "";
-        badView = "abc;d";
-
         // TODO test path query behaviour, but how to get model? example?
     }
 
