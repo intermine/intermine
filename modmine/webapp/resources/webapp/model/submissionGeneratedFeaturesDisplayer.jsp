@@ -210,13 +210,21 @@ Features
             <tr><td align=right><i>
             ${fn:replace(FS.key, "_", " ")}
             </i></td>
-            <td align="middle">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
+            <td align="middle" class="submission-features-count">
+            <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}"
+                   style="text-decoration: none;" data-feature-type="${fc.key}"  data-dcc-id="${object.dCCid}" data-file="${FS.key}"> 
+                   ${FS.value}
+                   </a>
+            
+</td>
+
 <td>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=tab">TAB</html:link>
 <td>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=csv">CSV</html:link>
 <%--
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
+
             <c:set var="isUnloc" value="false"></c:set>
             <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
                 <c:if test="${uft.key == object.dCCid}">
@@ -264,7 +272,7 @@ Features
 (function($) {
     var $table  = $('#${tableContainerId}');
     var NO_OP   = function () {};
-    
+        
 //     var querier = function (featureType, dccId) {
 //         return function (model) {
 //             var query = {
@@ -287,53 +295,66 @@ Features
 //             return query;
 //         };
 //     };
+
     
-    
-    var querier = function (featureType, dccId, isUnloc) {
+    var querier = function (featureType, dccId, isUnloc, sourceFile) {
         return function (model) {
         	
         	var query;
+        	// expression values queries
         	if (isUnloc == "subEL") { // these are expression levels
-                query = {
-                        select: ["primaryIdentifier", "expressionLevels.value", 
-                                 "expressionLevels.readCount", "expressionLevels.dcpm", 
-                                 "expressionLevels.dcpmBases", "expressionLevels.transcribed", 
-                                 "expressionLevels.predictionStatus", "expressionLevels.name"],
-                        from: featureType,
-                        where: {"submissions.DCCid": dccId}
-                    }
-        	} else { // these are normal features
+            query = {
+        			select: ["primaryIdentifier", "expressionLevels.value", 
+                       "expressionLevels.readCount", "expressionLevels.dcpm", 
+                       "expressionLevels.dcpmBases", "expressionLevels.transcribed", 
+                       "expressionLevels.predictionStatus", "expressionLevels.name"],
+              from: featureType,
+              where: {"submissions.DCCid": dccId}
+              }
+        	return query;
+        	}; 
         	
+        	// features queries
+        	if (sourceFile == null) { 
             query = {
                 select: ["primaryIdentifier", "score", "scoreProtocol.name"],
                 from: featureType,
                 joins: ["scoreProtocol"],
                 where: {"submissions.DCCid": dccId}
             }
-        	
-            if (isUnloc == false) {
-                query.select.push('chromosome.primaryIdentifier');
-                query.select.push('chromosomeLocation.start');
-                query.select.push('chromosomeLocation.end');
-                query.select.push('chromosomeLocation.strand');
-
-                query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
-                }
-                
-                query.select.push('submissions.DCCid');
-                query.select.push('submissions.experimentalFactors.name');
-                query.joins.push('submissions.experimentalFactors');
-        	
+        	} else {
+            query = {
+                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                from: featureType,
+                joins: ["scoreProtocol"],
+                where: {"submissions.DCCid": dccId,
+              			    "sourceFile": sourceFile}
+             }
         	}
-            return query;
+        	
+          if (isUnloc == false || isUnloc == null) {
+             query.select.push('chromosome.primaryIdentifier');
+             query.select.push('chromosomeLocation.start');
+             query.select.push('chromosomeLocation.end');
+             query.select.push('chromosomeLocation.strand');
+
+             query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+            }
+                
+         query.select.push('submissions.DCCid');
+         query.select.push('submissions.experimentalFactors.name');
+         query.joins.push('submissions.experimentalFactors');
+        	
+         return query;
         };
     };
 
-    
+
     $(function() {
         $('.submission-features-count a').click(function(e) {
             var $link     = $(this);
-            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"), $link.data("isunloc"));
+            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"), 
+            		$link.data("isunloc"), $link.data("file"));
             e.preventDefault();
             $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
                 $table.empty().imWidget({
