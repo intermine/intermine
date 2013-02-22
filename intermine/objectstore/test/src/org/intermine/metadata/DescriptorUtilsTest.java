@@ -173,26 +173,31 @@ public class DescriptorUtilsTest {
     }
 
     /**
-     * Test that the most specific common type of cousins is the grandparent
+     * Test that we get an exception when the connecting type is missing from the
+     * set, even where such a type exists.
      * 
      * ie:
      * <pre>
-     *          [?]
-     *         /   \
-     *        B     C
-     *               \
-     *                D
+     *        { BOOM }
+     *         /    \
+     *        B      C
+     *                \
+     *                 D
      * </pre>
      */
     @Test
-    public void testCousinsSpecificType() throws MetaDataException {
+    public void testCousinsSpecificType() {
         withClasses("Employee", "Manager", "Company");
-        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
-        assertEquals("HasAddress", common);
+        try {
+            String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
+            fail("Expected an exception. Got " + common);
+        } catch (MetaDataException e) {
+            // Expected behaviour.
+        }
     }
 
     /**
-     * Test that the most specific common type of cousins is the grandparent
+     * Test that we get exceptions with multiply branching rootless trees too.
      * 
      * ie:
      * <pre>
@@ -204,10 +209,14 @@ public class DescriptorUtilsTest {
      * </pre>
      */
     @Test
-    public void testClansSpecificType() throws MetaDataException {
+    public void testClansSpecificType() {
         withClasses("Contractor", "Manager", "CEO", "Address");
-        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
-        assertEquals("Thing", common);
+        try {
+            String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
+            fail("Expected an exception. Got " + common);
+        } catch (MetaDataException e) {
+            // Expected behaviour.
+        }
     }
 
     /**
@@ -225,6 +234,25 @@ public class DescriptorUtilsTest {
     @Test
     public void testBranchingTreeSpecificType() throws MetaDataException {
         withClasses("Thing", "Employable", "Employee", "Contractor");
+        String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
+        assertEquals("Employable", common);
+    }
+
+    /**
+     * Test that the most specific common type of a branching tree is the root.
+     * 
+     * ie:
+     * <pre>
+     *           A
+     *           |
+     *          [?]
+     *         /   \
+     *        C     D
+     * </pre>
+     */
+    @Test
+    public void testBranchingTreeMissingSpecificType() throws MetaDataException {
+        withClasses("Thing", "Employee", "Contractor");
         String common = DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
         assertEquals("Employable", common);
     }

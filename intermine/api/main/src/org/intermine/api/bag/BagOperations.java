@@ -10,23 +10,24 @@ package org.intermine.api.bag;
  *
  */
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.api.bag.operations.BagOperation;
+import org.intermine.api.bag.operations.BagOperationException;
+import org.intermine.api.bag.operations.Intersection;
+import org.intermine.api.bag.operations.RelativeComplement;
+import org.intermine.api.bag.operations.SymmetricDifference;
+import org.intermine.api.bag.operations.Union;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.FieldDescriptor;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ObjectStoreBagCombination;
-import org.intermine.objectstore.query.Query;
 
 /**
  * Perform logical operations on bags - combine bags to create new InterMineBags
@@ -68,7 +69,7 @@ public final class BagOperations
             Model model, Collection<InterMineBag> bags, String newBagName,
             Profile profile, Map<String, List<FieldDescriptor>> classKeys)
         throws BagOperationException, MetaDataException {
-        BagOperation operation = new UnionOperation(model, bags, profile);
+        BagOperation operation = new Union(model, profile, bags);
         return performBagOperation(operation, newBagName, classKeys);
     }
 
@@ -84,7 +85,7 @@ public final class BagOperations
     public static int intersect(Model model, Collection<InterMineBag> bags, String newBagName,
             Profile profile, Map<String, List<FieldDescriptor>> classKeys)
         throws BagOperationException, MetaDataException {
-        BagOperation operation = new IntersectionOperation(model, bags, profile);
+        BagOperation operation = new Intersection(model, profile, bags);
         return performBagOperation(operation, newBagName, classKeys);
     }
 
@@ -100,7 +101,7 @@ public final class BagOperations
     public static int subtract(Model model, Collection<InterMineBag> bags, String newBagName,
         Profile profile, Map<String, List<FieldDescriptor>> classKeys)
         throws BagOperationException, MetaDataException {
-        BagOperation operation = new SymmetricDifferenceOperation(model, bags, profile);
+        BagOperation operation = new SymmetricDifference(model, profile, bags);
         return performBagOperation(operation, newBagName, classKeys);
     }
 
@@ -112,33 +113,8 @@ public final class BagOperations
         Profile profile, Map<String, List<FieldDescriptor>> classKeys)
         throws BagOperationException, MetaDataException {
 
-        BagOperation leftUnion = new UnionOperation(model, include, profile);
-        BagOperation rightUnion = new UnionOperation(model, include, profile);
-        if (classKeys != null) {
-            leftUnion.setClassKeys(classKeys);
-            rightUnion.setClassKeys(classKeys);
-        }
-
-        InterMineBag left = null;
-
-        try {
-            left = leftUnion.operate();
-
-            BagOperation mainOp= new SubtractionOperation(model, left, exclude, profile);
-            return performBagOperation(mainOp, newBagName, classKeys);
-        } finally {
-            removeTemporaryBag(profile, left);
-        }
-    }
-
-    private static void removeTemporaryBag(Profile p, InterMineBag bag) {
-        if (bag != null) {
-            try {
-                p.deleteBag(bag.getName());
-            } catch (ObjectStoreException e) {
-                LOG.warn("Error deleting temporary bag", e);
-            }
-        }
+        BagOperation op= new RelativeComplement(model, profile, include, exclude);
+        return performBagOperation(op, newBagName, classKeys);
     }
 
     private static int performBagOperation(
