@@ -27,13 +27,11 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.intermine.api.config.ClassKeyHelper;
 import org.intermine.api.results.ResultElement;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.bio.ontology.SequenceOntology;
 import org.intermine.bio.ontology.SequenceOntologyFactory;
 import org.intermine.metadata.ClassDescriptor;
-import org.intermine.model.FastPathObject;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.pathquery.Path;
@@ -428,12 +426,6 @@ public class GFF3Exporter implements Exporter
      *
      */
     private void makeRecord() {
-        // hack for attributes
-        //--------------------------------
-//        Object keyFieldValue =
-//                ClassKeyHelper.getKeyFieldValue((FastPathObject) lastLsf, this.classKeys);
-        //--------------------------------
-
         GFF3Record gff3Record = GFF3Util.makeGFF3Record(lastLsf, soClassNames, sourceName,
                 attributes, makeUcscCompatible);
 

@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -152,6 +153,12 @@ public abstract class BioQueryService extends AbstractQueryService
         List<String> views = getPathQueryViews(getRequiredParameter(VIEW_PARAM));
         if (views != null) {
             pathQuery.addViews(views);
+            // Remove duplicates in views
+            ArrayList<String> al = new ArrayList<String>();
+            al.clear();
+            al.addAll(new LinkedHashSet<String>(pathQuery.getView()));
+            pathQuery.clearView();
+            pathQuery.addViews(al);
         }
 
         Exporter exporter = getExporter(pathQuery);
@@ -180,7 +187,12 @@ public abstract class BioQueryService extends AbstractQueryService
         }
         List<String> viewList = Arrays.asList(StringUtil.split(view, ","));
 
-        return viewList;
+        List<String> trimmedViewList = new ArrayList<String>();
+        for (String v : viewList) {
+            trimmedViewList.add(v.trim());
+        }
+
+        return trimmedViewList;
     }
 
     /**
