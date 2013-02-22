@@ -13,10 +13,13 @@ package org.intermine.bio.webservice;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -44,8 +47,11 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  */
 public abstract class BioQueryService extends AbstractQueryService
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(BioQueryService.class);
 
     private static final String XML_PARAM = "query";
+    private static final String VIEW_PARAM = "view";
 
     private PrintWriter pw;
 
@@ -143,6 +149,18 @@ public abstract class BioQueryService extends AbstractQueryService
         PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
         PathQuery pathQuery = getQuery();
         checkPathQuery(pathQuery);
+
+        List<String> views = getPathQueryViews(getRequiredParameter(VIEW_PARAM));
+        if (views != null) {
+            pathQuery.addViews(views);
+            // Remove duplicates in views
+            ArrayList<String> al = new ArrayList<String>();
+            al.clear();
+            al.addAll(new LinkedHashSet<String>(pathQuery.getView()));
+            pathQuery.clearView();
+            pathQuery.addViews(al);
+        }
+
         Exporter exporter = getExporter(pathQuery);
 
         ExportResultsIterator iter = null;
@@ -155,6 +173,44 @@ public abstract class BioQueryService extends AbstractQueryService
                 iter.releaseGoFaster();
             }
         }
+    }
+
+    /**
+     * Parse path query views from request parameter "view" comma-separated
+     *
+     * @param pathQuery
+     * @return a list of query view as string
+     */
+    protected static List<String> getPathQueryViews(String view) {
+        if (view == null || view.isEmpty()) {
+            return null;
+        }
+        List<String> viewList = Arrays.asList(StringUtil.split(view, ","));
+
+        List<String> trimmedViewList = new ArrayList<String>();
+        for (String v : viewList) {
+            trimmedViewList.add(v.trim());
+        }
+
+        return trimmedViewList;
+    }
+
+    /**
+     * Parse view strings to Path objects
+     *
+     * @param views
+     * @return a list of query path
+     */
+    protected List<Path> getQueryPaths(PathQuery pq) {
+        List<Path> paths = new ArrayList<Path>();
+        for (String view : pq.getView()) {
+            try {
+                paths.add(pq.makePath(view));
+            } catch (PathException e) {
+                e.printStackTrace();
+            }
+        }
+        return paths;
     }
 
 }

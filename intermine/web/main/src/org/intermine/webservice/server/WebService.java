@@ -66,7 +66,7 @@ import org.intermine.webservice.server.output.TabFormatter;
 import org.intermine.webservice.server.output.XMLFormatter;
 
 /**
- * 
+ *
  * Base class for web services. See methods of class to be able implement
  * subclass. <h3>Output</h3> There can be 3 types of output:
  * <ul>
@@ -74,7 +74,7 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * <li>Complete results - xml, tab separated, html
  * <li>Incomplete results - error messages are appended at the end
  * </ul>
- * 
+ *
  * <h3>Web service design</h3>
  * <ul>
  * <li>Request is parsed with corresponding RequestProcessor class and returned
@@ -88,7 +88,7 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * correctly initialized and there don't stay values from previous requests.
  * </ul>
  * For using of web services see InterMine wiki pages.
- * 
+ *
  * @author Jakub Kulaviak
  * @author Alex Kalderimis
  * @version
@@ -144,7 +144,7 @@ public abstract class WebService {
     /**
      * Return the permission object representing the authorisation state of the
      * request. This is guaranteed to not be null.
-     * 
+     *
      * @return A permission object, from which a service may inspect the level
      *         of authorisation, and retrieve details about whom the request is
      *         authorised for.
@@ -159,7 +159,7 @@ public abstract class WebService {
 
     /**
      * Get a parameter this service deems to be required.
-     * 
+     *
      * @param name
      *            The name of the parameter
      * @return The value of the parameter. Never null, never blank.
@@ -177,7 +177,7 @@ public abstract class WebService {
 
     /**
      * Get a parameter this service deems to be optional, or the default value.
-     * 
+     *
      * @param name
      *            The name of the parameter.
      * @param defaultValue
@@ -196,7 +196,7 @@ public abstract class WebService {
     /**
      * Get a profile that is a true authenticated user that exists in the
      * database.
-     * 
+     *
      * @return The user's profile.
      * @throws ServiceForbiddenException
      *             if this request resolves to an unauthenticated profile.
@@ -211,7 +211,7 @@ public abstract class WebService {
 
     /**
      * Get a parameter this service deems to be optional, or <code>null</code>.
-     * 
+     *
      * @param name
      *            The name of the parameter.
      * @return The value of the parameter, or <code>null</code>
@@ -222,7 +222,7 @@ public abstract class WebService {
 
     /**
      * Get the value of a parameter that should be interpreted as an integer.
-     * 
+     *
      * @param name The name of the parameter.
      * @return An integer
      * @throws BadRequestException if The value is absent or mal-formed.
@@ -239,7 +239,7 @@ public abstract class WebService {
 
     /**
      * Get the value of a parameter that should be interpreted as an integer.
-     * 
+     *
      * @param name The name of the parameter.
      * @param defaultValue The value to return if none is provided by the user.
      * @return An integer
@@ -255,10 +255,10 @@ public abstract class WebService {
 
     /**
      * Set the default name-space for configuration property look-ups.
-     * 
+     *
      * If a value is set, it must be provided before any actions are taken. This
      * means this property must be set before the execute method is called.
-     * 
+     *
      * @param namespace
      *            The name space to use (eg: "some.namespace"). May not be null.
      */
@@ -280,7 +280,7 @@ public abstract class WebService {
 
     /**
      * Get a configuration property by name.
-     * 
+     *
      * @param name
      *            The name of the property to retrieve.
      * @return A configuration value.
@@ -296,7 +296,7 @@ public abstract class WebService {
     /**
      * Construct the web service with the InterMine API object that gives access
      * to the core InterMine functionality.
-     * 
+     *
      * @param im
      *            the InterMine application
      */
@@ -311,15 +311,15 @@ public abstract class WebService {
 
     /**
      * Starting method of web service. The web service should be run like
-     * 
+     *
      * <pre>
      * new ListsService().service(request, response);
      * </pre>
-     * 
+     *
      * Ensures initialisation of web service and makes steps common for all web
      * services and after that executes the <tt>execute</tt> method, for which
      * each subclass must provide an implementation.
-     * 
+     *
      * @param request
      *            The request, as received by the servlet.
      * @param response
@@ -450,7 +450,7 @@ public abstract class WebService {
         // Accept tokens passed in the Authorization header.
         if (StringUtils.isEmpty(authToken) && StringUtils.startsWith(authString, "Token ")) {
             authToken = StringUtils.removeStart(authString, "Token ");
-        } 
+        }
 
         try {
              // Use a token if provided.
@@ -471,7 +471,7 @@ public abstract class WebService {
                  }
                  final String username = StringUtils.lowerCase(parts[0]);
                  final String password = parts[1];
-    
+
                  permission = pm.getPermission(username, password,
                          im.getClassKeys());
              }
@@ -586,7 +586,7 @@ public abstract class WebService {
     /**
      * Returns true if the format requires the count, rather than the full or
      * paged result set.
-     * 
+     *
      * @return a truth value
      */
     // This should not be in the general case.
@@ -604,7 +604,7 @@ public abstract class WebService {
 
     /**
      * Make the XML output given the HttpResponse's PrintWriter.
-     * 
+     *
      * @param out
      *            The PrintWriter from the HttpResponse.
      * @return An Output that produces good XML.
@@ -616,7 +616,7 @@ public abstract class WebService {
 
     /**
      * Make the default JSON output given the HttpResponse's PrintWriter.
-     * 
+     *
      * @param out
      *            The PrintWriter from the HttpResponse.
      * @return An Output that produces good JSON.
@@ -773,7 +773,7 @@ public abstract class WebService {
 
     /**
      * Make the default output for this service.
-     * 
+     *
      * @param out
      *            The response's PrintWriter.
      * @param os
@@ -790,7 +790,7 @@ public abstract class WebService {
 
     /**
      * Returns true if the request wants column headers as well as result rows
-     * 
+     *
      * @return true if the request declares it wants column headers
      */
     public boolean wantsColumnHeaders() {
@@ -804,7 +804,7 @@ public abstract class WebService {
     /**
      * Get an enum which represents the column header style (path, friendly, or
      * none)
-     * 
+     *
      * @return a column header style
      */
     public ColumnHeaderStyle getColumnHeaderStyle() {
@@ -834,9 +834,9 @@ public abstract class WebService {
 
     /**
      * Returns required output format.
-     * 
+     *
      * Cannot be overridden.
-     * 
+     *
      * @return format
      */
     public final Format getFormat() {
@@ -879,7 +879,7 @@ public abstract class WebService {
 
     /**
      * Get the value of the callback parameter.
-     * 
+     *
      * @return The value, or null if this request type does not support this.
      */
     public String getCallback() {
@@ -892,7 +892,7 @@ public abstract class WebService {
 
     /**
      * Determine whether a callback was supplied to this request.
-     * 
+     *
      * @return Whether or not a callback was supplied.
      */
     public boolean hasCallback() {
@@ -906,7 +906,7 @@ public abstract class WebService {
      * WebService.doGet method that encapsulates logic common for all web
      * services else you can overwrite doGet method in your web service class
      * and manage all the things alone.
-     * 
+     *
      * @throws Exception
      *             if some error occurs
      */
@@ -931,5 +931,5 @@ public abstract class WebService {
     protected boolean canServe(Format format) {
         return format == getDefaultFormat();
     }
- 
+
 }

@@ -1,6 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -147,9 +148,7 @@ public class ListInput
         if (paramValues != null) {
             for (String value: paramValues) {
                 String[] subvalues = StringUtils.split(value, ";");
-                for (String subvalue: subvalues) {
-                    list.add(subvalue);
-                }
+                Collections.addAll(list, subvalues);
             }
         }
     }

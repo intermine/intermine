@@ -1,4 +1,4 @@
-package org.intermine.api.bag;
+package org.intermine.api.bag.operations;
 
 public class BagOperationException extends Exception {
 

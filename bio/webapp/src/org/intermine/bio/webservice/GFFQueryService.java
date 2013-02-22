@@ -60,7 +60,7 @@ public class GFFQueryService extends BioQueryService
         removeFirstItemInPaths(viewColumns);
         return new GFF3Exporter(
             getPrintWriter(), indexes, getSoClassNames(),
-            viewColumns, sourceName, organisms, false);
+            viewColumns, sourceName, organisms, false, getQueryPaths(pq));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
