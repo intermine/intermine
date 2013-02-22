@@ -702,14 +702,14 @@
      <reportdisplayer javaClass="org.intermine.bio.web.displayer.FlyBaseExpressionDisplayer"
                      jspName="model/flybaseExpressionDisplayer.jsp"
                      replacesFields="rnaSeqResults"
-                     placement="summary"
+                     placement="Expression"
                      types="Gene"/>
 
      <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwayDescriptionDisplayer"
                      jspName="model/pathwayDescriptionDisplayer.jsp"
                      showImmediately="true"
                      replacesFields="description"
-                     placement="top"
+                     placement="summary"
                      types="Pathway"/>
 
   </reportdisplayers>
