@@ -1236,7 +1236,7 @@
   <filter-class>org.intermine.web.filters.AlertFilter</filter-class>
   <init-param>
 	<param-name>file</param-name>
-	<param-value>/usr/local/tomcat/webapps/stevemine/WEB-INF/alertMessage</param-value>
+	<param-value>/usr/local/tomcat/webapps/mousemine/WEB-INF/alertMessage</param-value>
   </init-param>
   <init-param>
 	<param-name>checkFrequency</param-name>
