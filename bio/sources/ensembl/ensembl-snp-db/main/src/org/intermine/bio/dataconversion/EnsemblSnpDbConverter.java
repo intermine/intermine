@@ -131,6 +131,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         chrNames.add("Pt");
 
         for (String chrName : chrNames) {
+            System. out.println("Starting to process chromosome " + chrName);
             LOG.info("Starting to process chromosome " + chrName);
             ResultSet res = queryVariation(connection, chrName);
             process(res, chrName);
@@ -194,6 +195,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         // queries to MySQL.
         res.previous(); // roll back one position
         while (res.next()) {
+
+            // HACK: issue with rs8896 (on human chrMT:8269) (Source: Ensembl 70). Ignore this SNP.
+            // This SNP will be created twice with bad reference to location.
+            if ("rs8896".equals(res.getString("variation_name"))) {
+                LOG.info("Ignore rs8896");
+                continue;
+            }
+
             counter++;
 
             currentVariationId = res.getInt("variation_id");
@@ -369,7 +378,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                         && currentVariationId.equals(previousVariationId) ? false : true;
                 if (newConsequenceType) {
                     previousTranscriptStableId = currentTranscriptStableId;
-                    String type = res.getString("consequence_types");
+                    String type = res.getString("transcript_variation_consequence_types");
                     // Seen one example so far where consequence type is an empty string
                     if (StringUtils.isBlank(type)) {
                         type = "UNKNOWN";
@@ -399,7 +408,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     consequenceCounter++;
                 }
             } else { // transcriptStableId is empty, log it
-                String variationConsequences = res.getString("consequence_type");
+                String variationConsequences = res.getString("variation_feature_consequence_types");
                 Integer consequenceCount = nonTranscriptConsequences.get(variationConsequences);
 
                 if (consequenceCount == null) {
@@ -992,5 +1001,17 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      */
     public void setEmptyResultSet(boolean isEmptyResultSet) {
         this.isEmptyResultSet = isEmptyResultSet;
+    }
+
+    private void storeLocation(String chrStart, String chrEnd, String strand,
+            String currentSnpItemId, String chrName)
+            throws ObjectStoreException {
+        Item loc = createItem("Location");
+        loc.setAttribute("start", "" + chrStart);
+        loc.setAttribute("end", "" + chrEnd);
+        loc.setAttribute("strand", "" + strand);
+        loc.setReference("feature", currentSnpItemId);
+        loc.setReference("locatedOn", getChromosome(chrName, taxonId));
+        store(loc);
     }
 }
