@@ -57,6 +57,11 @@ public final class BagOperations
     public static final String SUBTRACT = "SUBTRACT";
 
     /**
+     * Constant representing logical asymmetric substraction.
+     */
+    public static final String ASYMMETRIC_SUBTRACT = "ASYMMETRIC_SUBTRACT";
+
+    /**
      * Create a bag that is the UNION of all the bags provided, if the union is the
      * empty set then don't create the new bag - if bags are of incompatible types or are all empty.
      * @param bags the bags to operate on
