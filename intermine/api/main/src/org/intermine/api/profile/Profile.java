@@ -646,6 +646,8 @@ public class Profile
         if (isLoggedIn()) {
             getSharedBagManager().unshareBagWithAllUsers(bagToDelete);
             bagToDelete.delete();
+        } else { //refresh the search repository
+            ((StorableBag) bagToDelete).delete();
         }
 
         TagManager tagManager = getTagManager();
