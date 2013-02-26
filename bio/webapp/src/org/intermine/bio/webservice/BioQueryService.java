@@ -13,7 +13,6 @@ package org.intermine.bio.webservice;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -147,10 +146,15 @@ public abstract class BioQueryService extends AbstractQueryService
 
         Profile profile = getPermission().getProfile();
         PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
+        // For FASTA/BED/GFF only set Gene.id in the view in im-tables system
         PathQuery pathQuery = getQuery();
         checkPathQuery(pathQuery);
 
-        List<String> views = getPathQueryViews(getRequiredParameter(VIEW_PARAM));
+        // Bring back original views for extra fields to be included in data export
+        // NB: Functional but bad practice?
+        // view in http request will look like: view=Gene.name&view=Gene.length...
+        // Support the standard mechanism for accepting multiple parameter values
+        List<String> views = getPathQueryViews(request.getParameterValues(VIEW_PARAM));
         if (views != null) {
             pathQuery.addViews(views);
             // Remove duplicates in views
@@ -181,18 +185,17 @@ public abstract class BioQueryService extends AbstractQueryService
      * @param pathQuery
      * @return a list of query view as string
      */
-    protected static List<String> getPathQueryViews(String view) {
-        if (view == null || view.isEmpty()) {
+    protected static List<String> getPathQueryViews(String[] views) {
+        if (views == null || views.length < 1) {
             return null;
         }
-        List<String> viewList = Arrays.asList(StringUtil.split(view, ","));
 
-        List<String> trimmedViewList = new ArrayList<String>();
-        for (String v : viewList) {
-            trimmedViewList.add(v.trim());
+        List<String> viewList = new ArrayList<String>();
+        for (String view : views) {
+            viewList.add(view.trim());
         }
 
-        return trimmedViewList;
+        return viewList;
     }
 
     /**
