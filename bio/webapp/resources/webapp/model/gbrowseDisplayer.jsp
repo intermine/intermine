@@ -14,13 +14,11 @@
 
   <c:set var="loc" value="${object.chromosomeLocation}" />  
   <c:set var="name" value="${loc.locatedOn.primaryIdentifier}:${loc.start}..${loc.end}" />
-  <c:set var="label0" value="MGI_Genome_Features" />
-  <c:set var="label1" value="MGI_Genome_Features-MGI_NCBI-MGI_VEGA-MGI_ENSEMBL" />
 
   <c:choose>
   <c:when test="${WEB_PROPERTIES['gbrowse.database.source'] != null}">
     <div class="loading">
-      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?start=${loc.start};stop=${loc.end};ref=${loc.locatedOn.primaryIdentifier};label=${label1}"></html:link>
+      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?start=${loc.start};stop=${loc.end};ref=${loc.locatedOn.primaryIdentifier};label=${WEB_PROPERTIES['gbrowse.tracks']}"></html:link>
     </div>
 	<script type="text/javascript">
 	  jQuery(document).ready(function() {
@@ -41,7 +39,7 @@
 	          jQuery('#gBrowse').addClass('warning').append(jQuery('</p>', { 'text': 'There was a problem rendering the displayer, image could not be fetched.' }));
 	        })
 	        // set the attributes of the image
-	        .attr('src', "${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?t=${label0};name=${name};width=600")
+	        .attr('src', "${WEB_PROPERTIES['gbrowse_image.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?t=${WEB_PROPERTIES['gbrowse_image.tracks']};name=${name};width=600")
 	        .attr('style', 'border:1px solid #000;')
 	        .attr('title', 'GBrowse');
 	  });
