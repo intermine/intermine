@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -34,12 +32,11 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagOperations;
-import org.intermine.api.bag.IncompatibleTypesException;
 import org.intermine.api.bag.operations.BagOperationException;
 import org.intermine.api.bag.operations.InternalBagOperationException;
+import org.intermine.api.bag.operations.NoContent;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.util.NameUtil;
@@ -95,6 +92,9 @@ public class ModifyBagAction extends InterMineAction
         } else if (request.getParameter("copy") != null
                 || (mbf.getListsButton() != null && "copy".equals(mbf.getListsButton()))) {
             copy(form, request);
+        } else if (mbf.getListsButton() != null
+                   && "asymmetricdifference".equals(mbf.getListsButton().trim())) {
+            combine(form, request, BagOperations.ASYMMETRIC_SUBTRACT);
         }
 
         return getReturn(mbf.getPageName(), mapping);
@@ -219,6 +219,13 @@ public class ModifyBagAction extends InterMineAction
             } else if (opText.equals(BagOperations.SUBTRACT)) {
                 newBagSize = BagOperations.subtract(model, selectedBags, newBagName, profile,
                                           im.getClassKeys());
+            } else if (opText.equals(BagOperations.ASYMMETRIC_SUBTRACT)) {
+                Collection<InterMineBag> include = new ArrayList<InterMineBag>();
+                include.add(allBags.get(mbf.getListLeft()));
+                Collection<InterMineBag> exclude = new ArrayList<InterMineBag>();
+                exclude.add(allBags.get(mbf.getListRight()));
+                newBagSize = BagOperations.asymmetricSubtract(model, include, exclude, newBagName,
+                    profile, im.getClassKeys());
             }
         } catch (MetaDataException e) {
             SessionMethods.recordError(
@@ -231,6 +238,11 @@ public class ModifyBagAction extends InterMineAction
             ActionMessage actionMessage = new ActionMessage(
                     "An error occurred while saving the list");
             recordError(actionMessage, request);
+            return;
+        } catch (NoContent nc) {
+            SessionMethods.recordError(opText + " operation on lists "
+                    + StringUtil.prettyList(Arrays.asList(selectedBagNames))
+                    + " produced no results.", session);
             return;
         } catch (BagOperationException e) {
             SessionMethods.recordError(e.getMessage(), session);
@@ -248,12 +260,8 @@ public class ModifyBagAction extends InterMineAction
                     + "\" as " + opText + " of  "
                     + StringUtil.prettyList(Arrays.asList(selectedBagNames)) + ".",
                     session);
-            im.getTrackerDelegate().trackListCreation(created.getType() ,newBagSize,
+            im.getTrackerDelegate().trackListCreation(created.getType() , newBagSize,
                     ListBuildMode.OPERATION, profile, session.getId());
-        } else {
-            SessionMethods.recordError(opText + " operation on lists "
-                    + StringUtil.prettyList(Arrays.asList(selectedBagNames))
-                    + " produced no results.", session);
         }
     }
 
