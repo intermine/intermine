@@ -14,9 +14,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.query.PathQueryExecutor;
@@ -44,8 +46,11 @@ import org.intermine.webservice.server.query.result.PathQueryBuilder;
  */
 public abstract class BioQueryService extends AbstractQueryService
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(BioQueryService.class);
 
     private static final String XML_PARAM = "query";
+    private static final String VIEW_PARAM = "view";
 
     private PrintWriter pw;
 
@@ -141,8 +146,25 @@ public abstract class BioQueryService extends AbstractQueryService
 
         Profile profile = getPermission().getProfile();
         PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
+        // For FASTA/BED/GFF only set Gene.id in the view in im-tables system
         PathQuery pathQuery = getQuery();
         checkPathQuery(pathQuery);
+
+        // Bring back original views for extra fields to be included in data export
+        // NB: Functional but bad practice?
+        // view in http request will look like: view=Gene.name&view=Gene.length...
+        // Support the standard mechanism for accepting multiple parameter values
+        List<String> views = getPathQueryViews(request.getParameterValues(VIEW_PARAM));
+        if (views != null) {
+            pathQuery.addViews(views);
+            // Remove duplicates in views
+            ArrayList<String> al = new ArrayList<String>();
+            al.clear();
+            al.addAll(new LinkedHashSet<String>(pathQuery.getView()));
+            pathQuery.clearView();
+            pathQuery.addViews(al);
+        }
+
         Exporter exporter = getExporter(pathQuery);
 
         ExportResultsIterator iter = null;
@@ -155,6 +177,43 @@ public abstract class BioQueryService extends AbstractQueryService
                 iter.releaseGoFaster();
             }
         }
+    }
+
+    /**
+     * Parse path query views from request parameter "view" comma-separated
+     *
+     * @param pathQuery
+     * @return a list of query view as string
+     */
+    protected static List<String> getPathQueryViews(String[] views) {
+        if (views == null || views.length < 1) {
+            return null;
+        }
+
+        List<String> viewList = new ArrayList<String>();
+        for (String view : views) {
+            viewList.add(view.trim());
+        }
+
+        return viewList;
+    }
+
+    /**
+     * Parse view strings to Path objects
+     *
+     * @param views
+     * @return a list of query path
+     */
+    protected List<Path> getQueryPaths(PathQuery pq) {
+        List<Path> paths = new ArrayList<Path>();
+        for (String view : pq.getView()) {
+            try {
+                paths.add(pq.makePath(view));
+            } catch (PathException e) {
+                e.printStackTrace();
+            }
+        }
+        return paths;
     }
 
 }
