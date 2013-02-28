@@ -62,7 +62,7 @@ public class CodeService extends AbstractQueryService
 
     @Override
     protected boolean canServe(Format format) {
-        switch (getFormat()) {
+        switch (format) {
         case JSON:
             return true;
         case TEXT:
