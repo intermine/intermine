@@ -290,6 +290,7 @@ grep -vwf $RELDIR/$PREL/$p.live $p.live > $DELTA/$p.delta
 grep -wf $DELTA/$p.delta deprecation.table | sed 's/->/deprecated by/g' >> $LOG
 grep -wf $DELTA/$p.delta superseded.table | sed 's/->/superseded by/g' >> $LOG
 grep -vwf $LOG $DELTA/$p.delta |  sed '1i\---- new ----'>> $LOG
+grep -wf $RELDIR/$PREL/$p.live all.dead |  sed '1i\---- deleted ----'>> $LOG
 
 echo "=========================================" >>$LOG
 done
