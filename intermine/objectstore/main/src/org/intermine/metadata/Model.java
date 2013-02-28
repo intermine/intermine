@@ -291,14 +291,21 @@ public class Model
      */
     public String toJSONString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("\"name\":\"" + modelName + "\",\"classes\":{");
+        sb.append("\"name\":\"")
+          .append(modelName)
+          .append("\",\"package\":\"")
+          .append(packageName)
+          .append("\",\"classes\":{");
         boolean needsComma = false;
         for (ClassDescriptor cld: getClassDescriptors()) {
             if (!"org.intermine.model.InterMineObject".equals(cld.getName())) {
                 if (needsComma) {
                     sb.append(",");
                 }
-                sb.append(cld.toJSONString());
+                sb.append("\"")
+                  .append(cld.getUnqualifiedName())
+                  .append("\":")
+                  .append(cld.toJSONString());
                 needsComma = true;
             }
         }
