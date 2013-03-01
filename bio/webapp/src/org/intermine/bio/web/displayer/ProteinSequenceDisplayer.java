@@ -3,6 +3,7 @@ package org.intermine.bio.web.displayer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.intermine.api.InterMineAPI;
+import org.intermine.model.InterMineObject;
 import org.intermine.web.displayer.ReportDisplayer;
 import org.intermine.web.logic.config.ReportDisplayerConfig;
 import org.intermine.web.logic.results.ReportObject;
@@ -25,5 +26,12 @@ public class ProteinSequenceDisplayer extends ReportDisplayer
 
     @Override
     public void display(HttpServletRequest request, ReportObject reportObject) {
+        InterMineObject imObj = reportObject.getObject();
+
+        String imoClassName = imObj.getClass().getSimpleName();
+        if (imoClassName.endsWith("Shadow")) {
+            imoClassName = imoClassName.substring(0, imoClassName.indexOf("Shadow"));
+        }
+        request.setAttribute("objectClass", imoClassName);
     }
 }
