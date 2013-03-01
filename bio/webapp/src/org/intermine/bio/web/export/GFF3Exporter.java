@@ -208,7 +208,6 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
         export(resultIt, paths, paths);
@@ -297,6 +296,10 @@ public class GFF3Exporter implements Exporter
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
 
+                // NB:
+                // processAttributes should run here for collection attributes, e.g. Gene.pathways.name,
+                // ticket: https://github.com/intermine/intermine/issues/218
+
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
                 lastLsfPath = re.getPath();
@@ -329,26 +332,32 @@ public class GFF3Exporter implements Exporter
                 continue;
             }
 
+            // Disable collection export until further bug diagnose
+            if (isCollection || el.getPath().containsCollections()) {
+              continue;
+            }
+            //---------------------------------------------------------------
             // checks for attributes:
-            if (isCollection && !el.getPath().containsCollections()) {
-                // one is collection, the other is not: do not show
-                continue;
-            }
-            if (!isCollection && el.getPath().containsCollections()
-                    && soClassNames.containsKey(el.getType())) {
-                // show attributes only if they are not linked to features
-                // (they will be displayed with the relevant one, see below)
-                continue;
-            }
-
-            if (isCollection && el.getPath().containsCollections()) {
-                // show only if of the same class
-                Class<?> reType = p.getLastClassDescriptor().getType();
-                Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                if (!reType.isAssignableFrom(elType)) {
-                    continue;
-                }
-            }
+//            if (isCollection && !el.getPath().containsCollections()) {
+//                // one is collection, the other is not: do not show
+//                continue;
+//            }
+//            if (!isCollection && el.getPath().containsCollections()
+//                    && soClassNames.containsKey(el.getType())) {
+//                // show attributes only if they are not linked to features
+//                // (they will be displayed with the relevant one, see below)
+//                continue;
+//            }
+//
+//            if (isCollection && el.getPath().containsCollections()) {
+//                // show only if of the same class
+//                Class<?> reType = p.getLastClassDescriptor().getType();
+//                Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+//                if (!reType.isAssignableFrom(elType)) {
+//                    continue;
+//                }
+//            }
+            //---------------------------------------------------------------
 
             if ("location".equalsIgnoreCase(el.getPath()
                     .getLastClassDescriptor().getUnqualifiedName())) {

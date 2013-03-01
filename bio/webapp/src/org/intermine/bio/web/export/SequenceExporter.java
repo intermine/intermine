@@ -335,6 +335,11 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
+                // Disable collection export until further bug diagnose
+                if (re.getPath().containsCollections()) {
+                  continue;
+                }
+
                 Object fieldValue = re.getField();
                 if (fieldValue == null) {
                     headerBits.add("-");
@@ -354,6 +359,11 @@ public class SequenceExporter implements Exporter
             for (ResultElement re : subRow) {
                 if (re == null) {
                     continue;
+                }
+
+                // Disable collection export until further bug diagnose
+                if (re.getPath().containsCollections()) {
+                  continue;
                 }
 
                 Object fieldValue = re.getField();
