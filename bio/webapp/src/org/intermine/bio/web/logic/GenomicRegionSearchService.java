@@ -1025,7 +1025,10 @@ public class GenomicRegionSearchService
         }
 
         clHtml += "</select>";
-        clHtml += "<button onClick=\"javascript: createList('all','all-regions');\">Go</button>";
+        String largeListWarning =
+                "alert('Create a large list (e.g. 100,000+ items) will require extreme patience');";
+        clHtml += "<button onClick=\"javascript:" + largeListWarning +
+                "createList('all','all-regions');\">Go</button>";
 
         return clHtml;
     }
