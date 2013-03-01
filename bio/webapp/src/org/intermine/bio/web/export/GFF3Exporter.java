@@ -296,6 +296,10 @@ public class GFF3Exporter implements Exporter
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
 
+                // NB:
+                // processAttributes should run here for collection attributes, e.g. Gene.pathways.name,
+                // ticket: https://github.com/intermine/intermine/issues/218
+
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
                 lastLsfPath = re.getPath();
