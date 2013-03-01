@@ -215,5 +215,4 @@ public abstract class BioQueryService extends AbstractQueryService
         }
         return paths;
     }
-
 }
