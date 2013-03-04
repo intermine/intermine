@@ -39,7 +39,11 @@ public class SequenceFeatureDisplayer extends ReportDisplayer
         InterMineObject imObj = reportObject.getObject();
         Object loc = null;
 
-
+        String imoClassName = imObj.getClass().getSimpleName();
+        if (imoClassName.endsWith("Shadow")) {
+            imoClassName = imoClassName.substring(0, imoClassName.indexOf("Shadow"));
+        }
+        request.setAttribute("objectClass", imoClassName);
 
         try {
             loc = imObj.getFieldValue("chromosomeLocation");
