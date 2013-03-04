@@ -10,6 +10,9 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,48 +21,28 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.validator.ValidatorForm;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.template.TemplateQuery;
+import org.intermine.template.xml.TemplateQueryBinding;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.logic.template.TemplateHelper;
 
 /**
  * Form bean representing template import form.
  *
- * @author  Thomas Riley
+ * @author Thomas Riley
+ * @author Daniela Butano
  */
-public class TemplatesImportForm extends ValidatorForm
+public class TemplatesImportForm extends ImportXMLForm
 {
-    private String xml;
     private boolean overwriting = false;
     private boolean deleteTracks = false;
-
-    /**
-     * Creates a new instance of TemplatesImportForm.
-     */
-    public TemplatesImportForm() {
-        reset();
-    }
-
-    /**
-     * Get the xml.
-     * @return templates in xml format
-     */
-    public String getXml() {
-        return xml;
-    }
-
-    /**
-     * Set the xml.
-     * @param xml templates in xml format
-     */
-    public void setXml(String xml) {
-        this.xml = xml;
-    }
+    private Map<String, TemplateQuery> map;
 
     /**
      * Get the overwrite flag.
@@ -94,18 +77,10 @@ public class TemplatesImportForm extends ValidatorForm
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        super.reset(mapping, request);
-        reset();
-    }
-
-    /**
      * Reset the form.
      */
     protected void reset() {
-        xml = "";
+        super.reset();
         overwriting = false;
         deleteTracks = false;
     }
@@ -126,10 +101,31 @@ public class TemplatesImportForm extends ValidatorForm
         if (errors != null && errors.size() > 0) {
             return errors;
         }
-
+        if (formFile != null && formFile.getFileName() != null
+                && formFile.getFileName().length() > 0) {
+            String mimetype = formFile.getContentType();
+            if (!"application/octet-stream".equals(mimetype) && !mimetype.startsWith("text")) {
+                errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("importTemplates.notText", mimetype));
+                return errors;
+            }
+            if (formFile.getFileSize() == 0) {
+                errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("importTemplates.noTemplateFileOrEmpty"));
+                return errors;
+            }
+        }
         try {
-            Map<String, InterMineBag> allBags = bagManager.getBags(profile);
-            TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
+            xml = xml.trim();
+            if (!xml.isEmpty()) {
+                Map<String, InterMineBag> allBags = bagManager.getBags(profile);
+                TemplateHelper.xmlToTemplateMap(getXml(), allBags, PathQuery.USERPROFILE_VERSION);
+            } else if (formFile != null) {
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(formFile.getInputStream()));
+                map = TemplateQueryBinding.unmarshalTemplates(reader,
+                    PathQuery.USERPROFILE_VERSION);
+            }
         } catch (Exception err) {
             if (errors == null) {
                 errors = new ActionErrors();
@@ -138,5 +134,33 @@ public class TemplatesImportForm extends ValidatorForm
                         new ActionMessage("errors.badtemplatexml", err.getMessage()));
         }
         return errors;
+    }
+
+    /**
+     * Return a Map from template name to Template object.
+     * @return the Map
+     * @throws Exception if a problem parsing query XML
+     */
+    public Map<String, TemplateQuery> getQueryMap(BagManager bagManager, Profile profile)
+        throws Exception {
+        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
+        if (map == null) {
+            // multiple templates must be wrapped by <templates> element,
+            // add it if not already there
+            xml = xml.trim();
+            if (!xml.isEmpty()) {
+                if (!xml.startsWith("<templates>")) {
+                    xml = "<templates>" + xml + "</templates>";
+                }
+                map = TemplateHelper.xmlToTemplateMap(getXml(), allBags,
+                    PathQuery.USERPROFILE_VERSION);
+            } else if (formFile != null) {
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(formFile.getInputStream()));
+                map = TemplateQueryBinding.unmarshalTemplates(reader,
+                    PathQuery.USERPROFILE_VERSION);
+            }
+        }
+        return map;
     }
 }

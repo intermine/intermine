@@ -57,10 +57,7 @@ public class TemplatesImportAction extends InterMineAction
         TemplatesImportForm tif = (TemplatesImportForm) form;
         int deleted = 0, imported = 0, renamed = 0;
         BagManager bagManager = im.getBagManager();
-        Map<String, InterMineBag> allBags = bagManager.getBags(profile);
-
-        Map<String, TemplateQuery> templates = TemplateHelper.xmlToTemplateMap(tif.getXml(),
-                allBags, PathQuery.USERPROFILE_VERSION);
+        Map<String, TemplateQuery> templates = tif.getQueryMap(bagManager, profile);
 
         try {
             profile.disableSaving();
