@@ -8,6 +8,8 @@ public enum Format {
 
     /** The format for when no value is given **/
     EMPTY(null),
+    /** The format for when the user will accept whatever. **/
+    DEFAULT("*/*"),
     /** The Unknown format **/
     UNKNOWN(null),
     /** The HTML format **/
