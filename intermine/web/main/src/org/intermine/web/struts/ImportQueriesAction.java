@@ -21,9 +21,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.util.NameUtil;
 import org.intermine.pathquery.PathQuery;
@@ -43,13 +40,10 @@ public class ImportQueriesAction extends InterMineAction
     @Override public ActionForward execute(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         ImportQueriesForm qif = (ImportQueriesForm) form;
         Profile profile = SessionMethods.getProfile(session);
-
         Map<String, PathQuery> queries = null;
         queries = qif.getQueryMap();
-
 
         if (queries.size() == 1
             && ((request.getParameter("query_builder") != null && "yes".equals(request
@@ -87,7 +81,7 @@ public class ImportQueriesAction extends InterMineAction
                 if (queryName.isEmpty()) {
                     validNameQuery = false;
                     continue;
-                } 
+                }
                 SessionMethods.saveQuery(session, queryName, query);
                 imported++;
             }
