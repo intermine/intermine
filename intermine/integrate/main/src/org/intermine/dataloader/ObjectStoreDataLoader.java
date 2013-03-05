@@ -130,7 +130,8 @@ public class ObjectStoreDataLoader extends DataLoader
             SingletonResults res = os.executeSingleton(q, ITEM_READ_BATCH_SIZE, false, false, true);
             long time4 = System.currentTimeMillis();
             long time1, time2, time3;
-            @SuppressWarnings("unchecked") Collection<FastPathObject> tmpRes = (Collection) res;
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            Collection<FastPathObject> tmpRes = (Collection) res;
             for (FastPathObject obj : tmpRes) {
                 time1 = System.currentTimeMillis();
                 timeSpentLoop += time1 - time4;
@@ -220,6 +221,7 @@ public class ObjectStoreDataLoader extends DataLoader
             }
             throw e;
         }
+        LOG.warn("errorCount: " + errorCount);
         if (errorCount > 0) {
             throw new RuntimeException("Dataloading finished. There were errors while loading "
                     + "- see the logs for details."
