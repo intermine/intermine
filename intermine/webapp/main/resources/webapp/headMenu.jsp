@@ -23,18 +23,6 @@
   <c:if test="${fn:length(headerLinks) > 0}">
     <%-- Menu appearing at the top right (about, etc..) --%>
     <div id="topnav">
-      <c:forEach var="entry" items="${headerLinks}" varStatus="status">
-        <c:set value="header.links.${entry}" var="linkProp"/>
-        <c:choose>
-          <c:when test="${!empty WEB_PROPERTIES[linkProp]}">
-                  <a href="${WEB_PROPERTIES[linkProp]}">${entry}</a>
-          </c:when>
-          <c:otherwise>
-            <a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a>
-          </c:otherwise>
-        </c:choose>
-	&nbsp;|&nbsp;
-      </c:forEach>
   <span id="loginbar">
         <c:if test="${PROFILE.loggedIn}">
             <span id="username">
@@ -67,6 +55,18 @@
         </c:if>
         <span class="login"><im:login/></span>
 	&nbsp;|&nbsp;
+      <c:forEach var="entry" items="${headerLinks}" varStatus="status">
+        <c:set value="header.links.${entry}" var="linkProp"/>
+        <c:choose>
+          <c:when test="${!empty WEB_PROPERTIES[linkProp]}">
+                  <a href="${WEB_PROPERTIES[linkProp]}">${entry}</a>
+          </c:when>
+          <c:otherwise>
+            <a href="${WEB_PROPERTIES['project.sitePrefix']}/${entry}.shtml">${entry}</a>
+          </c:otherwise>
+        </c:choose>
+	&nbsp;|&nbsp;
+      </c:forEach>
         <span><a href="#" onclick="showContactForm();return false;"><fmt:message key="feedback.link"/></a></span>
     </ul>
     </div>
