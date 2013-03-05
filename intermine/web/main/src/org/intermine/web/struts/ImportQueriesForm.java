@@ -10,41 +10,29 @@ package org.intermine.web.struts;
  *
  */
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.validator.ValidatorForm;
-import org.intermine.api.InterMineAPI;
-import org.intermine.api.bag.BagManager;
-import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.profile.Profile;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
-import org.intermine.web.logic.session.SessionMethods;
 
 /**
  * Form bean representing query import form.
  *
- * @author  Thomas Riley
+ * @author Thomas Riley
+ * @author Daniela Butano
  */
-public class ImportQueriesForm extends ValidatorForm
+public class ImportQueriesForm extends ImportXMLForm
 {
-    private String xml;
     private Map<String, PathQuery> map;
     private String queryBuilder;
-
-    /**
-     * Creates a new instance of ImportQueriesForm.
-     */
-    public ImportQueriesForm() {
-        reset();
-    }
 
     /**
      * Return a Map from query name to Query object.
@@ -56,32 +44,24 @@ public class ImportQueriesForm extends ValidatorForm
         if (map == null) {
             // multiple queries must be wrapped by <queries> element, add it if not already there
             xml = xml.trim();
-            if (!xml.startsWith("<queries>")) {
-                xml = "<queries>" + xml + "</queries>";
-            }
+            if (!xml.isEmpty()) {
+                if (!xml.startsWith("<queries>")) {
+                    xml = "<queries>" + xml + "</queries>";
+                }
 
-            // TODO: Assumes we are loading the latest version format.
-            map = PathQueryBinding.unmarshalPathQueries(new StringReader(xml),
+                // TODO: Assumes we are loading the latest version format.
+                map = PathQueryBinding.unmarshalPathQueries(new StringReader(xml),
                     PathQuery.USERPROFILE_VERSION);
+            } else if (formFile != null) {
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(formFile.getInputStream()));
+                map = PathQueryBinding.unmarshalPathQueries(reader, PathQuery.USERPROFILE_VERSION);
+            }
         }
         return map;
     }
 
-    /**
-     * Get the xml.
-     * @return query in xml format
-     */
-    public String getXml() {
-        return xml;
-    }
 
-    /**
-     * Set the xml.
-     * @param xml query in xml format
-     */
-    public void setXml(String xml) {
-        this.xml = xml;
-    }
 
     /**
      * Get the queryBuilder field.  If true and there is only one query submitted, the action will
@@ -101,18 +81,10 @@ public class ImportQueriesForm extends ValidatorForm
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
-        super.reset(mapping, request);
-        reset();
-    }
-
-    /**
      * Reset the form.
      */
     protected void reset() {
-        xml = "";
+        super.reset();
         queryBuilder = "";
     }
 
@@ -126,11 +98,20 @@ public class ImportQueriesForm extends ValidatorForm
         if (errors != null && errors.size() > 0) {
             return errors;
         }
-        HttpSession session = request.getSession();
-        final InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        BagManager bagManager = im.getBagManager();
-        Profile profile = SessionMethods.getProfile(session);
-
+        if (formFile != null && formFile.getFileName() != null
+                && formFile.getFileName().length() > 0) {
+            String mimetype = formFile.getContentType();
+            if (!"application/octet-stream".equals(mimetype) && !mimetype.startsWith("text")) {
+                errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("errors.importQuery.notText", mimetype));
+                return errors;
+            }
+            if (formFile.getFileSize() == 0) {
+                errors.add(ActionErrors.GLOBAL_MESSAGE,
+                    new ActionMessage("errors.importQuery.noQueryFileOrEmpty"));
+                return errors;
+            }
+        }
         try {
             if (getQueryMap().size() == 0) {
                 if (errors == null) {

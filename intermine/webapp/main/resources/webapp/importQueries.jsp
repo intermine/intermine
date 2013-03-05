@@ -5,6 +5,8 @@
 <%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 
+<script type="text/javascript" src="js/import.js"></script>
+
 <!-- importQueries.jsp -->
 <html:xhtml/>
 <div class="body" align="center">
@@ -15,25 +17,36 @@
 <br/>
 
 <p>
-  <html:form action="/importQueriesAction?query_build=${param.query_builder}">
+  <html:form action="/importQueriesAction?query_build=${param.query_builder}" method="post" enctype="multipart/form-data" >
 
     <html:hidden property="query_builder" value="${param.query_builder}"/>
 
-    <div align="center">
-    <table cellspacing="0" cellpadding="0" border="0">
+    <table id="buildbaglist">
     <tr>
-      <td><html:textarea property="xml" cols="60" rows="20"/></td>
+      <td align="right" class="label">
+         <label><fmt:message key="importQuery.xml"/></label>
+     </td>
+      <td><html:textarea styleId="xml" property="xml" rows="20" cols="60"
+                   onclick="if(this.value != ''){switchInputs('xml','file');}else{openInputs();}"
+                   onkeyup="if(this.value != ''){switchInputs('xml','file');}else{openInputs();}" /></td>
     </tr>
     <tr>
-      <td align="center">
-      <br/>
-        <html:submit><fmt:message key="importQuery.submit"/></html:submit>
-      </td>
+    <%-- file input --%>
+    <td align="right" class="label">
+        <label><fmt:message key="importTemplates.or"/></label>
+    </td>
+    <td>
+        <html:file styleId="file" property="formFile"
+        onchange="switchInputs('file','xml');"
+        onkeydown="switchInputs('file','xml');" size="28" />
+    </td>
     </tr>
     </table>
+    <div align="right">
+    <input type="button" onClick="resetInputs('file', 'xml')" value="Reset" />
+        <html:submit><fmt:message key="importQuery.submit"/></html:submit>
     </div>
   </html:form>
-
   <br/>
   <br/>
 
