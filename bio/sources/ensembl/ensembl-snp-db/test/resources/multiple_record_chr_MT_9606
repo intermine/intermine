@@ -26,3 +26,9 @@
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000387449	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000387456	NULL	NULL	NULL	NULL
 19845	rs8896	8784	G/A	MT	1	8269	8269	1	dbSNP	NULL	downstream_gene_variant,upstream_gene_variant,stop_retained_variant	NULL	upstream_gene_variant	NULL	ENST00000361567	NULL	NULL	NULL	NULL
+18991	rs9743	9628	T/C	MT	1	9698	9698	1	dbSNP	freq,hapmap	synonymous_variant,downstream_gene_variant,upstream_gene_variant	NULL	downstream_gene_variant	NULL	ENST00000361453	NULL	NULL	NULL	NULL
+18991	rs9743	9628	T/C	MT	1	9698	9698	1	dbSNP	freq,hapmap	synonymous_variant,downstream_gene_variant,upstream_gene_variant	NULL	downstream_gene_variant	NULL	ENST00000387382	NULL	NULL	NULL	NULL
+18991	rs9743	9628	T/C	MT	1	9698	9698	1	dbSNP	freq,hapmap	synonymous_variant,downstream_gene_variant,upstream_gene_variant	NULL	upstream_gene_variant	NULL	ENST00000387392	NULL	NULL	NULL	NULL
+56003365	rs201350510	52677690	G/T/A/C	MT	2	9698	9698	-1	dbSNP	NULL	synonymous_variant,downstream_gene_variant,upstream_gene_variant	NULL	downstream_gene_variant	NULL	ENST00000361851	NULL	NULL	NULL	NULL
+56003365	rs201350510	52677690	G/T/A/C	MT	2	9698	9698	-1	dbSNP	NULL	synonymous_variant,downstream_gene_variant,upstream_gene_variant	NULL	downstream_gene_variant	NULL	ENST00000361899	NULL	NULL	NULL	NULL
+56003365	rs201350510	52677690	G/T/A/C	MT	2	9698	9698	-1	dbSNP	NULL	synonymous_variant,downstream_gene_variant,upstream_gene_variant	NULL	downstream_gene_variant	NULL	ENST00000361899	NULL	NULL	NULL	NULL

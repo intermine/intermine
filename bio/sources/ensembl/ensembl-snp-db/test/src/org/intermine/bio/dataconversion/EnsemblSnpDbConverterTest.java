@@ -63,6 +63,7 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
     private String chr2 = "2"; // fixed
     private String chrMT = "MT"; // fixed
     private String chrPt = "Pt"; // fixed
+    private String variationRawDataFileNameSingleRecord = "single_record_9606";
     private String variationRawDataFileNameMultipleRecord = "multiple_record_9606";
     private String variationRawDataFileNameDupConsequence = "dup_consequence_9606";
     private String variationRawDataFileNameMultipleLocationChr1 = "multiple_location_chr_1_9606";
@@ -96,6 +97,32 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
         converter.setOrganism(HUMAN);
         converter.process(mockResultSet(variationHeader, null), chrPt);
         assertEquals(true, converter.isEmptyResultSet());
+    }
+
+    /**
+     * Test case: normal multiple records
+     * @throws Exception e
+     */
+    public void testProcessSingleRecord() throws Exception {
+        converter.setOrganism(HUMAN);
+        converter.process(
+                mockResultSet(variationHeader,
+                        parseVariationRawData(variationRawDataFileNameSingleRecord)),
+                        chr1);
+        converter.storeFinalSnps();
+
+//        writeItemsFile(itemWriter.getItems(), "ensembl-snp-db-single-record-tgt-items.xml");
+//        Set<org.intermine.xml.full.Item> expected =
+//            readItemSet("EnsemblComparaConverterTest_tgt.xml");
+
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "SNP"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "Consequence"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "Transcript"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "ConsequenceType"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "Location"));
+        assertEquals(6, countItemByClass(itemWriter.getItems(), "ValidationState"));
+//        assertEquals(readItemSet("EnsemblSnpDbMultipleRecord-tgt-items.xml"),
+//                itemWriter.getItems());
     }
 
     /**

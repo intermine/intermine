@@ -121,14 +121,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
 
         List<String> chrNames = new ArrayList<String>();
-        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
-            chrNames.add("" + i);
-        }
-        chrNames.add("X");
-        chrNames.add("Y");
+//        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
+//            chrNames.add("" + i);
+//        }
+//        chrNames.add("X");
+//        chrNames.add("Y");
         chrNames.add("MT");
         chrNames.add("Mt");
-        chrNames.add("Pt");
+//        chrNames.add("Pt");
 
         for (String chrName : chrNames) {
             System. out.println("Starting to process chromosome " + chrName);
@@ -176,11 +176,11 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             return;
         }
 
-        int counter = 0;
+        int counter = 0; // result counter
         int snpCounter = 0;
         int consequenceCounter = 0;
-        Set<String> seenLocsForSnp = new HashSet<String>();
-        Boolean previousUniqueLocation = true;
+        Set<String> seenLocsForSnp = new HashSet<String>(); // stored locations
+        Boolean previousUniqueLocation = true; // whether previous snp has an unique location
         String previousTranscriptStableId = null;
         Set<String> consequenceItemIdSet = new HashSet<String>();
         boolean storeSnp = false;
@@ -196,13 +196,6 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         res.previous(); // roll back one position
         while (res.next()) {
 
-            // HACK: issue with rs8896 (on human chrMT:8269) (Source: Ensembl 70). Ignore this SNP.
-            // This SNP will be created twice with bad reference to location.
-            if ("rs8896".equals(res.getString("variation_name"))) {
-                LOG.info("Ignore rs8896");
-                continue;
-            }
-
             counter++;
 
             currentVariationId = res.getInt("variation_id");
@@ -212,6 +205,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     || pendingSnpVariationIdToConsequencesMap
                             .containsKey(currentVariationId) ? false : true;
 
+            // For the first snp, the if condition is false
             if (pendingSnpVariationIdToConsequencesMap.containsKey(currentVariationId)) {
                 previousUniqueLocation = false;
             }
@@ -219,31 +213,37 @@ public class EnsemblSnpDbConverter extends BioDBConverter
             if (newSnp) {
                 // starting a new SNP, store the one just finished - previousRsNumber
 
-                Integer storedSnpInterMineId = storedSnpVariationIdToInterMineIdMap
-                        .get(previousVariationId);
-
-                // if we didn't get back a storedSnpId this was the first time we found this
-                // (previous) SNP, so store it now
-                if (storeSnp && storedSnpInterMineId == null) {
-                    storedSnpInterMineId = store(currentSnpItem);
-                    storedSnpVariationIdToInterMineIdMap.put(
-                            previousVariationId, storedSnpInterMineId);
-                    snpCounter++;
-                }
-
-                if (previousUniqueLocation) {
-                    // the SNP we just stored has only one location so we won't see it again
-                    storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
-                } else {
-                    // we'll see the previous SNP multiple times so hang onto data
-                    Set<String> snpConsequences = pendingSnpVariationIdToConsequencesMap
+                {
+                    Integer storedSnpInterMineId = storedSnpVariationIdToInterMineIdMap
                             .get(previousVariationId);
 
-                    if (snpConsequences == null) {
-                        snpConsequences = new HashSet<String>();
-                        pendingSnpVariationIdToConsequencesMap.put(
-                                previousVariationId, snpConsequences);
-                        snpConsequences.addAll(consequenceItemIdSet);
+                    // if we didn't get back a storedSnpId this was the first time we found this
+                    // (previous) SNP, so store it now
+                    // For the first snp, there is no previous one, storeSnp is false, if condition
+                    // is false
+                    if (storeSnp && storedSnpInterMineId == null) {
+                        storedSnpInterMineId = store(currentSnpItem);
+                        storedSnpVariationIdToInterMineIdMap.put(
+                                previousVariationId, storedSnpInterMineId);
+                        snpCounter++;
+                    }
+
+                    if (previousUniqueLocation) {
+                        // the SNP we just stored has only one location so we won't see it again
+                        // For the first snp, previousUniqueLocation is true, consequenceItemIdSet is
+                        // empty, nothing to store
+                        storeSnpConsequenceCollections(storedSnpInterMineId, consequenceItemIdSet);
+                    } else {
+                        // we'll see the previous SNP multiple times so hang onto data
+                        Set<String> snpConsequences = pendingSnpVariationIdToConsequencesMap
+                                .get(previousVariationId);
+
+                        if (snpConsequences == null) {
+                            snpConsequences = new HashSet<String>();
+                            pendingSnpVariationIdToConsequencesMap.put(
+                                    previousVariationId, snpConsequences);
+                            snpConsequences.addAll(consequenceItemIdSet);
+                        }
                     }
                 }
 
@@ -298,15 +298,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     int chrStart = Math.min(start, end);
                     int chrEnd = Math.max(start, end);
 
-                    Item loc = createItem("Location");
-                    loc.setAttribute("start", "" + chrStart);
-                    loc.setAttribute("end", "" + chrEnd);
-                    loc.setAttribute("strand", "" + chrStrand);
-                    loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                    // The magic part, location can reference back to snp, for snp with multiple
-                    // locations, no need to set reference in snp
-                    loc.setReference("feature", currentSnpItemId);
-                    store(loc);
+                    Item loc = storeLocation("" + chrStart, "" + chrEnd, "" + chrStrand,
+                            currentSnpItemId, chrName);
 
                     // if mapWeight is 1 there is only one chromosome location, so set shortcuts
                     if (currentUniqueLocation) {
@@ -348,15 +341,9 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                 String chrLocStr = chrName + ":" + chrStart;
                 if (!seenLocsForSnp.contains(chrLocStr)) {
                     seenLocsForSnp.add(chrLocStr);
-
                     // if this location is on a chromosome we want, store it
-                    Item loc = createItem("Location");
-                    loc.setAttribute("start", "" + chrStart);
-                    loc.setAttribute("end", "" + chrEnd);
-                    loc.setAttribute("strand", "" + strand);
-                    loc.setReference("feature", currentSnpItemId);
-                    loc.setReference("locatedOn", getChromosome(chrName, taxonId));
-                    store(loc);
+                    storeLocation("" + chrStart, "" + chrEnd, "" + strand,
+                            currentSnpItemId, chrName);
                 }
             }
 
@@ -408,6 +395,8 @@ public class EnsemblSnpDbConverter extends BioDBConverter
                     consequenceCounter++;
                 }
             } else { // transcriptStableId is empty, log it
+                // variation_feature_consequence_types is full list of consequence types which
+                // should include transcript_variation_consequence_types
                 String variationConsequences = res.getString("variation_feature_consequence_types");
                 Integer consequenceCount = nonTranscriptConsequences.get(variationConsequences);
 
@@ -872,9 +861,12 @@ public class EnsemblSnpDbConverter extends BioDBConverter
          * 2) CREATE TABLE mM_snp_tmp_ordered_chr_all SELECT * FROM
          * mM_snp_tmp_no_order_chr_all ORDER BY seq_region_name, variation_id;
          */
+
+        // in mysql, string comparisons are case insensitive by default, use BINARY
+        // we had a loading issue with "MT" and "Mt", a snp was created twice
         String query = "SELECT *"
                 + " FROM mM_snp_tmp_ordered_chr_all"
-                + " WHERE seq_region_name = '" + chrName + "'";
+                + " WHERE BINARY seq_region_name = '" + chrName + "'";
 
         LOG.warn(query);
 
@@ -1003,15 +995,18 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         this.isEmptyResultSet = isEmptyResultSet;
     }
 
-    private void storeLocation(String chrStart, String chrEnd, String strand,
+    private Item storeLocation(String chrStart, String chrEnd, String strand,
             String currentSnpItemId, String chrName)
             throws ObjectStoreException {
         Item loc = createItem("Location");
         loc.setAttribute("start", "" + chrStart);
         loc.setAttribute("end", "" + chrEnd);
         loc.setAttribute("strand", "" + strand);
+        // The magic part, location can reference back to snp, for snp with multiple
+        // locations, no need to set reference in snp
         loc.setReference("feature", currentSnpItemId);
         loc.setReference("locatedOn", getChromosome(chrName, taxonId));
         store(loc);
+        return loc;
     }
 }
