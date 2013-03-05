@@ -846,6 +846,10 @@ public abstract class WebService {
                 format = getDefaultFormat();
             } else {
                 for (Format acceptable: askedFor) {
+                    if (Format.DEFAULT == acceptable) {
+                        format = getDefaultFormat();
+                        break;
+                    }
                     // Serve the first acceptable format.
                     if (canServe(acceptable)) {
                         format = acceptable;
