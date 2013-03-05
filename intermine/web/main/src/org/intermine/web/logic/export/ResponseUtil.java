@@ -236,7 +236,7 @@ public final class ResponseUtil
      * @param fileName the name of the downloaded file
      */
     public static void setFileName(HttpServletResponse response, String fileName) {
-        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
     }
 
     /**

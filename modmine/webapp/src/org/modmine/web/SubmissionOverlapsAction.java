@@ -10,6 +10,8 @@ package org.modmine.web;
  *
  */
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -48,6 +50,7 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.ForwardParameters;
 import org.intermine.web.struts.InterMineAction;
@@ -171,8 +174,28 @@ public class SubmissionOverlapsAction extends InterMineAction
         LOG.info("OVERLAP FORM overlap feat: " + findFeatureType);
         LOG.info("OVERLAP FORM given feat: " + featureType);
 
-        Submission submission = (Submission) im.getObjectStore().getObjectById(
-                Integer.valueOf(submissionId));
+//        Submission submission = (Submission) im.getObjectStore().getObjectById(
+//                Integer.valueOf(submissionId));
+
+        // this to allow url of the type
+        // /submissionOverlapsAction.do?submissionDCCId=modENCODE_3320
+        // &overlapFindType=Gene&distance=500&direction=downstream&overlapFeatureType=BindingSite
+        
+        String submissionDCCId = submissionOverlapsForm.getSubmissionDCCId();
+        Submission submission = null;
+        if (submissionId != null) { // the case via webapp form
+        	submission = (Submission) im.getObjectStore().getObjectById(
+        			Integer.valueOf(submissionId));
+        } else { // url
+        	submission =
+        			(Submission) DynamicUtil.createObject(Collections.singleton(Submission.class));
+        	submission.setdCCid(submissionDCCId);
+
+        	submission = (Submission) im.getObjectStore().getObjectByExample(submission,
+        			new HashSet<String>(Arrays.asList("DCCid")));
+        }
+        
+        
         int organismId = submission.getOrganism().getId();
 
         int beforeStartOfOF = getLeftMargin(direction, distance);
