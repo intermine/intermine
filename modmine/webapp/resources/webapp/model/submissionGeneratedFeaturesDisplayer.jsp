@@ -423,7 +423,7 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
             <html:form action="/submissionOverlapsAction" method="post">
                 <html:hidden property="submissionTitle" value="${object.title}" />
                 <html:hidden property="submissionId" value="${object.id}" />
-                <html:hidden property="submissionDCCid" value="${object.dCCid}" />
+                <html:hidden property="submissionDCCId" value="${object.dCCid}" />
                   Find
                   <html:select styleId="typeSelector" property="overlapFindType">
                             <html:option value="Gene">Genes</html:option>
