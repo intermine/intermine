@@ -170,9 +170,16 @@ public class GenomicRegionSearchAjaxAction extends Action
             exportFeatures(criteria, facet, format, request, response);
         }
 
+        // Get feature count
+        if (request.getParameter("getFeatureCount") != null) {
+            String criteria = request.getParameter("criteria");
+            String facet = request.getParameter("facet");
+            getFeatureCountOfGenomicRegion(criteria, facet, response);
+        }
+
         // Create List
         if (request.getParameter("createList") != null) {
-            String criteria = request.getParameter("criteria"); // all or ocation
+            String criteria = request.getParameter("criteria"); // all or any location
             String facet = request.getParameter("facet"); // "SequenceFeature" or any featureType
 
             createListByFeatureType(criteria, facet, response);
@@ -470,6 +477,27 @@ public class GenomicRegionSearchAjaxAction extends Action
                 exporter.export(pt, request, response, exportForm, null, null);
             }
         }
+    }
+
+    private void getFeatureCountOfGenomicRegion(String criteria, String facet,
+            HttpServletResponse response) throws Exception {
+        Set<Integer> featureIdSet = new LinkedHashSet<Integer>();
+        Map<GenomicRegion, List<List<String>>> featureMap = spanOverlapFullResultMap
+                .get(spanUUIDString);
+
+        if ("all".equals(criteria)) {
+            featureIdSet = grsService.getAllGenomicRegionOverlapFeaturesByType(
+                    featureMap, facet);
+        } else {
+            featureIdSet = grsService.getGenomicRegionOverlapFeaturesByType(
+                    criteria, featureMap, facet);
+        }
+
+        PrintWriter out = response.getWriter();
+        out.println(featureIdSet.size());
+
+        out.flush();
+        out.close();
     }
 
     private void createListByFeatureType(String criteria, String facet,
