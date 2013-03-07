@@ -1084,7 +1084,7 @@ public class PathQuery implements Cloneable
             }
         }
         for (String desc : getDescriptions().keySet()) {
-            if (isPathUnder(desc, path) && !isAnyViewWithPathUnder(desc)) {
+            if (isPathUnder(path, desc) && !isAnyViewWithPathUnder(desc)) {
                 setDescription(desc, null);
             }
         }
