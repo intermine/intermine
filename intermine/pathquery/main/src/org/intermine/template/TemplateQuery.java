@@ -24,7 +24,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
@@ -636,6 +636,10 @@ public class TemplateQuery extends PathQuery
         Map<PathConstraint, String> allConstraints = getConstraints();
         for (PathConstraint pc : editableConstraints) {
             editableConstraintCodes.add(allConstraints.get(pc));
+        }
+        LogicExpression logicExpression = getLogicExpression();
+        if (logicExpression == null) {
+            return "";
         }
         return getLogicExpression().getPartialString(editableConstraintCodes);
     }
