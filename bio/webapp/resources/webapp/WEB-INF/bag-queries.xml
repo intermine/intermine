@@ -3,9 +3,6 @@
     <query message="searching key fields for all types" matchesAreIssues="true" runBeforeDefault="false">
         SELECT DISTINCT a1_.id as a2_, a1_.primaryIdentifier as a3_, a1_.secondaryIdentifier as a4_, a1_.symbol as a5_, a1_.name as a6_ FROM BioEntity AS a1_ WHERE ((lower(a1_.primaryIdentifier) in ?) OR (lower(a1_.secondaryIdentifier) in ?) OR (lower(a1_.symbol) in ?) OR (lower(a1_.name) in ?))
     </query>
-    <query message="searching proteins" matchesAreIssues="false" runBeforeDefault="false">
-        SELECT DISTINCT a1_.id as a2_, a1_.primaryAccession as a3_ FROM Protein AS a1_ (WHERE lower(a1_.primaryAccession) in ?)
-    </query>
     <query message="searching xrefs for all types" matchesAreIssues="true" runBeforeDefault="false">
         SELECT DISTINCT a1_.id as a3_, a2_.identifier as a4_ FROM BioEntity AS a1_, CrossReference AS a2_ WHERE (a1_.crossReferences CONTAINS a2_ AND lower(a2_.identifier) in ?)
     </query>
