@@ -67,6 +67,7 @@ public class EnsemblSnpDbConverter extends BioDBConverter
 
     // Edit to restrict to loading fewer chromosomes
     private static final int MIN_CHROMOSOME = 1;
+    private Set<String> processedChrNames = new HashSet<String>();
 
     private Map<String, String> sources = new HashMap<String, String>();
     private Map<String, String> states = new HashMap<String, String>();
@@ -121,14 +122,14 @@ public class EnsemblSnpDbConverter extends BioDBConverter
         Connection connection = getDatabase().getConnection();
 
         List<String> chrNames = new ArrayList<String>();
-//        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
-//            chrNames.add("" + i);
-//        }
-//        chrNames.add("X");
-//        chrNames.add("Y");
+        for (int i = MIN_CHROMOSOME; i <= 22; i++) {
+            chrNames.add("" + i);
+        }
+        chrNames.add("X");
+        chrNames.add("Y");
         chrNames.add("MT");
         chrNames.add("Mt");
-//        chrNames.add("Pt");
+        chrNames.add("Pt");
 
         for (String chrName : chrNames) {
             System. out.println("Starting to process chromosome " + chrName);
@@ -168,6 +169,13 @@ public class EnsemblSnpDbConverter extends BioDBConverter
      * {@inheritDoc}
      */
     public void process(ResultSet res, String chrName) throws Exception {
+
+        if (processedChrNames.contains(chrName.toUpperCase())) {
+            LOG.info("Chr " + chrName + " has been processed...");
+            return;
+        } else {
+            processedChrNames.add(chrName.toUpperCase());
+        }
 
         // If empty set
         if (!res.next()) {
