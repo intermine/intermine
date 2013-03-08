@@ -134,7 +134,7 @@ function clearBagName(element) {
     <strong>Actions:</strong>
     <c:choose>
         <c:when test="${type == 'template'}">
-            <html:submit property="export" value="Export selected"/>
+            <html:submit property="export" value="Export selected" onclick="javascript: return isEmptyChecklist();"/>
             <html:hidden property="pageName" value="templates"/>
             <html:hidden property="templateButton" value="export"/>
         </c:when>
@@ -173,6 +173,14 @@ function clearBagName(element) {
     <html:submit property="save" value="Save" onclick="submitAsymOperation2()"/>
 </div>
 <script type="text/javascript" charset="utf-8">
+    function isEmptyChecklist()
+    {
+        if ((jQuery("input[type=checkbox][name=selected]:checked").length) < 1) {
+          alert("Please select some templates to export...");
+          return false;
+        }
+    }
+
     (function() {
       jQuery(document).ready(function() {
         jQuery("#all_bag_bag_container input[name='selectedBags']").click(function() {

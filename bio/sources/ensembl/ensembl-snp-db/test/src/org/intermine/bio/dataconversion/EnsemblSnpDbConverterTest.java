@@ -126,6 +126,36 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
     }
 
     /**
+     * Test case: A snp could be created twice if a chromosome is loaded twice
+     * @throws Exception e
+     */
+    public void testSNPCreatedTwice() throws Exception {
+        converter.setOrganism(HUMAN);
+        converter.process(
+                mockResultSet(variationHeader,
+                        parseVariationRawData(variationRawDataFileNameSingleRecord)),
+                        chr1);
+        converter.process(
+                mockResultSet(variationHeader,
+                        parseVariationRawData(variationRawDataFileNameSingleRecord)),
+                        chr1); // This one will be discarded
+        converter.storeFinalSnps();
+
+//        writeItemsFile(itemWriter.getItems(), "ensembl-snp-db-snp-created-twice-tgt-items.xml");
+//        Set<org.intermine.xml.full.Item> expected =
+//            readItemSet("EnsemblComparaConverterTest_tgt.xml");
+
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "SNP"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "Consequence"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "Transcript"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "ConsequenceType"));
+        assertEquals(1, countItemByClass(itemWriter.getItems(), "Location"));
+        assertEquals(6, countItemByClass(itemWriter.getItems(), "ValidationState"));
+//        assertEquals(readItemSet("EnsemblSnpDbMultipleRecord-tgt-items.xml"),
+//                itemWriter.getItems());
+    }
+
+    /**
      * Test case: normal multiple records
      * @throws Exception e
      */
@@ -229,7 +259,7 @@ public class EnsemblSnpDbConverterTest extends ItemsTestCase
 
 //        writeItemsFile(itemWriter.getItems(), "ensembl-snp-db-multiple-chr-tgt-items.xml");
 
-        assertEquals(2, countItemByClass(itemWriter.getItems(), "SNP"));
+        assertEquals(4, countItemByClass(itemWriter.getItems(), "SNP"));
         assertEquals(readItemSet("EnsemblSnpDbMultipleChr-tgt-items.xml"),
                 itemWriter.getItems());
     }
