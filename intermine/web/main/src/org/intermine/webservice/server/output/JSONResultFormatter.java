@@ -11,6 +11,7 @@ package org.intermine.webservice.server.output;
  */
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,9 +46,12 @@ public abstract class JSONResultFormatter extends JSONFormatter
      */
     @Override
     protected void formatAttributes(Map<String, Object> attributes, StringBuilder sb) {
-        if (attributes == null) attributes = new HashMap<String, Object>();
         if (sb         == null) throw new NullPointerException("sb must not be null");
-
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        } else {
+            attributes = new LinkedHashMap<String, Object>(attributes);
+        }
         if (!attributes.containsKey(KEY_INTRO)) {
             attributes.put(KEY_INTRO, "\"results\":[");
         }
