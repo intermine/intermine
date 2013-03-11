@@ -134,7 +134,7 @@ function clearBagName(element) {
     <strong>Actions:</strong>
     <c:choose>
         <c:when test="${type == 'template'}">
-            <html:submit property="export" value="Export selected" onclick="javascript: return isEmptyChecklist();"/>
+            <html:submit property="export" styleId="export" value="Export selected" disabled="true" onclick="javascript: return isEmptyChecklist();"/>
             <html:hidden property="pageName" value="templates"/>
             <html:hidden property="templateButton" value="export"/>
         </c:when>
@@ -183,9 +183,16 @@ function clearBagName(element) {
 
     (function() {
       jQuery(document).ready(function() {
+        jQuery("#all_templates_template_container input[name='selected']").click(function(){
+            var checked = jQuery("#all_templates_template_container input[name='selected']:checked");
+            var selected = checked.length;
+            if (selected > 0) {
+              jQuery("#export").attr('disabled', false);
+            } else {
+              jQuery("#export").attr('disabled', true);
+            }
+        });
         jQuery("#all_bag_bag_container input[name='selectedBags']").click(function() {
-          var checked = jQuery("#all_bag_bag_container input[name='selectedBags']:checked");
-          var selected = checked.length;
           if (selected > 1 ) {
             jQuery("#listA1").html(checked[0].value);
             jQuery("#listB1").html(checked[1].value);
