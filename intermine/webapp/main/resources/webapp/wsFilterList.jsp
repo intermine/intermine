@@ -193,7 +193,9 @@ function clearBagName(element) {
             }
         });
         jQuery("#all_bag_bag_container input[name='selectedBags']").click(function() {
-          if (selected > 1 ) {
+            var checked = jQuery("#all_bag_bag_container input[name='selectedBags']:checked");
+            var selected = checked.length;
+            if (selected > 1 ) {
             jQuery("#listA1").html(checked[0].value);
             jQuery("#listB1").html(checked[1].value);
             jQuery("#listA2").html(checked[0].value);
