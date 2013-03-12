@@ -885,8 +885,7 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="
-                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
@@ -914,8 +913,7 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
                                         mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"
-                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
-                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
+                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"/>
 
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
@@ -930,8 +928,7 @@
                                  views="secondaryIdentifier, symbol, organism.name,
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
-                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
 
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"
