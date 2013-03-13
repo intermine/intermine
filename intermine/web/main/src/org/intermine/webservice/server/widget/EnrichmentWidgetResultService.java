@@ -106,9 +106,9 @@ public class EnrichmentWidgetResultService extends WidgetService
             if (input.isSavePopulation()) {
                 deleteReferencePopulationPreference(input);
             }
-            addOutputAttribute("message", "One or more of the " + imBag.getType() + " in this list"
+            addOutputAttribute("message", "One or more of the " + imBag.getType() + "s in this list"
                 + " are currently not included in your background population. The background "
-                + "population should include all genes that were tested as part of "
+                + "population should include all " + imBag.getType() + "s that were tested as part of "
                 + "your experiment.");
             return;
         }
