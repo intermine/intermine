@@ -102,6 +102,16 @@ public class EnrichmentWidgetResultService extends WidgetService
 
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
+        if (populationBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
+            if (input.isSavePopulation()) {
+                deleteReferencePopulationPreference(input);
+            }
+            addOutputAttribute("message", "One or more of the " + imBag.getType() + " in this list"
+                + " are currently not included in your background population. The background "
+                + "population should include all genes that were tested as part of "
+                + "your experiment.");
+            return;
+        }
         addOutputUserLogged();
 
         //instantiate the widget
@@ -270,5 +280,18 @@ public class EnrichmentWidgetResultService extends WidgetService
             }
         }
         return "";
+    }
+
+    private boolean verifyPopulationContainsBag(InterMineBag bag, InterMineBag populationBag) {
+        //verify the population Bag contains all elements of imBag
+        List<Integer> populationBagContentdIds =
+            new ArrayList<Integer>(populationBag.getContentsAsIds());
+        List<Integer> bagContentdIds =
+            new ArrayList<Integer>(bag.getContentsAsIds());
+        populationBagContentdIds.retainAll(bagContentdIds);
+        if (populationBagContentdIds.size() == bagContentdIds.size()) {
+            return true;
+        }
+        return false;
     }
 }
