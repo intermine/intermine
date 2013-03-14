@@ -289,8 +289,7 @@ public class EnrichmentWidgetResultService extends WidgetService
             new ArrayList<Integer>(populationBag.getContentsAsIds());
         List<Integer> bagContentdIds =
             new ArrayList<Integer>(bag.getContentsAsIds());
-        populationBagContentdIds.retainAll(bagContentdIds);
-        if (populationBagContentdIds.size() == bagContentdIds.size()) {
+        if (populationBagContentdIds.containsAll(bagContentdIds)) {
             return true;
         }
         return false;
