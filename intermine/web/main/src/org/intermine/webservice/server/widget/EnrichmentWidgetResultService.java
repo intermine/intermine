@@ -100,6 +100,8 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
+        addOutputUserLogged();
+
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
         if (populationBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
@@ -112,7 +114,6 @@ public class EnrichmentWidgetResultService extends WidgetService
                 + "your experiment.");
             return;
         }
-        addOutputUserLogged();
 
         //instantiate the widget
         EnrichmentWidget widget = null;
