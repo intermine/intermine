@@ -20,6 +20,11 @@ package org.intermine.objectstore;
 public class ObjectStoreQueryDurationException extends ObjectStoreException
 {
     /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Create a new ObjectStoreQueryDurationException.
      */
     public ObjectStoreQueryDurationException () {
