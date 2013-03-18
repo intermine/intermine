@@ -156,7 +156,11 @@ public abstract class BioQueryService extends AbstractQueryService
         // Support the standard mechanism for accepting multiple parameter values
         List<String> views = getPathQueryViews(request.getParameterValues(VIEW_PARAM));
         if (views != null) {
-            pathQuery.addViews(views);
+            try {
+                pathQuery.addViews(views);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Bad value for view parameter", e);
+            }
             // Remove duplicates in views
             ArrayList<String> al = new ArrayList<String>();
             al.clear();
