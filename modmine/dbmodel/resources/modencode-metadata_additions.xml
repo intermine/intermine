@@ -72,6 +72,7 @@
 <class name="MRNA" is-interface="true">
   <attribute name="CDS" type="java.lang.String" />
   <attribute name="wormpep" type="java.lang.String" />
+  <collection name="expressionScores" referenced-type="MRNAExpressionScore" reverse-reference="mRNA"/>
 </class>
 
 <class name="MatureTranscript" is-interface="true">
@@ -376,6 +377,15 @@
 <class name="ExonExpressionScore" is-interface="true">
   <attribute name="score" type="java.lang.Double" />
   <reference name="exon" referenced-type="Exon" reverse-reference="expressionScores" />
+  <reference name="cellLine" referenced-type="CellLine" />
+  <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
+  <reference name="submission" referenced-type="Submission" />
+  <reference name="organism" referenced-type="Organism" />
+</class>
+
+<class name="MRNAExpressionScore" is-interface="true">
+  <attribute name="score" type="java.lang.Double" />
+  <reference name="mRNA" referenced-type="MRNA" reverse-reference="expressionScores" />
   <reference name="cellLine" referenced-type="CellLine" />
   <reference name="developmentalStage" referenced-type="DevelopmentalStage" />
   <reference name="submission" referenced-type="Submission" />
