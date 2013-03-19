@@ -51,6 +51,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     //String[] types = new String[] {"organism_part", "disease_state", "cell_type", "cell_line"};
     static String[] types = new String[] {"organism_part", "disease_state", "cell_type"};
     private static final Set<String> EXPRESSION_TYPES = new HashSet<String>(Arrays.asList(types));
+    private static final String NA_EXPRESSION = "NA";
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -128,6 +129,9 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
 
                         JSONObject stat = expressionResult.getJSONObject("stat");
                         String expression = stat.get("expression").toString();
+                        if (NA_EXPRESSION.equals(expression)) {
+                            continue;
+                        }
                         Double pValue = stat.getDouble("pvalue");
                         Double tStatistic = stat.getDouble("tstat");
 
