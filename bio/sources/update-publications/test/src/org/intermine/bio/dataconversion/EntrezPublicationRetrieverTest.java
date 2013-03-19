@@ -23,14 +23,15 @@ import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.xml.full.FullParser;
+import org.intermine.xml.full.Item;
 
 /**
  * Tests for EntrezOrganismRetriever.
  */
 public class EntrezPublicationRetrieverTest extends ItemsTestCase
 {
-	boolean loadFullRecord = true;
-	
+    boolean loadFullRecord = true;
+
     public EntrezPublicationRetrieverTest(String arg) {
         super(arg);
     }
@@ -45,23 +46,24 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         temp.deleteOnExit();
 
         if (loadFullRecord) {
-        	eor.setPubmedFormat("fullRecord"); // use eFetch URL instead of summary
+            eor.setPubmedFormat("fullRecord"); // use eFetch URL instead of summary
         }
 
         eor.setOsAlias("os.bio-test");
         eor.setOutputFile(temp.getPath());
+        // eor.setOutputFile("entrez-pub-tgt-items.xml");
         eor.setCacheDirName("build/");
         eor.execute();
-        Collection actual = FullParser.parse(new FileInputStream(temp));
+        Collection<Item> actual = FullParser.parse(new FileInputStream(temp));
 
-        Set expected;
+        Set<Item> expected;
         if (!loadFullRecord) {
-        	expected = readItemSet("EntrezPublicationsSummary_tgt.xml");
+            expected = readItemSet("EntrezPublicationsSummary_tgt.xml");
         } else {
-            expected = readItemSet("EntrezPublicationsFullRecord_tgt.xml");     
+            expected = readItemSet("EntrezPublicationsFullRecord_tgt.xml");
         }
-        
-        assertEquals(expected, new HashSet(actual));
+
+        assertEquals(expected, new HashSet<Item>(actual));
     }
 
     class TestEntrezPublicationsRetriever extends EntrezPublicationsRetriever
@@ -69,12 +71,13 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         public TestEntrezPublicationsRetriever() {
             super();
             setOsAlias("os.bio-test");
-            //setOutputFile("entrez-pub-tgt-items.xml");
+            // setOutputFile("entrez-pub-tgt-items.xml");
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         protected List getPublications(ObjectStore os) {
             try {
-                List items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_src.xml"));
+                List<Item> items = FullParser.parse(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_src.xml"));
 
                 return FullParser.realiseObjects(items, Model.getInstanceByName("genomic"), false);
             } catch (Exception e) {
@@ -82,10 +85,11 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
             }
         }
 
+        @SuppressWarnings("rawtypes")
         protected Reader getReader(Set ids) {
             if (!loadFullRecord) {
-            	return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));                			
-            } 
+                return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));
+            }
             return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_efetch.xml"));
         }
     }

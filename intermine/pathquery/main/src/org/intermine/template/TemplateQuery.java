@@ -539,44 +539,25 @@ public class TemplateQuery extends PathQuery
         return retVal;
     }
 
+    @Override
+    protected String getCommonJsonConstraintPrefix(String code, PathConstraint con) {
+        StringBuilder sb = new StringBuilder(super.getCommonJsonConstraintPrefix(code, con));
+        SwitchOffAbility soa = getSwitchOffAbility(con);
+        sb.append(String.format(",\"editable\":%b",     isEditable(con)));
+        sb.append(String.format(",\"switchable\":%b",   soa != SwitchOffAbility.LOCKED));
+        sb.append(String.format(",\"switched\":\"%s\"", soa));
+        return sb.toString();
+    }
+
     /**
      * Returns a JSON string representation of the template query.
      * TODO: !! fix confusion between toJson and toJSON !!
      * @return A string representation of the template query.
      */
     public synchronized String toJSON() {
-        StringBuffer sb = new StringBuffer("{");
-        addJsonProperty(sb, "name", getName());
-        addJsonProperty(sb, "title", getTitle());
-        addJsonProperty(sb, "description", getDescription());
-        addJsonProperty(sb, "comment", getComment());
-        addJsonProperty(sb, "view", getView());
-
-        sb.append(",\"constraints\":[");
-        Iterator<PathConstraint> iter = getEditableConstraints().iterator();
-        Map<PathConstraint, String> codeForConstraint = getConstraints();
-        while (iter.hasNext()) {
-            PathConstraint pc = iter.next();
-            StringBuffer pcw = new StringBuffer("{");
-
-            addJsonProperty(pcw, "path", pc.getPath());
-            addJsonProperty(pcw, "op", pc.getOp().toString());
-            addJsonProperty(pcw, "value", PathConstraint.getValue(pc));
-            addJsonProperty(pcw, "code", codeForConstraint.get(pc));
-            addJsonProperty(pcw, "extraValue", PathConstraint.getExtraValue(pc));
-
-            pcw.append("}");
-
-            sb.append(pcw.toString());
-            if (iter.hasNext()) {
-                sb.append(",");
-            }
-        }
-        sb.append("]");
-
-        sb.append("}");
-        return sb.toString();
+        return this.toJson();
     }
+
     /**
      * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
      * the query history.
