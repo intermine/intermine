@@ -51,6 +51,7 @@ public class WormExpressionScoreConverter extends BioFileConverter
     private static Map<String, String> devStages = null;
 
     private Map<String, String> geneItems = new HashMap<String, String>();
+    private Map<String, String> mRNAItems = new HashMap<String, String>();
     
     /**
      * Constructor
@@ -125,7 +126,7 @@ column 5: N2_EE_50-60
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
 
-        String [] headers = null;
+        String [] headers = null; 
         int lineNumber = 0;
 
         devStages = new HashMap<String, String>();
@@ -157,8 +158,8 @@ column 5: N2_EE_50-60
                 if (StringUtils.isEmpty(primaryId)) {
                     break;
                 }
-                //createBioEntity(primaryId, "mRNA");
-                createBioEntity(primaryId, "Gene"); // id=symbol
+                createBioEntity(primaryId, "MRNA");
+                //createBioEntity(primaryId, "Gene"); // id=symbol
 
                 // Developmental stage starts from column 3 till the end
                 for (int i = 2; i < headers.length; i++) {
@@ -170,8 +171,10 @@ column 5: N2_EE_50-60
                         Item developmentalStage = createDevelopmentalStage(col);
                         devStages.put(col, developmentalStage.getIdentifier());
                     }
-                    Item score = createGeneExpressionScore(line[i]);
-                    score.setReference("gene", geneItems.get(primaryId));
+//                    Item score = createGeneExpressionScore(line[i]);
+//                    score.setReference("gene", geneItems.get(primaryId));
+                    Item score = createMRNAExpressionScore(line[i]);
+                    score.setReference("mRNA", mRNAItems.get(primaryId));
                     score.setReference("developmentalStage", devStages.get(col));
                     score.setReference("submission", submission);
                     score.setReference("organism", organism);
@@ -242,6 +245,19 @@ column 5: N2_EE_50-60
     }
 
     /**
+     * Create and store a MRNAExpressionScore item on the first time called.
+     *
+     * @param score the expression score
+     * @return an Item representing the MRNAExpressionScore
+     */
+    private Item createMRNAExpressionScore(String score) throws ObjectStoreException {
+        Item expressionscore = createItem("MRNAExpressionScore");
+        expressionscore.setAttribute("score", score);
+
+        return expressionscore;
+    }
+
+    /**
      * Create and store a GeneExpressionScore item on the first time called.
      *
      * @param score the expression score
@@ -277,16 +293,25 @@ column 5: N2_EE_50-60
     private void createBioEntity(String primaryId, String type) throws ObjectStoreException {
         Item bioentity = null;
 
-        if ("Gene".equals(type)) {
-            if (!geneItems.containsKey(primaryId)) {
-                bioentity = createItem("Gene");
-//                bioentity.setAttribute("primaryIdentifier", primaryId);
-                bioentity.setAttribute("symbol", primaryId);
-                store(bioentity);
-                geneItems.put(primaryId, bioentity.getIdentifier());
-            }
-        }
-        //    else if ("Exon".equals(type)) {
+      if ("MRNA".equals(type)) {
+          if (!mRNAItems.containsKey(primaryId)) {
+              bioentity = createItem("MRNA");
+              bioentity.setAttribute("primaryIdentifier", primaryId);
+              store(bioentity);
+              mRNAItems.put(primaryId, bioentity.getIdentifier());
+          }
+      }        
+        
+//      if ("Gene".equals(type)) {
+//    	  if (!geneItems.containsKey(primaryId)) {
+//    		  bioentity = createItem("Gene");
+//    		  bioentity.setAttribute("symbol", primaryId);
+//    		  store(bioentity);
+//    		  geneItems.put(primaryId, bioentity.getIdentifier());
+//    	  }
+//      }
+
+      //    else if ("Exon".equals(type)) {
         //        if (!exonItems.containsKey(primaryId)) {
         //            bioentity = createItem("Exon");
         //            bioentity.setAttribute("primaryIdentifier", primaryId);
