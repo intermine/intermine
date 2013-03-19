@@ -2361,18 +2361,23 @@ public class PathQuery implements Cloneable
         return sb.toString();
     }
 
-    private String constraintToJson(PathConstraint constraint, String code) {
-        String type = PathConstraint.getType(constraint);
+    protected String typeConstraintToJson(final PathConstraint constraint) {
         String path = constraint.getPath();
+        String type = PathConstraint.getType(constraint);
+        return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
+    }
 
-        if (type != null) {
-            return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
-        }
-
+    protected String getCommonJsonConstraintPrefix(String code, PathConstraint constraint) {
+        String path = constraint.getPath();
         String op = constraint.getOp().toString();
 
-        String commonPrefix = "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":\""
+        return "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":\""
                               + code + "\"";
+    }
+ 
+    protected String valueConstraintToJson(final String code, final PathConstraint constraint) {
+
+        String commonPrefix = getCommonJsonConstraintPrefix(code, constraint);
         StringBuilder conb = new StringBuilder(commonPrefix);
 
         Collection<String> values = PathConstraint.getValues(constraint); // Serialise the Multi-Value list
@@ -2410,6 +2415,14 @@ public class PathQuery implements Cloneable
         }
         conb.append("}");
         return conb.toString();
+    }
+
+    private String constraintToJson(PathConstraint constraint, String code) {
+        if (PathConstraint.getType(constraint) != null) { // Would be nice to test code instead...
+            return typeConstraintToJson(constraint);
+        } else {
+            return valueConstraintToJson(code, constraint);
+        }
     }
 
     /**
