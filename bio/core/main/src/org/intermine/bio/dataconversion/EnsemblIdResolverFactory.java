@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,13 +12,11 @@ package org.intermine.bio.dataconversion;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,7 +34,8 @@ import org.intermine.util.PropertiesUtil;
 public class EnsemblIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(EnsemblIdResolverFactory.class);
-    private final String propName = "resolver.ensembl.file";
+    private final String propKey = "resolver.file.rootpath";
+    private final String resolverFileSymbo = "ensembl";
     private final String taxonId = "9606";
 
     /**
@@ -44,49 +43,59 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
      * @param soTerm the feature type to resolve
      */
     public EnsemblIdResolverFactory() {
-        this.clsName = this.defaultClsName;
+        this.clsCol = this.defaultClsCol;
     }
 
     @Override
     protected void createIdResolver() {
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(taxonId)) {
+        if (resolver != null
+                && resolver.hasTaxonAndClassName(taxonId, this.clsCol
+                        .iterator().next())) {
             return;
+        } else {
+            if (resolver == null) {
+                if (clsCol.size() > 1) {
+                    resolver = new IdResolver();
+                } else {
+                    resolver = new IdResolver(clsCol.iterator().next());
+                }
+            }
         }
 
-        Properties props = PropertiesUtil.getProperties();
-        String fileName = props.getProperty(propName);
-
-        if (StringUtils.isBlank(fileName)) {
-            String message = "Ensembl resolver has no file name specified, set " + propName
-                + " to the file location.";
-            LOG.error(message);
-            return;
-        }
-
-        BufferedReader reader;
         try {
-            FileReader fr = new FileReader(new File(fileName));
-            reader = new BufferedReader(fr);
-            createFromFile(reader);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Failed to open Ensembl identifiers file: "
-                    + fileName, e);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading from Ensembl identifiers file: "
-                    + fileName, e);
+            boolean isCachedIdResolverRestored = restoreFromFile();
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey);
+
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
+                    LOG.warn(message);
+                    return;
+                }
+
+                LOG.info("Creating id resolver from data file and caching it.");
+                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
+                File f = new File(resolverFileName);
+                if (f.exists()) {
+                    createFromFile(f);
+                    resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
+                } else {
+                    LOG.warn("Resolver file not exists: " + resolverFileName);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void createFromFile(BufferedReader reader) throws IOException {
+    protected void createFromFile(File f) throws IOException {
 
         Set<String> validChromosomes = validChromosomes();
 
         // Ensembl Id | chromosome name
-        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
             String ensembl = line[0];
@@ -97,7 +106,7 @@ public class EnsemblIdResolverFactory extends IdResolverFactory
         }
     }
 
-    private Set<String> validChromosomes() {
+    protected Set<String> validChromosomes() {
         Set<String> chrs = new HashSet<String>();
         for (int i = 1; i <= 22; i++) {
             chrs.add("" + i);

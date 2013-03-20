@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,7 @@ import org.intermine.web.logic.widget.EnrichmentWidget;
 
 /**
  * @author Julie Sullivan
- * @author dbutano
+ * @author Daniela Butano
  */
 public class EnrichmentWidgetConfig extends WidgetConfig
 {
@@ -33,6 +33,7 @@ public class EnrichmentWidgetConfig extends WidgetConfig
     private String enrichIdentifier;
     private String startClassDisplay;
     private String externalLink;
+    private String correctionCoefficient;
     private List<PathConstraint> pathConstraintsForView = new ArrayList<PathConstraint>();
 
     /**
@@ -111,13 +112,21 @@ public class EnrichmentWidgetConfig extends WidgetConfig
         return pathConstraintsForView;
     }
 
+    public String getCorrectionCoefficient() {
+        return correctionCoefficient;
+    }
+
+    public void setCorrectionCoefficient(String correctionCoefficient) {
+        this.correctionCoefficient = correctionCoefficient;
+    }
+
     /**
      * {@inheritDoc}
      */
     public EnrichmentWidget getWidget(InterMineBag imBag, InterMineBag populationBag,
                                       ObjectStore os, List<String> attributes) {
         return new EnrichmentWidget(this, imBag, populationBag, os, attributes.get(0),
-                attributes.get(1), attributes.get(2));
+                attributes.get(1), attributes.get(2), attributes.get(3));
     }
 
 }

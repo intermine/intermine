@@ -1,6 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ListInput
 
     public static final String SUBTRACT_PARAM = "subtract";
     public final static String NAME_PARAMETER = "name";
+    public final static String ALT_NAME_PARAM = "listName";
     public final static String LISTS_PARAMETER = "lists";
     public final static String REFERENCE_PARAMETER = "references";
     public final static String TAGS_PARAMETER = "tags";
@@ -74,13 +76,16 @@ public class ListInput
     protected String produceName() {
         // Give the user a default name if none is provided.
         String nameParam = request.getParameter(NAME_PARAMETER);
+        nameParam = StringUtils.isBlank(nameParam)
+                ? request.getParameter(ALT_NAME_PARAM)
+                : nameParam;
         String name;
         if (StringUtils.isBlank(nameParam)) {
             nameParam = DEFAULT_LIST_NAME;
             name = nameParam;
             Set<String> listNames = bagManager.getBags(profile).keySet();
             int counter = 2;
-            
+
             while (listNames.contains(name)) {
                 name = nameParam + "_" + counter;
                 counter++;
@@ -143,9 +148,7 @@ public class ListInput
         if (paramValues != null) {
             for (String value: paramValues) {
                 String[] subvalues = StringUtils.split(value, ";");
-                for (String subvalue: subvalues) {
-                    list.add(subvalue);
-                }
+                Collections.addAll(list, subvalues);
             }
         }
     }

@@ -59,7 +59,10 @@
   
   <target name="instrument" depends="-init-emma">
     <emma enabled="${emma.enabled}">
-      <instr instrpath="${instrument.path}" destdir="${build.instrumented.dir}" metadatafile="${build.coverage.dir}/coverage.em" merge="true"/>
+      <instr instrpath="${instrument.path}"
+        destdir="${build.instrumented.dir}"
+        metadatafile="${build.coverage.dir}/coverage.em"
+        merge="true"/>
     </emma>
   </target>
   
@@ -80,7 +83,8 @@
     <emma enabled="${emma.enabled}">
       <report sourcepath="${instrument.src.path}">
         <fileset dir="${build.coverage.dir}" includes="*.ec, *.em"/>
-        <html outfile="${build.coverage.results.dir}/index.html"/>
+        <html encoding="UTF-8" outfile="${build.coverage.results.dir}/index.html"/>
+        <xml outfile="${build.coverage.results.dir}/coverage.xml"/>
       </report>
     </emma>
   </target>

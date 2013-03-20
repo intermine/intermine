@@ -1,5 +1,0 @@
-<project name="affy_probe_human" default="default" basedir=".">
-  <description>build, test, package affy_probe_human</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

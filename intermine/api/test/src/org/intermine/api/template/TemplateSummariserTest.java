@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -118,14 +118,6 @@ public class TemplateSummariserTest extends StoreDataTestCase
 
     public static Test suite() {
         return buildSuite(TemplateSummariserTest.class);
-    }
-
-    public void testMaxValues() throws Exception {
-        Properties ossConfig = new Properties();
-        ossConfig.put("max.field.values", "10");
-        ObjectStoreSummary oss = new ObjectStoreSummary(ossConfig);
-        TemplateSummariser summariser = new TemplateSummariser(os, uosw, oss);
-        assertEquals(10, summariser.maxSummaryValues);
     }
 
     public void test1() throws Exception {

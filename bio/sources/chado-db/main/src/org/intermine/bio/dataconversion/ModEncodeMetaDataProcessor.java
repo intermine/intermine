@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -167,8 +167,7 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
     private Map<String, Item> nonWikiSubmissionProperties = new HashMap<String, Item>();
     private Map<String, Item> subItemsMap = new HashMap<String, Item>();
     Map<Integer, List<SubmissionReference>> submissionRefs = null;
-    private IdResolverFactory flyResolverFactory = null;
-    private IdResolverFactory wormResolverFactory = null;
+    protected IdResolver rslv;
     private Map<String, String> geneToItemIdentifier = new HashMap<String, String>();
 
     // DbRecords Integer=objectId String=submission.itemId
@@ -315,8 +314,12 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         // TODO: clean up
         processEFactor(connection);
 
-        flyResolverFactory = new FlyBaseIdResolverFactory("gene");
-        wormResolverFactory = new WormBaseChadoIdResolverFactory("gene");
+        // create id resolvers
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+            rslv = IdResolverService.getWormIdResolver();
+        }
+
         processSubmissionProperties(connection);
         createRelatedSubmissions(connection);
         setSubmissionProtocolsRefs(connection);
@@ -2533,9 +2536,9 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
 
             if (currentSubId == null) {
                 LOG.info("DSM failing dataId: " + dataId + " - " + attHeading + "|" + attName +
-                		"|" + attValue);     	           	
+                        "|" + attValue);
             }
-            
+
             if (dataId.intValue() != lastDataId.intValue()
                     || attDbxref.intValue() != lastAttDbXref.intValue()
                     || currentSubId != previousSubId) {
@@ -2938,19 +2941,14 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
             LOG.debug("RESOLVER: found taxon " + taxonId + " for submission " + dccId);
         }
 
-        IdResolver resolver = null;
-        if ("7227".equals(taxonId)) {
-            resolver = flyResolverFactory.getIdResolver();
-        } else if ("6239".equals(taxonId)) {
-            resolver = wormResolverFactory.getIdResolver();
-        } else {
+        if (!"7227".equals(taxonId) && !"6239".equals(taxonId)) {
             LOG.info("RESOLVER: unable to work out organism for target id text: "
                     + geneTargetIdText + " in submission " + dccId);
         }
 
         String geneItemId = null;
 
-        String primaryIdentifier = resolveGene(originalId, taxonId, resolver);
+        String primaryIdentifier = resolveGene(originalId, taxonId);
         if (primaryIdentifier != null) {
             geneItemId = geneToItemIdentifier.get(primaryIdentifier);
             if (geneItemId == null) {
@@ -2966,16 +2964,16 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
         return geneItemId;
     }
 
-    private String resolveGene(String originalId, String taxonId, IdResolver resolver) {
+    private String resolveGene(String originalId, String taxonId) {
         String primaryIdentifier = null;
-        int resCount = resolver.countResolutions(taxonId, originalId);
+        int resCount = rslv.countResolutions(taxonId, originalId);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring "
                     + "gene: " + originalId + " for organism " + taxonId + " count: " + resCount
-                    + " found ids: " + resolver.resolveId(taxonId, originalId) + ".");
+                    + " found ids: " + rslv.resolveId(taxonId, originalId) + ".");
         } else {
             primaryIdentifier =
-                    resolver.resolveId(taxonId, originalId).iterator().next();
+                    rslv.resolveId(taxonId, originalId).iterator().next();
             LOG.info("RESOLVER found gene " + primaryIdentifier
                     + " for original id: " + originalId);
         }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -36,16 +37,15 @@ public class AffyProbesConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new AffyProbesConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn00158291"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn0033159"));
-        resolverFactory.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn0035636"));
-        resolverFactory.addResolverEntry("7227", "FBgn004", Collections.singleton("FBgn0050389"));
-        resolverFactory.addResolverEntry("7227", "FBgn005", Collections.singleton("FBgn0046113"));
-        resolverFactory.addResolverEntry("7227", "FBgn006", Collections.singleton("FBgn0043854"));
-        resolverFactory.addResolverEntry("7227", "FBgn007", Collections.singleton("FBgn0037786"));
-        resolverFactory.addResolverEntry("7227", "FBgn008", Collections.singleton("FBgn0011829"));
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("FBgn00158291"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("FBgn0033159"));
+        converter.rslv.addResolverEntry("7227", "FBgn003", Collections.singleton("FBgn0035636"));
+        converter.rslv.addResolverEntry("7227", "FBgn004", Collections.singleton("FBgn0050389"));
+        converter.rslv.addResolverEntry("7227", "FBgn005", Collections.singleton("FBgn0046113"));
+        converter.rslv.addResolverEntry("7227", "FBgn006", Collections.singleton("FBgn0043854"));
+        converter.rslv.addResolverEntry("7227", "FBgn007", Collections.singleton("FBgn0037786"));
+        converter.rslv.addResolverEntry("7227", "FBgn008", Collections.singleton("FBgn0011829"));
     }
 
     public void testProcess() throws Exception {

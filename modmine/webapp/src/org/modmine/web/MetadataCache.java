@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -1538,9 +1538,35 @@ public final class MetadataCache
         Map<String, List<GBrowseTrack>> tracks = new HashMap<String, List<GBrowseTrack>>();
         Map<String, List<GBrowseTrack>> flyTracks = null;
         Map<String, List<GBrowseTrack>> wormTracks = null;
+        // and the other species... this is wasteful, but we access all these file
+        // only when filling the cache
+        Map<String, List<GBrowseTrack>> cbrenneriTracks = null;
+        Map<String, List<GBrowseTrack>> cbriggsaeTracks = null;
+        Map<String, List<GBrowseTrack>> cremaneiTracks = null;
+        Map<String, List<GBrowseTrack>> cjaponicaTracks = null;
+        Map<String, List<GBrowseTrack>> dpseTracks = null;
+        Map<String, List<GBrowseTrack>> dmojTracks = null;
+        Map<String, List<GBrowseTrack>> danaTracks = null;
+        Map<String, List<GBrowseTrack>> dvirTracks = null;
+        Map<String, List<GBrowseTrack>> dyakTracks = null;
+        Map<String, List<GBrowseTrack>> dsimTracks = null;
+        
+        
         try {
             flyTracks = GBrowseParser.readTracks("fly");
             wormTracks = GBrowseParser.readTracks("worm");
+            cbrenneriTracks = GBrowseParser.readTracks("cbrenneri");
+            cbriggsaeTracks = GBrowseParser.readTracks("cbriggsae");
+            cremaneiTracks = GBrowseParser.readTracks("cremanei");
+            cjaponicaTracks = GBrowseParser.readTracks("cjaponica");
+            dpseTracks = GBrowseParser.readTracks("dpse");
+            dmojTracks = GBrowseParser.readTracks("dmoj");
+            danaTracks = GBrowseParser.readTracks("dana");
+            dvirTracks = GBrowseParser.readTracks("dvir");
+            dyakTracks = GBrowseParser.readTracks("dyak");
+            dsimTracks = GBrowseParser.readTracks("dsim");
+
+        
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -1548,6 +1574,17 @@ public final class MetadataCache
         if (flyTracks != null && wormTracks != null) {
             tracks.putAll(flyTracks);
             tracks.putAll(wormTracks);
+            tracks.putAll(cbrenneriTracks);
+            tracks.putAll(cbriggsaeTracks);
+            tracks.putAll(cremaneiTracks);
+            tracks.putAll(cjaponicaTracks);
+            tracks.putAll(dpseTracks);
+            tracks.putAll(dmojTracks);
+            tracks.putAll(danaTracks);
+            tracks.putAll(dvirTracks);
+            tracks.putAll(dyakTracks);
+            tracks.putAll(dsimTracks);
+
             setGBrowseTracks(tracks);
         }
         long timeTaken = System.currentTimeMillis() - startTime;

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,9 +16,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
+import org.intermine.model.fulldata.Item;
 
 /**
  * Test for data from miRanda
@@ -32,9 +34,8 @@ public class MirandaConverterTest extends ItemsTestCase
 
     private Model tgtModel;
     private GFF3Converter converter;
-    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap());
+    private MockItemWriter writer = new MockItemWriter(new LinkedHashMap<String, Item>());
     private String seqClsName = "Chromosome";
-    private String taxonId = "7227";
     private String dataSourceName = "Sanger Institute";
     private String dataSetTitle = "miRanda";
 
@@ -46,14 +47,11 @@ public class MirandaConverterTest extends ItemsTestCase
         super.setUp();
         tgtModel = Model.getInstanceByName("genomic");
         handler = new MirandaGFF3RecordHandler(tgtModel);
-        MockIdResolverFactory geneResolverFactory = new MockIdResolverFactory("Gene");
-        geneResolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
-        geneResolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
-        handler.geneResolverFactory = geneResolverFactory;
-        MockIdResolverFactory mrnaResolverFactory = new MockIdResolverFactory("Gene");
-        mrnaResolverFactory.addResolverEntry("7227", "FBtr0089256", Collections.singleton("CG11023-RA"));
-        handler.mrnaResolverFactory = mrnaResolverFactory;
-        converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
+        handler.rslv = IdResolverService.getMockIdResolver("Gene");
+        handler.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("mir-92b"));
+        handler.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("mir-312"));
+        handler.rslv.addResolverEntry("7227", "FBtr0089256", Collections.singleton("CG11023-RA"));
+        converter = new GFF3Converter(writer, seqClsName, "7227", dataSourceName,
                                       dataSetTitle, tgtModel, handler, null);
     }
 
@@ -75,7 +73,7 @@ public class MirandaConverterTest extends ItemsTestCase
         // uncomment to write a new tgt items file
         //writeItemsFile(writer.getItems(), "miranda-tgt-items.xml");
 
-        Set expected = readItemSet("miranda-tgt-items.xml");
+        Set<org.intermine.xml.full.Item> expected = readItemSet("miranda-tgt-items.xml");
         assertEquals(expected, writer.getItems());
     }
 

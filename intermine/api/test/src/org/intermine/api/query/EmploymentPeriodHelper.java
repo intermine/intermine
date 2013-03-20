@@ -20,8 +20,8 @@ public class EmploymentPeriodHelper extends AbstractHelper {
 			ConstraintOp.AND,
 			ConstraintOp.GREATER_THAN_EQUALS,
 			ConstraintOp.LESS_THAN,
-			"start",
-			"end"
+			"startDate",
+			"endDate"
 		);
 	}
 

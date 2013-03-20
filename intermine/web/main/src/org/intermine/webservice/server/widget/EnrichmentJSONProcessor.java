@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EnrichmentJSONProcessor implements WidgetResultProcessor {
@@ -42,6 +43,24 @@ public class EnrichmentJSONProcessor implements WidgetResultProcessor {
         backingMap.put("matches", row.get(3));
         JSONObject jo = new JSONObject(backingMap);
         return new LinkedList<String>(Arrays.asList(jo.toString()));
+    }
+
+    /**
+     * Format the value of extraAttribute. E.g.
+     * "{"gene_length":{"percentage_gene_length_not_null":"22.58%","gene_length_correction":"false"
+     * @param extraAttributes
+     * @return
+     * @throws JSONException
+     */
+    public String formatExtraAttributes(Map<String, Map<String, Object>> extraAttributes)
+        throws JSONException {
+        JSONObject jsonExtraAttributes = new JSONObject();
+        for (String extraAttributeKey : extraAttributes.keySet()) {
+            Map<String, Object> kvpairs = extraAttributes.get(extraAttributeKey);
+            JSONObject jsonExtraAttribute = new JSONObject(kvpairs);
+            jsonExtraAttributes.put(extraAttributeKey, jsonExtraAttribute);
+        }
+        return jsonExtraAttributes.toString();
     }
 
 }

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
@@ -55,6 +56,16 @@ public abstract class ListMakerService extends AuthenticatedListService
             attributes.put(JSONFormatter.KEY_INTRO, "\"" + LIST_SIZE_KEY + "\":");
         }
         return attributes;
+    }
+
+    @Override
+    protected Format getDefaultFormat() {
+        return Format.JSON;
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        return format == Format.JSON || format == Format.TEXT;
     }
 
     /**

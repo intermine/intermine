@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -40,9 +40,8 @@ public class LongOligoGFF3RecordHandlerTest extends ItemsTestCase
         Model tgtModel = Model.getInstanceByName("genomic");
         handler = new LongOligoGFF3RecordHandler(tgtModel);
         LongOligoGFF3SeqHandler seqHandler = new LongOligoGFF3SeqHandler();
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("mRNA");
-        resolverFactory.addResolverEntry("7227", "FBtr0075391", Collections.singleton("CG4314-RA"));
-        seqHandler.resolverFactory = resolverFactory;
+        seqHandler.rslv = IdResolverService.getMockIdResolver("mRNA");
+        seqHandler.rslv.addResolverEntry("7227", "FBtr0075391", Collections.singleton("CG4314-RA"));
         converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName, dataSetTitle,
                                       tgtModel, handler, seqHandler);
     }

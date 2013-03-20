@@ -1,5 +1,7 @@
 package org.intermine.web.context;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.intermine.api.InterMineAPI;
@@ -13,6 +15,7 @@ public class InterMineContext {
     private static WebConfig webConfig;
     private static boolean isInitialised = false;
     private static Emailer emailer;
+    private static final Map<String, Object> attributes = new HashMap<String, Object>();
 
     public static void initilise(final InterMineAPI imApi, Properties webProps,
             WebConfig wc) {
@@ -47,6 +50,14 @@ public class InterMineContext {
     public static Properties getWebProperties() {
         checkInit();
         return webProperties;
+    }
+
+    public static Object getAttribute(String name) {
+        return attributes.get(name);
+    }
+
+    public static void setAttribute(String name, Object value) {
+        attributes.put(name, value);
     }
 
 }

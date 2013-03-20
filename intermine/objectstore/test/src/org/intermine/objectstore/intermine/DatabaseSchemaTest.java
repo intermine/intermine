@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -71,6 +71,7 @@ public class DatabaseSchemaTest extends TestCase
         employeeAttributes.add(employee.getFieldDescriptorByName("end"));
         employeeReferences.add(employee.getFieldDescriptorByName("department"));
         employeeReferences.add(employee.getFieldDescriptorByName("departmentThatRejectedMe"));
+        employeeReferences.add(employee.getFieldDescriptorByName("employmentPeriod"));
         employeeReferences.add(employee.getFieldDescriptorByName("address"));
         employeeAttributes.add(employee.getFieldDescriptorByName("name"));
         DatabaseSchema.Fields got = schema.getTableFields(employee);
@@ -85,6 +86,7 @@ public class DatabaseSchemaTest extends TestCase
         managerAttributes.add(manager.getFieldDescriptorByName("end"));
         managerReferences.add(manager.getFieldDescriptorByName("department"));
         managerReferences.add(manager.getFieldDescriptorByName("departmentThatRejectedMe"));
+        managerReferences.add(manager.getFieldDescriptorByName("employmentPeriod"));
         managerReferences.add(manager.getFieldDescriptorByName("address"));
         managerAttributes.add(manager.getFieldDescriptorByName("title"));
         managerAttributes.add(manager.getFieldDescriptorByName("name"));
@@ -140,6 +142,7 @@ public class DatabaseSchemaTest extends TestCase
         employeeAttributes.add(employee.getFieldDescriptorByName("end"));
         employeeReferences.add(employee.getFieldDescriptorByName("department"));
         employeeReferences.add(employee.getFieldDescriptorByName("departmentThatRejectedMe"));
+        employeeReferences.add(employee.getFieldDescriptorByName("employmentPeriod"));
         employeeReferences.add(employee.getFieldDescriptorByName("address"));
         employeeAttributes.add(employee.getFieldDescriptorByName("name"));
         employeeAttributes.add(manager.getFieldDescriptorByName("title"));
@@ -217,6 +220,7 @@ public class DatabaseSchemaTest extends TestCase
         employeeAttributes.add(employee.getFieldDescriptorByName("end"));
         employeeReferences.add(employee.getFieldDescriptorByName("department"));
         employeeReferences.add(employee.getFieldDescriptorByName("departmentThatRejectedMe"));
+        employeeReferences.add(employee.getFieldDescriptorByName("employmentPeriod"));
         employeeReferences.add(employee.getFieldDescriptorByName("address"));
         employeeAttributes.add(manager.getFieldDescriptorByName("title"));
         employeeAttributes.add(employee.getFieldDescriptorByName("name"));
@@ -235,6 +239,7 @@ public class DatabaseSchemaTest extends TestCase
         managerAttributes.add(manager.getFieldDescriptorByName("end"));
         managerReferences.add(manager.getFieldDescriptorByName("department"));
         managerReferences.add(manager.getFieldDescriptorByName("departmentThatRejectedMe"));
+        managerReferences.add(manager.getFieldDescriptorByName("employmentPeriod"));
         managerReferences.add(manager.getFieldDescriptorByName("address"));
         managerAttributes.add(manager.getFieldDescriptorByName("title"));
         managerAttributes.add(manager.getFieldDescriptorByName("name"));
@@ -290,6 +295,7 @@ public class DatabaseSchemaTest extends TestCase
         employeeAttributes.add(employee.getFieldDescriptorByName("end"));
         employeeReferences.add(employee.getFieldDescriptorByName("department"));
         employeeReferences.add(employee.getFieldDescriptorByName("departmentThatRejectedMe"));
+        employeeReferences.add(employee.getFieldDescriptorByName("employmentPeriod"));
         employeeReferences.add(employee.getFieldDescriptorByName("address"));
         employeeAttributes.add(employee.getFieldDescriptorByName("name"));
         employeeAttributes.add(manager.getFieldDescriptorByName("title"));
@@ -321,6 +327,7 @@ public class DatabaseSchemaTest extends TestCase
         importantPersonAttributes.add(manager.getFieldDescriptorByName("end"));
         importantPersonReferences.add(manager.getFieldDescriptorByName("department"));
         importantPersonReferences.add(manager.getFieldDescriptorByName("departmentThatRejectedMe"));
+        importantPersonReferences.add(manager.getFieldDescriptorByName("employmentPeriod"));
         importantPersonReferences.add(manager.getFieldDescriptorByName("address"));
         importantPersonAttributes.add(manager.getFieldDescriptorByName("title"));
         importantPersonAttributes.add(manager.getFieldDescriptorByName("name"));

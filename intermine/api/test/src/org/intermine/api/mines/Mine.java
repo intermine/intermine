@@ -1,7 +1,7 @@
 package org.intermine.api.mines;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,6 +27,7 @@ public class Mine
     protected String logo = null;
     protected String bgcolor, frontcolor;
     protected Set<String> defaultValues = new HashSet<String>();
+    protected String description;
     protected String releaseVersion = null;
 
     /**
@@ -143,4 +144,22 @@ public class Mine
             defaultValues.add(bit);
         }
     }
+
+    /**
+     * Return the description
+     * @return the description
+     */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Set the description
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+    
+    
 }

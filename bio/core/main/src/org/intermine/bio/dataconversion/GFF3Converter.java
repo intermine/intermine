@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -52,7 +52,6 @@ public class GFF3Converter extends DataConverter
     private GFF3RecordHandler handler;
     private GFF3SeqHandler sequenceHandler;
     private boolean dontCreateLocations;
-    protected IdResolverFactory resolverFactory;
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
 

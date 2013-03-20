@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.template.TemplateManager;
@@ -50,7 +49,6 @@ public class TemplateToListService extends QueryToListService
     private static final String NEW_VIEW_PARAM = "path";
 
     private final TemplateManager templateManager;
-    private static final Logger LOG = Logger.getLogger(TemplateToListService.class);
 
     /**
      * Constructor
@@ -110,8 +108,12 @@ public class TemplateToListService extends QueryToListService
 
         PathQuery pq = populatedTemplate.getQueryToExecute();
 
+        List<String> oldView = pq.getView();
+        oldView.remove(newViewString);
         pq.clearView();
         pq.addView(newViewString);
+        // Make sure these are added back to keep the query structure the same
+        pq.addViews(oldView); 
 
         return pq;
     }

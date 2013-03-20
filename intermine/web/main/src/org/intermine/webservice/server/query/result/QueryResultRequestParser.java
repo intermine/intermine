@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -62,12 +62,5 @@ public class QueryResultRequestParser extends QueryRequestParser
         }
         input.setXml(xmlQuery);
 
-        String totalCount = req.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
-        if (totalCount != null) {
-            throw new BadRequestException("Parameter " + COMPUTE_TOTAL_COUNT_PARAMETER
-                    + " is not now supported. It is not possible to retrieve number of results.");
-        }
-
-        input.setLayout(req.getParameter(LAYOUT_PARAMETER));
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -32,7 +33,7 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
     private Model tgtModel;
     private FlyRegGFF3RecordHandler handler;
     private String seqClsName = "Chromosome";
-    private String orgAbbrev = "DM";
+    private String taxonId = "7227";
     private String dataSourceName = "FlyReg";
     private String dataSetTitle = "FlyReg data set";
     private GFF3Converter converter;
@@ -47,11 +48,11 @@ public class FlyRegGFF3RecordHandlerTest extends ItemsTestCase
 
         handler = new FlyRegGFF3RecordHandler(tgtModel);
 
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
-        handler.resolverFactory = resolverFactory;
-        converter = new GFF3Converter(writer, seqClsName, orgAbbrev, dataSourceName,
+        handler.rslv = IdResolverService.getMockIdResolver("Gene");
+        handler.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("dpp"));
+        handler.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("dl"));
+
+        converter = new GFF3Converter(writer, seqClsName, taxonId, dataSourceName,
                                       dataSetTitle, tgtModel, handler, null);
 
     }

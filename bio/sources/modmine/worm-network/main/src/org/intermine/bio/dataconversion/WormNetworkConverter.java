@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -76,7 +76,7 @@ public class WormNetworkConverter extends BioDirectoryConverter
      */
     public WormNetworkConverter(ItemWriter writer, Model model) {
         super(writer, model, WORM_DATA_SOURCE_NAME, WORM_DATASET_TITLE);
-        resolverFactory = new WormBaseChadoIdResolverFactory("gene");
+        resolverFactory = new WormBaseIdResolverFactory("gene");
         orgRefId = getOrganism(WORM_TAXON_ID);
     }
 

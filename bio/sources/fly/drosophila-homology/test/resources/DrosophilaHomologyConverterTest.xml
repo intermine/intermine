@@ -1,85 +1,4 @@
 <items>
-<item id="9_6" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_4"/>
-<reference name="homologue" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_5" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0128019"/>
-<reference name="organism" ref_id="6_5"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_2" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_2"/>
-<reference name="homologue" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="9_3" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_1"/>
-<reference name="homologue" ref_id="7_3"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="6_6" class="Organism">
-<attribute name="taxonId" value="7230"/>
-</item>
-<item id="9_10" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_6"/>
-<reference name="homologue" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="9_1" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_1"/>
-<reference name="homologue" ref_id="7_2"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="9_7" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_1"/>
-<reference name="homologue" ref_id="7_5"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="7_1" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0000008"/>
-<reference name="organism" ref_id="6_1"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="7_2" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0079820"/>
-<reference name="organism" ref_id="6_2"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="0_1" class="Ontology">
-<attribute name="name" value="Sequence Ontology"/>
-<attribute name="url" value="http://www.sequenceontology.org"/>
-</item>
-<item id="7_4" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0114341"/>
-<reference name="organism" ref_id="6_4"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="8_1" class="SOTerm">
-<attribute name="name" value="gene"/>
-<reference name="ontology" ref_id="0_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="6_2" class="Organism">
-<attribute name="taxonId" value="7237"/>
-</item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="Drosophila 12 Genomes Consortium homology"/>
 <reference name="dataSource" ref_id="1_1"/>
@@ -88,66 +7,47 @@
 <attribute name="abbreviation" value="AA"/>
 <attribute name="name" value="Amino acid sequence comparison"/>
 </item>
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="gene"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
 <item id="5_1" class="OrthologueEvidence">
 <reference name="evidenceCode" ref_id="4_1"/>
 <collection name="publications"><reference ref_id="3_1"/></collection>
 </item>
-<item id="6_5" class="Organism">
-<attribute name="taxonId" value="7222"/>
-</item>
-<item id="9_4" class="Homologue">
+<item id="8_1" class="Homologue">
 <attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_3"/>
-<reference name="homologue" ref_id="7_1"/>
+<reference name="gene" ref_id="6_1"/>
+<reference name="homologue" ref_id="6_2"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 <collection name="evidence"><reference ref_id="5_1"/></collection>
 </item>
-<item id="6_1" class="Organism">
-<attribute name="taxonId" value="7227"/>
-</item>
-<item id="9_5" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_1"/>
-<reference name="homologue" ref_id="7_4"/>
+<item id="6_2" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0079820"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="9_8" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_5"/>
-<reference name="homologue" ref_id="7_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
-</item>
-<item id="6_4" class="Organism">
-<attribute name="taxonId" value="7220"/>
-</item>
-<item id="6_3" class="Organism">
-<attribute name="taxonId" value="7217"/>
-</item>
-<item id="7_3" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0088690"/>
-<reference name="organism" ref_id="6_3"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="9_9" class="Homologue">
-<attribute name="type" value="orthologue"/>
-<reference name="gene" ref_id="7_1"/>
-<reference name="homologue" ref_id="7_6"/>
-<collection name="dataSets"><reference ref_id="2_1"/></collection>
-<collection name="evidence"><reference ref_id="5_1"/></collection>
 </item>
 <item id="1_1" class="DataSource">
 <attribute name="name" value="FlyBase"/>
 </item>
-<item id="7_6" class="Gene">
-<attribute name="primaryIdentifier" value="FBgn0141564"/>
-<reference name="organism" ref_id="6_6"/>
-<reference name="sequenceOntologyTerm" ref_id="8_1"/>
+<item id="6_1" class="Gene">
+<attribute name="primaryIdentifier" value="FBgn0000008"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
 </item>
 <item id="3_1" class="Publication">
 <attribute name="pubMedId" value="17994087"/>
+</item>
+<item id="8_2" class="Homologue">
+<attribute name="type" value="orthologue"/>
+<reference name="gene" ref_id="6_2"/>
+<reference name="homologue" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="evidence"><reference ref_id="5_1"/></collection>
 </item>
 </items>

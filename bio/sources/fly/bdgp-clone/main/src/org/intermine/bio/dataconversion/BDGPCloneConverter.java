@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,8 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -29,8 +31,8 @@ public class BDGPCloneConverter extends CDNACloneConverter
 {
 //    protected static final Logger LOG = Logger.getLogger(BDGPCloneConverter.class);
     private Map<String, Item> genes = new HashMap<String, Item>();
-    protected IdResolverFactory resolverFactory;
-    private static final String TAXON_ID = "7227";
+    private static final String TAXON_FLY = "7227";
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -45,11 +47,8 @@ public class BDGPCloneConverter extends CDNACloneConverter
         super(writer, model, "BDGP", "BDGP cDNA clone data set");
 
         organism = createItem("Organism");
-        organism.setAttribute("taxonId", TAXON_ID);
+        organism.setAttribute("taxonId", TAXON_FLY);
         store(organism);
-
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
 
@@ -59,6 +58,9 @@ public class BDGPCloneConverter extends CDNACloneConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
 
         BufferedReader br = new BufferedReader(reader);
         //intentionally throw away first line
@@ -82,15 +84,17 @@ public class BDGPCloneConverter extends CDNACloneConverter
     }
 
     private Item getGene(String identifier) throws ObjectStoreException {
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, identifier);
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
+        int resCount = rslv.countResolutions(TAXON_FLY, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + identifier + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, identifier));
+                     + rslv.resolveId(TAXON_FLY, identifier));
             return null;
         }
-        String primaryIdentifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+        String primaryIdentifier = rslv.resolveId(TAXON_FLY, identifier).iterator().next();
         if (genes.containsKey(primaryIdentifier)) {
             return genes.get(primaryIdentifier);
         }

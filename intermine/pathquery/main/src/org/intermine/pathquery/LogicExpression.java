@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -361,7 +361,44 @@ public class LogicExpression
         String retval = StringUtils.join(subLogics, " and ");
         return new LogicExpression(retval);
     }
+    /**
+     * Produce an expression for this branch of the tree displaying only the children containing
+     * the variable in input
+     * @param variables
+     * @return expression representing this branch
+     */
+    public String getPartialString(List<String> variables) {
+        StringBuffer expr = new StringBuffer();
+        boolean needComma = false;
+        if (root instanceof Operator) {
+            Set<Node> nodes = ((Operator) root).getChildren();
+            for (Node child : nodes) {
+                String subexpr = child.toString();
+                if (!"".equals(subexpr) && isStringContainingAnyValueInArray(subexpr, variables)) {
+                    if (child instanceof Or && root instanceof And) {
+                        subexpr = "(" + subexpr + ")";
+                    } else if (child instanceof And && root instanceof Or) {
+                        subexpr = "(" + subexpr + ")";
+                    }
+                    if (needComma) {
+                        expr.append(" " + ((Operator) root).getOperator() + " ");
+                    }
+                    needComma = true;
+                    expr.append(subexpr);
+                }
+            }
+        }
+        return expr.toString();
+    }
 
+    private boolean isStringContainingAnyValueInArray(String s, List<String> values) {
+        for (String value : values) {
+            if (s.contains(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * {@inheritDoc}
      */

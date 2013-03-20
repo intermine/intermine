@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -35,10 +35,9 @@ public class FlyRNAiScreenConverterTest extends ItemsTestCase
         super.setUp();
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new FlyRNAiScreenConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG31973"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG31973"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("eve"));
     }
 
     public void testProcess() throws Exception {

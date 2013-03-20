@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -447,50 +447,7 @@ public final class SqlGenerator
                 && (selectList.get(0) instanceof ObjectStoreBagCombination)) {
             // Another special case.
             ObjectStoreBagCombination osbc = (ObjectStoreBagCombination) selectList.get(0);
-            if (osbc.getOp() == ObjectStoreBagCombination.UNION) {
-                StringBuffer retval = new StringBuffer("SELECT DISTINCT " + BAGVAL_COLUMN
-                        + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
-                        + " IN (");
-                boolean needComma = false;
-                for (ObjectStoreBag osb : osbc.getBags()) {
-                    if (needComma) {
-                        retval.append(", ");
-                    }
-                    needComma = true;
-                    retval.append(osb.getBagId() + "");
-                }
-                retval.append(") ORDER BY " + BAGVAL_COLUMN);
-                return retval.toString();
-            } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
-                StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN
-                        + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
-                        + " IN (");
-                boolean needComma = false;
-                for (ObjectStoreBag osb : osbc.getBags()) {
-                    if (needComma) {
-                        retval.append(", ");
-                    }
-                    needComma = true;
-                    retval.append(osb.getBagId() + "");
-                }
-                retval.append(") GROUP BY " + BAGVAL_COLUMN + " HAVING COUNT(*) < "
-                        + osbc.getBags().size() + " ORDER BY " + BAGVAL_COLUMN);
-                return retval.toString();
-            } else {
-                StringBuffer retval = new StringBuffer();
-                boolean needComma = false;
-                for (ObjectStoreBag osb : osbc.getBags()) {
-                    if (needComma) {
-                        retval.append(osbc.getOp() == ObjectStoreBagCombination.INTERSECT
-                                ? " INTERSECT " : " EXCEPT ");
-                    }
-                    needComma = true;
-                    retval.append("SELECT " + BAGVAL_COLUMN + " AS a1_ FROM " + INT_BAG_TABLE_NAME
-                            + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId());
-                }
-                retval.append(" ORDER BY a1_");
-                return retval.toString();
-            }
+            return generateSQLForBagCombo(osbc);
         } else if ((selectList.size() == 1)
                 && (selectList.get(0) instanceof ObjectStoreBagsForObject)) {
             // Another special case.
@@ -548,6 +505,64 @@ public final class SqlGenerator
         }
 
         return retval.toString();
+    }
+
+    private static String generateSQLForBagCombo(ObjectStoreBagCombination osbc) {
+        // In this implementation, only INTERSECT and EXCEPT combinations may
+        // have sub-combinations.
+        if (osbc.getOp() == ObjectStoreBagCombination.UNION) {
+            StringBuffer retval = new StringBuffer("SELECT DISTINCT " + BAGVAL_COLUMN
+                    + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
+                    + " IN (");
+            boolean needComma = false;
+            for (QuerySelectable qs : osbc.getBags()) {
+                ObjectStoreBag osb = (ObjectStoreBag) qs;
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
+                retval.append(osb.getBagId() + "");
+            }
+            retval.append(")"); // ORDER BY " + BAGVAL_COLUMN);
+            return retval.toString();
+        } else if (osbc.getOp() == ObjectStoreBagCombination.ALLBUTINTERSECT) {
+            StringBuffer retval = new StringBuffer("SELECT " + BAGVAL_COLUMN
+                    + " AS a1_ FROM " + INT_BAG_TABLE_NAME + " WHERE " + BAGID_COLUMN
+                    + " IN (");
+            boolean needComma = false;
+            for (QuerySelectable qs : osbc.getBags()) {
+                ObjectStoreBag osb = (ObjectStoreBag) qs;
+                if (needComma) {
+                    retval.append(", ");
+                }
+                needComma = true;
+                retval.append(osb.getBagId() + "");
+            }
+            retval.append(") GROUP BY " + BAGVAL_COLUMN + " HAVING COUNT(*) < "
+                    + osbc.getBags().size() + " ORDER BY " + BAGVAL_COLUMN);
+            return retval.toString();
+        } else {
+            StringBuffer retval = new StringBuffer();
+            boolean needComma = false;
+            for (QuerySelectable qs : osbc.getBags()) {
+                if (needComma) {
+                    retval.append(osbc.getOp() == ObjectStoreBagCombination.INTERSECT
+                            ? " INTERSECT " : " EXCEPT ");
+                }
+                needComma = true;
+                if (qs instanceof ObjectStoreBag) {
+                    ObjectStoreBag osb = (ObjectStoreBag) qs;
+                    retval.append("SELECT " + BAGVAL_COLUMN + " AS a1_ FROM " + INT_BAG_TABLE_NAME
+                            + " WHERE " + BAGID_COLUMN + " = " + osb.getBagId());
+                } else {
+                    // Must be a bag combo.
+                    ObjectStoreBagCombination subCombo = (ObjectStoreBagCombination) qs;
+                    retval.append(generateSQLForBagCombo(subCombo));
+                }
+            }
+            retval.append(" ORDER BY a1_");
+            return retval.toString();
+        }
     }
 
     /**
@@ -2518,6 +2533,11 @@ public final class SqlGenerator
                             // HACK!!! TODO: work out why this was producing screwed up
                             // precompute queries.
                             && ((QueryFunction) node).getOperation() != QueryFunction.COUNT) {
+                        //don't add average in the orderby because in the QueryOptimise.optimiseWith
+                        //in originalQuery = new Query(query); the originalQuery is not parsed correcty!!!
+                        if (((QueryFunction) node).getOperation() == QueryFunction.AVERAGE) {
+                            continue;
+                        }
                         String alias = q.getAliases().get(node);
                         buffer.append(alias);
                     } else {

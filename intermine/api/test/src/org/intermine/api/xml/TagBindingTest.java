@@ -1,7 +1,7 @@
 package org.intermine.api.xml;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -81,7 +82,7 @@ public class TagBindingTest extends InterMineAPITestCase
         try {
             XMLStreamWriter writer = factory.createXMLStreamWriter(sw);
             writer.writeStartElement("tags");
-            Set<Tag> tags = getTags();
+            List<Tag> tags = getTags();
             for (Tag tag : tags) {
                 TagBinding.marshal(tag, writer);
             }
@@ -109,8 +110,8 @@ public class TagBindingTest extends InterMineAPITestCase
                 .replaceAll("date-created=\"\\d+\"", "date-created=\"XXXX\""); // Ignore all dates
     }
 
-    private Set<Tag> getTags() {
-        Set<Tag> tags = new HashSet<Tag>();
+    private List<Tag> getTags() {
+        List<Tag> tags = new ArrayList<Tag>();
         Tag tag = new Tag();
         tag.setTagName("im:aspect:People");
         tag.setType("class");

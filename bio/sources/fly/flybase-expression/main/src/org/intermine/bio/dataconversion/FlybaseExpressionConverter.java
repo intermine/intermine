@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -37,15 +39,14 @@ public class FlybaseExpressionConverter extends BioFileConverter
     private static final Logger LOG = Logger.getLogger(FlybaseExpressionConverter.class);
     private static final String DATASET_TITLE = "FlyBase expression data";
     private static final String DATA_SOURCE_NAME = "modENCODE";
-    protected IdResolverFactory resolverFactory;
-    protected IdResolver resolver;
     private File flybaseExpressionLevelsFile, stagesFile;
     private Item organism;
     private static final String PREFIX = "me_mRNA_";
-    private static final String TAXON_ID = "7227";
+    private static final String TAXON_FLY = "7227";
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> terms = new HashMap<String, String>();
     private Map<String, Stage> stages = new HashMap<String, Stage>();
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -54,10 +55,9 @@ public class FlybaseExpressionConverter extends BioFileConverter
      */
     public FlybaseExpressionConverter(ItemWriter writer, Model model) {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
 
         organism = createItem("Organism");
-        organism.setAttribute("taxonId", TAXON_ID);
+        organism.setAttribute("taxonId", TAXON_FLY);
         try {
             store(organism);
         } catch (ObjectStoreException e) {
@@ -91,6 +91,9 @@ public class FlybaseExpressionConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
         processTermFile(new FileReader(flybaseExpressionLevelsFile));
         processStages(new FileReader(stagesFile));
         processScoreFile(reader);
@@ -226,8 +229,11 @@ public class FlybaseExpressionConverter extends BioFileConverter
     }
 
     private String resolveGene(String fbgn) {
-        resolver = resolverFactory.getIdResolver();
-        boolean currentGene = resolver.isPrimaryIdentifier(TAXON_ID, fbgn);
+        // if resolver not exist, return the original id as primary id
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return fbgn;
+        }
+        boolean currentGene = rslv.isPrimaryIdentifier(TAXON_FLY, fbgn);
         if (currentGene) {
             return fbgn;
         }

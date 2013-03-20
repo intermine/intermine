@@ -20,7 +20,7 @@ import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.webservice.server.WebServiceInput;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.core.Either;
 import org.intermine.webservice.server.core.EitherVisitor;
 import org.intermine.webservice.server.core.Page;
@@ -40,12 +40,16 @@ public class TableRowService extends QueryResultService
         super(im);
     }
 
+    @Override
+    protected Format getDefaultFormat() {
+        return Format.JSON;
+    }
 
     @Override
-    protected int getDefaultFormat() {
-        return JSON_FORMAT;
+    protected boolean canServe(Format format) {
+        return format == Format.JSON;
     }
-    
+
     @Override
     protected void setHeaderAttributes(PathQuery pq, Integer start, Integer size) {
         try {
@@ -64,9 +68,7 @@ public class TableRowService extends QueryResultService
     }
 
     @Override
-    public void runPathQuery(PathQuery pathQuery, int firstResult,
-            int maxResults, String title, String description,
-            WebServiceInput input, String mineLink, String layout) {
+    public void runPathQuery(PathQuery pathQuery, int firstResult, int maxResults) {
         final ObjectStore os = im.getObjectStore();
         final Profile p = getPermission().getProfile();
         final Map<String, QuerySelectable> pathToQueryNode = new HashMap<String, QuerySelectable>();
@@ -97,7 +99,7 @@ public class TableRowService extends QueryResultService
             }
         }
     }
-    
+
     private static final class Processor extends EitherVisitor<TableCell, SubTable, Map<String, Object>>
     {
         private static final String CELL_KEY_COLUMN = "column";

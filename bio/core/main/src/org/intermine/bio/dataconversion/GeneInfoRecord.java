@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,6 +33,7 @@ public class GeneInfoRecord
     protected final String defaultName;
     protected final String mapLocation;
     protected final String geneType;
+    protected final String locusTag;
     protected final Set<String> ensemblIds = new HashSet<String>();
     // xrefs: key - DB name, e.g. FLYABSE; value - set of id, e.g. FBgn1234567890
     protected final Map<String, Set<String>> xrefs = new HashMap<String, Set<String>>();
@@ -48,9 +49,11 @@ public class GeneInfoRecord
      * @param defaultName NCBI name, may be the same as the officialName
      * @param mapLocation chromosome band of the gene, if known
      * @param geneType e.g. protein-coding, ncrna, etc.
+     * @param locusTag treefam uses this field to identify yeast
      */
-    public GeneInfoRecord(String taxon, String entrez, String officialSymbol, String defaultSymbol,
-            String officialName, String defaultName, String mapLocation, String geneType) {
+    public GeneInfoRecord(String taxon, String entrez, String officialSymbol,
+            String defaultSymbol, String officialName, String defaultName,
+            String mapLocation, String geneType, String locusTag) {
         this.taxon = taxon;
         this.entrez = entrez;
         this.officialSymbol = filter(officialSymbol);
@@ -59,6 +62,7 @@ public class GeneInfoRecord
         this.defaultName = filter(defaultName);
         this.mapLocation = filter(mapLocation);
         this.geneType = filter(geneType);
+        this.locusTag = filter(locusTag);
     }
 
     /**
@@ -73,6 +77,9 @@ public class GeneInfoRecord
         }
         if (defaultSymbol != null) {
             ids.add(defaultSymbol);
+        }
+        if (locusTag != null) {
+            ids.add(locusTag);
         }
         return ids;
     }

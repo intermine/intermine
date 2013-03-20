@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.webservice.server.lists;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.Format;
 
 /**
  * A service for renaming lists.
@@ -57,4 +58,5 @@ public class ListRenameService extends AuthenticatedListService
         addOutputInfo(LIST_SIZE_KEY, "" + list.size());
 
     }
+
 }

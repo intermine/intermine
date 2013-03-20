@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -29,7 +29,9 @@ import org.intermine.api.profile.BagDoesNotExistException;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.ClassDescriptor;
+import org.intermine.metadata.DescriptorUtils;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.query.Query;
@@ -70,22 +72,7 @@ public final class ListServiceUtils
             Set<String> nameAccumulator, Profile profile,
             Map<String, List<FieldDescriptor>> classKeys)
         throws UnknownBagTypeException, ClassKeysNotFoundException, ObjectStoreException {
-        Set<InterMineBag> castBags = new HashSet<InterMineBag>();
-        for (InterMineBag bag: bags) {
-            if (bag.isOfType(type)) {
-                castBags.add(bag);
-            } else {
-                String castName = bag.getName() + CAST + type;
-                InterMineBag castBag
-                    = profile.createBag(castName, type, "", classKeys);
-                Query q = new Query();
-                q.addToSelect(bag.getOsb());
-                castBag.addToBagFromQuery(q);
-                castBags.add(castBag);
-                nameAccumulator.add(castName);
-            }
-        }
-        return castBags;
+        return bags;
     }
 
     /**
@@ -137,61 +124,28 @@ public final class ListServiceUtils
      * @return A class name.
      */
     public static String findCommonSuperTypeOf(Set<ClassDescriptor> classes) {
-        if (classes == null) {
-            throw new IllegalArgumentException("classes is null");
+        try {
+            return DescriptorUtils.findSumType(classes).getUnqualifiedName();
+        } catch (MetaDataException e) {
+            throw new BadRequestException(e.getMessage(), e);
         }
-        if (classes.isEmpty()) {
-            throw new RuntimeException(
-                    "Class set is empty - no type can be determined");
-        }
-        if (classes.size() == 1) {
-            return classes.iterator().next().getUnqualifiedName();
-        }
-
-        Set<String> classNames = new HashSet<String>();
-        for (ClassDescriptor cd: classes) {
-            classNames.add(cd.getUnqualifiedName());
-        }
-        String nameString = StringUtils.join(classNames, ", ");
-        Set<ClassDescriptor> superClasses = null;
-        for (ClassDescriptor cd: classes) {
-            if (superClasses == null) {
-                superClasses = new HashSet<ClassDescriptor>(cd.getAllSuperDescriptors());
-                superClasses.add(cd);
-            } else {
-                Set<ClassDescriptor> toIntersect = cd.getAllSuperDescriptors();
-                toIntersect.add(cd);
-                superClasses.retainAll(toIntersect);
-            }
-        }
-        CollectionUtils.filter(classes, new Predicate() {
-            @Override
-            public boolean evaluate(Object arg0) {
-                ClassDescriptor cd = (ClassDescriptor) arg0;
-                return cd.getAllSuperclassNames().contains("org.intermine.model.InterMineObject");
-            }
-        });
-        if (superClasses.isEmpty()) {
-            throw new BadRequestException("Incompatible types: " + nameString);
-        }
-        List<ClassDescriptor> superList = new ArrayList<ClassDescriptor>(superClasses);
-
-        Collections.sort(superList, new Comparator<ClassDescriptor>() {
-            @Override
-            public int compare(ClassDescriptor o1, ClassDescriptor o2) {
-                int depth1 = o1.getAllSuperDescriptors().size();
-                int depth2 = o2.getAllSuperDescriptors().size();
-                if (depth1 <= depth2) {
-                    return 1;
-                } else if (depth1 >= depth2) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
-
-        });
-        return superList.get(0).getUnqualifiedName();
     }
+
+    public static String findMostSpecificCommonTypeOf(Set<ClassDescriptor> classes) {
+        try {
+            return DescriptorUtils.findIntersectionType(classes).getUnqualifiedName();
+        } catch (MetaDataException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
+    }
+
+    public static List<ClassDescriptor> findCommonClasses(Set<ClassDescriptor> classes) {
+        try {
+            return DescriptorUtils.findCommonClasses(classes);
+        } catch (MetaDataException e) {
+            throw new BadRequestException(e.getMessage(), e);
+        }
+    }
+    
 
 }

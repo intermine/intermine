@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -96,39 +96,44 @@ public class WidgetLdr
      */
     protected QueryField createQueryFieldByPath(String path, Query query, boolean addToSelect) {
         QueryField queryField = null;
-        String[] paths = path.split("\\.");
+        String[] splittedPath = path.split("\\.");
         QueryClass qc = startClass;
-        for (int i = 0; i < paths.length; i++) {
-            if (i == paths.length - 1) {
-                queryField = new QueryField(qc, paths[i]);
+
+        String attribute;
+        String attributePath = "";
+        for (int i = 0; i < splittedPath.length; i++) {
+            attribute = splittedPath[i];
+            if (i == splittedPath.length - 1) {
+                queryField = new QueryField(qc, attribute);
                 if (addToSelect) {
                     query.addToSelect(queryField);
                     query.addToGroupBy(queryField);
                     query.addToOrderBy(queryField);
                 }
             } else {
-                qc = addReference(query, qc, paths[i]);
+                attributePath = createAttributePath(splittedPath, i);
+                qc = addReference(query, qc, attribute, attributePath);
             }
         }
         return queryField;
     }
 
     /**
-     * Add a contains constraint to Query (q) from qcStart using path
+     * Add a contains constraint to Query (q) built with the query class and attribute given in iput
      */
-    protected QueryClass addReference(Query query, QueryClass qc, String path) {
+    protected QueryClass addReference(Query query, QueryClass qc, String attribute, String attributePath) {
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
         QueryReference qr = null;
         String type = "";
         boolean useSubClass = false;
-        if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), path)) {
+        if (WidgetConfigUtil.isPathContainingSubClass(os.getModel(), attribute)) {
             useSubClass = true;
-            type = path.substring(path.indexOf("[") + 1, path.indexOf("]"));
-            path = path.substring(0, path.indexOf("["));
+            type = attribute.substring(attribute.indexOf("[") + 1, attribute.indexOf("]"));
+            attribute = attribute.substring(0, attribute.indexOf("["));
         }
         QueryClass qcTmp = null;
         try {
-            qr = new QueryObjectReference(qc, path);
+            qr = new QueryObjectReference(qc, attribute);
             if (useSubClass) {
                 try {
                     qcTmp = new QueryClass(Class.forName(os.getModel().getPackageName()
@@ -141,7 +146,7 @@ public class WidgetLdr
             }
         } catch (IllegalArgumentException e) {
             // Not a reference - try collection instead
-            qr = new QueryCollectionReference(qc, path);
+            qr = new QueryCollectionReference(qc, attribute);
             if (useSubClass) {
                 try {
                     qcTmp = new QueryClass(Class.forName(os.getModel().getPackageName()
@@ -150,53 +155,38 @@ public class WidgetLdr
                     LOG.error("The type " + type + " doesn't exist in the model.");
                 }
             } else {
-                qcTmp = new QueryClass(TypeUtil.getElementType(qc.getType(), path));
+                qcTmp = new QueryClass(TypeUtil.getElementType(qc.getType(), attribute));
             }
         }
-        if (!isQueryClassInQuery(qcTmp, qc)) {
-            String key = generateKeyForQueryClassInQuery(qcTmp, qc);
+        if (!queryClassInQuery.containsKey(attributePath)) {
             qc = qcTmp;
             query.addFrom(qc);
             cs.addConstraint(new ContainsConstraint(qr, ConstraintOp.CONTAINS, qc));
-            queryClassInQuery.put(key, qc);
+            queryClassInQuery.put(attributePath, qc);
         } else {
-            //retrieve qc from queryClassInQuery map
-            String key = generateKeyForQueryClassInQuery(qcTmp, qc);
-            qc = queryClassInQuery.get(key);
+            qc = queryClassInQuery.get(attributePath);
         }
         return qc;
     }
 
     /**
-     * Verify if the queryClass having as a parent (parent in a path) the queryClassParent
-     * given in input is already in the queryClassInQuery map
-     * @param queryClass the query class
-    * @param queryClassParent the query class parent in the path
-     * @return true if the queryClass is in queryClassInQuery map, otherwise false
+     * Return the path of the attribute at the the position index in the paths given in input
+     * without reference to subclass.
+     * @param paths
+     * @param index
+     * @return
      */
-    protected boolean isQueryClassInQuery(QueryClass queryClass, QueryClass queryClassParent) {
-        String key = generateKeyForQueryClassInQuery(queryClass, queryClassParent);
-        if (queryClassInQuery.containsKey(key)) {
-            return true;
+    protected String createAttributePath(String[] paths, int index) {
+        String partialPath = startClass.getType().getSimpleName();
+        String path;
+        for (int partialPathIndex = 0; partialPathIndex <= index; partialPathIndex++) {
+            path = paths[partialPathIndex];
+            if (path.contains("[")) {
+                path = path.substring(0, path.indexOf("["));
+            }
+            partialPath = partialPath + "." + path;
         }
-        return false;
-    }
-
-   /**
-    * Generate the key used in the queryClassInQuery map
-    * key= queryclass type + '_' + queryClass parent type(for root path is an empty string)
-    * @param queryClass the query class
-    * @param queryClassParent the query class parent in the path
-    * @return the key generated
-    */
-    protected String generateKeyForQueryClassInQuery(QueryClass queryClass,
-        QueryClass queryClassParent) {
-        String queryClassType = queryClass.getType().getSimpleName();
-        if (queryClassParent == null) {
-            return queryClassType + "_";
-        } else {
-            return queryClassType + "_" + queryClassParent.getType().getSimpleName();
-        }
+        return partialPath;
     }
 
 }

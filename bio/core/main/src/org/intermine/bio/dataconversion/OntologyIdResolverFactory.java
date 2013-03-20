@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -27,11 +27,10 @@ import org.intermine.sql.DatabaseFactory;
 public class OntologyIdResolverFactory extends IdResolverFactory
 {
     protected static final Logger LOG = Logger.getLogger(OntologyIdResolverFactory.class);
-    private Database db;
+
     private String ontology = null;
     private static final String MOCK_TAXON_ID = "0";
     private final String propName = "db.production";
-
 
     /**
      * Construct with SO term of the feature type to read from chado database.
@@ -77,29 +76,21 @@ public class OntologyIdResolverFactory extends IdResolverFactory
      */
     @Override
     protected void createIdResolver() {
-
-        if (resolver == null) {
-            resolver = new IdResolver(clsName);
-        }
-
-        if (resolver.hasTaxon(MOCK_TAXON_ID)) {
+        if (resolver != null && resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology)) {
             return;
+        } else {
+            if (resolver == null) {
+                resolver = new IdResolver(this.ontology);
+            }
         }
 
         try {
-            // TODO we already know this database, right?
-            db = DatabaseFactory.getDatabase(propName);
-
-            String cacheFileName = "build/" + db.getName() + "." + ontology;
-            File f = new File(cacheFileName);
-            if (f.exists()) {
-                System.out .println("OntologyIdResolver reading from cache file: " + cacheFileName);
-                createFromFile(ontology, f);
-            } else {
-                System.out .println("OntologyIdResolver creating from database: " + db.getName());
-                createFromDb(db);
-                resolver.writeToFile(f);
-                System.out .println("OntologyIdResolver caching in file: " + cacheFileName);
+            boolean isCachedIdResolverRestored = restoreFromFile();
+            if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
+                    && !resolver.hasTaxonAndClassName(MOCK_TAXON_ID, this.ontology))) {
+                LOG.info("Creating id resolver from database and caching it.");
+                createFromDb(DatabaseFactory.getDatabase(propName));
+                resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -108,7 +99,6 @@ public class OntologyIdResolverFactory extends IdResolverFactory
 
     @Override
     protected void createFromDb(Database database) {
-
         Connection conn = null;
         try {
             conn = database.getConnection();
@@ -120,12 +110,7 @@ public class OntologyIdResolverFactory extends IdResolverFactory
             LOG.info("QUERY: " + query);
             Statement stmt = conn.createStatement();
             ResultSet res = stmt.executeQuery(query);
-            int i = 0;
-            while (res.next()) {
-                String uniquename = res.getString("identifier");
-                String synonym = res.getString("name");
-                resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(synonym));
-            }
+            int i = addIdsFromResultSet(res);
             stmt.close();
             LOG.info("dbxref query returned " + i + " rows.");
         } catch (Exception e) {
@@ -140,5 +125,17 @@ public class OntologyIdResolverFactory extends IdResolverFactory
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    protected int addIdsFromResultSet(ResultSet res) throws Exception {
+        int i = 0;
+        while (res.next()) {
+            String uniquename = res.getString("identifier");
+            String synonym = res.getString("name");
+            resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(uniquename));
+            resolver.addMainIds(MOCK_TAXON_ID, uniquename, Collections.singleton(synonym));
+            i++;
+        }
+        return i;
     }
 }

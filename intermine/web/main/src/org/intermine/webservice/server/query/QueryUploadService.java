@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,10 +10,11 @@ package org.intermine.webservice.server.query;
  *
  */
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,16 +23,20 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.SavedQuery;
+import org.intermine.api.profile.ProfileManager.ApiPermission.Level;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.ServiceException;
+import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
 
 /**
  * A service to enable queries to be uploaded programmatically.
@@ -45,17 +50,12 @@ public class QueryUploadService extends WebService
     public static final String QUERIES_PARAMETER = "xml";
     /** The key for the version parameter **/
     public static final String VERSION_PARAMETER = "version";
-
-    /**
-     * The usage string to school recalcitrant users with.
-     */
-    public static final String USAGE =
-          "\nQuery Upload Service:\n"
-        + "==========================\n"
-        + "Parameters:\n"
-        + QUERIES_PARAMETER + ": XML representation of template(s)\n"
-        + VERSION_PARAMETER + ": (optional) XML version number\n"
-        + "NOTE: all template upload requests must be authenticated.\n";
+    private Map<String, InterMineBag> lists;
+    private Set<String> knownBags;
+    private Map<String, PathQuery> toSave;
+    private List<String> problems;
+    private Profile profile;
+    private Set<String> saved;
 
     /**
      * Constructor.
@@ -66,63 +66,89 @@ public class QueryUploadService extends WebService
     }
 
     @Override
+    protected Format getDefaultFormat() {
+        return Format.TEXT;
+    }
+
+    @Override
+    protected boolean canServe(Format f) {
+        return f == Format.JSON || f == Format.TEXT;
+    }
+
+    @Override
+    protected void initState() {
+        toSave = new HashMap<String, PathQuery>();
+        problems = new ArrayList<String>();
+        saved = new HashSet<String>();
+    }
+
+    @Override
+    protected void postInit() {
+        profile = getPermission().getProfile();
+        BagManager bagManager = im.getBagManager();
+        lists = bagManager.getBags(profile);
+        knownBags = lists.keySet();
+    }
+
+    @Override
+    protected void validateState() {
+        if (!isAuthenticated() || getPermission().getLevel() == Level.RO) {
+            throw new ServiceForbiddenException("Not authenticated");
+        }
+    }
+
+    @Override
     protected void execute() throws Exception {
-        if (!isAuthenticated()) {
-            throw new BadRequestException("Not authenticated" + USAGE);
-        }
-        String queriesXML = request.getParameter(QUERIES_PARAMETER);
-        if (queriesXML == null || "".equals(queriesXML)) {
-            throw new BadRequestException("No XML data." + USAGE);
-        }
-        Profile profile = getPermission().getProfile();
-        BagManager bagManager = this.im.getBagManager();
 
-        Map<String, InterMineBag> lists = bagManager.getBags(profile);
+        String queriesXML = getXML();
+        int version = getVersion();
 
-        int version = getVersion(request);
         Reader r = new StringReader(queriesXML);
-
-        Map<String, PathQuery> queries;
-        Map<String, SavedQuery> toSave = new HashMap<String, SavedQuery>();
-        try {
-            queries = PathQueryBinding.unmarshalPathQueries(r, version);
-        } catch (RuntimeException e) {
-            throw new ServiceException("Error parsing queries", e);
-        }
+        Map<String, PathQuery> queries = PathQueryBinding.unmarshalPathQueries(r, version);
 
         for (String name: queries.keySet()) {
             PathQuery pq = queries.get(name);
             if (!pq.isValid()) {
-                this.output.addResultItem(Arrays.asList(name,
-                    formatMessage(pq.verifyQuery())));
+                problems.add(name + ": " + formatMessage(pq.verifyQuery()));
             } else {
                 Set<String> missingBags = new HashSet<String>();
                 for (String bag: pq.getBagNames()) {
-                    if (!lists.keySet().contains(bag)) {
+                    if (!knownBags.contains(bag)) {
                         missingBags.add(bag);
                     }
                 }
                 if (missingBags.isEmpty()) {
-                    toSave.put(name, new SavedQuery(name, new Date(), pq));
+                    toSave.put(name, pq);
                 } else {
-                    this.output.addResultItem(Arrays.asList(name,
-                        "The following lists referred to by " + name
-                        + " either don't exist or cannot be accessed"
-                        + " by this user account: " + missingBags));
+                    problems.add(name + " references the following missing lists: " + missingBags);
                 }
             }
         }
         if (toSave.size() != queries.size()) {
-            throw new BadRequestException("Errors with queries");
+            throw new BadRequestException("Errors with queries. " + StringUtils.join(problems, "\n"));
         }
-        for (String name: toSave.keySet()) {
-            try {
-                profile.saveQuery(name, toSave.get(name));
-                this.output.addResultItem(Arrays.asList(name, "Success"));
-            } catch (RuntimeException e) {
-                throw new ServiceException("Failed to save template: " + name, e);
+
+        try {
+            profile.saveQueries(toSave, saved);
+        } catch (Exception e) {
+            for (String name: saved) {
+                profile.deleteQuery(name);
             }
+            throw new ServiceException("Failed to save queries", e);
         }
+    }
+
+    protected String getXML() throws IOException {
+        String contentType = StringUtils.defaultString(request.getContentType(), "").trim();
+
+        String queriesXML;
+        if ("application/xml".equals(contentType) || "text/xml".equals(contentType)) {
+            InputStream in = request.getInputStream();
+            queriesXML = IOUtils.toString(in);
+        } else {
+            queriesXML = getRequiredParameter("xml");
+        }
+        return queriesXML;
     }
 
     private String formatMessage(List<String> msgs) {
@@ -136,17 +162,7 @@ public class QueryUploadService extends WebService
         return sb.toString();
     }
 
-    private int getVersion(HttpServletRequest request) {
-        String versionString = request.getParameter(VERSION_PARAMETER);
-        if (versionString == null || "".equals(versionString)) {
-            return PathQuery.USERPROFILE_VERSION;
-        }
-        try {
-            int version = Integer.parseInt(versionString);
-            return version;
-        } catch (NumberFormatException e) {
-            throw new ServiceException("Version provided in request (" + versionString
-                    + ") can not be parsed to an integer");
-        }
+    private Integer getVersion() {
+        return getIntParameter(VERSION_PARAMETER, PathQuery.USERPROFILE_VERSION);
     }
 }

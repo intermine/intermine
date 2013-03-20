@@ -31,17 +31,19 @@ public abstract class WebServiceServlet extends HttpServlet {
         throws ServletException, IOException {
         try {
             WebService service = getService(method);
-            // ugly, but better safe than sorry, since null is the bottom type.
+            // ugly, but better safe than sorry, since null is the bottom type;
+            // but strictly speaking, the getService method should throw a
+            // NoServiceException instead of returning null.
             if (service == null) {
                 throw new NoServiceException();
             }
             service.service(request, response);
         } catch (NoServiceException e) {
-            sendNoMethodError(method, request, response);
+            sendNoMethodError(method.toString(), request, response);
         }
     }
 
-    private void sendNoMethodError(Method method, HttpServletRequest request,
+    private void sendNoMethodError(String method, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         // The default no-op servlet behaviour.
         String protocol = request.getProtocol();
@@ -58,13 +60,31 @@ public abstract class WebServiceServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        respond(Method.GET, request, response);
+        String tunnelledMethod = request.getParameter("method");
+        if (tunnelledMethod != null && !"".equals(tunnelledMethod.trim())) {
+            // This a fake tunnelled request, probably from IE, but possibly json-p
+            Method tm;
+            try {
+                tm = Method.valueOf(tunnelledMethod);
+            } catch (IllegalArgumentException e) {
+                sendNoMethodError(tunnelledMethod, request, response);
+                return;
+            }
+            respond(tm, request, response);
+        } else {
+            respond(Method.GET, request, response);
+        }
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        respond(Method.POST, request, response);
+        if ("PUT".equals(request.getParameter("method"))) {
+            // This a fake tunnelled request, probably from IE.
+            doPut(request, response);
+        } else {
+            respond(Method.POST, request, response);
+        }
     }
     
     @Override

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.webservice.server.query;
  */
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.intermine.api.InterMineAPI;
@@ -44,7 +45,7 @@ public class QueryListAppendService extends QueryToListService
 
     @Override
     protected void generateListFromQuery(PathQuery pq,
-        String name, String description, List<String> tags,
+        String name, String description, Collection<String> tags,
         Profile profile) throws ObjectStoreException, PathException {
 
         InterMineBag list = getList(profile, name);

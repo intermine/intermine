@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,8 @@ package org.intermine.bio.dataconversion;
  */
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.xml.full.Item;
 
 /**
@@ -19,8 +21,9 @@ import org.intermine.xml.full.Item;
  */
 public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
 {
-    protected IdResolverFactory resolverFactory = null;
-    private IdResolver resolver = null;
+    private static final String TAXON_FLY = "7227";
+    private static final String CLASS_NAME = "mRNA";
+    protected IdResolver rslv;
     protected static final Logger LOG = Logger.getLogger(LongOligoGFF3SeqHandler.class);
 
 
@@ -28,7 +31,7 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      * Construct the seq handler.
      */
     public LongOligoGFF3SeqHandler() {
-        resolverFactory = new FlyBaseIdResolverFactory("mRNA");
+        rslv = IdResolverService.getFlyIdResolver(CLASS_NAME);
     }
 
 
@@ -37,20 +40,18 @@ public class LongOligoGFF3SeqHandler extends GFF3SeqHandler
      */
     @Override
     public String getSeqIdentifier(String id) {
-        // resolve id from file to valid FlyBase primaryIdentifier
-        if (resolver == null) {
-            resolver = resolverFactory.getIdResolver();
+        if (rslv == null || !rslv.hasTaxonAndClassName(TAXON_FLY, CLASS_NAME)) {
+            return null;
         }
 
         String updatedId = null;
-        int resCount = resolver.countResolutions("7227", id);
+        int resCount = rslv.countResolutions(TAXON_FLY, id);
         if (resCount == 1) {
-            updatedId = resolver.resolveId("7227", id).iterator().next();
+            updatedId = rslv.resolveId(TAXON_FLY, id).iterator().next();
         }
 
         return updatedId;
     }
-
 
     /**
      * {@inheritDoc}

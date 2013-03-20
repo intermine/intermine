@@ -37,22 +37,19 @@ public class IdResolutionService extends JSONService
         } catch (IOException e) {
             throw new InternalErrorException("Could not read details", e);
         }
-        
+
         final BagQueryRunner runner = im.getBagQueryRunner();
-        
+
         Job job = new Job(runner, in);
 
-        output.addResultItem(Arrays.asList(job.getUid()));
-        
-        new Thread(job).run();
+        addResultValue(job.getUid(), false);
+
+        new Thread(job).run(); // Run job in the background.
     }
-    
+
     @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = super.getHeaderAttributes();
-        attributes.put(JSONFormatter.KEY_INTRO, "\"uid\":");
-        attributes.put(JSONFormatter.KEY_QUOTE, true);
-        return attributes;
+    protected String getResultsKey() {
+        return "uid";
     }
 
     public class Input
@@ -65,7 +62,7 @@ public class IdResolutionService extends JSONService
 
         Input() throws JSONException, IOException {
             JSONObject requestDetails
-                = new JSONObject(new JSONTokener(IdResolutionService.this.request.getReader()));
+                = new JSONObject(new JSONTokener(request.getReader()));
             JSONArray identifiers = requestDetails.getJSONArray("identifiers");
             ids = new LinkedList<String>();
             for (int i = 0; i < identifiers.length(); i++) {

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,6 +60,7 @@ public class NcbiGeneInfoParser
 
             String entrez = line[1].trim();
             String defaultSymbol = line[2].trim();
+            String locusTag = line[3].trim();
             String synonyms = line[4].trim();
             String xrefs = line[5].trim(); // db Identifiers
             String mapLocation = line[7].trim();
@@ -69,7 +70,7 @@ public class NcbiGeneInfoParser
             String officialName = line[11].trim();
 
             GeneInfoRecord record = new GeneInfoRecord(taxonId, entrez, officialSymbol,
-                    defaultSymbol, officialName, defaultName, mapLocation, geneType);
+                    defaultSymbol, officialName, defaultName, mapLocation, geneType, locusTag);
 
             record.ensemblIds.addAll(parseXrefs(xrefs, "Ensembl"));
             record.xrefs.putAll(parseXrefs(xrefs));

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -25,7 +25,7 @@ import org.json.JSONArray;
  */
 public class MinimalJsonIterator implements Iterator<JSONArray>
 {
-    private final ExportResultsIterator subIter;
+    private final Iterator<List<ResultElement>> subIter;
     private final InterMineAPI im;
 
     /**
@@ -33,7 +33,7 @@ public class MinimalJsonIterator implements Iterator<JSONArray>
      * @param it An ExportResultsIterator that will be used internally to process the data.
      * @param im A reference to the the API settings bundle.
      */
-    public MinimalJsonIterator(ExportResultsIterator it, InterMineAPI im) {
+    public MinimalJsonIterator(Iterator<List<ResultElement>> it, InterMineAPI im) {
         this.subIter = it;
         this.im = im;
     }
