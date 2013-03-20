@@ -11,22 +11,16 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
-import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
 
 
@@ -42,23 +36,8 @@ public class DrosophilaHomologyConverter extends BioFileConverter
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
-    private Set<String> taxonIds = new HashSet<String>();
-    private static final Map<String, String> DROSOPHILAS = new HashMap<String, String>();
-    
-    static  {
-        DROSOPHILAS.put("Dana", "7217");
-        DROSOPHILAS.put("Dere", "7220");
-        DROSOPHILAS.put("Dgri", "7222");
-        DROSOPHILAS.put("Dmoj", "7230");
-        DROSOPHILAS.put("Dper", "7234");
-        DROSOPHILAS.put("Dpse", "7237");
-        DROSOPHILAS.put("Dsec", "7238");
-        DROSOPHILAS.put("Dsim", "7240");
-        DROSOPHILAS.put("Dvir", "7244");
-        DROSOPHILAS.put("Dwil", "7260");
-        DROSOPHILAS.put("Dyak", "7245");        
-    }
-    
+
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -82,14 +61,6 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         evidence.addToCollection("publications", pub);
         store(evidence);
     }
-
-    /**
-     * Set the organisms to include by a space separated list of taxon ids.
-     * @param taxonIds the organisms to include
-     */
-    public void setOrganisms(String taxonIds) {
-        this.taxonIds = new HashSet<String>(Arrays.asList(StringUtil.split(taxonIds, " ")));
-    }
     
     /**
      * Read each line from flat file, create genes and synonyms.
@@ -105,16 +76,19 @@ public class DrosophilaHomologyConverter extends BioFileConverter
                 continue;
             }
             String geneIdentifier = line[0];
-            String geneOrganismRefId = getOrganism("7227");
+            // String geneOrganismRefId = getOrganism("7227");
             String homologue = line[5];
-            String homoOrganismRefId = parseSymbol(line[6]);
+            //String homoOrganismRefId = parseSymbol(line[6]);
             // NULL if not a fly of interest 
-            if (homoOrganismRefId != null) {
-                String gene1 = getGene(geneIdentifier, geneOrganismRefId);
-                String gene2 = getGene(homologue, homoOrganismRefId);
+            
+            String gene1 = getGene(geneIdentifier);
+            String gene2 = getGene(homologue);
+            
+            if (gene1 != null && gene2 != null) {
                 createHomologue(gene1, gene2);
                 createHomologue(gene2, gene1);
             }
+            
         }
     }
 
@@ -132,7 +106,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         store(homologue);
     }
 
-    private String getGene(String identifier, String organismRefId)
+    private String getGene(String identifier)
         throws ObjectStoreException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
@@ -140,19 +114,9 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         }
         Item item = createItem("Gene");
         item.setAttribute("primaryIdentifier", identifier);
-        item.setReference("organism", organismRefId);
         geneRefId = item.getIdentifier();
         genes.put(identifier, geneRefId);
         store(item);
         return geneRefId;
-    }
-
-    private String parseSymbol(String symbol)  {
-        String species = symbol.substring(0, 4);
-        String taxonId = DROSOPHILAS.get(species); 
-        if (taxonId != null & (taxonIds.contains(taxonId) || taxonIds.isEmpty())) {
-            return getOrganism(taxonId);
-        }
-        return null;
     }
 }
