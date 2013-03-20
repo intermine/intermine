@@ -44,12 +44,12 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         File temp = File.createTempFile("EntrezPublicationsRetriever", ".tmp");
         // Delete temp file when program exits.
         temp.deleteOnExit();
-        
+
         eor.setLoadFullRecord(fullRecord); // use eFetch URL instead of summary
-        
+
         eor.setOsAlias("os.bio-test");
         eor.setOutputFile(temp.getPath());
-        eor.setOutputFile("entrez-pub-tgt-items.xml");
+        // eor.setOutputFile("entrez-pub-tgt-items.xml");
         eor.setCacheDirName("build/");
         eor.execute();
         Collection<Item> actual = FullParser.parse(new FileInputStream(temp));
@@ -69,7 +69,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
         public TestEntrezPublicationsRetriever() {
             super();
             setOsAlias("os.bio-test");
-            setOutputFile("entrez-pub-tgt-items.xml");
+            // setOutputFile("entrez-pub-tgt-items.xml");
         }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -88,7 +88,7 @@ public class EntrezPublicationRetrieverTest extends ItemsTestCase
             if ("true".equals(fullRecord)) {
                 return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_efetch.xml"));
             }
-            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));            
+            return new InputStreamReader(getClass().getClassLoader().getResourceAsStream("EntrezPublicationsRetrieverTest_esummary.xml"));
         }
     }
 }

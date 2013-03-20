@@ -98,9 +98,9 @@ public class EntrezPublicationsRetriever
      *
      * @param fullRecord if TRUE load full record of publication.
      */
-    public void setLoadFullRecord(String fullRecord) {
-        if ("true".equalsIgnoreCase(fullRecord)) {
-            loadFullRecord = true;
+    public void setLoadFullRecord(String loadFullRecord) {
+        if ("true".equalsIgnoreCase(loadFullRecord)) {
+            this.loadFullRecord = true;
         }
     }
 

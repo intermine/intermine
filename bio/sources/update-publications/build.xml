@@ -1,6 +1,6 @@
 <project name="update-publications" default="default" basedir=".">
   <description>update-publications retrieve and load tasks</description>
-  <import file="../../../imbuild/source.xml"/> 
+  <import file="../../../imbuild/source.xml"/>
 
   <!-- special case to create a ${src.data.file} (in InterMine XML format) by
        finding the pubmed ids in the objectstore, then retrieving the details
@@ -8,14 +8,14 @@
   <target name="-pre-retrieve" depends="source.-pre-retrieve">
     <property name="cp" refid="task.class.path"/>
 
-    <taskdef name="retrieve-publications" 
+    <taskdef name="retrieve-publications"
              classname="org.intermine.bio.dataconversion.EntrezPublicationsRetriever">
       <classpath refid="task.class.path"/>
     </taskdef>
-    
+
     <echo message="retrieving from ${src.data.file}"/>
 
     <retrieve-publications osAlias="os.production" outputFile="${src.data.file}"
-                           cacheDirName="${build.dir}"/>
+                           cacheDirName="${build.dir}" loadFullRecord="${loadFullRecord}" />
   </target>
 </project>
