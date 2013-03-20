@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -73,9 +73,10 @@ public class EntrezPublicationsRetriever
     protected static final Logger LOG = Logger.getLogger(EntrezPublicationsRetriever.class);
     protected static final String ENDL = System.getProperty("line.separator");
     // full record (new)
+    // rettype=abstract or just leave it out
     protected static final String EFETCH_URL =
         "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?tool=flymine&db=pubmed"
-        + "&rettype=docsum&retmode=xml&id=";
+        + "&rettype=abstract&retmode=xml&id=";
     // summary
     protected static final String ESUMMARY_URL =
             "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?tool=flymine&db=pubmed&id=";
@@ -92,12 +93,13 @@ public class EntrezPublicationsRetriever
     private Map<String, Item> meshTerms = new HashMap<String, Item>();
 
     /**
-     * load full record or summary?
+     * Load summary version of Publication record by default. If this boolean (loadFullRecord)
+     * is true, load all data, eg. abstract, MeSH terms etc.
      *
-     * @param pubmedFormat summary or full
+     * @param fullRecord if TRUE load full record of publication.
      */
-    public void setPubmedFormat(String pubmedFormat) {
-        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("fullRecord")) {
+    public void setLoadFullRecord(String fullRecord) {
+        if ("true".equalsIgnoreCase(fullRecord)) {
             loadFullRecord = true;
         }
     }
@@ -130,6 +132,7 @@ public class EntrezPublicationsRetriever
      * Synchronize publications with pubmed using pmid
      * @throws Exception if an error occurs
      */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void execute() throws Exception {
         // Needed so that STAX can find it's implementation classes
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -286,6 +289,7 @@ public class EntrezPublicationsRetriever
     /**
      * Add a Map of pubication information to the Database
      */
+    @SuppressWarnings("rawtypes")
     private void addToDb(Transaction txn, Database db,
                          Map<String, Map<String, Object>> fromServerMap)
         throws IOException, DatabaseException {
@@ -308,6 +312,7 @@ public class EntrezPublicationsRetriever
      * @param os The ObjectStore to read from
      * @return a List of publications
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected List<Publication> getPublications(ObjectStore os) {
         Query q = new Query();
         QueryClass qc = new QueryClass(Publication.class);
@@ -330,7 +335,7 @@ public class EntrezPublicationsRetriever
 
         q.setConstraint(cs);
 
-        @SuppressWarnings("unchecked") List<Publication> retval = (List<Publication>) ((List) os
+        List<Publication> retval = (List<Publication>) ((List) os
                 .executeSingleton(q));
         return retval;
     }
@@ -347,6 +352,7 @@ public class EntrezPublicationsRetriever
         return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private Set<Item> mapToItems(ItemFactory itemFactory, Map map) {
         Set<Item> retSet = new HashSet<Item>();
         Item publication = itemFactory.makeItemForClass("Publication");
@@ -496,6 +502,7 @@ public class EntrezPublicationsRetriever
         /**
          * {@inheritDoc}
          */
+        @SuppressWarnings("unchecked")
         @Override
         public void endElement(String uri, String localName, String qName) {
             stack.pop();

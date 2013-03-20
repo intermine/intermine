@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -41,6 +41,8 @@ public abstract class StatusDictionary
                 ret = "Resource not found."; break;
             case Output.SC_OK:
                 ret = "OK"; break;
+            case Output.NOT_ACCEPTABLE:
+                ret = "NOT ACCEPTABLE"; break;
             default:
                 ret = "Unknown Status";
         }

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -79,6 +79,7 @@ public class GFF3Exporter implements Exporter
     // for comparison with path elements classes.
     private Set<String> cNames = new HashSet<String>();
     private boolean makeUcscCompatible = false;
+    private List<Path> paths = Collections.emptyList();
 
     /**
      * Constructor.
@@ -102,6 +103,35 @@ public class GFF3Exporter implements Exporter
         this.sourceName = sourceName;
         this.organisms = organisms;
         this.makeUcscCompatible = makeUcscCompatible;
+
+        for (String s : soClassNames.keySet()) {
+            this.cNames.add(s.toLowerCase());
+        }
+    }
+
+    /**
+     * Constructor.
+     * @param out output stream
+     * @param indexes index of column with exported sequence
+     * @param soClassNames mapping
+     * @param attributesNames names of attributes that are printed in record,
+     *  they are names of columns in results table, they are in the same order
+     *  as corresponding columns in results table
+     * @param sourceName name of Mine to put in GFF source column
+     * @param organisms taxon id of the organisms
+     * @param makeUcscCompatible true if chromosome ids should be prefixed by 'chr'
+     */
+    public GFF3Exporter(PrintWriter out, List<Integer> indexes, Map<String, String> soClassNames,
+            List<String> attributesNames, String sourceName, Set<Integer> organisms,
+            boolean makeUcscCompatible, List<Path> paths) {
+        this.out = out;
+        this.featureIndexes = indexes;
+        this.soClassNames = soClassNames;
+        this.attributesNames = attributesNames;
+        this.sourceName = sourceName;
+        this.organisms = organisms;
+        this.makeUcscCompatible = makeUcscCompatible;
+        this.paths = paths;
 
         for (String s : soClassNames.keySet()) {
             this.cNames.add(s.toLowerCase());
@@ -178,10 +208,9 @@ public class GFF3Exporter implements Exporter
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
-        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        export(resultIt, paths, paths);
     }
 
     /* State for the exportRow method, to allow several rows to be merged. */
@@ -217,7 +246,14 @@ public class GFF3Exporter implements Exporter
             // remove the last element in the list, it is a field
             pathList.remove(pathList.size() - 1);
             String lastClassPath = pathList.get(pathList.size() - 1).toStringNoConstraints();
-            Integer id = ((SequenceFeature) el.getObject()).getId();
+
+            Integer id = null;
+            try {
+                id = ((SequenceFeature) el.getObject()).getId();
+            } catch (Exception e) {
+                LOG.info("Object cannot be cast to SequenceFeature");
+                continue;
+            }
 
             idToResultElementMap.put(id, el);
 
@@ -260,6 +296,10 @@ public class GFF3Exporter implements Exporter
                     attributes = new LinkedHashMap<String, List<String>>();
                 }
 
+                // NB:
+                // processAttributes should run here for collection attributes, e.g. Gene.pathways.name,
+                // ticket: https://github.com/intermine/intermine/issues/218
+
                 lastLsfId = lsf.getId();
                 lastLsf = lsf;
                 lastLsfPath = re.getPath();
@@ -292,26 +332,32 @@ public class GFF3Exporter implements Exporter
                 continue;
             }
 
+            // Disable collection export until further bug diagnose
+            if (isCollection || el.getPath().containsCollections()) {
+              continue;
+            }
+            //---------------------------------------------------------------
             // checks for attributes:
-            if (isCollection && !el.getPath().containsCollections()) {
-                // one is collection, the other is not: do not show
-                continue;
-            }
-            if (!isCollection && el.getPath().containsCollections()
-                    && soClassNames.containsKey(el.getType())) {
-                // show attributes only if they are not linked to features
-                // (they will be displayed with the relevant one, see below)
-                continue;
-            }
-
-            if (isCollection && el.getPath().containsCollections()) {
-                // show only if of the same class
-                Class<?> reType = p.getLastClassDescriptor().getType();
-                Class<?> elType = el.getPath().getLastClassDescriptor().getType();
-                if (!reType.isAssignableFrom(elType)) {
-                    continue;
-                }
-            }
+//            if (isCollection && !el.getPath().containsCollections()) {
+//                // one is collection, the other is not: do not show
+//                continue;
+//            }
+//            if (!isCollection && el.getPath().containsCollections()
+//                    && soClassNames.containsKey(el.getType())) {
+//                // show attributes only if they are not linked to features
+//                // (they will be displayed with the relevant one, see below)
+//                continue;
+//            }
+//
+//            if (isCollection && el.getPath().containsCollections()) {
+//                // show only if of the same class
+//                Class<?> reType = p.getLastClassDescriptor().getType();
+//                Class<?> elType = el.getPath().getLastClassDescriptor().getType();
+//                if (!reType.isAssignableFrom(elType)) {
+//                    continue;
+//                }
+//            }
+            //---------------------------------------------------------------
 
             if ("location".equalsIgnoreCase(el.getPath()
                     .getLastClassDescriptor().getUnqualifiedName())) {
@@ -502,12 +548,11 @@ public class GFF3Exporter implements Exporter
 
         if (unionPathCollection.containsAll(newPathCollection)) {
             for (Path p : newPathCollection) {
-                ResultElement el = row.get(((List<Path>) unionPathCollection).indexOf(p));
-                if (el != null) {
-                    newRow.add(el);
-                } else {
-                    newRow.add(null);
+                ResultElement el = null;
+                if (!p.toString().endsWith(".id")) {
+                    el = row.get(((List<Path>) unionPathCollection).indexOf(p));
                 }
+                newRow.add(el);
             }
             return newRow;
         } else {

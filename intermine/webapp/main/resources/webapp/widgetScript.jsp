@@ -1,6 +1,6 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <script type="text/javascript">
-(function() {
+jQuery(document).ready(function() {
     var callbacks = {
         matchCb: function(id, type) {
             window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
@@ -24,5 +24,5 @@
         }
     };
     window.widgets.<tiles:getAsString name="style"/>('<tiles:getAsString name="widgetId"/>', '<tiles:getAsString name="bagName"/>', '#<tiles:getAsString name="widgetId"/>-widget', callbacks);
-})();
+});
 </script>

@@ -1,7 +1,7 @@
 package org.intermine.api.template;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.util.PathUtil;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.pathquery.Path;
@@ -34,7 +35,6 @@ import org.intermine.template.SwitchOffAbility;
 import org.intermine.template.TemplatePopulatorException;
 import org.intermine.template.TemplateQuery;
 import org.intermine.template.TemplateValue;
-import org.intermine.template.TemplateValue.ValueType;
 import org.intermine.util.DynamicUtil;
 
 
@@ -172,10 +172,16 @@ public final class TemplatePopulator
             throw new TemplatePopulatorException("Template must have exactly one editable "
                     + "constraint to be configured with a bag.");
         }
-
+        Set<String> allClasses = new HashSet<String>();
+        allClasses.add(bag.getType());
+        for (ClassDescriptor cld : bag.getClassDescriptors()) {            
+            allClasses.add(cld.getUnqualifiedName());
+        }
         PathConstraint constraint = template.getEditableConstraints().get(0);
         Path path = getPathOfClass(template, constraint.getPath());
-        if (!bag.isOfType(path.getLastClassDescriptor().getName())) {
+        ClassDescriptor cld = path.getLastClassDescriptor();
+        if (!cld.getUnqualifiedName().equals(bag.getType()) && 
+                !allClasses.contains(cld.getUnqualifiedName())) {
             throw new TemplatePopulatorException("The constraint of type "
                     + path.getNoConstraintsString()
                     + " can't be set to a bag (list) of type " + bag.getType()

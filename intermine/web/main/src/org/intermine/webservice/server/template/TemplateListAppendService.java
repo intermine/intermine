@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.webservice.server.template;
  */
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class TemplateListAppendService extends TemplateToListService
 
     @Override
     protected void generateListFromQuery(PathQuery pq,
-        String name, String description, List<String> tags,
+        String name, String description, Collection<String> tags,
         Profile profile) throws ObjectStoreException, PathException {
         Query q = MainHelper.makeQuery(
                 pq,
@@ -57,6 +58,10 @@ public class TemplateListAppendService extends TemplateToListService
                 new HashMap<String, BagQueryResult>());
 
         InterMineBag list = profile.getSavedBags().get(name);
+        if (list == null) {
+            throw new BadRequestException(
+                    "You do not have access to a list called '" + name + "'");
+        }
         try {
             list.addToBagFromQuery(q);
             try {

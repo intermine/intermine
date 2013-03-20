@@ -99,8 +99,8 @@ public class EmploymentPeriodHelperIntegrationTest {
                 }
 
                 EmploymentPeriod ep = new EmploymentPeriod();
-                ep.setStart(when.getTime());
-                ep.setEnd(then.getTime());
+                ep.setStartDate(when.getTime());
+                ep.setEndDate(then.getTime());
                 osw.store(ep);
                 
                 e.setEmploymentPeriod(ep);
@@ -191,7 +191,7 @@ public class EmploymentPeriodHelperIntegrationTest {
 
     protected void showEmployee(Employee e) {
         EmploymentPeriod ep = e.getEmploymentPeriod();
-        System.out.printf("%s (%s .. %s)\n", e.getName(), ep.getStart(), ep.getEnd());
+        System.out.printf("%s (%s .. %s)\n", e.getName(), ep.getStartDate(), ep.getEndDate());
     }
 
     @Test
@@ -248,7 +248,7 @@ public class EmploymentPeriodHelperIntegrationTest {
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStart(), emp.getEmploymentPeriod().getEnd());
+            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStartDate(), emp.getEmploymentPeriod().getEndDate());
             assertTrue(emp.getAge() >= 901);
             assertTrue(emp.getAge() <= 968);
         }
@@ -262,7 +262,7 @@ public class EmploymentPeriodHelperIntegrationTest {
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStart(), emp.getEmploymentPeriod().getEnd());
+            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStartDate(), emp.getEmploymentPeriod().getEndDate());
             assertTrue(emp.getAge() < 901 || emp.getAge() > 968);
         }
         assertEquals(EMP_COUNT - 68, res.size());
@@ -275,7 +275,7 @@ public class EmploymentPeriodHelperIntegrationTest {
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStart(), emp.getEmploymentPeriod().getEnd());
+            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStartDate(), emp.getEmploymentPeriod().getEndDate());
             //assertTrue(emp.getAge() < 901 || emp.getAge() > 968);
         }
         assertEquals(28, res.size());
@@ -288,7 +288,7 @@ public class EmploymentPeriodHelperIntegrationTest {
         for (Object row: res) {
             List<Object> l = (List<Object>) row;
             Employee emp = (Employee) l.get(0);
-            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStart(), emp.getEmploymentPeriod().getEnd());
+            System.out.printf("%s (%s .. %s)\n", emp.getName(), emp.getEmploymentPeriod().getStartDate(), emp.getEmploymentPeriod().getEndDate());
             //assertTrue(emp.getAge() < 901 || emp.getAge() > 968);
         }
         assertEquals(EMP_COUNT - 28, res.size());

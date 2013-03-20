@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,7 +21,8 @@ import java.util.Set;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.results.ResultElement;
+import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.model.GenomicRegion;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -30,11 +31,15 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.StringUtil;
+import org.intermine.web.logic.export.Exporter;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.webservice.server.Format;
+import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.lists.ListInput;
+import org.intermine.webservice.server.output.Formatter;
 import org.intermine.webservice.server.output.Output;
+import org.intermine.webservice.server.output.PlainFormatter;
 import org.intermine.webservice.server.output.StreamedOutput;
-import org.intermine.webservice.server.output.TabFormatter;
 
 /**
  * Base class for Biological region export services.
@@ -87,49 +92,81 @@ public abstract class AbstractRegionExportService extends GenomicRegionSearchSer
      * @param tempBag The bag to constrain this query on.
      * @return A path-query.
      */
-    protected PathQuery makePathQuery(String type, Collection<Integer> ids) {
+    protected PathQuery makePathQuery(String type, Collection<Integer> ids) throws Exception {
         PathQuery pq = new PathQuery(im.getModel());
         pq.addView(type + ".primaryIdentifier");
         pq.addConstraint(Constraints.inIds(type, ids));
+        checkPathQuery(pq);
         return pq;
     }
+
+    protected void checkPathQuery(PathQuery pq) throws Exception {
+        // No-op stub. Override to implement format checks.
+    }
+
+    protected abstract Exporter getExporter(PathQuery pq);
 
     /**
      * Method that carries out the logic for this exporter.
      * @param pq The pathquery.
      * @param profile A profile to lookup saved bags in.
      */
-    protected abstract void export(PathQuery pq, Profile profile);
+    protected void export(PathQuery pq, Profile profile) {
+        Exporter exporter = getExporter(pq);
+        ExportResultsIterator iter = null;
+        try {
+            PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
+            iter = executor.execute(pq, 0, WebServiceRequestParser.DEFAULT_MAX_COUNT);
+            iter.goFaster();
+            exporter.export(iter);
+        } finally {
+            if (iter != null) {
+                iter.releaseGoFaster();
+            }
+        }
+    }
 
     /**
      * The suffix for the file name.
      */
-    protected static String suffix;
+    protected abstract String getSuffix();
 
     @Override
     protected String getDefaultFileName() {
-        return "results" + StringUtil.uniqueString() + suffix;
+        return "results" + StringUtil.uniqueString() + getSuffix();
     }
 
-    protected PrintWriter pw;
-    protected OutputStream os;
+    private PrintWriter pw;
+    private OutputStream os;
+    
+    protected PrintWriter getPrintWriter() {
+        return pw;
+    }
+
+    protected OutputStream getOutputStream() {
+        return os;
+    }
+
+    protected abstract String getContentType();
+
+    protected Formatter getFormatter() {
+        return new PlainFormatter();
+    }
 
     @Override
     protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
         this.pw = out;
         this.os = os;
-        output = new StreamedOutput(out, new TabFormatter(), separator);
+        output = new StreamedOutput(out, getFormatter(), separator);
         if (isUncompressed()) {
-            ResponseUtil.setPlainTextHeader(response,
-                    getDefaultFileName());
+            ResponseUtil.setCustomTypeHeader(response, getDefaultFileName(), getContentType());
         }
         return output;
     }
 
     @Override
-    public int getFormat() {
-        return UNKNOWN_FORMAT;
+    public Format getDefaultFormat() {
+        return Format.UNKNOWN;
     }
-
 
 }

@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query.iql;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -319,7 +319,7 @@ public class IqlQuery
             StringBuffer retval = new StringBuffer();
             ObjectStoreBagCombination osbc = (ObjectStoreBagCombination) qn;
             boolean needComma = false;
-            for (ObjectStoreBag osb : osbc.getBags()) {
+            for (QuerySelectable osb : osbc.getBags()) {
                 if (needComma) {
                     switch(osbc.getOp()) {
                         case ObjectStoreBagCombination.UNION:

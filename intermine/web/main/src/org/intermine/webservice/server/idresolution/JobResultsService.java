@@ -64,19 +64,13 @@ public class JobResultsService extends JSONService
             doDuplicates(ret, job.getResult(), BagQueryResult.WILDCARD);
             doDuplicates(ret, job.getResult(), BagQueryResult.OTHER);
             doDuplicates(ret, job.getResult(), BagQueryResult.TYPE_CONVERTED);
-            
-            // also wildcards, conversions, other, unresolved.
-            output.addResultItem(Arrays.asList(new JSONObject(ret).toString()));
+
+            addResultItem(ret, false);
         } else {
             throw new ResourceNotFoundException("No such job");
         }
     }
-    
-    @Override
-    protected void cleanUp() {
-        Job.JOBS.remove(jobId);
-    }
-    
+
     private void doDuplicates(Map<String, Object> ret, BagQueryResult bqr, String key) {
         
         Map<String, Map<String, List>> issues = bqr.getIssues().get(key);
@@ -184,14 +178,10 @@ public class JobResultsService extends JSONService
         }
         return objectDetails;
     }
-    
-    @Override
-    protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = super.getHeaderAttributes();
-        attributes.put(JSONFormatter.KEY_INTRO, "\"results\":");
-        attributes.put(JSONFormatter.KEY_OUTRO, "");
-        return attributes;
-    }
 
+    @Override
+    protected String getResultsKey() {
+        return "results";
+    }
 
 }

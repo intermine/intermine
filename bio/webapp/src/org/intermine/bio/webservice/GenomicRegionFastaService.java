@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,16 +10,13 @@ package org.intermine.bio.webservice;
  *
  */
 
-import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.query.PathQueryExecutor;
-import org.intermine.api.results.ExportResultsIterator;
 import org.intermine.bio.web.export.SequenceExporter;
-import org.intermine.objectstore.ObjectStore;
+import org.intermine.bio.web.logic.SequenceFeatureExportUtil;
+import org.intermine.bio.web.logic.SequenceFeatureExportUtil.InvalidQueryException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.Exporter;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
 * A class for exposing the region search as a FASTA resource.
@@ -28,8 +25,7 @@ import org.intermine.webservice.server.exceptions.InternalErrorException;
 */
 public class GenomicRegionFastaService extends AbstractRegionExportService
 {
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GenomicRegionFastaService.class);
+
     protected static final String SUFFIX = ".fasta";
 
     /**
@@ -41,25 +37,26 @@ public class GenomicRegionFastaService extends AbstractRegionExportService
     }
 
     @Override
-    protected void export(PathQuery pq, Profile profile) {
-        int index = 0;
-        Exporter exporter;
+    protected String getContentType() {
+        return "text/x-fasta";
+    }
+
+    @Override
+    protected Exporter getExporter(PathQuery pq) {
+        return new SequenceExporter(im.getObjectStore(), getOutputStream(), 0, im.getClassKeys(), 0);
+    }
+
+    @Override
+    protected String getSuffix() {
+        return SUFFIX;
+    }
+
+    @Override
+    protected void checkPathQuery(PathQuery pq) throws Exception {
         try {
-            ObjectStore objStore = im.getObjectStore();
-            exporter = new SequenceExporter(objStore, os, index, im.getClassKeys(), 0);
-            ExportResultsIterator iter = null;
-            try {
-                PathQueryExecutor executor = this.im.getPathQueryExecutor(profile);
-                iter = executor.execute(pq);
-                iter.goFaster();
-                exporter.export(iter);
-            } finally {
-                if (iter != null) {
-                    iter.releaseGoFaster();
-                }
-            }
-        } catch (Exception e) {
-            throw new InternalErrorException("Service failed:" + e, e);
+            SequenceFeatureExportUtil.isValidFastaQuery(pq);
+        } catch (InvalidQueryException e) {
+            throw new BadRequestException(e.getMessage(), e);
         }
     }
 

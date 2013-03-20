@@ -1,5 +1,15 @@
 package org.intermine.bio.dataconversion;
 
+/*
+ * Copyright (C) 2002-2013 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
 import java.io.File;
 import java.io.Reader;
 import java.util.HashMap;
@@ -15,18 +25,6 @@ import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.xml.full.Item;
-
-/*
- * Copyright (C) 2002-2009 FlyMine
- *
- * This code may be freely distributed and modified under the
- * terms of the GNU Lesser General Public Licence.  This should
- * be distributed with the code.  See the LICENSE file for more
- * information or http://www.gnu.org/copyleft/lesser.html.
- *
- */
-
-
 
 /**
  * Read two identifier files fetched from Ensembl's BioMart. These map from Ensembl id to HGNC

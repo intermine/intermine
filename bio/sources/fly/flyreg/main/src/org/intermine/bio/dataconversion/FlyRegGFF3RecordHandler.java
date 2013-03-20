@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Item;
@@ -31,8 +33,8 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
 {
     private final Map<String, Item> pubmedIdMap = new HashMap<String, Item>();
     private final Map<String, Item> geneIdMap = new HashMap<String, Item>();
-    protected IdResolverFactory resolverFactory;
-    private static final String TAXON_ID = "7227";
+    private static final String TAXON_FLY = "7227";
+    protected IdResolver rslv;
 
     protected static final Logger LOG = Logger.getLogger(FlyRegGFF3RecordHandler.class);
 
@@ -42,8 +44,6 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
      */
     public FlyRegGFF3RecordHandler(Model tgtModel) {
         super(tgtModel);
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -51,6 +51,10 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
+
         getFeature().setClassName("TFBindingSite");
 
         Item bindingSite = getFeature();
@@ -131,15 +135,17 @@ public class FlyRegGFF3RecordHandler extends GFF3RecordHandler
     }
 
     private Item getGene(String symbol) {
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, symbol);
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
+        int resCount = rslv.countResolutions(TAXON_FLY, symbol);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + symbol + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, symbol));
+                     + rslv.resolveId(TAXON_FLY, symbol));
             return null;
         }
-        String primaryIdentifier = resolver.resolveId(TAXON_ID, symbol).iterator().next();
+        String primaryIdentifier = rslv.resolveId(TAXON_FLY, symbol).iterator().next();
         Item gene = geneIdMap.get(primaryIdentifier);
         if (gene == null) {
             gene = converter.createItem("Gene");

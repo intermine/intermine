@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -70,7 +70,7 @@ public class TemplateResultService extends QueryResultService
         template = templateManager.getUserOrGlobalTemplate(profile, input.getName());
         if (template == null) {
             throw new ResourceNotFoundException(
-                    "There is no public template called '" + input.getName() + "' in this mine.");
+                "You do not have access to a template called '" + input.getName() + "' in this mine.");
         }
 
         Map<String, List<TemplateValue>> templateValues;
@@ -97,10 +97,7 @@ public class TemplateResultService extends QueryResultService
         }
         setHeaderAttributes(populatedTemplate, input.getStart(), input.getMaxCount());
         if (populatedTemplate.isValid()) {
-            runPathQuery(populatedTemplate, input.getStart().intValue(),
-                    input.getMaxCount().intValue(),  populatedTemplate.getTitle(),
-                    populatedTemplate.getDescription(), input,
-                    getMineLinkURL(populatedTemplate, input), input.getLayout());
+            runPathQuery(populatedTemplate, input.getStart(), input.getMaxCount());
         } else {
             String msg = "Required data source (template) is outdated and is in conflict "
                 + "with model: " + populatedTemplate.verifyQuery();
@@ -110,86 +107,6 @@ public class TemplateResultService extends QueryResultService
 
     private TemplateResultInput getInput() {
         return new TemplateResultRequestParser(request).getInput();
-    }
-
-    private String getMineLinkURL(TemplateQuery template, TemplateResultInput input) {
-        String ret = new URLGenerator(request).getBaseURL();
-        ret += "/" + TemplateAction.TEMPLATE_ACTION_PATH;
-        ret += "?" + getQueryString(template, input);
-        ret += "&" + TemplateAction.SKIP_BUILDER_PARAMETER + "&"
-            + TemplateResultService.TYPE_PARAMETER + "=" + Scope.ALL;
-        return ret;
-    }
-
-    private String getQueryString(TemplateQuery template, TemplateResultInput input) {
-        String ret = "";
-        ret += TemplateResultService.NAME_PARAMETER + "=" + encode(input.getName()) + "&";
-        int i = 1;
-        for (PathConstraint con : template.getEditableConstraints()) {
-            ret += constraintToString(getCorrespondingInput(template, con, input), i);
-            i++;
-        }
-        return ret;
-    }
-
-    @Override
-    protected String getLinkPath(PathQuery pq, String format) {
-        if (!(pq instanceof TemplateQuery)) {
-            throw new IllegalArgumentException(
-                    "The template results service only handles "
-                    + "TemplateQuerys, I got: " + pq.getClass());
-        }
-        TemplateQuery template = (TemplateQuery) pq;
-        TemplateResultLinkGenerator linkGen = new TemplateResultLinkGenerator();
-        return linkGen.getLinkPath(template, format);
-    }
-
-    @Override
-    protected String getMineResultsLinkPath(PathQuery pq) {
-        if (!(pq instanceof TemplateQuery)) {
-            throw new IllegalArgumentException(
-                    "The template results service only handles "
-                    + "TemplateQuerys, I got: " + pq.getClass());
-        }
-        TemplateQuery template = (TemplateQuery) pq;
-        TemplateResultLinkGenerator linkGen = new TemplateResultLinkGenerator();
-        return linkGen.getMineResultsPath(template, false);
-    }
-
-    private ConstraintInput getCorrespondingInput(TemplateQuery template, PathConstraint con,
-            TemplateResultInput input) {
-        List<ConstraintInput> conInputs = input.getConstraints().get(con.getPath());
-        String code = template.getConstraints().get(con);
-        if (conInputs != null) {
-            if (conInputs.size() == 1) {
-                return conInputs.get(0);
-            } else {
-                for (ConstraintInput conInput : conInputs) {
-                    if (conInput.getCode().equals(code)) {
-                        return conInput;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private String constraintToString(ConstraintInput input, int index) {
-        String ret = "";
-
-        if (input != null) {
-            ret += encode("attributeOps(" + index + ")") + "=";
-            ret += encode(input.getConstraintOp().getIndex().toString()) + "&";
-
-            ret += encode("attributeValues(" + index + ")") + "=";
-            ret += encode(input.getValue()) + "&";
-
-            if (input.getExtraValue() != null) {
-                ret += encode("extraValues(" + index + ")") + "="
-                    + encode(input.getExtraValue()) + "&";
-            }
-        }
-        return ret;
     }
 
 }

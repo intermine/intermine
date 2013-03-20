@@ -1,4 +1,0 @@
-<project name="HuGE-tasks" default="default" basedir=".">
-  <description>build HuGE tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

@@ -1,5 +1,0 @@
-<project name="ensemblsnp" default="default" basedir=".">
-  <description>build, test, package ensemblsnp</description>
-  
-  <import file="../../../imbuild/source.xml"/>
-</project>

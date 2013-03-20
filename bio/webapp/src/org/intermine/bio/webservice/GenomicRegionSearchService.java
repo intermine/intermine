@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -135,6 +135,8 @@ public class GenomicRegionSearchService extends ListMakerService
                 throw new BadRequestException("Error parsing region search input");
             }
             throw new BadRequestException("Error parsing region search input: " + e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Could not read input: " + e.getMessage(), e);
         }
     }
 

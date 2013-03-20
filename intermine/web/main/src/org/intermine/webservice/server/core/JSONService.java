@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.core;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,7 @@ import java.util.Map;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.metadata.Model;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONArray;
@@ -49,7 +50,7 @@ public abstract class JSONService extends WebService
     }
 
     @Override
-    protected void initState() {
+    protected void postInit() {
         output.setHeaderAttributes(getHeaderAttributes());
     }
 
@@ -88,7 +89,7 @@ public abstract class JSONService extends WebService
      * @param mapping the mapping of things to output.
      * @param hasMore Whether there is more to come, and thus a comma is required.
      */
-    protected void addResultItem(Map<String, Object> mapping, boolean hasMore) {
+    protected void addResultItem(Map<String, ? extends Object> mapping, boolean hasMore) {
         JSONObject jo = new JSONObject(mapping);
         addResultItemInternal(jo, hasMore);
     }
@@ -117,7 +118,7 @@ public abstract class JSONService extends WebService
      * @param listing The list of things to output.
      * @param hasMore Whether there is more to come, and thus a comma is required.
      */
-    protected void addResultItem(List<Object> listing, boolean hasMore) {
+    protected void addResultItem(List<? extends Object> listing, boolean hasMore) {
         JSONArray ja = new JSONArray(listing);
         addResultItemInternal(ja, hasMore);
     }
@@ -132,11 +133,7 @@ public abstract class JSONService extends WebService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        if (hasCallback()) {
-            return WebService.JSONP_FORMAT;
-        } else {
-            return WebService.JSON_FORMAT;
-        }
+    protected Format getDefaultFormat() {
+        return Format.JSON;
     }
 }

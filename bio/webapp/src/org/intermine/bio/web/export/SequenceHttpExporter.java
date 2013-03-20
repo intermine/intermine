@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,6 +42,8 @@ import org.intermine.web.logic.session.SessionMethods;
 import org.intermine.web.struts.TableExportForm;
 
 /**
+ * Obsoleted - replaced by new results table
+ *
  * An implementation of TableExporter that exports sequence objects using the BioJava sequence and
  * feature writers.
  *

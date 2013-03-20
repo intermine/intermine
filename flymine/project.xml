@@ -579,8 +579,14 @@
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
+
     <source name="flymine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
+    </source>
+
+    <source name="update-data-sources" type="update-data-sources">
+      <property name="src.data.file" location="build/datasources.xml"/>
+      <property name="dataSourceFile" value="/micklem/data/uniprot/xrefs/current/dbxref.txt"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml"/>

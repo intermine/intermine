@@ -29,7 +29,7 @@ PATCHDIR=$LOADDIR/patches
 
 FTPURL=http://submit.modencode.org/submit/public
 PROPDIR=$HOME/.intermine
-SCRIPTDIR=../bio/scripts/modmine/
+SCRIPTDIR=../bio/scripts/modmine
 
 ARKDIR=/micklem/releases/modmine
 
@@ -73,7 +73,7 @@ P=               # no project declared
 
 # these are mutually exclusive
 # should be enforced
-INCR=y
+INCR=n
 FULL=n
 META=n           # it builds a new mine with static and metadata only
 RESTART=n        # restart building recovering last dumped db
@@ -85,13 +85,14 @@ function usage () {
 	cat <<EOF
 
 Usage:
-$progname [-F] [-M] [-R] [-V] [-P] [-T] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DCCid
+$progname [-F] [-M] [-R] [-V] [-P] [-L] [-I] [-f file_name] [-g] [-i] [-r release] [-s] [-v] DCCid
 	-F: full (modmine) rebuild (Uses modmine-build as default)
 	-M: test build (metadata only)
 	-R: restart full build after failure
 	-V: validation mode: all new entries,one at the time (Uses modmine-val as default)
-  -P project_name: as -M, but restricted to a project.
-  -L list of projects: as -M, but using a (comma separated) list of projects.
+    -P project_name: as -M, but restricted to a project.
+    -L list of projects: as -M, but using a (comma separated) list of projects.
+    -I: do an incremental build (add modENCODE data to existing mine).
 	-f file_name: using a given list of submissions
 	-g: no checking of ftp directory (wget is not run)
 	-i: interactive mode
@@ -120,8 +121,10 @@ Parameters: you can process
 Notes: The file is downloaded only if not present or the remote copy
 			 is newer or has a different size.
  
-       If no uppercase switch is used (V, M, F, R), the submissions found in the relevant chado
+       With the -I switch is used, the submissions found in the relevant chado
        (default modchado-dev) are ADDED to the relevant modmine (default: modmine-dev)
+       
+       If no uppercase switch is used (V, M, F, R, P, L, I), the local project.xml is used.
 
 examples:
 
@@ -142,17 +145,18 @@ EOF
 
 echo
 
-while getopts ":FMRQVP:L:abf:gipr:stvwx" opt; do
+while getopts ":FMRQVP:L:Iabf:gipr:stvwx" opt; do
 	case $opt in
 
 #	F )  echo; echo "Full modMine realease"; FULL=y; BUP=y; INCR=n; REL=build;;
-	F )  echo "- Full modMine realease"; FULL=y; INCR=n; REL=build;;
-	M )  echo "- Test build (metadata only)"; META=y; INCR=n;;
-	R )  echo "- Restart full realease"; RESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
-	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; INCR=n; STAG=n; WGET=n; BUP=n; REL=build;;
-	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; INCR=n; BUP=n; REL=val;;
-	P )  P=$OPTARG; META=y; INCR=n; P="`echo $P|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with project $P";;
-	L )  L=$OPTARG; META=y; INCR=n; L="`echo $L|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with projects $L";;
+	F )  echo "- Full modMine realease"; FULL=y; REL=build;;
+	M )  echo "- Test build (metadata only)"; META=y;;
+	R )  echo "- Restart full realease"; RESTART=y; FULL=y; STAG=n; WGET=n; BUP=n; REL=build;;
+	Q )  echo "- Quick restart full realease"; QRESTART=y; FULL=y; STAG=n; WGET=n; BUP=n; REL=build;;
+	V )  echo "- Validating submission(s) in $DATADIR/new"; VALIDATING=y; META=y; BUP=n; REL=val;;
+	P )  P=$OPTARG; META=y; P="`echo $P|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with project $P";;
+	L )  L=$OPTARG; META=y; L="`echo $L|tr '[A-Z]' '[a-z]'`"; echo "- Test build (metadata only) with projects $L";;
+	I )  echo "- Incremental build (modENCODE data is added to existing mine)"; INCR=y;;
 	a )  echo "- Append data in chado" ; CHADOAPPEND=y;;
 	b )  echo "- Don't build a back-up of the database." ; BUP=n;;
 	p )  echo "- prepare directories for full realease and update all sources (get_all_modmine is run)" ; PREP4FULL=y;;
@@ -197,7 +201,6 @@ fi
 #***
 LOG="$LOGDIR/$USER.$REL.$P"`date "+%y%m%d.%H%M"`  # timestamp of stag operations + error log
 
-#SOURCES=cdna-clone,modmine-static,modencode-"$P"metadata
 if [ -n "$P" ]
 then
 SOURCES=modmine-static,modencode-"$P"-metadata
@@ -214,7 +217,9 @@ IFS=$'\t\n'
 else
 #SOURCES=entrez-organism,modmine-static,modencode-metadata,fly-expression-score
 #SOURCES=chado-db-wormbase-c_elegans,wormbase-c_elegans-chromosome-fasta,modmine-static,modencode-metadata
-SOURCES=modmine-static,modencode-metadata
+SOURCES=chado-db-wormbase-c_elegans,modmine-static,modencode-metadata,worm-expression-score
+#SOURCES=modmine-static,modencode-metadata,worm-expression-score
+#SOURCES=modmine-static,modencode-metadata
 #SOURCES=modencode-metadata,worm-network
 fi
 
@@ -931,6 +936,7 @@ setProjectFile
 # 
 # fi
 
+cd $MINEDIR
 
 if [ "$STAG" = "y" ]
 then

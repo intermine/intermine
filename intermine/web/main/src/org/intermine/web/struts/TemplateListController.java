@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -69,7 +69,9 @@ public class TemplateListController extends TilesAction
         Set<String> allClasses = new HashSet<String>();
         if (StringUtils.equals(Scope.GLOBAL, scope)) {
             if (interMineIdBag != null) {
-                allClasses.add(interMineIdBag.getType());
+                for (ClassDescriptor cld : interMineIdBag.getClassDescriptors()) {
+                    allClasses.add(cld.getUnqualifiedName());
+                }
                 templates = templateManager.getReportPageTemplatesForAspect(aspect, allClasses);
             } else if (object != null) {
                 ClassDescriptor thisCld = model.getClassDescriptorByName(DynamicUtil

@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -86,9 +86,10 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
 
     private void doComparison(PathQuery pathQuery, String resource) {
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(pathQuery, false);
-        String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__");
+        String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
+        String got = cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
 
-        assertEquals(expected, cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__"));
+        assertEquals(expected, got);
     }
 
     private void doPrivateComparison(String xml, String resource) {
@@ -193,10 +194,11 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
      * This method tests when a path query has one view.
      *
      * Test PathQuery:
-     * <query name="" model="genomic" view="Gene.primaryIdentifier"
+     * <pre>
+     *  &lt;query name="" model="genomic" view="Gene.primaryIdentifier"
      *   sortOrder="Gene.primaryIdentifier asc">
-     * </query>
-     * @throws IOException
+     *  &lt;/query>
+     * </pre>
      *
      */
     public void testPathQueryCodeGenerationWithOneView() {
@@ -210,10 +212,11 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
      * This method tests when a path query has no constraints and more than one view.
      *
      * Test PathQuery:
-     * <query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier
+     * <pre>
+     *  &lt;query name="" model="genomic" view="Gene.primaryIdentifier Gene.secondaryIdentifier
      *   Gene.symbol Gene.name Gene.organism.shortName" sortOrder="Gene.primaryIdentifier asc">
-     * </query>
-     *
+     *  &lt;/query>
+     * </pre>
      */
     public void testPathQueryCodeGenerationWithNoConstraints() {
         String queryXml = "<query name=\"\" model=\"genomic\" view=\"Gene.primaryIdentifier " +
@@ -672,8 +675,8 @@ public class WebserviceJavaCodeGeneratorTest extends TestCase
 
     private void doTemplateComparison(TemplateQuery templateQuery, String resource) {
         WebserviceCodeGenInfo wsCodeGenInfo = getGenInfo(templateQuery);
-        String expected = readExpected(resource);
-        assertEquals(expected, cg.generate(wsCodeGenInfo));
+        String expected = readExpected(resource).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim();
+        assertEquals(expected, cg.generate(wsCodeGenInfo).replaceAll(DATE_PATTERN, "__SOME-DATE__").trim());
     }
 
     /**

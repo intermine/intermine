@@ -702,14 +702,14 @@
      <reportdisplayer javaClass="org.intermine.bio.web.displayer.FlyBaseExpressionDisplayer"
                      jspName="model/flybaseExpressionDisplayer.jsp"
                      replacesFields="rnaSeqResults"
-                     placement="summary"
+                     placement="Expression"
                      types="Gene"/>
 
      <reportdisplayer javaClass="org.intermine.bio.web.displayer.PathwayDescriptionDisplayer"
                      jspName="model/pathwayDescriptionDisplayer.jsp"
                      showImmediately="true"
                      replacesFields="description"
-                     placement="top"
+                     placement="summary"
                      types="Pathway"/>
 
   </reportdisplayers>
@@ -724,8 +724,8 @@
                       domainLabel="Chromosome"
                       filterLabel="Organism"
                       filters="organism.name=[list]"
-                      startClass="Gene"
-                      typeClass="Gene"
+                      startClass="SequenceFeature"
+                      typeClass="SequenceFeature"
                       categoryPath="chromosome.primaryIdentifier"
                       seriesLabels="Actual,Expected"
                       seriesPath="ActualExpectedCriteria"
@@ -781,6 +781,21 @@
                       constraints="mRNAExpressionResults.dataSet.name=fly-Fish data set"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name,
                              mRNAExpressionResults.stageRange,mRNAExpressionResults.expressed"/>
+                             
+<!--       <graphdisplayer id="mouse_human_orthologue_pair"
+                      title="Mouse-human orthologue pair"
+                      description="dots would be where there is a mouse-human orthologue pair "
+                      graphType="ScatterChart"
+                      domainLabel="Chromosome location for humans"
+                      rangeLabel="Chromosome location for mouses"
+                      startClass="Gene"
+                      typeClass="Gene"
+                      categoryPath="organism.name"
+                      seriesPath="homologues.homologue.organism.name"
+                      seriesValues=""
+                      seriesLabels=""
+                      constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
+                      views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>        -->                      
 
       <graphdisplayer id="bdgp"
                       title="BDGP expression patterns"
@@ -855,7 +870,8 @@
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        goAnnotation.ontologyTerm.identifier, goAnnotation.ontologyTerm.name,
                                        goAnnotation.ontologyTerm.parents.identifier,goAnnotation.ontologyTerm.parents.name"
-                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="/>
+                                 externalLink="http://amigo.geneontology.org/cgi-bin/amigo/term_details?term="
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_gene"
                                  title="Protein Domain Enrichment"
@@ -869,7 +885,8 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier,symbol,primaryIdentifier,organism.name,
                                        proteins.proteinDomains.primaryIdentifier,proteins.proteinDomains.name"
-                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="/>
+                                 externalLink="http://www.ebi.ac.uk/interpro/IEntry?ac="
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="prot_dom_enrichment_for_protein"
                                  title="Protein Domain Enrichment"
@@ -897,7 +914,8 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier, symbol, organism.name, mRNAExpressionResults.stageRange,
                                         mRNAExpressionResults.mRNAExpressionTerms.name, mRNAExpressionResults.dataSet.name"
-                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"/>
+                                 constraintsForView="mRNAExpressionResults.expressed = true, mRNAExpressionResults.dataSet.name = BDGP in situ data set"
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
       <enrichmentwidgetdisplayer id="publication_enrichment"
                                  title="Publication Enrichment"
@@ -912,7 +930,8 @@
                                  views="secondaryIdentifier, symbol, organism.name,
                                        publications.title, publications.firstAuthor,
                                        publications.journal, publications.year, publications.pubMedId"
-                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="/>
+                                 externalLink="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;dopt=Abstract&amp;list_uids="
+                                 correctionCoefficient="org.intermine.bio.web.widget.GeneLenghtCorrectionCoefficient"/>
 
 
       <enrichmentwidgetdisplayer id="pathway_enrichment"
@@ -929,12 +948,12 @@
                                  typeClass="Gene"
                                  views="secondaryIdentifier, symbol, organism.name, pathways.identifier, pathways.name, pathways.dataSets.name"/>
 
-      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type=orthologue].homologue.organism"
-                         description="Counts of orthologues for the genes in this list."
+      <bagtabledisplayer id="orthologues" title="Orthologues" pathStrings="Gene.homologues[type!=paralogue].homologue.organism"
+                         description="Counts of genes in list with orthologues."
                          displayFields="name"
                          exportField="primaryIdentifier"
                          typeClass="Gene"
-                         columnTitle="Orthologues"
+                         columnTitle="Genes"
                          views="secondaryIdentifier, symbol, organism.shortName,
                                 homologues.homologue.primaryIdentifier,
                                 homologues.homologue.symbol,

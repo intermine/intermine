@@ -106,12 +106,19 @@
           facet = jQuery("#"+id).val();
         }
 
-        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: span_uuid_string, createList: "true", criteria: criteria, facet: facet }, function(bagName){
-            // window.location.href = "/" + webapp_path + "/bagDetails.do?bagName=" + bagName;
-            window.open(
-                "/" + webapp_path + "/bagDetails.do?bagName=" + bagName,
-                '_blank' // <- This is what makes it open in a new window.
-                );
+        jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: span_uuid_string, getFeatureCount: "true", criteria: criteria, facet: facet }, function(count){
+          var feature_count = parseInt(count);
+          if (feature_count >= 100000) {
+            alert("It is not allowed to create a list with 100,000+ genomic features...");
+          } else {
+              jQuery.post("genomicRegionSearchAjax.do", { spanUUIDString: span_uuid_string, createList: "true", criteria: criteria, facet: facet }, function(bagName){
+                  // window.location.href = "/" + webapp_path + "/bagDetails.do?bagName=" + bagName;
+                  window.open(
+                      "/" + webapp_path + "/bagDetails.do?bagName=" + bagName,
+                      '_blank' // <- This is what makes it open in a new window.
+                      );
+              }, "text");
+          }
         }, "text");
     }
 

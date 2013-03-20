@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +45,9 @@ import org.intermine.web.search.KeywordSearch;
 import org.intermine.web.search.KeywordSearchFacetData;
 import org.intermine.web.search.KeywordSearchHit;
 import org.intermine.web.search.KeywordSearchResult;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.browseengine.bobo.api.BrowseHit;
 import com.browseengine.bobo.api.BrowseResult;
@@ -115,10 +118,11 @@ public class KeywordSearchResultsController extends TilesAction
         Vector<KeywordSearchResult> searchResultsParsed = new Vector<KeywordSearchResult>();
         Vector<KeywordSearchFacet> searchResultsFacets = new Vector<KeywordSearchFacet>();
         Set<Integer> objectIds = new HashSet<Integer>();
+
         if (result != null) {
             totalHits = result.getNumHits();
             LOG.debug("Browse found " + result.getNumHits() + " hits");
-            BrowseHit[] browseHits = result.getHits();
+            BrowseHit[] browseHits = result.getHits();            
             objectIds = KeywordSearch.getObjectIds(browseHits);
             Map<Integer, InterMineObject> objMap = KeywordSearch.getObjects(im, objectIds);
             Vector<KeywordSearchHit> searchHits = KeywordSearch.getSearchHits(browseHits, objMap);
@@ -140,12 +144,16 @@ public class KeywordSearchResultsController extends TilesAction
         request.setAttribute("searchTerm", searchTerm);
         request.setAttribute("searchBag", searchBag);
         request.setAttribute("searchFacetValues", facetValues);
-
+        
+        // used for re-running the search in case of creating a list for ALL results
+        request.setAttribute("jsonFacets", javaMapToJSON(facetValues));
+        
         context.putAttribute("searchResults", request.getAttribute("searchResults"));
         context.putAttribute("searchTerm", request.getAttribute("searchTerm"));
         context.putAttribute("searchBag", request.getAttribute("searchBag"));
         context.putAttribute("searchFacetValues", request.getAttribute("searchFacetValues"));
-
+        context.putAttribute("jsonFacets", request.getAttribute("jsonFacets"));
+        
         // pagination
         context.putAttribute("searchOffset", new Integer(offset));
         context.putAttribute("searchPerPage", new Integer(KeywordSearch.PER_PAGE));
@@ -267,5 +275,18 @@ public class KeywordSearchResultsController extends TilesAction
             }
             LOG.info("Logging searches to: " + logFileName);
         }
+    }
+    
+    private JSONObject javaMapToJSON(Map<String, String> facets) throws JSONException {
+        JSONObject jo = new JSONObject();
+        JSONArray ja = new JSONArray();
+        for (Map.Entry<String, String> entry : facets.entrySet()) {
+            JSONObject facet = new JSONObject();
+            facet.put("facetName", entry.getKey());
+            facet.put("facetValue", entry.getValue());
+            ja.put(facet);
+        }
+        jo.put("facets", ja);
+        return jo;
     }
 }

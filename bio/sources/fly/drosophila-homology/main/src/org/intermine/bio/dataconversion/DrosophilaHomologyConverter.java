@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.intermine.bio.util.OrganismData;
-import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
@@ -35,11 +33,10 @@ public class DrosophilaHomologyConverter extends BioFileConverter
 {
     private Item pub, evidence;
     private Map<String, String> genes = new HashMap<String, String>();
-    protected IdResolverFactory resolverFactory;
     protected static final Logger LOG = Logger.getLogger(DrosophilaHomologyConverter.class);
-    private OrganismRepository or;
     private static final String EVIDENCE_CODE_ABBR = "AA";
     private static final String EVIDENCE_CODE_NAME = "Amino acid sequence comparison";
+
 
     /**
      * Constructor
@@ -63,15 +60,14 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         evidence.setReference("evidenceCode", evidenceCode);
         evidence.addToCollection("publications", pub);
         store(evidence);
-        or = OrganismRepository.getOrganismRepository();
     }
-
-
+    
     /**
      * Read each line from flat file, create genes and synonyms.
      *
      * {@inheritDoc}
      */
+    @Override
     public void process(Reader reader) throws Exception {
         Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
         while (lineIter.hasNext()) {
@@ -80,17 +76,22 @@ public class DrosophilaHomologyConverter extends BioFileConverter
                 continue;
             }
             String geneIdentifier = line[0];
-            String geneOrganismRefId = parseSymbol(line[1]);
+            // String geneOrganismRefId = getOrganism("7227");
             String homologue = line[5];
-            String homoOrganismRefId = parseSymbol(line[6]);
-            createHomologue(getGene(geneIdentifier, geneOrganismRefId),
-                            getGene(homologue, homoOrganismRefId));
-            createHomologue(getGene(homologue, homoOrganismRefId),
-                    getGene(geneIdentifier, geneOrganismRefId));
+            //String homoOrganismRefId = parseSymbol(line[6]);
+            // NULL if not a fly of interest 
+            
+            String gene1 = getGene(geneIdentifier);
+            String gene2 = getGene(homologue);
+            
+            if (gene1 != null && gene2 != null) {
+                createHomologue(gene1, gene2);
+                createHomologue(gene2, gene1);
+            }
+            
         }
     }
 
-    // create and store a Homologue with identifiers of Gene items
     private void createHomologue(String gene, String homGene)
         throws ObjectStoreException {
         // if no genes created then ids could not be resolved, don't create a homologue
@@ -105,7 +106,7 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         store(homologue);
     }
 
-    private String getGene(String identifier, String organismRefId)
+    private String getGene(String identifier)
         throws ObjectStoreException {
         String geneRefId = genes.get(identifier);
         if (geneRefId != null) {
@@ -113,19 +114,9 @@ public class DrosophilaHomologyConverter extends BioFileConverter
         }
         Item item = createItem("Gene");
         item.setAttribute("primaryIdentifier", identifier);
-        item.setReference("organism", organismRefId);
         geneRefId = item.getIdentifier();
         genes.put(identifier, geneRefId);
         store(item);
         return geneRefId;
-    }
-
-    private String parseSymbol(String symbol)  {
-        if (!symbol.contains("\\")) {
-            return getOrganism("7227");
-        }
-        String[] bits = symbol.split("\\\\");
-        OrganismData od = or.getOrganismDataByAbbreviation(bits[0]);
-        return getOrganism(String.valueOf(od.getTaxonId()));
     }
 }

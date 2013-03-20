@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -36,12 +38,12 @@ public class AffyProbesConverter extends BioFileConverter
     protected String dataSource, dataSet;
     private String orgRefId;
     protected Map<String, String> bioentities = new HashMap<String, String>();
-    protected IdResolverFactory resolverFactory;
-    private static final String TAXON_ID = "7227";
+    private static final String TAXON_FLY = "7227";
     private static final String DATASET_PREFIX = "Affymetrix array: ";
     private Map<String, String> chromosomes = new HashMap<String, String>();
     private Map<String, ProbeSetHolder> holders = new HashMap<String, ProbeSetHolder>();
     private List<Item> delayedItems = new LinkedList<Item>();
+    protected IdResolver rslv;
 
     /**
      * Constructor
@@ -54,10 +56,7 @@ public class AffyProbesConverter extends BioFileConverter
         super(writer, model, null, null);
 
         dataSource = getDataSource("Ensembl");
-        orgRefId = getOrganism(TAXON_ID);
-
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
+        orgRefId = getOrganism(TAXON_FLY);
     }
 
     /**
@@ -68,6 +67,9 @@ public class AffyProbesConverter extends BioFileConverter
     @Override
     public void process(Reader reader)
         throws Exception {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
 
         Iterator<String[]> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
@@ -213,16 +215,18 @@ public class AffyProbesConverter extends BioFileConverter
 
     private String createGene(String id)
         throws ObjectStoreException {
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
         String identifier = id;
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, identifier);
+        int resCount = rslv.countResolutions(TAXON_FLY, identifier);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + identifier + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, identifier));
+                     + rslv.resolveId(TAXON_FLY, identifier));
             return null;
         }
-        identifier = resolver.resolveId(TAXON_ID, identifier).iterator().next();
+        identifier = rslv.resolveId(TAXON_FLY, identifier).iterator().next();
         return createBioentity("Gene", identifier, null);
     }
 

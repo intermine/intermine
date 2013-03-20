@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,54 +10,20 @@ package org.intermine.bio.webservice;
  *
  */
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.WebService;
 
 /**
  * A servlet to hand off to the GFF3-query-service.
  * @author Alex Kalderimis.
  *
  */
-public class GFF3QueryServlet extends HttpServlet
+public class GFF3QueryServlet extends BioExportServlet
 {
-    private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final Logger LOG = Logger.getLogger(GFF3QueryServlet.class);
+    private static final long serialVersionUID = 4561011192947331380L;
 
-    /**
-     * {@inheritDoc}}
-     */
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        runService(request, response);
-    }
-
-    /**
-     * {@inheritDoc}}
-     */
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-        throws ServletException, IOException {
-        runService(req, resp);
-    }
-
-    private void runService(HttpServletRequest request,
-            HttpServletResponse response) {
-        // To avoid servlet caching always new service is created -->
-        // Service has always new data and fields in executor are initialized
-        // according new data
-        // and not remember fields initialized according previous request data
-        final InterMineAPI im = SessionMethods.getInterMineAPI(request.getSession());
-        new GFFQueryService(im).service(request, response);
+    protected WebService getService() {
+        return new GFFQueryService(api);
     }
 }

@@ -105,8 +105,9 @@ jQuery(document).ready(function() {
 
 if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     // Set up the service, if required.
+    var root = window.location.protocol + "//" + window.location.host + "/${WEB_PROPERTIES['webapp.path']}";
     $SERVICE = new intermine.Service({
-        "root": "${WEB_PROPERTIES['webapp.baseurl']}/${WEB_PROPERTIES['webapp.path']}",
+        "root": root,
         "token": "${PROFILE.dayToken}",
         "help": "${WEB_PROPERTIES['feedback.destination']}"
     });
@@ -114,6 +115,13 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     $SERVICE.fetchVersion().fail(notification.render).done(function(v) {
         console.log("Webservice is at version " + v);
     });
+    if (intermine.widgets != null) {
+        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
+    }
+    var ua = jQuery.browser; // kinda evil, but best way to do this for now
+    if (ua.msie && parseInt(ua.version, 10) < 9) {
+        new Notification({message: '<fmt:message key="old.browser"/>'}).render();
+    }
 }
 
 $MODEL_TRANSLATION_TABLE = {
