@@ -89,21 +89,18 @@ public class EntrezPublicationsRetriever
     private Map<String, Item> authorMap = new HashMap<String, Item>();
     private String cacheDirName;
     private ItemFactory itemFactory;
-    private boolean loadFullRecord = true;
+    private boolean loadFullRecord = false;
     private Map<String, Item> meshTerms = new HashMap<String, Item>();
 
     /**
-     * load full record or summary?
+     * Load summary version of Publication record by default. If this boolean (loadFullRecord)
+     * is true, load all data, eg. abstract, MeSH terms etc.
      *
-     * @param pubmedFormat summary or full
+     * @param fullRecord if TRUE load full record of publication.
      */
-    public void setPubmedFormat(String pubmedFormat) {
-        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("fullRecord")) {
+    public void setLoadFullRecord(String fullRecord) {
+        if ("true".equalsIgnoreCase(fullRecord)) {
             loadFullRecord = true;
-        }
-
-        if (StringUtils.isNotEmpty(pubmedFormat) && pubmedFormat.startsWith("summary")) {
-            loadFullRecord = false;
         }
     }
 
