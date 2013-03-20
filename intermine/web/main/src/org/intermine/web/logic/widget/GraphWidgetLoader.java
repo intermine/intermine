@@ -30,6 +30,8 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -208,8 +210,13 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
                 qfConstraint = new QueryField(qc, pathConstraintSplitted[index]);
                 if (queryValue != null) {
                     if (!"null".equalsIgnoreCase(queryValue.getValue().toString())) {
-                        cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
-                                                          queryValue));
+                        QueryEvaluable qe = null;
+                        if (isFilterConstraint || queryValue.getValue() instanceof Boolean) {
+                            qe = qfConstraint;
+                        } else {
+                            qe = new QueryExpression(QueryExpression.LOWER, qfConstraint);
+                        }
+                        cs.addConstraint(new SimpleConstraint(qe, pc.getOp(), queryValue));
                     } else {
                         ConstraintOp op = (pc.getOp().equals(ConstraintOp.EQUALS))
                                           ? ConstraintOp.IS_NULL

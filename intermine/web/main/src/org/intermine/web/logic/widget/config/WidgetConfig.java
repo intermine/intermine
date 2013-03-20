@@ -260,6 +260,9 @@ public abstract class WidgetConfig
                     value = splitConstraint[1];
                 }
             }
+            if (!value.contains("[") && !path.contains("]")) {
+                value = value.toLowerCase();
+            }
             pathConstraints.add(new PathConstraintAttribute(path, op, value));
         }
     }
