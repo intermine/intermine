@@ -13,8 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.biojava.bio.Annotation;
-import org.biojava.bio.seq.Sequence;
+import org.biojava3.core.sequence.ProteinSequence;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -38,14 +37,12 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      * {@inheritDoc}
      */
     @Override
-    protected void extraProcessing(Sequence bioJavaSequence,
+    protected void extraProcessing(ProteinSequence bioJavaSequence,
             org.intermine.model.bio.Sequence flymineSequence,
             BioEntity bioEntity, Organism organism, DataSet dataSet)
         throws ObjectStoreException {
-        Annotation annotation = bioJavaSequence.getAnnotation();
-        String header = (String) annotation.getProperty("description");
+        String header = bioJavaSequence.getOriginalHeader();
         String mrnaIdentifier = getMRNAIdentifier(header);
-
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
         if (model.hasClassDescriptor(model.getPackageName() + ".CDS")) {
@@ -73,10 +70,8 @@ public class FlyBaseCDSFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      * {@inheritDoc}
      */
     @Override
-    protected String getIdentifier(Sequence bioJavaSequence) {
-        Annotation annotation = bioJavaSequence.getAnnotation();
-        String header = (String) annotation.getProperty("description");
-
+    protected String getIdentifier(ProteinSequence bioJavaSequence) {
+        String header = bioJavaSequence.getOriginalHeader();        
         final String regexp = ".*FlyBase_Annotation_IDs:([^, =;]+).*";
         Pattern p = Pattern.compile(regexp);
         Matcher m = p.matcher(header);
