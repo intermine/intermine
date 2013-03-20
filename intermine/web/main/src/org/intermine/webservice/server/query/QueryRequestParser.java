@@ -12,9 +12,15 @@ package org.intermine.webservice.server.query;
 
 import java.io.UnsupportedEncodingException;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
@@ -28,6 +34,7 @@ import org.intermine.webservice.server.exceptions.BadRequestException;
  **/
 public class QueryRequestParser extends WebServiceRequestParser
 {
+    private static Logger logger = Logger.getLogger(QueryRequestParser.class);
 
     protected HttpServletRequest request;
 
@@ -40,6 +47,12 @@ public class QueryRequestParser extends WebServiceRequestParser
     }
 
     private static final String QUERY_PARAMETER = "query";
+
+    /**
+     * The query parameter for queries passed as a
+     * lzw compressed string.
+     */
+    private static final String QLZW_PARAMETER = "qlzw";
 
     /**
      * Function for dealing with encoding issues with various
@@ -101,12 +114,65 @@ public class QueryRequestParser extends WebServiceRequestParser
     }
 
     /**
+     * Decompress a list of output ks to a string.
+     *
+     * Gratefully nicked from Stack-Overflow.
+     **/
+    public static String decompressLZW(List<Integer> compressed) {
+        // Build the dictionary.
+        int dictSize = 256;
+        Map<Integer,String> dictionary = new HashMap<Integer,String>();
+        for (int i = 0; i < 256; i++)
+            dictionary.put(i, "" + (char)i);
+ 
+        String w = "" + (char)(int)compressed.remove(0);
+        String result = w;
+        for (int k : compressed) {
+            String entry;
+            if (dictionary.containsKey(k))
+                entry = dictionary.get(k);
+            else if (k == dictSize)
+                entry = w + w.charAt(0);
+            else
+                throw new IllegalArgumentException("Bad compressed k: " + k);
+ 
+            result += entry;
+ 
+            // Add w+entry[0] to the dictionary.
+            dictionary.put(dictSize++, w + entry.charAt(0));
+ 
+            w = entry;
+        }
+        return result;
+    }
+
+    /**
+     * Take in a LZW encoded string and return a decoded plain-text string.
+     */
+    public static String decodeLZWString(String encoded) {
+        List<Integer> codes = new ArrayList<Integer>();
+        encoded = fixEncoding(encoded);
+        int length = encoded.length();
+        for (int i = 0; i < length; i++) {
+            Integer cp = Integer.valueOf(encoded.codePointAt(i));
+            codes.add(cp);
+        }
+        return decompressLZW(codes);
+    }
+
+    /**
      * Get query XML from a request.
      * @param req The request to get the XML from.
      * @return The XML string version of the query, in the correct encoding.
      */
     public static String getQueryXml(HttpServletRequest req) {
-        String xmlQuery = req.getParameter(QUERY_PARAMETER);
+        String xmlQuery, lzwQuery;
+        lzwQuery = req.getParameter(QLZW_PARAMETER);
+        if (StringUtils.isNotBlank(lzwQuery)) {
+            xmlQuery = decodeLZWString(lzwQuery);
+        } else {
+            xmlQuery = req.getParameter(QUERY_PARAMETER);
+        }
         if (StringUtils.isBlank(xmlQuery)) {
             throw new BadRequestException("The 'query' parameter must not be blank");
         }
