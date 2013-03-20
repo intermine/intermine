@@ -10,10 +10,8 @@ package org.intermine.bio.dataconversion;
  *
  */
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +20,8 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.biojava.bio.BioException;
-import org.biojava.bio.seq.Sequence;
-import org.biojava.bio.seq.SequenceIterator;
-import org.biojava.bio.seq.io.SeqIOTools;
+import org.biojava3.core.sequence.ProteinSequence;
+import org.biojava3.core.sequence.io.FastaReaderHelper;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.model.InterMineObject;
@@ -49,7 +45,6 @@ import org.intermine.util.Util;
 public class FastaLoaderTask extends FileDirectDataLoaderTask
 {
     private static final Logger LOG = Logger.getLogger(FastaLoaderTask.class);
-
     private String sequenceType = "dna";
     private String classAttribute = "primaryIdentifier";
     private Organism org;
@@ -204,29 +199,12 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
     @Override
     public void processFile(File file) {
         try {
-            FileReader fileReader = new FileReader(file);
-            BufferedReader reader = new BufferedReader(fileReader);
-
-            System.err .println("reading " + sequenceType + " sequence from: " + file);
-
-            SequenceIterator iter =
-                    (SequenceIterator) SeqIOTools.fileToBiojava("fasta", sequenceType, reader);
-
-            if (!iter.hasNext()) {
-                System.err .println("no fasta sequences found - exiting");
-                return;
+           Map<String, ProteinSequence> a = FastaReaderHelper.readFastaProteinSequence(file);
+            //FastaReaderHelper.readFastaDNASequence for DNA sequences
+     
+            for (Map.Entry<String, ProteinSequence> entry : a.entrySet() ) {
+                processSequence(entry.getValue());
             }
-
-            while (iter.hasNext()) {
-                Sequence bioJavaSequence = iter.nextSequence();
-                processSequence(getOrganism(bioJavaSequence), bioJavaSequence);
-            }
-
-            reader.close();
-            fileReader.close();
-        } catch (BioException e) {
-            throw new BuildException("sequence not in fasta format or wrong alphabet for: "
-                    + file, e);
         } catch (NoSuchElementException e) {
             throw new BuildException("no fasta sequences in: " + file, e);
         } catch (FileNotFoundException e) {
@@ -235,6 +213,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             throw new BuildException("ObjectStore problem while processing: " + file, e);
         } catch (IOException e) {
             throw new BuildException("error while closing FileReader for: " + file, e);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -244,7 +225,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @throws ObjectStoreException if there is a problem
      * @return the new Organism
      */
-    protected Organism getOrganism(Sequence bioJavaSequence) throws ObjectStoreException {
+    protected Organism getOrganism() throws ObjectStoreException {
         if (org == null) {
             org = getDirectDataLoader().createObject(Organism.class);
             org.setTaxonId(new Integer(fastaTaxonId));
@@ -259,8 +240,11 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param bioJavaSequence the Sequence object
      * @throws ObjectStoreException if store() fails
      */
-    private void processSequence(Organism organism, Sequence bioJavaSequence)
+    private void processSequence(ProteinSequence sequence)
         throws ObjectStoreException {
+        
+        Organism organism = getOrganism();
+        
         // some fasta files are not filtered - they contain sequences from organisms not
         // specified in project.xml
         if (organism == null) {
@@ -269,10 +253,10 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         org.intermine.model.bio.Sequence flymineSequence = getDirectDataLoader().createObject(
                 org.intermine.model.bio.Sequence.class);
 
-        String sequence = bioJavaSequence.seqString();
-        String md5checksum = Util.getMd5checksum(sequence);
-        flymineSequence.setResidues(new PendingClob(sequence));
-        flymineSequence.setLength(bioJavaSequence.length());
+        String residues = sequence.getSequenceAsString();
+        String md5checksum = Util.getMd5checksum(residues);
+        flymineSequence.setResidues(new PendingClob(residues));
+        flymineSequence.setLength(residues.length());
         flymineSequence.setMd5checksum(md5checksum);
         Class<? extends InterMineObject> imClass;
         Class<?> c;
@@ -290,7 +274,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
         }
         BioEntity imo = (BioEntity) getDirectDataLoader().createObject(imClass);
 
-        String attributeValue = getIdentifier(bioJavaSequence);
+        String attributeValue = getIdentifier(sequence);
 
         try {
             imo.setFieldValue(classAttribute, attributeValue);
@@ -319,7 +303,7 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
             // Ignore - we don't care if the field doesn't exist.
         }
 
-        extraProcessing(bioJavaSequence, flymineSequence, imo, organism, getDataSet());
+        extraProcessing(sequence, flymineSequence, imo, organism, getDataSet());
 
         if (StringUtils.isEmpty(dataSetTitle)) {
             throw new RuntimeException("DataSet title (fasta.dataSetTitle) not set");
@@ -367,8 +351,9 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param dataSet the DataSet object
      * @throws ObjectStoreException if a store() fails during processing
      */
-    protected void  extraProcessing(Sequence bioJavaSequence, org.intermine.model.bio.Sequence
-            flymineSequence, BioEntity bioEntity, Organism organism, DataSet dataSet)
+    protected void  extraProcessing(ProteinSequence bioJavaSequence, 
+            org.intermine.model.bio.Sequence flymineSequence, BioEntity bioEntity, 
+            Organism organism, DataSet dataSet)
         throws ObjectStoreException {
         // default - no extra processing
     }
@@ -380,8 +365,8 @@ public class FastaLoaderTask extends FileDirectDataLoaderTask
      * @param bioJavaSequence the Sequenece
      * @return an identifier
      */
-    protected String getIdentifier(Sequence bioJavaSequence) {
-        String name = bioJavaSequence.getName() + idSuffix;
+    protected String getIdentifier(ProteinSequence bioJavaSequence) {
+        String name = bioJavaSequence.getOriginalHeader() + idSuffix;
         // description_line=sp|Q9V8R9-2|41_DROME
         if (name.contains("|")) {
             String[] bits = name.split("\\|");
