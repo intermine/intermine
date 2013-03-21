@@ -659,6 +659,18 @@ public abstract class WebService {
         }
     }
 
+    private PrintWriter out = null;
+ 
+    /**
+     * Get access to the underlying print-writer.
+     *
+     * Most services should not need this method.
+     * @return The raw print-writer.
+     */
+    protected PrintWriter getRawOutput() {
+        return out;
+    }
+
     private void initOutput() {
         final String separator;
         if (RequestUtil.isWindowsClient(request)) {
@@ -668,7 +680,6 @@ public abstract class WebService {
         }
         Format format = getFormat();
 
-        PrintWriter out;
         OutputStream os;
         try {
             // set reasonable buffer size
