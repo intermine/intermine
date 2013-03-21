@@ -54,6 +54,8 @@ public class QueryRequestParser extends WebServiceRequestParser
      */
     private static final String QLZW_PARAMETER = "qlzw";
 
+    private static final String QID = "qid";
+
     /**
      * Function for dealing with encoding issues with various
      * inputs.
@@ -166,12 +168,15 @@ public class QueryRequestParser extends WebServiceRequestParser
      * @return The XML string version of the query, in the correct encoding.
      */
     public static String getQueryXml(HttpServletRequest req) {
-        String xmlQuery, lzwQuery;
+        String xmlQuery, lzwQuery, qid;
+        qid = req.getParameter(QID);
+        xmlQuery = req.getParameter(QUERY_PARAMETER);
         lzwQuery = req.getParameter(QLZW_PARAMETER);
-        if (StringUtils.isNotBlank(lzwQuery)) {
+        
+        if (StringUtils.isNotBlank(qid)) {
+            return QueryStore.getQuery(qid);
+        } else if (StringUtils.isNotBlank(lzwQuery)) {
             xmlQuery = decodeLZWString(lzwQuery);
-        } else {
-            xmlQuery = req.getParameter(QUERY_PARAMETER);
         }
         if (StringUtils.isBlank(xmlQuery)) {
             throw new BadRequestException("The 'query' parameter must not be blank");
