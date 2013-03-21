@@ -108,8 +108,7 @@ public class QueryToListService extends AbstractQueryService
      * @return A pathquery
      */
     protected PathQuery getQuery(HttpServletRequest request) {
-        String xml = request.getParameter(XML_PARAM);
-
+        String xml = QueryRequestParser.getQueryXml(request);
         if (StringUtils.isEmpty(xml)) {
             throw new BadRequestException("query is blank");
         }
