@@ -1,0 +1,17 @@
+{
+  "services":[
+    {
+      "root": "www.flymine.org/query",
+      "token": "t1R3X3y6n0H2SaD8X8X2n27Y3QZ"
+    },
+    {
+      "root": "beta.flymine.org/beta",
+      "token": "G1N3n3O082faB924l8Lde6jN4Bh"
+    }
+  ],
+  "source": {
+    "service": "preview.flymine.org/preview",
+    "name": "some genes fbgn",
+    "attribute": "primaryIdentifier"
+  }
+}
