@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import org.intermine.api.query.KeyFormatException;
+import org.intermine.api.query.NotPresentException;
+import org.intermine.api.query.QueryStore;
+import org.intermine.api.query.QueryStoreException;
 import org.intermine.webservice.server.WebServiceRequestParser;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 
@@ -38,11 +42,14 @@ public class QueryRequestParser extends WebServiceRequestParser
 
     protected HttpServletRequest request;
 
+    private QueryStore queryStore;
+
     /**
      * RequestProcessor constructor.
      * @param request request
      */
-    public QueryRequestParser(HttpServletRequest request) {
+    public QueryRequestParser(QueryStore queryStore, HttpServletRequest request) {
+        this.queryStore = queryStore;
         this.request = request;
     }
 
@@ -167,14 +174,18 @@ public class QueryRequestParser extends WebServiceRequestParser
      * @param req The request to get the XML from.
      * @return The XML string version of the query, in the correct encoding.
      */
-    public static String getQueryXml(HttpServletRequest req) {
+    public String getQueryXml() {
         String xmlQuery, lzwQuery, qid;
-        qid = req.getParameter(QID);
-        xmlQuery = req.getParameter(QUERY_PARAMETER);
-        lzwQuery = req.getParameter(QLZW_PARAMETER);
+        qid = request.getParameter(QID);
+        xmlQuery = request.getParameter(QUERY_PARAMETER);
+        lzwQuery = request.getParameter(QLZW_PARAMETER);
         
         if (StringUtils.isNotBlank(qid)) {
-            return QueryStore.getQuery(qid);
+            try {
+                return queryStore.getQuery(qid);
+            } catch (QueryStoreException e) {
+                throw new BadRequestException(e.getMessage());
+            }
         } else if (StringUtils.isNotBlank(lzwQuery)) {
             xmlQuery = decodeLZWString(lzwQuery);
         }

@@ -5,11 +5,15 @@ import java.io.StringReader;
 
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.query.KeyFormatException;
+import org.intermine.api.query.NotPresentException;
+import org.intermine.api.query.QueryStoreException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.pathquery.PathQueryBinding;
 import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 public class QueryRetrieverService extends WebService {
 
@@ -40,14 +44,20 @@ public class QueryRetrieverService extends WebService {
     }
 
     @Override
-    protected void execute() throws Exception {
+    protected void execute() throws ServiceException {
         String qid = getRequiredParameter("id");
-        String xml = QueryStore.getQuery(qid);
+        String xml;
+        try {
+            xml = im.getQueryStore().getQuery(qid);
+        } catch (QueryStoreException e) {
+            throw new BadRequestException(e.getMessage());
+        }
         PathQuery pq;
         try {
             pq = PathQueryBinding.unmarshalPathQuery(
                 new StringReader(xml), PathQuery.USERPROFILE_VERSION);
         } catch (Exception e) {
+            // Shouldn't happen. Never harms to check.
             throw new BadRequestException(e);
         }
         String ret = formatPathQuery(pq);

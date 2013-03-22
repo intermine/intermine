@@ -377,6 +377,6 @@ public class QueryResultService extends AbstractQueryService
 
 
     private QueryResultInput getInput() {
-        return new QueryResultRequestParser(request).getInput();
+        return new QueryResultRequestParser(im.getQueryStore(), request).getInput();
     }
 }
