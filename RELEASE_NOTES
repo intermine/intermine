@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -7,11 +7,28 @@
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
-
              Intermine 1.2
              Release Notes
+New Features
+============
 
-In this release....
 
-The code is available via git, and see http://www.intermine.org/wiki/UpgradeInterMine to update your Mine to the new version.
+Bug Fixing
+==========
 
+
+
+
+
+             Intermine 1.1.2
+             Release Notes
+
+The code is available via git, and see www.intermine.org/wiki/UpgradeInterMine to update your Mine to the new version.
+
+Bug Fixing
+==========
+* Fix a bug in list cloning
+* Remove FAQ link
+* Id resolver updates
+* Updated genomeRNAi reference
+* Fixed bug in submission displayer
