@@ -962,7 +962,7 @@
     <metadata>
         <name>Generated Code</name>
         <minVersion>7</minVersion>
-        <method type="GET" ALSO="PUT" authenticationRequired="false">
+        <method type="GET" ALSO="POST" authenticationRequired="false">
             <summary>Get the code to run a pathquery in a given language.</summary>
             <description>
 	            This service provides the ability to generate code in one of several
