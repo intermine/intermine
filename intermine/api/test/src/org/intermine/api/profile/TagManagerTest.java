@@ -118,9 +118,9 @@ public class TagManagerTest extends InterMineAPITestCase
         assertEquals(tag, retrievedTag);
     }
 
-    // Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':', '.'
+    // Verifies that tag name can only contain A-Z, a-z, 0-9, '_', '-', ' ', ':', '.', ','
     public void testIsValidTagName() {
-        assertTrue(TagManager.isValidTagName("validTagName_.- :1"));
+        assertTrue(TagManager.isValidTagName("validTagName_.,- :1"));
         assertFalse(TagManager.isValidTagName("'; drop table userprofile;"));
         assertFalse(TagManager.isValidTagName(null));
         assertFalse(TagManager.isValidTagName("invalidTagName@"));
