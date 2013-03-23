@@ -638,7 +638,7 @@ public class TagManager
         if (name == null) {
             return false;
         }
-        Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
+        Pattern p = Pattern.compile("[^\\w\\s\\.\\-,:]");
         Matcher m = p.matcher(name);
         return !m.find();
     }
