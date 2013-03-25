@@ -140,6 +140,7 @@ public class FlyBaseIdResolverFactory extends IdResolverFactory
                     + " where c.cv_id = cv.cv_id"
                     + " and cv.name = \'SO\'"
                     + " and c.name =\'" + clsName + "\'";
+                LOG.info("QUERY: " + query);
                 Statement stmt = conn.createStatement();
                 ResultSet res = stmt.executeQuery(query);
                 String soTermId = null;
