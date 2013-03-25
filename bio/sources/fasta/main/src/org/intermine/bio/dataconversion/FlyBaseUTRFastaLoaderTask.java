@@ -15,10 +15,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.biojava3.core.sequence.ProteinSequence;
+import org.biojava.bio.Annotation;
+import org.biojava.bio.seq.Sequence;
 import org.intermine.metadata.Model;
 import org.intermine.model.FastPathObject;
 import org.intermine.model.InterMineObject;
@@ -27,7 +26,6 @@ import org.intermine.model.bio.Chromosome;
 import org.intermine.model.bio.DataSet;
 import org.intermine.model.bio.Location;
 import org.intermine.model.bio.Organism;
-import org.intermine.model.bio.Sequence;
 import org.intermine.model.bio.SequenceFeature;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
@@ -47,12 +45,14 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      * {@inheritDoc}
      */
     @Override
-    protected void extraProcessing(ProteinSequence bioJavaSequence, Sequence flymineSequence,
-            BioEntity bioEntity, Organism organism, DataSet dataSet)
+    protected void extraProcessing(Sequence bioJavaSequence,
+            @SuppressWarnings("unused") org.intermine.model.bio.Sequence flymineSequence,
+            BioEntity bioEntity, Organism organism,
+            @SuppressWarnings("unused") DataSet dataSet)
         throws ObjectStoreException {
-        String header = bioJavaSequence.getOriginalHeader();
-        // I don't know why this isn't working - bioJavaSequence.getAccession().getID();
-        String mrnaIdentifier = header.substring(0, 11); 
+        Annotation annotation = bioJavaSequence.getAnnotation();
+        String mrnaIdentifier = bioJavaSequence.getName();
+
         ObjectStore os = getIntegrationWriter().getObjectStore();
         Model model = os.getModel();
         if (model.hasClassDescriptor(model.getPackageName() + ".UTR")) {
@@ -68,7 +68,7 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
                 Set<? extends InterMineObject> mrnas = new HashSet(Collections.singleton(mrna));
                 bioEntity.setFieldValue("transcripts", mrnas);
             }
-            
+            String header = (String) annotation.getProperty("description");
             Location loc = getLocationFromHeader(header, (SequenceFeature) bioEntity,
                     organism);
             getDirectDataLoader().store(loc);
@@ -82,13 +82,10 @@ public class FlyBaseUTRFastaLoaderTask extends FlyBaseFeatureFastaLoaderTask
      * {@inheritDoc}
      */
     @Override
-    protected String getIdentifier(ProteinSequence bioJavaSequence) {
-        String header = bioJavaSequence.getOriginalHeader();
-        String accession = header.substring(0, 11);
+    protected String getIdentifier(Sequence bioJavaSequence) {
         if (getClassName().endsWith(".FivePrimeUTR")) {
-            return accession + "-5-prime-utr";
+            return bioJavaSequence.getName() + "-5-prime-utr";
         }
-        return accession + "-3-prime-utr";
+        return bioJavaSequence.getName() + "-3-prime-utr";
     }
-
 }
