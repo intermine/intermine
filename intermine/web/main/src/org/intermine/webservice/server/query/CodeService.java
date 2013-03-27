@@ -182,7 +182,7 @@ public class CodeService extends AbstractQueryService
     }
 
     private PathQuery getPathQuery() {
-        String xml = QueryRequestParser.getQueryXml(request);
+        String xml = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
         PathQueryBuilder pqb = getQueryBuilder(xml);
         PathQuery query = pqb.getQuery();
         return query;

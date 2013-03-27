@@ -65,8 +65,13 @@ public class PathQueryBuilder
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
-            pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(xml),
+            try {
+                pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(xml),
                     PathQuery.USERPROFILE_VERSION);
+            } catch (Exception e) {
+                String message = String.format("XML is not well formatted. Got %s.", xml);
+                throw new BadRequestException(message, e);
+            }
 
             if (!pathQuery.isValid()) {
                 throw new BadRequestException("XML is well formatted but query contains errors:\n"

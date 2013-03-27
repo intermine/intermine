@@ -962,7 +962,7 @@
     <metadata>
         <name>Generated Code</name>
         <minVersion>7</minVersion>
-        <method type="GET" ALSO="PUT" authenticationRequired="false">
+        <method type="GET" ALSO="POST" authenticationRequired="false">
             <summary>Get the code to run a pathquery in a given language.</summary>
             <description>
 	            This service provides the ability to generate code in one of several
@@ -1103,7 +1103,7 @@
         <name>Enrichment Widgets</name>
         <minVersion>8</minVersion>
         <method authenticationRequired="true" type="GET" ALSO="POST">
-            <summary>get the data for a given enrichemnt widget</summary>
+            <summary>get the data for a given enrichment widget</summary>
             <description>
                 Enrichment widgets provide a statistical summary of what makes a list distinct from
                 the background population over a certain domain. They return a list of members of the
@@ -1643,6 +1643,53 @@
       </method>
      </metadata>
    </servlet-mapping>
+
+   <!-- NEW IN VERSION 12 -->
+
+   <servlet>
+    <servlet-name>ws-query-store</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.query.QueryRetrieverService</param-value>
+    </init-param>
+    <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.query.QueryStoreService</param-value>
+    </init-param>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-query-store</servlet-name>
+    <url-pattern>/service/queries/*</url-pattern>
+    <metadata>
+        <name>Query Store</name>
+        <minVersion>12</minVersion>
+        <method authenticationRequired="false" type="GET" >
+            <summary>Get a stored query</summary>
+            <description>
+                Get a query stored at the service.
+            </description>
+            <param type="Integer" required="true" description="The id of the query to fetch">id</param>
+            <returns>
+                <format key="id">json</format>
+            </returns>
+        </method>
+        <method authenticationRequired="false" type="POST">
+            <summary>Store a query</summary>
+            <param type="String" required="true" description="The xml of the query to store.">query</param>
+            <returns>
+                <format>json</format>
+                <format>xml</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+   
 
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
