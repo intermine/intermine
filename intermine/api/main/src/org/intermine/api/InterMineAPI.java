@@ -21,7 +21,9 @@ import org.intermine.api.mines.FriendlyMineManager;
 import org.intermine.api.profile.Profile;
 import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.TagManager;
+import org.intermine.api.query.MemoryQueryStore;
 import org.intermine.api.query.PathQueryExecutor;
+import org.intermine.api.query.QueryStore;
 import org.intermine.api.query.WebResultsExecutor;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.template.TemplateSummariser;
@@ -54,6 +56,7 @@ public class InterMineAPI
     protected TrackerDelegate trackerDelegate;
     protected LinkRedirectManager linkRedirector;
     protected FriendlyMineManager friendlyMineManager;
+    protected QueryStore queryStore;
 
     // query executors are cached per profile
     private final Map<Profile, WebResultsExecutor> wreCache =
@@ -99,6 +102,7 @@ public class InterMineAPI
             new BagQueryRunner(objectStore, classKeys, bagQueryConfig, templateManager);
         this.trackerDelegate = trackerDelegate;
         this.linkRedirector = linkRedirector;
+        this.queryStore = new MemoryQueryStore(1024);
     }
 
     /**
@@ -226,5 +230,12 @@ public class InterMineAPI
      */
     public LinkRedirectManager getLinkRedirector() {
         return linkRedirector;
+    }
+
+    /**
+     * @return The query store, which associates queries to ids.
+     */
+    public QueryStore getQueryStore() {
+        return queryStore;
     }
 }

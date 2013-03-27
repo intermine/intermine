@@ -160,9 +160,6 @@ li#toolbar-export span.bed a { background-image:url('../images/formats/bed.gif')
 li#toolbar-export span.gff3 a { background-image:url('../images/formats/gff3.gif'); width:40px; }
 li#toolbar-export span.seq a { background-image:url('../images/formats/seq.gif'); width:35px; }
 
-.btn.dropdown-toggle {
-  height: 28px;
-}
-.im-query-trail .btn.dropdown-toggle {
-  height: 18px;
+.intermine .im-dropdown-summary h3 {
+    margin-top: -5px;
 }

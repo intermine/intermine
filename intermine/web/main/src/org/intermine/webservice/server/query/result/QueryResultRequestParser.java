@@ -13,6 +13,7 @@ package org.intermine.webservice.server.query.result;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.query.QueryStore;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.QueryRequestParser;
 
@@ -37,8 +38,8 @@ public class QueryResultRequestParser extends QueryRequestParser
      * RequestProcessor constructor.
      * @param request request
      */
-    public QueryResultRequestParser(HttpServletRequest request) {
-        super(request);
+    public QueryResultRequestParser(QueryStore queryStore, HttpServletRequest request) {
+        super(queryStore, request);
     }
 
     /**
@@ -55,7 +56,7 @@ public class QueryResultRequestParser extends QueryRequestParser
     private void parseRequest(HttpServletRequest req, QueryResultInput input) {
 
         super.parseRequest(req, input);
-        String xmlQuery = getQueryXml(req);
+        String xmlQuery = getQueryXml();
         if (StringUtils.isEmpty(xmlQuery)) {
             throw new BadRequestException("invalid " + QUERY_PARAMETER
                     + " parameter (empty or missing)");
