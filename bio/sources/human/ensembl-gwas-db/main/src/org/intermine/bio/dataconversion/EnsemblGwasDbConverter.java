@@ -42,8 +42,10 @@ public class EnsemblGwasDbConverter extends BioDBConverter
     private Map<String, String> genes = new HashMap<String, String>();
     private Map<String, String> studies = new HashMap<String, String>();
     private Map<String, String> sources = new HashMap<String, String>();
-    private EntrezGeneIdResolverFactory resolverFactory;
-    private int taxonId = 9606;
+    // private EntrezGeneIdResolverFactory resolverFactory;
+
+    // take value set by parser
+    Integer taxonId = null;
 
     // approximately the minimum permitted double value in postgres
     private static final double MIN_POSTGRES_DOUBLE = 1.0E-307;
@@ -58,9 +60,16 @@ public class EnsemblGwasDbConverter extends BioDBConverter
      */
     public EnsemblGwasDbConverter(Database database, Model model, ItemWriter writer) {
         super(database, model, writer, DATA_SOURCE_NAME, DATASET_TITLE);
-        resolverFactory = new EntrezGeneIdResolverFactory();
+        // resolverFactory = new EntrezGeneIdResolverFactory();
     }
 
+    /**
+     * Set the organism to load
+     * @param taxonId the organism to load
+     */
+    public void setOrganism(String taxonId) {
+        this.taxonId = Integer.valueOf(taxonId);
+    }
 
     /**
      * {@inheritDoc}
@@ -242,32 +251,34 @@ public class EnsemblGwasDbConverter extends BioDBConverter
 
     private String getGeneIdentifier(String symbol) throws ObjectStoreException {
         String geneIdentifier = null;
-        String entrezGeneNumber = resolveGene(symbol.toLowerCase());
-        if (entrezGeneNumber != null) {
-            geneIdentifier = genes.get(entrezGeneNumber);
+        // String entrezGeneNumber = resolveGene(symbol.toLowerCase());
+
+        if (symbol != null) {
+            geneIdentifier = genes.get(symbol);
             if (geneIdentifier == null) {
                 Item gene = createItem("Gene");
-                gene.setAttribute("ncbiGeneNumber", entrezGeneNumber);
+                gene.setAttribute("symbol", symbol);
                 gene.setReference("organism", getOrganismItem(taxonId));
                 store(gene);
                 geneIdentifier = gene.getIdentifier();
-                genes.put(entrezGeneNumber, geneIdentifier);
+                genes.put(symbol, geneIdentifier);
             }
         }
         return geneIdentifier;
     }
 
-    private String resolveGene(String symbol) {
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions("" + taxonId, symbol);
-        if (resCount != 1) {
-            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                     + symbol + " count: " + resCount + " - "
-                     + resolver.resolveId("" + taxonId, symbol));
-            return null;
-        }
-        return resolver.resolveId("" + taxonId, symbol).iterator().next();
-    }
+    // Disable id resolver for plant for now
+//    private String resolveGene(String symbol) {
+//        IdResolver resolver = resolverFactory.getIdResolver();
+//        int resCount = resolver.countResolutions("" + taxonId, symbol);
+//        if (resCount != 1) {
+//            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+//                     + symbol + " count: " + resCount + " - "
+//                     + resolver.resolveId("" + taxonId, symbol));
+//            return null;
+//        }
+//        return resolver.resolveId("" + taxonId, symbol).iterator().next();
+//    }
 
     private String getSourceIdentifier(String name) throws ObjectStoreException {
         String sourceIdentifier = sources.get(name);
