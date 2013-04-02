@@ -16,7 +16,7 @@ use constant {
        'reactome', 
     SOURCES => [{
         SERVER  => "http://reactome.org/download/current",
-        FILE    => 'biopax.zip',
+        FILE    => 'biopax2.zip',
     }],
 };
 use constant ORGANISMS => (
@@ -38,11 +38,11 @@ override clean_up => sub {
     make_link($curated, $curated_ln);
     # Unzip the files we want into the not-curated directory
     my @args = ( 'unzip', 
-        $self->get_destination_dir->file("biopax.zip"), 
+        $self->get_destination_dir->file("biopax2.zip"), 
         @wanted_members, 
         '-d', $not_curated );
     $self->execute_system_command(@args);
-    unlink($self->get_destination_dir->file("biopax.zip"));
+    unlink($self->get_destination_dir->file("biopax2.zip"));
 };
 
 1;
