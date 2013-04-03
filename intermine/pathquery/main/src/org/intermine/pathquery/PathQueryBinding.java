@@ -198,13 +198,18 @@ public class PathQueryBinding
                 writer.writeAttribute("op", "" + constraint.getKey().getOp());
 
                 for (String value : ((PathConstraintMultiValue) constraint.getKey()).getValues()) {
-                    if (!value.equals(value.trim())) {
+                    if (value == null) {
+                        writer.writeStartElement("nullValue");
+                        writer.writeEndElement();
+                    } else {
+                        if (!value.equals(value.trim())) {
                         throw new XMLStreamException("Value in MultiValue starts or ends with "
                                 + "whitespace - this query cannot be represented in XML");
+                        }
+                        writer.writeStartElement("value");
+                        writer.writeCharacters(value);
+                        writer.writeEndElement();
                     }
-                    writer.writeStartElement("value");
-                    writer.writeCharacters(value);
-                    writer.writeEndElement();
                 }
             } else if (constraint.getKey() instanceof PathConstraintLoop) {
                 writer.writeAttribute("op", "" + constraint.getKey().getOp());
