@@ -199,7 +199,7 @@ public final class Constants
      * 
      * 12 - Added ability to filter lists from AvailableListsService
      */
-    public static final int WEB_SERVICE_VERSION = 12;
+    public static final int WEB_SERVICE_VERSION = 13;
 
     /**
      * Key for a Map from class name to Boolean.TRUE for all classes in the model that do not have
