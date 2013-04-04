@@ -1,7 +1,7 @@
 package org.intermine.web.logic.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -261,7 +261,7 @@ public class DisplayConstraint
         String multiValuesAsString = "";
         if (getMultiValues() != null) {
             for (String value : getMultiValues()) {
-                multiValuesAsString += value + ", ";
+                multiValuesAsString += value + ",";
             }
             multiValuesAsString = multiValuesAsString.substring(0,
                                   multiValuesAsString.lastIndexOf(","));

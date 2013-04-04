@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,7 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.text.StrMatcher;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.intermine.InterMineException;
@@ -43,7 +44,8 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.web.logic.Constants;
-import org.intermine.webservice.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.output.JSONFormatter;
 
 /**
@@ -144,12 +146,17 @@ public class ListUploadService extends ListMakerService
     protected void makeList(final ListInput input, final String type, final Profile profile,
         final Set<String> temporaryBagNamesAccumulator) throws Exception {
 
+        if (StringUtils.isBlank(type)) {
+            throw new BadRequestException("No list type provided");
+        }
+
         if (input.doReplace()) {
             ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
         }
         if (profile.getCurrentSavedBags().containsKey(input.getListName())) {
-            throw new BadRequestException("Attempt to overwrite an existing bag - name:'"
-                    + input.getListName() + "'");
+            throw new BadRequestException(
+                "Attempt to overwrite an existing bag - name: '"
+                + input.getListName() + "'");
         }
 
         final StrMatcher matcher = getMatcher();
@@ -198,32 +205,39 @@ public class ListUploadService extends ListMakerService
      * Get the reader for the identifiers uploaded with this request.
      * @param request The request object.
      * @return A buffered reader for reading the identifiers.
-     * @throws IOException If there is a problem getting access to the data.
-     * @throws FileUploadException If there was a problem transferring the file.
      */
-    protected BufferedReader getReader(final HttpServletRequest request)
-        throws IOException, FileUploadException {
+    protected BufferedReader getReader(final HttpServletRequest request) {
         BufferedReader r = null;
 
         if (ServletFileUpload.isMultipartContent(request)) {
             final ServletFileUpload upload = new ServletFileUpload();
-            final FileItemIterator iter = upload.getItemIterator(request);
-            while (iter.hasNext()) {
-                final FileItemStream item = iter.next();
-                final String fieldName = item.getFieldName();
-                if (!item.isFormField() && "identifiers".equalsIgnoreCase(fieldName)) {
-                    final InputStream stream = item.openStream();
-                    final InputStreamReader in = new InputStreamReader(stream);
-                    r = new BufferedReader(in);
-                    break;
+            try {
+                final FileItemIterator iter = upload.getItemIterator(request);
+                while (iter.hasNext()) {
+                    final FileItemStream item = iter.next();
+                    final String fieldName = item.getFieldName();
+                    if (!item.isFormField() && "identifiers".equalsIgnoreCase(fieldName)) {
+                        final InputStream stream = item.openStream();
+                        final InputStreamReader in = new InputStreamReader(stream);
+                        r = new BufferedReader(in);
+                        break;
+                    }
                 }
+            } catch (FileUploadException e) {
+                throw new InternalErrorException("Could not read request body", e);
+            } catch (IOException e) {
+                throw new InternalErrorException(e);
             }
         } else {
             if (!requestIsOfSuitableType()) {
                 throw new BadRequestException("Bad content type - "
                         + request.getContentType() + USAGE);
             }
-            r = request.getReader();
+            try {
+                r = request.getReader();
+            } catch (IOException e) {
+                throw new InternalErrorException(e);
+            }
         }
         if (r == null) {
             throw new BadRequestException("No identifiers found in request." + USAGE);

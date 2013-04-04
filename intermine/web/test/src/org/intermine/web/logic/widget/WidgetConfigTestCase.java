@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,7 @@ import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.model.testmodel.Company;
 import org.intermine.model.testmodel.CompanyShadow;
+import org.intermine.model.testmodel.Contractor;
 import org.intermine.model.testmodel.Department;
 import org.intermine.model.testmodel.Employee;
 import org.intermine.objectstore.ObjectStoreException;
@@ -64,13 +65,21 @@ public class WidgetConfigTestCase extends InterMineAPITestCase {
         ObjectStoreWriter osw = null;
         try {
             Profile superUser = im.getProfileManager().getSuperuserProfile();
+            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
             Employee e1 = new Employee();
             e1.setName("Employee1");
             Employee e2 = new Employee();
             e2.setName("Employee2");
             Department d1 = new Department();
             d1.setName("department");
-            osw = ObjectStoreWriterFactory.getObjectStoreWriter("osw.unittest");
+            Company company = new CompanyShadow();
+            company.setName("company");
+            Contractor contractor = new Contractor();
+            contractor.setName("contractor");
+            osw.store(contractor);
+            company.addContractors(contractor);
+            osw.store(company);
+            d1.setCompany(company);
             osw.store(d1);
             e1.setDepartment(d1);
             e2.setDepartment(d1);

@@ -8,8 +8,8 @@ import org.intermine.webservice.client.services.TemplateService;
 import org.intermine.webservice.client.template.TemplateParameter;
 
 /**
- * This is an automatically generated Java program to run the TEST_PROJECT_TITLE template, im_available_organisms
- * Description: For all genes, list the taxonIds available.  Used by webservice to construct links to other intermines.
+ * This is a Java program to run a query from TEST_PROJECT_TITLE.
+ * It was automatically generated at __SOME-DATE__
  *
  * @author TEST_PROJECT_TITLE
  *
@@ -19,19 +19,19 @@ public class TemplateImAvailableOrganisms
     private static final String ROOT = "TEST_SERVICE_ROOT/service";
 
     /**
+     * Perform the query and print the rows of results.
      * @param args command line arguments
+     * @throws IOException
      */
     public static void main(String[] args) {
-
         TemplateService service = new ServiceFactory(ROOT).getTemplateService();
-
         List<TemplateParameter> parameters = new ArrayList<TemplateParameter>();
+
         // You can edit the constraint values below
         parameters.add(new TemplateParameter("Gene.primaryIdentifier", "eq", "zen"));
 
         // Name of template
         String name = "im_available_organisms";
-
         List<List<String>> rows = service.getAllResults(name, parameters);
         System.out.println("Results:");
         for (List<String> row : rows) {
@@ -41,4 +41,5 @@ public class TemplateImAvailableOrganisms
             System.out.print("\n");
         }
     }
+
 }

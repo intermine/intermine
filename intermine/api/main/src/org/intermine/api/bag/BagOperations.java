@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,17 +11,23 @@ package org.intermine.api.bag;
  */
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.intermine.api.bag.operations.BagOperation;
+import org.intermine.api.bag.operations.BagOperationException;
+import org.intermine.api.bag.operations.Intersection;
+import org.intermine.api.bag.operations.RelativeComplement;
+import org.intermine.api.bag.operations.SymmetricDifference;
+import org.intermine.api.bag.operations.Union;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
 import org.intermine.metadata.FieldDescriptor;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
-import org.intermine.objectstore.query.ObjectStoreBagCombination;
-import org.intermine.objectstore.query.Query;
 
 /**
  * Perform logical operations on bags - combine bags to create new InterMineBags
@@ -29,6 +35,8 @@ import org.intermine.objectstore.query.Query;
  */
 public final class BagOperations
 {
+    private static final Logger LOG = Logger.getLogger(BagOperations.class);
+
     private BagOperations() {
         // don't
     }
@@ -49,6 +57,11 @@ public final class BagOperations
     public static final String SUBTRACT = "SUBTRACT";
 
     /**
+     * Constant representing logical asymmetric substraction.
+     */
+    public static final String ASYMMETRIC_SUBTRACT = "ASYMMETRIC_SUBTRACT";
+
+    /**
      * Create a bag that is the UNION of all the bags provided, if the union is the
      * empty set then don't create the new bag - if bags are of incompatible types or are all empty.
      * @param bags the bags to operate on
@@ -57,11 +70,12 @@ public final class BagOperations
      * @return the size of the new bag or 0 if no bag created
      * @throws ObjectStoreException if problems storing bag
      */
-    public static int union(Collection<InterMineBag> bags, String newBagName,
+    public static int union(
+            Model model, Collection<InterMineBag> bags, String newBagName,
             Profile profile, Map<String, List<FieldDescriptor>> classKeys)
-        throws ObjectStoreException {
-        return performBagOperation(bags, newBagName, profile, ObjectStoreBagCombination.UNION,
-                                  classKeys);
+        throws BagOperationException, MetaDataException {
+        BagOperation operation = new Union(model, profile, bags);
+        return performBagOperation(operation, newBagName, classKeys);
     }
 
     /**
@@ -73,11 +87,11 @@ public final class BagOperations
      * @return the size of the new bag or 0 if no bag created
      * @throws ObjectStoreException if problems storing bag
      */
-    public static int intersect(Collection<InterMineBag> bags, String newBagName,
+    public static int intersect(Model model, Collection<InterMineBag> bags, String newBagName,
             Profile profile, Map<String, List<FieldDescriptor>> classKeys)
-        throws ObjectStoreException {
-        return performBagOperation(bags, newBagName, profile, ObjectStoreBagCombination.INTERSECT,
-                                  classKeys);
+        throws BagOperationException, MetaDataException {
+        BagOperation operation = new Intersection(model, profile, bags);
+        return performBagOperation(operation, newBagName, classKeys);
     }
 
     /**
@@ -89,60 +103,42 @@ public final class BagOperations
      * @return the size of the new bag or 0 if no bag created
      * @throws ObjectStoreException if problems storing bag
      */
-    public static int subtract(Collection<InterMineBag> bags, String newBagName,
-            Profile profile, Map<String, List<FieldDescriptor>> classKeys)
-        throws ObjectStoreException {
-        return performBagOperation(bags, newBagName, profile,
-                ObjectStoreBagCombination.ALLBUTINTERSECT, classKeys);
+    public static int subtract(Model model, Collection<InterMineBag> bags, String newBagName,
+        Profile profile, Map<String, List<FieldDescriptor>> classKeys)
+        throws BagOperationException, MetaDataException {
+        BagOperation operation = new SymmetricDifference(model, profile, bags);
+        return performBagOperation(operation, newBagName, classKeys);
     }
 
-    private static int performBagOperation(Collection<InterMineBag> bags, String newBagName,
-            Profile profile, int op, Map<String, List<FieldDescriptor>> classKeys)
-        throws ObjectStoreException {
-        String type = getCommonBagType(bags);
-        if (type == null) {
-            throw new IncompatibleTypesException("Given bags were of incompatible types.");
-        }
-        InterMineBag combined = null;
+    public static int asymmetricSubtract(
+        Model model,
+        Collection<InterMineBag> include,
+        Collection<InterMineBag> exclude,
+        String newBagName,
+        Profile profile, Map<String, List<FieldDescriptor>> classKeys)
+        throws BagOperationException, MetaDataException {
+
+        BagOperation op= new RelativeComplement(model, profile, include, exclude);
+        return performBagOperation(op, newBagName, classKeys);
+    }
+
+    private static int performBagOperation(
+        BagOperation operation, String newBagName, Map<String, List<FieldDescriptor>> classKeys)
+        throws BagOperationException, MetaDataException {
+        if (StringUtils.isNotBlank(newBagName)) operation.setNewBagName(newBagName);
+        if (classKeys != null) operation.setClassKeys(classKeys);
+        return performBagOperation(operation);
+    }
+
+    private static int performBagOperation(BagOperation operation)
+        throws BagOperationException, MetaDataException {
+        InterMineBag newBag = operation.operate();
         try {
-            combined = profile.createBag(newBagName, type, "", classKeys);
-        } catch (UnknownBagTypeException e) {
-            throw new RuntimeException(
-                    "The type returned by getCommonBagType is not in the model", e);
-        } catch (ClassKeysNotFoundException cke) {
-            throw new RuntimeException("Bag has not class key set", cke);
+            return newBag.size();
+        } catch (ObjectStoreException e) {
+            // Really shouldn't happen.
+            throw new BagOperationException("Could not read size");
         }
-        ObjectStoreBagCombination osbc =
-            new ObjectStoreBagCombination(op);
-        for (InterMineBag bag : bags) {
-            osbc.addBag(bag.getOsb());
-        }
-        Query q = new Query();
-        q.addToSelect(osbc);
-
-        combined.addToBagFromQuery(q);
-
-        if (combined.size() == 0) {
-            profile.deleteBag(combined.getName());
-        }
-        return combined.size();
     }
 
-
-    /**
-     * If all of the bags provided are of the same type return the type, otherwise return null.
-     * This method does not take into account inheritance.
-     * @param bags the bags to check
-     * @return the common type or null if the bags are not all the same type
-     */
-    public static String getCommonBagType(Collection<InterMineBag> bags) {
-        Set<String> types = new HashSet<String>();
-        for (InterMineBag bag : bags) {
-            types.add(bag.getType());
-        }
-        if (types.size() == 1) {
-            return types.iterator().next();
-        }
-        return null;
-    }
 }

@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -808,6 +808,10 @@ public class PathQuery implements Cloneable
         return (logic == null ? "" : logic.toString());
     }
 
+    public synchronized LogicExpression getLogicExpression() {
+        return logic;
+    }
+
     /**
      * Sets the current constraint logic.
      *
@@ -1080,7 +1084,7 @@ public class PathQuery implements Cloneable
             }
         }
         for (String desc : getDescriptions().keySet()) {
-            if (isPathUnder(desc, path) && !isAnyViewWithPathUnder(desc)) {
+            if (isPathUnder(path, desc) && !isAnyViewWithPathUnder(desc)) {
                 setDescription(desc, null);
             }
         }
@@ -2357,18 +2361,23 @@ public class PathQuery implements Cloneable
         return sb.toString();
     }
 
-    private String constraintToJson(PathConstraint constraint, String code) {
-        String type = PathConstraint.getType(constraint);
+    protected String typeConstraintToJson(final PathConstraint constraint) {
         String path = constraint.getPath();
+        String type = PathConstraint.getType(constraint);
+        return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
+    }
 
-        if (type != null) {
-            return String.format("{\"path\":\"%s\",\"type\":\"%s\"}", path, type);
-        }
-
+    protected String getCommonJsonConstraintPrefix(String code, PathConstraint constraint) {
+        String path = constraint.getPath();
         String op = constraint.getOp().toString();
 
-        String commonPrefix = "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":\""
+        return "{\"path\":\"" + path + "\",\"op\":\"" + op + "\",\"code\":\""
                               + code + "\"";
+    }
+ 
+    protected String valueConstraintToJson(final String code, final PathConstraint constraint) {
+
+        String commonPrefix = getCommonJsonConstraintPrefix(code, constraint);
         StringBuilder conb = new StringBuilder(commonPrefix);
 
         Collection<String> values = PathConstraint.getValues(constraint); // Serialise the Multi-Value list
@@ -2406,6 +2415,14 @@ public class PathQuery implements Cloneable
         }
         conb.append("}");
         return conb.toString();
+    }
+
+    private String constraintToJson(PathConstraint constraint, String code) {
+        if (PathConstraint.getType(constraint) != null) { // Would be nice to test code instead...
+            return typeConstraintToJson(constraint);
+        } else {
+            return valueConstraintToJson(code, constraint);
+        }
     }
 
     /**

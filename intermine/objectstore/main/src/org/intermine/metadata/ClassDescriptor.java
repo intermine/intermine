@@ -1,7 +1,7 @@
 package org.intermine.metadata;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.metadata;
  */
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -813,7 +814,9 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
         StringBuffer sb = new StringBuffer();
         Set<String> superClassNames = getSuperclassNames();
         String name = className.substring(className.lastIndexOf(".") + 1);
-        sb.append("\"" + name + "\":{\"name\":\"" + name + "\",\"extends\":[");
+        sb.append("{\"name\":\"")
+          .append(name)
+          .append("\",\"extends\":[");
         Iterator<String> supersIter = superClassNames.iterator();
         while (supersIter.hasNext()) {
             sb.append("\"");
@@ -829,39 +832,26 @@ public class ClassDescriptor implements Comparable<ClassDescriptor>
             }
         }
         sb.append("],\"isInterface\":" + isInterface + ",\"attributes\":{");
-        Iterator<AttributeDescriptor> attrIter = getAllAttributeDescriptors().iterator();
-        while (attrIter.hasNext()) {
-            AttributeDescriptor ad = attrIter.next();
-            sb.append("\"" + ad.getName() + "\":");
-            sb.append(ad.toJSONString());
-            if (attrIter.hasNext()) {
-                sb.append(",");
-            }
-        }
+        addFields(sb, getAllAttributeDescriptors());
         sb.append("},\"references\":{");
-        Iterator<ReferenceDescriptor> refIter = getAllReferenceDescriptors().iterator();
-        while (refIter.hasNext()) {
-            ReferenceDescriptor rd = refIter.next();
-            sb.append("\"" + rd.getName() + "\":");
-            sb.append(rd.toJSONString());
-            if (refIter.hasNext()) {
-                sb.append(",");
-            }
-        }
+        addFields(sb, getAllReferenceDescriptors());
         sb.append("},\"collections\":{");
-        Iterator<CollectionDescriptor> colIter = getAllCollectionDescriptors().iterator();
-        while (colIter.hasNext()) {
-            CollectionDescriptor cd = colIter.next();
-            sb.append("\"" + cd.getName() + "\":");
-            sb.append(cd.toJSONString());
-            if (colIter.hasNext()) {
-                sb.append(",");
-            }
-        }
+        addFields(sb, getAllCollectionDescriptors());
         sb.append("}}");
         return sb.toString();
     }
 
+    private void addFields(StringBuffer sb, Collection fields) {
+        Iterator<FieldDescriptor> iter = ((Collection<FieldDescriptor>) fields).iterator();
+        while (iter.hasNext()) {
+            FieldDescriptor fld = iter.next();
+            sb.append("\"" + fld.getName() + "\":");
+            sb.append(fld.toJSONString());
+            if (iter.hasNext()) {
+                sb.append(",");
+            }
+        }
+    }
 
     /**
      * Returns a String that contains a multi-line human-readable description of the

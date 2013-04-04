@@ -1,7 +1,7 @@
 package org.intermine.web.logic.template;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -209,6 +209,16 @@ public final class TemplateHelper
 
     /**
      * Given a HTTP request, parse out the template values.
+     * 
+     * A template value is expected to be encoded such as:
+     * <pre><code>
+     *   constraintX=Gene
+     *   opX=LOOKUP
+     *   valueX=eve
+     *   extraX=D.%20melanogaster
+     * </code></pre>
+     * where X is an integer from 1 - 25. The only element that may be omitted is
+     * the "extra" parameter where none is expected.
      *
      * @param request HTTP request by user
      * @return map of constraints and values to be used to populate template.

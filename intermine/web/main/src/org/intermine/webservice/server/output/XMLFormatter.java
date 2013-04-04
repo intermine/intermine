@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,14 +26,45 @@ public class XMLFormatter extends Formatter
 
     private final Stack<String> openElements = new Stack<String>();
 
+    protected String getRootElement() {
+        return "ResultSet";
+    }
+
+    protected String getRowElement() {
+        return "Result";
+    }
+
+    protected String getItemElement() {
+        return "i";
+    }
+    
+    protected String getErrorElement() {
+        return "error";
+    }
+
+    protected String getMessageElement() {
+        return "message";
+    }
+
+    protected String getCauseElement() {
+        return "cause";
+    }
+
     /** {@inheritDoc}} **/
     @SuppressWarnings("rawtypes")
     @Override
     public String formatHeader(Map<String, Object> attributes) {
         StringBuilder sb = new  StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        openElements.push("ResultSet");
-        sb.append("<ResultSet ");
+        String elem = getRootElement();
+        openElements.push(elem);
+        sb.append("<" + elem + " ");
+        handleHeaderAttributes(attributes, sb);
+        return sb.toString();
+    }
+
+    protected void handleHeaderAttributes(Map<String, Object> attributes,
+            StringBuilder sb) {
         if (attributes != null) {
             for (String key : attributes.keySet()) {
                 if (attributes.get(key) instanceof Map) {
@@ -46,24 +77,24 @@ public class XMLFormatter extends Formatter
             }
         }
         sb.append(">");
-        return sb.toString();
     }
 
     /** {@inheritDoc}} **/
     @Override
     public String formatResult(List<String> resultRow) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<Result>");
-        openElements.push("Result");
+        String elem = getRowElement();
+        sb.append("<" + elem + ">");
+        openElements.push(elem);
         for (String s : resultRow) {
-            addElement(sb, "i", s);
+            addElement(sb, getItemElement(), s);
         }
-        sb.append("</Result>");
+        sb.append("</" + elem + ">");
         openElements.pop();
         return sb.toString();
     }
 
-    private void addElement(StringBuilder sb, String tag, String contents) {
+    protected void addElement(StringBuilder sb, String tag, String contents) {
         sb.append("<" + tag + ">");
         openElements.push(tag);
         sb.append(StringEscapeUtils.escapeXml(contents));
@@ -77,22 +108,22 @@ public class XMLFormatter extends Formatter
         StringBuilder sb = new StringBuilder();
         // Close all the open tags, except for ResultSet
         if (openElements.isEmpty()) {
-            sb.append("<ResultSet>"); //return a result set, even on failure
+            sb.append("<" + getRootElement() + ">"); //return a result set, even on failure
         }
         while (!openElements.isEmpty()) {
             String openTag = openElements.pop();
-            if ("ResultSet".equals(openTag)) {
+            if (getRootElement().equals(openTag)) {
                 continue;
             }
             sb.append("</" + openTag + ">");
         }
         if (errorCode != Output.SC_OK) {
-            sb.append("<error>");
-            addElement(sb, "message", StatusDictionary.getDescription(errorCode));
-            addElement(sb, "cause", errorMessage);
-            sb.append("</error>");
+            sb.append("<" + getErrorElement() + ">");
+            addElement(sb, getMessageElement(), StatusDictionary.getDescription(errorCode));
+            addElement(sb, getCauseElement(), errorMessage);
+            sb.append("</" + getErrorElement() + ">");
         }
-        sb.append("</ResultSet>");
+        sb.append("</" + getRootElement() + ">");
         return sb.toString();
     }
 }

@@ -1,7 +1,7 @@
 package org.intermine.api.query.codegen;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -147,8 +147,9 @@ public class WebservicePythonCodeGenerator implements WebserviceCodeGenerator
                 toPrint += ",";
             }
             if (currentLine.length() + toPrint.length() > 100) {
-                sb.append(currentLine.toString() + "\\" + ENDL);
+                sb.append(currentLine.toString() + ENDL);
                 currentLine = new StringBuffer(INDENT + INDENT);
+                toPrint = toPrint.substring(1);
             }
             currentLine.append(toPrint);
         }

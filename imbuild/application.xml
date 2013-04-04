@@ -137,19 +137,20 @@
 
   <!-- RELEASE / REMOVE FROM TOMCAT -->
   <target name="-set-deploy-url">
-    <var name="url" value="${webapp.deploy.url}/manager"/>
-      <if>
-          <equals arg1="${webapp.tomcat.version}" arg2="7" />
-          <then>
-              <var name="url" value="${url}/text"/>
-          </then>
-      </if>
+  	<taskdef name="determine-tomcat-version" classname="org.intermine.task.SetDeployURL"
+  	   classpath="${webapp.xml.basedir}/lib/im-ant-tasks.jar:${webapp.xml.basedir}/im-ant-tasks/lib/catalina-ant.jar"/>
+  	
+  	<determine-tomcat-version
+      var="-tomcat-manager-url"
+      url="${webapp.deploy.url}"
+      username="${webapp.manager}"
+      password="${webapp.password}"/>
   </target>
  
   <target name="release-webapp" depends="-init-properties, init, -set-deploy-url">
     <taskdef name="tomcat-deploy" classname="org.apache.catalina.ant.DeployTask"
-             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
-    <tomcat-deploy url="${url}"
+    	classpath="${webapp.xml.basedir}/im-ant-tasks/lib/catalina-ant.jar"/>
+    <tomcat-deploy url="${-tomcat-manager-url}"
                    username="${webapp.manager}"
                    password="${webapp.password}"
                    path="/${webapp.path}"
@@ -158,8 +159,8 @@
 
   <target name="remove-webapp" depends="-init-properties, init, -set-deploy-url">
     <taskdef name="tomcat-undeploy" classname="org.apache.catalina.ant.UndeployTask"
-             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
-    <tomcat-undeploy url="${url}"
+    	classpath="${webapp.xml.basedir}/im-ant-tasks/lib/catalina-ant.jar"/>
+    <tomcat-undeploy url="${-tomcat-manager-url}"
                      username="${webapp.manager}"
                      password="${webapp.password}"
                      path="/${webapp.path}"
@@ -168,8 +169,8 @@
 
   <target name="start-webapp" depends="-init-properties, init, -set-deploy-url">
     <taskdef name="tomcat-start" classname="org.apache.catalina.ant.StartTask"
-             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
-    <tomcat-start url="${url}"
+    	classpath="${webapp.xml.basedir}/im-ant-tasks/lib/catalina-ant.jar"/>
+    <tomcat-start url="${-tomcat-manager-url}"
                   username="${webapp.manager}"
                   password="${webapp.password}"
                   path="/${webapp.path}"
@@ -178,8 +179,8 @@
 
   <target name="stop-webapp" depends="-init-properties, init, -set-deploy-url">
     <taskdef name="tomcat-stop" classname="org.apache.catalina.ant.StopTask"
-             classpath="${webapp.xml.basedir}/lib/catalina-ant.jar"/>
-    <tomcat-stop url="${url}"
+    	classpath="${webapp.xml.basedir}/im-ant-tasks/lib/catalina-ant.jar"/>
+    <tomcat-stop url="${-tomcat-manager-url}"
                  username="${webapp.manager}"
                  password="${webapp.password}"
                  path="/${webapp.path}"

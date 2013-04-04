@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,11 @@ package org.intermine.objectstore;
 
 public class ObjectStoreQueryDurationException extends ObjectStoreException
 {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     /**
      * Create a new ObjectStoreQueryDurationException.
      */

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.path;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,19 +10,16 @@ package org.intermine.webservice.server.path;
  *
  */
 
+import static org.apache.commons.lang.StringUtils.split;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.split;
-import static org.apache.commons.lang.ArrayUtils.reverse;
 import org.apache.log4j.Logger;
 import org.intermine.api.InterMineAPI;
-import org.intermine.metadata.Model;
 import org.intermine.metadata.AttributeDescriptor;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.query.Query;
@@ -32,9 +29,12 @@ import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.Results;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
-import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.Format;
+import org.intermine.webservice.server.WebServiceRequestParser;
+import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -42,11 +42,10 @@ import org.json.JSONObject;
  * @author Alex Kalderimis
  *
  */
-public class PossibleValuesService extends WebService
+public class PossibleValuesService extends JSONService
 {
 
     private static final int DEFAULT_BATCH_SIZE = 5000;
-    private Map<String, String> kvPairs = new HashMap<String, String>();
     private static Logger logger
         = Logger.getLogger(PossibleValuesService.class);
 
@@ -65,56 +64,72 @@ public class PossibleValuesService extends WebService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        if (hasCallback()) {
-            return JSONP_OBJ_FORMAT;
-        } else {
-            return JSON_OBJ_FORMAT;
-        }
-    }
-
-    private Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.put("path", "UNKNOWN");
-        kvPairs.put("path", "UNKNOWN");
-        if (formatIsCount()) {
-            attributes.put(JSONFormatter.KEY_KV_PAIRS, kvPairs);
-        }
-        if (formatIsJSONP()) {
-            attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
-        }
-        return attributes;
+    protected Format getDefaultFormat() {
+        return Format.OBJECTS;
     }
 
     @Override
-    protected void execute() throws Exception {
-        String pathString = request.getParameter("path");
-
-        Map<String, Object> attributes = getHeaderAttributes();
-        output.setHeaderAttributes(attributes);
-
-        if (isEmpty(pathString)) {
-            throw new BadRequestException("No path provided");
+    protected boolean canServe(Format format) {
+        switch (format) {
+            case OBJECTS:
+            case JSON:
+            case TEXT:
+                return true;
         }
-        attributes.put("path", pathString);
-        kvPairs.put("path", pathString);
+        return false;
+    }
 
-        String typeConstraintStr = request.getParameter("typeConstraints");
+    private boolean count = false;
+    private Path path;
+
+    @Override
+    protected void initState() {
+        super.initState();
+        count = WebServiceRequestParser.isCountRequest(request);
+    }
+
+    @Override
+    protected Map<String, Object> getHeaderAttributes() {
+        Map<String, Object> attrs = super.getHeaderAttributes();
+        if (count) {
+            attrs.put(JSONFormatter.KEY_INTRO, "\"count\":");
+        } else {
+            attrs.put(JSONFormatter.KEY_INTRO, "\"results\":[");
+            attrs.put(JSONFormatter.KEY_OUTRO, "]");
+        }
+        return attrs;
+    }
+
+    @Override
+    protected void postInit() {
+        super.postInit();
+
+        String pathString = getRequiredParameter("path").trim();
+
+        addOutputInfo("path", pathString);
+
+        String typeConstraintStr = getOptionalParameter("typeConstraints", "{}");
         Map<String, String> typeMap = new HashMap<String, String>();
-        if (!isEmpty(typeConstraintStr)) {
-            logger.debug(typeConstraintStr);
-            JSONObject typeJO = new JSONObject(typeConstraintStr);
-            Iterator<String> it = (Iterator<String>) typeJO.keys();
-            while (it.hasNext()) {
-                String name = it.next();
-                String subType = typeJO.getString(name);
-                typeMap.put(name, subType);
-            }
+
+        JSONObject typeJO;
+        try {
+            typeJO = new JSONObject(typeConstraintStr);
+        } catch (JSONException e) {
+            throw new BadRequestException("The value of 'typeConstraints' should be a json string");
         }
 
-        Model model = im.getModel();
+        Iterator<String> it = (Iterator<String>) typeJO.keys();
+        while (it.hasNext()) {
+            String name = it.next();
+            String subType;
+            try {
+                subType = typeJO.getString(name);
+            } catch (JSONException e) {
+                throw new BadRequestException("The typeConstraints object may only have strings as values");
+            }
+            typeMap.put(name, subType);
+        }
 
-        Path path;
         try {
             if (typeMap.isEmpty()) {
                 path = new Path(model, pathString);
@@ -125,16 +140,20 @@ public class PossibleValuesService extends WebService
             throw new BadRequestException("Bad path given: " + pathString, e);
         }
 
+    }
+
+    @Override
+    protected void execute() throws Exception {
+
         Query q = new Query();
 
-        attributes.put("class",
-                path.getLastClassDescriptor().getUnqualifiedName());
-        attributes.put("field", path.getLastElement());
-        String type =
-            ((AttributeDescriptor) path.getEndFieldDescriptor()).getType();
+        addOutputInfo("class", path.getLastClassDescriptor().getUnqualifiedName());
+        addOutputInfo("class", path.getLastClassDescriptor().getUnqualifiedName());
+        addOutputInfo("field", path.getLastElement());
+
+        String type = ((AttributeDescriptor) path.getEndFieldDescriptor()).getType();
         String[] parts = split(type, '.');
-        reverse(parts);
-        attributes.put("type", parts[0]);
+        addOutputInfo("type", parts[parts.length - 1]);
 
         QueryClass qc = new QueryClass(path.getPrefix().getEndType());
         q.addFrom(qc);
@@ -146,30 +165,24 @@ public class PossibleValuesService extends WebService
         q.addToSelect(qf);
         q.addToGroupBy(qf1);
 
-        int count = im.getObjectStore().count(q, ObjectStore.SEQUENCE_IGNORE);
+        int total = im.getObjectStore().count(q, ObjectStore.SEQUENCE_IGNORE);
 
-        if (formatIsCount()) {
-            output.addResultItem(Arrays.asList(String.valueOf(count)));
+        if (count) {
+            addResultValue(total, false);
         } else {
-            attributes.put("count", count);
+            addOutputInfo("count", Integer.toString(total));
 
             Results results = im.getObjectStore().execute(q, DEFAULT_BATCH_SIZE, true, true, false);
             Iterator<Object> iter = results.iterator();
 
+            List<Map<String,Object>> parsed = new ArrayList<Map<String,Object>>();
             while (iter.hasNext()) {
                 @SuppressWarnings("rawtypes")
                 List row = (List) iter.next();
                 Map<String, Object> jsonMap = new HashMap<String, Object>();
                 jsonMap.put("value", row.get(0));
                 jsonMap.put("count", row.get(1));
-                JSONObject jo = new JSONObject(jsonMap);
-                List<String> forOutput = new ArrayList<String>();
-                forOutput.add(jo.toString());
-                if (iter.hasNext()) {
-                    // Standard hack to ensure commas
-                    forOutput.add("");
-                }
-                output.addResultItem(forOutput);
+                addResultItem(jsonMap, iter.hasNext());
             }
         }
 

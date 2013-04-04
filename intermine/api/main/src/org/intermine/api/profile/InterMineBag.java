@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -37,15 +37,18 @@ import org.intermine.objectstore.ObjectStore;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.objectstore.ObjectStoreWriter;
 import org.intermine.objectstore.query.BagConstraint;
+import org.intermine.objectstore.query.Constraint;
 import org.intermine.objectstore.query.ConstraintOp;
 import org.intermine.objectstore.query.ConstraintSet;
 import org.intermine.objectstore.query.ObjectStoreBag;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryField;
+import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectPathExpression;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsRow;
+import org.intermine.objectstore.query.SimpleConstraint;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.TypeUtil;
 
@@ -212,7 +215,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
             state = BagState.NOT_CURRENT;
         } else if (BagState.UPGRADING.toString().equals(savedBagStatus)) {
             state = BagState.UPGRADING;
-        }else {
+        } else {
             state = BagState.TO_UPGRADE;
         }
     }
@@ -604,7 +607,7 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     }
 
     /**
-     * Return true if the status bag is to_upgrade, otherwise false 
+     * Return true if the status bag is to_upgrade, otherwise false
      * @return isToUpgrade
      */
     public boolean isToUpgrade() {
@@ -860,5 +863,51 @@ public class InterMineBag extends StorableBag implements WebSearchable, Cloneabl
     @Override
     public void deleteAllBagValues() {
         deleteSomeBagValues(null);
+    }
+
+    /**
+     * Return the number of items contained in the bag with length not null
+     * If the type bag is not a subclass of SequenceFeature, return 0
+     * @return the number of items with length not null
+     */
+    public int getCountItemsWithLengthNotNull() {
+        ClassDescriptor sequenceFeatureCd = os.getModel()
+                .getClassDescriptorByName("SequenceFeature");
+        if (classDescriptors.contains(sequenceFeatureCd)) {
+            Query q = new Query();
+            try {
+                Class<? extends InterMineObject> clazz =
+                    (Class<InterMineObject>) Class.forName(getQualifiedType());
+                QueryClass qc = new QueryClass(clazz);
+                QueryFunction count = new QueryFunction();
+                q.addToSelect(count);
+                q.addFrom(qc);
+                ConstraintSet cs = new ConstraintSet(ConstraintOp.AND);
+                QueryField lenghtField = new QueryField(qc, "length");
+                cs.addConstraint(new SimpleConstraint(lenghtField, ConstraintOp.IS_NOT_NULL));
+                cs.addConstraint(new BagConstraint(qc, ConstraintOp.IN, osb));
+                q.setConstraint(cs);
+                SingletonResults result = os.executeSingleton(q);
+                return ((Long) result.get(0)).intValue();
+            } catch (ClassNotFoundException cnfe) {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer(getClass().getName()).append('(');
+        sb.append(" name = \"").append(this.name).append('"');
+        sb.append(" type = ").append(this.getType());
+        sb.append(" createdAt = \"").append(this.getDateCreated()).append('"');
+        if (StringUtils.isNotBlank(description)) {
+            sb.append(" description = \"").append(this.description).append('"');
+        }
+        sb.append(" bagID = ").append(this.getOsb().getBagId());
+        sb.append(" profileID = ").append(this.getProfileId());
+        sb.append(" )");
+        return sb.toString();
     }
 }

@@ -700,6 +700,13 @@ function saveToggleState(elementId) {
     AjaxServices.saveToggleState(elementId, opened);
 }
 
+function showDirectionDiv() {
+    jQuery("#directionDiv").show();
+}
+
+function hideDirectionDiv() {
+    jQuery("#directionDiv").hide();
+}
 // historyBagView.jsp, wsFilterList.jsp
 function validateBagOperations(formName, operation) {
     if (Event && (Event.keyCode == 13
@@ -749,6 +756,11 @@ function validateBagOperations(formName, operation) {
                 }, {title: 'Warning', modal: false});
             } else {
                 Boxy.alert(errMsg, null, {title: 'Error', modal: false});
+                if (operation == 'asymmetricdifference') {
+                   jQuery("#directionDiv input[name='asymmetricDirection']:checked").each(function() {
+                      jQuery(this).attr('checked', false);
+                  });
+                }
             }
         } else {
             jQuery('table.boxy-wrapper').hide();

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.intermine.bio.util.BioUtil;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
@@ -44,6 +45,8 @@ import org.intermine.xml.full.Item;
  */
 public class PubMedGeneConverter extends BioFileConverter
 {
+    protected static final Logger LOG = Logger.getLogger(PubMedGeneConverter.class);
+
     private String referencesFileName;
     private Set<String> taxonIds = new HashSet<String>();
     private Map<Integer, String> publications = new HashMap<Integer, String>();
@@ -53,6 +56,7 @@ public class PubMedGeneConverter extends BioFileConverter
     private Map<Integer, String> organisms = new HashMap<Integer, String>();
     private Map<String, Item> genes = new HashMap<String, Item>();
     private Set<String> genesToRemove = new TreeSet<String>();
+    private Set<String> genesResolved = new HashSet<String>();
 
     /**
      * @param writer item writer
@@ -94,7 +98,10 @@ public class PubMedGeneConverter extends BioFileConverter
 
         // init resolver
         if (rslv == null) {
+            IdResolverService.getWormIdResolver();
+            taxonIds.remove("6239");
             rslv = IdResolverService.getIdResolverByOrganism(taxonIds);
+            taxonIds.add("6239");
         }
 
         try {
@@ -195,14 +202,22 @@ public class PubMedGeneConverter extends BioFileConverter
     private Item createGene(String ncbiGeneId, String taxonId, String organismRefId) {
         Item gene = createItem("Gene");
         String pid = resolveToPrimIdentifier(taxonId, ncbiGeneId);
+
         if (pid == null) {
             return null;
         }
-        // Case where a gene has multiple NCBI id mapping to one single pid
-        if (genes.keySet().contains(pid)) {
-            genesToRemove.add(pid);
-            return null;
+
+        if (genesResolved == null) {
+            genesResolved.add(pid);
+        } else {
+            if (genesResolved.contains(pid)) { // HACK for Wormbase
+                LOG.info("Duplicated id: " + pid);
+                return null;
+            } else {
+                genesResolved.add(pid);
+            }
         }
+
         gene.setAttribute("primaryIdentifier", pid);
         gene.setReference("organism", organismRefId);
         gene.setCollection("dataSets", new ArrayList<String>(Collections.singleton(datasetRefId)));
@@ -221,9 +236,6 @@ public class PubMedGeneConverter extends BioFileConverter
     }
 
     private void storeGenes() {
-        for (String id : genesToRemove) {
-            genes.remove(id);
-        }
         try {
             List<Item> gs = new ArrayList<Item>();
             for (String id : genes.keySet()) {
@@ -248,7 +260,6 @@ public class PubMedGeneConverter extends BioFileConverter
         for (String pubRefId : publications) {
             gene.addToCollection("publications", pubRefId);
         }
-        genes.put(gene.getAttribute("primaryIdentifier").getValue(), gene);
+        genes.put("" + ncbiGeneId, gene);
     }
 }
-

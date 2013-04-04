@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -9,6 +9,8 @@ package org.intermine.objectstore.intermine;
  * information or http://www.gnu.org/copyleft/lesser.html.
  *
  */
+
+import static org.intermine.objectstore.query.ResultsBatches.DEFAULT_BATCH_SIZE;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -69,7 +71,6 @@ import org.intermine.objectstore.query.QueryOrderable;
 import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.objectstore.query.Results;
 import org.intermine.objectstore.query.ResultsBatches;
-import static org.intermine.objectstore.query.ResultsBatches.DEFAULT_BATCH_SIZE;
 import org.intermine.objectstore.query.ResultsInfo;
 import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
@@ -242,10 +243,10 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
     /**
      * Returns a Connection. Please put them back.
-     * 
+     *
      * Whenever you receive a connection from the object-store, you MUST
      * release its resources by calling releaseConnection.
-     * 
+     *
      * Failure to do so KILLS THE OBJECT STORE!
      *
      * @return a java.sql.Connection
@@ -258,29 +259,29 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
         }
         return retval;
     }
-    
+
     /**
      * Convenience wrapper to manage the boilerplate when performing unsafe operations.
-     * 
+     *
      * @param operation The operation to perform.
      * @return
      * @throws SQLException
      */
     public <T> T performUnsafeOperation(final String sql, SQLOperation<T> operation) throws SQLException {
-    	Connection con = null;
-    	PreparedStatement stm = null;
-    	T retval;
-    	try {
-    		con = getConnection();
-    		stm = con.prepareStatement(sql);
-    		retval = operation.run(stm);
-    		return retval;
-    	} finally {
-    		if (stm != null) {
-				stm.close();
-    		}
-    		releaseConnection(con);
-    	}
+        Connection con = null;
+        PreparedStatement stm = null;
+        T retval;
+        try {
+            con = getConnection();
+            stm = con.prepareStatement(sql);
+            retval = operation.run(stm);
+            return retval;
+        } finally {
+            if (stm != null) {
+                stm.close();
+            }
+            releaseConnection(con);
+        }
     }
 
     /**
@@ -1385,7 +1386,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
 
             for (ConstraintWithBag bagConstraint : bagConstraints) {
                 if (!bagConstraintTables.containsKey(bagConstraint)) {
-                    @SuppressWarnings("unchecked") Collection bag = bagConstraint.getBag();
+                    Collection<?> bag = bagConstraint.getBag();
 
                     if (bag.size() >= getMinBagTableSize()) {
                         if (queryString == null) {
@@ -1399,7 +1400,7 @@ public class ObjectStoreInterMineImpl extends ObjectStoreAbstractImpl implements
                 if (fe instanceof QueryClassBag) {
                     QueryClassBag qcb = (QueryClassBag) fe;
                     if (!bagConstraintTables.containsKey(qcb)) {
-                        @SuppressWarnings("unchecked") Collection bag = qcb.getIds();
+                        Collection<?> bag = qcb.getIds();
                         if ((bag != null) && (bag.size() >= getMinBagTableSize())) {
                             if (queryString == null) {
                                 queryString = q.getIqlQuery().getQueryString();

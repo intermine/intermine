@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -248,12 +248,23 @@ public class TableWidgetLdr extends WidgetLdr
 
             String refName;
             String constraintName = null, constraintValue = null;
+            ConstraintOp constraintOp = null;
             // extra constraints have syntax Company.departments[name=DepartmentA].employees
             if (queryBits[i].indexOf('[') > 0) {
                 String s = queryBits[i];
                 refName = s.substring(0, s.indexOf('['));
-                constraintName = s.substring(s.indexOf('[') + 1, s.indexOf('='));
-                constraintValue = s.substring(s.indexOf('=') + 1, s.indexOf(']'));
+                int startOp, endOp;
+                if (s.indexOf("!=") != -1) {
+                    startOp = s.indexOf("!=");
+                    endOp = startOp + 2;
+                    constraintOp = ConstraintOp.NOT_EQUALS;
+                } else {
+                    startOp = s.indexOf("=");
+                    endOp = startOp + 1;
+                    constraintOp = ConstraintOp.EQUALS;
+                }
+                constraintName = s.substring(s.indexOf('[') + 1, startOp);
+                constraintValue = s.substring(endOp, s.indexOf(']'));
             } else {
                 refName = queryBits[i];
             }
@@ -284,7 +295,7 @@ public class TableWidgetLdr extends WidgetLdr
                                                        + "' is a " + attFld.getType());
                 }
                 SimpleConstraint sc = new SimpleConstraint(new QueryField(qcEnd, constraintName),
-                                                           ConstraintOp.EQUALS,
+                                                           constraintOp,
                                                            new QueryValue(constraintValue));
                 QueryHelper.addAndConstraint(q, sc);
                 constraintName = null;
@@ -515,10 +526,23 @@ public class TableWidgetLdr extends WidgetLdr
         if (ps.contains("[") && ps.contains("]")) {
             //e.g.Gene.homologues[type=orthologue].homologue.organism
             String constraintPath, constraintValue;
-            constraintPath = ps.substring(ps.indexOf('[') + 1, ps.indexOf('=')); //e.g. type
-            constraintValue = ps.substring(ps.indexOf('=') + 1, ps.indexOf(']')); //e.g. orthologue
-            q.addConstraint(Constraints.eq(ps.substring(0, ps.indexOf('[')) + "." + constraintPath,
-                                           constraintValue));
+            int startOp, endOp;
+            if (ps.indexOf("!=") != -1) {
+                startOp = ps.indexOf("!=");
+                endOp = startOp + 2;
+            } else {
+                startOp = ps.indexOf("=");
+                endOp = startOp + 1;
+            }
+            constraintPath = ps.substring(ps.indexOf('[') + 1, startOp); //e.g. type
+            constraintValue = ps.substring(endOp, ps.indexOf(']')); //e.g. orthologue
+            if (ps.contains("!=")) {
+                q.addConstraint(Constraints.neq(ps.substring(0,
+                    ps.indexOf('[')) + "." + constraintPath, constraintValue));
+            } else {
+                q.addConstraint(Constraints.neq(ps.substring(0,
+                    ps.indexOf('[')) + "." + constraintPath, constraintValue));
+            }
         }
         return q;
     }

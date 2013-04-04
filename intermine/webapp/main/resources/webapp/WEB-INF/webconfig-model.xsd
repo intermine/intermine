@@ -59,7 +59,9 @@
     <xsd:complexType name="fieldConfigType">
         <xsd:attribute name="fieldExpr" type="xsd:string"></xsd:attribute>
         <xsd:attribute name="displayer" type="xsd:string"></xsd:attribute>
+        <xsd:attribute name="escapeXml" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInSummary" type="xsd:boolean"></xsd:attribute>
+        <xsd:attribute name="outerInSummary" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInInlineCollection" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInListAnalysisPreviewTable" type="xsd:boolean"></xsd:attribute>
         <xsd:attribute name="showInResults" type="xsd:boolean"></xsd:attribute>
@@ -128,7 +130,6 @@
                 <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="domainLabel" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="rangeLabel" type="xsd:string"></xsd:attribute>
-                <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="graphType" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="extraAttributeClass" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="listPath" type="xsd:string"></xsd:attribute>
@@ -143,13 +144,13 @@
         <xsd:complexContent>
             <xsd:extension base="widgetType">
                 <xsd:attribute name="startClass" type="xsd:string"></xsd:attribute>
-                <xsd:attribute name="dataSetLoader" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="label" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="externalLink" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="startClassDisplay" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="enrich" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="enrichIdentifier" type="xsd:string"></xsd:attribute>
                 <xsd:attribute name="constraintsForView" type="xsd:string"></xsd:attribute>
+                <xsd:attribute name="correctionCoefficient" type="xsd:string"></xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

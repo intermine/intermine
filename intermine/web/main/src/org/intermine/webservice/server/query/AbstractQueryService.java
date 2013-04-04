@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.InterMineBag;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.WebService;
 import org.intermine.webservice.server.core.ListManager;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
@@ -75,6 +76,13 @@ public abstract class AbstractQueryService extends WebService
         } else {
             return new PathQueryBuilder(xml, getXMLSchemaUrl(), savedBags);
         }
+    }
+
+    /**
+     * @return Whether or not the format is for JSON-Objects
+     */
+    protected boolean formatIsJsonObj() {
+        return getFormat() == Format.OBJECTS;
     }
 
 }

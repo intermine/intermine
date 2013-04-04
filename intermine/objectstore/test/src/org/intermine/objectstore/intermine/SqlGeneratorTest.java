@@ -1,7 +1,7 @@
 package org.intermine.objectstore.intermine;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -730,7 +730,7 @@ public class SqlGeneratorTest extends SetupDataTestCase
             SqlGenerator.generate(q, 0, Integer.MAX_VALUE, getSchema(), db, new HashMap());
             fail("Expected: ObjectStoreException");
         } catch (ObjectStoreException e) {
-            assertEquals("Reference ?.extras is not in the model - fields available in class org.intermine.objectstore.intermine.SqlGeneratorTest$3 are [fullTime, age, end, department, departmentThatRejectedMe, simpleObjects, address, id, name]", e.getMessage());
+            assertEquals("Reference ?.extras is not in the model - fields available in class org.intermine.objectstore.intermine.SqlGeneratorTest$3 are [fullTime, age, end, department, departmentThatRejectedMe, employmentPeriod, simpleObjects, address, id, name]", e.getMessage());
         }
     }
 

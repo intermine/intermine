@@ -1,7 +1,7 @@
 package org.intermine.web.logic.config;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,13 +16,16 @@ import org.apache.commons.lang.StringUtils;
  * The webapp configuration for one field of a class.
  *
  * @author Kim Rutherford
+ * @author Daniela Butano
  */
 
 public class FieldConfig
 {
     private String fieldExpr;
     private boolean doNotTruncate;
+    private boolean escapeXml = true;
     private boolean showInSummary = true;
+    private boolean outerInSummary = false;
     private boolean showInInlineCollection = true;
     private boolean showInResults = true;
     private boolean sectionOnRight;
@@ -139,6 +142,23 @@ public class FieldConfig
     }
 
     /**
+     * If set to true, don't escape the field value on object
+     * details page.
+     * @param escapeXml do not escape if true
+     */
+    public void setEscapeXml(boolean escapeXml) {
+        this.escapeXml = escapeXml;
+    }
+
+    /**
+     * Return the value of the escapeXml flag.
+     * @return the value of the flag
+     */
+    public boolean getEscapeXml() {
+        return escapeXml;
+    }
+
+    /**
      * Set the showInSummary flag.  If true, show this field in the summary section of the object
      * details page.
      * @param showInSummary the new value of the flag
@@ -153,6 +173,14 @@ public class FieldConfig
      */
     public boolean getShowInSummary() {
         return showInSummary;
+    }
+
+    public boolean getOuterInSummary() {
+        return outerInSummary;
+    }
+
+    public void setOuterInSummary(boolean outerInSummary) {
+        this.outerInSummary = outerInSummary;
     }
 
     /**
@@ -226,6 +254,7 @@ public class FieldConfig
 
             return otherFc.fieldExpr.equals(fieldExpr)
                 && otherFc.showInSummary == showInSummary
+                && otherFc.outerInSummary == outerInSummary
                 && otherFc.showInInlineCollection == showInInlineCollection
                 && otherFc.showInResults == showInResults;
         } else {
@@ -245,9 +274,10 @@ public class FieldConfig
      */
     public String toString() {
         return "<fieldconfig fieldExpr=\"" + fieldExpr + "\" displayer=\"" + displayer
-               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary + "\""
+               + "\" doNotTruncate=\"" + doNotTruncate + "\" showInSummary=\"" + showInSummary
+               + "\" outerInSummary=\"" + outerInSummary + "\""
                + " showInInlineCollection=\"" + showInInlineCollection + "\""
-               + " showInResults=\"" + showInResults + "\""
+               + " showInResults=\"" + showInResults + "\"" + " escapeXml=\"" + escapeXml + "\""
                + (fieldExporter == null ? "" : " fieldExporter=\"" + fieldExporter + "\"")
                + (label == null ? "" : " label=\"" + label + "\"")
                + "/>";

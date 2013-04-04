@@ -1,7 +1,7 @@
 package org.intermine.bio.web.logic;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,7 @@ import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.util.DynamicUtil;
 import org.intermine.web.logic.session.SessionMethods;
+import org.intermine.webservice.server.exceptions.BadRequestException;
 
 /**
  * Utility methods for LocatedSequenceFeature exporting.
@@ -50,7 +51,6 @@ public final class SequenceFeatureExportUtil
     private SequenceFeatureExportUtil() {
         super();
     }
-
 
     /**
      * From the view elements of a PathQuery, return a List of the Paths that this exporter will
@@ -95,11 +95,15 @@ public final class SequenceFeatureExportUtil
      * @param session http session
      * @return set of organisms
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Set<String> getOrganisms(PathQuery pathQuery, HttpSession session) {
 
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
+        return getOrganisms(pathQuery, im, profile);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Set<String> getOrganisms(PathQuery pathQuery, InterMineAPI im, Profile profile) {
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         Set<String> organismShortNames = new HashSet<String>();
@@ -126,6 +130,56 @@ public final class SequenceFeatureExportUtil
         return organismShortNames;
     }
 
+    public static class InvalidQueryException extends RuntimeException {
+        private static final long serialVersionUID = -4552483251561758438L;
+
+        InvalidQueryException(String msg) {
+            super(msg);
+        }
+
+        InvalidQueryException(Throwable t) {
+            super("Invalid query", t);
+        }
+    }
+
+    public static void isValidFastaQuery(PathQuery pq) {
+        if (pq.getView().size() > 1) {
+            throw new InvalidQueryException("Queries to this service may only have one view.");
+        }
+        Path path;
+        try {
+            path = pq.makePath(pq.getView().get(0));
+        } catch (PathException e) {
+            throw new InvalidQueryException(e);
+        }
+        ClassDescriptor klazz = path.getLastClassDescriptor();
+        ClassDescriptor sf = pq.getModel().getClassDescriptorByName("SequenceFeature");
+        ClassDescriptor protein = pq.getModel().getClassDescriptorByName("Protein");
+        if (sf == klazz || protein == klazz || klazz.getAllSuperDescriptors().contains(sf) || klazz.getAllSuperDescriptors().contains(protein)) {
+            return; // OK
+        } else {
+            throw new InvalidQueryException("Unsuitable type for export: " + klazz);
+        }
+    }
+
+    public static void isValidSequenceFeatureQuery(PathQuery pq) {
+        ClassDescriptor sf = pq.getModel().getClassDescriptorByName("SequenceFeature");
+        for (String view: pq.getView()) {
+            Path path;
+            try {
+                path = pq.makePath(view);
+            } catch (PathException e) {
+                throw new InvalidQueryException(e);
+            }
+            ClassDescriptor klazz = path.getLastClassDescriptor();
+            if (sf == klazz || klazz.getAllSuperDescriptors().contains(sf)) {
+                return; // OK
+            } else {
+                throw new InvalidQueryException("Unsuitable type for export: " + klazz);
+            }
+        }
+    }
+
     /**
      * Get organism taxon ids info from PathQuery
      *
@@ -133,11 +187,14 @@ public final class SequenceFeatureExportUtil
      * @param session http session
      * @return set of organism taxon ids
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Set<String> getTaxonIds(PathQuery pathQuery, HttpSession session) {
-
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
+        return getTaxonIds(pathQuery, im, profile);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static Set<String> getTaxonIds(PathQuery pathQuery, InterMineAPI im, Profile profile) {
         WebResultsExecutor webResultsExecutor = im.getWebResultsExecutor(profile);
 
         Set<String> organismTaxonIds = new HashSet<String>();

@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +26,7 @@ import org.apache.struts.actions.DispatchAction;
 import org.intermine.metadata.ClassDescriptor;
 import org.intermine.pathquery.Node;
 import org.intermine.pathquery.OrderDirection;
+import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLoop;
@@ -332,6 +333,10 @@ public class QueryBuilderChange extends DispatchAction
                         && (!query.getView().contains(pathToAdd.getNoConstraintsString()))
                         && (fc.getDisplayer() == null && fc.getShowInSummary())) {
                     query.addView(pathToAdd.getNoConstraintsString());
+                    if (fc.getOuterInSummary() && pathToAdd.decomposePath().size() > 2) {
+                        query.setOuterJoinStatus(pathToAdd.getPrefix().getNoConstraintsString(),
+                            OuterJoinStatus.OUTER);
+                    }
                 }
             }
         } else {
@@ -350,7 +355,6 @@ public class QueryBuilderChange extends DispatchAction
 
         return new ForwardParameters(mapping.findForward("query")).forward();
     }
-
 
     /**
      * AJAX request - expand a model browser node.

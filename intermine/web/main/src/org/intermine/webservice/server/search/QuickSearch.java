@@ -54,7 +54,6 @@ public class QuickSearch extends JSONService
         super(im);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void execute() throws Exception {
         javax.servlet.ServletContext servletContext = request.getSession().getServletContext();
@@ -64,8 +63,6 @@ public class QuickSearch extends JSONService
         QuickSearchRequest input = new QuickSearchRequest();
         Vector<KeywordSearchFacetData> facets = KeywordSearch.getFacets();
         Map<String, String> facetValues = getFacetValues(facets);
-
-        int totalHits = 0;
 
         long searchTime = System.currentTimeMillis();
         BrowseResult result = KeywordSearch.runBrowseSearch(input.searchTerm, input.offset,
@@ -77,7 +74,6 @@ public class QuickSearch extends JSONService
 
         Set<Integer> objectIds = new HashSet<Integer>();
         if (result != null) {
-            totalHits = result.getNumHits();
             LOG.debug("Browse found " + result.getNumHits() + " hits");
             BrowseHit[] browseHits = result.getHits();
             objectIds = KeywordSearch.getObjectIds(browseHits);
@@ -212,9 +208,10 @@ public class QuickSearch extends JSONService
                 final BagManager bm = im.getBagManager();
                 final Profile p = getPermission().getProfile();
                 final InterMineBag bag = bm.getBag(p, searchBag);
-                if (bag != null) {
-                    ids.addAll(bag.getContentsAsIds());
+                if (bag == null) {
+                    throw new BadRequestException("You do not have access to a bag named '" + searchBag + "'");
                 }
+                ids.addAll(bag.getContentsAsIds());
             }
             return ids;
         }

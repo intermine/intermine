@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,8 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -79,14 +81,14 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         query.addFrom(startClass);
 
         queryClassInQuery = new HashMap<String, QueryClass>();
-        String key = generateKeyForQueryClassInQuery(startClass, null);
+        String key = startClass.getType().getSimpleName();
         queryClassInQuery.put(key, startClass);
 
         QueryField qfCategoryPath = null;
         QueryField qfSeriesPath = null;
         if (!GraphWidgetActionType.TOTAL.equals(action)) {
             qfCategoryPath = createQueryFieldByPath(config.getCategoryPath(), query, true);
-            if (!config.isActualExpectedCriteria()) {
+            if (!config.isActualExpectedCriteria() && config.hasSeries()) {
                 qfSeriesPath = createQueryFieldByPath(config.getSeriesPath(), query, true);
             }
         }
@@ -194,7 +196,7 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         QueryClass qc = startClass;
         QueryField qfConstraint = null;
         ConstraintSet cs = (ConstraintSet) query.getConstraint();
-        String[] pathsConstraint = pc.getPath().split("\\.");
+        String[] pathConstraintSplitted = pc.getPath().split("\\.");
         boolean isFilterConstraint = WidgetConfigUtil.isFilterConstraint(config, pc);
         QueryValue queryValue = null;
         if (!isFilterConstraint) {
@@ -203,14 +205,18 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         if (isFilterConstraint && !"All".equalsIgnoreCase(filter)) {
             queryValue = new QueryValue(filter);
         }
-
-        for (int index = 0; index < pathsConstraint.length; index++) {
-            if (index == pathsConstraint.length - 1) {
-                qfConstraint = new QueryField(qc, pathsConstraint[index]);
+        for (int index = 0; index < pathConstraintSplitted.length; index++) {
+            if (index == pathConstraintSplitted.length - 1) {
+                qfConstraint = new QueryField(qc, pathConstraintSplitted[index]);
                 if (queryValue != null) {
                     if (!"null".equalsIgnoreCase(queryValue.getValue().toString())) {
-                        cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
-                                                          queryValue));
+                        QueryEvaluable qe = null;
+                        if (isFilterConstraint || queryValue.getValue() instanceof Boolean) {
+                            qe = qfConstraint;
+                        } else {
+                            qe = new QueryExpression(QueryExpression.LOWER, qfConstraint);
+                        }
+                        cs.addConstraint(new SimpleConstraint(qe, pc.getOp(), queryValue));
                     } else {
                         ConstraintOp op = (pc.getOp().equals(ConstraintOp.EQUALS))
                                           ? ConstraintOp.IS_NULL
@@ -219,37 +225,53 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
                     }
                 }
             } else {
-                qc = addReference(query, qc, pathsConstraint[index]);
+                String partialPath = createAttributePath(pathConstraintSplitted, index);
+                qc = addReference(query, qc, pathConstraintSplitted[index], partialPath);
             }
         }
     }
 
     private void buildCategorySeriesMap(
         HashMap<String, long[]> categorySeriesMap) {
-        String[] seriesValue = config.getSeriesValues().split("\\,");
-        for (Iterator<?> it = results.iterator(); it.hasNext();) {
-            ResultsRow<?> row = (ResultsRow<?>) it.next();
-            String category = (String) row.get(0);
-            Object series = row.get(1);
-            long count = (Long) row.get(2);
-            if (series != null) {
-                if (categorySeriesMap.get(category) != null) {
-                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
-                        if (isSeriesValue(seriesValue[indexSeries], series)) {
-                            (categorySeriesMap.get(category))[indexSeries] = count;
-                            break;
+        if (config.hasSeries()) {
+            String[] seriesValue = config.getSeriesValues().split("\\,");
+            for (Iterator<?> it = results.iterator(); it.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) it.next();
+                String category = (String) row.get(0);
+                Object series = row.get(1);
+                long count = (Long) row.get(2);
+                if (series != null) {
+                    if (categorySeriesMap.get(category) != null) {
+                        for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
+                            if (isSeriesValue(seriesValue[indexSeries], series)) {
+                                (categorySeriesMap.get(category))[indexSeries] = count;
+                                break;
+                            }
                         }
-                    }
-                } else {
-                    long[] counts = new long[seriesValue.length];
-                    for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
-                        if (isSeriesValue(seriesValue[indexSeries], series)) {
-                            counts[indexSeries] = count;
-                            break;
+                    } else {
+                        long[] counts = new long[seriesValue.length];
+                        for (int indexSeries = 0; indexSeries < seriesValue.length; indexSeries++) {
+                            if (isSeriesValue(seriesValue[indexSeries], series)) {
+                                counts[indexSeries] = count;
+                                break;
+                            }
                         }
+                        categorySeriesMap.put(category, counts);
                     }
-                    categorySeriesMap.put(category, counts);
                 }
+            }
+        } else {
+            for (Iterator<?> it = results.iterator(); it.hasNext();) {
+                ResultsRow<?> row = (ResultsRow<?>) it.next();
+                String category;
+                try {
+                    category = (String) row.get(0);
+                } catch (ClassCastException cce) {
+                    category = Integer.toString((Integer) row.get(0));
+                }
+                long count = (Long) row.get(1);
+                long[] counts = {count};
+                categorySeriesMap.put(category, counts);
             }
         }
     }
@@ -266,9 +288,11 @@ public class GraphWidgetLoader extends WidgetLdr implements DataSetLdr
         List<Object> headerRow = new LinkedList<Object>();
         List<Object> dataRow = null;
         headerRow.add(config.getRangeLabel());
-        String[] seriesLabels = config.getSeriesLabels().split(",");
-        for (String seriesLabel : seriesLabels) {
-            headerRow.add(seriesLabel);
+        if (config.hasSeries()) {
+            String[] seriesLabels = config.getSeriesLabels().split(",");
+            for (String seriesLabel : seriesLabels) {
+                headerRow.add(seriesLabel);
+            }
         }
         resultTable.add(headerRow);
         ArrayList<String> categories = new ArrayList<String>(categorySeriesMap.keySet());

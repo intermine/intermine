@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +26,8 @@ public class ModifyBagForm extends ActionForm
     protected String newBagName;
     protected String pageName;
     protected String listsButton;
+    protected String listLeft;
+    protected String listRight;
 
     /**
      * Constructor
@@ -40,6 +42,8 @@ public class ModifyBagForm extends ActionForm
     public void initialise() {
         selectedBags = new String[0];
         newBagName = "";
+        listLeft = "";
+        listRight = "";
     }
 
     /**
@@ -58,6 +62,22 @@ public class ModifyBagForm extends ActionForm
      */
     public String[] getSelectedBags() {
         return selectedBags;
+    }
+
+    public String getListLeft() {
+        return listLeft;
+    }
+
+    public void setListLeft(String listLeft) {
+        this.listLeft = listLeft;
+    }
+
+    public String getListRight() {
+        return listRight;
+    }
+
+    public void setListRight(String listRight) {
+        this.listRight = listRight;
     }
 
     /**

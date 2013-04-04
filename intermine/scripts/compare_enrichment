@@ -1,0 +1,126 @@
+#!/usr/bin/python
+
+import sys
+import json
+from operator import attrgetter
+from itertools import product
+import traceback
+from intermine.webservice import Service, ServiceError
+
+usage = """
+%s: Compare the enrichment statistics from two versions of the same webservice
+
+usage: %s www.flymine.org/query beta.flymine.org/beta listname
+
+All arguments are positional.
+
+Arguments:
+    * service version A
+    * service version B
+    * the name of a list to run
+
+"""
+
+algorithms = [
+    'Holm-Bonferroni',
+    'Bonferroni',
+    'Benjamini Hochberg'
+]
+
+tags = [ "compare_enrichment", "automated_testing" ]
+
+HR = "============================================="
+hr = "---------------------------------------------"
+
+def get_list_args(service, name, attribute):
+    try:
+        source_mine = Service(service)
+    except (IOError, ServiceError):
+        raise UsageError("Could not connect to " + service)
+
+    source_list = source_mine.get_list(name)
+    if source_list is None:
+        raise UsageError("Could not find " + name)
+    list_args = {
+        "list_type": source_list.list_type,
+        "tags": tags,
+        "content": map(attrgetter(attribute), source_list)
+    }
+    return list_args
+
+def run_enrichment(l, name, a, f, results):
+    key = "%s (%s, %s)" % (name, a, f)
+    if key not in results: results[key] = []
+    top5 = list(l.calculate_enrichment(name, maxp = 0.5, correction = a, filter = f))[:5]
+    results[key].append(map(attrgetter('p_value'), top5))
+    if len(top5):
+        print "# list = %s, algorithm = %s, filter = %s" % (l, a, f)
+        for item in top5:
+            print "    ", item.p_value, item.description
+        print hr
+
+def run_all_combinations(l, name, filters, results):
+    for f, a in product(filters, algorithms):
+        run_enrichment(l, name, a, f, results)
+
+def run_suitable_enrichment_widgets(results, l, widgets):
+    for name, widget in widgets.iteritems():
+        if 'enrichment' == widget['widgetType'] and l.list_type in widget['targets']:
+            print "Running ", name
+            print HR
+            filters = widget['filters'].split(',') if widget['filters'] is not None else ['']
+            run_all_combinations(l, name, filters, results)
+
+def compare_enrichment(services, source):
+    mines = map(lambda args: Service(**args), services)
+    list_args = get_list_args(**source)
+
+    results = {}
+
+    for mine in mines:
+        print "RESULTS FOR %s (version = %s, release = %s)" % (mine.root, mine.version, mine.release.strip())
+        print HR
+        l = mine.create_list(**list_args)
+        widgets = mine.widgets
+        run_suitable_enrichment_widgets(results, l, widgets)
+        l.delete()
+    analyse_results(results)
+
+def analyse_results(results):
+    print "Analysis"
+    print HR
+    for key, pvalues in results.iteritems():
+        if len(pvalues) == 2:
+            if pvalues[0] != pvalues[1]:
+                print "! Results for %s differ: %r, %r" % (key, pvalues[0], pvalues[1])
+            else:
+                print "* Results for %s are consistent" % key
+        else:
+            print "! This set of parameters only ran in one mine: ", key
+
+
+class UsageError(Exception):
+    pass
+
+### CALL MAIN ###
+
+if __name__ == '__main__':
+
+    args = sys.argv[1:]
+
+    try:
+        if len(args) == 1:
+            with open(args[0]) as f:
+                conf = json.load(f)
+                compare_enrichment(**conf)
+        else:
+            raise UsageError("No arguments supplied")
+    except UsageError as e:
+        print usage % (sys.argv[0], sys.argv[0])
+        print "Error: ", e
+        exit(1)
+    except:
+        tb = traceback.format_exc()
+        print "ERROR:"
+        print tb
+        exit(1)

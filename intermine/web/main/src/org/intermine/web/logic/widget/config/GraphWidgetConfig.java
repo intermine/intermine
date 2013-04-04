@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -156,7 +156,14 @@ public class GraphWidgetConfig extends WidgetConfig
     }
 
     public boolean isActualExpectedCriteria() {
-        if (this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA)) {
+        if (hasSeries() && this.seriesPath.contains(ACTUAL_EXPECTED_CRITERIA)) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean hasSeries() {
+        if (this.seriesPath != null && !"".equals(this.seriesPath)) {
             return true;
         }
         return false;

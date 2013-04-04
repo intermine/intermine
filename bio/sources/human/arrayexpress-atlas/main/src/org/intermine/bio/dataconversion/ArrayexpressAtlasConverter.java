@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -31,7 +31,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  * Read ArrayExpress .json files retrieved from web service.
  * @author Richard Smith
@@ -39,9 +38,12 @@ import org.json.JSONObject;
 public class ArrayexpressAtlasConverter extends BioDirectoryConverter
 {
     //
-    private static final String DATASET_TITLE = "ArrayExpress dataset";
+    private static final String DATASET_TITLE_PREFIX = "ArrayExpress accession: ";
     private static final String DATA_SOURCE_NAME = "ArrayExpress";
     private Map<String, String> genes = new HashMap<String, String>();
+    private boolean isDatasetTitleAssigned = false;
+    private String DATASET_TITLE;
+    private List<String> datasets = new ArrayList<String>();
 
     private String taxonId = "9606";
     private static final Logger LOG = Logger.getLogger(ArrayexpressAtlasConverter.class);
@@ -49,18 +51,16 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
     //String[] types = new String[] {"organism_part", "disease_state", "cell_type", "cell_line"};
     static String[] types = new String[] {"organism_part", "disease_state", "cell_type"};
     private static final Set<String> EXPRESSION_TYPES = new HashSet<String>(Arrays.asList(types));
+    private static final String NA_EXPRESSION = "NA";
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
     public ArrayexpressAtlasConverter(ItemWriter writer, Model model) {
-        super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
+        super(writer, model, DATA_SOURCE_NAME, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void process(File dataDir) throws Exception {
         List<File> files = readFilesInDir(dataDir);
@@ -72,7 +72,6 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
                 process(new FileReader(f));
             }
         }
-
     }
 
     private List<File> readFilesInDir(File dir) {
@@ -83,11 +82,6 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         return files;
     }
 
-    /**
-     *
-     *
-     * {@inheritDoc}
-     */
     public void process(Reader reader) throws Exception {
         BufferedReader bufferedReader = new BufferedReader(reader);
         StringBuilder sb = new StringBuilder();
@@ -95,11 +89,23 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
         while ((line = bufferedReader.readLine()) != null) {
             sb.append(line);
         }
+        bufferedReader.close();
+
         JSONObject json = new JSONObject(sb.toString());
 
         JSONArray results = json.getJSONArray("results");
 
         JSONObject result = results.getJSONObject(0);
+
+        if (!isDatasetTitleAssigned) {
+            JSONObject experimentInfo = result.getJSONObject("experimentInfo");
+            String accession = experimentInfo.getString("accession");
+            DATASET_TITLE = DATASET_TITLE_PREFIX + accession;
+            String dataSetRefId = getDataSet(DATASET_TITLE, getDataSource(DATA_SOURCE_NAME));
+            setDataSet(dataSetRefId);
+            datasets.add(dataSetRefId);
+            isDatasetTitleAssigned = true;
+        }
 
         String arrayDesign = result.getString("arrayDesign");
 
@@ -123,6 +129,9 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
 
                         JSONObject stat = expressionResult.getJSONObject("stat");
                         String expression = stat.get("expression").toString();
+                        if (NA_EXPRESSION.equals(expression)) {
+                            continue;
+                        }
                         Double pValue = stat.getDouble("pvalue");
                         Double tStatistic = stat.getDouble("tstat");
 
@@ -131,6 +140,7 @@ public class ArrayexpressAtlasConverter extends BioDirectoryConverter
                         expressionItem.setAttribute("expression", expression);
                         expressionItem.setAttribute("pValue", pValue.toString());
                         expressionItem.setAttribute("tStatistic", tStatistic.toString());
+                        expressionItem.setCollection("dataSets", datasets);
                         store(expressionItem);
                     } catch (JSONException e) {
                         LOG.warn("JSON object missing some values: "

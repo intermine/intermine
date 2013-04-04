@@ -1,7 +1,7 @@
 package org.intermine.bio.webservice;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,7 +52,8 @@ public class FastaQueryServiceTest {
         int tested = 0;
         for (String ext: extensionsToValues.keySet()) {
             assertEquals("Can parse this extension: " + ext,
-                extensionsToValues.get(ext), Integer.valueOf(FastaQueryService.parseExtension(ext)));
+                extensionsToValues.get(ext),
+                Integer.valueOf(FastaQueryService.parseExtension(ext)));
             tested++;
         }
         assertEquals(tested, extensionsToValues.size());
