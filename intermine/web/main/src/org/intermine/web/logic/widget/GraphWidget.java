@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.intermine.metadata.ClassDescriptor;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.objectstore.ObjectStore;
 import org.intermine.pathquery.Constraints;
@@ -31,10 +32,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
 public class GraphWidget extends Widget
 {
     private static final Logger LOG = Logger.getLogger(GraphWidget.class);
-    private int notAnalysed = 0;
     private GraphWidgetLoader grapgWidgetLdr;
-    private InterMineBag bag;
-    private ObjectStore os;
     private String filter;
 
 
@@ -68,11 +66,24 @@ public class GraphWidget extends Widget
      * Throws a ResourceNotFoundException if it's not valid
      */
     private void validateBagType() {
-        String typeClass = config.getTypeClass();
-        if (!typeClass.equals(bag.getType())) {
-            throw new ResourceNotFoundException("Could not find a graph widget called \""
-                    + config.getId() + "\" with type " + bag.getType());
+        ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
+        ClassDescriptor accepted = os.getModel().getClassDescriptorByName(config.getTypeClass());
+        if (bagType == null) {
+            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
         }
+        if (accepted == null) {
+            throw new IllegalStateException("This widget is configured incorrectly. Its type is not in the model: " + config.getTypeClass());
+        }
+        if ("InterMineObject".equals(accepted.getUnqualifiedName())) {
+            return; // This widget accepts anything, however useless.
+        } else if (bagType.equals(accepted)) {
+            return; // Exact match.
+        } else if (bagType.getAllSuperDescriptors().contains(accepted)) {
+            return; // Sub-class.
+        }
+        throw new IllegalArgumentException(
+            String.format("The %s chart widget only accepts lists of %s, but you provided a list of %s",
+                config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**
@@ -113,22 +124,6 @@ public class GraphWidget extends Widget
                 && grapgWidgetLdr.getResults().size() > 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNotAnalysed() {
-        return notAnalysed;
-    }
-
     @Override
     public List<List<Object>> getResults() {
         return grapgWidgetLdr.getResultTable();
@@ -154,7 +149,8 @@ public class GraphWidget extends Widget
         //category constraint
         q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
                                       "%category"));
-        if (!((GraphWidgetConfig) config).isActualExpectedCriteria()) {
+        if (!((GraphWidgetConfig) config).isActualExpectedCriteria()
+        	&& ((GraphWidgetConfig) config).hasSeries()) {
             //series constraint
             q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
                                           "%series"));
@@ -196,8 +192,10 @@ public class GraphWidget extends Widget
         q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getCategoryPath(),
                                       "%category"));
         //series constraint
-        q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
+        if (((GraphWidgetConfig) config).hasSeries()) {
+            q.addConstraint(Constraints.eq(prefix + ((GraphWidgetConfig) config).getSeriesPath(),
                                       "%series"));
+        }
 
         return q;
     }

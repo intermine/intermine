@@ -857,7 +857,7 @@ input#submitClassSelect {
 
 /* bagBuild.jsp create a new list table */
 table#buildbaglist {
-    width: 500px;
+    width: 90%;
     margin-bottom: 10px;
 }
 
@@ -869,7 +869,7 @@ table#buildbaglist td {
 
 table#buildbaglist td.label {
     padding-right: 14px;
-    width: auto;
+    width: 25%;
 }
 
 table#buildbaglist td label {

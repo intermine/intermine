@@ -1,7 +1,7 @@
 package org.intermine.pathquery;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,7 @@ package org.intermine.pathquery;
  *
  */
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -201,5 +202,24 @@ public class LogicExpressionTest extends TestCase
         assertTrue(true || true && false);
         assertTrue(true || (true && false));
         assertFalse((true || true) && false);
+    }
+
+    public void testGetPartialString() {
+        LogicExpression l = new LogicExpression("(A and B) or C");
+        assertEquals("(A and B)", l.getPartialString(Arrays.asList("A", "B")));
+        assertEquals("(A and B) or C", l.getPartialString(Arrays.asList("A", "C")));
+        assertEquals("C", l.getPartialString(Arrays.asList("C")));
+
+        LogicExpression l2 = new LogicExpression("A and B or C");
+        assertEquals("(A and B)", l2.getPartialString(Arrays.asList("A")));
+        assertEquals("(A and B) or C", l2.getPartialString(Arrays.asList("A", "C")));
+        assertEquals("C", l2.getPartialString(Arrays.asList("C")));
+        assertEquals("(A and B)", l2.getPartialString(Arrays.asList("A", "B")));
+
+        LogicExpression l3 = new LogicExpression("A and (B or C)");
+        assertEquals("A and (B or C)", l3.getPartialString(Arrays.asList("A", "B")));
+        assertEquals("A and (B or C)", l3.getPartialString(Arrays.asList("A", "C")));
+        assertEquals("(B or C)", l3.getPartialString(Arrays.asList("C")));
+
     }
 }

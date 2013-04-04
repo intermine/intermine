@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -42,6 +42,9 @@ public class ReportObjectField
     /** @var shall we truncate the field value? */
     private boolean fieldDoNotTruncate;
 
+    /** @var shall we escape the field value? */
+    private boolean fieldEscapeXml;
+
     private String label = null;
 
     /**
@@ -51,19 +54,21 @@ public class ReportObjectField
      * @param fieldValue Object
      * @param fieldDisplayerPage String
      * @param doNotTruncate bool
+     * @param escapeXml bool
      */
     public ReportObjectField(String objectType, String fieldName,
-            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate) {
+            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate, boolean escapeXml) {
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
         this.fieldDisplayerPage = fieldDisplayerPage;
         this.fieldDoNotTruncate = doNotTruncate;
+	this.fieldEscapeXml = escapeXml;
         this.pathString = objectType + "." + fieldName;
     }
 
     public ReportObjectField(String objectType, String fieldName,
-            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate, String label) {
-        this(objectType, fieldName, fieldValue, fieldDisplayerPage, doNotTruncate);
+            Object fieldValue, String fieldDisplayerPage, boolean doNotTruncate, boolean escapeXml, String label) {
+        this(objectType, fieldName, fieldValue, fieldDisplayerPage, doNotTruncate, escapeXml);
         this.label = label;
     }
 
@@ -107,6 +112,14 @@ public class ReportObjectField
      */
     public boolean getDoNotTruncate() {
         return fieldDoNotTruncate;
+    }
+
+    /**
+     *
+     * @return true if escape xml
+     */
+    public boolean getEscapeXml() {
+        return fieldEscapeXml;
     }
 
     /**

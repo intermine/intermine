@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -101,6 +101,7 @@ public class GraphService extends WidgetService
         addOutputInfo("chartType", graphConfig.getGraphType());
         addOutputAttribute("seriesValues", graphConfig.getSeriesValues());
         addOutputAttribute("seriesLabels", graphConfig.getSeriesLabels());
+        addOutputAttribute("seriesPath", graphConfig.getSeriesPath());
         addOutputAttribute("domainLabel", graphConfig.getDomainLabel());
         addOutputAttribute("rangeLabel", graphConfig.getRangeLabel());
     }

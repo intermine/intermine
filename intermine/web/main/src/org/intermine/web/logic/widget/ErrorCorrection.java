@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -60,10 +60,10 @@ public final class ErrorCorrection
         } else {
             adjustedResults = calculate(results, max);
         }
-        return sortMap(adjustedResults);
+        return adjustedResults;
     }
 
-    private static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
+    public static Map<String, BigDecimal> sortMap(Map<String, BigDecimal> originalMap) {
         SortableMap sortedMap = new SortableMap(originalMap);
         // sort ascending, smallest values first
         sortedMap.sortValues(false, true);

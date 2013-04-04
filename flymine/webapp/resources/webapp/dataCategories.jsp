@@ -88,7 +88,7 @@
         <p><i>S. cerevisiae</i></p>
     </td>
     <td> Protein annotation</td>
-    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_11</td>
+    <td> <a href="http://www.ebi.uniprot.org/index.shtml" target="_new" class="extlink">UniProt</a> - Release 2012_09</td>
     <td> UniProt Consortium - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17142230" target="_new" class="extlink">PubMed: 17142230</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -100,7 +100,7 @@
         <p><i>C. elegans</i></p>
     </td>
     <td> Protein family and domain assignments to proteins</td>
-    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2012_11)</td>
+    <td> <a href="http://www.ebi.ac.uk/interpro" target="_new" class="extlink">InterPro</a> (from UniProt Release 2012_09)</td>
     <td> Mulder et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17202162" target="_new" class="extlink">PubMed: 17202162</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -119,7 +119,7 @@
         <p><i>S. cerevisiae</i></p>
     </td>
     <td> High-throughput yeast 2-hybrid protein interaction datasets </td>
-    <td> <a href="http://www.ebi.ac.uk/intact" target="_new" class="extlink">IntAct</a> - 13 November 2012</td>
+    <td> <a href="http://www.ebi.ac.uk/intact" target="_new" class="extlink">IntAct</a> - 17 August 2012</td>
     <td> Kerrien et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/17145710" target="_new" class="extlink">PubMed:17145710</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -131,7 +131,7 @@
        <p><i>S. cerevisiae</i></p>
     </td>
     <td> Interactions from the BioGRID</td>
-    <td> <a href="http://www.thebiogrid.org" target="_new" class="extlink">BioGRID</a> - Version 3.2.95 </td>
+    <td> <a href="http://www.thebiogrid.org" target="_new" class="extlink">BioGRID</a> - Version 3.1.93 </td>
     <td> Stark et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/16381927" target="_new" class="extlink">PubMed:16381927</a></td>
     <td> &nbsp;</td>
   </tr>
@@ -237,7 +237,7 @@
   <tr>
     <td> <i>D. melanogaster</i> </td>
     <td> Transcription factor binding sites</td>
-    <td> <a href="http://www.flyreg.org" target="_new" class="extlink">REDfly</a> - 8th November 2012</td>
+    <td> <a href="http://www.flyreg.org" target="_new" class="extlink">REDfly</a> - 21st September 2012</td>
     <td> Bergman et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/15572468" target="_new" class="extlink">PubMed: 15572468</a></td>
     <td>  &nbsp; </td>
   </tr>
@@ -263,7 +263,7 @@
     <td> <i>D. melanogaster</i> </td>
     <td> High-throughput cell-based RNAi screens</td>
     <td> <a href="http://genomernai.org" target="_new" class="extlink">GenomeRNAi</a> - Version 9.0</td>
-    <td> Schmidt et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/23193271" target="_new" class="extlink">PubMed: 23193271</a></td>
+    <td> Gilsdorf et al - <a href="http://www.ncbi.nlm.nih.gov/pubmed/19910367" target="_new" class="extlink">PubMed: 19910367</a></td>
     <td> &nbsp;</td>
   </tr>
   <tr>
@@ -278,7 +278,7 @@
   <tr>
     <td> <p><i>D. melanogaster</i></p></td>
     <td> Pathway information and the genes involved in them, inferred through orthologues from Human curated pathways</td>
-    <td> <a href="http://www.reactome.org/" target="_new" class="extlink">Reactome</a> - 30th Oct 2012</td>
+    <td> <a href="http://www.reactome.org/" target="_new" class="extlink">Reactome</a> - 5th Oct 2012</td>
     <td> &nbsp;</td>
     <td>&nbsp;</td>
   </tr>
@@ -355,7 +355,7 @@
        <p><i>C. elegans</i></p>
     </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new" class="extlink">NCBI</a> - 30th October 2012</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new" class="extlink">NCBI</a> - 10th October 2012</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>

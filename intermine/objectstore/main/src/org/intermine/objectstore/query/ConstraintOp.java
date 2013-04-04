@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * Operations used in building constraints.
+ *
+ * TODO: These should be enums so that they are switchable.
  *
  * @author Mark Woodbridge
  * @author Matthew Wakeling
@@ -123,6 +125,7 @@ public final class ConstraintOp
 
     /**
      * Get an index for this ConstraintOp
+     * TODO: expunge this horror. Webapp code should NOT BE IN THE OBJECTSTORE!
      * (Only for use in webapp)
      * @return the index
      */

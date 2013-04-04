@@ -99,14 +99,7 @@ Features
     </tr>
 </thead>
 <tbody>
-<%--
-     <tr>
-        <th>Feature type</th>
-        <th>View data</th>
-        <th colspan="4" >Export</th>
-        <th>Action</th>
-      </tr>
---%>
+
       <c:forEach items="${featureCounts}" var="fc" varStatus="status">
         <c:if test='${fc.key != "Chromosome"}'>
           <tr>
@@ -120,20 +113,6 @@ Features
                 </c:forEach>
             </td>
 
-            <td align="middle" style="padding-left: 6px;" class="submission-features-count">
-                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}"
-                   style="text-decoration: none;" data-feature-type="${fc.key}" data-dcc-id="${object.dCCid}">
-                    ${fc.value}
-                </a>
-            </td>
-
-            <td align="left" style="padding-left: 6px;">
-              <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
-            </td>
-            <td align="left" style="padding-left: 6px;" >
-              <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
-            </td>
-
             <c:set var="isUnloc" value="false"></c:set>
             <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
                 <c:if test="${uft.key == object.dCCid}">
@@ -145,6 +124,21 @@ Features
                     </c:forEach>
                 </c:if>
             </c:forEach>
+
+            <td align="middle" style="padding-left: 6px;" class="submission-features-count">
+                <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&isUnloc=${isUnloc}"
+                   style="text-decoration: none;" data-feature-type="${fc.key}"  data-dcc-id="${object.dCCid}" data-isunloc="${isUnloc}">
+                    ${fc.value}
+                </a>
+            </td>
+
+            <td align="left" style="padding-left: 6px;">
+              <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=tab&submission=${object.dCCid}&feature=${fc.key}" title="Tab-delimited values" style="text-decoration: none;">TAB</a>
+            </td>
+            <td align="left" style="padding-left: 6px;" >
+              <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&format=csv&submission=${object.dCCid}&feature=${fc.key}" title="Comma-separated values" style="text-decoration: none;">CSV</a>
+            </td>
+
             <c:choose>
             <c:when test="${isUnloc == 'true' }">
               <td><i>GFF3</i><td><i>SEQUENCE</i>
@@ -168,16 +162,19 @@ Features
         </c:if>
 
 
-
+<%--EXPRESSION LEVELS --%>
 
 <c:forEach items="${subFeatEL}" var="subEL" varStatus="subEL_status">
 <c:if test="${subEL.key == object.dCCid}" >
 <c:forEach items="${subEL.value}" var="subELF" varStatus="subELF_status">
 <c:if test="${subELF.key == fc.key}" >
 <tr><td><i>Expression Levels</i>
-<td>
+<td class="submission-features-count">
 <i>
-<html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}">${subELF.value} </html:link>
+<a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=subEL&action=results&submission=${object.dCCid}&feature=${fc.key}" 
+                   style="text-decoration: none;" data-feature-type="${fc.key}"  data-dcc-id="${object.dCCid}" data-isunloc="subEL">
+                   ${subELF.value}</a>
+
 </i>
 </td>
 <td align="left" style="padding-left: 6px;">
@@ -213,13 +210,21 @@ Features
             <tr><td align=right><i>
             ${fn:replace(FS.key, "_", " ")}
             </i></td>
-            <td align="middle">
-            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
+            <td align="middle" class="submission-features-count">
+            <a href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}"
+                   style="text-decoration: none;" data-feature-type="${fc.key}"  data-dcc-id="${object.dCCid}" data-file="${FS.key}"> 
+                   ${FS.value}
+                   </a>
+            
+</td>
+
 <td>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=tab">TAB</html:link>
 <td>
             <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=export&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}&format=csv">CSV</html:link>
 <%--
+            <html:link href="/${WEB_PROPERTIES['webapp.path']}/features.do?type=submission&action=results&submission=${object.dCCid}&feature=${fc.key}&file=${FS.key}">${FS.value} </html:link>
+
             <c:set var="isUnloc" value="false"></c:set>
             <c:forEach items="${unlocatedFeat}" var="uft" varStatus="uft_status">
                 <c:if test="${uft.key == object.dCCid}">
@@ -267,32 +272,89 @@ Features
 (function($) {
     var $table  = $('#${tableContainerId}');
     var NO_OP   = function () {};
-    var querier = function (featureType, dccId) {
+        
+//     var querier = function (featureType, dccId) {
+//         return function (model) {
+//             var query = {
+//                 select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+//                 from: featureType,
+//                 joins: ["scoreProtocol"],
+//                 where: {"submissions.DCCid": dccId}
+//             };
+//             var table = model.classes[featureType];
+//             if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
+//                 query.select.push('chromosome.primaryIdentifier');
+//                 query.select.push('chromosomeLocation.start');
+//                 query.select.push('chromosomeLocation.end');
+//                 query.select.push('chromosomeLocation.strand');
+//                 query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+//             }
+//             query.select.push('submissions.DCCid');
+//             query.select.push('submissions.experimentalFactors.name');
+//             query.joins.push('submissions.experimentalFactors');
+//             return query;
+//         };
+//     };
+
+    
+    var querier = function (featureType, dccId, isUnloc, sourceFile) {
         return function (model) {
-            var query = {
+        	
+        	var query;
+        	// expression values queries
+        	if (isUnloc == "subEL") { // these are expression levels
+            query = {
+        			select: ["primaryIdentifier", "expressionLevels.value", 
+                       "expressionLevels.readCount", "expressionLevels.dcpm", 
+                       "expressionLevels.dcpmBases", "expressionLevels.transcribed", 
+                       "expressionLevels.predictionStatus", "expressionLevels.name"],
+              from: featureType,
+              where: {"submissions.DCCid": dccId}
+              }
+        	return query;
+        	}; 
+        	
+        	// features queries
+        	if (sourceFile == null) { 
+            query = {
                 select: ["primaryIdentifier", "score", "scoreProtocol.name"],
                 from: featureType,
                 joins: ["scoreProtocol"],
                 where: {"submissions.DCCid": dccId}
-            };
-            var table = model.classes[featureType];
-            if (table && table.fields && table.fields['chromosomeLocation'] && table.fields['chromosome']) {
-                query.select.push('chromosome.primaryIdentifier');
-                query.select.push('chromosomeLocation.start');
-                query.select.push('chromosomeLocation.end');
-                query.select.push('chromosomeLocation.strand');
-                query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
             }
-            query.select.push('submissions.DCCid');
-            query.select.push('submissions.experimentalFactors.name');
-            query.joins.push('submissions.experimentalFactors');
-            return query;
+        	} else {
+            query = {
+                select: ["primaryIdentifier", "score", "scoreProtocol.name"],
+                from: featureType,
+                joins: ["scoreProtocol"],
+                where: {"submissions.DCCid": dccId,
+              			    "sourceFile": sourceFile}
+             }
+        	}
+        	
+          if (isUnloc == false || isUnloc == null) {
+             query.select.push('chromosome.primaryIdentifier');
+             query.select.push('chromosomeLocation.start');
+             query.select.push('chromosomeLocation.end');
+             query.select.push('chromosomeLocation.strand');
+
+             query.sortOrder = ['chromosome.primaryIdentifier', 'chromosomeLocation.start'];
+            }
+                
+         query.select.push('submissions.DCCid');
+         query.select.push('submissions.experimentalFactors.name');
+         query.joins.push('submissions.experimentalFactors');
+        	
+         return query;
         };
     };
+
+
     $(function() {
         $('.submission-features-count a').click(function(e) {
             var $link     = $(this);
-            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"));
+            var makeQuery = querier($link.data("feature-type"), $link.data("dcc-id"), 
+            		$link.data("isunloc"), $link.data("file"));
             e.preventDefault();
             $SERVICE.fetchModel(NO_OP).pipe(makeQuery).done(function(modded) {
                 $table.empty().imWidget({
@@ -361,7 +423,7 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
             <html:form action="/submissionOverlapsAction" method="post">
                 <html:hidden property="submissionTitle" value="${object.title}" />
                 <html:hidden property="submissionId" value="${object.id}" />
-                <html:hidden property="submissionDCCid" value="${object.dCCid}" />
+                <html:hidden property="submissionDCCId" value="${object.dCCid}" />
                   Find
                   <html:select styleId="typeSelector" property="overlapFindType">
                             <html:option value="Gene">Genes</html:option>
@@ -372,16 +434,6 @@ relevant ones compiled by rachel. TODO add check for unlocated features?
 
                  with a flanking region of
 
-<!--
-              <html:select styleId="typeSelector" property="distance">
-              <html:option value="0">0</html:option>
-              <html:option value="0.5kb">.5kb</html:option>
-              <html:option value="1.0kb">1kb</html:option>
-              <html:option value="2.0kb">2kb</html:option>
-              <html:option value="5.0kb">5kb</html:option>
-              <html:option value="10.0kb">10kb</html:option>
-           </html:select>
--->
             <!-- insert slider -->
             <html:hidden styleId="distance" property="distance" value="0" />
 

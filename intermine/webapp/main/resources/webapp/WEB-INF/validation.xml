@@ -46,15 +46,5 @@
         <arg key="templateBuilder.shortName"/>
       </field>
     </form>
-    
-    <form name="importTemplatesForm">
-      <field
-        property="xml"
-        depends="required">
-        <arg key="importTemplates.xml"/>
-      </field>
-    </form>
-    
   </formset>
-  
 </form-validation>

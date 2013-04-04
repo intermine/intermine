@@ -1,7 +1,7 @@
 package org.intermine.web.logic.results;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -224,6 +224,7 @@ public class ReportObject
                             fieldValue,
                             fieldDisplayer,
                             fc.getDoNotTruncate(),
+                            fc.getEscapeXml(),
                             fc.getLabel()
                     );
 
@@ -249,7 +250,8 @@ public class ReportObject
                                 attName,
                                 attributes.get(attName),
                                 null,
-                                false
+                                false,
+				false
                         );
                         objectSummaryFields.add(rof);
                     }

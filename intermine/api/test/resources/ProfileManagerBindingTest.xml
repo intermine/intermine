@@ -1,5 +1,5 @@
 <userprofiles>
-  <userprofile password="bob_pass" username="bob" apikey="BOBKEY"
+  <userprofile username="bob" password="bob_pass" apikey="BOBKEY"
     localAccount="true" superUser="false">
     <bags>
       <bag name="bag1" type="Department" date-created="1322666095693"
@@ -8,9 +8,10 @@
         <bagValue value="DepartmentB1" extra="" />
       </bag>
     </bags>
+    <shared-bags></shared-bags>
     <queries>
       <saved-query name="query1" date-created="1322666095688">
-        <query name="query1" model="testmodel" view=""></query>
+        <query name="query1" model="testmodel" view="" longDescription=""></query>
       </saved-query>
     </queries>
     <template-queries>
@@ -25,8 +26,9 @@
       <tag name="test-tag2" objectIdentifier="Department.employees"
         type="collection"></tag>
     </tags>
+    <preferences></preferences><invitations></invitations>
   </userprofile>
-  <userprofile password="sally_pass" username="sally"
+  <userprofile username="sally" password="sally_pass" 
     localAccount="true" superUser="false">
     <bags>
       <bag name="bag2" type="Employee" date-created="1322666095854"
@@ -34,9 +36,10 @@
         <bagValue value="EmployeeB1" extra="DepartmentB1" />
       </bag>
     </bags>
+    <shared-bags></shared-bags>
     <queries>
       <saved-query name="query1" date-created="1322666095688">
-        <query name="query1" model="testmodel" view=""></query>
+        <query name="query1" model="testmodel" view="" longDescription=""></query>
       </saved-query>
     </queries>
     <template-queries>
@@ -47,5 +50,6 @@
     <tags>
       <tag name="test-tag" objectIdentifier="Department.company" type="reference"></tag>
     </tags>
+    <preferences></preferences><invitations></invitations>
   </userprofile>
 </userprofiles>

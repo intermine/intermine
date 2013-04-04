@@ -1,11 +1,10 @@
 package org.intermine.api.query.codegen;
 
-import java.lang.StringBuffer;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -19,16 +18,20 @@ import org.intermine.pathquery.OuterJoinStatus;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintAttribute;
 import org.intermine.pathquery.PathConstraintBag;
+import org.intermine.pathquery.PathConstraintIds;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
 import org.intermine.pathquery.PathConstraintMultiValue;
+import org.intermine.pathquery.PathConstraintNull;
 import org.intermine.pathquery.PathConstraintSubclass;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 
+import static java.lang.String.format;
+
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -47,6 +50,7 @@ import org.intermine.util.TypeUtil;
  */
 public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
 {
+    private static final String LOOKUP_FMT = "Constraints.lookup(%s, %s, %s)";
     protected static final String TEST_STRING = "This is a Java test string...";
     protected static final String INVALID_QUERY =
             "/**\n * Invalid query.\n * =============\n * "
@@ -73,16 +77,64 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private static final String TEMPLATE_PARAMS_EXPL
         = "Edit the template parameter values to get different results";
 
-    /* Currently only using the string format.
-    private static final String FLT_FMT = "g";
-    private static final String DATE_FMT = "tc";
-    private static final String INT_FMT = "d";
-    private static final String BOOL_FMT = "b";
-    */
+    private static final String MULTI_VALUE_FMT = "Constraints.%s(\"%s\", %s);";
+
     private static final String STR_FMT = "s";
-    private static final String GET_ITERATOR
-        = "Iterator<List<Object>> rows = service.getRowListIterator(";
+    private static final String GET_ITERATOR = "Iterator<List<Object>> rows = service.getRowListIterator(";
     private static final String INIT_OUT = "PrintStream out = System.out;";
+
+    private static class MethodNameMap extends HashMap<ConstraintOp, String> {
+
+        public String get(ConstraintOp op) throws UnhandledFeatureException {
+            String ret = super.get(op);
+            if (ret == null) {
+                throw new UnhandledFeatureException("Unknown constraint operator: " + op);
+            }
+            return ret;
+        }
+
+        private static final long serialVersionUID = -2113407677691787960L;
+    };
+
+    private static final MethodNameMap multiMethodNames = new MethodNameMap() {
+        private static final long serialVersionUID = -2113407677691787960L;
+        {
+            put(ConstraintOp.ONE_OF, "oneOfValues");
+            put(ConstraintOp.NONE_OF, "noneOfValues");
+        }
+    };
+
+    private static final MethodNameMap loopMethodNames = new MethodNameMap() {
+        private static final long serialVersionUID = -2113407677691787960L;
+        {
+            put(ConstraintOp.EQUALS, "equalToLoop");
+            put(ConstraintOp.NOT_EQUALS, "notEqualToLoop");
+        }
+    };
+
+    private static final MethodNameMap nullMethodNames = new MethodNameMap() {
+        private static final long serialVersionUID = -2113407677691787960L;
+        {
+            put(ConstraintOp.IS_NULL, "isNull");
+            put(ConstraintOp.IS_NOT_NULL, "isNotNull");
+        }
+    };
+
+    private static final MethodNameMap methodNames = new MethodNameMap() {
+        private static final long serialVersionUID = -2113407677691787960L;
+        {
+            put(ConstraintOp.EQUALS, "eq");
+            put(ConstraintOp.NOT_EQUALS, "neq");
+            put(ConstraintOp.MATCHES, "like");
+            put(ConstraintOp.DOES_NOT_MATCH, "notLike");
+            put(ConstraintOp.LESS_THAN, "lessThan");
+            put(ConstraintOp.LESS_THAN_EQUALS, "lessThanEqualTo");
+            put(ConstraintOp.GREATER_THAN, "greaterThan");
+            put(ConstraintOp.GREATER_THAN_EQUALS, "greaterThanEqualTo");
+            put(ConstraintOp.IN, "in");
+            put(ConstraintOp.NOT_IN, "notIn");
+        }
+    };
 
     /**
      * This method will generate web service source code in Java from a path query
@@ -338,24 +390,31 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         }
 
         // Add display results code
-        intermineImports.add("org.intermine.webservice.client.services.QueryService");
+        handleResults(javaImports, intermineImports, codeBody, query);
 
-        codeBody.append(INDENT2 + "QueryService service = factory.getQueryService();" + ENDL);
+        codeBody.append(INDENT + "}" + ENDL + ENDL); // END METHOD
+        codeBody.append("}" + ENDL); // END CLASS
+    }
+
+    private void handleResults(Set<? super String> javaImports, Set<? super String> intermineImports,
+            StringBuffer codeBody, PathQuery query) throws InvalidQueryException {
 
         javaImports.add("java.util.List");
         javaImports.add("java.util.Iterator");
-
-        String format = getFormat(query);
-
         javaImports.add("java.io.PrintStream");
+
+        intermineImports.add("org.intermine.webservice.client.services.QueryService");
+
+        codeBody.append(INDENT2 + "QueryService service = factory.getQueryService();" + ENDL);
         codeBody.append(INDENT2 + INIT_OUT + ENDL);
 
         if (query.getView().size() == 1) {
-            codeBody.append(INDENT2 + "out.println(" + qq(query.getView().get(0)) + ");" + ENDL);
+            codeBody.append(format(INDENT2 + "out.println(%s);" + ENDL, qq(query.getView().get(0))));
         } else {
-            codeBody.append(INDENT2 + "String format = \"" + format + "\\n\";" + ENDL);
+            codeBody.append(format(INDENT2 + "String format = %s;" + ENDL, qq(getFormat(query) + "\\n")));
             codeBody.append(INDENT2 + "out.printf(format, query.getView().toArray());" + ENDL);
         }
+
         codeBody.append(INDENT2 + GET_ITERATOR + "query);" + ENDL);
         codeBody.append(INDENT2 + "while (rows.hasNext()) {" + ENDL);
         if (query.getView().size() == 1) {
@@ -366,9 +425,6 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         codeBody.append(INDENT2 + "}" + ENDL);
 
         codeBody.append(INDENT2 + "out.printf(\"%d rows\\n\", service.getCount(query));" + ENDL);
-
-        codeBody.append(INDENT + "}" + ENDL + ENDL); // END METHOD
-        codeBody.append("}" + ENDL); // END CLASS
     }
 
     private String getFormat(PathQuery query) throws InvalidQueryException {
@@ -385,8 +441,7 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         for (int i = 0; i < query.getView().size(); i++) {
             parts.add(prefix + "." + width + STR_FMT );
         }
-        String format = StringUtils.join(parts, " | ");
-        return format;
+        return StringUtils.join(parts, " | ");
     }
 
     /**
@@ -452,17 +507,17 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         intermineImports.add("org.intermine.webservice.client.services.TemplateService");
         javaImports.add("java.util.Iterator");
 
-        String format = getFormat(template);
-
         // Add display results code
-        codeBody.append(
-              INDENT2 + "// Name of template" + ENDL
-            + INDENT2 + "String name = \"" + template.getName() + "\";" + ENDL
-            + INDENT2 + "// Template Service - use this object to fetch results." + ENDL
-            + INDENT2 + "TemplateService service = factory.getTemplateService();" + ENDL
-            + INDENT2 + "// Format to present data in fixed width columns" + ENDL
-            + INDENT2 + "String format = \"" + format + "\\n\";" + ENDL
-            + ENDL);
+        String[] lines = new String[] {
+                "// Name of template",
+                format("String name = %s;", qq(template.getName())),
+                "// Template Service - use this object to fetch results.",
+                "TemplateService service = factory.getTemplateService();",
+                "// Format to present data in fixed width columns",
+                format("String format = %s;", qq(getFormat(template)))
+        };
+        codeBody.append(INDENT2).append(StringUtils.join(lines, ENDL + INDENT2)).append(ENDL + ENDL);
+
         StringBuffer currentLine = new StringBuffer(INDENT2 + "System.out.printf(format,");
         Iterator<String> viewIt = template.getView().iterator();
         while (viewIt.hasNext()) {
@@ -480,17 +535,21 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
             currentLine.append(view);
         }
         codeBody.append(currentLine.toString() + ");" + ENDL);
-        codeBody.append(
-              INDENT2 + "Iterator<List<Object>> rows = " + "service.getRowListIterator(name, parameters);" + ENDL
-            + INDENT2 + "while (rows.hasNext()) {" + ENDL
-            + INDENT2 + INDENT + "System.out.printf(format, rows.next().toArray());" + ENDL
-            + INDENT2 + "}" + ENDL);
-        codeBody.append(INDENT2 + "System.out.printf(\"%d rows\\n\", service.getCount(name, parameters));" + ENDL);
+        codeBody.append(INDENT2).append(StringUtils.join(PROCESS_TEMPLATE_RES_LINES, ENDL + INDENT2)).append(ENDL);
+        
+        codeBody.append(INDENT2).append("System.out.printf(\"%d rows\\n\", service.getCount(name, parameters));" + ENDL);
 
         codeBody.append(INDENT + "}" + ENDL + ENDL); // END METHOD
         codeBody.append("}" + ENDL); // END CLASS
 
     }
+
+    private static final String[] PROCESS_TEMPLATE_RES_LINES = new String[] {
+        "Iterator<List<Object>> rows = service.getRowListIterator(name, parameters);",
+        "while (rows.hasNext()) {",
+        INDENT + "System.out.printf(format, rows.next().toArray());",
+        "}"
+    };
 
     /**
      * Format a list at a certain indentation, so
@@ -534,6 +593,14 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
         return sb.toString();
     }
 
+    private String produceCallToConstraints(String method, String path, String value) {
+        return format("Constraints.%s(%s, %s)", method, qq(path), qq(value));
+    }
+
+    private String produceCallToConstraints(String method, String path) {
+        return format("Constraints.%s(%s)", method, qq(path));
+    }
+
     /**
      * This method helps to generate constraint source code for PathQuery
      * @param pc PathConstraint object
@@ -543,110 +610,65 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private String pathContraintUtil(PathConstraint pc, Set<String> javaImports) throws UnhandledFeatureException {
         // Generate a string like "Constraints.lessThan(\"Gene.length\", \"1000\")"
         // Ref to Constraints
-        String className = TypeUtil.unqualifiedName(pc.getClass().toString());
-        String path = pc.getPath();
-        ConstraintOp op = pc.getOp();
 
-        if ("PathConstraintAttribute".equals(className)) {
-            String value = ((PathConstraintAttribute) pc).getValue();
-            if (op.equals(ConstraintOp.EQUALS)) {
-                return "Constraints.eq(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.NOT_EQUALS)) {
-                return "Constraints.neq(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.MATCHES)) {
-                return "Constraints.like(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.DOES_NOT_MATCH)) {
-                return "Constraints.notLike(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.LESS_THAN)) {
-                return "Constraints.lessThan(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.LESS_THAN_EQUALS)) {
-                return "Constraints.lessThanEqualTo(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.GREATER_THAN)) {
-                return "Constraints.greaterThan(\"" + path + "\", \"" + value + "\")";
-            }
-
-            if (op.equals(ConstraintOp.GREATER_THAN_EQUALS)) {
-                return "Constraints.greaterThanEqualTo(\"" + path + "\", \"" + value + "\")";
-            }
+        if (pc instanceof PathConstraintAttribute || pc instanceof PathConstraintBag) {
+            return handleConstraintWithValue(pc);
+        } else if (pc instanceof PathConstraintLookup) {
+            return handleConstraint((PathConstraintLookup) pc);
+        } else if (pc instanceof PathConstraintIds) {
+            throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG
+                + " (" + TypeUtil.unqualifiedName(pc.getClass().getName()) + ")");
+        } else if (pc instanceof PathConstraintMultiValue) {
+            return handleConstraint((PathConstraintMultiValue) pc, javaImports);
+        } else if (pc instanceof PathConstraintNull) {
+            return handleConstraint((PathConstraintNull) pc);
+        } else if (pc instanceof PathConstraintLoop) {
+            return handleConstraint((PathConstraintLoop) pc);
+        } else if (pc instanceof PathConstraintSubclass) {
+            return handleConstraint((PathConstraintSubclass) pc);
         }
 
-        if ("PathConstraintLookup".equals(className)) {
-            String value = ((PathConstraintLookup) pc).getValue();
-            String extraValue = ((PathConstraintLookup) pc).getExtraValue();
-
-            return "Constraints.lookup(\"" + path + "\", \"" + value + "\", \""
-                    + extraValue + "\")";
-        }
-
-        if ("PathConstraintBag".equals(className)) {
-            String bag = ((PathConstraintBag) pc).getBag();
-            if (op.equals(ConstraintOp.IN)) {
-                return "Constraints.in(\"" + path + "\", \"" + bag + "\")";
-            }
-
-            if (op.equals(ConstraintOp.NOT_IN)) {
-                return "Constraints.notIn(\"" + path + "\", \"" + bag + "\")";
-            }
-        }
-
-        if ("PathConstraintIds".equals(className)) {
-            throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG + " (" + className + ")");
-        }
-
-        if ("PathConstraintMultiValue".equals(className)) {
-            javaImports.add("java.util.Arrays");
-            String method = null;
-            String values = "Arrays.asList(" + formatList(((PathConstraintMultiValue) pc).getValues(), 2) + ")";
-            if (op.equals(ConstraintOp.ONE_OF)) {
-                method = "oneOfValues";
-            }
-            if (op.equals(ConstraintOp.NONE_OF)) {
-                method = "noneOfValues";
-            }
-            return "Constraints." + method + "(\"" + path + "\", " + values + ");";
-        }
-
-        if ("PathConstraintNull".equals(className)) {
-            if (op.equals(ConstraintOp.IS_NULL)) {
-                return "Constraints.isNull(\"" + path + "\")";
-            }
-
-            if (op.equals(ConstraintOp.IS_NOT_NULL)) {
-                return "Constraints.isNotNull(\"" + path + "\")";
-            }
-        }
-
-        if ("PathConstraintSubclass".equals(className)) {
-            String type = ((PathConstraintSubclass) pc).getType();
-            return "Constraints.type(\"" + path + "\", \"" + type + "\")";
-        }
-
-        if ("PathConstraintLoop".equals(className)) {
-            String loopPath = ((PathConstraintLoop) pc).getLoopPath();
-            if (op.equals(ConstraintOp.EQUALS)) {
-                return "Constraints.equalToLoop(\"" + path + "\", \"" + loopPath + "\")";
-            }
-
-            if (op.equals(ConstraintOp.NOT_EQUALS)) {
-                return "Constraints.notEqualToLoop(\"" + path + "\", \"" + loopPath + "\")";
-            }
-        }
-
-        return null;
+        throw new UnhandledFeatureException("Unknown constraint type " + pc.getClass().getName());
     }
 
+    private String handleConstraint(PathConstraintSubclass pc) {
+        return produceCallToConstraints("type", pc.getPath(), pc.getType());
+    }
+
+    private String handleConstraint(PathConstraintLoop pc) throws UnhandledFeatureException {
+        final String method = loopMethodNames.get(pc.getOp());
+        return produceCallToConstraints(method, pc.getPath(), pc.getLoopPath());
+    }
+
+    private String handleConstraint(PathConstraintNull pc) throws UnhandledFeatureException {
+        return produceCallToConstraints(nullMethodNames.get(pc.getOp()), pc.getPath());
+    }
+
+    private String handleConstraint(PathConstraintMultiValue pc, Set<? super String> imports) throws UnhandledFeatureException {
+        imports.add("java.util.Arrays");
+        final String values = "Arrays.asList(" + formatList(pc.getValues(), 2) + ")";
+        return format(MULTI_VALUE_FMT, multiMethodNames.get(pc.getOp()), pc.getPath(), values);
+    }
+
+    private String handleConstraint(PathConstraintLookup pc) throws UnhandledFeatureException {
+        return format(LOOKUP_FMT, qq(pc.getPath()), qq(pc.getValue()), qq(pc.getExtraValue()));
+    }
+
+    private String handleConstraintWithValue(PathConstraint pc) throws UnhandledFeatureException {
+        ConstraintOp op = pc.getOp();
+        final String value = PathConstraint.getValue(pc);
+        if (value == null) {
+            throw new IllegalArgumentException("The constraint must have a value.");
+        }
+        return produceCallToConstraints(methodNames.get(op), pc.getPath(), value);
+    }
+
+    /**
+     * Double-Quote a string, but return the string <code>null</code> rather
+     * than <code>"null"</code> if the input is null.
+     * @param input
+     * @return A quoted string.
+     */
     private static String qq(String input) {
         if (input == null) {
             return "null";
@@ -664,8 +686,10 @@ public class WebserviceJavaCodeGenerator implements WebserviceCodeGenerator
     private String templateConstraintUtil(PathConstraint pc, String code, Set<String> javaImports) throws UnhandledFeatureException {
         String className = TypeUtil.unqualifiedName(pc.getClass().toString());
 
-        if ("PathConstraintIds".equals(className) || "PathConstraintSubclass".equals(className)) {
+        if ("PathConstraintIds".equals(className)) {
             throw new UnhandledFeatureException(INTERNAL_FEATURE_MSG + "(" + className + ")");
+        } else if ("PathConstraintSubclass".equals(className)) {
+            throw new UnhandledFeatureException("Type constraints cannot be used with templates.");
         }
 
         String path = qq(pc.getPath());

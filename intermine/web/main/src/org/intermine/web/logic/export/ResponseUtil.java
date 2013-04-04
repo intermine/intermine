@@ -1,7 +1,7 @@
 package org.intermine.web.logic.export;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -90,9 +90,24 @@ public final class ResponseUtil
      */
     public static void setJSONHeader(HttpServletResponse response,
             String filename) {
-        setJSONContentType(response);
-        setFileName(response, filename);
-        setNoCache(response);
+        setJSONHeader(response, filename, false);
+    }
+
+    /**
+     * Sets the response header and content type for json output
+     * @param response The response we are sending into the world
+     * @param filename The filename this response should have
+     * @param isJSONP Whether this request is being handled as JSONP
+     */
+    public static void setJSONHeader(HttpServletResponse response,
+            String filename, boolean isJSONP) {
+        if (isJSONP) {
+            setJSONPHeader(response, filename);
+        } else {
+            setJSONContentType(response);
+            setFileName(response, filename);
+            setNoCache(response);
+        }
     }
 
     public static void setJSONSchemaHeader(HttpServletResponse response,
@@ -221,7 +236,7 @@ public final class ResponseUtil
      * @param fileName the name of the downloaded file
      */
     public static void setFileName(HttpServletResponse response, String fileName) {
-        response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
     }
 
     /**
@@ -247,7 +262,7 @@ public final class ResponseUtil
      * @param response The response we are sending out into the world
      */
     public static void setJSONPContentType(HttpServletResponse response) {
-        response.setContentType("text/javascript");
+        response.setContentType("application/javascript");
         response.setCharacterEncoding("UTF-8");
     }
 }

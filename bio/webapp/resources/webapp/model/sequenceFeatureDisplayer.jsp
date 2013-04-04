@@ -51,6 +51,7 @@
               <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
               <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
                 <tiles:put name="expr" value="length" />
+                <tiles:put name="objectClass" value="${objectClass}" />
               </tiles:insert>
             </td>
           </c:when>
@@ -73,6 +74,7 @@
               <c:set var="interMineObject" value="${reportObject.object}" scope="request" />
               <tiles:insert page="/model/sequenceShortDisplayerWithField.jsp">
                 <tiles:put name="expr" value="length" />
+                <tiles:put name="objectClass" value="${objectClass}" />
               </tiles:insert>
             </td>
           </tr>

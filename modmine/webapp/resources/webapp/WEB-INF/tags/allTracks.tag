@@ -32,8 +32,14 @@
 </c:forEach>
 
 <c:if test="${!empty tracks}">
+
+<c:set var="pic" value="fly" />
+<c:if test="${fn:startsWith(organism,'c') || organism=='worm'}">
+<c:set var="pic" value="worm" />
+</c:if>
+
 <html:link styleId="sub-all-tracks"
   href="${WEB_PROPERTIES['gbrowse.prefix']}/${organism}/?l=${urlabels}" target="_blank" title="${dccId}">
-  <html:img src="model/images/${organism}_gb.png" title="View all tracks for submission ${dccId} in GBrowse"/>
+  <html:img src="model/images/${pic}_gb.png" title="View all tracks for submission ${dccId} in GBrowse"/>
 </html:link>
 </c:if>

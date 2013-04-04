@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,14 +26,11 @@ import org.intermine.web.logic.widget.config.TableWidgetConfig;
 
 /**
  * @author "Xavier Watkins"
+ * @author Daniela Butano
  *
  */
 public class TableWidget extends Widget
 {
-
-    private int notAnalysed = 0;
-    private InterMineBag bag;
-    private ObjectStore os;
     private TableWidgetLdr bagWidgLdr;
     @SuppressWarnings("rawtypes")
     private List bagContent = new Vector();
@@ -137,20 +134,6 @@ public class TableWidget extends Widget
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public int getNotAnalysed() {
-        return notAnalysed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
-    }
-
-    /**
      * Get the columns
      * @return the columns
      */
@@ -162,10 +145,6 @@ public class TableWidget extends Widget
     @Override
     public List<List<Object>> getResults() {
         return bagWidgLdr.getFlattenedResults();
-    }
-
-    public String getType() {
-        return bagWidgLdr.getType();
     }
 
     public PathQuery getPathQuery() {

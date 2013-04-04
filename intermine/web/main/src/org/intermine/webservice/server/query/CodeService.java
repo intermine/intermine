@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,6 +33,7 @@ import org.intermine.api.tag.TagTypes;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.web.logic.export.ResponseUtil;
 import org.intermine.web.util.URLGenerator;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
@@ -55,8 +56,20 @@ public class CodeService extends AbstractQueryService
     }
 
     @Override
-    protected int getDefaultFormat() {
-        return TEXT_FORMAT;
+    protected Format getDefaultFormat() {
+        return Format.TEXT;
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        switch (format) {
+        case JSON:
+            return true;
+        case TEXT:
+            return true;
+        default:
+            return false;
+        }
     }
 
     @Override
@@ -169,7 +182,7 @@ public class CodeService extends AbstractQueryService
     }
 
     private PathQuery getPathQuery() {
-        String xml = QueryRequestParser.getQueryXml(request);
+        String xml = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
         PathQueryBuilder pqb = getQueryBuilder(xml);
         PathQuery query = pqb.getQuery();
         return query;

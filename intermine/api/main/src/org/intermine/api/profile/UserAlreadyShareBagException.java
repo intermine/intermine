@@ -4,7 +4,7 @@ import org.intermine.model.userprofile.SavedBag;
 import org.intermine.model.userprofile.UserProfile;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should

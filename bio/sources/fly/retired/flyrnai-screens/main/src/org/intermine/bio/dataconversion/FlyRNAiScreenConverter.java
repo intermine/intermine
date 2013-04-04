@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -32,6 +32,7 @@ import org.intermine.xml.full.Item;
 
 /**
  * DataConverter to create items from DRSC RNAi screen date files.
+ * NOTE: RETIRED
  *
  * @author Kim Rutherford
  * @author Richard Smith
@@ -46,7 +47,7 @@ public class FlyRNAiScreenConverter extends BioFileConverter
     private static final String TAXON_ID = "7227";
     private File screenDetailsFile;
     private String[] hitScreenNames;
-    protected IdResolverFactory resolverFactory;
+    protected IdResolver rslv;
 
     protected static final Logger LOG = Logger.getLogger(FlyRNAiScreenConverter.class);
     /**
@@ -56,7 +57,6 @@ public class FlyRNAiScreenConverter extends BioFileConverter
      */
     public FlyRNAiScreenConverter(ItemWriter writer, Model model) {
         super(writer, model, "DRSC", "DRSC data set");
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
     private static final Map<String, String> RESULTS_KEY = new HashMap<String, String>();
 
@@ -84,6 +84,9 @@ public class FlyRNAiScreenConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
         if (organism == null) {
             organism = createItem("Organism");
             organism.setAttribute("taxonId", TAXON_ID);
@@ -248,15 +251,17 @@ public class FlyRNAiScreenConverter extends BioFileConverter
         if (geneSymbol == null) {
             throw new RuntimeException("geneSymbol can't be null");
         }
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, geneSymbol);
+        if (rslv == null || !rslv.hasTaxon(TAXON_ID)) {
+            return null;
+        }
+        int resCount = rslv.countResolutions(TAXON_ID, geneSymbol);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + geneSymbol + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, geneSymbol));
+                     + rslv.resolveId(TAXON_ID, geneSymbol));
             return null;
         }
-        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneSymbol).iterator().next();
+        String primaryIdentifier = rslv.resolveId(TAXON_ID, geneSymbol).iterator().next();
         String refId = genes.get(primaryIdentifier);
         if (refId == null) {
             Item item = createItem("Gene");

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,6 +11,7 @@ package org.intermine.webservice.server.query;
  */
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +36,12 @@ import org.intermine.objectstore.query.QuerySelectable;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.webservice.server.Format;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
+import org.intermine.webservice.server.lists.ListInput;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.query.result.PathQueryBuilder;
 
@@ -68,10 +72,19 @@ public class QueryToListService extends AbstractQueryService
     }
 
     @Override
+    protected Format getDefaultFormat() {
+        return Format.JSON;
+    }
+
+    @Override
+    protected boolean canServe(Format format) {
+        return format == Format.JSON || format == Format.TEXT;
+    }
+
+    @Override
     protected void validateState() {
         if (!isAuthenticated()) {
-            throw new ServiceForbiddenException("All requests to list operation services must"
-                    + " be authenticated.");
+            throw new UnauthorizedException();
         }
         if (!getPermission().isRW()) {
             throw new ServiceForbiddenException("This request does not have RW permission");
@@ -80,23 +93,12 @@ public class QueryToListService extends AbstractQueryService
 
     @Override
     protected void execute() throws Exception {
-
         Profile profile = getPermission().getProfile();
-
-        String name = request.getParameter(NAME_PARAM);
-        String description = request.getParameter(DESC_PARAM);
-        String[] tags = StringUtils.split(request.getParameter("tags"), ';');
-        List<String> tagList = (tags == null) ? Collections.EMPTY_LIST : Arrays.asList(tags);
-
-        if (StringUtils.isEmpty(name)) {
-            setHeaderAttributes("none-given");
-            throw new BadRequestException("name is blank");
-        }
-
-        setHeaderAttributes(name);
-
+        ListInput input = new ListInput(request, bagManager, profile);
         PathQuery pq = getQuery(request);
-        generateListFromQuery(pq, name, description, tagList, profile);
+
+        setHeaderAttributes(input.getListName());
+        generateListFromQuery(pq, input.getListName(), input.getDescription(), input.getTags(), profile);
 
     }
 
@@ -106,8 +108,7 @@ public class QueryToListService extends AbstractQueryService
      * @return A pathquery
      */
     protected PathQuery getQuery(HttpServletRequest request) {
-        String xml = request.getParameter(XML_PARAM);
-
+        String xml = new QueryRequestParser(im.getQueryStore(), request).getQueryXml();
         if (StringUtils.isEmpty(xml)) {
             throw new BadRequestException("query is blank");
         }
@@ -137,7 +138,7 @@ public class QueryToListService extends AbstractQueryService
      * @throws PathException If the paths supplied are illegal.
      */
     protected void generateListFromQuery(PathQuery pq,
-            String name, String description, List<String> tags,
+            String name, String description, Collection<String> tags,
             Profile profile) throws ObjectStoreException, PathException {
 
         Query q = getQuery(pq, profile);

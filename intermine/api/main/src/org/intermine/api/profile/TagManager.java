@@ -1,7 +1,7 @@
 package org.intermine.api.profile;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -638,7 +638,7 @@ public class TagManager
         if (name == null) {
             return false;
         }
-        Pattern p = Pattern.compile("[^\\w\\s\\.\\-:]");
+        Pattern p = Pattern.compile("[^\\w\\s\\.\\-,:]");
         Matcher m = p.matcher(name);
         return !m.find();
     }

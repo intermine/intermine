@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -34,7 +34,6 @@ public class HgncIdResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(HgncIdResolverFactory.class);
     private final String propKey = "resolver.file.rootpath";
     private final String resolverFileSymbo = "hgnc";
-    private final String FilePathKey = "resolver.hgnc.file";
     private final String taxonId = "9606";
 
     /**
@@ -66,34 +65,23 @@ public class HgncIdResolverFactory extends IdResolverFactory
         }
 
         try {
-            boolean isCachedIdResolverRestored = restoreFromFile(this.clsCol);
+            boolean isCachedIdResolverRestored = restoreFromFile();
             if (!isCachedIdResolverRestored || (isCachedIdResolverRestored
                     && !resolver.hasTaxonAndClassName(taxonId, this.clsCol.iterator().next()))) {
+                String resolverFileRoot =
+                        PropertiesUtil.getProperties().getProperty(propKey);
 
-                String resolverFileName =
-                        PropertiesUtil.getProperties().getProperty(FilePathKey).trim();
-
-                if (StringUtils.isBlank(resolverFileName)) {
-                    String message = "Resolver data file path is not specified";
+                if (StringUtils.isBlank(resolverFileRoot)) {
+                    String message = "Resolver data file root path is not specified";
                     LOG.warn(message);
-
-                    String resolverFileRoot =
-                            PropertiesUtil.getProperties().getProperty(propKey).trim();
-
-                    // File path not set in MINE.properties
-                    if (StringUtils.isBlank(resolverFileRoot)) {
-                        String msg = "Resolver data file root path is not specified";
-                        LOG.warn(msg);
-                        return;
-                    }
-
-                    LOG.info("Creating id resolver from data file and caching it.");
-                    resolverFileName = resolverFileRoot + resolverFileSymbo;
+                    return;
                 }
 
+                LOG.info("Creating id resolver from data file and caching it.");
+                String resolverFileName = resolverFileRoot.trim() + resolverFileSymbo;
                 File f = new File(resolverFileName);
                 if (f.exists()) {
-                    createFromFile(new BufferedReader(new FileReader(f)));
+                    createFromFile(f);
                     resolver.writeToFile(new File(ID_RESOLVER_CACHED_FILE_NAME));
                 } else {
                     LOG.warn("Resolver file not exists: " + resolverFileName);
@@ -104,11 +92,17 @@ public class HgncIdResolverFactory extends IdResolverFactory
         }
     }
 
-    private void createFromFile(BufferedReader reader) throws IOException {
+    protected void createFromFile(File f) throws IOException {
         // HGNC ID | Approved Symbol | Approved Name | Status | Previous Symbols | Aliases
-        Iterator<?> lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
+        Iterator<?> lineIter = FormattedTextParser
+                .parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
+
+            if (line[0].startsWith("HGNC ID")) {
+                continue;
+            }
+
             String symbol = line[1];
 
             resolver.addMainIds(taxonId, symbol, Collections.singleton(symbol));

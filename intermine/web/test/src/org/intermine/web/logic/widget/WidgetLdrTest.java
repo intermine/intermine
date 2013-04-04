@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -92,7 +92,7 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         query.setConstraint(cs);
         QueryClass startQc = new QueryClass(Class.forName("org.intermine.model.testmodel.Employee"));
         query.addFrom(startQc);
-        widgetLdr.addReference(query, startQc, "department");
+        widgetLdr.addReference(query, startQc, "department", "Employee.department");
         ContainsConstraint cc = (ContainsConstraint) (cs.getConstraints().iterator().next());
         assertEquals("Department", cc.getQueryClass().getType().getSimpleName());
         QueryObjectReference qr = (QueryObjectReference) cc.getReference();
@@ -100,18 +100,9 @@ public class WidgetLdrTest extends WidgetConfigTestCase {
         assertEquals("Employee", qr.getQcType().getSimpleName());
     }
 
-    public void testAddQueryClassInQuery() throws ClassNotFoundException {
-        QueryClass queryClassParent = new QueryClass(Class.forName("org.intermine.model.testmodel.Department"));
-        QueryClass queryClass = new QueryClass(Class.forName("org.intermine.model.testmodel.Employee"));
-        assertEquals(false, widgetLdr.isQueryClassInQuery(queryClass, queryClassParent));
-        assertEquals(false, widgetLdr.isQueryClassInQuery(queryClass, null));
-    }
-
-    public void testGenerateKeyForQueryClassInQuery() throws ClassNotFoundException {
-        QueryClass queryClass = new QueryClass(Class.forName("org.intermine.model.testmodel.Department"));
-        QueryClass queryClassParent = new QueryClass(Class.forName("org.intermine.model.testmodel.Employee"));
-        assertEquals("Department_Employee", widgetLdr.generateKeyForQueryClassInQuery(queryClass, queryClassParent));
-        assertEquals("Employee_", widgetLdr.generateKeyForQueryClassInQuery(queryClassParent, null));
+    public void testCreateAttributePath() throws ClassNotFoundException {
+        String[] splittedPath = {"department", "employee[CEO], name"};
+        assertEquals("Employee.department.employee", widgetLdr.createAttributePath(splittedPath, 1));
     }
 
 /*    */

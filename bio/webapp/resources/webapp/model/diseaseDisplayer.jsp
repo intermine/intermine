@@ -26,13 +26,13 @@
   <c:when test="${ratGenes != null && !empty(ratGenes)}">
 
 <style type="text/css">
-    .disease-item {
+    #mine-rat-disease .disease-item {
         float: left;
         display: inline-block;
         min-width: 30em;
         padding-bottom: 0.5em;
     }
-    .less { display: none; }
+    #mine-rat-disease .less { display: none; }
 </style>
 
 <script type="text/javascript" charset="utf-8">

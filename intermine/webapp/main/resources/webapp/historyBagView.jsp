@@ -46,7 +46,9 @@ if (!im.bagWorks) {
 
   <html:form action="/modifyBag">
   <c:forEach items="${PROFILE.savedBagsByStatus}" var="statusSavedBag">
-
+   <c:if test="${statusSavedBag.key == 'CURRENT'}">
+                <div id="historyBagDiv">
+   </c:if>
     <div class="${statusSavedBag.key} status-table" <c:if test="${empty(statusSavedBag.value) || statusSavedBag.key == 'NOT_CURRENT' || statusSavedBag.key == 'UPGRADING'}">style="display:none;"</c:if>>
     <c:choose>
       <c:when test="${statusSavedBag.key == 'TO_UPGRADE'}">
@@ -87,6 +89,7 @@ if (!im.bagWorks) {
             </tr>
           </thead>
           <tbody>
+          
           <c:forEach items="${statusSavedBag.value}" var="savedBag" varStatus="status">
             <c:set var="index" value="${index+1}"/>
             <tr>
@@ -168,16 +171,29 @@ if (!im.bagWorks) {
               <input type="button" onclick="validateBagOperations('modifyBagForm', 'union')" value="Union"/>
               <input type="button" onclick="validateBagOperations('modifyBagForm', 'intersect')" value="Intersect"/>
              <input type="button" onclick="validateBagOperations('modifyBagForm', 'subtract')" value="Subtract"/>
+             <input type="button" onclick="showAsymmetricDirection()" value="Asymmetric Difference"/>
           </c:if>
           <input type="button" onclick="validateBagOperations('modifyBagForm', 'delete')" value="Delete"/>
           <input type="button" onclick="validateBagOperations('modifyBagForm', 'copy')" value="Copy"/>
-
+          <br>
+          <div id="directionDiv">
+             <input type="radio" name="asymmetricDirection" onClick="submitAsymOperation1();">
+             List <span id="listA1"></span> minus <span id="listB1"></span>
+             </input>
+             <input type="radio" name="asymmetricDirection" onClick="submitAsymOperation2();">
+             List <span id="listB2"></span> minus <span id="listA2"></span>
+             </input>
+          </div>
           <html:hidden property="pageName" value="MyMine"/>
           <html:hidden property="listsButton" value="" styleId="listsButton"/>
+          <html:hidden property="listLeft" value="" styleId="listLeft"/>
+          <html:hidden property="listRight" value="" styleId="listRight"/>
         </c:if>
 
         </div>
-
+      <c:if test="${statusSavedBag.key == 'CURRENT'}">
+                </div>
+      </c:if>
       </c:forEach>
       </html:form>
 
@@ -290,12 +306,15 @@ if (!im.bagWorks) {
         <html:hidden name="newBagName" property="newBagName" value="__DUMMY-VALUE__"/>
         <html:hidden property="pageName" value="MyMine"/>
         <html:hidden property="listsButton" value="" styleId="listsButton"/>
-
       </html:form>
   </c:if>
 
 <script type="text/javascript">
 (function() {
+  jQuery(document).ready(function() {
+        jQuery("#directionDiv").hide();
+  });
+  
   jQuery(window).load(function(){
     <%-- sort bags by a remembered column --%>
     var order = im.getCookie("mymine.lists.order");
@@ -320,6 +339,17 @@ if (!im.bagWorks) {
     });
   });
 
+  jQuery("#historyBagDiv input[name='selectedBags']").click(function() {
+      hideDirectionDiv();
+      var checked = jQuery("#historyBagDiv input[name='selectedBags']:checked");
+      var selected = checked.length;
+      if (selected > 1 ) {
+        jQuery("#listA1").html(checked[0].value);
+        jQuery("#listB1").html(checked[1].value);
+        jQuery("#listA2").html(checked[0].value);
+        jQuery("#listB2").html(checked[1].value);
+      }
+  });
   <%-- ##### --%>
 
   <%-- attach handler to select all in a table --%>
@@ -396,6 +426,27 @@ if (!im.bagWorks) {
     }, im.bagWorks.timeout);
     }
 })();
+
+function showAsymmetricDirection() {
+    var checked = jQuery("#historyBagDiv input[name='selectedBags']:checked");
+    var selected = checked.length;
+    if (selected > 1 ) {
+      showDirectionDiv();
+    }
+}
+function submitAsymOperation1() {
+    jQuery("#listsButton").val("asymmetricdifference");
+    jQuery("#listLeft").val(jQuery("#listA1").html());
+    jQuery("#listRight").val(jQuery("#listB1").html());
+    validateBagOperations('modifyBagForm', 'asymmetricdifference');
+  }
+  function submitAsymOperation2() {
+    jQuery("#listsButton").val("asymmetricdifference");
+    jQuery("#listLeft").val(jQuery("#listB2").html());
+    jQuery("#listRight").val(jQuery("#listA2").html());
+    validateBagOperations('modifyBagForm', 'asymmetricdifference');
+  }
+
 </script>
 </im:body>
 

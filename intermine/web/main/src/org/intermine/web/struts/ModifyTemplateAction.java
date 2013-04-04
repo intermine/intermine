@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -12,13 +12,12 @@ package org.intermine.web.struts;
 
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -27,9 +26,6 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.TagManager;
-import org.intermine.api.search.SearchRepository;
-import org.intermine.api.tag.TagTypes;
 import org.intermine.pathquery.PathQuery;
 import org.intermine.template.TemplateQuery;
 import org.intermine.util.XmlUtil;
@@ -43,6 +39,9 @@ import org.intermine.web.logic.session.SessionMethods;
  */
 public class ModifyTemplateAction extends InterMineAction
 {
+    @SuppressWarnings("unused")
+    private static final Logger LOG = Logger.getLogger(ModifyTemplateAction.class);
+
     /**
      * Forward to the correct method based on the button pressed.
      * @param mapping The ActionMapping used to select this instance
@@ -82,12 +81,12 @@ public class ModifyTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public ActionErrors delete(@SuppressWarnings("unused") ActionMapping mapping,
+    public ActionErrors delete(ActionMapping mapping,
             ActionForm form, HttpServletRequest request,
-            @SuppressWarnings("unused") HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         InterMineAPI im = SessionMethods.getInterMineAPI(session);
-        ServletContext servletContext = session.getServletContext();
+//        ServletContext servletContext = session.getServletContext();
         Profile profile = SessionMethods.getProfile(session);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
         ActionErrors errors = new ActionErrors();
@@ -118,7 +117,7 @@ public class ModifyTemplateAction extends InterMineAction
      * @exception Exception if the application business logic throws
      *  an exception
      */
-    public void export(@SuppressWarnings("unused") ActionMapping mapping,
+    public void export(ActionMapping mapping,
                                 ActionForm form,
                                 HttpServletRequest request,
                                 HttpServletResponse response)
@@ -127,15 +126,17 @@ public class ModifyTemplateAction extends InterMineAction
         final InterMineAPI im = SessionMethods.getInterMineAPI(session);
         Profile profile = SessionMethods.getProfile(session);
         ModifyTemplateForm mqf = (ModifyTemplateForm) form;
-        ServletContext servletContext = session.getServletContext();
+//        ServletContext servletContext = session.getServletContext();
 
         response.setContentType("text/plain");
         response.setHeader("Content-Disposition ", "inline; filename=template-queries.xml");
 
         PrintStream out = new PrintStream(response.getOutputStream());
+
         out.println("<template-queries>");
-        Map myTemplates = profile.getSavedTemplates();
-        Map publicTemplates = im.getProfileManager().getSuperuserProfile().getSavedTemplates();
+        Map<?, ?> myTemplates = profile.getSavedTemplates();
+        Map<?, ?> publicTemplates =
+                im.getProfileManager().getSuperuserProfile().getSavedTemplates();
         for (int i = 0; i < mqf.getSelected().length; i++) {
             String name = mqf.getSelected()[i];
             String xml = null;
@@ -147,7 +148,7 @@ public class ModifyTemplateAction extends InterMineAction
                 xml = ((TemplateQuery) myTemplates.get(name)).toXml(PathQuery.USERPROFILE_VERSION);
             }
             if (xml != null) {
-                xml = XmlUtil.indentXmlSimple(xml);
+                xml = XmlUtil.indentXmlSimple(xml).trim();
                 out.println(xml);
             }
         }

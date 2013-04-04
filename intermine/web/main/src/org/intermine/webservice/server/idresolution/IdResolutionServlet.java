@@ -3,52 +3,61 @@ package org.intermine.webservice.server.idresolution;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.intermine.api.InterMineAPI;
-import org.intermine.web.context.InterMineContext;
+import org.apache.commons.lang.StringUtils;
 import org.intermine.webservice.server.WebService;
+import org.intermine.webservice.server.core.NoServiceException;
+import org.intermine.webservice.server.core.WebServiceServlet;
 
-public class IdResolutionServlet extends HttpServlet
+public class IdResolutionServlet extends WebServiceServlet
 {
+    private static final long serialVersionUID = -3364780354450369691L;
 
-    Logger log = Logger.getLogger(IdResolutionServlet.class);
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException {
-        String pathInfo = request.getPathInfo().replaceAll("^/", "");
-        if (pathInfo == null || pathInfo.length() == 0) {
-            throw new ServletException("no job id");
+    @Override
+    protected void respond(Method method, HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        if (Method.GET == method) {
+            String[] uidAndCommand = getUidAndCommand(request);
+            if (uidAndCommand != null) {
+                WebService getter = getGetter(uidAndCommand[0], uidAndCommand[1]);
+                if (getter != null) {
+                    getter.service(request, response);
+                    return;
+                }
+            }
         }
-        WebService ws;
-        log.info(pathInfo);
+        super.respond(method, request, response);
+    }
+
+    private static String[] getUidAndCommand(HttpServletRequest request) {
+        String pathInfo = StringUtils.defaultString(request.getPathInfo(), "").replaceAll("^/", "");
         int slashIndex = pathInfo.indexOf('/');
-        // Either called as GET /ids/UID/status or GET /ids/UID/result
         if (slashIndex > 0) {
-            InterMineAPI im = InterMineContext.getInterMineAPI();
             String jobId = pathInfo.substring(0, slashIndex);
             String command = pathInfo.substring(slashIndex + 1);
-            log.info(command + " of " + jobId);
-            if ("status".equalsIgnoreCase(command)) {
-                ws = new JobStatusService(im, jobId);
-            } else if ("result".equalsIgnoreCase(command)) {
-                ws = new JobResultsService(im, jobId);
-            } else {
-                throw new ServletException("bad command: " + command);
-            }
-        } else {
-            throw new ServletException("No command");
+            return new String[] {jobId, command};
         }
-
-        ws.service(request, response);
+        return null;
     }
-    
+
+    private WebService getGetter(String uid, String command) {
+        WebService ws = null;
+        if ("status".equalsIgnoreCase(command)) {
+            ws = new JobStatusService(api, uid);
+        } else if ("result".equalsIgnoreCase(command) || "results".equalsIgnoreCase(command)) {
+            ws = new JobResultsService(api, uid);
+        }
+        return ws;
+    }
+
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        new IdResolutionService(InterMineContext.getInterMineAPI()).service(request, response);
+    protected WebService getService(Method method) throws NoServiceException {
+        switch (method) {
+            case POST: return new IdResolutionService(api);
+            case DELETE: return new JobRemovalService(api);
+            default: throw new NoServiceException();
+        }
     }
-
 }

@@ -1,0 +1,11 @@
+<items>
+<item id="-1_2" class="Publication">
+<attribute name="pubMedId" value="17202162"/>
+</item>
+<item id="-1_1" class="DataSource">
+<attribute name="name" value="InterPro"/>
+<attribute name="url" value="http://www.ebi.ac.uk/interpro/"/>
+<attribute name="description" value="Integrated resource of protein families, domains and functional sites"/>
+<collection name="publications"><reference ref_id="-1_2"/></collection>
+</item>
+</items>

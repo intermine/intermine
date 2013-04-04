@@ -84,7 +84,8 @@
 
   <!--@MODEL_INCLUDE@-->
 
-  
+  <!--@PLUGIN_INCLUDE@-->
+
   <servlet>
   <servlet-name>ws-query-results</servlet-name>
   <servlet-class>org.intermine.webservice.server.query.result.QueryResultServlet</servlet-class>
@@ -99,6 +100,7 @@
   <url-pattern>/service/query/results/*</url-pattern>
   <metadata>
     <name>Query Results</name>
+    <minVersion>1</minVersion>
     <method type="POST" authenticationRequired="false" ALSO="GET">
         <summary>Get results for a query against the database.</summary>
         <description>
@@ -108,31 +110,54 @@
             of SQL; see the InterMine wiki for a full description of the query XML
             syntax.
         </description>
-        <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format">query</param>
-        <param type="Integer" required="false" default="0" description="The index of the first result to return.">start</param>
+        <param required="true" type="XML" schema="/schema/query.xsd" description="A definition of the query to execute in Path-Query XML format">query</param>
+        <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format used">version</param>
+        <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
         <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
         <returns>
-            <format>tab</format>
-            <format>csv</format>
-            <format key="results">json</format>
-            <format>xml</format>
+            <format accept="application/tsv">tab</format>
+            <format accept="application/csv">csv</format>
+            <format accept="application/json" key="results">json</format>
+            <format accept="application/xml">xml</format>
         </returns>
     </method>
   </metadata>
   </servlet-mapping>
 
   <servlet>
-  <servlet-name>ws-query-to-list</servlet-name>
-  <servlet-class>org.intermine.webservice.server.query.QueryToListServlet</servlet-class>
-  <init-param>
+    <servlet-name>ws-query-to-list</servlet-name>
+    <servlet-class>org.intermine.webservice.server.query.QueryToListServlet</servlet-class>
+    <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
-  </init-param>
+    </init-param>
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-query-to-list</servlet-name>
-  <url-pattern>/service/query/tolist/*</url-pattern>
+    <servlet-name>ws-query-to-list</servlet-name>
+    <url-pattern>/service/query/tolist/*</url-pattern>
+    <metadata>
+        <name>Create List from Query</name>
+        <minVersion>4</minVersion>
+        <method type="POST" authenticationRequired="true" ALSO="GET">
+            <summary>Save the result set of a query as a list on the server.</summary>
+            <description>
+                This service provides the facility to submit a query and create a new list
+                whose contents shall be the result set defined by running the query. This
+                facility places a couple of restrictions on the query itself, namely that
+                the view list may only contain a single item, which should refer to the
+                internal id attribute of an object in the query.
+            </description>
+            <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format">query</param>
+            <param required="true" type="String" description="The name for the new list. There must be no existing list of this name">listName</param>
+            <param required="false" type="String" description="A description to attach to the new list">description</param>
+            <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+            <returns>
+                <format accept="application/json">json</format>
+                <format accept="text/plain">text</format>
+            </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -145,13 +170,73 @@
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-query-append</servlet-name>
-  <url-pattern>/service/query/append/tolist/*</url-pattern>
+	  <servlet-name>ws-query-append</servlet-name>
+	  <url-pattern>/service/query/append/tolist/*</url-pattern>
+	  <metadata>
+	        <name>Add to List from Query</name>
+	        <minVersion>4</minVersion>
+	        <method type="POST" authenticationRequired="true" ALSO="GET">
+	            <summary>Add the result set of a query to a list on the server.</summary>
+	            <description>
+	                This service provides the facility to submit a query and add the objects
+	                contained in its result set to a list that already exists on the server. This
+	                facility places a couple of restrictions on the query itself, namely that
+	                the view list may only contain a single item, which should refer to the
+	                internal id attribute of an object in the query.
+	            </description>
+	            <param required="true" type="XML" description="A definition of the query to execute in Path-Query XML format.">query</param>
+	            <param required="true" type="String" description="The list to append items to.">name</param>
+	            <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+	            <returns>
+	                <format accept="application/json">json</format>
+	                <format accept="text/plain">text</format>
+	            </returns>
+	        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
-  <servlet-name>ws-query-upload</servlet-name>
-  <servlet-class>org.intermine.webservice.server.query.QueryUploadServlet</servlet-class>
+    <servlet-name>ws-query-upload</servlet-name>
+    <servlet-class>org.intermine.webservice.server.query.QueryUploadServlet</servlet-class>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-query-upload</servlet-name>
+    <url-pattern>/service/query/upload</url-pattern>
+    <metadata>
+        <name>Save Query</name>
+        <minVersion>4</minVersion>
+        <method type="POST" authenticationRequired="true" ALSO="GET">
+                <summary>Save queries to a user account on the server.</summary>
+                <description>
+                    This service provides the facility to submit one or more queries
+                    and save it/them for future reference to a user account on the server.
+                </description>
+                <param required="true" type="XML" description="A definition of the query/ies to save in Path-Query XML format.">xml</param>
+                <param required="false" type="Integer" description="The version of the path-qeury format being used.">version</param>
+                <returns>
+                    <format accept="application/json">json</format>
+                    <format accept="text/plain">text</format>
+                </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ws-lists</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListsService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -159,13 +244,46 @@
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-query-upload</servlet-name>
-  <url-pattern>/service/query/upload</url-pattern>
+    <servlet-name>ws-lists</servlet-name>
+    <url-pattern>/service/listswithobject/*</url-pattern>
+    <metadata>
+        <name>Find Lists Containing an Object</name>
+        <minVersion>1</minVersion>
+        <method type="POST" authenticationRequired="false" ALSO="GET">
+                <summary>Find lists on the server containing an object.</summary>
+                <description>
+                    This service allows users to get back a list of
+                    lists that contain a given object, either defined by an
+                    internal ID, or looked up from stable identifiers.
+                    If the request does not authenticate to a user account,
+                    then only relevant public lists will be returned.
+                </description>
+                <param required="false" type="String" description="A stable identifier that can be used to find the object.">publicId</param>
+                <param required="false" type="Integer" description="The internal DB id (changes on each re-release).">id</param>
+                <param required="false" type="String" description="The type of object (required if using a public id)">type</param>
+                <param required="false" type="String" description="An extra value to disambiguate objects">extraValue</param>
+                <returns>
+                    <format accept="application/json">json</format>
+                    <format accept="text/html">html</format>
+                    <format accept="text/plain">text</format>
+                    <format accept="application/csv">csv</format>
+                    <format accept="application/tsv">tab</format>
+                </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
-  <servlet-name>ws-lists</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListsServlet</servlet-class>
+    <servlet-name>ws-list-append</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListAppendService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -173,27 +291,47 @@
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-lists</servlet-name>
-  <url-pattern>/service/listswithobject/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-  <servlet-name>ws-list-append</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListAppendServlet</servlet-class>
-  <init-param>
-     <param-name>debug</param-name>
-     <param-value>true</param-value>
-  </init-param>
-  </servlet>
-
-  <servlet-mapping>
-  <servlet-name>ws-list-append</servlet-name>
-  <url-pattern>/service/lists/append/*</url-pattern>
+    <servlet-name>ws-list-append</servlet-name>
+    <url-pattern>/service/lists/append/*</url-pattern>
+    <metadata>
+      <name>Append to List</name>
+      <minVersion>4</minVersion>
+      <method type="POST" authenticationRequired="true">
+        <summary>Add items to an existing list by identifiers</summary>
+        <description>
+            This service allows users to add new items to an existing
+            list by uploading a set of identifiers. This is equivalent to
+            creating a new list from a set of identifiers, and then performing
+            the union operation on that list an existing one, if the resulant
+            list replaced the existing list.
+        </description>
+        <param required="true" type="String" description="The name of the list to append to">name</param>
+        <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
+          <content type="text/plain">
+            "even skipped"
+            zen, bib
+            hairless
+          </content>
+        </body>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
   <servlet-name>ws-list-union</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListUnionServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListUnionService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -203,11 +341,41 @@
   <servlet-mapping>
   <servlet-name>ws-list-union</servlet-name>
   <url-pattern>/service/lists/union/*</url-pattern>
+  <metadata>
+      <name>List Union</name>
+      <minVersion>4</minVersion>
+      <method type="POST" authenticationRequired="true" ALSO="GET">
+        <name>Combine Lists</name>
+        <summary>Combine Two or More Lists through Union</summary>
+        <description>
+            This service allows users to create new lists which contain all the members
+            contained in the set of input lists. The user must have access to all the input
+            lists, but need not be the owner of any of them. A union of a single list with
+            itself may be considered a copy.
+        </description>
+        <param required="true" type="String" description="The name of the list to create">name</param>
+        <param required="true" type="String[]" description="The name of a source list">lists</param>
+        <param required="false" type="String" description="A description of this new list">description</param>
+        <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+  </metadata>
   </servlet-mapping>
 
   <servlet>
   <servlet-name>ws-list-subtract</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListSubtractionServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListSubtractionService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -217,12 +385,45 @@
   <servlet-mapping>
   <servlet-name>ws-list-subtract</servlet-name>
   <url-pattern>/service/lists/subtract/*</url-pattern>
+  <metadata>
+      <name>List Subtraction</name>
+      <minVersion>4</minVersion>
+      <method type="POST" authenticationRequired="true" ALSO="GET">
+        <summary>Subtract one List From Another</summary>
+        <description>
+            This service allows users to create new lists which contain only those elements
+            which are present in one set of lists, and none of those elements which are present
+            in another set of lists. This is what is typically thought of as subtraction, or more
+            technically, the asymmetric difference of two sets. The user must supply the names of
+            the lists to be used as either the source lists or the subtraction lists, as well as
+            details for the new list to be created. The user must have access to all the named lists,
+            but need not be the owner of any of them.
+        </description>
+        <param required="true" type="String" description="The name of the list to create">name</param>
+        <param required="true" type="String[]" description="The name of a source list">references</param>
+        <param required="true" type="String[]" description="The name of a list to exclude">subtract</param>
+        <param required="false" type="String" description="A description of this new list">description</param>
+        <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+  </metadata>
   </servlet-mapping>
 
   <servlet>
   <servlet-name>ws-list-intersect</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListIntersectionServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
   <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListIntersectionService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
+   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
   </init-param>
@@ -231,11 +432,41 @@
   <servlet-mapping>
   <servlet-name>ws-list-intersect</servlet-name>
   <url-pattern>/service/lists/intersect/*</url-pattern>
+  <metadata>
+      <name>List Intersection</name>
+      <minVersion>4</minVersion>
+      <method type="POST" authenticationRequired="true">
+        <name>Intersect Lists</name>
+        <summary>Combine Two or More Lists through Intersection</summary>
+        <description>
+            This service allows users to create new lists which contain only those items
+            which are members of all the source lists. The user must have access to all the input
+            lists, but need not be the owner of any of them. An intersection of a single list
+            may be considered a copy.
+        </description>
+        <param required="true" type="String" description="The name of the list to create">name</param>
+        <param required="true" type="String[]" description="The name of a source list, or multiple list names concatenated with a ';' separator.">lists</param>
+        <param required="false" type="String" description="A description of this new list">description</param>
+        <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+  </metadata>
   </servlet-mapping>
 
   <servlet>
   <servlet-name>ws-list-diff</servlet-name>
-  <servlet-class>org.intermine.webservice.server.lists.ListDifferenceServlet</servlet-class>
+  <servlet-class>org.intermine.webservice.server.core.ConfigurableWebServiceServlet</servlet-class>
+  <init-param>
+     <param-name>service</param-name>
+     <param-value>org.intermine.webservice.server.lists.ListDifferenceService</param-value>
+   </init-param>
+   <init-param>
+     <param-name>methods</param-name>
+     <param-value>GET,POST</param-value>
+   </init-param>
   <init-param>
      <param-name>debug</param-name>
      <param-value>true</param-value>
@@ -245,6 +476,27 @@
   <servlet-mapping>
   <servlet-name>ws-list-diff</servlet-name>
   <url-pattern>/service/lists/diff/*</url-pattern>
+  <metadata>
+      <name>List Difference</name>
+      <minVersion>4</minVersion>
+      <method type="POST" authenticationRequired="true">
+        <name>Symmetric Difference</name>
+        <summary>Combine Two or More Lists through Difference</summary>
+        <description>
+            This service allows users to create new lists which only contain members which are not shared
+            by an even number of lists (see: http://en.wikipedia.org/wiki/Symmetric_difference).
+            The user must have access to all the input lists, but need not be the owner of any of them.
+        </description>
+        <param required="true" type="String" description="The name of the list to create">name</param>
+        <param required="true" type="String[]" description="The name of a source list">lists</param>
+        <param required="false" type="String" description="A description of this new list">description</param>
+        <param required="false" type="String[]" description="A set of tags to apply to the new list">tags</param>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+  </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -257,8 +509,53 @@
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-available-lists</servlet-name>
-  <url-pattern>/service/lists/*</url-pattern>
+    <servlet-name>ws-available-lists</servlet-name>
+    <url-pattern>/service/lists/*</url-pattern>
+    <metadata>
+        <name>Lists</name>
+        <minVersion>4</minVersion>
+        <method type="GET" authenticationRequired="false">
+                <summary>Find lists on the server.</summary>
+                <description>
+                    This service allows users to get back a list of
+                    lists that they have access to. The lists can be optionally
+                    be filtered on the server by name, thus returning just a single
+                    name, or if '*' wildcards are used, a subset of all lists.
+                </description>
+                <param required="false" type="String" description="An optional filter by name.">name</param>
+                <returns>
+                    <format accept="application/json">json</format>
+                    <format accept="text/html">html</format>
+                    <format accept="text/plain">text</format>
+                    <format accept="application/csv">csv</format>
+                    <format accept="application/tsv">tab</format>
+                </returns>
+        </method>
+        <method type="POST" authenticationRequired="true">
+	        <summary>Create a new list</summary>
+	          <description>
+	            This service allows users to add new items to an existing
+	            list by uploading a set of identifiers. This is equivalent to
+	            creating a new list from a set of identifiers, and then performing
+	            the union operation on that list an existing one, if the resulant
+	            list replaced the existing list.
+	          </description>
+	        <param required="true" type="String" description="The name of the new list">name</param>
+	        <param required="true" type="String" description="The type of the list">type</param>
+	        <param required="false" type="String" description="A disambiguating value (such as organism name)">extraValue</param>
+	        <body description="Identifiers for objects to add to the list, tab, comma or newline separated.">
+             <content type="text/plain">
+              "even skipped"
+              zen, bib
+              hairless
+             </content>
+            </body>
+	        <returns>
+	          <format accept="application/json">json</format>
+	          <format accept="text/plain">text</format>
+	        </returns>
+        </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -273,20 +570,54 @@
   <servlet-mapping>
   <servlet-name>ws-rename-list</servlet-name>
   <url-pattern>/service/lists/rename/*</url-pattern>
+  <metadata>
+    <name>List Renaming</name>
+    <minVersion>4</minVersion>
+    <method type="GET" authenticationRequired="false" ALSO="POST">
+      <summary>Rename an Existing List</summary>
+      <description>
+        This service allows users to change the name of an existing list that
+        they are the owner of.
+      </description>
+      <param required="true" type="String" description="The current name of the list">oldname</param>
+      <param required="true" type="String" description="The name the list should have">newname</param>
+      <returns>
+        <format accept="application/json">json</format>
+      </returns>
+    </method>
+  </metadata>
   </servlet-mapping>
 
   <servlet>
   <servlet-name>ws-template-upload</servlet-name>
   <servlet-class>org.intermine.webservice.server.template.TemplateUploadServlet</servlet-class>
   <init-param>
-     <param-name>debug</param-name>
-     <param-value>true</param-value>
+    <param-name>debug</param-name>
+    <param-value>true</param-value>
   </init-param>
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-template-upload</servlet-name>
-  <url-pattern>/service/template/upload</url-pattern>
+    <servlet-name>ws-template-upload</servlet-name>
+    <url-pattern>/service/template/upload</url-pattern>
+    <metadata>
+      <name>Template Upload</name>
+      <method type="POST" authenticationRequired="true" ALSO="GET">
+        <summary>Save a Template, or Overwrite an Existing One</summary>
+        <description>
+          This service allows users to save templates they have authored on the server, associated
+          with their account. The templates once saved can be used as any other template query.
+        </description>
+        <param type="XML" required="true" description="One or more templates, serialised in XML format.">xml</param>
+        <param type="Integer" required="false" default="2" min="1" max="2" description="The version of the XML format">version</param>
+        <returns>
+          <format accept="text/plain">text</format>
+          <format accept="application/json">json</format>
+          <format accept="text/html">html</format>
+          <format accept="application/xml">xml</format>
+        </returns>
+      </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -299,8 +630,35 @@
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-template-results</servlet-name>
-  <url-pattern>/service/template/results</url-pattern>
+    <servlet-name>ws-template-results</servlet-name>
+    <url-pattern>/service/template/results</url-pattern>
+    <metadata>
+      <name>Template Results</name>
+      <method type="GET" ALSO="POST" authenticationRequired="false">
+        <summary>Get the results from running a template with a given set of parameters</summary>
+        <description>
+        Templates are predefined parameterised queries which may be run by supplying values and
+        operators for the available editable constraints. To run a template, for example which
+        has the following editable constraints:
+          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
+          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
+        Then the user should supply the following parameters to run it with the default values:
+          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
+        The value of the number used to identify each constraint is ignored - it must however be
+        consistent for each parameter. 
+        </description>
+        <param type="String" required="true" description="The name of the template to run">name</param>
+        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
+        <param type="Integer" required="false" default="0" min="0" description="The index of the first result to return.">start</param>
+        <param type="Integer" required="false" default="10" description="The maximum size of the result set.">size</param>
+        <returns>
+          <format accept="application/tsv">tab</format>
+          <format accept="application/csv">csv</format>
+          <format accept="application/json" key="results">json</format>
+          <format accept="application/xml">xml</format>
+        </returns>
+      </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -315,20 +673,85 @@
   <servlet-mapping>
   <servlet-name>ws-template-to-list</servlet-name>
   <url-pattern>/service/template/tolist/*</url-pattern>
+  <metadata>
+      <name>Template to list</name>
+      <method type="GET" ALSO="POST" authenticationRequired="false">
+        <summary>Create a List from the Output of a Template</summary>
+        <description>
+        This service allows the user to create a list from the result set of running a template
+        with a given set of parameters. The parameters for running the template are the same as when
+        requesting results, and in addition to these parameters the user needs to supply a name 
+        and optional description for the list to be created.
+        To define which part of the template results, the user must supply a path parameter which
+        indicates a valid column from the output to be used.
+        Templates are predefined parameterised queries which may be run by supplying values and
+        operators for the available editable constraints. To run a template, for example which
+        has the following editable constraints:
+          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
+          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
+        Then the user should supply the following parameters to run it with the default values:
+          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
+        The value of the number used to identify each constraint is ignored - it must however be
+        consistent for each parameter. 
+        </description>
+        <param type="String" required="true" description="The name of the template to run">name</param>
+        <param type="String" required="true" description="The path to use to compose the results">path</param>
+        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
+        <param required="true" type="String" description="The name for the new list. There must be no existing list of this name">listName</param>
+        <param required="false" type="String" description="A description to attach to the new list">description</param>
+        <param required="false" type="String[]" description="A set of tags to use to categorise the new list">tags</param>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
   <servlet-name>ws-template-append</servlet-name>
   <servlet-class>org.intermine.webservice.server.template.TemplateListAppendServlet</servlet-class>
   <init-param>
-     <param-name>debug</param-name>
-     <param-value>true</param-value>
+    <param-name>debug</param-name>
+    <param-value>true</param-value>
   </init-param>
   </servlet>
 
   <servlet-mapping>
-  <servlet-name>ws-template-append</servlet-name>
-  <url-pattern>/service/template/append/tolist/*</url-pattern>
+    <servlet-name>ws-template-append</servlet-name>
+    <url-pattern>/service/template/append/tolist/*</url-pattern>
+    <metadata>
+      <name>Append to List from Template Results</name>
+      <minVersion>4</minVersion>
+      <method type="POST" ALSO="GET" authenticationRequired="true">
+        <summary>Add items to a list from a set of results from running a template</summary>
+        <description>
+        This service allows the user to add items to a list from the result set of running a template
+        with a given set of parameters. The parameters for running the template are the same as when
+        requesting results, and in addition to these parameters the user needs to supply a name 
+        and optional description for the list to be created.
+        To define which part of the template results, the user must supply a path parameter which
+        indicates a valid column from the output to be used.
+        Templates are predefined parameterised queries which may be run by supplying values and
+        operators for the available editable constraints. To run a template, for example which
+        has the following editable constraints:
+          &lt;constraint path="Gene.symbol" op="=" value="eve" editable="true"&gt;
+          &lt;constraint path="Gene.length" op="&amp;gt;" value="1000" editable="true"&gt;
+        Then the user should supply the following parameters to run it with the default values:
+          constraint1=Gene.symbol&amp;op1=eq&amp;value1=eve&amp;constraint2=Gene.length&amp;op2=gt&amp;value2=1000
+        The value of the number used to identify each constraint is ignored - it must however be
+        consistent for each parameter. 
+        </description>
+        <param type="String" required="true" description="The name of the template to run">name</param>
+        <param type="String" required="true" description="The path to use to compose the results">path</param>
+        <param type="String[]" required="true" description="One of a variable set of parameters used to supply constraint values">?</param>
+        <param required="true" type="String" description="The name of the list to add items to.">listName</param>
+        <returns>
+          <format accept="application/json">json</format>
+          <format accept="text/plain">text</format>
+        </returns>
+      </method>
+    </metadata>
   </servlet-mapping>
 
   <servlet>
@@ -355,12 +778,10 @@
                 If the request is authenticated to a user, then the templates that that has access
                 to will also be returned.
             </description>
-            <param required="false" default="false" description="Whether or not to include invalid templates. Invalid templates cannot be run.">includeBroken</param>
+            <param required="false" type="boolean" default="false" description="Whether or not to include invalid templates. Invalid templates cannot be run.">includeBroken</param>
             <returns>
                 <format>xml</format>
                 <format key="templates">json</format>
-                <format>tab</format>
-                <format>csv</format>
             </returns>
         </method>
     </metadata>
@@ -420,6 +841,18 @@
              <format key="version">json</format>
            </returns>
        </method>
+       <method type="GET" authenticationRequired="false" slug="/release">
+           <summary>Get the Data-Warehouse Release Version.</summary>
+           <description>
+               Get the release version of the data-warehouse. This is a string that is changed
+               each time data is added or removed from the server. Thus this number is meant
+               to reflect the contents rather than the interface of this set of services.
+           </description>
+           <returns>
+             <format>text</format>
+             <format key="version">json</format>
+           </returns>
+       </method>
     </metadata>
   </servlet-mapping>
 
@@ -463,10 +896,11 @@
                applications providing completion and suggestions for user-input.
            </description>
            <param type="String" required="true" description="The path whose possible values are requested">path</param>
-           <param type="JSON {string -> string}" required="false" description="Any type constraints on this path">typeConstraints</param>
+           <param type="JSON" required="false" description="A json object mapping which describes the type constraints on this path">typeConstraints</param>
            <returns>
-             <format key="results">json</format>
-             <format key="results">count</format>
+             <format accept="application/json" key="results">json</format>
+             <format accept="application/json;type=count" key="count">jsoncount</format>
+             <format accept="text/plain;type=count">count</format>
            </returns>
        </method>
     </metadata>
@@ -528,7 +962,7 @@
     <metadata>
         <name>Generated Code</name>
         <minVersion>7</minVersion>
-        <method type="GET" ALSO="PUT" authenticationRequired="false">
+        <method type="GET" ALSO="POST" authenticationRequired="false">
             <summary>Get the code to run a pathquery in a given language.</summary>
             <description>
 	            This service provides the ability to generate code in one of several
@@ -537,9 +971,9 @@
             <param type="enumerated" default="py" values="pl,py,rb,js,java" required="true" description="The language to generate code in.">lang</param>
             <param type="XML" required="true" description="The query to generate code for, in XML form." schema="/service/schema/query.xsd">query</param>
             <returns>
-                <format>text</format>
-	            <format key="code">json</format>
-	            <format>xml</format>
+                <format accept="text/plain">text</format>
+	            <format accept="application/json" key="code">json</format>
+	            <format accept="application/xml">xml</format>
 	        </returns>
         </method>
     </metadata>
@@ -547,7 +981,19 @@
 
   <servlet>
     <servlet-name>ws-list-tags</servlet-name>
-    <servlet-class>org.intermine.webservice.server.lists.ListTagServlet</servlet-class>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.lists.ListTagService</param-value>
+    </init-param>
+    <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.lists.ListTagAddingService</param-value>
+    </init-param>
+    <init-param>
+        <param-name>DELETE</param-name>
+        <param-value>org.intermine.webservice.server.lists.ListTagRemovalService</param-value>
+    </init-param>
     <init-param>
        <param-name>debug</param-name>
        <param-value>true</param-value>
@@ -657,7 +1103,7 @@
         <name>Enrichment Widgets</name>
         <minVersion>8</minVersion>
         <method authenticationRequired="true" type="GET" ALSO="POST">
-            <summary>get the data for a given enrichemnt widget</summary>
+            <summary>get the data for a given enrichment widget</summary>
             <description>
                 Enrichment widgets provide a statistical summary of what makes a list distinct from
                 the background population over a certain domain. They return a list of members of the
@@ -760,20 +1206,15 @@
     <metadata>
         <name>Report Widgets</name>
         <minVersion>8</minVersion>
-        <methods>
-            <method authenticationRequired="false" function="get the Report Widget JavaScript package">GET</method>
-        </methods>
-        <params>
+        <method authenticationRequired="false" type="GET">
+            <description>get the Report Widget JavaScript package</description>
             <param type="String" required="true" description="The name of the widget to use">id</param>
             <param type="String" required="true" description="The callback to use in the widget">callback</param>
-        </params>
-        <returns>
-            <format key="results">json</format>
-            <format>js</format>
-        </returns>
-        <description>
-            This service returns a Report Widget in a JavaScript package.
-        </description>
+            <returns>
+              <format key="results">json</format>
+              <format>js</format>
+            </returns>
+        </method>
     </metadata>
   </servlet-mapping>
 
@@ -878,6 +1319,14 @@
   <servlet>
     <servlet-name>ws-new-user</servlet-name>
     <servlet-class>org.intermine.webservice.server.user.NewUserServlet</servlet-class>
+    <!--
+    This config should be used when there are some tests set up for it. 
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.user.NewUserService</param-value>
+     </init-param>
+    -->
     <init-param>
        <param-name>debug</param-name>
        <param-value>true</param-value>
@@ -904,7 +1353,7 @@
               This is equivalent to the registration mechanism in the web-application interface.
               Requests to this service are rate limited by IP Address
           </description>
-          <param type="String" required="true" description="The user name of the new user. It should be an email address if possible. There must not be any user with the same username">name</param>
+          <param type="Email" required="true" description="The user name of the new user. It should be an email address if possible. There must not be any user with the same username">name</param>
           <param type="String" required="true" description="A password to associate with the account.">password</param>
           <param type="boolean" required="false" description="Whether or not to subscribe to the mine's mailing list, if it has one. The username must be an email address if true">subscribe-to-list</param>
           <returns>
@@ -938,20 +1387,6 @@
     </metadata>
   </servlet-mapping>
 
-   <servlet>
-     <servlet-name>ws-displayers</servlet-name>
-     <servlet-class>org.intermine.webservice.server.displayer.DisplayerServlet</servlet-class>
-   </servlet>
-
-   <servlet-mapping>
-     <servlet-name>ws-displayers</servlet-name>
-     <url-pattern>/service/displayer</url-pattern>
-      <metadata>
-        <name>Displayers</name>
-        <minVersion>9</minVersion>
-      </metadata>
-   </servlet-mapping>
-   
       <!-- NEW IN VERSION 10 -->
       
    <servlet>
@@ -965,6 +1400,56 @@
       <metadata>
         <name>ID Resolution</name>
         <minVersion>10</minVersion>
+        <method type="POST" authenticationRequired="true">
+          <name>Submit Job</name>
+          <summary>Start a New ID Resolution Job on the Server</summary>
+          <description>
+            New ID resolution jobs are created by posting a representation of the job to this
+            service.
+          </description>
+          <body
+            description="A representation of the job. This must include a list of identifiers to resolve, and the type of object these ids are meant to resolve to">
+              <content type="application/json" schema="/schema/job.schema">
+                {
+                  "identifiers": ["eve", "zen", "bib"],
+                  "type": "Gene",
+                  "caseSensitive": true,
+                  "wildCards": true,
+                  "extra": "D. melanogaster"
+                }
+              </content>
+           </body>
+           <returns>
+             <format key="uid">json</format>
+           </returns>
+        </method>
+        <method type="GET" authenticationRequired="true" slug="/:uid/status">
+            <name>Check Job Status</name>
+            <summary>Check the Status of a Given Job</summary>
+            <description>Get a representation of the status of job.</description>
+            <param type="String" required="true" description="The unique identifier of the job">uid</param>
+            <returns>
+              <format key="status" accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="GET" authenticationRequired="true" slug="/:uid/results">
+            <name>Retrieve Job Results</name>
+            <summary>Get the Results of a Given Job</summary>
+            <description>Get the full results of running a specific job.</description>
+            <param type="String" required="true" description="The unique identifier of the job">uid</param>
+            <returns>
+              <format key="results" accept="application/json">json</format>
+            </returns>
+        </method>
+        <method type="DELETE" authenticationRequired="true" slug="/:uid">
+            <name>Delete A Job</name>
+            <summary>Delete a given job from the server.</summary>
+            <description>Each job should be removed from the server when the user has finished inspecting the results.</description>
+            <param type="String" required="true" description="The unique identifier of the job">uid</param>
+            <returns>
+              <format accept="application/json">json</format>
+            </returns>
+        </method>
       </metadata>
    </servlet-mapping>
    
@@ -994,14 +1479,24 @@
             <format key="invitation">json</format>
           </returns>
       </method>
+      <method type="GET" requiresAuthentication="true">
+          <name>Invitation Details</name>
+          <summary>Details of all outstanding invitations</summary>
+          <description>
+            This service returns a description of all the outstanding list invitations
+            for a user on the system.
+          </description>
+          <returns>
+            <format key="invitation">json</format>
+          </returns>
+      </method>
       <method type="GET" requiresAuthentication="true" slug="/:uid">
           <name>Invitation Details</name>
-          <summary>Details of a single invitation, or of all one's out-standing invitations</summary>
+          <summary>Details of a single invitation</summary>
           <description>
-            One if uid, else all
-			Blah... todo
+            This service returns details of a single invitation on the system.
           </description>
-          <param type="String" required="false" description="The identifier of the invitation - a 20 character unique string">uid</param>
+          <param type="String" required="true" description="The identifier of the invitation - a 20 character unique string">uid</param>
           <returns>
             <format key="invitation">json</format>
           </returns>
@@ -1031,43 +1526,53 @@
      <servlet-name>ws-list-shares</servlet-name>
      <url-pattern>/service/lists/shares/*</url-pattern>
      <metadata>
-       <name>List Invitations</name>
+       <name>List Sharing</name>
        <minVersion>11</minVersion>
        <method type="POST" requiresAuthentication="true">
-          <name>Invitation Creation</name>
-          <summary>Invite another user to share a list</summary>
+          <name>Share a List</name>
+          <summary>Authorise another user to access a list</summary>
           <description>
-			Blah... todo
+            This service provides a means for authorising another user to access a list. To
+            share a list the user making the request must be the owner of the list and you must
+            know the username of the user you wish to share with. If you do not know the username
+            of the user to share with, then the user should issue an invitation instead. The user
+            the list is shared with must exist and the list must not already be shared with them.
+
+            The service returns information detailing whom the list in question is currently
+            shared with.
           </description>
-          <param type="String" required="true" description="The list of yours you wish to share">list</param>
-          <param type="String" required="true" description="The email address of the user to invite to share a list.">to</param>
-          <param type="boolean" required="false" description="Whether or not to send an email to the invitee. The invitee value must be an email address if true">notify</param>
+          <param type="String" required="true" description="The list of yours you wish to share.">list</param>
+          <param type="String" required="true" description="The username of the user who will have access.">with</param>
+          <param type="boolean" required="false" description="Whether or not to send an email to the user you are sharing with.">notify</param>
           <returns>
-            <format key="invitation">json</format>
+            <format accept="application/javascript" key="share">json</format>
           </returns>
       </method>
-      <method type="GET" requiresAuthentication="true" slug="/:uid">
-          <name>Invitation Details</name>
-          <summary>Details of a single invitation, or of all one's out-standing invitations</summary>
+      <method type="GET" requiresAuthentication="true">
+          <name>Details of Currently Shared Lists</name>
+          <summary>Retrieve information about which lists are shared with and by whom.</summary>
           <description>
-            One if uid, else all
-			Blah... todo
+            Get information about each list that is shared by or with the authenticating
+            user. The service returns a map with two keys "sharedByUser" and "sharedWithUser"
+            which are themselves each maps, with list names as keys, and either lists of 
+            users with access as values, or the name of the original owner as values.
           </description>
-          <param type="String" required="false" description="The identifier of the invitation - a 20 character unique string">uid</param>
           <returns>
-            <format key="invitation">json</format>
+            <format accept="application/javascript" key="share">json</format>
           </returns>
       </method>
-      <method type="PUT" requiresAuthentication="true" slug="/:uid">
-          <name>Invitation Acceptance</name>
-          <summary>Declare the acceptance of an invitation.</summary>
+       <method type="DELETE" requiresAuthentication="true">
+          <name>Stop Sharing a List</name>
+          <summary>Rescind the Permission Granted to a User to Access a List.</summary>
           <description>
-			Blah... todo
+            Stop a user from being able to access a list that you own. This service allows a user
+            to remove a user's previously granted permission to view the contents of a list.
+
+            Other than a json results envelope no meaningful results are returned, and the caller
+            should simply check for a successful response.
           </description>
-          <param type="String" required="true" description="The identifier of the invitation - a 20 character unique string">uid</param>
-          <param type="boolean" required="true" description="Whether or not this invitation is accepted or not.">accepted</param>
           <returns>
-            <format key="invitation">json</format>
+            <format accept="application/javascript">json</format>
           </returns>
       </method>
      </metadata>
@@ -1075,7 +1580,23 @@
    
     <servlet>
      <servlet-name>ws-user-preferences</servlet-name>
-     <servlet-class>org.intermine.webservice.server.user.PreferencesServlet</servlet-class>
+     <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+     <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.user.ReadPreferencesService</param-value>
+     </init-param>
+     <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.user.SetPreferencesService</param-value>
+     </init-param>
+     <init-param>
+        <param-name>PUT</param-name>
+        <param-value>org.intermine.webservice.server.user.SetPreferencesService</param-value>
+     </init-param>
+     <init-param>
+        <param-name>DELETE</param-name>
+        <param-value>org.intermine.webservice.server.user.DeletePreferencesService</param-value>
+     </init-param>
    </servlet>
    
    <servlet-mapping>
@@ -1088,18 +1609,21 @@
           <name>Set Preference(s)</name>
           <summary>Set the value of one or more preferences</summary>
           <description>
-            Blah... todo
+            Thid service allows a user to store or change a key value pair
+            associated with their account. The keys may have a particular meaning. All values
+            will be stored and retrieved as strings.
           </description>
-          <param type="String" required="false" repeat="true" description="The preference to set">?</param>
+          <param type="String[]" required="false" description="The preference to set">?</param>
           <returns>
             <format key="preferences">json</format>
           </returns>
       </method>
       <method type="GET" requiresAuthentication="true">
-          <name>Invitation Details</name>
+          <name>View Preferences</name>
           <summary>Get a user's preferences</summary>
           <description>
-            Blah... todo
+            Get a complete listing of a user's preferences. This is presented as a mapping
+            from string key to string value.
           </description>
           <returns>
             <format key="preferences">json</format>
@@ -1109,9 +1633,10 @@
           <name>Delete Preference(s)</name>
           <summary>Remove one or all preferences.</summary>
           <description>
-            Blah... todo
+            Delete either a single preference from a user's set of stored preferences, or deletes
+            all stored preference values.
           </description>
-          <param type="String" required="false" description="The preference to delete. If not provided, all will be cleared">key</param>
+          <param type="String" required="false" description="The preference to delete. If not provided, ALL will be cleared">key</param>
           <returns>
             <format key="preferences">json</format>
           </returns>
@@ -1119,10 +1644,66 @@
      </metadata>
    </servlet-mapping>
 
+   <!-- NEW IN VERSION 12 -->
+
+   <servlet>
+    <servlet-name>ws-query-store</servlet-name>
+    <servlet-class>org.intermine.webservice.server.core.RestfulServlet</servlet-class>
+    <init-param>
+        <param-name>GET</param-name>
+        <param-value>org.intermine.webservice.server.query.QueryRetrieverService</param-value>
+    </init-param>
+    <init-param>
+        <param-name>POST</param-name>
+        <param-value>org.intermine.webservice.server.query.QueryStoreService</param-value>
+    </init-param>
+    <init-param>
+       <param-name>debug</param-name>
+       <param-value>true</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ws-query-store</servlet-name>
+    <url-pattern>/service/queries/*</url-pattern>
+    <metadata>
+        <name>Query Store</name>
+        <minVersion>12</minVersion>
+        <method authenticationRequired="false" type="GET" >
+            <summary>Get a stored query</summary>
+            <description>
+                Get a query stored at the service.
+            </description>
+            <param type="Integer" required="true" description="The id of the query to fetch">id</param>
+            <returns>
+                <format key="id">json</format>
+            </returns>
+        </method>
+        <method authenticationRequired="false" type="POST">
+            <summary>Store a query</summary>
+            <param type="String" required="true" description="The xml of the query to store.">query</param>
+            <returns>
+                <format>json</format>
+                <format>xml</format>
+            </returns>
+        </method>
+    </metadata>
+  </servlet-mapping>
+   
+
   <!-- MUST BE LISTED LAST OF ALL WEBSERVICES AS IT IS THE MOST GENERAL -->
   <servlet-mapping>
     <servlet-name>ws-service-listing</servlet-name>
     <url-pattern>/service</url-pattern>
+    <metadata>
+      <name>Service Listing</name>
+      <method type="GET" requiresAuthentication="false">
+        <summary>Get a description of the services offered by this data-warehouse.</summary>
+        <returns>
+          <format accept="application/json">json</format>
+        </returns>
+      </method>
+    </metadata>
   </servlet-mapping>
 <!-- ================================================================================= -->
 

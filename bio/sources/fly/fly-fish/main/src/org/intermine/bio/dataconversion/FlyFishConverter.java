@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
@@ -40,8 +42,8 @@ public class FlyFishConverter extends BioFileConverter
     Item orgDrosophila;
     private Item pub, ontology;
     private String[] stages;
-    protected IdResolverFactory resolverFactory;
-    private static final String TAXON_ID = "7227";
+    private static final String TAXON_FLY = "7227";
+    protected IdResolver rslv;
 
     /**
      * Construct a new instance of flyfishconverter.
@@ -55,7 +57,7 @@ public class FlyFishConverter extends BioFileConverter
         super(writer, model, "fly-FISH", "fly-Fish data set");
 
         orgDrosophila = createItem("Organism");
-        orgDrosophila.addAttribute(new Attribute("taxonId", TAXON_ID));
+        orgDrosophila.addAttribute(new Attribute("taxonId", TAXON_FLY));
         store(orgDrosophila);
 
         pub = createItem("Publication");
@@ -67,10 +69,6 @@ public class FlyFishConverter extends BioFileConverter
         store(ontology);
 
         stages = getStages();
-
-
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     private class HeaderConfig
@@ -87,6 +85,9 @@ public class FlyFishConverter extends BioFileConverter
      */
     @Override
     public void process(Reader reader) throws Exception {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
         BufferedReader br = new BufferedReader(reader);
         String line = br.readLine();
         String[] headerArray = StringUtils.split(line, ';');
@@ -211,15 +212,17 @@ public class FlyFishConverter extends BioFileConverter
     }
 
     private Item getGene(String geneCG) throws ObjectStoreException {
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, geneCG);
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
+        int resCount = rslv.countResolutions(TAXON_FLY, geneCG);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + geneCG + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, geneCG));
+                     + rslv.resolveId(TAXON_FLY, geneCG));
             return null;
         }
-        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneCG).iterator().next();
+        String primaryIdentifier = rslv.resolveId(TAXON_FLY, geneCG).iterator().next();
         if (geneItems.containsKey(primaryIdentifier)) {
             return geneItems.get(primaryIdentifier);
         }

@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.template.result;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -63,7 +63,7 @@ public class TemplateResultRequestParser extends WebServiceRequestParser
     private String getRequiredStringParameter(String name) {
         String param = request.getParameter(name);
         if (param == null || "".equals(param)) {
-            throw new IllegalArgumentException("Missing required parameter: " + name);
+            throw new BadRequestException("Missing required parameter: " + name);
         } else {
             return param;
         }

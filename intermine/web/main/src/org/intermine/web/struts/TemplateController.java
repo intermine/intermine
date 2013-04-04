@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -187,7 +187,7 @@ public class TemplateController extends TilesAction
         verifyDisplayExtraValue(displayConstraintList, template);
         request.setAttribute("dcl", displayConstraintList);
         request.setAttribute("templateQuery", displayTemplate);
-        String constraintLogic = template.getConstraintLogic().toLowerCase();
+        String constraintLogic = template.getConstraintLogicForEditableConstraints();
         if (constraintLogic.contains("or") || constraintLogic.contains("not")) {
             request.setAttribute("displayLogicExpression", "true");
         }

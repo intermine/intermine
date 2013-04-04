@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,11 +26,11 @@ import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagQueryConfig;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.results.WebResults;
 import org.intermine.api.template.TemplateManager;
 import org.intermine.api.util.NameUtil;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.pathquery.PathQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.PortalHelper;
 import org.intermine.web.logic.bag.BagConversionHelper;
@@ -137,21 +137,18 @@ public class ModifyBagDetailsAction extends InterMineAction
                         && request.getParameter("bagName") != null) {
             String type2 = request.getParameter("convert");
             TemplateManager templateManager = im.getTemplateManager();
-            WebResults webResults = BagConversionHelper.getConvertedObjects(session,
+            PathQuery q = BagConversionHelper.getConvertedObjects(session,
                     templateManager.getConversionTemplates(),
                     TypeUtil.instantiate(model.getPackageName() + "." + imBag.getType()),
                     TypeUtil.instantiate(model.getPackageName() + "." + type2), imBag);
-            PagedTable pc = new PagedTable(webResults);
-            String identifier = "bagconvert." + imBag.getName() + "." + type2;
-
-            SessionMethods.setResultsTable(session, identifier, pc);
-            String trail = "|bag." + imBag.getName();
-            SessionMethods.removeQuery(session);
-            return new ForwardParameters(mapping.findForward("results"))
-                            .addParameter("table", identifier)
-                            .addParameter("size", "25")
-                            .addParameter("trail", trail).forward();
-
+            q.setTitle(type2 + "s from list '" + imBag.getName() + "'");
+            SessionMethods.loadQuery(q, session, response);
+            String qid = SessionMethods.startQueryWithTimeout(request, false, q);
+            Thread.sleep(200); // slight pause in the hope of avoiding holding page
+            final String trail = "|bag." + imBag.getName();
+            return new ForwardParameters(mapping.findForward("waiting"))
+                               .addParameter("trail", trail)
+                               .addParameter("qid", qid).forward();
         }
         return new ForwardParameters(mapping.findForward("bagDetails"))
                     .addParameter("bagName", mbdf.getBagName()).forward();

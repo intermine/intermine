@@ -1,7 +1,7 @@
 package org.intermine.objectstore.query;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,7 +20,8 @@ import java.util.List;
  */
 public class ObjectStoreBagCombination implements QuerySelectable
 {
-    private final List<ObjectStoreBag> bags = new ArrayList<ObjectStoreBag>();
+    // List of either Bags or ObjectStoreBagCombinations
+    private final List<QuerySelectable> bags = new ArrayList<QuerySelectable>();
     private final int op;
     /** Constant representing a UNION operation */
     public static final int UNION = 879234;
@@ -52,6 +53,10 @@ public class ObjectStoreBagCombination implements QuerySelectable
         bags.add(bag);
     }
 
+    public void addBagCombination(ObjectStoreBagCombination combo) {
+        bags.add(combo);
+    }
+
     /**
      * Returns the op of this combination.
      *
@@ -66,7 +71,7 @@ public class ObjectStoreBagCombination implements QuerySelectable
      *
      * @return a List of ObjectStoreBags
      */
-    public List<ObjectStoreBag> getBags() {
+    public List<QuerySelectable> getBags() {
         return bags;
     }
 

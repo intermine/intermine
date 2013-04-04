@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,9 +33,9 @@ public abstract class IdResolverFactory
     // ResolverFactory takes in a SO term/Class name (as a collection), "gene" is used by default
     protected final Set<String> defaultClsCol = new HashSet<String>(
             Arrays.asList(new String[] { "gene" }));
-    protected Set<String> clsCol  = new HashSet<String>();
+    protected Set<String> clsCol = new HashSet<String>();
 
-    protected static final String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
+    protected String ID_RESOLVER_CACHED_FILE_NAME = "build/idresolver.cache";
 
     /**
      * Return an IdResolver, if not already built then create it.
@@ -69,37 +69,12 @@ public abstract class IdResolverFactory
     /**
      * Read IdResolver contents from a file, allows for caching during build.
      *
-     * @param f the file to read from
-     * @return a created IdResolver
-     * @throws IOException if problem reading from file
-     */
-    protected boolean restoreFromFile(File f)
-        throws IOException {
-        return restoreFromFile(defaultClsCol, f);
-    }
-
-    /**
-     * Read IdResolver contents from a file, allows for caching during build.
-     *
-     * @param clsName the class name to resolve
-     * @param f the file to read from
-     * @return a created IdResolver
-     * @throws IOException if problem reading from file
-     */
-    protected boolean restoreFromFile(String clsName, File f)
-        throws IOException {
-        return restoreFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})), f);
-    }
-
-    /**
-     * Read IdResolver contents from a file, allows for caching during build.
-     *
      * @param clsCol a collection of class name to resolve
      * @param f the file to read from
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean restoreFromFile(Set<String> clsCol, File f)
+    protected boolean restoreFromFile(File f)
         throws IOException {
         if (f.exists()) {
             resolver.populateFromFile(f);
@@ -112,34 +87,11 @@ public abstract class IdResolverFactory
     /**
      * Read IdResolver contents from a file, allows for caching during build. Use default file name.
      *
-     * @return a created IdResolver
-     * @throws IOException if problem reading from file
-     */
-    protected boolean restoreFromFile()
-        throws IOException {
-        return restoreFromFile(defaultClsCol);
-    }
-
-    /**
-     * Read IdResolver contents from a file, allows for caching during build. Use default file name.
-     *
-     * @param clsName the class name to resolve
-     * @return a created IdResolver
-     * @throws IOException if problem reading from file
-     */
-    protected boolean restoreFromFile(String clsName)
-        throws IOException {
-        return restoreFromFile(new HashSet<String>(Arrays.asList(new String[]{clsName})));
-    }
-
-    /**
-     * Read IdResolver contents from a file, allows for caching during build. Use default file name.
-     *
      * @param clsCol a collection of class name to resolve
      * @return a created IdResolver
      * @throws IOException if problem reading from file
      */
-    protected boolean restoreFromFile(Set<String> clsCol)
+    protected boolean restoreFromFile()
         throws IOException {
         File f = new File(ID_RESOLVER_CACHED_FILE_NAME);
         if (f.exists()) {

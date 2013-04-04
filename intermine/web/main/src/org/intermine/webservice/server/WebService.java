@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
@@ -44,9 +46,12 @@ import org.intermine.web.logic.profile.LoginHandler;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.exceptions.InternalErrorException;
 import org.intermine.webservice.server.exceptions.MissingParameterException;
+import org.intermine.webservice.server.exceptions.NotAcceptableException;
 import org.intermine.webservice.server.exceptions.ServiceException;
 import org.intermine.webservice.server.exceptions.ServiceForbiddenException;
+import org.intermine.webservice.server.exceptions.UnauthorizedException;
 import org.intermine.webservice.server.output.CSVFormatter;
+import org.intermine.webservice.server.output.HTMLTableFormatter;
 import org.intermine.webservice.server.output.JSONCountFormatter;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.intermine.webservice.server.output.JSONObjectFormatter;
@@ -88,79 +93,10 @@ import org.intermine.webservice.server.output.XMLFormatter;
  * @author Alex Kalderimis
  * @version
  */
-public abstract class WebService
-{
+public abstract class WebService {
 
     /** Default jsonp callback **/
     public static final String DEFAULT_CALLBACK = "callback";
-
-    /** The format for when no value is given **/
-    public static final int EMPTY_FORMAT = -1;
-
-    /** The Unknown format **/
-    public static final int UNKNOWN_FORMAT = -2;
-
-    /** XML format constant **/
-    public static final int XML_FORMAT = 0;
-
-    /** TSV format constant **/
-    public static final int TSV_FORMAT = 1;
-
-    /** HTML format constant **/
-    public static final int HTML_FORMAT = 2;
-
-    /** CSV format constant **/
-    public static final int CSV_FORMAT = 3;
-
-    /** Count format constant **/
-    public static final int COUNT_FORMAT = 4;
-
-    /** Text format constant **/
-    public static final int TEXT_FORMAT = 5;
-
-    // FORMAT CONSTANTS BETWEEN 20-40 ARE RESERVED FOR JSON FORMATS!!
-
-    /** Start of JSON format range **/
-    public static final int JSON_RANGE_START = 20;
-
-    /** End of JSON format range **/
-    public static final int JSON_RANGE_END = 40;
-
-    /** JSONP format constant **/
-    public static final int JSON_FORMAT = 20;
-
-    /** JSONP format constant **/
-    public static final int JSONP_FORMAT = 21;
-
-    /** JSON Object format constant **/
-    public static final int JSON_OBJ_FORMAT = 22;
-
-    /** JSONP Object format constant **/
-    public static final int JSONP_OBJ_FORMAT = 23;
-
-    /** JSON Table format constant **/
-    public static final int JSON_TABLE_FORMAT = 24;
-
-    /** JSONP Table format constant **/
-    public static final int JSONP_TABLE_FORMAT = 25;
-
-    /** JSON Row format constant **/
-    public static final int JSON_ROW_FORMAT = 26;
-
-    /** JSONP Row format constant **/
-    public static final int JSONP_ROW_FORMAT = 27;
-
-    /** JSON count format constant **/
-    public static final int JSON_COUNT_FORMAT = 28;
-
-    /** JSONP count format constant **/
-    public static final int JSONP_COUNT_FORMAT = 29;
-
-    /** JSON data table format constant **/
-    public static final int JSON_DATA_TABLE_FORMAT = 30;
-
-    /** JSONP data table format constant **/
-    public static final int JSONP_DATA_TABLE_FORMAT = 31;
 
     private static final String COMPRESS = "compress";
     private static final String GZIP = "gzip";
@@ -205,27 +141,33 @@ public abstract class WebService
     private boolean initialised = false;
     private String propertyNameSpace = null;
 
-
     /**
-     * Return the permission object representing the authorisation state of the request. This
-     * is guaranteed to not be null.
-     * @return A permission object, from which a service may inspect the level of authorisation,
-     *          and retrieve details about whom the request is authorised for.
+     * Return the permission object representing the authorisation state of the
+     * request. This is guaranteed to not be null.
+     *
+     * @return A permission object, from which a service may inspect the level
+     *         of authorisation, and retrieve details about whom the request is
+     *         authorised for.
      */
     protected ApiPermission getPermission() {
         if (permission == null) {
-            throw new IllegalStateException("There should always be a valid permission object");
+            throw new IllegalStateException(
+                    "There should always be a valid permission object");
         }
         return permission;
     }
 
     /**
      * Get a parameter this service deems to be required.
-     * @param name The name of the parameter
+     *
+     * @param name
+     *            The name of the parameter
      * @return The value of the parameter. Never null, never blank.
-     * @throws MissingParameterException If the value of the parameter is blank or null.
+     * @throws MissingParameterException
+     *             If the value of the parameter is blank or null.
      */
-    protected String getRequiredParameter(String name) throws MissingParameterException {
+    protected String getRequiredParameter(String name)
+            throws MissingParameterException {
         String value = request.getParameter(name);
         if (StringUtils.isBlank(value)) {
             throw new MissingParameterException(name);
@@ -235,9 +177,13 @@ public abstract class WebService
 
     /**
      * Get a parameter this service deems to be optional, or the default value.
-     * @param name The name of the parameter.
-     * @param defaultValue The default value.
-     * @return The value provided, if there is a non-blank one, or the default value.
+     *
+     * @param name
+     *            The name of the parameter.
+     * @param defaultValue
+     *            The default value.
+     * @return The value provided, if there is a non-blank one, or the default
+     *         value.
      */
     protected String getOptionalParameter(String name, String defaultValue) {
         String value = request.getParameter(name);
@@ -248,10 +194,12 @@ public abstract class WebService
     }
 
     /**
-     * Get a profile that is a true authenticated user that exists in the database.
+     * Get a profile that is a true authenticated user that exists in the
+     * database.
      *
      * @return The user's profile.
-     * @throws ServiceForbiddenException if this request resolves to an unauthenticated profile.
+     * @throws ServiceForbiddenException
+     *             if this request resolves to an unauthenticated profile.
      */
     protected Profile getAuthenticatedUser() throws ServiceForbiddenException {
         Profile profile = getPermission().getProfile();
@@ -263,7 +211,9 @@ public abstract class WebService
 
     /**
      * Get a parameter this service deems to be optional, or <code>null</code>.
-     * @param name The name of the parameter.
+     *
+     * @param name
+     *            The name of the parameter.
      * @return The value of the parameter, or <code>null</code>
      */
     protected String getOptionalParameter(String name) {
@@ -271,20 +221,58 @@ public abstract class WebService
     }
 
     /**
+     * Get the value of a parameter that should be interpreted as an integer.
+     *
+     * @param name The name of the parameter.
+     * @return An integer
+     * @throws BadRequestException if The value is absent or mal-formed.
+     */
+    protected Integer getIntParameter(String name) {
+        String value = getRequiredParameter(name);
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            String msg = String.format("%s should be a valid number. Got %s", name, value);
+            throw new BadRequestException(msg, e);
+        }
+    }
+
+    /**
+     * Get the value of a parameter that should be interpreted as an integer.
+     *
+     * @param name The name of the parameter.
+     * @param defaultValue The value to return if none is provided by the user.
+     * @return An integer
+     * @throw BadRequestException if the user provided a mal-formed value.
+     */
+    protected Integer getIntParameter(String name, Integer defaultValue) {
+        try {
+            return getIntParameter(name);
+        } catch (MissingParameterException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
      * Set the default name-space for configuration property look-ups.
      *
-     * If a value is set, it must be provided before any actions are taken. This means this
-     * property must be set before the execute method is called.
-     * @param namespace The name space to use (eg: "some.namespace"). May not be null.
+     * If a value is set, it must be provided before any actions are taken. This
+     * means this property must be set before the execute method is called.
+     *
+     * @param namespace
+     *            The name space to use (eg: "some.namespace"). May not be null.
      */
     protected void setNameSpace(String namespace) {
         if (namespace == null || namespace.endsWith(".")) {
-            throw new IllegalArgumentException("Namespace must be a non-null string, and may " +
-                    "not terminate in a period. Value was: " + namespace);
+            throw new IllegalArgumentException(
+                    "Namespace must be a non-null string, and may "
+                            + "not terminate in a period. Value was: "
+                            + namespace);
         }
         if (initialised) {
-            throw new IllegalStateException("Name space must be set prior to, or as part of, " +
-                    "initialisation.");
+            throw new IllegalStateException(
+                    "Name space must be set prior to, or as part of, "
+                            + "initialisation.");
         }
 
         propertyNameSpace = namespace;
@@ -292,22 +280,25 @@ public abstract class WebService
 
     /**
      * Get a configuration property by name.
-     * @param name The name of the property to retrieve.
+     *
+     * @param name
+     *            The name of the property to retrieve.
      * @return A configuration value.
      */
     protected String getProperty(String name) {
         if (StringUtils.contains(name, '.')) {
             return webProperties.getProperty(name);
         }
-        return webProperties.getProperty(propertyNameSpace == null
-                ? name : propertyNameSpace  + "." + name);
+        return webProperties.getProperty(propertyNameSpace == null ? name
+                : propertyNameSpace + "." + name);
     }
 
     /**
      * Construct the web service with the InterMine API object that gives access
      * to the core InterMine functionality.
      *
-     * @param im the InterMine application
+     * @param im
+     *            the InterMine application
      */
     public WebService(InterMineAPI im) {
         this.im = im;
@@ -326,35 +317,40 @@ public abstract class WebService
      * </pre>
      *
      * Ensures initialisation of web service and makes steps common for all web
-     * services and after that executes the <tt>execute</tt> method, that should be
-     * overwritten with each web service.
+     * services and after that executes the <tt>execute</tt> method, for which
+     * each subclass must provide an implementation.
      *
-     * @param request The request, as received by the servlet.
-     * @param response The response, as handled by the servlet.
+     * @param request
+     *            The request, as received by the servlet.
+     * @param response
+     *            The response, as handled by the servlet.
      */
     public void service(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
 
-        if (!agentIsRobot()) {
-            try {
+        try {
+            if (agentIsRobot()) {
+                response.sendError(Output.SC_FORBIDDEN);
+            } else {
                 setHeaders();
+                initState();
                 initOutput();
                 checkEnabled();
                 authenticate();
-                initState();
                 initialised = true;
+                postInit();
                 validateState();
                 execute();
-            } catch (Throwable t) {
-                sendError(t, response);
             }
-        } else {
-            response.setStatus(403);
+        } catch (Throwable t) {
+            sendError(t, response);
         }
 
         try {
-            if (output != null) {
+            if (output == null) {
+                response.flushBuffer();
+            } else {
                 output.flush();
             }
         } catch (Throwable t) {
@@ -373,7 +369,8 @@ public abstract class WebService
         String ua = request.getHeader("User-Agent");
         if (ua != null) {
             ua = ua.toLowerCase();
-            String[] robots = StringUtils.split(webProperties.getProperty(BOTS, ""), ',');
+            String[] robots = StringUtils.split(
+                    webProperties.getProperty(BOTS, ""), ',');
             for (String bot : robots) {
                 if (ua.contains(bot.trim())) {
                     return true;
@@ -384,8 +381,8 @@ public abstract class WebService
     }
 
     private void setHeaders() {
-        Properties headerProps
-            = PropertiesUtil.getPropertiesStartingWith(WS_HEADERS_PREFIX, webProperties);
+        Properties headerProps = PropertiesUtil.getPropertiesStartingWith(
+                WS_HEADERS_PREFIX, webProperties);
         for (Object o : headerProps.values()) {
             String h = o.toString();
             String[] parts = StringUtils.split(h, ":", 2);
@@ -405,7 +402,8 @@ public abstract class WebService
     }
 
     /**
-     * Subclasses may put clean-up code here, to be run after the request has been executed.
+     * Subclasses may put clean-up code here, to be run after the request has
+     * been executed.
      */
     protected void cleanUp() {
         // No-op stub.
@@ -419,12 +417,19 @@ public abstract class WebService
     }
 
     /**
-     * Subclasses can put initialisation checks here.
-     * The main use case is for confirming
-     * authentication.
+     * Subclasses can put initialisation checks here. The main use case is for
+     * confirming authentication.
      */
     protected void validateState() {
         // No-op stub
+    }
+
+    /**
+     * Subclasses can hook in here to do common behaviour that needs to happen
+     * after initialisation.
+     */
+    protected void postInit() {
+        // No-op stub;
     }
 
     /**
@@ -435,35 +440,43 @@ public abstract class WebService
      */
     private void authenticate() {
 
-        final String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        String authToken = request.getParameter(AUTH_TOKEN_PARAM_KEY);
+        final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
         final ProfileManager pm = im.getProfileManager();
 
+        if (StringUtils.isEmpty(authToken) && StringUtils.isEmpty(authString)) {
+            return; // Not Authenticated.
+        }
+        // Accept tokens passed in the Authorization header.
+        if (StringUtils.isEmpty(authToken) && StringUtils.startsWith(authString, "Token ")) {
+            authToken = StringUtils.removeStart(authString, "Token ");
+        }
+
         try {
-            if (StringUtils.isEmpty(authToken)) {
-                final String authString = request.getHeader(AUTHENTICATION_FIELD_NAME);
-                if (StringUtils.isEmpty(authString) || formatIsJSONP()) {
-                    return; // Not Authenticated.
-                }
+             // Use a token if provided.
+             if (StringUtils.isNotEmpty(authToken)) {
+                 permission = pm.getPermission(authToken, im.getClassKeys());
+             } else {
+                 // Try and read the authString as a basic auth header.
+                 // Strip off the "Basic" part - but don't require it.
+                 final String encoded = StringUtils.removeStart(authString, "Basic ");
+                 final String decoded = new String(Base64.decodeBase64(encoded.getBytes()));
+                 final String[] parts = decoded.split(":", 2);
+                 if (parts.length != 2) {
+                     throw new UnauthorizedException(
+                             "Invalid request authentication. "
+                                     + "Authorization field contains invalid value. "
+                                     + "Decoded authorization value: "
+                                     + parts[0]);
+                 }
+                 final String username = StringUtils.lowerCase(parts[0]);
+                 final String password = parts[1];
 
-                // Strip off the "Basic" part - but don't require it.
-                final String encoded = StringUtils.removeStart(authString, "Basic ");
-                final String decoded = new String(Base64.decodeBase64(encoded.getBytes()));
-                final String[] parts = decoded.split(":", 2);
-                if (parts.length != 2) {
-                    throw new BadRequestException(
-                        "Invalid request authentication. "
-                        + "Authorization field contains invalid value. "
-                        + "Decoded authorization value: " + parts[0]);
-                }
-                final String username = StringUtils.lowerCase(parts[0]);
-                final String password = parts[1];
-
-                permission = pm.getPermission(username, password, im.getClassKeys());
-            } else {
-                permission = pm.getPermission(authToken, im.getClassKeys());
-            }
+                 permission = pm.getPermission(username, password,
+                         im.getClassKeys());
+             }
         } catch (AuthenticationException e) {
-            throw new ServiceForbiddenException(e.getMessage(), e);
+            throw new UnauthorizedException(e.getMessage());
         }
 
         LoginHandler.setUpPermission(im, permission);
@@ -476,8 +489,7 @@ public abstract class WebService
 
         int code;
         if (t instanceof ServiceException) {
-            ServiceException ex = (ServiceException) t;
-            code = ex.getHttpErrorCode();
+            code = ((ServiceException) t).getHttpErrorCode();
         } else {
             code = Output.SC_INTERNAL_SERVER_ERROR;
         }
@@ -500,7 +512,9 @@ public abstract class WebService
             attributes.put(JSONResultFormatter.KEY_CALLBACK, callback);
             output.setHeaderAttributes(attributes);
         }
-        output.setError(msg, code);
+        if (output != null) {
+            output.setError(msg, code);
+        }
         LOG.debug("Set error to : " + msg + "," + code);
     }
 
@@ -514,10 +528,11 @@ public abstract class WebService
 
         if (code == Output.SC_INTERNAL_SERVER_ERROR) {
             LOG.error("Service failed by internal error. Request parameters: \n"
-                            + requestParametersToString() + b.toString());
+                    + requestParametersToString() + b.toString());
         } else {
             LOG.debug("Service didn't succeed. It's not an internal error. "
-                    + "Reason: " + getErrorDescription(msg, code) + "\n" + b.toString());
+                    + "Reason: " + getErrorDescription(msg, code) + "\n"
+                    + b.toString());
         }
     }
 
@@ -538,71 +553,60 @@ public abstract class WebService
     private String getErrorDescription(String msg, int errorCode) {
         StringBuilder sb = new StringBuilder();
         sb.append(StatusDictionary.getDescription(errorCode));
+        sb.append(" ");
         sb.append(msg);
         return sb.toString();
     }
 
-
     /**
-     * @return Whether or not the requested result format is one of our JSON formats.
+     * @return Whether or not the requested result format is one of our JSON
+     *         formats.
      */
-    protected boolean formatIsJSON() {
-        int format = getFormat();
-        return (format >= JSON_RANGE_START && format <= JSON_RANGE_END);
+    protected final boolean formatIsJSON() {
+        return Format.JSON_FORMATS.contains(getFormat());
     }
 
     /**
      * @return Whether or not the format is a JSON-P format
      */
-    protected boolean formatIsJSONP() {
-        return formatIsJSON() && (getFormat() % 2 == 1);
-    }
-
-    /**
-     * @return Whether or not the format is for JSON-Objects
-     */
-    protected boolean formatIsJsonObj() {
-        int format = getFormat();
-        return (format == JSON_OBJ_FORMAT || format == JSONP_OBJ_FORMAT);
+    protected final boolean formatIsJSONP() {
+        if (isJsonP == null) {
+            isJsonP = WebServiceRequestParser.isJsonP(request);
+        }
+        return isJsonP;
     }
 
     /**
      * @return Whether or not the format is a flat-file format
      */
-    protected boolean formatIsFlatFile() {
-        int format = getFormat();
-        return (format == TSV_FORMAT || format == CSV_FORMAT);
+    protected final boolean formatIsFlatFile() {
+        return Format.FLAT_FILES.contains(getFormat());
     }
 
     /**
      * Returns true if the format requires the count, rather than the full or
      * paged result set.
+     *
      * @return a truth value
      */
-    public boolean formatIsCount() {
-        int format = getFormat();
-        switch (format) {
-            case COUNT_FORMAT:
-                return true;
-            case JSONP_COUNT_FORMAT:
-                return true;
-            case JSON_COUNT_FORMAT:
-                return true;
-            default:
-                return false;
-        }
-    }
+    // This should not be in the general case.
+    //public boolean formatIsCount() {
+    //    int format = getFormat();
+    //    return (format == Formats.COUNT || format == Formats.JSON_COUNT);
+    //}
 
     /**
      * @return Whether or not the format is XML.
      */
     public boolean formatIsXML() {
-        return (getFormat() == XML_FORMAT);
+        return (getFormat() == Format.XML);
     }
 
     /**
      * Make the XML output given the HttpResponse's PrintWriter.
-     * @param out The PrintWriter from the HttpResponse.
+     *
+     * @param out
+     *            The PrintWriter from the HttpResponse.
      * @return An Output that produces good XML.
      */
     protected Output makeXMLOutput(PrintWriter out, String separator) {
@@ -612,13 +616,14 @@ public abstract class WebService
 
     /**
      * Make the default JSON output given the HttpResponse's PrintWriter.
-     * @param out The PrintWriter from the HttpResponse.
+     *
+     * @param out
+     *            The PrintWriter from the HttpResponse.
      * @return An Output that produces good JSON.
      */
     protected Output makeJSONOutput(PrintWriter out, String separator) {
         return new StreamedOutput(out, new JSONFormatter(), separator);
     }
-
 
     /**
      * @return Whether or not this request wants gzipped data.
@@ -654,6 +659,18 @@ public abstract class WebService
         }
     }
 
+    private PrintWriter out = null;
+ 
+    /**
+     * Get access to the underlying print-writer.
+     *
+     * Most services should not need this method.
+     * @return The raw print-writer.
+     */
+    protected PrintWriter getRawOutput() {
+        return out;
+    }
+
     private void initOutput() {
         final String separator;
         if (RequestUtil.isWindowsClient(request)) {
@@ -661,9 +678,8 @@ public abstract class WebService
         } else {
             separator = Exporter.UNIX_SEPARATOR;
         }
-        int format = getFormat();
+        Format format = getFormat();
 
-        PrintWriter out;
         OutputStream os;
         try {
             // set reasonable buffer size
@@ -678,132 +694,74 @@ public abstract class WebService
         } catch (IOException e) {
             throw new InternalErrorException(e);
         }
-
+        // TODO: retrieve the content types from the formats.
         String filename = getDefaultFileName();
         switch (format) {
-        // HTML is a special case
-            case HTML_FORMAT:
-                output = new MemoryOutput();
-                ResponseUtil.setHTMLContentType(response);
-                break;
-            case XML_FORMAT:
-                output = makeXMLOutput(out, separator);
-                break;
-            case TSV_FORMAT:
-                output = new StreamedOutput(out,
-                        new TabFormatter(StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
-                        separator);
-                filename = "result.tsv";
-                if (isUncompressed()) {
-                    ResponseUtil.setTabHeader(response, filename);
-                }
-                break;
-            case CSV_FORMAT:
-                output = new StreamedOutput(out, new CSVFormatter(), separator);
-                filename = "result.csv";
-                if (isUncompressed()) {
-                    ResponseUtil.setCSVHeader(response, filename);
-                }
-                break;
-            case COUNT_FORMAT:
-                output = new StreamedOutput(out, new PlainFormatter(), separator);
-                filename = "count.txt";
-                if (isUncompressed()) {
-                    ResponseUtil.setPlainTextHeader(response, filename);
-                }
-                break;
-            case TEXT_FORMAT:
-                output = new StreamedOutput(out, new PlainFormatter(), separator);
-                if (filename == null) {
-                    filename = "result.txt";
-                }
-                filename += getExtension();
-                if (isUncompressed()) {
-                    ResponseUtil.setPlainTextHeader(response, filename);
-                }
-                break;
-            case JSON_FORMAT:
-                output = makeJSONOutput(out, separator);
-                filename = "result.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename);
-                }
-                break;
-            case JSONP_FORMAT:
-                output = makeJSONOutput(out, separator);
-                filename = "result.jsonp";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            case JSON_OBJ_FORMAT:
-                output = new StreamedOutput(out, new JSONObjectFormatter(), separator);
-                filename = "result.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename);
-                }
-                break;
-            case JSONP_OBJ_FORMAT:
-                output = new StreamedOutput(out, new JSONObjectFormatter(), separator);
-                filename = "result.jsonp";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            case JSON_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
-                filename = "resulttable.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename);
-                }
-                break;
-            case JSONP_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
-                filename = "resulttable.jsonp";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            case JSON_DATA_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
-                filename = "resulttable.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename);
-                }
-                break;
-            case JSONP_DATA_TABLE_FORMAT:
-                output = new StreamedOutput(out, new JSONTableFormatter(), separator);
-                filename = "resulttable.jsonp";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            case JSON_ROW_FORMAT:
-                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
-                ResponseUtil.setJSONHeader(response,
-                        "result.json" + getExtension());
-                break;
-            case JSONP_ROW_FORMAT:
-                output = new StreamedOutput(out, new JSONRowFormatter(), separator);
-                ResponseUtil.setJSONPHeader(response,
-                        "result.json" + getExtension());
-                break;
-            case JSON_COUNT_FORMAT:
-                output = new StreamedOutput(out, new JSONCountFormatter(), separator);
-                filename = "resultcount.json";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONHeader(response, filename);
-                }
-                break;
-            case JSONP_COUNT_FORMAT:
-                output = new StreamedOutput(out, new JSONCountFormatter(), separator);
-                filename = "resultcount.jsonp";
-                if (isUncompressed()) {
-                    ResponseUtil.setJSONPHeader(response, filename);
-                }
-                break;
-            default:
-                output = getDefaultOutput(out, os, separator);
+        case HTML:
+            output = new StreamedOutput(out, new HTMLTableFormatter(),
+                    separator);
+            ResponseUtil.setHTMLContentType(response);
+            break;
+        case XML:
+            output = makeXMLOutput(out, separator);
+            break;
+        case TSV:
+            output = new StreamedOutput(out, new TabFormatter(
+                    StringUtils.equals(getProperty("ws.tsv.quoted"), "true")),
+                    separator);
+            filename = "result.tsv";
+            if (isUncompressed()) {
+                ResponseUtil.setTabHeader(response, filename);
+            }
+            break;
+        case CSV:
+            output = new StreamedOutput(out, new CSVFormatter(), separator);
+            filename = "result.csv";
+            if (isUncompressed()) {
+                ResponseUtil.setCSVHeader(response, filename);
+            }
+            break;
+        case TEXT:
+            output = new StreamedOutput(out, new PlainFormatter(), separator);
+            if (filename == null) {
+                filename = "result.txt";
+            }
+            filename += getExtension();
+            if (isUncompressed()) {
+                ResponseUtil.setPlainTextHeader(response, filename);
+            }
+            break;
+        case JSON:
+            output = makeJSONOutput(out, separator);
+            filename = "result.json";
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+            }
+            break;
+        case OBJECTS:
+            output = new StreamedOutput(out, new JSONObjectFormatter(),
+                    separator);
+            filename = "result.json";
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+            }
+            break;
+        case TABLE:
+            output = new StreamedOutput(out, new JSONTableFormatter(),
+                    separator);
+            filename = "resulttable.json";
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, filename, formatIsJSONP());
+            }
+            break;
+        case ROWS:
+            output = new StreamedOutput(out, new JSONRowFormatter(), separator);
+            if (isUncompressed()) {
+                ResponseUtil.setJSONHeader(response, "result.json", formatIsJSONP());
+            }
+            break;
+        default:
+            output = getDefaultOutput(out, os, separator);
         }
         if (!isUncompressed()) {
             ResponseUtil.setGzippedHeader(response, filename + getExtension());
@@ -826,11 +784,16 @@ public abstract class WebService
 
     /**
      * Make the default output for this service.
-     * @param out The response's PrintWriter.
-     * @param os The Response's output stream.
-     * @return An Output. (default = new StreamedOutput(out, new TabFormatter()))
+     *
+     * @param out
+     *            The response's PrintWriter.
+     * @param os
+     *            The Response's output stream.
+     * @return An Output. (default = new StreamedOutput(out, new
+     *         TabFormatter()))
      */
-    protected Output getDefaultOutput(PrintWriter out, OutputStream os, String separator) {
+    protected Output getDefaultOutput(PrintWriter out, OutputStream os,
+            String separator) {
         output = new StreamedOutput(out, new TabFormatter(), separator);
         ResponseUtil.setTabHeader(response, getDefaultFileName());
         return output;
@@ -838,21 +801,27 @@ public abstract class WebService
 
     /**
      * Returns true if the request wants column headers as well as result rows
+     *
      * @return true if the request declares it wants column headers
      */
     public boolean wantsColumnHeaders() {
-        String wantsCols = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
-        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0".equals(wantsCols));
+        String wantsCols = request
+                .getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+        boolean no = (wantsCols == null || wantsCols.isEmpty() || "0"
+                .equals(wantsCols));
         return !no;
     }
 
     /**
-     * Get an enum which represents the column header style (path, friendly, or none)
+     * Get an enum which represents the column header style (path, friendly, or
+     * none)
+     *
      * @return a column header style
      */
     public ColumnHeaderStyle getColumnHeaderStyle() {
         if (wantsColumnHeaders()) {
-            String style = request.getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
+            String style = request
+                    .getParameter(WebServiceRequestParser.ADD_HEADER_PARAMETER);
             if ("path".equalsIgnoreCase(style)) {
                 return ColumnHeaderStyle.PATH;
             } else {
@@ -864,147 +833,85 @@ public abstract class WebService
     }
 
     /**
-     * Parse a format from the path-info of the request.
-     * By default, if the path-info is one of "xml", "json", "jsonp", "tsv" or "csv",
-     * then an appropriate format will be returned. All other values will cause
-     * null to be returned.
-     * @return A format string.
-     */
-    protected String parseFormatFromPathInfo() {
-        String pathInfo = request.getPathInfo();
-        pathInfo = StringUtil.trimSlashes(pathInfo);
-        if ("xml".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_XML;
-        } else if ("json".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_JSON;
-        } else if ("jsonp".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_JSONP;
-        } else if ("tsv".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_TAB;
-        } else if ("csv".equalsIgnoreCase(pathInfo)) {
-            return WebServiceRequestParser.FORMAT_PARAMETER_CSV;
-        }
-        return null;
-    }
-
-    /**
      * @return The default format constant for this service.
      */
-    protected int getDefaultFormat() {
-        return EMPTY_FORMAT;
+    protected Format getDefaultFormat() {
+        return Format.EMPTY;
     }
+
+
+    private Format format = null;
+    private Boolean isJsonP = null;
 
     /**
      * Returns required output format.
      *
+     * Cannot be overridden.
+     *
      * @return format
      */
-    public int getFormat() {
-        String format;
-        if (request.getPathInfo() != null) {
-            format = parseFormatFromPathInfo();
-        } else {
-            format = request.getParameter(WebServiceRequestParser.OUTPUT_PARAMETER);
+    public final Format getFormat() {
+        if (format == null) {
+            List<Format> askedFor = WebServiceRequestParser.getAcceptableFormats(request);
+            if (askedFor.isEmpty()) {
+                format = getDefaultFormat();
+            } else {
+                for (Format acceptable: askedFor) {
+                    if (Format.DEFAULT == acceptable) {
+                        format = getDefaultFormat();
+                        break;
+                    }
+                    // Serve the first acceptable format.
+                    if (canServe(acceptable)) {
+                        format = acceptable;
+                        break;
+                    }
+                }
+                // Nothing --> NotAcceptable
+                if (format == null) {
+                    throw new NotAcceptableException();
+                }
+                // But empty --> default
+                if (format == Format.EMPTY) {
+                    format = getDefaultFormat();
+                }
+            }
         }
-        if (StringUtils.isEmpty(format)) {
-            return getDefaultFormat();
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_XML
-                .equalsIgnoreCase(format)) {
-            return XML_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_HTML
-                .equalsIgnoreCase(format)) {
-            return HTML_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_TAB
-                .equalsIgnoreCase(format)) {
-            return TSV_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_CSV
-                .equalsIgnoreCase(format)) {
-            return CSV_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_COUNT
-                .equalsIgnoreCase(format)) {
-            return COUNT_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_OBJ
-                .equalsIgnoreCase(format)) {
-            return JSON_OBJ_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_OBJ
-                .equalsIgnoreCase(format)) {
-            return JSONP_OBJ_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_TABLE
-                .equalsIgnoreCase(format)) {
-            return JSON_TABLE_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_TABLE
-                .equalsIgnoreCase(format)) {
-            return JSONP_TABLE_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_ROW
-                .equalsIgnoreCase(format)) {
-            return JSON_ROW_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_ROW
-                .equalsIgnoreCase(format)) {
-            return JSONP_ROW_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP
-                .equalsIgnoreCase(format)) {
-            return JSONP_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON
-                .equalsIgnoreCase(format)) {
-            return JSON_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_DATA_TABLE
-                .equalsIgnoreCase(format)) {
-            return JSON_DATA_TABLE_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_DATA_TABLE
-                .equalsIgnoreCase(format)) {
-            return JSONP_DATA_TABLE_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSONP_COUNT
-                .equalsIgnoreCase(format)) {
-            return JSONP_COUNT_FORMAT;
-        }
-        if (WebServiceRequestParser.FORMAT_PARAMETER_JSON_COUNT
-                .equalsIgnoreCase(format)) {
-            return JSON_COUNT_FORMAT;
-        }
-        return getDefaultFormat();
+
+        return format;
+    }
+
+    /**
+     * For very picky services, you can just set it yourself, and say "s****w you requester".
+     *
+     * Use this with caution, and fall-back to getFormat(). Please.
+     *
+     * @param format The format you have decided this request really wants.
+     */
+    protected void setFormat(Format format) {
+        this.format = format;
     }
 
     /**
      * Get the value of the callback parameter.
+     *
      * @return The value, or null if this request type does not support this.
      */
     public String getCallback() {
         if (formatIsJSONP()) {
-            if (!hasCallback()) {
-                return DEFAULT_CALLBACK;
-            } else {
-                return request.getParameter(
-                        WebServiceRequestParser.CALLBACK_PARAMETER);
-            }
+            return getOptionalParameter(WebServiceRequestParser.CALLBACK_PARAMETER, DEFAULT_CALLBACK);
         } else {
             return null;
         }
     }
 
     /**
-      * Determine whether a callback was supplied to this request.
-      * @return Whether or not a callback was supplied.
-      */
+     * Determine whether a callback was supplied to this request.
+     *
+     * @return Whether or not a callback was supplied.
+     */
     public boolean hasCallback() {
-        String cb = request.getParameter(
-                WebServiceRequestParser.CALLBACK_PARAMETER);
-        return (cb != null && !"".equals(cb));
+        return getOptionalParameter(WebServiceRequestParser.CALLBACK_PARAMETER) != null;
     }
 
     /**
@@ -1015,14 +922,29 @@ public abstract class WebService
      * services else you can overwrite doGet method in your web service class
      * and manage all the things alone.
      *
-     * @throws Exception if some error occurs
+     * @throws Exception
+     *             if some error occurs
      */
     protected abstract void execute() throws Exception;
 
     /**
-     * @return true if this request has been authenticated to a specific existing user.
+     * @return true if this request has been authenticated to a specific
+     *         existing user.
      */
     public boolean isAuthenticated() {
         return getPermission().getProfile() != ANON_PROFILE;
     }
+
+    /**
+     * Check whether the format is acceptable.
+     *
+     * By default returns true. Services with a particular set of accepted
+     * formats should override this and check.
+     * @param format The format to check.
+     * @return whether or not this format is acceptable.
+     */
+    protected boolean canServe(Format format) {
+        return format == getDefaultFormat();
+    }
+
 }

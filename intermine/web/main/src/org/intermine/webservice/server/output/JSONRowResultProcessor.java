@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -49,7 +49,7 @@ public class JSONRowResultProcessor extends JSONResultProcessor
     protected Iterator<? extends Object> getResultsIterator(Iterator<List<ResultElement>> it) {
         Iterator<JSONArray> jsonIter;
         if (verbosity == Verbosity.MINIMAL) {
-            jsonIter = new MinimalJsonIterator((ExportResultsIterator) it, im);
+            jsonIter = new MinimalJsonIterator(it, im);
         } else {
             jsonIter = new JSONRowIterator((ExportResultsIterator) it, im);
         }

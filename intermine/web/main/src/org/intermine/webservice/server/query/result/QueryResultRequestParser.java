@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.webservice.server.query.result;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.intermine.api.query.QueryStore;
 import org.intermine.webservice.server.exceptions.BadRequestException;
 import org.intermine.webservice.server.query.QueryRequestParser;
 
@@ -37,8 +38,8 @@ public class QueryResultRequestParser extends QueryRequestParser
      * RequestProcessor constructor.
      * @param request request
      */
-    public QueryResultRequestParser(HttpServletRequest request) {
-        super(request);
+    public QueryResultRequestParser(QueryStore queryStore, HttpServletRequest request) {
+        super(queryStore, request);
     }
 
     /**
@@ -55,19 +56,12 @@ public class QueryResultRequestParser extends QueryRequestParser
     private void parseRequest(HttpServletRequest req, QueryResultInput input) {
 
         super.parseRequest(req, input);
-        String xmlQuery = getQueryXml(req);
+        String xmlQuery = getQueryXml();
         if (StringUtils.isEmpty(xmlQuery)) {
             throw new BadRequestException("invalid " + QUERY_PARAMETER
                     + " parameter (empty or missing)");
         }
         input.setXml(xmlQuery);
 
-        String totalCount = req.getParameter(COMPUTE_TOTAL_COUNT_PARAMETER);
-        if (totalCount != null) {
-            throw new BadRequestException("Parameter " + COMPUTE_TOTAL_COUNT_PARAMETER
-                    + " is not now supported. It is not possible to retrieve number of results.");
-        }
-
-        input.setLayout(req.getParameter(LAYOUT_PARAMETER));
     }
 }

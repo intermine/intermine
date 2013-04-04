@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.query.result;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -65,8 +65,13 @@ public class PathQueryBuilder
         XMLValidator validator = new XMLValidator();
         validator.validate(xml, schemaUrl);
         if (validator.getErrorsAndWarnings().size() == 0) {
-            pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(xml),
+            try {
+                pathQuery = PathQueryBinding.unmarshalPathQuery(new StringReader(xml),
                     PathQuery.USERPROFILE_VERSION);
+            } catch (Exception e) {
+                String message = String.format("XML is not well formatted. Got %s.", xml);
+                throw new BadRequestException(message, e);
+            }
 
             if (!pathQuery.isValid()) {
                 throw new BadRequestException("XML is well formatted but query contains errors:\n"
