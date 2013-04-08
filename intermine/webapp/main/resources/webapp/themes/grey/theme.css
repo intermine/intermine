@@ -170,9 +170,6 @@ div#filter_tool_bar {
     max-height:400px;width: 450px;padding:15px;
     text-align: center; background-color: #D2CEBF;}
 
-.widget p {
-  font-size:10px;	}
-
 .widget_slide {
   margin-top:10px; max-height:350px;
     overflow-x:none;overflow-y:auto;overflow: auto;}
