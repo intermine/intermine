@@ -126,8 +126,7 @@
     <p><h2>Homology</h2></p></td>
     <td> Mouse-Human Orthologies</td>
     <td> 
-    <a href="http://www.ncbi.nlm.nih.gov/homologene/" target="_new">Homologene</a> (via MGI)
-    </td>
+    <a href="http://www.ncbi.nlm.nih.gov/homologene/" target="_new">Homologene</a> and <a href="http://www.pantherdb.org/">Panther</a>
   </tr>
 
   <tr>
