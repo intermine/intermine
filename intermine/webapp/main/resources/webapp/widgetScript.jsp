@@ -17,9 +17,25 @@ jQuery(document).ready(function() {
             });
         },
         resultsCb: function(pq) {
-            (new intermine.Service({'root': service})).query(pq, function(query) {						
-                window.open(service.replace('/service/', "/run.do") + "?query=" + query.toXML());
-                window.focus();
+            (new intermine.Service({'root': service})).query(pq, function(query) {
+                var target, uri, form, field, w;
+
+                // Generate the target name.
+                target = 'tmp' + +new Date();
+
+                // Open the window.
+                w = window.open('', target);
+
+                // We will be posting here.
+                uri = service.replace('/service/', '/run.do');
+                // Create the query field.
+                field = jQuery('<input>', { 'type': 'hidden', 'value': query.toXML(), 'name': 'query' });
+                // Create a hidden form & submit it.
+                form = jQuery('<form>', { 'method': 'POST', 'action': uri, 'target': target });
+                form.append(field).submit();
+
+                // Give the window focus.
+                w.focus();
             });
         }
     };
