@@ -108,7 +108,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 
     protected void createFromFile(File f) throws IOException {
         // data is in format:
-        // ZDBID	ID1|ID2
+        // ZDBID	ID1,ID2,ID3
         Iterator<?> lineIter = FormattedTextParser.
                 parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
@@ -119,7 +119,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             }
 
             String zfinId = line[0];
-            String[] synonyms = StringUtil.split(line[1].trim(), "|");
+            String[] synonyms = StringUtil.split(line[1].trim(), ",");
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
             resolver.addSynonyms(taxonId, zfinId, new HashSet<String>(Arrays.asList(synonyms)));
