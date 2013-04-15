@@ -1,2 +1,3 @@
-MGI:87861	Gene	abn	abnormal	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	null	
-MGI:87862	Gene	Scgb1b27	secretoglobin, family 1B, member 27	OTTMUSG00000008372	7	34806502	34807900	+	NCBI Build 37	11354	7	34806586	34807900	+	ENSMUSG00000066583	7	34806502	34807900	+	OTTMUSG00000008372	7	34806502	34807900	+	null	null	null	null	null	null	null	null	null	null	null	null	null	
+MGI:1858420	15	     56.09	99242818	99251961	-	Mcrs1	O	microspherule protein 1	Gene	protein coding gene	MSP58|ICP22BP|P78|C78274
+MGI:1914088	11	     84.07	120348678	120351190	+	0610009L18Rik	O	RIKEN cDNA 0610009L18 gene	Gene	protein coding gene	
+MGI:1916316	11	     70.10	107028118	107030438	+	1810010H24Rik	O	RIKEN cDNA 1810010H24 gene	Gene	unclassified gene	OTTMUSG00000003581

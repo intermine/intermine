@@ -43,7 +43,7 @@ public class MgiIdentifiersResolverFactoryTest extends TestCase {
 //        IdResolverFactory.resolver.writeToFile(new File("build/mgi"));
         assertTrue(IdResolverFactory.resolver.getTaxons().size() == 1);
         assertEquals(new LinkedHashSet<String>(Arrays.asList(new String[] {"10090"})), IdResolverFactory.resolver.getTaxons());
-        assertEquals("MGI:87861", IdResolverFactory.resolver.resolveId("10090", "abn").iterator().next());
-        assertEquals("MGI:87862", IdResolverFactory.resolver.resolveId("10090", "gene", "ENSMUSG00000066583").iterator().next());
+        assertEquals("MGI:1914088", IdResolverFactory.resolver.resolveId("10090", "0610009L18Rik").iterator().next());
+        assertEquals("MGI:1916316", IdResolverFactory.resolver.resolveId("10090", "gene", "OTTMUSG00000003581").iterator().next());
     }
 }

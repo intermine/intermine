@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.intermine.util.FormattedTextParser;
 import org.intermine.util.PropertiesUtil;
+import org.intermine.util.StringUtil;
 
 /**
  * ID resolver for MGI genes.
@@ -107,20 +108,15 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length < 16) {
-                continue;
-            }
-
-            String type = line[1];
+            String type = line[9];
             if (!"Gene".equals(type)) {
                 continue;
             }
 
             String identifier = line[0];    // MGI
-            String symbol = line[2];
-            String name = line[3];
-            String entrez = line[10];
-            String ensembl = line[15];
+            String symbol = line[6];
+            String name = line[8];
+            String synonymsStr = line[11];
 
             if (StringUtils.isEmpty(identifier)) {
                 continue;
@@ -135,11 +131,10 @@ public class MgiIdentifiersResolverFactory extends IdResolverFactory
                 if (!NULL_STRING.equals(name)) {
                     resolver.addMainIds(taxonId, identifier, Collections.singleton(name));
                 }
-                if (!NULL_STRING.equals(entrez)) {
-                    resolver.addSynonyms(taxonId, identifier, Collections.singleton(entrez));
-                }
-                if (!NULL_STRING.equals(ensembl)) {
-                    resolver.addSynonyms(taxonId, identifier, Collections.singleton(ensembl));
+
+                if (synonymsStr != null && !synonymsStr.isEmpty()) {
+                    resolver.addSynonyms(taxonId, identifier,
+                            new HashSet<String>(Arrays.asList(StringUtil.split(synonymsStr, "|"))));
                 }
             }
         }
