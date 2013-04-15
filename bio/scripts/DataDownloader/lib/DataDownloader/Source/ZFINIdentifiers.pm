@@ -13,7 +13,7 @@ use constant {
     TITLE       => 
         'ZFIN Identifiers',
     DESCRIPTION => 
-        "ZFIN Marker associations to Ensembl IDs",
+        "ZFIN Marker synonyms and xrefs",
     SOURCE_LINK => 
         "http://zfin.org/",
     SOURCE_DIR => "zfin-identifiers",
@@ -24,7 +24,7 @@ sub BUILD {
     $self->set_sources([
         {
             SERVER  => 'http://zfin.org/downloads',
-            FILE    => "ensembl_1_to_1.txt",
+            FILE    => "identifiersForIntermine.txt",
         },
     ]);
 }
