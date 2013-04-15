@@ -20,8 +20,8 @@ import org.apache.log4j.Logger;
 import org.intermine.dataconversion.ItemWriter;
 import org.intermine.metadata.Model;
 import org.intermine.util.FormattedTextParser;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Item;
-
 
 /**
  *
@@ -44,11 +44,10 @@ public class MgiIdentifiersConverter extends BioFileConverter
     }
 
     /**
-     *
-     *
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
+        @SuppressWarnings("rawtypes")
         Iterator lineIter = FormattedTextParser.parseTabDelimitedReader(reader);
 
         Item organism = createItem("Organism");
@@ -61,20 +60,15 @@ public class MgiIdentifiersConverter extends BioFileConverter
         while (lineIter.hasNext()) {
             String[] line = (String[]) lineIter.next();
 
-            if (line.length < 16) {
-                continue;
-            }
-
-            String type = line[1];
+            String type = line[9];
             if (!"Gene".equals(type)) {
                 continue;
             }
 
             String identifier = line[0];    // MGI
-            String symbol = line[2];
-            String name = line[3];
-            String entrez = line[10];
-            String ensembl = line[15];
+            String symbol = line[6];
+            String name = line[8];
+            String synonymsStr = line[11];
 
             if (StringUtils.isEmpty(identifier)) {
                 throw new RuntimeException("null MGI identifier: " + symbol);
@@ -103,11 +97,20 @@ public class MgiIdentifiersConverter extends BioFileConverter
             if (!NULL_STRING.equals(name)) {
                 gene.setAttribute("name", name);
             }
-            if (!NULL_STRING.equals(entrez)) {
-                createCrossReference(gene.getIdentifier(), entrez, "NCBI", true);
-            }
-            if (!NULL_STRING.equals(ensembl)) {
-                createCrossReference(gene.getIdentifier(), ensembl, "Ensembl", true);
+
+            if (synonymsStr != null && !synonymsStr.isEmpty()) {
+                if (synonymsStr.contains("OTTMUSG") || synonymsStr.contains("ENSMUSG")) {
+                    String[] synonyms = StringUtil.split(synonymsStr, "|");
+                    for (String s : synonyms) {
+                        if (s.startsWith("OTTMUSG")) {
+                            createCrossReference(gene.getIdentifier(), s, "Vega", true);
+                        }
+                        if (s.startsWith("ENSMUSG")) {
+                            createCrossReference(gene.getIdentifier(), s, "Ensembl", true);
+                        }
+                    }
+                }
+
             }
             store(gene);
         }
