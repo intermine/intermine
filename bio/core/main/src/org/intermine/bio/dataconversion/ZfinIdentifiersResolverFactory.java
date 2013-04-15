@@ -35,7 +35,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(ZfinIdentifiersResolverFactory.class);
 
     // data file path set in ~/.intermine/MINE.properties
-    // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/ensembl_1_to_1.txt
+    // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/identifiersForIntermine.txt
     private final String propKey = "resolver.file.rootpath";
     private final String resolverFileSymbo = "zfin";
     private final String taxonId = "7955";
