@@ -69,6 +69,8 @@ public class OrthodbConverter extends BioFileConverter
 
     private IdResolver rslv;
 
+    private Set<String> processedHomologueRelationships = new HashSet<String>();
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
@@ -231,6 +233,19 @@ public class OrthodbConverter extends BioFileConverter
             if (gene1 == null || gene2 == null) {
                 continue;
             }
+
+            // HACK - remove duplicated relationships
+            String relationshipStr = gene1.toString() + "-" + gene2.toString();
+            String reverseRelationshipStr = gene2.toString() + "-" + gene1.toString();
+            if (processedHomologueRelationships.contains(relationshipStr) ||
+                    processedHomologueRelationships.contains(reverseRelationshipStr)) {
+                LOG.info("Dup >>> " + relationshipStr);
+                continue;
+            } else {
+                processedHomologueRelationships.add(relationshipStr);
+                processedHomologueRelationships.add(reverseRelationshipStr);
+            }
+
 
             // Create both way relations
             createHomologue(gene1, taxonId1, gene2, taxonId2, groupId);
