@@ -14,7 +14,7 @@ use constant {
             SUBTITLE => 'Fly Development',
             HOST => 'ftp.flybase.net',
             REMOTE_DIR => "releases/current/precomputed_files/ontologies",
-            FILE => 'fly_development.obo.zip',
+            FILE => 'fly_development.obo.gz',
             EXTRACT => 1,
         },
     ],

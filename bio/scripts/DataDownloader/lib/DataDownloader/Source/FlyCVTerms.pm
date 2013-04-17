@@ -14,7 +14,7 @@ use constant {
             SUBTITLE => 'Controlled Vocabulary',
             HOST => 'ftp.flybase.net',
             REMOTE_DIR => "releases/current/precomputed_files/ontologies",
-            FILE => 'flybase_controlled_vocabulary.obo.zip',
+            FILE => 'flybase_controlled_vocabulary.obo.gz',
             EXTRACT => 1,
         },
     ],
