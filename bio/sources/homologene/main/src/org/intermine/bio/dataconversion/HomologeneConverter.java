@@ -250,7 +250,11 @@ public class HomologeneConverter extends BioFileConverter
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item item = createItem("Gene");
-            item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+
+            // Unresolved ids should not be set as primaryidentifier
+            if (!resolvedGenePid.equals(symbol)) {
+                item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            }
             // NB: in case of yeast, homologen use mixture of symbol, systematic name or alias.
             //     Don't enforce to assign ids to a field. But for other organism so far, ids are
             //     symbols. Config in the properties file if want to keep those ids as symbol.
