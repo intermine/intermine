@@ -131,7 +131,7 @@
                     ${fn:substring(savedTemplate.value.description, 0, 60)}...
                   </c:when>
                   <c:otherwise>
-                    ${savedTemplate.value.description}
+                    <c:out value="${savedTemplate.value.description}"/>
                   </c:otherwise>
                 </c:choose>
                 &nbsp;
