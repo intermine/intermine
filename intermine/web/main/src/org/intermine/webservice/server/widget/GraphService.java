@@ -101,6 +101,7 @@ public class GraphService extends WidgetService
         addOutputInfo("chartType", graphConfig.getGraphType());
         addOutputAttribute("seriesValues", graphConfig.getSeriesValues());
         addOutputAttribute("seriesLabels", graphConfig.getSeriesLabels());
+        addOutputAttribute("seriesPath", graphConfig.getSeriesPath());
         addOutputAttribute("domainLabel", graphConfig.getDomainLabel());
         addOutputAttribute("rangeLabel", graphConfig.getRangeLabel());
     }

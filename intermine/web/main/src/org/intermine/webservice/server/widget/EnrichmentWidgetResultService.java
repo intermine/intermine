@@ -100,9 +100,20 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
+        addOutputUserLogged();
+
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
-        addOutputUserLogged();
+        if (populationBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
+            if (input.isSavePopulation()) {
+                deleteReferencePopulationPreference(input);
+            }
+            addOutputAttribute("message", "One or more of the " + imBag.getType() + "s in this list"
+                + " are currently not included in your background population. The background "
+                + "population should include all " + imBag.getType() + "s that were tested as part of "
+                + "your experiment.");
+            return;
+        }
 
         //instantiate the widget
         EnrichmentWidget widget = null;
@@ -270,5 +281,17 @@ public class EnrichmentWidgetResultService extends WidgetService
             }
         }
         return "";
+    }
+
+    private boolean verifyPopulationContainsBag(InterMineBag bag, InterMineBag populationBag) {
+        //verify the population Bag contains all elements of imBag
+        List<Integer> populationBagContentdIds =
+            new ArrayList<Integer>(populationBag.getContentsAsIds());
+        List<Integer> bagContentdIds =
+            new ArrayList<Integer>(bag.getContentsAsIds());
+        if (populationBagContentdIds.containsAll(bagContentdIds)) {
+            return true;
+        }
+        return false;
     }
 }

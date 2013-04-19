@@ -1221,7 +1221,7 @@ public final class SqlGenerator
                 boolean empty = true;
                 Class<?> type = bc.getQueryNode().getType();
                 for (Object bagItem : bc.getBag()) {
-                    if (!(ProxyReference.class.equals(bagItem.getClass())
+                    if (!(bagItem == null || ProxyReference.class.equals(bagItem.getClass())
                                 || DynamicUtil.isInstance(bagItem, type))) {
                         throw new ObjectStoreException("Bag<" + DynamicUtil.getFriendlyName(type)
                                 + "> contains element of wrong type ("
@@ -1739,31 +1739,37 @@ public final class SqlGenerator
                 buffer.append("))");
             }
         } else {
-            //int lowest = Integer.MAX_VALUE;
-            //int highest = Integer.MIN_VALUE;
+            boolean nullSeen = false;
             for (Object bagItem : bagColl) {
-                if (ProxyReference.class.equals(bagItem.getClass())
+                if (bagItem == null) {
+                    nullSeen = true;
+                } else if (ProxyReference.class.equals(bagItem.getClass())
                         || DynamicUtil.isInstance(bagItem, type)) {
                     if (bagItem instanceof InterMineObject) {
                         Integer bagValue = ((InterMineObject) bagItem).getId();
                         filteredBag.add(bagValue);
-                    //    lowest = Math.min(bagValue.intValue(), lowest);
-                    //    highest = Math.max(bagValue.intValue(), highest);
                     } else if (bagItem instanceof Class<?>) {
                         filteredBag.add(((Class<?>) bagItem).getName());
                     } else {
                         filteredBag.add(bagItem);
-                    //    if (bagItem instanceof Integer) {
-                    //        lowest = Math.min(((Integer) bagItem).intValue(), lowest);
-                    //        highest = Math.max(((Integer) bagItem).intValue(), highest);
-                    //    }
                     }
                 } else {
                     throw new ObjectStoreException("Bag<" + type.getName() + "> contains element "
                             + "of wrong type (" + bagItem.getClass().getName() + ")");
                 }
             }
-            if (filteredBag.isEmpty()) {
+            if (nullSeen) {
+                if (!filteredBag.isEmpty()) {
+                    buffer.append("(");
+                }
+                buffer.append("(" + leftHandSide + " " + (c.getOp() == ConstraintOp.IN ? "IS" : "IS NOT") + " NULL)");
+                if (!filteredBag.isEmpty()) {
+                    buffer.append(" ")
+                          .append(c.getOp() == ConstraintOp.IN ? "OR" : "AND")
+                          .append(" ");
+                }
+            }
+            if (filteredBag.isEmpty() && !nullSeen) {
                 buffer.append(c.getOp() == ConstraintOp.IN ? "false" : "true");
             } else {
                 String bagTableName = state.getBagTableNames().get(c);
@@ -1826,6 +1832,9 @@ public final class SqlGenerator
                     if (c.getOp() == ConstraintOp.NOT_IN) {
                         buffer.append("))");
                     }
+                }
+                if (nullSeen) {
+                    buffer.append(")");
                 }
             }
         }

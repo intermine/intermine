@@ -1210,6 +1210,7 @@ public class AjaxServices
             Profile profile  = getProfile(request);
             TagManager manager = im.getTagManager();
             BagManager bm = im.getBagManager();
+            TemplateManager tm = im.getTemplateManager();
 
             if (NON_WS_TAG_TYPES.contains(type)) {
                 if (TagTypes.CLASS.equals(type)) {
@@ -1227,9 +1228,9 @@ public class AjaxServices
             } else {
                 WebSearchable ws = null;
                 if (TagTypes.BAG.equals(type)) {
-                    ws = bm.getUserBag(profile, tagged);
+                    ws = bm.getGlobalBag(tagged);
                 } else if (TagTypes.TEMPLATE.equals(type)) {
-                    ws = profile.getTemplate(tagged);
+                    ws = tm.getGlobalTemplate(tagged);
                 }
                 if (ws == null) {
                     throw new RuntimeException("Could not find " + type + " " + tagged);
