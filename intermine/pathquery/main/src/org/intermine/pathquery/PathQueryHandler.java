@@ -86,7 +86,7 @@ public class PathQueryHandler extends DefaultHandler
         if (valueBuffer != null) {
             throw new SAXException("Cannot have any tags inside a value tag");
         }
-        if ((constraintPath != null) && (!"value".equals(qName))) {
+        if ((constraintPath != null) && !("value".equals(qName) || "nullValue".equals(qName))) {
             throw new SAXException("Cannot have anything other than value tag inside a constraint");
         }
         if ("query-list".equals(qName)) {
@@ -311,7 +311,7 @@ public class PathQueryHandler extends DefaultHandler
         } else if (PathConstraintMultiValue.VALID_OPS.contains(constraintOp)) {
             Collection<String> valuesCollection = new LinkedHashSet<String>();
             for (String value : values) {
-                valuesCollection.add(value.trim());
+                valuesCollection.add(value == null ? value : value.trim());
             }
             return new PathConstraintMultiValue(path, constraintOp, valuesCollection);
         } else if (ConstraintOp.LOOKUP.equals(constraintOp)) {
@@ -371,6 +371,9 @@ public class PathQueryHandler extends DefaultHandler
                         + constraintPath);
             }
             constraintValues.add(valueBuffer.toString());
+            valueBuffer = null;
+        } else if ("nullValue".equals(qName)) {
+            constraintValues.add(null);
             valueBuffer = null;
         }
     }

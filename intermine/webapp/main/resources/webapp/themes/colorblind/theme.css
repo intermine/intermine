@@ -52,7 +52,6 @@
 .tb_button:hover{border-bottom:1px solid #000;border-right:1px solid #000;margin-right:0;}
 .tb_button_active{border:1px solid #000;}
 .widget{background-color:#D2CEBF;max-height:400px;padding:15px;text-align:center;width:450px;}
-.widget p{font-size:10px;}
 .widget_slide{margin-top:10px;max-height:350px;overflow:auto;overflow-x:none;overflow-y:auto;}
 .widgetcontainer{background:#FFF url(gray_grad.png) repeat-x top;border:1px solid #888;}
 .wsLine_act,div.contactButton{background:#000!important;}

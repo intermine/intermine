@@ -25,6 +25,11 @@
     <source name="so" type="so">
       <property name="src.data.file" location="../../bio/sources/so/so.obo" />
     </source>
+
+    <source name="arrayexpress-atlas-E-MEXP-2559" type="arrayexpress-atlas">
+      <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MEXP-2559/" />
+    </source>
+
     <source name="arrayexpress-atlas" type="arrayexpress-atlas" dump="true">
       <property name="src.data.dir" location="/micklem/data/metabolic/array-express/E-MTAB-62/" />
     </source>
@@ -121,7 +126,7 @@
       <property name="src.data.dir" location="/micklem/data/ensembl/mus_musculus/current_core/fasta" />
     </source>
     <source name="ensembl-compara" type="ensembl-compara" dump="true">
-      <property name="src.data.dir" location="/micklem/data/metabolic/ensembl-compara/current" />
+      <property name="src.data.dir" location="/micklem/data/ensembl-compara/current" />
       <property name="ensemblcompara.organisms" value="9606 10090 10116" />
     </source>
     <source name="ensembl-snp-db-human" type="ensembl-snp-db" dump="true">

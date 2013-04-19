@@ -178,6 +178,7 @@ public class CreateTemplateAction extends InterMineAction
 
         SessionMethods.loadQuery(template, request.getSession(), response);
         if ("SAVE".equals(tsf.getActionType())) {
+            session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
             return mapping.findForward("query");
         } else {
             //prepare display constraint list to display  parameter values

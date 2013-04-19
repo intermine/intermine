@@ -2,6 +2,8 @@
       position: absolute;
       background: white;
       visibility: hidden;
+      z-index: 2;
+      cursor: pointer;
     }
     div.auto_complete ul{
       width:100%;    
@@ -25,6 +27,7 @@
     	border:1px solid #888;
     	font-family:'Times New Roman',Times,serif;
     	text-align: right;
+      display: none;
     }
 
     div.error_auto_complete {
