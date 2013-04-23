@@ -29,9 +29,8 @@ public class BioPAXConverterTest extends MockItemsTestCase
 {
     private BioPAXConverter converter;
     private MockItemWriter itemWriter;
-    private String TEST_FILE = "Bos taurus.owl";
-    private String TAXON_ID = "9913";
-    private boolean processDmel = true;
+    private String TEST_FILE = "83333.owl";
+    private String TAXON_ID = "83333";
 
     /**
      *
@@ -47,10 +46,6 @@ public class BioPAXConverterTest extends MockItemsTestCase
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void testProcess() throws Exception {
-        if (processDmel) {
-            TEST_FILE = "83333.owl";
-            TAXON_ID = "83333";
-        }
 
         itemWriter = new MockItemWriter(new HashMap());
         converter = new BioPAXConverter(itemWriter, Model.getInstanceByName("genomic"));
@@ -67,7 +62,7 @@ public class BioPAXConverterTest extends MockItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
+        // writeItemsFile(itemWriter.getItems(), "BioPAX-tgt-items.xml");
 
         Set<Item> expected = readItemSet("BioPAXConverterTest_tgt.xml");
 
