@@ -26,14 +26,16 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.biopax.paxtools.controller.PropertyEditor;
+import org.biopax.paxtools.controller.SimpleEditorMap;
 import org.biopax.paxtools.controller.Traverser;
 import org.biopax.paxtools.controller.Visitor;
 import org.biopax.paxtools.io.jena.JenaIOHandler;
-import org.biopax.paxtools.io.simpleIO.SimpleEditorMap;
 import org.biopax.paxtools.model.BioPAXElement;
 import org.biopax.paxtools.model.BioPAXLevel;
 import org.biopax.paxtools.model.Model;
-import org.biopax.paxtools.model.level2.pathway;
+import org.biopax.paxtools.model.level3.Named;
+import org.biopax.paxtools.model.level3.Pathway;
+import org.biopax.paxtools.model.level3.Xref;
 import org.intermine.bio.util.OrganismData;
 import org.intermine.bio.util.OrganismRepository;
 import org.intermine.dataconversion.ItemWriter;
@@ -73,10 +75,11 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
      * @param intermineModel the Model
      * @throws ObjectStoreException if something goes horribly wrong
      */
+    @SuppressWarnings("unchecked")
     public BioPAXConverter(ItemWriter writer, org.intermine.metadata.Model intermineModel)
         throws ObjectStoreException {
         super(writer, intermineModel);
-        traverser = new Traverser(new SimpleEditorMap(BioPAXLevel.L2), this);
+        traverser = new Traverser(SimpleEditorMap.L3, this);
         readConfig();
         or = OrganismRepository.getOrganismRepository();
     }
@@ -137,11 +140,11 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         setConfig(taxonId);
 
         // navigate through the owl file
-        JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L2);
+        JenaIOHandler jenaIOHandler = new JenaIOHandler(null, BioPAXLevel.L3);
         Model model = jenaIOHandler.convertFromOWL(new FileInputStream(getCurrentFile()));
-        Set<pathway> pathwaySet = model.getObjects(pathway.class);
+        Set<Pathway> pathwaySet = model.getObjects(Pathway.class);
 
-        for (pathway pathwayObj : pathwaySet) {
+        for (Pathway pathwayObj : pathwaySet) {
             try {
                 pathwayRefId = getPathway(pathwayObj);
             } catch (ObjectStoreException e) {
@@ -200,18 +203,21 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
     /**
      * Adds the BioPAX element into the model and traverses the element for its dependent elements.
      *
-     * @param bpe    the BioPAX element to be added into the model
+     * @param domain    the BioPAX element to be added into the model
+     * @param range Provenance, such as http://www.reactome.org/biopax/56210#PathwayStep1240
      * @param model  model into which the element will be added
      * @param editor editor that is going to be used for traversing functionallity
      * @see org.biopax.paxtools.controller.Traverser
      */
-    public void visit(BioPAXElement bpe, Model model, PropertyEditor editor) {
-        if (bpe != null) {
-            if (bpe instanceof org.biopax.paxtools.model.level2.entity) {
-                org.biopax.paxtools.model.level2.entity entity
-                    = (org.biopax.paxtools.model.level2.entity) bpe;
+    public void visit(BioPAXElement domain, Object range, Model model, PropertyEditor<?, ?> editor) {
+
+        if (range != null && range instanceof BioPAXElement) {
+            BioPAXElement bpe = (BioPAXElement) range;
+            if (bpe instanceof Named) {
+                Named entity = (Named) bpe;
                 String className = entity.getModelInterface().getSimpleName();
-                if (className.equalsIgnoreCase("protein") && StringUtils.isNotEmpty(pathwayRefId)) {
+                if (className.equalsIgnoreCase("ProteinReference")
+                        && StringUtils.isNotEmpty(pathwayRefId)) {
                     processProteinEntry(entity);
                 }
             }
@@ -224,18 +230,22 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         }
     }
 
-    private void processProteinEntry(org.biopax.paxtools.model.level2.entity entity) {
-        String identifier = entity.getNAME();
+    private void processProteinEntry(Named entity) {
+        Set<String> identifierSet = entity.getName(); // multiple names
+        String idWithDBPrefix = null;
 
-        // there is only one gene
-        if (identifier.contains(DEFAULT_DB_NAME)) {
-            processBioentity(identifier, pathwayRefId);
+        for (String identifier : identifierSet) {
+            if (identifier.contains(DEFAULT_DB_NAME)) {
+                idWithDBPrefix = identifier;
+            }
+        }
 
-        // there are multiple genes
-        } else {
-            Set<org.biopax.paxtools.model.level2.xref> uniXrefs = entity.getXREF();
-            for (org.biopax.paxtools.model.level2.xref xref : uniXrefs) {
-                identifier = xref.getRDFId();
+        if (idWithDBPrefix != null) {
+            processBioentity(idWithDBPrefix, pathwayRefId);
+        } else { // Example?
+            Set<Xref> uniXrefs = entity.getXref();
+            for (Xref xref : uniXrefs) {
+                String identifier = xref.getRDFId();
                 if (identifier.contains(DEFAULT_DB_NAME)) {
                     processBioentity(identifier, pathwayRefId);
                 }
@@ -269,18 +279,18 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
         return;
     }
 
-    private String getPathway(org.biopax.paxtools.model.level2.pathway pathway)
+    private String getPathway(Pathway pathway)
         throws ObjectStoreException {
-        for (org.biopax.paxtools.model.level2.xref xref : pathway.getXREF()) {
-            String xrefId = xref.getID();
+        for (Xref xref : pathway.getXref()) {
+            String xrefId = xref.getId();
             if (StringUtils.isNotEmpty(xrefId) && xrefId.startsWith(xrefPrefix)) {
                 String identifier = xrefId.substring(xrefPrefix.length());
                 String refId = pathways.get(identifier);
                 if (refId == null) {
                     Item item = createItem("Pathway");
                     item.setAttribute("identifier", identifier);
-                    item.setAttribute("name", pathway.getNAME());
-                    String comment = getComment(pathway.getCOMMENT());
+                    item.setAttribute("name", pathway.getDisplayName());
+                    String comment = getComment(pathway.getComment());
                     if (StringUtils.isNotEmpty(comment)) {
                         item.setAttribute("description", comment);
                     }
@@ -293,7 +303,7 @@ public class BioPAXConverter extends BioFileConverter implements Visitor
                 return refId;
             }
         }
-        LOG.warn("couldn't process pathway " + pathway.getNAME());
+        LOG.warn("couldn't process pathway " + pathway.getDisplayName());
         return null;
     }
 
