@@ -142,13 +142,10 @@ public class IdResolver
         Set<String> common = new LinkedHashSet<String>();
         for (int i=0; i<ids.size();i++) {
             Set<String> resovledSet = resolveId(taxonId, clsName, ids.get(i));
-            if (i == 0) {
-                common.addAll(resovledSet);
-            } else {
-                common.retainAll(resovledSet);
-            }
+            common.addAll(resovledSet);
         }
 
+        common.remove(null);
         return common;
     }
 
