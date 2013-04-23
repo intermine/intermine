@@ -399,18 +399,14 @@ public class TreefamConverter extends BioFileConverter
             return identifier;
         }
 
-        Set<String> resolvedIdSet = rslv.resolveIds(taxonId, Arrays.asList(identifier, symbol));
+        String resolvedId = rslv.resolveIds(taxonId, Arrays.asList(identifier, symbol));
 
-        if (resolvedIdSet != null && resolvedIdSet.size() == 1) {
-            String resolvedId = resolvedIdSet.iterator().next();
-            resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
-            return resolvedId;
+        if (resolvedId != null) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                    + identifier + " for taxon ID " + taxonId);
         }
 
-        resolvedIds.put(new MultiKey(taxonId, identifier, symbol), null);
-        LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                + identifier + " for taxon ID " + taxonId);
-
-        return null;
+        resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
+        return resolvedId;
     }
 }
