@@ -114,11 +114,11 @@ public class IdResolverTest extends TestCase
     }
 
     public void testResolveIds() throws Exception {
-        assertEquals(Collections.emptySet(), resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym3)));
-        assertEquals(Collections.singleton(primaryId3), resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym1)));
-        assertEquals(2, resolver.resolveIds(taxId1, clsName1, Arrays.asList(synonym1)).size());
-        assertEquals(2, resolver.resolveIds(taxId1, clsName1, Arrays.asList(synonym1, synonym2)).size());
-        assertEquals(0, resolver.resolveIds(taxId1, clsName1, Arrays.asList(mainId1, synonym1, synonym3)).size());
+        assertEquals(null, resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym3)));
+        assertEquals("primaryId3", resolver.resolveIds(taxId1, clsName2, Arrays.asList(mainId1, synonym1)));
+        assertEquals(null, resolver.resolveIds(taxId1, clsName1, Arrays.asList(synonym1)));
+        assertEquals(null, resolver.resolveIds(taxId1, clsName1, Arrays.asList(synonym1, synonym2)));
+        assertEquals(null, resolver.resolveIds(taxId1, clsName1, Arrays.asList(mainId1, synonym1, synonym3)));
     }
 
     public void testGetSynonyms() throws Exception {
