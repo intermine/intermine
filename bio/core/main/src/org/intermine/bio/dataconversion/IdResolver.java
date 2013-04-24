@@ -146,11 +146,12 @@ public class IdResolver
         }
 
         common.remove(null);
-        if (common.size() > 1) {
+        if (common.size() != 1) {
             LOG.info("Not resolve to an unique identifier: " + common);
             return null;
+        } else {
+            return common.iterator().next();
         }
-        return common.iterator().next();
     }
 
     /**
