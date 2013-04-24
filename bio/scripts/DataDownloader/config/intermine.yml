@@ -26,7 +26,6 @@ default_sources:
   - "WormIdentifiers"
   - "HomoloGene"
   - "OrthoDB"
-  - "TreeFam"
   - "SGDIdentifiers"
   - "ZFINIdentifiers"
   - "MousePheno"
