@@ -723,17 +723,16 @@
                      placement="Interactions"
                      types="Gene,Protein"/>
 
-  <reportdisplayer javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
-                    jspName="model/drosophilaHomologueDisplayer.jsp"
-                    replacesFields=""
-                    placement="Genomics"
-                    types="Gene"/>
+	<reportdisplayer
+		javaClass="org.flymine.web.displayer.DrosophilaHomologueDisplayer"
+		jspName="model/drosophilaHomologueDisplayer.jsp" replacesFields=""
+		placement="Genomics"
+		types="Gene" />
 
-  <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
-                     jspName="model/geneOntologyDisplayer.jsp"
-                     replacesFields="goAnnotation,ontologyAnnotations"
-                     placement="Genomics"
-                     types="Gene"/>
+	<reportdisplayer
+		javaClass="org.intermine.bio.web.displayer.GeneOntologyDisplayer"
+		jspName="model/geneOntologyDisplayer.jsp" replacesFields="goAnnotation,ontologyAnnotations"
+		placement="Genomics" types="Gene" />
 
   <reportdisplayer javaClass="org.intermine.bio.web.displayer.GeneStructureDisplayer"
                      jspName="model/geneStructureDisplayer.jsp"
@@ -741,13 +740,24 @@
                      placement="Genomics"
                      types="Gene,Transcript,Exon,Intron,UTR,CDS"/>
 
+<!-- 
+  <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
+                     jspName="model/homologueDisplayer.jsp"
+                     replacesFields="homologues"
+                     placement="Genomics"
+                     parameters="{'dataSets': ['TreeFam data set', 'Ensembl Compara data set']}"
+                     types="Gene"/>
+-->
 
   <reportdisplayer javaClass="org.intermine.bio.web.displayer.HomologueDisplayer"
                      jspName="model/homologueDisplayer.jsp"
                      replacesFields="homologues"
-                     placement="Comparative Genomics"
+                     placement="Genomics"
                      parameters="{'dataSets': ['TreeFam data set', 'Ensembl Compara data set', 'Drosophila 12 Genomes Consortium homology']}"
                      types="Gene"/>
+
+
+
 
   <reportdisplayer javaClass="org.intermine.bio.web.displayer.MinePathwaysDisplayer"
                      jspName="model/minePathwaysDisplayer.jsp"
