@@ -52,7 +52,9 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private Set<String> commonFeatureInterMineTypes = new HashSet<String>();
     private static final String SUBFEATUREID_TEMP_TABLE_NAME = "modmine_subfeatureid_temp";
     private static final String BINDING_SITE_FEATS =
-            "'binding_site', 'protein_binding_site', 'TF_binding_site', 'histone_binding_site'";
+    "'binding_site', 'protein_binding_site', 'TF_binding_site', 'histone_binding_site', 'insulator_binding_site'";
+    // use instead like in query?
+    
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
@@ -68,9 +70,11 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "three_prime_RACE_clone", "three_prime_RST", "three_prime_UST"
             , "polyA_site", "polyA_signal_sequence", "overlapping_EST_set", "exon_region"
             , "SL1_acceptor_site", "SL2_acceptor_site"
+            , "SL4_acceptor_site", "SL7_acceptor_site"
             , "transcription_end_site", "TSS", "under-replicated-region"
             , "full_transcript", "polypeptide_region", "peptide_collection"
-            , "chromatin_state"
+            , "chromatin_state", "domain", "contig", "golden_path_region"
+            , "spliced_leader_RNA", "primer", "snoRNA", "pseudogene", "ncRNA"
     );
     // the FB name for the mitochondrial genome
     private static final String MITOCHONDRION = "dmel_mitochondrion_genome";

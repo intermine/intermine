@@ -555,8 +555,14 @@ public class SequenceProcessor extends ChadoProcessor
         if ("three_prime_untranslated_region".equals(type)) {
             return "three_prime_UTR";
         }
-        if ("full_transcript".equals(type)) {
+        if ("full_transcript".equals(type)) { // modencode
             return "mature_transcript";
+        }
+        if ("golden_path_region".equals(type)) { // modencode
+            return "golden_path_fragment";
+        }
+        if ("domain".equals(type)) { // modencode
+            return "polypeptide_domain";
         }
         return type;
     }
