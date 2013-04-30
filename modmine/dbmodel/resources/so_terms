@@ -15,6 +15,7 @@ chromosome_band
 chromosome_structure_variation
 clone
 codon
+contig
 copy_number_variation
 enhancer
 EST
@@ -45,9 +46,12 @@ point_mutation
 polyA_sequence
 polyA_signal_sequence
 polyA_site
+polypeptide_domain
 polypeptide_region
+primer
 processed_transcript
 protein_binding_site
+pseudogene
 reagent
 regulatory_region
 repeat_region
@@ -57,9 +61,12 @@ sequence_feature
 sequence_variant
 SL1_acceptor_site
 SL2_acceptor_site
+SL4_acceptor_site
+SL7_acceptor_site
 small_regulatory_ncRNA
 snoRNA
 snRNA
+spliced_leader_RNA
 start_codon
 stop_codon
 substitution
@@ -85,5 +92,7 @@ intron.transcript
 UTR.transcript
 SL1AcceptorSite.transcript
 SL2AcceptorSite.transcript
+SL4AcceptorSite.transcript
+SL7AcceptorSite.transcript
 TSS.transcript
 EST.overlapping_EST_set
