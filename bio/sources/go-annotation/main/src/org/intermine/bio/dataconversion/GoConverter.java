@@ -197,7 +197,8 @@ public class GoConverter extends BioFileConverter
 
         BufferedReader br = new BufferedReader(reader);
         String line = null;
-
+        Set<String> missedTaxa = null;
+                
         // loop through entire file
         while ((line = br.readLine()) != null) {
             if (line.startsWith("!")) {
@@ -215,8 +216,7 @@ public class GoConverter extends BioFileConverter
             Config config = configs.get(taxonId);
             if (config == null) {
                 config = defaultConfig;
-                LOG.warn("No entry for organism with taxonId = '"
-                        + taxonId + "' found in go-annotation config file.  Using default");
+                missedTaxa.add(taxonId);
             }
 
             // Some annotation files mix gene and protein, e.g. wormbase, etc.
@@ -304,6 +304,13 @@ public class GoConverter extends BioFileConverter
                 }
             }
         }
+        
+        if (!missedTaxa.isEmpty()) {
+            LOG.warn("No entry for organism(s) with taxonId in '"
+                    + missedTaxa + "' found in go-annotation config file.  Using default");
+        	missedTaxa.clear();
+        }
+        
         storeProductCollections();
         storeEvidence();
     }
