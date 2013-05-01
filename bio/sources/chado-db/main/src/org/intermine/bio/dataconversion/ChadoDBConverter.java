@@ -199,7 +199,7 @@ public class ChadoDBConverter extends BioDBConverter
             }
 
             if (od == null) {
-                LOG.warn("can't find OrganismData for species: " + species
+                LOG.debug("can't find OrganismData for species: " + species
                          + " genus: " + genus + " abbreviation: " + abbreviation);
             }
 
