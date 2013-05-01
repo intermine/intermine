@@ -1,0 +1,5 @@
+<project name="gff" default="default" basedir=".">
+  <description>build, test, package gff</description>
+  
+  <import file="../../../imbuild/source.xml"/>
+</project>
