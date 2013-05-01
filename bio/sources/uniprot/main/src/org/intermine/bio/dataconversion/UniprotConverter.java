@@ -112,7 +112,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
         // init id resolver
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(FLY);
+            rslv = IdResolverService.getFlyIdResolver();
         }
 
         if (taxonIds != null) {
