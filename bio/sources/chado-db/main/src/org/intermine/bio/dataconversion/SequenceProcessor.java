@@ -620,6 +620,7 @@ public class SequenceProcessor extends ChadoProcessor
         throws SQLException, ObjectStoreException {
         int count = 0;
         int featureWarnings = 0;
+        int yetAnotherFeatureWarnings = 0;
         while (res.next()) {
             Integer featureLocId = new Integer(res.getInt("featureloc_id"));
             Integer featureId = new Integer(res.getInt("feature_id"));
@@ -671,8 +672,15 @@ public class SequenceProcessor extends ChadoProcessor
                                     String.valueOf(end - start + 1));
                         }
                     } else {
-                        LOG.warn("featureId (" + featureId + ") from location " + featureLocId
-                                + " was expected to be a SequenceFeature");
+                        if (yetAnotherFeatureWarnings <= 20) {
+                            if (yetAnotherFeatureWarnings < 20) {
+                            	LOG.warn("featureId (" + featureId + ") from location " + featureLocId
+                                        + " was expected to be a SequenceFeature");
+                            } else {
+                                LOG.warn("further warnings about non-SequenceFeature ignored");
+                            }
+                            yetAnotherFeatureWarnings++;
+                        }
                     }
                     count++;
                 } else {
