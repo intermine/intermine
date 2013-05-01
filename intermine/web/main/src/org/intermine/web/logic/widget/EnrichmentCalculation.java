@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
 
 /**
  * Calculate enrichment of an attribute applied to members of a sample that is a subset of a larger
@@ -65,8 +65,8 @@ public final class EnrichmentCalculation
             PopulationInfo pi = annotatedPopulationInfo.get(attribute);
             Integer populationCount = (pi != null) ? pi.getSize() : 0;
 
-            HypergeometricDistributionImpl h =
-                new HypergeometricDistributionImpl(populationSize, populationCount, sampleSize);
+            HypergeometricDistribution h =
+                new HypergeometricDistribution(populationSize, populationCount, sampleSize);
             Double pValue = h.upperCumulativeProbability(sampleCount);
             rawResults.put(attribute, new BigDecimal(pValue));
         }
