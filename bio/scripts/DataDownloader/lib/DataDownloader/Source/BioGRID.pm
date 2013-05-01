@@ -18,6 +18,8 @@ use constant ORGANISMS => (
     "Mus_musculus",
     "Homo_sapiens",
     "Saccharomyces_cerevisiae",
+    "Bacillus_subtilis_168",
+    "Escherichia_coli",
 );
 
 sub BUILD {
