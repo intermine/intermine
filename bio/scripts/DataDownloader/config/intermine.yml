@@ -17,7 +17,6 @@ default_sources:
   - "MGIIdentifiers"
   - "NCBIGene"
   - "Panther"
-  - "PDB"
   - "PubMed"
   - "Reactome"
   - "RedFly"
