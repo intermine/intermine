@@ -197,7 +197,7 @@ public class GoConverter extends BioFileConverter
 
         BufferedReader br = new BufferedReader(reader);
         String line = null;
-        Set<String> missedTaxa = null;
+        Set<String> missedTaxa = new HashSet<String>();
                 
         // loop through entire file
         while ((line = br.readLine()) != null) {
