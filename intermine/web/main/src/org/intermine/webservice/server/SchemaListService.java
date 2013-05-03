@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -11,22 +11,17 @@ package org.intermine.webservice.server;
  */
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 import org.intermine.api.InterMineAPI;
-import org.intermine.webservice.server.output.JSONFormatter;
-import org.json.JSONArray;
+import org.intermine.webservice.server.core.JSONService;
 
 /**
  * Serve up the list of schemata that we have.
  * @author Alexis Kalderimis
  *
  */
-public class SchemaListService extends WebService
+public class SchemaListService extends JSONService
 {
 
     /**
@@ -43,38 +38,20 @@ public class SchemaListService extends WebService
      */
     @Override
     protected void execute() throws Exception {
+        List<String> schemata =
+            Arrays.asList(webProperties.getProperty("schema.filenames", "").split(","));
 
-        Set<String> schemata = new HashSet<String>(
-            Arrays.asList(webProperties.getProperty("schema.filenames", "").split(",")));
-        output.setHeaderAttributes(getHeaderAttributes());
-
-        JSONArray ja = new JSONArray(schemata);
-        output.addResultItem(Collections.singletonList(ja.toString()));
+        addResultItem(schemata, false);
     }
 
-    private Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_INTRO, "\"schemata:\"");
-        }
-        if (formatIsJSONP()) {
-            attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
-        }
-        return attributes;
+    @Override
+    protected String getResultsKey() {
+        return "schemata";
     }
 
     @Override
     protected String getDefaultFileName() {
         return "schemata.json";
-    }
-
-    @Override
-    public int getFormat() {
-        if (hasCallback()) {
-            return JSONP_FORMAT;
-        } else {
-            return JSON_FORMAT;
-        }
     }
 
 }

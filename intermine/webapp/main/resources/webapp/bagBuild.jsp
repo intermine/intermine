@@ -5,7 +5,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="im"%>
 <%@ taglib uri="/WEB-INF/functions.tld" prefix="imf" %>
 
-
+<script type="text/javascript" src="js/import.js"></script>
 
 <!-- bagBuild.jsp -->
 <html:xhtml/>
@@ -20,23 +20,6 @@
       bagExampleIdentifiers['${exampleType.key}'.replace(/\s/gi,"").toLowerCase()] = '${exampleType.value}';
     </c:forEach>
   </c:if>
-
-   function switchInputs(open, close) {
-      jQuery('#' + open + 'Input').attr("disabled", false);
-      jQuery('#' + close + 'Input').attr("disabled", false);
-    }
-
-    function resetInputs() {
-       jQuery('#fileInput').attr("disabled", false);
-       jQuery('#pasteInput').attr("disabled", false);
-       jQuery('#fileInput').val('');
-       jQuery('#pasteInput').val('');
-    }
-
-    function openInputs() {
-       jQuery('#fileInput').attr("disabled", false);
-       jQuery('#pasteInput').attr("disabled", false);
-    }
 
     function loadExample() {
       switchInputs('paste','file');
@@ -142,8 +125,8 @@
                        </html:link>
                  </c:if>
                    <html:textarea styleId="pasteInput" property="text" rows="10"
-                   onclick="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}"
-                   onkeyup="if(this.value != ''){switchInputs('paste','file');}else{openInputs();}" />
+                   onclick="if(this.value != ''){switchInputs('pasteInput','fileInput');}else{openInputs('fileInput', 'pasteInput');}"
+                   onkeyup="if(this.value != ''){switchInputs('pasteInput','fileInput');}else{openInputs('fileInput', 'pasteInput');}" />
                </td>
            </tr>
            <tr>
@@ -153,8 +136,8 @@
                </td>
                <td>
                    <html:file styleId="fileInput" property="formFile"
-                   onchange="switchInputs('file','paste');"
-                   onkeydown="switchInputs('file','paste');" size="28" />
+                   onchange="switchInputs('fileInput','pasteInput');"
+                   onkeydown="switchInputs('fileInput','pasteInput');" size="28" />
                </td>
            </tr>
            <tr>
@@ -165,7 +148,7 @@
 
     <div align="right">
        <%-- reset button --%>
-       <input type="button" onClick="resetInputs()" value="Reset" />
+       <input type="button" onClick="resetInputs('fileInput', 'pasteInput')" value="Reset" />
        <html:submit styleId="submitBag"><fmt:message key="bagBuild.makeBag"/></html:submit>
     </div>
 

@@ -1,7 +1,7 @@
 package org.modmine.web;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -30,6 +30,7 @@ public class SubmissionOverlapsForm extends ActionForm
     private String flankingFeatureType;
     private String overlapFindType;
     private String submissionId;
+    private String submissionDCCId;
 
     /**
      * @return the submissionId
@@ -43,6 +44,20 @@ public class SubmissionOverlapsForm extends ActionForm
      */
     public void setSubmissionId(String submissionId) {
         this.submissionId = submissionId;
+    }
+
+    /**
+     * @return the submissionDCCId
+     */
+    public String getSubmissionDCCId() {
+        return submissionDCCId;
+    }
+
+    /**
+     * @param submissionDCCId the submissionDCCId to set
+     */
+    public void setSubmissionDCCId(String submissionDCCId) {
+        this.submissionDCCId = submissionDCCId;
     }
 
     /**
@@ -141,5 +156,14 @@ public class SubmissionOverlapsForm extends ActionForm
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         super.reset(mapping, request);
         direction = null;
+
+        // added to be able to use url, e.g.:
+        // /submissionOverlapsAction.do?submissionDCCId=modENCODE_3171
+        // &overlapFindType=Gene&distance=440&direction=bothways&overlapFeatureType=BindingSite
+
+        distance = null;
+        submissionId = null;
+        submissionDCCId = null;
+        submissionTitle = null;
     }
 }

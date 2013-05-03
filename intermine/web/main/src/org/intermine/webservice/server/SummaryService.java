@@ -1,7 +1,7 @@
 package org.intermine.webservice.server;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -26,6 +26,7 @@ import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.FieldConfig;
 import org.intermine.web.logic.config.FieldConfigHelper;
 import org.intermine.web.logic.config.WebConfig;
+import org.intermine.webservice.server.core.JSONService;
 import org.intermine.webservice.server.output.JSONFormatter;
 import org.json.JSONObject;
 
@@ -34,10 +35,10 @@ import org.json.JSONObject;
  * @author Alexis Kalderimis
  *
  */
-public class SummaryService extends WebService
+public class SummaryService extends JSONService
 {
 
-	private final static Logger LOG = Logger.getLogger(SummaryService.class);
+    private final static Logger LOG = Logger.getLogger(SummaryService.class);
 
     /**
      * Constructor
@@ -54,47 +55,40 @@ public class SummaryService extends WebService
      */
     @Override
     protected void execute() throws Exception {
-
-        Boolean refsAllowed = !Boolean.valueOf(request.getParameter("norefs"));
-        Map<String, List<String>> summaryFieldsForCd = new HashMap<String, List<String>>();
+        Boolean refsAllowed = !Boolean.valueOf(getOptionalParameter("norefs", "false"));
         WebConfig webConfig = InterMineContext.getWebConfig();
+
+        Map<String, Object> summaryFieldsForCd = getMapping(refsAllowed, webConfig);
+
+        addResultItem(summaryFieldsForCd, false);
+    }
+
+    protected Map<String, Object> getMapping(Boolean refsAllowed, WebConfig webConfig) {
+        Map<String, Object> summaryFieldsForCd = new HashMap<String, Object>();
         Model m = im.getModel();
-        output.setHeaderAttributes(getHeaderAttributes());
         for (ClassDescriptor cd: m.getClassDescriptors()) {
             List<String> summaryFields = new ArrayList<String>();
             if (!"org.intermine.model.InterMineObject".equals(cd.getName())) {
                 for (FieldConfig fc : FieldConfigHelper.getClassFieldConfigs(webConfig, cd)) {
-                	try {
-			            Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
-			            if (p.endIsAttribute() && (!p.containsReferences() || refsAllowed)
-			                    && fc.getShowInSummary()) {
-			                summaryFields.add(p.getNoConstraintsString());
-			            }
-                	} catch (PathException e) {
-                		LOG.warn("Web config contains a bad path!", e);
-                	}
+                    try {
+                        Path p = new Path(m, cd.getUnqualifiedName() + "." + fc.getFieldExpr());
+                        if (p.endIsAttribute() && (!p.containsReferences() || refsAllowed)
+                                && fc.getShowInSummary()) {
+                            summaryFields.add(p.getNoConstraintsString());
+                        }
+                    } catch (PathException e) {
+                        LOG.warn("Web config contains a bad path!", e);
+                    }
                 }
                 summaryFieldsForCd.put(cd.getUnqualifiedName(), summaryFields);
             }
         }
-
-        JSONObject jo = new JSONObject(summaryFieldsForCd);
-        output.addResultItem(Collections.singletonList(jo.toString()));
+        return summaryFieldsForCd;
     }
 
-    /**
-     * Get attributes for header.
-     * @return a map from attribute name to value
-     */
-    protected Map<String, Object> getHeaderAttributes() {
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        if (formatIsJSON()) {
-            attributes.put(JSONFormatter.KEY_INTRO, "\"classes\":");
-        }
-        if (formatIsJSONP()) {
-            attributes.put(JSONFormatter.KEY_CALLBACK, this.getCallback());
-        }
-        return attributes;
+    @Override
+    protected String getResultsKey() {
+        return "classes";
     }
 
     @Override
@@ -102,13 +96,5 @@ public class SummaryService extends WebService
         return "summary_fields.json";
     }
 
-    @Override
-    public int getFormat() {
-        if (hasCallback()) {
-            return JSONP_FORMAT;
-        } else {
-            return JSON_FORMAT;
-        }
-    }
 }
 

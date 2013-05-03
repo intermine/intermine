@@ -1,4 +1,0 @@
-<project name="stitch-tasks" default="default" basedir=".">
-  <description>build stitch tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

@@ -1,7 +1,7 @@
 package org.intermine.api.bag;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -219,7 +219,8 @@ public class BagManager
      */
     public boolean isAnyBagNotCurrent(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        for (InterMineBag bag : savedBags.values()) {
+        Map<String, InterMineBag> savedBagsCopy = new HashMap<String, InterMineBag>(savedBags);
+        for (InterMineBag bag : savedBagsCopy.values()) {
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
                 return true;
             }
@@ -235,7 +236,9 @@ public class BagManager
      */
     public boolean isAnyBagNotCurrentOrUpgrading(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        for (InterMineBag bag : savedBags.values()) {
+        Map<String, InterMineBag> savedBagsCopy = new HashMap<String, InterMineBag>(savedBags);
+
+        for (InterMineBag bag : savedBagsCopy.values()) {
             if (bag.getState().equals(BagState.NOT_CURRENT.toString())
                 || bag.getState().equals(BagState.UPGRADING.toString())) {
                 return true;
@@ -252,7 +255,9 @@ public class BagManager
      */
     public boolean isAnyBagToUpgrade(Profile profile) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        for (InterMineBag bag : savedBags.values()) {
+        Map<String, InterMineBag> savedBagsCopy = new HashMap<String, InterMineBag>(savedBags);
+
+        for (InterMineBag bag : savedBagsCopy.values()) {
             if (bag.getState().equals(BagState.TO_UPGRADE.toString())) {
                 return true;
             }
@@ -318,7 +323,7 @@ public class BagManager
         }
         sharedBagManager.unshareBagWithUser(bag, userName);
     }
-    
+
     /**
      * Unshare the bag with the user given in input
      * @param bag the bag to un-share

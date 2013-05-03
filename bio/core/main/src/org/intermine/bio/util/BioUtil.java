@@ -1,7 +1,7 @@
 package org.intermine.bio.util;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,11 +10,14 @@ package org.intermine.bio.util;
  *
  */
 
-
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStore;
@@ -36,7 +39,7 @@ import org.intermine.objectstore.query.ResultsRow;
  */
 public final class BioUtil
 {
-
+	protected static final Logger LOG = Logger.getLogger(BioUtil.class);
     private static final OrganismRepository OR = OrganismRepository.getOrganismRepository();
 
     private BioUtil() {
@@ -282,5 +285,26 @@ public final class BioUtil
             return taxonId;
         }
         return strain; 
+    }
+    
+    /**
+     * Returns strains for given collection of taxon Ids
+     *
+     * @param taxonIdCol a collection of original taxon ID 
+     * @return strainMap for strain or original taxon if no strain exists in a map 
+     *         (key:strain, value:original taxon)
+     */
+    public static Map<String, String> getStrain(Set<String> taxonIdSet) {
+        Map<String, String> strainMap = new HashMap<String, String>();
+        for (String taxonId : taxonIdSet) {
+            String strain = OR.getStrain(taxonId);
+            if (strain == null) {
+                strainMap.put(taxonId, taxonId);
+            } else {
+                strainMap.put(strain, taxonId);
+            }
+    	}
+        
+        return strainMap; 
     }
 }

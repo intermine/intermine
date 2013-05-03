@@ -1,0 +1,28 @@
+/*
+ * Copyright (C) 2002-2013 FlyMine
+ *
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  See the LICENSE file for more
+ * information or http://www.gnu.org/copyleft/lesser.html.
+ *
+ */
+
+1.2 (27 March 2013)
+
+#  9 - Import templates/queries from file
+# 44 - Special characters escaped correctly
+# 45 - List operations: asymmetric difference 
+# 93 - Keyword search: redirects work as expected
+# 95 - Can create outer joins in 'summary' views in the query builder
+#137 - Enrichment widgets: added option to 'normalize by gene length' 
+#152 - Data source ontology
+#173 - Keyword search: can create a list with over 100 members
+#176 - Convert links on list analysis working
+#179 - 'make_source' script creates all needed directories
+#181 - Templates handling inheritance correctly now
+#190 - Default fields displayed on list analysis page now include references
+#196 - Template form: hide complicated logic from user
+#233 - Transfer-sequences postprocess correctly creating sequences for CDSs and transcripts
+#234 - Link in enrichment widgets displays identifier instead of [link], as before
+#236 - Graph widgets: clicking on expected bar is disabled

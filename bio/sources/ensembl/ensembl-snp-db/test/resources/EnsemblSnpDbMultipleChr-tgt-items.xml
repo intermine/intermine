@@ -1,0 +1,544 @@
+<items>
+<item id="11_23" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361227"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_2" class="Chromosome">
+<attribute name="primaryIdentifier" value="2"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_7" class="Location">
+<attribute name="end" value="593308"/>
+<attribute name="start" value="593308"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_21" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_21"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_1" class="Consequence">
+<attribute name="description" value="nc_transcript_variant,intron_variant"/>
+<reference name="transcript" ref_id="11_1"/>
+<collection name="types"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
+</item>
+<item id="9_28" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_28"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_2" class="Consequence">
+<attribute name="description" value="nc_transcript_variant,intron_variant"/>
+<reference name="transcript" ref_id="11_2"/>
+<collection name="types"><reference ref_id="10_1"/><reference ref_id="10_2"/></collection>
+</item>
+<item id="11_29" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387456"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_8" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361453"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_5" class="ConsequenceType">
+<attribute name="type" value="stop_retained_variant"/>
+</item>
+<item id="11_13" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387409"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_13" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_13"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="11_15" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387416"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_14" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_14"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="3_4" class="SNP">
+<attribute name="alleles" value="G/T/A/C"/>
+<attribute name="primaryIdentifier" value="rs201350510"/>
+<attribute name="type" value="snp"/>
+<attribute name="uniqueLocation" value="false"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<reference name="source" ref_id="8_1"/>
+<collection name="consequences"><reference ref_id="9_34"/><reference ref_id="9_35"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_16" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_16"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="9_26" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_26"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="5_8" class="Location">
+<attribute name="end" value="78143"/>
+<attribute name="start" value="78143"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_14" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361624"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_30" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_30"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_6" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_6"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_33" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_10"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="11_1" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000455207"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_25" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_25"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="11_24" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387439"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_2" class="ConsequenceType">
+<attribute name="type" value="intron_variant"/>
+</item>
+<item id="11_30" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361567"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_17" class="Consequence">
+<attribute name="description" value="stop_retained_variant"/>
+<attribute name="peptideAlleles" value="*"/>
+<reference name="transcript" ref_id="11_17"/>
+<collection name="types"><reference ref_id="10_5"/></collection>
+</item>
+<item id="10_4" class="ConsequenceType">
+<attribute name="type" value="upstream_gene_variant"/>
+</item>
+<item id="9_4" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_4"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="5_12" class="Location">
+<attribute name="end" value="9698"/>
+<attribute name="start" value="9698"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_4"/>
+<reference name="locatedOn" ref_id="6_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_28" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387449"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_7" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387377"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="6_3" class="Chromosome">
+<attribute name="primaryIdentifier" value="MT"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_23" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_23"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_19" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_19"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="5_1" class="Location">
+<attribute name="end" value="102445290"/>
+<attribute name="start" value="102445290"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_18" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_18"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="10_1" class="ConsequenceType">
+<attribute name="type" value="nc_transcript_variant"/>
+</item>
+<item id="5_9" class="Location">
+<attribute name="end" value="170981318"/>
+<attribute name="start" value="170981318"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_19" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361851"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_34" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_19"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="11_21" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000362079"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="4_1" class="Organism">
+<attribute name="taxonId" value="9606"/>
+</item>
+<item id="5_2" class="Location">
+<attribute name="end" value="85888"/>
+<attribute name="start" value="85888"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_9" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387382"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_20" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_20"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_22" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_22"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="11_11" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387400"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_18" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387421"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_26" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361381"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_11" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_11"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="2_1" class="DataSet">
+<attribute name="name" value="Ensembl SNP data"/>
+<reference name="dataSource" ref_id="1_1"/>
+</item>
+<item id="11_25" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361335"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_31" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_8"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="11_2" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000440200"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_1" class="ValidationState">
+<attribute name="name" value="freq"/>
+</item>
+<item id="9_8" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_8"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="11_17" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361739"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_29" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_29"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="6_1" class="Chromosome">
+<attribute name="primaryIdentifier" value="1"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_1" class="SNP">
+<attribute name="alleles" value="T/A"/>
+<attribute name="primaryIdentifier" value="rs80179172"/>
+<attribute name="type" value="snp"/>
+<attribute name="uniqueLocation" value="false"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<reference name="source" ref_id="8_1"/>
+<collection name="consequences"><reference ref_id="9_2"/><reference ref_id="9_1"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_35" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_20"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="9_7" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_7"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="11_10" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387392"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_4" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361390"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="1_1" class="DataSource">
+<attribute name="name" value="Ensembl"/>
+</item>
+<item id="9_3" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_3"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="8_1" class="Source">
+<attribute name="name" value="dbSNP"/>
+</item>
+<item id="11_27" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387441"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_6" class="Location">
+<attribute name="end" value="397150"/>
+<attribute name="start" value="397150"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_12" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_12"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="11_3" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000386347"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_9" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_9"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="11_22" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387429"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_10" class="Location">
+<attribute name="end" value="8269"/>
+<attribute name="start" value="8269"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_2"/>
+<reference name="locatedOn" ref_id="6_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_16" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387419"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_32" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_9"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="7_1" class="SOTerm">
+<attribute name="name" value="chromosome"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_3" class="Location">
+<attribute name="end" value="129740"/>
+<attribute name="start" value="129740"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_3" class="SOTerm">
+<attribute name="name" value="transcript"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="9_15" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_15"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="3_2" class="SNP">
+<attribute name="alleles" value="G/A"/>
+<attribute name="primaryIdentifier" value="rs8896"/>
+<attribute name="type" value="snp"/>
+<attribute name="uniqueLocation" value="true"/>
+<reference name="chromosome" ref_id="6_3"/>
+<reference name="chromosomeLocation" ref_id="5_10"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<reference name="source" ref_id="8_1"/>
+<collection name="consequences"><reference ref_id="9_20"/><reference ref_id="9_21"/><reference ref_id="9_22"/><reference ref_id="9_23"/><reference ref_id="9_28"/><reference ref_id="9_29"/><reference ref_id="9_24"/><reference ref_id="9_25"/><reference ref_id="9_26"/><reference ref_id="9_27"/><reference ref_id="9_10"/><reference ref_id="9_12"/><reference ref_id="9_11"/><reference ref_id="9_18"/><reference ref_id="9_17"/><reference ref_id="9_19"/><reference ref_id="9_14"/><reference ref_id="9_13"/><reference ref_id="9_16"/><reference ref_id="9_15"/><reference ref_id="9_8"/><reference ref_id="9_30"/><reference ref_id="9_9"/><reference ref_id="9_6"/><reference ref_id="9_7"/><reference ref_id="9_5"/><reference ref_id="9_4"/><reference ref_id="9_3"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="0_1" class="Ontology">
+<attribute name="name" value="Sequence Ontology"/>
+<attribute name="url" value="http://www.sequenceontology.org"/>
+</item>
+<item id="11_20" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000361899"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="12_2" class="ValidationState">
+<attribute name="name" value="hapmap"/>
+</item>
+<item id="11_5" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387365"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="7_2" class="SOTerm">
+<attribute name="name" value="SNP"/>
+<reference name="ontology" ref_id="0_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_6" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387372"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="3_3" class="SNP">
+<attribute name="alleles" value="T/C"/>
+<attribute name="primaryIdentifier" value="rs9743"/>
+<attribute name="type" value="snp"/>
+<attribute name="uniqueLocation" value="true"/>
+<reference name="chromosome" ref_id="6_3"/>
+<reference name="chromosomeLocation" ref_id="5_11"/>
+<reference name="organism" ref_id="4_1"/>
+<reference name="sequenceOntologyTerm" ref_id="7_2"/>
+<reference name="source" ref_id="8_1"/>
+<collection name="consequences"><reference ref_id="9_33"/><reference ref_id="9_31"/><reference ref_id="9_32"/></collection>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+<collection name="validations"><reference ref_id="12_1"/><reference ref_id="12_2"/></collection>
+</item>
+<item id="9_5" class="Consequence">
+<attribute name="description" value="downstream_gene_variant"/>
+<reference name="transcript" ref_id="11_5"/>
+<collection name="types"><reference ref_id="10_3"/></collection>
+</item>
+<item id="5_5" class="Location">
+<attribute name="end" value="60109"/>
+<attribute name="start" value="60109"/>
+<attribute name="strand" value="-1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_2"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_11" class="Location">
+<attribute name="end" value="9698"/>
+<attribute name="start" value="9698"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_3"/>
+<reference name="locatedOn" ref_id="6_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="5_4" class="Location">
+<attribute name="end" value="180823702"/>
+<attribute name="start" value="180823702"/>
+<attribute name="strand" value="1"/>
+<reference name="feature" ref_id="3_1"/>
+<reference name="locatedOn" ref_id="6_1"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="11_12" class="Transcript">
+<attribute name="primaryIdentifier" value="ENST00000387405"/>
+<reference name="sequenceOntologyTerm" ref_id="7_3"/>
+<collection name="dataSets"><reference ref_id="2_1"/></collection>
+</item>
+<item id="10_3" class="ConsequenceType">
+<attribute name="type" value="downstream_gene_variant"/>
+</item>
+<item id="9_27" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_27"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_24" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_24"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+<item id="9_10" class="Consequence">
+<attribute name="description" value="upstream_gene_variant"/>
+<reference name="transcript" ref_id="11_10"/>
+<collection name="types"><reference ref_id="10_4"/></collection>
+</item>
+</items>

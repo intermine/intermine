@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -34,13 +32,16 @@ import org.apache.struts.action.ActionMessage;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.BagManager;
 import org.intermine.api.bag.BagOperations;
-import org.intermine.api.bag.IncompatibleTypesException;
+import org.intermine.api.bag.operations.BagOperationException;
+import org.intermine.api.bag.operations.InternalBagOperationException;
+import org.intermine.api.bag.operations.NoContent;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
-import org.intermine.api.profile.ProfileManager;
 import org.intermine.api.profile.SavedQuery;
 import org.intermine.api.tracker.util.ListBuildMode;
 import org.intermine.api.util.NameUtil;
+import org.intermine.metadata.MetaDataException;
+import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
 import org.intermine.util.StringUtil;
 import org.intermine.web.logic.session.SessionMethods;
@@ -91,6 +92,9 @@ public class ModifyBagAction extends InterMineAction
         } else if (request.getParameter("copy") != null
                 || (mbf.getListsButton() != null && "copy".equals(mbf.getListsButton()))) {
             copy(form, request);
+        } else if (mbf.getListsButton() != null
+                   && "asymmetricdifference".equals(mbf.getListsButton().trim())) {
+            combine(form, request, BagOperations.ASYMMETRIC_SUBTRACT);
         }
 
         return getReturn(mbf.getPageName(), mapping);
@@ -181,6 +185,7 @@ public class ModifyBagAction extends InterMineAction
         throws ObjectStoreException {
         // Clone method clones the bag in the database
         InterMineBag newBag = (InterMineBag) origBag.clone();
+        newBag.setProfileId(profile.getUserId());
         newBag.setDate(new Date());
         newBag.setName(newBagName);
         profile.saveBag(newBagName, newBag);
@@ -204,44 +209,60 @@ public class ModifyBagAction extends InterMineAction
         String newBagName = NameUtil.validateName(allBags.keySet(), mbf.getNewBagName());
 
         int newBagSize = 0;
+        Model model = im.getModel();
         try {
             if (opText.equals(BagOperations.UNION)) {
-                newBagSize = BagOperations.union(selectedBags, newBagName, profile,
+                newBagSize = BagOperations.union(model, selectedBags, newBagName, profile,
                                            im.getClassKeys());
             } else if (opText.equals(BagOperations.INTERSECT)) {
-                newBagSize = BagOperations.intersect(selectedBags, newBagName, profile,
+                newBagSize = BagOperations.intersect(model, selectedBags, newBagName, profile,
                                           im.getClassKeys());
             } else if (opText.equals(BagOperations.SUBTRACT)) {
-                newBagSize = BagOperations.subtract(selectedBags, newBagName, profile,
+                newBagSize = BagOperations.subtract(model, selectedBags, newBagName, profile,
                                           im.getClassKeys());
+            } else if (opText.equals(BagOperations.ASYMMETRIC_SUBTRACT)) {
+                Collection<InterMineBag> include = new ArrayList<InterMineBag>();
+                include.add(allBags.get(mbf.getListLeft()));
+                Collection<InterMineBag> exclude = new ArrayList<InterMineBag>();
+                exclude.add(allBags.get(mbf.getListRight()));
+                newBagSize = BagOperations.asymmetricSubtract(model, include, exclude, newBagName,
+                    profile, im.getClassKeys());
             }
-        } catch (IncompatibleTypesException e) {
+        } catch (MetaDataException e) {
             SessionMethods.recordError(
-                    "You can only perform operations on lists of the same type."
+                    "Incompatible list types."
                             + " Lists " + StringUtil.prettyList(Arrays.asList(selectedBagNames))
                             + " do not match.", session);
             return;
-        } catch (ObjectStoreException e) {
+        } catch (InternalBagOperationException e) {
             LOG.error(e);
             ActionMessage actionMessage = new ActionMessage(
                     "An error occurred while saving the list");
             recordError(actionMessage, request);
             return;
+        } catch (NoContent nc) {
+            SessionMethods.recordError(opText + " operation on lists "
+                    + StringUtil.prettyList(Arrays.asList(selectedBagNames))
+                    + " produced no results.", session);
+            return;
+        } catch (BagOperationException e) {
+            SessionMethods.recordError(e.getMessage(), session);
+            return;
         }
 
         if (newBagSize > 0) {
+            //track the list creation
+            InterMineBag created = im.getBagManager().getBag(profile, newBagName);
+            if (created == null) {
+                SessionMethods.recordError("An unknown error occured.", session);
+                return;
+            }
             SessionMethods.recordMessage("Created list \"" + newBagName
                     + "\" as " + opText + " of  "
                     + StringUtil.prettyList(Arrays.asList(selectedBagNames)) + ".",
                     session);
-            //track the list creation
-            im.getTrackerDelegate().trackListCreation(BagOperations.getCommonBagType(
-                                    selectedBags), newBagSize, ListBuildMode.OPERATION,
-                                    profile, session.getId());
-        } else {
-            SessionMethods.recordError(opText + " operation on lists "
-                    + StringUtil.prettyList(Arrays.asList(selectedBagNames))
-                    + " produced no results.", session);
+            im.getTrackerDelegate().trackListCreation(created.getType() , newBagSize,
+                    ListBuildMode.OPERATION, profile, session.getId());
         }
     }
 

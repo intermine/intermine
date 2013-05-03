@@ -1,7 +1,7 @@
 package org.intermine.web.struts;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -178,6 +178,7 @@ public class CreateTemplateAction extends InterMineAction
 
         SessionMethods.loadQuery(template, request.getSession(), response);
         if ("SAVE".equals(tsf.getActionType())) {
+            session.setAttribute(Constants.EDITING_TEMPLATE, Boolean.TRUE);
             return mapping.findForward("query");
         } else {
             //prepare display constraint list to display  parameter values

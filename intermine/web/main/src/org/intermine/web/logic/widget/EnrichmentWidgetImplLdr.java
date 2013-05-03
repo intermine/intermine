@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -21,6 +21,8 @@ import org.intermine.objectstore.query.ContainsConstraint;
 import org.intermine.objectstore.query.Query;
 import org.intermine.objectstore.query.QueryClass;
 import org.intermine.objectstore.query.QueryCollectionReference;
+import org.intermine.objectstore.query.QueryEvaluable;
+import org.intermine.objectstore.query.QueryExpression;
 import org.intermine.objectstore.query.QueryField;
 import org.intermine.objectstore.query.QueryFunction;
 import org.intermine.objectstore.query.QueryObjectReference;
@@ -32,27 +34,41 @@ import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
+/**
+ * Implement methods to access data an enrichment calculation needs to be provided with.
+ * @author Daniela Butano
+ *
+ */
 public class EnrichmentWidgetImplLdr extends WidgetLdr
 {
     private EnrichmentWidgetConfig config;
     private String action;
     private InterMineBag populationBag;
+    private boolean extraCorrectionCoefficient;
+    private CorrectionCoefficient correctionCoefficient;
 
     /**
      * Construct an Enrichment widget loader, which performs the queries needed for
      * enrichment statistics.
-     * 
+     *
      * @param bag The bag containing the items we are interested in examining.
-     * @param populationBag The bag containing the background population for this test (MAY BE NULL).
+     * @param populationBag The bag containing the background population for
+     * this test (MAY BE NULL).
      * @param os The connection to the Object Store database.
      * @param config The configuration detailing the kind of enrichment to do.
      * @param filter An optional filter value.
+     * @param extraCorrectionCoefficient if true correction coefficient has been selected
+     * @param correctionCoefficient a instance of correction coefficient
+     * @param applyCorrectionCoefficient
      */
     public EnrichmentWidgetImplLdr(InterMineBag bag, InterMineBag populationBag,
                                    ObjectStore os, EnrichmentWidgetConfig config,
-                                   String filter) {
+                                   String filter, boolean extraCorrectionCoefficient,
+                                   CorrectionCoefficient correctionCoefficient) {
         super(bag, os, filter, config);
         this.populationBag = populationBag;
+        this.extraCorrectionCoefficient = extraCorrectionCoefficient;
+        this.correctionCoefficient = correctionCoefficient;
         this.config = config;
     }
 
@@ -93,7 +109,7 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     public Query getQuery(String action, List<String> keys) {
         this.action = action;
         queryClassInQuery = new HashMap<String, QueryClass>();
-        String key = generateKeyForQueryClassInQuery(startClass, null);
+        String key = startClass.getType().getSimpleName();
         queryClassInQuery.put(key, startClass);
 
         Query query = new Query();
@@ -118,7 +134,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         if (!action.startsWith("population")) {
             cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, bag.getOsb()));
         } else if (populationBag != null) {
-            cs.addConstraint(new BagConstraint(qfStartClassId, ConstraintOp.IN, populationBag.getOsb()));
+            cs.addConstraint(new BagConstraint(qfStartClassId,
+                             ConstraintOp.IN, populationBag.getOsb()));
         }
 
         for (PathConstraint pathConstraint : config.getPathConstraints()) {
@@ -131,6 +148,11 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
         mainQuery.setDistinct(false);
 
         QueryFunction qfCount = new QueryFunction();
+        QueryField qfCorrection = null;
+        if (extraCorrectionCoefficient
+            && correctionCoefficient.isApplicable()) {
+            qfCorrection = correctionCoefficient.updateQueryWithCorrectionCoefficient(subQ, startClass);
+        }
         // which columns to return when the user clicks on 'export'
         if ("export".equals(action)) {
             subQ.addToSelect(qfEnrichId);
@@ -147,6 +169,10 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             subQ.addToSelect(qfStartClassId);
             mainQuery.addFrom(subQ);
             mainQuery.addToSelect(qfCount);
+            // and for the whole population the average length
+            if (action.startsWith("population") && qfCorrection != null) {
+                correctionCoefficient.updatePopulationQuery(mainQuery, subQ, qfCorrection);
+            }
         // enrichment queries
         } else {
             subQ.addToSelect(qfStartClassId);
@@ -154,9 +180,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
             if (qfEnrichId != qfEnrich) {
                 subQ.addToSelect(qfEnrich);
             }
-
-            QueryField outerQfEnrichId = new QueryField(subQ, qfEnrichId);
             mainQuery.addFrom(subQ);
+            QueryField outerQfEnrichId = new QueryField(subQ, qfEnrichId);
             mainQuery.addToSelect(outerQfEnrichId);
             mainQuery.addToGroupBy(outerQfEnrichId);
             mainQuery.addToSelect(qfCount);
@@ -168,6 +193,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 } else {
                     mainQuery.addToSelect(outerQfEnrichId);
                 }
+            } else if ("population".equals(action) && qfCorrection != null) {
+                correctionCoefficient.updatePopulationQuery(mainQuery, subQ, qfCorrection);
             }
         }
         return mainQuery;
@@ -214,8 +241,14 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                 } else {
                     if (queryValue != null) {
                         if (!"null".equalsIgnoreCase(queryValue.getValue().toString())) {
-                            cs.addConstraint(new SimpleConstraint(qfConstraint, pc.getOp(),
-                                                              queryValue));
+                            QueryEvaluable qe = null;
+                            if (isFilterConstraint || isListConstraint
+                                || queryValue.getValue() instanceof Boolean) {
+                                qe = qfConstraint;
+                            } else {
+                                qe = new QueryExpression(QueryExpression.LOWER, qfConstraint);
+                            }
+                            cs.addConstraint(new SimpleConstraint(qe, pc.getOp(), queryValue));
                         } else {
                             ConstraintOp op = (pc.getOp().equals(ConstraintOp.EQUALS))
                                               ? ConstraintOp.IS_NULL
@@ -236,8 +269,8 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                     qcConstraint = new QueryClass(TypeUtil.getElementType(
                         qc.getType(), pathsConstraint[index]));
                 }
-                if (!isQueryClassInQuery(qcConstraint, qc)) {
-                    String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
+                String partialPath = createAttributePath(pathsConstraint, index);
+                if (!queryClassInQuery.containsKey(partialPath)) {
                     qc = qcConstraint;
                     query.addFrom(qc);
                     cs.addConstraint(new ContainsConstraint(qr,
@@ -246,11 +279,9 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
                         csSubQuery.addConstraint(new ContainsConstraint(qr,
                                ConstraintOp.CONTAINS, qc));
                     }
-                    queryClassInQuery.put(key, qc);
+                    queryClassInQuery.put(partialPath, qc);
                 } else {
-                    //retrieve qc from queryClassInQuery map
-                    String key = generateKeyForQueryClassInQuery(qcConstraint, qc);
-                    qc = queryClassInQuery.get(key);
+                    qc = queryClassInQuery.get(partialPath);
                 }
             }
         }
@@ -283,6 +314,4 @@ public class EnrichmentWidgetImplLdr extends WidgetLdr
     public Query getExportQuery(List<String> keys) {
         return getQuery("export", keys);
     }
-
-
 }

@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -45,7 +45,7 @@ public class HomologeneConverter extends BioFileConverter
 
     private static final String PROP_FILE = "homologene_config.properties";
     private static final String DEFAULT_IDENTIFIER_TYPE = "primaryIdentifier";
-    private static final String DEFAULT_GENEID_TYPE = "symbol";
+//    private static final String DEFAULT_GENEID_TYPE = "symbol";
 
     private Set<String> taxonIds = new HashSet<String>();
     private Set<String> homologues = new HashSet<String>();
@@ -197,8 +197,10 @@ public class HomologeneConverter extends BioFileConverter
         for (GeneRecord gene : genes) {
             notProcessed.remove(gene);
             for (GeneRecord homologue : notProcessed) {
-                createHomologue(gene.geneRefId, gene.taxonId, homologue.geneRefId, homologue.taxonId);
-                createHomologue(homologue.geneRefId, homologue.taxonId, gene.geneRefId, gene.taxonId);
+                createHomologue(gene.geneRefId, gene.taxonId, homologue.geneRefId,
+                        homologue.taxonId);
+                createHomologue(homologue.geneRefId, homologue.taxonId, gene.geneRefId,
+                        gene.taxonId);
             }
         }
     }
@@ -238,9 +240,6 @@ public class HomologeneConverter extends BioFileConverter
     private String getGene(String ncbiId, String symbol, String taxonId)
             throws ObjectStoreException {
         String identifierType = config.get(taxonId);
-        if (StringUtils.isEmpty(identifierType)) {
-            identifierType = DEFAULT_GENEID_TYPE;
-        }
 
         String resolvedGenePid = resolveGene(taxonId, symbol);
 
@@ -251,8 +250,17 @@ public class HomologeneConverter extends BioFileConverter
         String refId = identifiersToGenes.get(new MultiKey(taxonId, resolvedGenePid));
         if (refId == null) {
             Item item = createItem("Gene");
-            item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            item.setAttribute(identifierType, symbol);
+
+            // Unresolved ids should not be set as primaryidentifier
+            if (!resolvedGenePid.equals(symbol)) {
+                item.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
+            }
+            // NB: in case of yeast, homologen use mixture of symbol, systematic name or alias.
+            //     Don't enforce to assign ids to a field. But for other organism so far, ids are
+            //     symbols. Config in the properties file if want to keep those ids as symbol.
+            if (!StringUtils.isEmpty(identifierType)) {
+                item.setAttribute(identifierType, symbol);
+            }
             item.setReference("organism", getOrganism(taxonId));
             refId = item.getIdentifier();
             identifiersToGenes.put(new MultiKey(taxonId, resolvedGenePid), refId);

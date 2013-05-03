@@ -59,11 +59,15 @@
       <xs:attribute name="constraintLogic" type="xs:string"
         use="optional" />
     </xs:complexType>
+
+    <xs:complexType name="nullValueType">
+    </xs:complexType>
     
     <xs:complexType name="constrainttype">
-        <xs:sequence>
-            <xs:element name="value" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-        </xs:sequence>
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="value" type="xs:string"/>
+            <xs:element name="nullValue" type="xsq:nullValueType"/>
+        </xs:choice>
         <xs:attribute name="path" type="xs:string" use="required"/>
         <xs:attribute name="op" type="xs:string" use="optional" />
         <xs:attribute name="value" type="xs:string" use="optional" />

@@ -1,7 +1,7 @@
 package org.intermine.bio.web.export;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -69,6 +69,7 @@ public class SequenceExporter implements Exporter
     private int extension; // must > 0
     // Map to hold DNA sequence of a whole chromosome in memory
     private static Map<MultiKey, String> chromosomeSequenceMap = new HashMap<MultiKey, String>();
+    private List<Path> paths = Collections.emptyList();
 
     /**
      * Constructor.
@@ -90,6 +91,17 @@ public class SequenceExporter implements Exporter
         this.extension = extension;
     }
 
+    public SequenceExporter(ObjectStore os, OutputStream outputStream,
+            int featureIndex, Map<String, List<FieldDescriptor>> classKeys, int extension,
+            List<Path> paths) {
+        this.os = os;
+        this.out = outputStream;
+        this.featureIndex = featureIndex;
+        this.classKeys = classKeys;
+        this.extension = extension;
+        this.paths = paths;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -97,10 +109,9 @@ public class SequenceExporter implements Exporter
         return writtenResultsCount;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void export(Iterator<? extends List<ResultElement>> resultIt) {
-        export(resultIt, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+        export(resultIt, paths, paths);
     }
 
     /**
@@ -275,11 +286,22 @@ public class SequenceExporter implements Exporter
             headerBits.add("-");
         }
 
+//        List<Object> keyFieldValues =
+//                ClassKeyHelper.getKeyFieldValues((FastPathObject) object, this.classKeys);
+//        for (Object key : keyFieldValues) {
+//            if (key != null) {
+//                headerBits.add(key.toString());
+//            }
+//        }
+
+        // here unionPathCollection is newPathCollection
         List<ResultElement> subRow = new ArrayList<ResultElement>();
         if (newPathCollection != null && unionPathCollection != null
                 && unionPathCollection.containsAll(newPathCollection)) {
             for (Path p : newPathCollection) {
-                subRow.add(row.get(((List<Path>) unionPathCollection).indexOf(p)));
+                if (!p.toString().endsWith(".id")) {
+                    subRow.add(row.get(((List<Path>) unionPathCollection).indexOf(p)));
+                }
             }
         } else {
             subRow = row;
@@ -313,6 +335,11 @@ public class SequenceExporter implements Exporter
                     continue;
                 }
 
+                // Disable collection export until further bug diagnose
+                if (re.getPath().containsCollections()) {
+                  continue;
+                }
+
                 Object fieldValue = re.getField();
                 if (fieldValue == null) {
                     headerBits.add("-");
@@ -332,6 +359,11 @@ public class SequenceExporter implements Exporter
             for (ResultElement re : subRow) {
                 if (re == null) {
                     continue;
+                }
+
+                // Disable collection export until further bug diagnose
+                if (re.getPath().containsCollections()) {
+                  continue;
                 }
 
                 Object fieldValue = re.getField();

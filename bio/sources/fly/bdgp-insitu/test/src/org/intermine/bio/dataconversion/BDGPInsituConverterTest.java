@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.bio.dataconversion;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.dataconversion.ItemsTestCase;
 import org.intermine.dataconversion.MockItemWriter;
 import org.intermine.metadata.Model;
@@ -40,10 +41,9 @@ public class BDGPInsituConverterTest extends ItemsTestCase
     public void setUp() throws Exception {
         itemWriter = new MockItemWriter(new HashMap<String, Item>());
         converter = new BDGPInsituConverter(itemWriter, model);
-        MockIdResolverFactory resolverFactory = new MockIdResolverFactory("Gene");
-        resolverFactory.addResolverEntry("7227", "FBgn001", Collections.singleton("CG10002"));
-        resolverFactory.addResolverEntry("7227", "FBgn002", Collections.singleton("CG100022"));
-        converter.resolverFactory = resolverFactory;
+        converter.rslv = IdResolverService.getMockIdResolver("Gene");
+        converter.rslv.addResolverEntry("7227", "FBgn001", Collections.singleton("CG10002"));
+        converter.rslv.addResolverEntry("7227", "FBgn002", Collections.singleton("CG100022"));
     }
 
     public void testConstruct() throws Exception {

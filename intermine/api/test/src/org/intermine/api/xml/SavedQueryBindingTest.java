@@ -1,7 +1,7 @@
 package org.intermine.api.xml;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -33,11 +33,10 @@ public class SavedQueryBindingTest extends TestCase
     public void testMarshalSavedQuery() throws Exception {
         PathQuery query = new PathQuery(model);
         SavedQuery sq = new SavedQuery("hello", created, query);
-
         String xml = SavedQueryBinding.marshal(sq, PathQuery.USERPROFILE_VERSION);
         SavedQuery sq2 = (SavedQuery) SavedQueryBinding.unmarshal(new StringReader(xml),
                 new HashMap(), PathQuery.USERPROFILE_VERSION).values().iterator().next();
-
-        assertEquals(sq, sq2);
+        String expected = "\n<saved-query name=\"hello\" date-created=\"1124276877010\"><query name=\"hello\" model=\"testmodel\" view=\"\" longDescription=\"\"></query></saved-query>";
+        assertEquals(expected, xml);
     }
 }

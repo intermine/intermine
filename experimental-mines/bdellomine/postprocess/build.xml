@@ -1,7 +1,0 @@
-<project name="bdellomine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for bdellomine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>

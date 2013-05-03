@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.intermine.bio.dataconversion.IdResolver;
+import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
 import org.intermine.xml.full.Attribute;
@@ -36,8 +38,8 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     private Map<String, Item> anatomyMap = new LinkedHashMap<String, Item>();
     private Map<String, Item> geneMap = new HashMap<String, Item>();
     private Map<String, Item> publications = new HashMap<String, Item>();
-    protected IdResolverFactory resolverFactory;
-    private static final String TAXON_ID = "7227";
+    private static final String TAXON_FLY = "7227";
+    protected IdResolver rslv;
 
     protected static final Logger LOG = Logger.getLogger(RedFlyGFF3RecordHandler.class);
 
@@ -47,8 +49,6 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
      */
     public RedFlyGFF3RecordHandler (Model tgtModel) {
         super(tgtModel);
-        // only construct factory here so can be replaced by mock factory in tests
-        resolverFactory = new FlyBaseIdResolverFactory("gene");
     }
 
     /**
@@ -56,6 +56,10 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
      */
     @Override
     public void process(GFF3Record record) {
+        if (rslv == null) {
+            rslv = IdResolverService.getFlyIdResolver();
+        }
+
         Item feature = getFeature();
 
         feature.setClassName("CRM");
@@ -147,16 +151,18 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
     }
 
     private Item getGene(String geneId) {
-        // try to resolve this id to a current FlyBase identifier
-        IdResolver resolver = resolverFactory.getIdResolver();
-        int resCount = resolver.countResolutions(TAXON_ID, geneId);
+        if (rslv == null || !rslv.hasTaxon(TAXON_FLY)) {
+            return null;
+        }
+
+        int resCount = rslv.countResolutions(TAXON_FLY, geneId);
         if (resCount != 1) {
             LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                      + geneId + " count: " + resCount + " FBgn: "
-                     + resolver.resolveId(TAXON_ID, geneId));
+                     + rslv.resolveId(TAXON_FLY, geneId));
             return null;
         }
-        String primaryIdentifier = resolver.resolveId(TAXON_ID, geneId).iterator().next();
+        String primaryIdentifier = rslv.resolveId(TAXON_FLY, geneId).iterator().next();
         Item geneItem = geneMap.get(primaryIdentifier);
         if (geneItem == null) {
             geneItem = converter.createItem("Gene");

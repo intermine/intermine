@@ -1,7 +1,7 @@
 package org.intermine.api.mines;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -123,12 +123,15 @@ public final class FriendlyMineQueryRunner
             String url = mine.getUrl() + WEBSERVICE_URL + RELEASE_VERSION_URL;
             BufferedReader reader = runWebServiceQuery(url);
             final String msg = "Unable to retrieve release version for " + mine.getName();
-            String newReleaseVersion;
-            try {
-                newReleaseVersion = IOUtils.toString(reader);
-            } catch (Exception e) {
-                LOG.warn(msg, e);
-                continue;
+            String newReleaseVersion = null;
+            
+            if (reader != null) {
+                try {
+                    newReleaseVersion = IOUtils.toString(reader);
+                } catch (Exception e) {
+                    LOG.warn(msg, e);
+                    continue;
+                }
             }
 
             if (StringUtils.isBlank(newReleaseVersion)
@@ -145,7 +148,6 @@ public final class FriendlyMineQueryRunner
 
                 // update release version
                 mine.setReleaseVersion(newReleaseVersion);
-
                 clearCache = true;
             }
         }

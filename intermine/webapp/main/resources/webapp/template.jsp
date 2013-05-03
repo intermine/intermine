@@ -322,7 +322,7 @@
 <c:if test="${empty builder && !empty displayLogicExpression}">
 <div id="constraintLogicContainer" class="templateConstraintLogic">
 <strong><fmt:message key="query.constraintLogic"/>: </strong>
-<c:out value="${templateQuery.constraintLogic}"/>
+<c:out value="${templateQuery.constraintLogicForEditableConstraints}"/>
 </div>
 </c:if>
 </div>

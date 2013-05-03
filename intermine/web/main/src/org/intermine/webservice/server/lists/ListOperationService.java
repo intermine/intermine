@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.lists;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,9 +13,18 @@ package org.intermine.webservice.server.lists;
 import java.util.Arrays;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.intermine.api.InterMineAPI;
+import org.intermine.api.bag.operations.BagOperation;
+import org.intermine.api.bag.operations.BagOperationException;
+import org.intermine.api.bag.operations.IncompatibleTypes;
+import org.intermine.api.bag.operations.InternalBagOperationException;
+import org.intermine.api.bag.operations.NoContent;
 import org.intermine.api.profile.InterMineBag;
 import org.intermine.api.profile.Profile;
+import org.intermine.webservice.server.exceptions.BadRequestException;
+import org.intermine.webservice.server.exceptions.ServiceException;
 
 /**
  * A base class for services that perform operations on lists.
@@ -33,46 +42,65 @@ public abstract class ListOperationService extends ListMakerService
         super(api);
     }
 
-    /**
-     * Perform the operation on the lists.
-     * @param input The parameters passed with the request.
-     * @param type The class of the objects in the new list.
-     * @param profile The profile any new lists will be saved to.
-     * @param temporaryBagsAccumulator A rubbish bin for temporary bags.
-     *  Anything placed here will be deleted.
-     * @return The size of the newly created list.
-     * @throws Exception if something goes wrong.
-     */
-    protected abstract int doOperation(ListInput input, String type, Profile profile,
-            Set<String> temporaryBagsAccumulator) throws Exception;
-
+    @Override
+    public String getNewListType(ListInput input) {
+        return null; // Not needed, as it can be calculated.
+    }
 
     @Override
-    protected void makeList(ListInput input, String type, Profile profile,
-        Set<String> rubbishbin) throws Exception {
-        int size = doOperation(input, type, profile, rubbishbin);
-        InterMineBag newList;
-        if (size == 0) {
-            output.addResultItem(Arrays.asList("0"));
-            newList = profile.createBag(
-                input.getTemporaryListName(), type, input.getDescription(), im.getClassKeys());
-        } else {
-            newList = profile.getSavedBags().get(input.getTemporaryListName());
-            if (input.getDescription() != null) {
-                newList.setDescription(input.getDescription());
-            }
-            output.addResultItem(Arrays.asList("" + newList.size()));
+    protected ListInput getInput(HttpServletRequest request) {
+        return new CommutativeOperationInput(request, bagManager, getPermission().getProfile());
+    }
+
+    /**
+     * Get the BagOperation that will create the list.
+     * @param input The parameters provided by the user.
+     * @return A BagOperation.
+     */
+    protected abstract BagOperation getOperation(ListInput input);
+
+    @Override
+    protected void makeList(ListInput input, String type, Profile profile, Set<String> rubbishbin)
+            throws Exception {
+
+        int size = 0;
+        InterMineBag newBag;
+        BagOperation operation = getOperation(input);
+        operation.setClassKeys(im.getClassKeys());
+
+        try { // Make sure we can clean up if ANYTHING goes wrong.
+            rubbishbin.add(operation.getNewBagName());
+        } catch (IncompatibleTypes e) {
+            throw new BadRequestException("Incompatible types", e);
         }
+
+        try {
+            newBag = operation.operate();
+            size = newBag.getSize();
+        } catch (NoContent e) {
+            // This service guarantees a bag, even an empty one.
+            size = 0;
+            newBag = profile.createBag(
+                operation.getNewBagName(), // If this throws, it should have done so by now.
+                operation.getNewBagType(), // If this throws, it should have done so by now.
+                input.getDescription(),
+                im.getClassKeys());
+        }
+
+        if (input.getDescription() != null) {
+            newBag.setDescription(input.getDescription());
+        }
+        if (!input.getTags().isEmpty()) {
+            bagManager.addTagsToBag(input.getTags(), newBag, profile);
+        }
+
+        output.addResultItem(Arrays.asList("" + size));
+
         if (input.doReplace()) {
             ListServiceUtils.ensureBagIsDeleted(profile, input.getListName());
         }
-        if (!input.getTags().isEmpty()) {
-            bagManager.addTagsToBag(input.getTags(),
-                    profile.getSavedBags().get(input.getTemporaryListName()),
-                    profile);
-        }
-        profile.renameBag(input.getTemporaryListName(), input.getListName());
 
+        profile.renameBag(newBag.getName(), input.getListName());
     }
 
 }

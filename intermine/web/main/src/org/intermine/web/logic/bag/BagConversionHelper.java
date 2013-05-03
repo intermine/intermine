@@ -1,7 +1,7 @@
 package org.intermine.web.logic.bag;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -19,16 +19,13 @@ import org.intermine.InterMineException;
 import org.intermine.api.InterMineAPI;
 import org.intermine.api.bag.TypeConverter;
 import org.intermine.api.profile.InterMineBag;
-import org.intermine.api.profile.Profile;
-import org.intermine.api.query.WebResultsExecutor;
-import org.intermine.api.results.WebResults;
 import org.intermine.api.template.ApiTemplate;
 import org.intermine.metadata.Model;
 import org.intermine.objectstore.ObjectStoreException;
+import org.intermine.objectstore.query.Query;
 import org.intermine.pathquery.Path;
 import org.intermine.pathquery.PathException;
 import org.intermine.pathquery.PathQuery;
-import org.intermine.template.TemplateQuery;
 import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.pathqueryresult.PathQueryResultHelper;
@@ -54,7 +51,7 @@ public class BagConversionHelper
      * @throws InterMineException if an error occurs
      * @throws ObjectStoreException if an error occurs
      */
-    public static WebResults getConvertedObjects(HttpSession session,
+    public static PathQuery getConvertedObjects(HttpSession session,
             List<ApiTemplate> conversionTemplates, Class typeA, Class typeB,
             InterMineBag imBag) throws InterMineException, ObjectStoreException {
         ServletContext servletContext = session.getServletContext();
@@ -76,18 +73,16 @@ public class BagConversionHelper
         WebConfig webConfig = SessionMethods.getWebConfig(servletContext);
         Model model = im.getModel();
         String typeBStr = TypeUtil.unqualifiedName(typeB.getName());
-        // bit hacky, remove any remainging ids on the view
+
+        pq.addViews(PathQueryResultHelper.getDefaultViewForClass(typeBStr, model, webConfig,
+                convertFrom));
+        // bit hacky, remove any remaining ids on the view
         List<String> views = pq.getView();
         for (String viewPath : views) {
             if (viewPath.endsWith(".id")) {
                 pq.removeView(viewPath);
             }
         }
-        pq.addViews(PathQueryResultHelper.getDefaultViewForClass(typeBStr, model, webConfig,
-                convertFrom));
-
-        Profile profile = SessionMethods.getProfile(session);
-        WebResultsExecutor executor = im.getWebResultsExecutor(profile);
-        return executor.execute(pq);
+        return pq;
     }
 }

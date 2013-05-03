@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -20,6 +20,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -35,6 +38,7 @@ import org.apache.log4j.Logger;
  * primary identifier(s).
  *
  * @author rns
+ * @author Fengyuan Hu
  */
 public class IdResolver
 {
@@ -49,9 +53,9 @@ public class IdResolver
     @SuppressWarnings("unchecked")
     protected Map<MultiKey, Map<String, Set<String>>> orgMainMaps = new MultiKeyMap();
     @SuppressWarnings("unchecked")
-    private Map<MultiKey, Map<String, Set<String>>> orgIdMainMaps = new MultiKeyMap();
+    protected Map<MultiKey, Map<String, Set<String>>> orgIdMainMaps = new MultiKeyMap();
     @SuppressWarnings("unchecked")
-    private Map<MultiKey, Map<String, Set<String>>> orgIdSynMaps = new MultiKeyMap();
+    protected Map<MultiKey, Map<String, Set<String>>> orgIdSynMaps = new MultiKeyMap();
 
     /**
      * Construct and empty IdResolver
@@ -65,6 +69,16 @@ public class IdResolver
      */
     public IdResolver(String clsName) {
         this.clsName = clsName;
+    }
+
+    // check that the given taxon id has some data for it
+    // if an exception thrown, there must be something wrong with resolver factory.
+    protected void checkTaxonId(String taxonId, String clsName) {
+        if (!orgIdMaps.containsKey(new MultiKey(taxonId, clsName))) {
+            throw new IllegalArgumentException(clsName + " IdResolver has "
+                                               + "no data for taxonId: "
+                                               + taxonId + ".");
+        }
     }
 
     /**
@@ -108,7 +122,8 @@ public class IdResolver
             && orgMainMaps.get(new MultiKey(taxonId, clsName)).containsKey(id)) {
             return orgMainMaps.get(new MultiKey(taxonId, clsName)).get(id);
         }
-        if (orgSynMaps.containsKey(new MultiKey(taxonId, clsName))) {
+        if (orgSynMaps.containsKey(new MultiKey(taxonId, clsName))
+            && orgSynMaps.get(new MultiKey(taxonId, clsName)).containsKey(id)) {
             return orgSynMaps.get(new MultiKey(taxonId, clsName)).get(id);
         }
         return Collections.emptySet();
@@ -121,14 +136,20 @@ public class IdResolver
      * @param taxonId the organism to search within
      * @param clsName go term
      * @param ids the identifier set to resolve
-     * @return a map of matching primary identifiers
+     * @return a set of common pid
      */
-    public Map<String, Set<String>> resolveIds(String taxonId, String clsName, Set<String> ids) {
-        Map<String, Set<String>> resolvedIdMap = new HashMap<String, Set<String>>();
-        for (String id : ids) {
-            resolvedIdMap.put(id, resolveId(taxonId, clsName, id));
+    public Set<String> resolveIds(String taxonId, String clsName, List<String> ids) {
+        Set<String> common = new LinkedHashSet<String>();
+        for (int i=0; i<ids.size();i++) {
+            Set<String> resovledSet = resolveId(taxonId, clsName, ids.get(i));
+            if (i == 0) {
+                common.addAll(resovledSet);
+            } else {
+                common.retainAll(resovledSet);
+            }
         }
-        return resolvedIdMap;
+
+        return common;
     }
 
     /**
@@ -151,7 +172,7 @@ public class IdResolver
      * @param ids the identifier set to resolve
      * @return a map of matching primary identifiers
      */
-    public Map<String, Set<String>> resolveIds(String taxonId, Set<String> ids) {
+    public Set<String> resolveIds(String taxonId, List<String> ids) {
         return resolveIds(taxonId, this.clsName, ids);
     }
 
@@ -163,12 +184,12 @@ public class IdResolver
      * @param id the primary identifier to look up
      * @return a set of synonyms or null if id is not a primary identifier
      */
-    public Set<String> getSynonyms(String taxonId, String clsName, String id) {
+    public Set<String> getSynonyms(String taxonId, String clsName, String primaryIdentifier) {
         checkTaxonId(taxonId, clsName);
-        if (!isPrimaryIdentifier(taxonId, clsName, id)) {
+        if (!isPrimaryIdentifier(taxonId, clsName, primaryIdentifier)) {
             return null;
         }
-        return orgIdMaps.get(new MultiKey(taxonId, clsName)).get(id);
+        return orgIdMaps.get(new MultiKey(taxonId, clsName)).get(primaryIdentifier);
     }
 
     /**
@@ -178,8 +199,8 @@ public class IdResolver
      * @param id the primary identifier to look up
      * @return a set of synonyms or null if id is not a primary identifier
      */
-    public Set<String> getSynonyms(String taxonId, String id) {
-        return getSynonyms(taxonId, this.clsName, id);
+    public Set<String> getSynonyms(String taxonId, String primaryIdentifier) {
+        return getSynonyms(taxonId, this.clsName, primaryIdentifier);
     }
 
     /**
@@ -232,7 +253,7 @@ public class IdResolver
      * @return all taxon ids in resolver
      */
     public Set<String> getTaxons() {
-        Set<String> taxonIdSet = new HashSet<String>();
+        Set<String> taxonIdSet = new LinkedHashSet<String>();
         for (MultiKey key : orgIdMaps.keySet()) {
             taxonIdSet.add((String) key.getKey(0));
         }
@@ -329,7 +350,7 @@ public class IdResolver
                 taxonIdAndClsNameMap.put(
                         taxonId,
                         new HashSet<String>(Arrays
-                                .asList(new String[] { taxonId })));
+                                .asList(new String[] { clsName })));
             } else {
                 taxonIdAndClsNameMap.get(taxonId).add(clsName);
             }
@@ -414,11 +435,11 @@ public class IdResolver
      * @param synonyms a set of synonyms
      * @param mainId if true these are main ids, otherwise synonms
     */
-    private void addEntry(String taxonId, String clsName, String primaryIdentifier,
+    protected void addEntry(String taxonId, String clsName, String primaryIdentifier,
             Collection<String> ids, Boolean mainId) {
         Map<String, Set<String>> idMap = orgIdMaps.get(new MultiKey(taxonId, clsName));
         if (idMap == null) {
-            idMap = new HashMap<String, Set<String>>();
+            idMap = new LinkedHashMap<String, Set<String>>();
             orgIdMaps.put(new MultiKey(taxonId, clsName), idMap);
         }
 
@@ -435,20 +456,20 @@ public class IdResolver
 
             reverseMap = orgIdMainMaps.get(new MultiKey(taxonId, clsName));
             if (reverseMap == null) {
-                reverseMap = new HashMap<String, Set<String>>();
+                reverseMap = new LinkedHashMap<String, Set<String>>();
                 orgIdMainMaps.put(new MultiKey(taxonId, clsName), reverseMap);
             }
         } else {
             // these ids are synonyms
             lookupMap = orgSynMaps.get(new MultiKey(taxonId, clsName));
             if (lookupMap == null) {
-                lookupMap = new HashMap<String, Set<String>>();
+                lookupMap = new LinkedHashMap<String, Set<String>>();
                 orgSynMaps.put(new MultiKey(taxonId, clsName), lookupMap);
             }
 
             reverseMap = orgIdSynMaps.get(new MultiKey(taxonId, clsName));
             if (reverseMap == null) {
-                reverseMap = new HashMap<String, Set<String>>();
+                reverseMap = new LinkedHashMap<String, Set<String>>();
                 orgIdSynMaps.put(new MultiKey(taxonId, clsName), reverseMap);
             }
         }
@@ -551,20 +572,14 @@ public class IdResolver
         reader.close();
     }
 
-    // check that the given taxon id has some data for it
-    private void checkTaxonId(String taxonId, String clsName) {
-        if (!orgIdMaps.containsKey(new MultiKey(taxonId, clsName))) {
-            throw new IllegalArgumentException(clsName + " IdResolver has "
-                                               + "no data for taxonId: "
-                                               + taxonId + ".");
-        }
-    }
+    // TODO populate part from file with given taxons and classes, what if there
+    // are some data nonexists? Maybe not a good idea...
 
     // add a new list to a map or add elements of set to existing map entry
     private void addToMapList(Map<String, Set<String>> map, String key, Collection<String> values) {
         Set<String> set = map.get(key);
         if (set == null) {
-            set = new HashSet<String>();
+            set = new LinkedHashSet<String>();
             map.put(key, set);
         }
         set.addAll(values);

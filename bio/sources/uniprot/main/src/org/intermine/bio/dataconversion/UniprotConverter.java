@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -112,7 +112,7 @@ public class UniprotConverter extends BioDirectoryConverter
 
         // init id resolver
         if (rslv == null) {
-            rslv = IdResolverService.getIdResolverByOrganism(FLY);
+            rslv = IdResolverService.getFlyIdResolver();
         }
 
         if (taxonIds != null) {

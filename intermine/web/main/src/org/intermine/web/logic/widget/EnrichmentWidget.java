@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,6 +10,7 @@ package org.intermine.web.logic.widget;
  *
  */
 
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,44 +34,44 @@ import org.intermine.pathquery.Constraints;
 import org.intermine.pathquery.OrderDirection;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathQuery;
+import org.intermine.util.TypeUtil;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
+import org.intermine.web.logic.widget.config.WidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfigUtil;
 
 /**
  * @author "Xavier Watkins"
- * @author dbutano
+ * @author Daniela Butano
  *
  */
 public class EnrichmentWidget extends Widget
 {
-
     private static final Logger LOG = Logger.getLogger(EnrichmentWidget.class);
-    private int notAnalysed = 0;
-    private InterMineBag bag;
     private InterMineBag populationBag;
-    private ObjectStore os;
     private String filter;
     private EnrichmentResults results;
     private String errorCorrection, max;
+    private boolean extraCorrectionCoefficient = false;
+    private CorrectionCoefficient correctionCoefficient = null;
     private EnrichmentWidgetImplLdr ldr;
     private String pathConstraint;
     private ClassDescriptor typeDescriptor;
 
 
     /**
-import org.intermine.webservice.server.exceptions.BadRequestException;
-import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
-
      * @param config widget config
      * @param interMineBag bag for this widget
-     * @param os object store
+     * @param populationBag the reference population
+     * @param os object storegene
      * @param errorCorrection which error correction to use (Bonferroni, etc)
+     * @param extraCorrectionCoefficient if true correction coefficient has been selected
      * @param max maximum value to display (0 - 1)
      * @param filter filter to use (ie Ontology)
      */
     public EnrichmentWidget(EnrichmentWidgetConfig config, InterMineBag interMineBag,
                             InterMineBag populationBag, ObjectStore os,
-                            String filter, String max, String errorCorrection) {
+                            String filter, String max, String errorCorrection,
+                            String extraCorrectionCoefficient) {
         super(config);
         this.bag = interMineBag;
         this.populationBag = populationBag;
@@ -79,7 +80,26 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         this.errorCorrection = errorCorrection;
         this.max = max;
         this.filter = filter;
+
         validateBagType();
+        String correctionCoefficientClassName = (config.getCorrectionCoefficient() != null)
+                                               ? config.getCorrectionCoefficient().trim()
+                                               : "";
+        if (!correctionCoefficientClassName.isEmpty()) {
+            try {
+                Class<?> clazz = Class.forName(correctionCoefficientClassName);
+                Constructor<?> c = clazz.getConstructor(new Class[] {WidgetConfig.class,
+                    ObjectStore.class, InterMineBag.class});
+                correctionCoefficient =  (CorrectionCoefficient) c.newInstance(new Object[] {
+                    config, os, bag});
+                this.extraCorrectionCoefficient = correctionCoefficient
+                    .isSelected(extraCorrectionCoefficient);
+            } catch (ClassNotFoundException cnfe) {
+                LOG.error(cnfe);
+            } catch (Exception e) {
+                LOG.error(e);
+            }
+        }
         process();
     }
 
@@ -90,7 +110,8 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     private void validateBagType() {
         ClassDescriptor bagType = os.getModel().getClassDescriptorByName(bag.getType());
         if (bagType == null) {
-            throw new IllegalArgumentException("This bag has a type not found in the current model: " + bag.getType());
+            throw new IllegalArgumentException("This bag has a type not found in the current "
+                                              + "model: " + bag.getType());
         }
         if ("InterMineObject".equals(typeDescriptor.getName())) {
             return; // This widget accepts anything, however useless.
@@ -100,8 +121,8 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
             return; // Sub-class.
         }
         throw new IllegalArgumentException(
-            String.format("The %s enrichment query only accepts lists of %s, but you provided a list of %s",
-                config.getId(), config.getTypeClass(), bag.getType()));
+            String.format("The %s enrichment query only accepts lists of %s, but you provided a "
+                + "list of %s ", config.getId(), config.getTypeClass(), bag.getType()));
     }
 
     /**
@@ -111,10 +132,12 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     public void process() {
         try {
             ldr = new EnrichmentWidgetImplLdr(bag, populationBag, os,
-                (EnrichmentWidgetConfig) config, filter);
+                  (EnrichmentWidgetConfig) config, filter, extraCorrectionCoefficient,
+                  correctionCoefficient);
             EnrichmentInput input = new EnrichmentInputWidgetLdr(os, ldr);
             Double maxValue = Double.parseDouble(max);
-            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection);
+            results = EnrichmentCalculation.calculate(input, maxValue, errorCorrection,
+                                           extraCorrectionCoefficient, correctionCoefficient);
             setNotAnalysed(bag.getSize() - results.getAnalysedTotal());
         } catch (ObjectStoreException e) {
             // TODO Auto-generated catch block
@@ -138,20 +161,6 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List getElementInList() {
         return new Vector();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getNotAnalysed() {
-        return notAnalysed;
-    }
-
-    /**
-    * {@inheritDoc}
-     */
-    public void setNotAnalysed(int notAnalysed) {
-        this.notAnalysed = notAnalysed;
     }
 
     /**
@@ -332,12 +341,12 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         String subClassType = "";
         String subClassPath = "";
         EnrichmentWidgetConfig ewc = ((EnrichmentWidgetConfig) config);
-        if (((EnrichmentWidgetConfig) config).getEnrichIdentifier() != null) {
+        if (ewc.getEnrichIdentifier() != null) {
             enrichIdentifier = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrichIdentifier();
+                + ewc.getEnrichIdentifier();
         } else {
             String enrichPath = config.getStartClass() + "."
-                + ((EnrichmentWidgetConfig) config).getEnrich();
+                + ewc.getEnrich();
             if (WidgetConfigUtil.isPathContainingSubClass(model, enrichPath)) {
                 subClassContraint = true;
                 subClassType = enrichPath.substring(enrichPath.indexOf("[") + 1,
@@ -350,7 +359,7 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         }
 
         String startClassDisplayView = config.getStartClass() + "."
-            + ((EnrichmentWidgetConfig) config).getStartClassDisplay();
+            + ewc.getStartClassDisplay();
         pathQuery.addView(enrichIdentifier);
         pathQuery.addView(startClassDisplayView);
         pathQuery.addOrderBy(enrichIdentifier, OrderDirection.ASC);
@@ -362,12 +371,20 @@ import org.intermine.webservice.server.exceptions.ResourceNotFoundException;
         }
         //constraints for view
         List<PathConstraint> pathConstraintsForView =
-            ((EnrichmentWidgetConfig) config).getPathConstraintsForView();
+            ewc.getPathConstraintsForView();
         if (pathConstraintsForView != null) {
             for (PathConstraint pc : pathConstraintsForView) {
                 pathQuery.addConstraint(pc);
             }
         }
         return pathQuery;
+    }
+
+    /**
+     * Return the correction coefficient used by the widget
+     * @return
+     */
+    public CorrectionCoefficient getExtraCorrectionCoefficient() {
+        return correctionCoefficient;
     }
 }

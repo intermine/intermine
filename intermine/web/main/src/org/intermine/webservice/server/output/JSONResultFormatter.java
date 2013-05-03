@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,17 +10,14 @@ package org.intermine.webservice.server.output;
  *
  */
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.JSONArray;
-import org.json.JSONException;
+
 import org.apache.commons.lang.StringEscapeUtils;
-import org.intermine.webservice.server.exceptions.InternalErrorException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * @author Alexis Kalderimis
@@ -40,79 +37,71 @@ public abstract class JSONResultFormatter extends JSONFormatter
      * The key for the model name
      */
     public static final String KEY_MODEL_NAME = "modelName";
-    /**
-     * The key for the execution time
-     */
-    public static final String KEY_TIME = "executionTime";
-
 
     /**
-     * Starts the result set object, and sets the attributes given into it
-     * @see org.intermine.webservice.server.output.Formatter#formatHeader(java.util.Map)
-     * @return the header
+     * This differs from the JSONFormatter implementation in that it will output
+     * a representation of all keys in the attributes map.
      * @param attributes the attributes passed in from the containing output
+     * @param sb The buffer containing the header so far.
      */
     @Override
-    public String formatHeader(Map<String, Object> attributes) {
-        String superResults = super.formatHeader(attributes);
-        StringBuilder sb = new StringBuilder(superResults);
-        if (attributes != null) {
-            for (String key : attributes.keySet()) {
-                if (KEY_CALLBACK.equals(key)) { continue; }
-                sb.append("\"" + key + "\":");
-                // Format lists as arrays
-                if (attributes.get(key) instanceof List) {
-                        JSONArray ja = new JSONArray((List) attributes.get(key));
-                        sb.append(ja.toString());
-                } else {
-                    // Format as attribute
-                    String attr = (attributes.get(key) == null) ? null : attributes.get(key).toString();
-                    sb.append(quote(StringEscapeUtils.escapeJava(attr)));
-                }
-                sb.append(",");
-            }
+    protected void formatAttributes(Map<String, Object> attributes, StringBuilder sb) {
+        if (sb         == null) throw new NullPointerException("sb must not be null");
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        } else {
+            attributes = new LinkedHashMap<String, Object>(attributes);
         }
-        sb.append("\"results\":[");
-        return sb.toString();
+        if (!attributes.containsKey(KEY_INTRO)) {
+            attributes.put(KEY_INTRO, "\"results\":[");
+        }
+        if (!attributes.containsKey(KEY_OUTRO)) {
+            attributes.put(KEY_OUTRO, "]");
+        }
+
+        // Handle all non-reserved keys in the attribute map.
+        for (String key : attributes.keySet()) {
+            if (RESERVED_KEYS.contains(key)) { continue; }
+            Object val = attributes.get(key);
+            sb.append("\"" + key + "\":");
+
+            if (val instanceof List) {
+                // Format lists as arrays
+                JSONArray ja = new JSONArray((List) val);
+                sb.append(ja.toString());
+            } else if (val instanceof Map) {
+                // Format maps as objects
+                JSONObject jo = new JSONObject((Map) val);
+                sb.append(jo.toString());
+            } else {
+                // Format as value (string, number, boolean, null)
+                sb.append(quote(val));
+            }
+            sb.append(",");
+        }
+        super.formatAttributes(attributes, sb);
     }
 
     private String quote(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        String sth = o.toString();
-        if (attrNeedsQuotes(sth)) {
+        String sth = StringEscapeUtils.escapeJava(String.valueOf(o).trim());
+        if (attrNeedsQuotes(o, sth)) {
             return "\"" + sth + "\"";
         } else {
             return sth;
         }
     }
 
-    private boolean attrNeedsQuotes(String attr) {
+    private boolean attrNeedsQuotes(Object attr, String asString) {
         if (attr == null) {
             return false;
         }
-        return !attr.startsWith("{") // it is a javascript object
-                && !attr.startsWith("[") // it is a javascript array
-                && !attr.matches("[-+]?\\d+(\\.\\d+)?"); // it is numeric
-    }
-
-    /**
-     * Closes the remaining open brackets (the root class array, and the
-     * overall result set object), and adds an execution time property.
-     * @see org.intermine.webservice.server.output.Formatter#formatFooter()
-     * @return The formatted footer string.
-     */
-    @Override
-    public String formatFooter(String errorMessage, int errorCode) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("],");
-        Date now = Calendar.getInstance().getTime();
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
-        String executionTime = dateFormatter.format(now);
-        sb.append("\"" + JSONResultFormatter.KEY_TIME + "\":\"" + executionTime + "\"");
-        declarePrinted();
-        sb.append(super.formatFooter(errorMessage, errorCode));
-        return sb.toString();
+        if (attr instanceof Number) {
+            return false;
+        }
+        // Very ugly, but a js literal may have been placed here as a string.
+        // it would be nice to remove this.
+        return !asString.startsWith("{") // it is a javascript object
+                && !asString.startsWith("[") // it is a javascript array
+                && !asString.matches("[-+]?\\d+(\\.\\d+)?"); // it is numeric
     }
 }

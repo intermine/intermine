@@ -1,7 +1,7 @@
 package org.intermine.web.logic.widget.config;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -260,6 +260,9 @@ public abstract class WidgetConfig
                     value = splitConstraint[1];
                 }
             }
+            if (!value.contains("[") && !path.contains("]")) {
+                value = value.toLowerCase();
+            }
             pathConstraints.add(new PathConstraintAttribute(path, op, value));
         }
     }
@@ -270,8 +273,9 @@ public abstract class WidgetConfig
 
     /**
      * @param imBag the bag for this widget
+     * @param populationBag the population bag
      * @param os objectstore
-     * @param attributes extra attribute - like organism
+     * @param attributes extra attribute - like organism or gene length correction coefficient
      * @return the widget
      */
     public abstract Widget getWidget(InterMineBag imBag, InterMineBag populationBag,ObjectStore os,

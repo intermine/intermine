@@ -1,7 +1,0 @@
-<project name="pharmine-postprocess" default="default" basedir=".">
-
-  <description>perform post processing for pharmine</description>
-
-  <import file="../../imbuild/postprocess.xml"/>
-
-</project>

@@ -11,11 +11,11 @@
     <fields>
       <fieldconfig fieldExpr="name" showInSummary="true" showInInlineCollection="true" showInResults="true"/>
       <fieldconfig fieldExpr="department.name" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works In"/>
-      <fieldconfig fieldExpr="department.manager.name" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Under"/>
+      <fieldconfig fieldExpr="department.manager.name" showInSummary="true" outerInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Under"/>
       <fieldconfig fieldExpr="department.company.name" showInSummary="true" showInResults="true" showInInlineCollection="false" label="Works For"/>
       <fieldconfig fieldExpr="age" showInSummary="false" showInResults="false" showInInlineCollection="true" label="Years Alive"/>
       <fieldconfig fieldExpr="fullTime" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Works Full Time?"/>
-      <fieldconfig fieldExpr="address.address" showInSummary="true" showInResults="true" showInInlineCollection="true" label="Lives At"/>
+      <fieldconfig fieldExpr="address.address" showInSummary="true" outerInSummary="true" showInResults="true" showInInlineCollection="true" label="Lives At"/>
     </fields>
   </class>
 
@@ -63,7 +63,7 @@
                      className="org.intermine.model.testmodel.web.EmployeeExporter"/>
 
      <widgets>
-<!--            <graphdisplayer id="age_groups"
+         <graphdisplayer id="age_groups"
                       title="Age Groups Distribution"
                       description="Demographic distribution of employees by age group"
                       graphType="ColumnChart"
@@ -75,7 +75,7 @@
                       seriesPath=""
                       seriesValues=""
                       seriesLabels=""
-                      views="name,age,fullTime,department.name"/> -->
+                      views="name,age,fullTime,department.name"/>
          <graphdisplayer id="full_part_time"
                       title="Full-Time Status by Department"
                       description="For each department associated with an item show the number of workers in that department in full or part-time employment"
@@ -88,16 +88,21 @@
                       seriesPath="fullTime"
                       seriesValues="true,false"
                       seriesLabels="Full-Time,Part-Time"
-                      views="id,name,age,fullTime,department.name"/>
+                      views="name,age,fullTime,department.name"/>
+         <graphdisplayer id="company_distribution"
+                 startClass="Employee"
+                 typeClass="Employee"
+                 title="Company Affiliation"
+                 description="Percentage of employees belonging to each company"
+                 graphType="PieChart"
+                 domainLabel="Company"
+                 rangeLabel="No. of employees"
+                 categoryPath="department.company.name"
+                 seriesPath=""
+                 seriesValues=""
+                 seriesLabels=""
+                 views="name,age,fullTime,department.company.name"/>
      <!--
-         <graphdisplayer id="age_groups"
-                 dataSetLoader="org.intermine.model.testmodel.web.widget.AgeGroupLdr"
-                 typeClass="org.intermine.model.testmodel.Employee"
-                 title="Age Groups Distribution"
-                 description="Demographic distribution of employees by age group"
-                 domainLabel="Age Group"
-                 rangeLabel="Count"
-                 graphType="BarChart"/>
          <graphdisplayer id="age_salary"
                  dataSetLoader="org.intermine.model.testmodel.web.widget.AgeSalaryLdr"
                  typeClass="org.intermine.model.testmodel.CEO"
@@ -106,14 +111,6 @@
                  domainLabel="Age"
                  rangeLabel="Salary"
                  graphType="XYLineChart"/>
-         <graphdisplayer id="company_distribution"
-                 dataSetLoader="org.intermine.model.testmodel.web.widget.CompanyDistLdr"
-                 typeClass="org.intermine.model.testmodel.Employee"
-                 title="Company Affiliation"
-                 description="Percentage of employees belonging to each company"
-                 domainLabel="Company"
-                 rangeLabel="No. of employees"
-                 graphType="PieChart"/>
          <graphdisplayer id="age_seniority"
                  dataSetLoader="org.intermine.model.testmodel.web.widget.AgeSeniorityLdr"
                  typeClass="org.intermine.model.testmodel.Manager"

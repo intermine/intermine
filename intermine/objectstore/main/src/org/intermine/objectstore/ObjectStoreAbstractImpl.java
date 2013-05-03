@@ -1,7 +1,7 @@
 package org.intermine.objectstore;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -22,6 +22,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.log4j.Logger;
+import org.intermine.metadata.MetaDataException;
 import org.intermine.metadata.Model;
 import org.intermine.model.InterMineObject;
 import org.intermine.objectstore.query.Clob;
@@ -33,9 +35,6 @@ import org.intermine.objectstore.query.ResultsRow;
 import org.intermine.objectstore.query.SingletonResults;
 import org.intermine.util.CacheMap;
 import org.intermine.util.PropertiesUtil;
-import org.intermine.metadata.MetaDataException;
-
-import org.apache.log4j.Logger;
 
 /**
  * Abstract implementation of the ObjectStore interface. Used to provide uniformity
@@ -78,9 +77,19 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
         this.model = model;
         Properties props = PropertiesUtil.getPropertiesStartingWith("os.query");
         props = PropertiesUtil.stripStart("os.query", props);
-        maxLimit = Integer.parseInt((String) props.get("max-limit"));
-        maxOffset = Integer.parseInt((String) props.get("max-offset"));
-        maxTime = Long.parseLong((String) props.get("max-time"));
+
+        if (props.get("max-limit") != null) {
+            maxLimit = Integer.parseInt((String) props.get("max-limit"));
+        }
+
+        if (props.get("max-offset") != null) {
+            maxOffset = Integer.parseInt((String) props.get("max-offset"));
+        }
+
+        if (props.get("max-time") != null) {
+            maxTime = Long.parseLong((String) props.get("max-time"));
+        }
+
         LOG.info("Creating new " + getClass().getName() + " with sequence = " + sequenceNumber
                 + ", model = \"" + model.getName() + "\"");
         cache = new CacheMap<Integer, InterMineObject>(getClass().getName() + " with sequence = "
@@ -234,7 +243,7 @@ public abstract class ObjectStoreAbstractImpl implements ObjectStore
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings({ "cast", "unchecked" })
+    @SuppressWarnings({ "cast", "unchecked", "rawtypes" })
     public List<InterMineObject> getObjectsByIds(Collection<Integer> ids)
         throws ObjectStoreException {
         Results results = executeSingleton(QueryCreator.createQueryForIds(ids,

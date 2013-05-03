@@ -1,7 +1,7 @@
 package org.intermine.template;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -24,7 +24,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.intermine.pathquery.LogicExpression;
 import org.intermine.pathquery.PathConstraint;
 import org.intermine.pathquery.PathConstraintLookup;
 import org.intermine.pathquery.PathConstraintLoop;
@@ -520,6 +520,7 @@ public class TemplateQuery extends PathQuery
         return res;
     }
 
+    // Only switched-on constraints are relevant.
     public synchronized Map<PathConstraint, String> getRelevantConstraints() {
         Map<PathConstraint, String> retVal
             = new LinkedHashMap<PathConstraint, String>(getConstraints());
@@ -538,44 +539,25 @@ public class TemplateQuery extends PathQuery
         return retVal;
     }
 
+    @Override
+    protected String getCommonJsonConstraintPrefix(String code, PathConstraint con) {
+        StringBuilder sb = new StringBuilder(super.getCommonJsonConstraintPrefix(code, con));
+        SwitchOffAbility soa = getSwitchOffAbility(con);
+        sb.append(String.format(",\"editable\":%b",     isEditable(con)));
+        sb.append(String.format(",\"switchable\":%b",   soa != SwitchOffAbility.LOCKED));
+        sb.append(String.format(",\"switched\":\"%s\"", soa));
+        return sb.toString();
+    }
+
     /**
      * Returns a JSON string representation of the template query.
      * TODO: !! fix confusion between toJson and toJSON !!
      * @return A string representation of the template query.
      */
     public synchronized String toJSON() {
-        StringBuffer sb = new StringBuffer("{");
-        addJsonProperty(sb, "name", getName());
-        addJsonProperty(sb, "title", getTitle());
-        addJsonProperty(sb, "description", getDescription());
-        addJsonProperty(sb, "comment", getComment());
-        addJsonProperty(sb, "view", getView());
-
-        sb.append(",\"constraints\":[");
-        Iterator<PathConstraint> iter = getEditableConstraints().iterator();
-        Map<PathConstraint, String> codeForConstraint = getConstraints();
-        while (iter.hasNext()) {
-            PathConstraint pc = iter.next();
-            StringBuffer pcw = new StringBuffer("{");
-
-            addJsonProperty(pcw, "path", pc.getPath());
-            addJsonProperty(pcw, "op", pc.getOp().toString());
-            addJsonProperty(pcw, "value", PathConstraint.getValue(pc));
-            addJsonProperty(pcw, "code", codeForConstraint.get(pc));
-            addJsonProperty(pcw, "extraValue", PathConstraint.getExtraValue(pc));
-
-            pcw.append("}");
-
-            sb.append(pcw.toString());
-            if (iter.hasNext()) {
-                sb.append(",");
-            }
-        }
-        sb.append("]");
-
-        sb.append("}");
-        return sb.toString();
+        return this.toJson();
     }
+
     /**
      * Returns true if the TemplateQuery has been edited by the user and is therefore saved only in
      * the query history.
@@ -613,8 +595,7 @@ public class TemplateQuery extends PathQuery
 
     /**
      * Verify templates don't contain non-editable lookup constraints
-     * @param template to validate
-     * @return true id the tempalte is valid
+     * @return true id the template is valid
      */
     public boolean validateLookupConstraints() {
         Map<PathConstraint, String> pathConstraints = getConstraints();
@@ -625,5 +606,22 @@ public class TemplateQuery extends PathQuery
             }
         }
         return true;
+    }
+
+    /**
+    * Return the constraint logic modified to contain only the blocks with editable constraints
+    * @return the string representing the logic expression modified
+    */
+    public synchronized String getConstraintLogicForEditableConstraints() {
+        List<String> editableConstraintCodes = new ArrayList<String>();
+        Map<PathConstraint, String> allConstraints = getConstraints();
+        for (PathConstraint pc : editableConstraints) {
+            editableConstraintCodes.add(allConstraints.get(pc));
+        }
+        LogicExpression logicExpression = getLogicExpression();
+        if (logicExpression == null) {
+            return "";
+        }
+        return getLogicExpression().getPartialString(editableConstraintCodes);
     }
 }

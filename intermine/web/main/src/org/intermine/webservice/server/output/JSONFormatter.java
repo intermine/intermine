@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.output;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -10,14 +10,25 @@ package org.intermine.webservice.server.output;
  *
  */
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
+
+import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
 
 /**
  * Base class for formatters that process JSON data. The
@@ -52,6 +63,22 @@ public class JSONFormatter extends Formatter {
      * this stern imprecation.
      */
     public static final String KEY_KV_PAIRS = "key_value_pairs";
+    /**
+     * The key for the execution time
+     */
+    public static final String KEY_TIME = "executionTime";
+
+    public static final Set<String> RESERVED_KEYS = Collections.unmodifiableSet(
+            new HashSet<String>(Arrays.asList(
+                KEY_CALLBACK,
+                KEY_INTRO,
+                KEY_OUTRO,
+                KEY_QUOTE,
+                KEY_HEADER_OBJS,
+                KEY_KV_PAIRS,
+                KEY_TIME)));
+
+   
 
     /**
      * Constructor
@@ -68,34 +95,49 @@ public class JSONFormatter extends Formatter {
      */
     @Override
     public String formatHeader(Map<String, Object> attributes) {
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        }
         StringBuilder sb = new StringBuilder();
-        if (attributes != null && attributes.get(KEY_CALLBACK) != null) {
+        Object callback = attributes.get(KEY_CALLBACK);
+        if (callback != null) {
             hasCallback = true;
-            sb.append(attributes.get(KEY_CALLBACK)).append("(");
+            sb.append(callback).append("(");
         }
         sb.append("{");
-        if (attributes != null && attributes.containsKey(KEY_KV_PAIRS)) {
+        formatAttributes(attributes, sb);
+        header = sb.toString();
+        return header;
+    }
+
+    protected void formatAttributes(Map<String, Object> attributes, StringBuilder sb) {
+        if (attributes == null) return;
+        if (sb         == null) throw new NullPointerException("sb must not be null");
+
+        if (attributes.containsKey(KEY_KV_PAIRS)) {
             @SuppressWarnings("unchecked")
             Map<String, String> kvPairs = (Map<String, String>) attributes.get(KEY_KV_PAIRS);
             for (Entry<String, String> pair: kvPairs.entrySet()) {
-                sb.append("\""
-                        + StringEscapeUtils.escapeJava(pair.getKey())
-                        + "\":"
-                        + quoteValue(StringEscapeUtils.escapeJava(pair.getValue()))
-                        + ",");
+                sb.append("\"")
+                  .append(escapeJava(pair.getKey()))
+                  .append("\":")
+                  .append(quoteValue(escapeJava(pair.getValue())))
+                  .append(",");
             }
         }
-        if (attributes != null && attributes.containsKey(KEY_HEADER_OBJS)) {
-            @SuppressWarnings("rawtypes")
+        // Add any complex objects as json-objects to the headers.
+        if (attributes.containsKey(KEY_HEADER_OBJS)) {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
             Map<String, Map> headerObjs = (Map<String, Map>) attributes.get(KEY_HEADER_OBJS);
             for (@SuppressWarnings("rawtypes") Entry<String, Map> pair: headerObjs.entrySet()) {
-                sb.append("\"" + StringEscapeUtils.escapeJava(pair.getKey()) + "\":");
-                JSONObject ho = new JSONObject(pair.getValue());
-                sb.append(ho.toString());
-                sb.append(",");
+                sb.append("\"")
+                  .append(escapeJava(pair.getKey()))
+                  .append("\":")
+                  .append(new JSONObject(pair.getValue()))
+                  .append(",");
             }
         }
-        if (attributes != null && attributes.get(KEY_INTRO) != null) {
+        if (attributes.get(KEY_INTRO) != null) {
             sb.append(attributes.get(KEY_INTRO));
             if (attributes.containsKey(KEY_OUTRO)) {
                 outro = attributes.get(KEY_OUTRO).toString();
@@ -103,11 +145,9 @@ public class JSONFormatter extends Formatter {
                 isExpectingPrimitive = true;
             }
         }
-        if (attributes != null && attributes.containsKey(KEY_QUOTE)) {
+        if (attributes.containsKey(KEY_QUOTE)) {
             shouldQuote = (Boolean) attributes.get(KEY_QUOTE);
         }
-        header = sb.toString();
-        return sb.toString();
     }
 
     private String quoteValue(String val) {
@@ -183,9 +223,14 @@ public class JSONFormatter extends Formatter {
             sb.append(',');
         }
 
+        Date now = Calendar.getInstance().getTime();
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd HH:mm::ss");
+        String executionTime = dateFormatter.format(now);
+        sb.append("\"" + KEY_TIME + "\":\"" + executionTime + "\",");
+
         sb.append("\"wasSuccessful\":");
         if (errorCode != Output.SC_OK) {
-            sb.append("false,\"error\":\"" + StringEscapeUtils.escapeJava(errorMessage) + "\"");
+            sb.append("false,\"error\":\"" + escapeJava(errorMessage) + "\"");
         } else {
             sb.append("true,\"error\":null");
         }

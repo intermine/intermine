@@ -134,7 +134,7 @@ function clearBagName(element) {
     <strong>Actions:</strong>
     <c:choose>
         <c:when test="${type == 'template'}">
-            <html:submit property="export" value="Export selected"/>
+            <html:submit property="export" styleId="export" value="Export selected" disabled="true" onclick="javascript: return isEmptyChecklist();"/>
             <html:hidden property="pageName" value="templates"/>
             <html:hidden property="templateButton" value="export"/>
         </c:when>
@@ -142,6 +142,7 @@ function clearBagName(element) {
         <a href="#operations" title="Union" class="boxy inactive"><img src="images/union.png" width="21" height="14" alt="Union">Union</a>&nbsp;|&nbsp;
         <a href="#operations" title="Intersect" class="boxy inactive"><img src="images/intersect.png" width="21" height="14" alt="Intersect">Intersect</a>&nbsp;|&nbsp;
         <a href="#operations" title="Subtract" class="boxy inactive"><img src="images/subtract.png" width="21" height="14" alt="Subtract">Subtract</a>&nbsp;|&nbsp;
+        <a href="#asymoperations" title="AsymmetricDifference" class="boxy inactive"><img src="images/asymmetricdifference.png" width="21" height="14" alt="Asymmetric Difference">Asymmetric Difference</a>&nbsp;|&nbsp;
         <a href="#" title="Copy" class="boxy inactive"><img src="images/icons/copy.png" width="16" height="16" alt="Copy">Copy</a>
         <a href="#" title="Delete" class="boxy inactive"><img src="images/icons/delete.png" width="16" height="16" alt="Delete">Delete</a>
     </c:otherwise>
@@ -154,18 +155,52 @@ function clearBagName(element) {
     <label for="showCheckbox">Show descriptions</label>
 </div>
 <html:hidden property="listsButton" value="" styleId="listsButton"/>
-<%-- Need a dummy because boxy puts it outside of the form --%>
 <html:hidden property="newBagName" value="" styleId="newBagName"/>
+<html:hidden property="listLeft" value="" styleId="listLeft"/>
+<html:hidden property="listRight" value="" styleId="listRight"/>
+<%-- Need a dummy because boxy puts it outside of the form --%>
 <div id="operations" style="display:none">
     Enter a new List name:<br>
     <html:text styleId="dummy_text" property="" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
     <html:submit property="save" value="Save" onclick="submitBagOperation()"/>
 </div>
+<div id="asymoperations" style="display:none">
+    List <span id="listA1"></span> minus <span id="listB1"></span>:<br>
+    <html:text styleId="dummy_text1" property="" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
+    <html:submit property="save" value="Save" onclick="submitAsymOperation1()"/><br><br>
+    List <span id="listB2"></span> minus <span id="listA2"></span>:<br>
+    <html:text styleId="dummy_text2" property="" size="12" value="${textForBox}" style="color:#666;font-style:italic;vertical-align:top" onclick="clearBagName(this)"/>
+    <html:submit property="save" value="Save" onclick="submitAsymOperation2()"/>
+</div>
 <script type="text/javascript" charset="utf-8">
+    function isEmptyChecklist()
+    {
+        if ((jQuery("input[type=checkbox][name=selected]:checked").length) < 1) {
+          alert("Please select some templates to export...");
+          return false;
+        }
+    }
+
     (function() {
       jQuery(document).ready(function() {
+        jQuery("#all_templates_template_container input[name='selected']").click(function(){
+            var checked = jQuery("#all_templates_template_container input[name='selected']:checked");
+            var selected = checked.length;
+            if (selected > 0) {
+              jQuery("#export").attr('disabled', false);
+            } else {
+              jQuery("#export").attr('disabled', true);
+            }
+        });
         jQuery("#all_bag_bag_container input[name='selectedBags']").click(function() {
-          var selected = jQuery("#all_bag_bag_container input[name='selectedBags']:checked").length;
+            var checked = jQuery("#all_bag_bag_container input[name='selectedBags']:checked");
+            var selected = checked.length;
+            if (selected > 1 ) {
+            jQuery("#listA1").html(checked[0].value);
+            jQuery("#listB1").html(checked[1].value);
+            jQuery("#listA2").html(checked[0].value);
+            jQuery("#listB2").html(checked[1].value);
+          }
           if (selected > 1 ) {
             jQuery("#filter_tool_bar a.boxy[title='Copy']").attr("href", "");
           } else {
@@ -178,17 +213,26 @@ function clearBagName(element) {
             jQuery("#filter_tool_bar a.boxy[title='Union']").addClass('inactive');
             jQuery("#filter_tool_bar a.boxy[title='Intersect']").addClass('inactive');
             jQuery("#filter_tool_bar a.boxy[title='Subtract']").addClass('inactive');
+            jQuery("#filter_tool_bar a.boxy[title='AsymmetricDifference']").addClass('inactive');
             if (selected > 1) {
               jQuery("#filter_tool_bar a.boxy[title='Union']").removeClass('inactive');
               jQuery("#filter_tool_bar a.boxy[title='Intersect']").removeClass('inactive');
               jQuery("#filter_tool_bar a.boxy[title='Subtract']").removeClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='AsymmetricDifference']").removeClass('inactive');
             }
+            if (selected > 2) {
+                jQuery("#filter_tool_bar a.boxy[title='Union']").removeClass('inactive');
+                jQuery("#filter_tool_bar a.boxy[title='Intersect']").removeClass('inactive');
+                jQuery("#filter_tool_bar a.boxy[title='Subtract']").removeClass('inactive');
+                jQuery("#filter_tool_bar a.boxy[title='AsymmetricDifference']").addClass('inactive');
+              }
           } else {
               jQuery("#filter_tool_bar a.boxy[title='Copy']").addClass('inactive');
               jQuery("#filter_tool_bar a.boxy[title='Delete']").addClass('inactive');
               jQuery("#filter_tool_bar a.boxy[title='Union']").addClass('inactive');
               jQuery("#filter_tool_bar a.boxy[title='Intersect']").addClass('inactive');
               jQuery("#filter_tool_bar a.boxy[title='Subtract']").addClass('inactive');
+              jQuery("#filter_tool_bar a.boxy[title='AsymmetricDifference']").addClass('inactive');
           }
         });
 
@@ -223,6 +267,18 @@ function clearBagName(element) {
       jQuery("#newBagName").val(jQuery("#dummy_text").val());
       }
       validateBagOperations('modifyBagForm',jQuery('#listsButton').val());
+    }
+    function submitAsymOperation1() {
+      jQuery("#newBagName").val(jQuery("#dummy_text1").val());
+      jQuery("#listLeft").val(jQuery("#listA1").html());
+      jQuery("#listRight").val(jQuery("#listB1").html());
+      modifyBagForm.submit();
+    }
+    function submitAsymOperation2() {
+      jQuery("#newBagName").val(jQuery("#dummy_text2").val());
+      jQuery("#listLeft").val(jQuery("#listB2").html());
+      jQuery("#listRight").val(jQuery("#listA2").html());
+      modifyBagForm.submit();
     }
 </script>
 <script type="text/javascript">

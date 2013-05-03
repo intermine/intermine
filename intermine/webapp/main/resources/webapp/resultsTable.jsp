@@ -34,40 +34,35 @@
 
 <c:set var="currentUniqueId" value="${currentUniqueId + 1}" scope="application"/>
 
-<script>
-(function() {
-    intermine.css.headerIcon = "fm-header-icon";
-    <c:choose>
-        <c:when test="${not empty query.json}">
-            var query = ${query.json};
-        </c:when>
-        <c:otherwise>
-            var query = {}; // QUERY.json is empty
-        </c:otherwise>
-    </c:choose>
-
-    jQuery(function() {
-        var $container = jQuery('#${tableContainerId}');
-
-        if (query && query.select && query.select.length > 0) {
-            $container.empty().imWidget({
-                type: 'table',
-                service: $SERVICE,
-                query: query,
-                events: LIST_EVENTS,
-                properties: {pageSize: ${pageSize} },
-                error: FailureNotification.notify
-            });
-        } else {
-            $container.html('<p>Query has not been specified, failing...</p>');
-        }
-    });
-})();
-</script>
-
 <c:if test="${! empty query.title}">
     <c:set var="templateQuery" value="${query}"/>
     <tiles:insert template="templateTitle.jsp"/>
 </c:if>
 
+<c:choose>
+    <c:when test="${not empty query.json}">
+        <c:set var="queryJson" value="${query.json}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="queryJson" value="{}"/>
+    </c:otherwise>
+</c:choose>
+
 <div id="${tableContainerId}" class="${cssClass}"></div>
+
+<script type="text/javascript">
+jQuery(function() {
+    intermine.css.headerIcon = "fm-header-icon";
+    var opts = {
+        type: 'table',
+        service: $SERVICE,
+        error: FailureNotification.notify,
+        query: ${queryJson},
+        events: LIST_EVENTS,
+        properties: { pageSize: ${pageSize} }
+    };
+    jQuery('#${tableContainerId}').imWidget(opts);
+});
+</script>
+
+

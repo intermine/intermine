@@ -1,5 +1,0 @@
-<project name="plant-identifiers" default="default" basedir=".">
-  <description>build, test, package plant-identifiers</description>
-  
-  <import file="../../../../imbuild/source.xml"/>
-</project>

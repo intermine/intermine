@@ -1,0 +1,20 @@
+<project name="update-data-sources" default="default" basedir=".">
+  <description>build update-data-sources tasks</description>
+  <import file="../../../imbuild/source.xml"/> 
+
+  <!-- special case to create a ${tgt.xml.file} (in InterMine XML format) by
+       finding the taxon ids in the objectstore, then retrieving the species name
+       and genus from Entrez into the file -->
+  <target name="-pre-retrieve" depends="source.-pre-retrieve">
+    <property name="cp" refid="task.class.path"/>
+
+    <taskdef name="update-data-sources" 
+             classname="org.intermine.bio.dataconversion.DataSourceUpdater">
+      <classpath refid="task.class.path"/>
+    </taskdef>
+    
+    <echo message="retrieving from ${src.data.file}"/>
+
+    <update-data-sources osAlias="os.production" outputFile="${src.data.file}" dataSourceFile="${dataSourceFile}" />
+  </target>
+</project>

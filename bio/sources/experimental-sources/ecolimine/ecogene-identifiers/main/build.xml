@@ -1,4 +1,0 @@
-<project name="ecogene-identifiers-tasks" default="default" basedir=".">
-  <description>build ecogene-identifiers tasks</description>
-  <import file="../../../../imbuild/library.xml"/> 
-</project>

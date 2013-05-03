@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-1-transitional.dtd">
+<!DOCTYPE html>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles" %>
@@ -115,9 +114,9 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
     $SERVICE.fetchVersion().fail(notification.render).done(function(v) {
         console.log("Webservice is at version " + v);
     });
-    //if (intermine.widgets != null) {
-        //window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
-    //}
+    if (intermine.widgets != null) {
+        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
+    }
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua.msie && parseInt(ua.version, 10) < 9) {
         new Notification({message: '<fmt:message key="old.browser"/>'}).render();

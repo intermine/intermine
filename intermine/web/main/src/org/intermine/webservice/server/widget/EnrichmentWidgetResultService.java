@@ -1,7 +1,7 @@
 package org.intermine.webservice.server.widget;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -13,6 +13,7 @@ package org.intermine.webservice.server.widget;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.intermine.api.InterMineAPI;
@@ -27,6 +28,7 @@ import org.intermine.model.userprofile.Tag;
 import org.intermine.web.context.InterMineContext;
 import org.intermine.web.logic.config.WebConfig;
 import org.intermine.web.logic.export.ResponseUtil;
+import org.intermine.web.logic.widget.CorrectionCoefficient;
 import org.intermine.web.logic.widget.EnrichmentWidget;
 import org.intermine.web.logic.widget.config.EnrichmentWidgetConfig;
 import org.intermine.web.logic.widget.config.WidgetConfig;
@@ -72,7 +74,6 @@ public class EnrichmentWidgetResultService extends WidgetService
      *
      * @throws Exception an error has occurred
      */
-    @SuppressWarnings("deprecation")
     @Override
     protected void execute() throws Exception {
         WidgetsServiceInput input = getInput();
@@ -99,9 +100,20 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputFilter(widgetConfig, filterSelectedValue, imBag);
 
+        addOutputUserLogged();
+
         //reference population
         InterMineBag populationBag = getReferencePopulationBag(input);
-        addOutputUserLogged();
+        if (populationBag != null && !verifyPopulationContainsBag(imBag, populationBag)) {
+            if (input.isSavePopulation()) {
+                deleteReferencePopulationPreference(input);
+            }
+            addOutputAttribute("message", "One or more of the " + imBag.getType() + "s in this list"
+                + " are currently not included in your background population. The background "
+                + "population should include all " + imBag.getType() + "s that were tested as part of "
+                + "your experiment.");
+            return;
+        }
 
         //instantiate the widget
         EnrichmentWidget widget = null;
@@ -118,6 +130,7 @@ public class EnrichmentWidgetResultService extends WidgetService
         }
         addOutputInfo("notAnalysed", Integer.toString(widget.getNotAnalysed()));
         addOutputPathQuery(widget, widgetConfig);
+        addOutputExtraAttribute(input, widget);
 
         addOutputResult(widget);
     }
@@ -140,6 +153,29 @@ public class EnrichmentWidgetResultService extends WidgetService
             addOutputAttribute("is_logged", "true");
         } else {
             addOutputAttribute("is_logged", "false");
+        }
+    }
+
+    /*
+     * Set in the output the gene_lenth_correction attribute.
+     * The attribute is null if the gene length coefficient correction can't be applicable
+     * true if the gene length coefficient correction is selected, false if not selected
+     */
+    private void addOutputExtraAttribute(WidgetsServiceInput input,
+        EnrichmentWidget widget) throws Exception {
+        WidgetResultProcessor processor = getProcessor();
+        String extra = input.getExtraAttributes().get(3);
+        CorrectionCoefficient cc = widget.getExtraCorrectionCoefficient();
+        Map<String, Map<String, Object>> extraAttributes;
+        if (cc != null) {
+            extraAttributes = cc.getOutputInfo(extra);
+            if (processor instanceof EnrichmentJSONProcessor) {
+                String jsonExtraAttribute = ((EnrichmentJSONProcessor) processor)
+                                         .formatExtraAttributes(extraAttributes);
+                addOutputInfo("extraAttribute", jsonExtraAttribute);
+            }
+        } else {
+            addOutputInfo("extraAttribute", null);
         }
     }
 
@@ -245,5 +281,17 @@ public class EnrichmentWidgetResultService extends WidgetService
             }
         }
         return "";
+    }
+
+    private boolean verifyPopulationContainsBag(InterMineBag bag, InterMineBag populationBag) {
+        //verify the population Bag contains all elements of imBag
+        List<Integer> populationBagContentdIds =
+            new ArrayList<Integer>(populationBag.getContentsAsIds());
+        List<Integer> bagContentdIds =
+            new ArrayList<Integer>(bag.getContentsAsIds());
+        if (populationBagContentdIds.containsAll(bagContentdIds)) {
+            return true;
+        }
+        return false;
     }
 }

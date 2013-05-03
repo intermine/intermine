@@ -1,7 +1,7 @@
 package org.intermine.bio.dataconversion;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -149,7 +149,7 @@ public class TreefamConverter extends BioFileConverter
         }
 
         createIDResolver();
-        
+
         try {
             readGenes(new FileReader(geneFile));
         } catch (IOException err) {
@@ -170,7 +170,7 @@ public class TreefamConverter extends BioFileConverter
 
             GeneHolder holder1 = idsToGenes.get(gene1id);
             GeneHolder holder2 = idsToGenes.get(gene2id);
-            
+
             // at least one of the genes has to be from an organism of interest
             if (isValidPair(holder1, holder2)) {
                 processHomologues(holder1, holder2, bootstrap);
@@ -178,20 +178,20 @@ public class TreefamConverter extends BioFileConverter
             }
         }
     }
-    
+
     private void processHomologues(GeneHolder holder1, GeneHolder holder2, String bootstrap)
             throws ObjectStoreException {
-        
+
         String gene1 = getGene(holder1.identifier, holder1.symbol,
                 holder1.identifierType, holder1.taxonId);
         String gene2 = getGene(holder2.identifier, holder2.symbol,
                 holder2.identifierType, holder2.taxonId);
-        
+
         // resolver didn't resolve
         if (gene1 == null || gene2 == null) {
             return;
         }
-        
+
         Item homologue = createItem("Homologue");
         homologue.setAttribute("bootstrapScore", bootstrap);
         homologue.setReference("gene", gene1);
@@ -202,26 +202,26 @@ public class TreefamConverter extends BioFileConverter
             type = "paralogue";
         }
         homologue.setAttribute("type", type);
-        
+
         store(homologue);
     }
-    
+
     private String getGene(String geneId, String symbol, String type, String taxonId)
             throws ObjectStoreException {
         String identifierType = (StringUtils.isNotEmpty(type) ? type : DEFAULT_IDENTIFIER_TYPE);
-        
+
         String resolvedGenePid = null;
         // test if id has been resolved
         if (resolvedIds.containsKey(new MultiKey(taxonId, geneId, symbol))) {
             if (resolvedIds.get(new MultiKey(taxonId, geneId, symbol)) != null) {
-            	resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
+                resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
                 LOG.info("This id: " + taxonId + "-" + geneId + "-" + symbol
                         + " has been resolved as: " + resolvedGenePid);
             }
         } else {
-        	resolvedGenePid = resolveGene(taxonId, geneId, symbol);
+            resolvedGenePid = resolveGene(taxonId, geneId, symbol);
         }
-        
+
         if (resolvedGenePid == null) {
             return null;
         }
@@ -229,7 +229,7 @@ public class TreefamConverter extends BioFileConverter
         if (refId == null) {
             Item gene = createItem("Gene");
             gene.setAttribute(DEFAULT_IDENTIFIER_TYPE, resolvedGenePid);
-            
+
             if (!identifierType.equals(DEFAULT_IDENTIFIER_TYPE)) {
                 if ("crossReferences".equals(identifierType)) {
                     gene.addToCollection(identifierType,
@@ -239,25 +239,25 @@ public class TreefamConverter extends BioFileConverter
                     gene.setAttribute(identifierType, geneId);
                 }
             }
-            
+
             gene.setReference("organism", getOrganism(taxonId));
             refId = gene.getIdentifier();
             identifiersToGenes.put(resolvedGenePid, refId);
             store(gene);
         }
         return refId;
-    }    
-    
+    }
+
     private void createIDResolver() {
         Set<String> allTaxonIds = new HashSet<String>();
         allTaxonIds.addAll(taxonIds);
         allTaxonIds.addAll(homologues);
-        if (rslv == null) { 
+        if (rslv == null) {
             rslv = IdResolverService.getIdResolverByOrganism(allTaxonIds);
         }
         LOG.info("Taxons in resolver:" + rslv.getTaxons());
     }
-    
+
     // the gene is from an organism we want
     // the homologue is from an organism we want
     private boolean isValidPair(GeneHolder holder1, GeneHolder holder2) {
@@ -304,12 +304,12 @@ public class TreefamConverter extends BioFileConverter
 
             String identifierType = DEFAULT_IDENTIFIER_TYPE;
             String geneField = DEFAULT_IDENTIFIER_COLUMN;
-            
+
             if (config.containsKey(taxonId)) {
                 String[] configs = config.get(taxonId);
                 geneField = configs[0];
                 identifierType = configs[1];
-            } 
+            }
             identifier = setIdentifier(identifier, symbol, geneField);
             idsToGenes.put(id, new GeneHolder(identifier, symbol, identifierType, taxonId));
         }
@@ -398,18 +398,15 @@ public class TreefamConverter extends BioFileConverter
             LOG.info("ID resolver not used for taxon ID " + taxonId);
             return identifier;
         }
-        
-        Map<String, Set<String>> resolvedIdMap = rslv.resolveIds(taxonId,
-                new HashSet<String>(Arrays.asList(identifier, symbol)));
-        for (Entry<String, Set<String>> e : resolvedIdMap.entrySet()) {
-            LOG.info("Resolve id: " + e.getKey() + " with resolution: " + e.getValue());
-            if (e.getValue() != null && e.getValue().size() == 1) {
-                String resolvedId = e.getValue().iterator().next();
-                resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
-                return resolvedId;
-            }
+
+        Set<String> resolvedIdSet = rslv.resolveIds(taxonId, Arrays.asList(identifier, symbol));
+
+        if (resolvedIdSet != null && resolvedIdSet.size() == 1) {
+            String resolvedId = resolvedIdSet.iterator().next();
+            resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
+            return resolvedId;
         }
-        
+
         resolvedIds.put(new MultiKey(taxonId, identifier, symbol), null);
         LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
                 + identifier + " for taxon ID " + taxonId);

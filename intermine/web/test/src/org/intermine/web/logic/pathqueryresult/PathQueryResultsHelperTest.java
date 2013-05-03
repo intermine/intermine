@@ -1,7 +1,7 @@
 package org.intermine.web.logic.pathqueryresult;
 
 /*
- * Copyright (C) 2002-2012 FlyMine
+ * Copyright (C) 2002-2013 FlyMine
  *
  * This code may be freely distributed and modified under the
  * terms of the GNU Lesser General Public Licence.  This should
@@ -138,10 +138,11 @@ public class PathQueryResultsHelperTest extends TestCase
     public void testMakePathQueryForBag() throws Exception {
         InterMineBag imBag = new InterMineBag("Fred", "Employee", "Test bag", new Date(), BagState.CURRENT, os, null, uosw, Arrays.asList("name"));
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForBag(imBag, webConfig, os.getModel());
-        String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.age Employee.fullTime\">"
+        String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name Employee.age Employee.fullTime\" longDescription=\"\">"
             + "<constraint path=\"Employee\" op=\"IN\" value=\"Fred\"/>"
             + "</query>";
-        assertEquals(expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
+
+        assertEquals(pathQuery.toXml(PathQuery.USERPROFILE_VERSION), expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
     }
 
     // This test expects the references from the configuration to be included.
@@ -159,26 +160,27 @@ public class PathQueryResultsHelperTest extends TestCase
         List<Class<?>> sr = new ArrayList<Class<?>>();
         sr.add(Employee.class);
         sr.add(Manager.class);
+       
         PathQuery pathQuery = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Employee", "employees");
-        String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.name Department.employees.department.name Department.employees.department.company.name Department.employees.age Department.employees.fullTime\">"
+        String expectedXml = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.name Department.employees.department.name Department.employees.department.company.name Department.employees.age Department.employees.fullTime\" longDescription=\"\">"
             + "<join path=\"Department.employees.department\" style=\"OUTER\"/>"
             + "<join path=\"Department.employees.department.company\" style=\"OUTER\"/>"
             + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
             + "</query>";
-        assertEquals(expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
+        assertEquals(pathQuery.toXml(PathQuery.USERPROFILE_VERSION), expectedXml, pathQuery.toXml(PathQuery.USERPROFILE_VERSION));
         PathQuery pathQuery2 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) e1, "Address", "address");
         String expectedXml2 =  "<query name=\"query\" model=\"testmodel\" "
-            + "view=\"Employee.address.address\"><constraint path=\"Employee.id\" "
+            + "view=\"Employee.address.address\" longDescription=\"\"><constraint path=\"Employee.id\" "
             + "op=\"=\" value=\"2\"/></query>";
-        assertEquals(expectedXml2, pathQuery2.toXml(PathQuery.USERPROFILE_VERSION));
+        assertEquals(pathQuery2.toXml(PathQuery.USERPROFILE_VERSION), expectedXml2, pathQuery2.toXml(PathQuery.USERPROFILE_VERSION));
         PathQuery pathQuery3 = PathQueryResultHelper.makePathQueryForCollection(webConfig, os, (InterMineObject) d1, "Manager", "employees");
         String expectedXml3 = "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title "
             + "Department.employees.fullTime Department.employees.age Department.employees.end "
-            + "Department.employees.name Department.employees.seniority\">"
+            + "Department.employees.name Department.employees.seniority\" longDescription=\"\">"
             + "<constraint path=\"Department.employees\" type=\"Manager\"/>"
             + "<constraint path=\"Department.id\" op=\"=\" value=\"1\"/>"
             + "</query>";
-        assertEquals(expectedXml3, pathQuery3.toXml(PathQuery.USERPROFILE_VERSION));
+        assertEquals(pathQuery3.toXml(PathQuery.USERPROFILE_VERSION), expectedXml3, pathQuery3.toXml(PathQuery.USERPROFILE_VERSION));
     }
 
 
@@ -207,7 +209,7 @@ public class PathQueryResultsHelperTest extends TestCase
         assertEquals(
                 "<query name=\"query\" model=\"testmodel\" view=\"Department.employees.title " +
                 "Department.employees.fullTime Department.employees.age Department.employees.end " +
-                "Department.employees.name Department.employees.seniority\"><constraint " +
+                "Department.employees.name Department.employees.seniority\" longDescription=\"\"><constraint " +
                 "path=\"Department.employees\" type=\"Manager\"/></query>",
                 pq.toXml(PathQuery.USERPROFILE_VERSION));
     }

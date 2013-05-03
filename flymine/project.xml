@@ -565,6 +565,10 @@
       <property name="geneFile" value="/micklem/data/treefam/current/genes.txt.table"/>
       <property name="treefam.organisms" value="7227 7165 9606 10090 10116 7955 6239 4932"/>
      </source>
+    <source name="panther" type="panther">
+          <property name="src.data.dir" location="/micklem/data/panther/current"/>
+          <property name="panther.organisms" value="7227 6239 9606 10090 10116 7955"/>
+    </source>
     <source name="biogrid" type="biogrid">
       <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
       <property name="src.data.dir.includes" value="*psi25.xml"/>
@@ -579,8 +583,14 @@
     <source name="entrez-organism" type="entrez-organism">
       <property name="src.data.file" location="build/organisms.xml"/>
     </source>
+
     <source name="flymine-static" type="intermine-items-xml-file">
       <property name="src.data.file" location="datasets.xml"/>
+    </source>
+
+    <source name="update-data-sources" type="update-data-sources">
+      <property name="src.data.file" location="build/datasources.xml"/>
+      <property name="dataSourceFile" value="/micklem/data/uniprot/xrefs/current/dbxref.txt"/>
     </source>
     <source name="update-publications" type="update-publications" dump="true">
       <property name="src.data.file" location="build/publications.xml"/>
