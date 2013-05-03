@@ -114,58 +114,46 @@
       <property name="ontologyPrefix" value="GO"/>
     </source>
 
-<!--
-    <source name="ecogene" type="ecogene-identifiers">
-      <property name="src.data.dir" location="/micklem/data/ecolimine/ecogene/current"/>
-      <property name="src.data.dir.includes" value="EcoData_9_11_2011_protein_and_RNA_exclude_pseudogenes.txt"/> 
-    </source>
-
-    <source name="ecogene-gene-fasta" type="fasta">
-      <property name="fasta.taxonId" value="83333"/>
-      <property name="fasta.dataSetTitle" value="EcoGene fasta data set for genes"/>
-      <property name="fasta.dataSourceName" value="EcoGene"/>
-      <property name="fasta.className" value="org.intermine.model.bio.Gene"/>
-      <property name="fasta.classAttribute" value="primaryIdentifier"/>
-      <property name="fasta.includes" value="EcoGene.fasta"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/ecogene/current"/>
-    </source>
-
-      <source name="K12-MG1655-gff" type="ecoli-gff">
-      <property name="gff3.taxonId" value="83333"/>
-      <property name="gff3.seqDataSourceName" value="GenBank"/>
-      <property name="gff3.dataSourceName" value="GenBank"/>
-      <property name="gff3.seqClsName" value="Chromosome"/>
-      <property name="gff3.dataSetTitle" value="E. coli K-12 MG1655 genome"/>
-      <property name="src.data.dir" location="/micklem/data/ecolimine/genbank/current/Escherichia_coli_K_12_substr__MG1655_uid225"/>
-      <property name="src.data.dir.includes" value="U00096_gene_without_pseudo.gff"/> 
+    <source name="biogrid" type="biogrid">
+      <property name="src.data.dir" location="/micklem/data/biogrid/current"/>
+      <property name="src.data.dir.includes" value="*psi25.xml"/>
+      <property name="biogrid.organisms" value="511145 224308"/>
     </source>
 
     <source name="reactome" type="biopax">
-      <property name="src.data.dir" location="/micklem/data/ecolimine/reactome/current"/>
-      <property name="biopax.organisms" value="83333"/>
+      <property name="src.data.dir" location="/micklem/data/reactome/current"/>
+      <property name="biopax.organisms" value="511145"/>
       <property name="biopax.datasourcename" value="Reactome"/>
       <property name="biopax.datasetname" value="Reactome data set"/>
       <property name="biopax.curated" value="false"/>
     </source>
 
-    <source name="biogrid" type="biogrid">
-      <property name="src.data.dir" location="/micklem/data/ecolimine/biogrid/current"/>
-      <property name="src.data.dir.includes" value="*psi25.xml"/>
-      <property name="biogrid.organisms" value="562 83333"/>
+<!--
+    <source name="orthodb" type="orthodb" dump="true">
+      <property name="src.data.dir" location="/micklem/data/orthodb/test"/>
+      <property name="orthodb.organisms" value="511145 409438"/>
+      <property name="orthodb.homologues" value="511145 409438"/>
     </source>
 
-    <source name="psi-intact" type="psi">
-      <property name="src.data.dir" location="/micklem/data/ecolimine/intact"/>
-      <property name="intact.organisms" value="83333"/>
+    <source name="panther" type="panther" dump="true">
+      <property name="src.data.dir" location="/micklem/data/panther/current"/>
+      <property name="panther.organisms" value="5111453 224308"/>
+      <property name="orthodb.homologues" value="7227 9606 10090 10116 7955 6239 4932"/>
     </source>
 
+    <source name="wikipathways" type="biopax">
+      <property name="src.data.dir" location="/micklem/data/ecolimine/wikipathways"/>
+      <property name="biopax.organisms" value="511145 224308"/>
+      <property name="biopax.datasourcename" value="WikiPathways"/>
+      <property name="biopax.datasetname" value="WikiPathways data set"/>
+      <property name="biopax.curated" value="false"/>
+    </source>
 
-    <source name="ncbi-gene" type="ncbi-gene">
-     <property name="src.data.dir" location="/micklem/data/ecolimine/gene-info"/>
-     <property name="organisms" value="83333"/>
+   <source name="psi-intact" type="psi" dump="true">
+      <property name="src.data.dir" location="/micklem/data/psi/intact/current"/>
+      <property name="intact.organisms" value="511145 224308"/>
     </source>
 -->
-
 
     <source name="pubmed-gene" type="pubmed-gene" dump="true">
       <property name="src.data.dir" location="/micklem/data/pubmed/current"/>
