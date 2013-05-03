@@ -220,6 +220,12 @@
                      placement="summary"
                      types="Gene,Protein"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.CytoscapeNetworkDisplayer"
+                     jspName="model/cytoscapeNetworkDisplayer.jsp"
+                     replacesFields="interactions"
+                     placement="Interactions"
+                     types="Gene,Protein"/>
+
   </reportdisplayers>
 
 <!-- widgets -->
