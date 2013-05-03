@@ -254,7 +254,7 @@ public class UniprotConverter extends BioDirectoryConverter
     }
 
     /**
-     * Toggle whether or not to load trembl data
+     * Toggle whether or not to allow duplicate sequences
      * @param allowduplicates whether or not to allow duplicate sequences
      */
     public void setAllowduplicates(String allowduplicates) {
@@ -348,14 +348,21 @@ public class UniprotConverter extends BioDirectoryConverter
             } else if ("dbReference".equals(qName) && "organism".equals(previousQName)) {
                 entry.setTaxonId(parseTaxonId(getAttrValue(attrs, "id")));
             } else if ("id".equals(qName)  && "isoform".equals(previousQName)) {
+                // TODO only use the first isoform
+                // how does xml parser work for multiple isoforms?
                 attName = "isoform";
             } else if ("sequence".equals(qName)  && "isoform".equals(previousQName)) {
                 String sequenceType = getAttrValue(attrs, "type");
                 // ignore "external" types
                 if ("displayed".equals(sequenceType)) {
-                    entry.setCanonicalIsoform(entry.getAttribute());
+                    entry.addCanonicalIsoform(entry.getAttribute());
                 } else if ("described".equals(sequenceType)) {
                     entry.addIsoform(entry.getAttribute());
+                    //>>> test code
+                    if (entry.getIsoforms().size() == 1) {
+                        // Stop adding new isoforms
+                    }
+                    //<<< test code
                 }
             } else if ("sequence".equals(qName)) {
                 String strLength = getAttrValue(attrs, "length");
@@ -948,7 +955,18 @@ public class UniprotConverter extends BioDirectoryConverter
                             // Prepend RGD:
                             geneIdentifier = GENE_PREFIXES.get(taxId) + geneIdentifier;
                         }
-                        gene.setAttribute(geneField, geneIdentifier);
+
+                        if ("primaryIdentifier".equals(geneField)) {
+                            String resolvedId = resolveGene(taxId, geneIdentifier);
+                            if (resolvedId == null) {
+                                LOG.info("Can not resolve " + geneIdentifier);
+                            } else {
+                                gene.setAttribute(geneField, resolvedId);
+                            }
+                        } else {
+                            gene.setAttribute(geneField, geneIdentifier);
+                        }
+
                     }
                 }
                 store(gene);
