@@ -209,9 +209,11 @@ public class GFF3Converter extends DataConverter
     public void process(GFF3Record record) throws ObjectStoreException {
         String term = record.getType();
 
-        if (config_term != null && !config_term.isEmpty()) {
-            if (!config_term.get(this.orgTaxonId).contains(term)) {
-                return;
+        if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
+            if (config_term.containsKey(this.orgTaxonId)) {
+                if (!config_term.get(this.orgTaxonId).contains(term)) {
+                    return;
+                }
             }
         }
 
