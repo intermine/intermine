@@ -16,7 +16,7 @@ default_sources:
   - "InterProGO"
   - "MGIIdentifiers"
   - "NCBIGene"
-  - "Panther"
+  - "Panther"  
   - "PubMed"
   - "Reactome"
   - "RedFly"
