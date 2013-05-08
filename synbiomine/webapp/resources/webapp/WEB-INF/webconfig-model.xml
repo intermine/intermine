@@ -226,6 +226,20 @@
                      placement="Interactions"
                      types="Gene,Protein"/>
 
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationAnnotationsDisplayer"
+                     jspName="model/publicationAnnotationsDisplayer.jsp"
+                     replacesFields=""
+                     placement="summary"
+                     parameters="Gene,Protein,InteractionDetail.experiment,GOAnnotation.evidence"
+                     types="Publication"/>
+
+    <!-- currently only works with classes with publications collection -->
+    <reportdisplayer javaClass="org.intermine.bio.web.displayer.PublicationCountsDisplayer"
+                     jspName="model/publicationCountsDisplayer.jsp"
+                     replacesFields="publications"
+                     placement="summary"
+                     types="BioEntity"/>
+                     
   </reportdisplayers>
 
 <!-- widgets -->

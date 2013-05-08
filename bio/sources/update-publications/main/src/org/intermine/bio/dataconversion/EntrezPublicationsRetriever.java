@@ -154,6 +154,7 @@ public class EntrezPublicationsRetriever
             envConfig.setTransactional(true);
             envConfig.setAllowCreate(true);
 
+            // Cached as bio/sources/update-publications/build/*.jdb
             Environment env = new Environment(new File(cacheDirName), envConfig);
 
             DatabaseConfig dbConfig = new DatabaseConfig();
@@ -182,7 +183,6 @@ public class EntrezPublicationsRetriever
                     // not a pubmed id
                     continue;
                 }
-
                 if (seenPubMeds.contains(pubMedIdInteger)) {
                     continue;
                 }
@@ -347,7 +347,10 @@ public class EntrezPublicationsRetriever
      * @throws Exception if an error occurs
      */
     protected Reader getReader(Set<Integer> ids) throws Exception {
-        String urlString = EFETCH_URL + StringUtil.join(ids, ",");
+        String urlString = ESUMMARY_URL + StringUtil.join(ids, ",");
+        if (loadFullRecord) {
+            urlString = EFETCH_URL + StringUtil.join(ids, ",");
+        }
         System.err .println("retrieving: " + urlString);
         return new BufferedReader(new InputStreamReader(new URL(urlString).openStream()));
     }
@@ -429,7 +432,7 @@ public class EntrezPublicationsRetriever
     }
 
     /**
-     * Extension of DefaultHandler to handle an  for a publication
+     * Extension of DefaultHandler to handle for a publication
      */
     class FullRecordHandler extends DefaultHandler
     {
@@ -702,6 +705,7 @@ public class EntrezPublicationsRetriever
                 pubMap.put("pages", characters.toString());
             } else if ("Author".equals(name)) {
                 String authorString = characters.toString();
+                @SuppressWarnings("unchecked")
                 List<String> authorList = (List<String>) pubMap.get("authors");
                 if (authorList == null) {
                     authorList = new ArrayList<String>();
