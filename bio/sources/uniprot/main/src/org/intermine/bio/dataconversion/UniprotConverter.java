@@ -911,7 +911,9 @@ public class UniprotConverter extends BioDirectoryConverter
             String uniqueIdentifierField = getUniqueField(taxId);
             Set<String> geneIdentifiers = getGeneIdentifiers(uniprotEntry, uniqueIdentifierField);
             if (geneIdentifiers == null) {
-                LOG.error("no valid gene identifiers found for "
+            	// this error should be caught by the methods in getGeneIdentifiers
+            	// TODO: check getGeneDesignation
+                LOG.debug("no valid gene identifiers found for "
                         + uniprotEntry.getPrimaryAccession());
                 return;
             }
