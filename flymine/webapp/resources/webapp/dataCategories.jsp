@@ -373,7 +373,7 @@
        <p><i>C. elegans</i></p>
     </td>
     <td> Gene versus publications</td>
-    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new" class="extlink">NCBI</a> - 18 Apr 2012</td>
+    <td> <a href="http://www.ncbi.nlm.nih.gov" target="_new" class="extlink">NCBI</a> - 18 Apr 2013</td>
     <td> &nbsp;</td>
     <td> &nbsp;</td>
   </tr>
