@@ -52,14 +52,14 @@ public class WormExpressionScoreConverter extends BioFileConverter
 
     private Map<String, String> geneItems = new HashMap<String, String>();
     private Map<String, String> mRNAItems = new HashMap<String, String>();
-    
+
     /**
      * Constructor
      * @param writer the ItemWriter used to handle the resultant items
      * @param model the Model
      */
     public WormExpressionScoreConverter(ItemWriter writer, Model model)
-    		throws ObjectStoreException {
+        throws ObjectStoreException {
         super(writer, model, DATA_SOURCE_NAME, DATASET_TITLE);
         createSubmissionItem();
         createOrganismItem();
@@ -71,13 +71,13 @@ public class WormExpressionScoreConverter extends BioFileConverter
      * {@inheritDoc}
      */
     public void process(Reader reader) throws Exception {
-    	File currentFile = getCurrentFile();
-        
+        File currentFile = getCurrentFile();
+
         if ("C_elegans.dcpm_per_gene_per_stage.ws220".equals(currentFile.getName())) {
             processScoreFile(reader, sub, org);
         } else {
             LOG.info("WWSS skipping file: " + currentFile.getName());
-        	//            throw new IllegalArgumentException("Unexpected file: "
+            //            throw new IllegalArgumentException("Unexpected file: "
 //          + currentFile.getName());
         }
     }
@@ -118,7 +118,7 @@ column 5: N2_EE_50-60
      * @throws ObjectStoreException
      */
     private void processScoreFile(Reader reader, Item submission, Item organism)
-            throws IOException, ObjectStoreException {
+        throws IOException, ObjectStoreException {
         Iterator<?> tsvIter;
         try {
             tsvIter = FormattedTextParser.parseTabDelimitedReader(reader);
@@ -126,7 +126,7 @@ column 5: N2_EE_50-60
             throw new BuildException("cannot parse file: " + getCurrentFile(), e);
         }
 
-        String [] headers = null; 
+        String [] headers = null;
         int lineNumber = 0;
 
         devStages = new HashMap<String, String>();
@@ -134,7 +134,7 @@ column 5: N2_EE_50-60
         while (tsvIter.hasNext()) {
             String[] line = (String[]) tsvIter.next();
 //            LOG.info("SCOREg " + line[0]);
-            
+
             if (lineNumber == 0) {
                 //LOG.info("SCOREg " + line[0]);
                 // column headers - strip off any extra columns - FlyAtlas
@@ -148,39 +148,39 @@ column 5: N2_EE_50-60
                 }
                 headers = new String[end];
                 System.arraycopy(line, 0, headers, 0, end);
-                LOG.info("WW header lenght " + headers.length);  
+                LOG.info("WW header lenght " + headers.length);
                 lineNumber++;
                 continue;
-            } 
+            }
 
             String primaryId = line[0]; // mRNA id, e.g. 2RSSE.1 == Gene.symbol
-                // there seems to be some empty lines at the end of the file - FlyAtlas
-                if (StringUtils.isEmpty(primaryId)) {
-                    break;
-                }
-                createBioEntity(primaryId, "MRNA");
-                //createBioEntity(primaryId, "Gene"); // id=symbol
+            // there seems to be some empty lines at the end of the file - FlyAtlas
+            if (StringUtils.isEmpty(primaryId)) {
+                break;
+            }
+            createBioEntity(primaryId, "MRNA");
+            //createBioEntity(primaryId, "Gene"); // id=symbol
 
-                // Developmental stage starts from column 3 till the end
-                for (int i = 2; i < headers.length; i++) {
-                    String col = headers[i];
-                    //LOG.info("WWW " + i + ": " + col);
-                    col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
+            // Developmental stage starts from column 3 till the end
+            for (int i = 2; i < headers.length; i++) {
+                String col = headers[i];
+                //LOG.info("WWW " + i + ": " + col);
+                col = correctOfficialName(col, DEVELOPMENTAL_STAGE);
 
-                    if (!devStages.containsKey(col)) {
-                        Item developmentalStage = createDevelopmentalStage(col);
-                        devStages.put(col, developmentalStage.getIdentifier());
-                    }
-//                    Item score = createGeneExpressionScore(line[i]);
-//                    score.setReference("gene", geneItems.get(primaryId));
-                    Item score = createMRNAExpressionScore(line[i]);
-                    score.setReference("mRNA", mRNAItems.get(primaryId));
-                    score.setReference("developmentalStage", devStages.get(col));
-                    score.setReference("submission", submission);
-                    score.setReference("organism", organism);
-                    store(score);
+                if (!devStages.containsKey(col)) {
+                    Item developmentalStage = createDevelopmentalStage(col);
+                    devStages.put(col, developmentalStage.getIdentifier());
                 }
-            
+                //                    Item score = createGeneExpressionScore(line[i]);
+                //                    score.setReference("gene", geneItems.get(primaryId));
+                Item score = createMRNAExpressionScore(line[i]);
+                score.setReference("mRNA", mRNAItems.get(primaryId));
+                score.setReference("developmentalStage", devStages.get(col));
+                score.setReference("submission", submission);
+                score.setReference("organism", organism);
+                store(score);
+            }
+
             lineNumber++;
         }
     }
@@ -188,9 +188,9 @@ column 5: N2_EE_50-60
 
     /**
      * Unify variations on similar official names.
-     * 
-     * TODO, data from marc 
-     * 
+     *
+     * TODO, data from marc
+     *
      * @param name the original 'official name' value
      * @param type cell line or developmental stage
      * @return a unified official name
@@ -293,23 +293,23 @@ column 5: N2_EE_50-60
     private void createBioEntity(String primaryId, String type) throws ObjectStoreException {
         Item bioentity = null;
 
-      if ("MRNA".equals(type)) {
-          if (!mRNAItems.containsKey(primaryId)) {
-              bioentity = createItem("MRNA");
-              bioentity.setAttribute("primaryIdentifier", primaryId);
-              store(bioentity);
-              mRNAItems.put(primaryId, bioentity.getIdentifier());
-          }
-      }        
-        
-//      if ("Gene".equals(type)) {
-//    	  if (!geneItems.containsKey(primaryId)) {
-//    		  bioentity = createItem("Gene");
-//    		  bioentity.setAttribute("symbol", primaryId);
-//    		  store(bioentity);
-//    		  geneItems.put(primaryId, bioentity.getIdentifier());
-//    	  }
-//      }
+        if ("MRNA".equals(type)) {
+            if (!mRNAItems.containsKey(primaryId)) {
+                bioentity = createItem("MRNA");
+                bioentity.setAttribute("primaryIdentifier", primaryId);
+                store(bioentity);
+                mRNAItems.put(primaryId, bioentity.getIdentifier());
+            }
+        }
+
+        //      if ("Gene".equals(type)) {
+        //if (!geneItems.containsKey(primaryId)) {
+        //bioentity = createItem("Gene");
+        //bioentity.setAttribute("symbol", primaryId);
+        //store(bioentity);
+        //geneItems.put(primaryId, bioentity.getIdentifier());
+        //}
+        //}
 
       //    else if ("Exon".equals(type)) {
         //        if (!exonItems.containsKey(primaryId)) {
