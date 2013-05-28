@@ -16,6 +16,8 @@
 #312 - Upgraded Backbone.js
 #138 - Scroll to top after list creation on List Analysis page
 
+intermine-list-widgets#164 - Select all items in a widget list if none are selected
+
 1.2 (27 March 2013)
 
 #  9 - Import templates/queries from file
