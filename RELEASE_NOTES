@@ -13,7 +13,8 @@
 #279 - Updated jQuery UI to be compatible with newer jQuery
 #306 - ref #279
 #307 - ref #279
-#312 - upgraded Backbone.js
+#312 - Upgraded Backbone.js
+#138 - Scroll to top after list creation on List Analysis page
 
 1.2 (27 March 2013)
 
