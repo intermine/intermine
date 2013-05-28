@@ -1,7 +1,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <script type="text/javascript">
 jQuery(document).ready(function() {
-    var callbacks = {
+    var opts = {
         matchCb: function(id, type) {
             window.open(window.service.replace('/service/', '/portal.do?class=' + type + "&externalids=" + id));
         },
@@ -12,8 +12,19 @@ jQuery(document).ready(function() {
                 dialogue.render().$el.appendTo('#<tiles:getAsString name="widgetId"/>-widget');
                 dialogue.openDialogue();
 
-                query.on('list-creation:success', window.LIST_EVENTS['list-creation:success']);
-                query.on('list-creation:failure', window.LIST_EVENTS['list-creation:failure']);
+                var notify = {
+                    'success': function(list, change) {
+                        window.LIST_EVENTS['list-creation:success'](list, change);
+                        window.scrollTo(0, 0);
+                    },
+                    'failure': function(list, change) {
+                        window.LIST_EVENTS['list-creation:failure'](list, change);
+                        window.scrollTo(0, 0);
+                    }
+                };
+
+                query.on('list-creation:success', notify.success);
+                query.on('list-creation:failure', notify.failure);
             });
         },
         resultsCb: function(pq) {
@@ -39,6 +50,6 @@ jQuery(document).ready(function() {
             });
         }
     };
-    window.widgets.<tiles:getAsString name="style"/>('<tiles:getAsString name="widgetId"/>', '<tiles:getAsString name="bagName"/>', '#<tiles:getAsString name="widgetId"/>-widget', callbacks);
+    window.widgets.<tiles:getAsString name="style"/>('<tiles:getAsString name="widgetId"/>', '<tiles:getAsString name="bagName"/>', '#<tiles:getAsString name="widgetId"/>-widget', opts);
 });
 </script>
