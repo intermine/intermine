@@ -172,7 +172,11 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
                 float populationCountProbability = (float) populationPerTerm / population.getSize();
                 float correctionCoefficient =  geneLenghtProbability / populationCountProbability;
                 pValueCorrected = pValue.multiply(new BigDecimal(correctionCoefficient));
-                pValuesPerTerm.put(term, pValueCorrected);
+                if (BigDecimal.ONE.compareTo(pValueCorrected) == -1) {
+                    pValuesPerTerm.put(term, BigDecimal.ONE);
+                } else {
+                    pValuesPerTerm.put(term, pValueCorrected);
+                }
             } else {
                 pValuesPerTerm.put(term, BigDecimal.ZERO);
             }
