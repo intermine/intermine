@@ -3970,7 +3970,6 @@ public class ModEncodeMetaDataProcessor extends ChadoProcessor
      * maps from chado field names to ours.
      *
      *
-     *
      * if a field is not needed it is marked with NOT_TO_BE_LOADED
      * a check is performed and fields unaccounted for are logged.
      */
