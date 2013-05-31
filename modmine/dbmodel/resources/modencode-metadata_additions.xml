@@ -79,6 +79,9 @@
   <reference name="intron" referenced-type="Intron" reverse-reference="matureTranscripts" />
 </class>
 
+<class name="ORC" extends="SequenceFeature" is-interface="true">
+</class>
+
 <class name="OverlappingESTSet" extends="SequenceFeature" is-interface="true">
   <attribute name="fdr" type="java.lang.String" />
   <attribute name="fp" type="java.lang.String" />
@@ -146,6 +149,18 @@
   <collection name="exons" referenced-type="Exon" reverse-reference="transcriptRegions" />
   <collection name="exonRegions" referenced-type="ExonRegion" reverse-reference="transcriptRegions" />
   <collection name="introns" referenced-type="Intron" reverse-reference="transcriptRegions" />
+</class>
+
+<class name="TandemRepeat" extends="SequenceFeature" is-interface="true">
+</class>
+
+<class name="InvertedRepeat" extends="SequenceFeature" is-interface="true">
+</class>
+
+<class name="Polypeptide" extends="SequenceFeature" is-interface="true">
+</class>
+
+<class name="TransSpliceAcceptorSite" extends="SequenceFeature" is-interface="true">
 </class>
 
 <class name="UnderReplicatedRegion" extends="SequenceFeature" is-interface="true">

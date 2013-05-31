@@ -108,6 +108,9 @@ public class WormBaseProcessor extends SequenceProcessor
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript", "intron", "exon", "five_prime_untranslated_region",
             "five_prime_UTR", "three_prime_untranslated_region", "three_prime_UTR"
+            , "pseudogene", "tandem_repeat", "ncRNA", "polyA_signal_sequence", "polyA_site"
+            , "polypeptide", "repeat_region", "trans_splice_acceptor_site", "transposable_element"
+            , "inverted_repeat"
     );
 
     /**
