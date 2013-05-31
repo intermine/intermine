@@ -54,7 +54,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
     private static final String BINDING_SITE_FEATS =
     "'binding_site', 'protein_binding_site', 'TF_binding_site', 'histone_binding_site', 'insulator_binding_site'";
     // use instead like in query?
-    
+
     // feature type to query from the feature table
     private static final List<String> FEATURES = Arrays.asList(
             "gene", "mRNA", "transcript",
@@ -75,6 +75,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
             , "full_transcript", "polypeptide_region", "peptide_collection"
             , "chromatin_state", "domain", "contig", "golden_path_region"
             , "spliced_leader_RNA", "primer", "snoRNA", "pseudogene", "ncRNA"
+            , "ORC"
     );
     // the FB name for the mitochondrial genome
     private static final String MITOCHONDRION = "dmel_mitochondrion_genome";
@@ -645,6 +646,7 @@ public class ModEncodeFeatureProcessor extends SequenceProcessor
                         + "AND c.cvterm_id = f.type_id "
                         + "AND d.data_id = df.data_id "
                         + "AND c.name in ( " + BINDING_SITE_FEATS + ") "
+                        + "AND c.name like '%binding_site' "
                         + "AND df.feature_id = sf.feature_id ";
         LOG.info("executing: " + query);
         long bT = System.currentTimeMillis();
