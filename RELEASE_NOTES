@@ -18,6 +18,7 @@
 #213 - Do not get actual count of matches on identifier resolution page
 #329 - Do nothing if nothing is entered in search boxes on Home page
 #341 - Make homepage boxes work with any length of text
+#343 - Homepage boxes use CSS3 not background images
 
 intermine-list-widgets#164 - Select all items in a widget list if none are selected
 
