@@ -20,6 +20,7 @@
 #341 - Make homepage boxes work with any length of text
 #343 - Homepage boxes use CSS3 not background images
 #348 - Results tables dropdown menus theme colors
+#350 - Use debug mode in List Widgets
 
 intermine-list-widgets#164 - Select all items in a widget list if none are selected
 
