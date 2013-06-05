@@ -411,3 +411,7 @@ div.bagDetails-page div.widget h3 { color:#004499; } /* div.basic-table a.link *
 div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#F0F0F0; } /* div.collection-of-collections div.collection-table h3 */
 div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#FAFAFA; } /* div.collection-table table tbody tr.odd td */
 div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
+
+.intermine .im-column-th .dropdown-menu:after {
+  border-bottom-color: #004499;
+}
