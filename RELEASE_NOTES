@@ -8,6 +8,21 @@
  *
  */
 
+1.2.1 (fixes for WormBase)
+
+#279 - Updated jQuery UI to be compatible with newer jQuery
+#306 - ref #279
+#307 - ref #279
+#312 - Upgraded Backbone.js
+#138 - Scroll to top after list creation on List Analysis page
+#213 - Do not get actual count of matches on identifier resolution page
+#329 - Do nothing if nothing is entered in search boxes on Home page
+#341 - Make homepage boxes work with any length of text
+#343 - Homepage boxes use CSS3 not background images
+#348 - Results tables dropdown menus theme colors
+
+intermine-list-widgets#164 - Select all items in a widget list if none are selected
+
 1.2 (27 March 2013)
 
 #  9 - Import templates/queries from file

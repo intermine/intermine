@@ -116,6 +116,7 @@ public class UniProtCommentsDisplayer extends ReportDisplayer
      * @param values
      * @return
      */
+    @SuppressWarnings("unchecked")
     private Object geneComments2(ExportResultsIterator values) {
         // returned result columns positions
         int posCommentText = 0, posProteinID = 1, posObjectID = 2, posCommentType = 3;

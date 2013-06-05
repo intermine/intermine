@@ -181,10 +181,12 @@
   <class className="org.intermine.model.bio.GWASResult">
     <fields>
       <fieldconfig fieldExpr="SNP.primaryIdentifier"/>
+      <fieldconfig fieldExpr="SNP.alleles"/>
+      <fieldconfig fieldExpr="SNP.chromosomeLocation.start"/>
+      <fieldconfig fieldExpr="SNP.chromosome.primaryIdentifier"/>
       <fieldconfig fieldExpr="phenotype"/>
       <fieldconfig fieldExpr="pValue"/>
       <fieldconfig fieldExpr="study.firstAuthor"/>
-      <fieldconfig fieldExpr="source.name"/>
     </fields>
   </class>
 
@@ -500,7 +502,7 @@
                       constraints="organism.name=[Organism]"
                       views="primaryIdentifier, organism.shortName, locations.locatedOn.primaryIdentifier,
                              locations.start, locations.end, locations.strand"/>
-      
+
      <graphdisplayer id="mouse_human_orthologue_pair"
                       title="Mouse-human orthologue pair"
                       description="dots would be where there is a mouse-human orthologue pair "
@@ -516,7 +518,7 @@
                       seriesLabels=""
                       constraints="organism.name=Homo sapiens,homologues.homologue.organism.name=Mus musculus"
                       views="primaryIdentifier,secondaryIdentifier,name,organism.name"/>
-      
+
      <enrichmentwidgetdisplayer id="go_enrichment_for_gene"
                                  title="Gene Ontology Enrichment"
                                  description="GO terms enriched for items in this list."

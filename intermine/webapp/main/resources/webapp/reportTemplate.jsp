@@ -74,9 +74,14 @@
                 }
             });
             $('#${elemId} h3').click(function(e) {
-                var view = new intermine.query.results.CompactView($SERVICE, query, LIST_EVENTS, {pageSize: 10});
-                view.$el.appendTo('#${tableContainerId}');
-                view.render();
+                var options = {
+                    type: 'table',
+                    service: $SERVICE,
+                    query: query,
+                    events: LIST_EVENTS,
+                    properties: {pageSize: 10}
+                };
+                jQuery('#${tableContainerId}').imWidget(options);
                 $(this).unbind('click').click(function(e) {
                     $('#${tableContainerId}').slideToggle('fast');
                 });

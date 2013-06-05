@@ -138,18 +138,20 @@ public class IdResolver
      * @param ids the identifier set to resolve
      * @return a set of common pid
      */
-    public Set<String> resolveIds(String taxonId, String clsName, List<String> ids) {
+    public String resolveIds(String taxonId, String clsName, List<String> ids) {
         Set<String> common = new LinkedHashSet<String>();
         for (int i=0; i<ids.size();i++) {
             Set<String> resovledSet = resolveId(taxonId, clsName, ids.get(i));
-            if (i == 0) {
-                common.addAll(resovledSet);
-            } else {
-                common.retainAll(resovledSet);
-            }
+            common.addAll(resovledSet);
         }
 
-        return common;
+        common.remove(null);
+        if (common.size() != 1) {
+            LOG.info("Not resolve to an unique identifier: " + common);
+            return null;
+        } else {
+            return common.iterator().next();
+        }
     }
 
     /**
@@ -172,7 +174,7 @@ public class IdResolver
      * @param ids the identifier set to resolve
      * @return a map of matching primary identifiers
      */
-    public Set<String> resolveIds(String taxonId, List<String> ids) {
+    public String resolveIds(String taxonId, List<String> ids) {
         return resolveIds(taxonId, this.clsName, ids);
     }
 
