@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!-- gbrowseDisplayer.jsp -->
 
@@ -13,12 +14,16 @@
   <h3><fmt:message key="sequenceFeature.GBrowse.message"/></h3>
 
   <c:set var="loc" value="${object.chromosomeLocation}" />  
-  <c:set var="name" value="${loc.locatedOn.primaryIdentifier}:${loc.start}..${loc.end}" />
+  <c:set var="chrom" value="${loc.locatedOn.primaryIdentifier}" />
+  <c:if test="${fn:startsWith(chrom, '0')}">
+	<c:set var="chrom" value="${fn:substring(chrom, 1, 2)}" />
+  </c:if>
+  <c:set var="name" value="${chrom}:${loc.start}..${loc.end}" />
 
   <c:choose>
   <c:when test="${WEB_PROPERTIES['gbrowse.database.source'] != null}">
     <div class="loading">
-      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?start=${loc.start};stop=${loc.end};ref=${loc.locatedOn.primaryIdentifier};label=${WEB_PROPERTIES['gbrowse.tracks']}"></html:link>
+      <html:link href="${WEB_PROPERTIES['gbrowse.prefix']}/${WEB_PROPERTIES['gbrowse.database.source']}?start=${loc.start};stop=${loc.end};ref=${chrom};label=${WEB_PROPERTIES['gbrowse.tracks']}"></html:link>
     </div>
 	<script type="text/javascript">
 	  jQuery(document).ready(function() {
