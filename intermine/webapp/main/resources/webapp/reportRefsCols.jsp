@@ -34,10 +34,11 @@
         value="${imf:formatFieldStr(pathString, INTERMINE_API, WEBCONFIG)}"/>
 
     <c:set var="placementAndField" value="${aspectPlacement}_${fieldName}" />
-        <%-- ############# --%>
+    <c:set var="divName" value="${fn:replace(aspectPlacement, ':', '_')}${fieldName}_table" /> 
+
         <div id="${fn:replace(aspectPlacement, ":", "_")}${fieldName}_table" class="collection-table">
         <a name="${fieldName}" class="anchor"></a>
-        <h3>
+        <h3 id="${divName}_h3">
           <c:if test="${SHOW_TAGS}">
             <div class="right">
               <c:set var="descriptor" value="${collection.descriptor}" />
@@ -52,27 +53,58 @@
         </h3>
         <div class="clear"></div>
         <%-- ############# --%>
-    <c:choose>
-      <c:when test="${collection.size > 0}">
+        <c:choose>
+         <c:when test="${collection.size > 0}">
           <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}">
-          <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner" style="overflow-x:auto;">
-
-            <c:set var="inlineResultsTable" value="${collection.table}"/>
-
-            <tiles:insert page="/reportCollectionTable.jsp">
+          <div id="coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner" style="overflow-x:hidden;">
+          <c:set var="innerDivName" value="coll_${fn:replace(aspectPlacement, ':', '_')}${fieldName}" /> 
+          <c:set var="inlineResultsTable" value="${collection.table}"/>
+          <c:set var="useTableWidget" value="${WEB_PROPERTIES['inline.collections.in.tables']=='true'}" />
+          <c:set var="useLocalStorage" value="${WEB_PROPERTIES['use.localstorage']=='true'}" />
+          <c:choose>
+            <c:when test="${useTableWidget}">
+              <tiles:insert page="/collectionToTable.do?field=${fieldName}&id=${object.id}&trail=${param.trail}&pathString=${object.classDescriptor.unqualifiedName}.${fieldName}"> 
+              </tiles:insert>
+            </c:when>
+            <c:otherwise>
+             <tiles:insert page="/reportCollectionTable.jsp"> 
               <tiles:put name="inlineResultsTable" beanName="inlineResultsTable" />
               <tiles:put name="object" beanName="object" />
               <tiles:put name="fieldName" value="${fieldName}" />
-            </tiles:insert>
-            <script type="text/javascript">trimTable('#coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner');</script>
+             </tiles:insert>
+            </c:otherwise> 
+          </c:choose>
+          <script type="text/javascript">
+            trimTable('#coll_${fn:replace(aspectPlacement, ":", "_")}${fieldName}_inner');
+            $(function(){
+                if(${useLocalStorage} && typeof(Storage)!=="undefined"){
+                 if(localStorage.${innerDivName}==undefined || localStorage.${innerDivName} == "hide"){
+                   $('#${innerDivName}').hide();
+                   localStorage.${innerDivName}="hide";
+                 }
+              }
+              $('#${divName}_h3').click(function(e){
+               $('#${innerDivName}').slideToggle('fast');
+               if(${useLocalStorage} && typeof(Storage)!=="undefined"){
+                 if(localStorage.${innerDivName}=="hide"){
+                     localStorage.${innerDivName}="show";
+                 }else{
+                     localStorage.${innerDivName}="hide";
+                 }
+               }
+               });
+            });
+          </script>
           </div>
-
-          <div class="show-in-table" style="display:none;">
-            <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
-              Show all in a table »
-            </html:link>
-          </div>
-
+          <c:choose>
+            <c:when test="${!useTableWidget}">
+              <div class="show-in-table" style="display:none;">
+              <html:link action="/collectionDetails?id=${object.id}&amp;field=${fieldName}&amp;trail=${param.trail}">
+                Show all in a table
+              </html:link>
+              </div> 
+            </c:when>
+          </c:choose>
           </div>
           <div class="clear"></div>
         <%-- ############# --%>
