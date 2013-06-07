@@ -5,9 +5,9 @@ BEGIN {
     my $base = ( $0 =~ m:(.*)/.*: )[0];
     unshift( @INC, 
         map( {$base . $_} 
-            '/../../../../intermine/perl/InterMine-Util/lib',
-            '/../../../../intermine/perl/InterMine-Item/lib',
-            '/../../../../intermine/perl/InterMine-Model/lib',
+            '/../../intermine/perl/InterMine-Util/lib',
+            '/../../intermine/perl/InterMine-Item/lib',
+            '/../../intermine/perl/InterMine-Model/lib',
         ),
     );
 }
@@ -63,7 +63,7 @@ $log->info("Running $0");
 # Set-up the intermine item-creating apparatus
 my $release = ($opt_r) ? '.' . $opt_r : '';
 my $model_file =
-  $script_dir . "/../../../../$mine_name/dbmodel/build/model/genomic_model.xml";
+  $script_dir . "/../../$mine_name/dbmodel/build/model/genomic_model.xml";
 my $properties_file = "$ENV{HOME}/.intermine/$mine_name.properties" . $release;
 
 for ( $model_file, $properties_file ) {
@@ -86,7 +86,7 @@ my ( $org_item, $dataset_item, $datasource_item, %genesncbis, %ncbisgenes )
 # config file to tell us which chromosomes to bother with for which organisms
 # the default is _all_ chromosomes
 my $config_file =
-  $script_dir . '/../../../sources/ensembl/resources/ensembl_config.properties';
+  $script_dir . '/../sources/ensembl/ensembl-core/resources/ensembl_config.properties';
 %organisms = parse_config( $config_file, %organisms );
 my $item_factory;
 
@@ -194,6 +194,8 @@ foreach my $taxon_id ( keys %organisms ) {
 
     my $host =
       $properties->{"db.ensembl.${taxon_id}.core.datasource.serverName"};
+    my $port =
+      $properties->{"db.ensembl.${taxon_id}.core.datasource.port"};
     my $dbname =
       $properties->{"db.ensembl.${taxon_id}.core.datasource.databaseName"};
     my $user = $properties->{"db.ensembl.${taxon_id}.core.datasource.user"};
@@ -203,6 +205,7 @@ foreach my $taxon_id ( keys %organisms ) {
 
     my $dbCore = Bio::EnsEMBL::DBSQL::DBAdaptor->new(
         -host    => $host,
+        -port    => $port,
         -user    => $user,
         -pass    => $pass,
         -dbname  => $dbname,

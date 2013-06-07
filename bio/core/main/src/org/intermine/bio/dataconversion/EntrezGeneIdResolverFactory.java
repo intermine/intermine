@@ -42,6 +42,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     protected String PROP_FILE = "entrezIdResolver_config.properties";
     protected Map<String, String> config_xref = new HashMap<String, String>();
+    protected Map<String, String> config_nonxref = new HashMap<String, String>();
     protected Map<String, String> config_prefix = new HashMap<String, String>();
     protected Map<String, String> config_strains = new HashMap<String, String>();
     protected Set<String> ignoredTaxonIds = new HashSet<String>();
@@ -228,11 +229,10 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
 
     private void processGenes(String taxonId, Set<GeneInfoRecord> genes) {
         for (GeneInfoRecord record : genes) {
-            String primaryIdentifier;
-            String config = config_xref.get(taxonId); // the original taxon id, not strain
-            // Strictly filter out entrez ids as for ZFIN, some of the genes don't have ZFIN id,
-            // ignore them
-            if (config != null && !config.isEmpty()) {
+            String primaryIdentifier = null;
+
+            if (config_xref.containsKey(taxonId)) {
+                String config = config_xref.get(taxonId);
                 if (record.xrefs.get(config) != null) {
                     String prefix = config_prefix.get(taxonId); // eg. RGD:
                     primaryIdentifier = record.xrefs.get(config).iterator().next();
@@ -242,6 +242,11 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 } else {
                     LOG.info("Gene " + record.entrez + " does not have xref pattern: " + config);
                     continue;
+                }
+            } else if (config_nonxref.containsKey(taxonId)) {
+                String config = config_nonxref.get(taxonId);
+                if (config.equalsIgnoreCase("locusTag")) {
+                    primaryIdentifier = record.locusTag;
                 }
             } else {
                 primaryIdentifier = record.entrez;
@@ -283,7 +288,7 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
             } else {
-                String key = (String) entry.getKey(); // e.g. 10090.xref
+                String key = (String) entry.getKey(); // e.g. 10090.primaryIdentifier.xref
                 String value = ((String) entry.getValue()).trim(); // e.g. ZFIN
                 String[] attributes = key.split("\\.");
                 if (attributes.length == 0) {
@@ -292,10 +297,12 @@ public class EntrezGeneIdResolverFactory extends IdResolverFactory
                 }
 
                 String taxonId = attributes[0];
-                if ("xref".equals(attributes[1])) {
+                if ("xref".equals(attributes[2])) {
                     config_xref.put(taxonId, value);
-                } else if ("prefix".equals(attributes[1])) {
+                } else if ("prefix".equals(attributes[2])) {
                     config_prefix.put(taxonId, value);
+                } else if ("nonxref".equals(attributes[2])) {
+                    config_nonxref.put(taxonId, value);
                 }
             }
         }

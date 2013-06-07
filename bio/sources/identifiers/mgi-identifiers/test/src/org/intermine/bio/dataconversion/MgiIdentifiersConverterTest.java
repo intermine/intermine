@@ -50,21 +50,18 @@ public class MgiIdentifiersConverterTest extends ItemsTestCase
      * @throws Exception e
      */
     public void testProcess() throws Exception {
-        String input = "MGI:12345\t"
+        String input = "MGI:1916316\t"
+                + "15\t"
+                + "70.10\t"
+                + "107028118\t"
+                + "107030438\t"
+                + "+\t"
+                + "1810010H24Rik\t"
+                + "0\t"
+                + "RIKEN cDNA 1810010H24 gene\t"
                 + "Gene\t"
-                + "mouse-symbol\t"
-                + "mouse-name\t"
-                + "OTTMUSG00000015981\t"
-                + "154617138\t"
-                + "154876748\t"
-                + "NCBI Build 37\t"
-                + "50518\t"
-                + "2\t"
-                + "mouse-ncbinumber\t"
-                + "154876748\t"
-                + "ENSMUSG00000027596\t"
-                + "2\tnull\tmouse-ensemblId\t"
-                + "154617138";
+                + "unclassified gene\t"
+                + "OTTMUSG00000003581";
 
 
         MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
@@ -74,7 +71,7 @@ public class MgiIdentifiersConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "mgi-identfiers_tgt.xml");
+        // writeItemsFile(itemWriter.getItems(), "mgi-identfiers_tgt.xml");
 
         assertEquals(readItemSet("MgiIdentifiersConverterTest.xml"), itemWriter.getItems());
     }

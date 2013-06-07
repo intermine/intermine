@@ -35,7 +35,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
     protected static final Logger LOG = Logger.getLogger(ZfinIdentifiersResolverFactory.class);
 
     // data file path set in ~/.intermine/MINE.properties
-    // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/ensembl_1_to_1.txt
+    // e.g. resolver.zfin.file=/micklem/data/zfin-identifiers/current/identifiersForIntermine.txt
     private final String propKey = "resolver.file.rootpath";
     private final String resolverFileSymbo = "zfin";
     private final String taxonId = "7955";
@@ -108,7 +108,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
 
     protected void createFromFile(File f) throws IOException {
         // data is in format:
-        // ZDBID	ID1|ID2
+        // ZDBID	ID1,ID2,ID3
         Iterator<?> lineIter = FormattedTextParser.
                 parseTabDelimitedReader(new BufferedReader(new FileReader(f)));
         while (lineIter.hasNext()) {
@@ -119,7 +119,7 @@ public class ZfinIdentifiersResolverFactory extends IdResolverFactory
             }
 
             String zfinId = line[0];
-            String[] synonyms = StringUtil.split(line[1].trim(), "|");
+            String[] synonyms = StringUtil.split(line[1].trim(), ",");
 
             resolver.addMainIds(taxonId, zfinId, Collections.singleton(zfinId));
             resolver.addSynonyms(taxonId, zfinId, new HashSet<String>(Arrays.asList(synonyms)));

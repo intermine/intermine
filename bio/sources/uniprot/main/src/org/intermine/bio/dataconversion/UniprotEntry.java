@@ -499,7 +499,7 @@ public class UniprotEntry
      * The uniprotAccession for all other isoforms will be the same as this entry's primaryaccession
      * @param accession for this isoform
      */
-    public void setCanonicalIsoform(String accession) {
+    public void addCanonicalIsoform(String accession) {
         isIsoform = false;
         addToCollection("accessions", accession);
     }

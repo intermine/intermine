@@ -21,6 +21,18 @@ use constant {
             FILE => 'OrthoDB6_ALL_FUNGI_tabtext.gz',
             EXTRACT => 1,
         },
+        {
+            HOST => 'cegg.unige.ch',
+            REMOTE_DIR => '/OrthoDB6/',
+            FILE => 'OrthoDB6_Firmicutes-Bacilli_tabtext.gz',
+            EXTRACT => 1,
+        },
+        {
+            HOST => 'cegg.unige.ch',
+            REMOTE_DIR => '/OrthoDB6/',
+            FILE => 'OrthoDB6_Gammaproteobacteria_tabtext.gz',
+            EXTRACT => 1,
+        },
     ],
 };
 

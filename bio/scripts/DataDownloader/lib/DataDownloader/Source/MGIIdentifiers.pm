@@ -12,7 +12,7 @@ use constant {
     SOURCE_LINK => "ftp.informatics.jax.org",
     SOURCE_DIR => "mgi-identifiers",
     SOURCES => [{
-        FILE => "MGI_Coordinate_build37.rpt", 
+        FILE => "MRK_List2.rpt", 
         HOST => "ftp.informatics.jax.org",
         REMOTE_DIR => "pub/reports",
     }],

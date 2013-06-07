@@ -179,26 +179,41 @@ public class EntrezOrganismRetriever extends Task
 /*
 Example
 
-  <?xml version="1.0"?>
-  <!DOCTYPE eSummaryResult PUBLIC "-//NLM//DTD eSummaryResult, 29 October 2004//EN"
-            "http://www.ncbi.nlm.nih.gov/entrez/query/DTD/eSummary_041029.dtd">
-  <eSummaryResult>
-    <DocSum>
-      <Id>7227</Id>
-      <Item Name="Rank" Type="String">species</Item>
-      <Item Name="Division" Type="String">flies</Item>
-      <Item Name="ScientificName" Type="String">Drosophila melanogaster</Item>
-      <Item Name="CommonName" Type="String">fruit fly</Item>
+    <eSummaryResult>
+        <DocSum>
+            <Id>7227</Id>
+            <Item Name="Status" Type="String">active</Item>
+            <Item Name="Rank" Type="String">species</Item>
+            <Item Name="Division" Type="String">flies</Item>
+            <Item Name="ScientificName" Type="String">Drosophila melanogaster</Item>
+            <Item Name="CommonName" Type="String">fruit fly</Item>
+            <Item Name="TaxId" Type="Integer">7227</Item>
+            <Item Name="AkaTaxId" Type="Integer">0</Item>
+            <Item Name="Genus" Type="String">Drosophila</Item>
+            <Item Name="Species" Type="String">melanogaster</Item>
+            <Item Name="Subsp" Type="String"/>
+            <Item Name="ModificationDate" Type="Date">2011/10/05 00:00</Item>
+        </DocSum>
+    </eSummaryResult>
 
-      <Item Name="TaxId" Type="Integer">7227</Item>
-      <Item Name="NucNumber" Type="Integer">566345</Item>
-      <Item Name="ProtNumber" Type="Integer">74568</Item>
-      <Item Name="StructNumber" Type="Integer">196</Item>
-      <Item Name="GenNumber" Type="Integer">7</Item>
-      <Item Name="GeneNumber" Type="Integer">21146</Item>
+ Example of merged taxon
 
-    </DocSum>
-  </eSummaryResult>
+    <eSummaryResult>
+        <DocSum>
+            <Id>71853</Id>
+            <Item Name="Status" Type="String">merged</Item>
+            <Item Name="Rank" Type="String"/>
+            <Item Name="Division" Type="String"/>
+            <Item Name="ScientificName" Type="String"/>
+            <Item Name="CommonName" Type="String"/>
+            <Item Name="TaxId" Type="Integer">71853</Item>
+            <Item Name="AkaTaxId" Type="Integer">109296</Item>
+            <Item Name="Genus" Type="String"/>
+            <Item Name="Species" Type="String"/>
+            <Item Name="Subsp" Type="String"/>
+            <Item Name="ModificationDate" Type="Date">1/01/01 00:00</Item>
+        </DocSum>
+    </eSummaryResult>
 */
 
     /**
@@ -211,6 +226,7 @@ Example
         String name;
         StringBuffer characters;
         ItemFactory itemFactory;
+        boolean isMerged = false;
 
         /**
          * Constructor
@@ -225,8 +241,7 @@ Example
         /**
          * {@inheritDoc}
          */
-        public void startElement(@SuppressWarnings("unused") String uri,
-                @SuppressWarnings("unused") String localName, String qName, Attributes attrs) {
+        public void startElement(String uri, String localName, String qName, Attributes attrs) {
             if ("ERROR".equals(qName)) {
                 name = qName;
             } else if ("Id".equals(qName)) {
@@ -247,33 +262,50 @@ Example
         /**
          * {@inheritDoc}
          */
-        public void endElement(@SuppressWarnings("unused") String uri,
-                @SuppressWarnings("unused") String localName,
-                @SuppressWarnings("unused") String qName) {
+        public void endElement(String uri, String localName, String qName) {
             if ("ERROR".equals(name)) {
                 LOG.error("Unable to retrieve taxonomy record: " + characters);
             } else if ("Id".equals(name)) {
                 organism = itemFactory.makeItemForClass("Organism");
                 toStore.add(organism);
                 organism.setAttribute("taxonId", characters.toString());
+            } else if ("Status".equals(name)) {
+                if ("merged".equals(characters.toString())) {
+                    this.isMerged = true;
+                } else if ("active".equals(characters.toString())) {
+                    this.isMerged = false;
+                }
             } else if ("ScientificName".equals(name)) {
                 String text = characters.toString();
-                organism.setAttribute("name", text);
-                int spaceIndex = text.indexOf(" ");
-                if (spaceIndex == -1) {
-                    organism.setAttribute("genus", text);
-                } else {
-                    organism.setAttribute("genus", text.substring(0, spaceIndex));
-                    organism.setAttribute("species", text.substring(spaceIndex + 1));
-                    organism.setAttribute("shortName", text.charAt(0) + ". "
-                                          + text.substring(spaceIndex + 1));
+                if (StringUtils.isNotEmpty(text)) {
+                    organism.setAttribute("name", text);
+
+                    int spaceIndex = text.indexOf(" ");
+                    if (spaceIndex == -1) {
+                        organism.setAttribute("genus", text);
+                    } else {
+                        organism.setAttribute("genus",
+                                text.substring(0, spaceIndex));
+                        organism.setAttribute("species",
+                                text.substring(spaceIndex + 1));
+                        organism.setAttribute("shortName", text.charAt(0)
+                                + ". " + text.substring(spaceIndex + 1));
+                    }
                 }
             } else if ("CommonName".equals(name)) {
                 String text = characters.toString();
                 if (StringUtils.isNotEmpty(text)) {
                     organism.setAttribute("commonName", text);
                 }
+            } else if ("AkaTaxId".equals(name)) {
+                if (!"0".equals(characters.toString()) && this.isMerged) {
+                    throw new RuntimeException("Your taxon id "
+                            + organism.getAttribute("taxonId").getValue()
+                            + " is replaced by " + characters.toString()
+                            + ", please update.");
+                }
             }
+
             name = null;
         }
     }

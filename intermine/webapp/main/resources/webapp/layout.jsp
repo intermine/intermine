@@ -49,6 +49,9 @@
       <tiles:put name="pageNameTitle" value="${pageNameTitle}"/>
       <tiles:put name="scope" value="${scope}"/>
     </tiles:insert>
+
+    <link rel="shortcut icon" type="image/x-icon" href="model/images/favicon.ico">
+
   </head>
 
   <!-- Check if the current page has fixed layout -->
@@ -115,7 +118,9 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         console.log("Webservice is at version " + v);
     });
     if (intermine.widgets != null) {
-        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
+        // Make sure we have all deps required in `global.web.properties`, otherwise we fail!!!
+        var opts = { 'root': $SERVICE.root, 'token': $SERVICE.token, 'skipDeps': true };
+        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token, opts);
     }
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua.msie && parseInt(ua.version, 10) < 9) {

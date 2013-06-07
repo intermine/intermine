@@ -220,9 +220,15 @@ public class Database implements Shutdownable
      */
     public String getURL() {
 
-        String url = "jdbc:" + platform.toLowerCase() + "://"
-            + (String) settings.get("datasource.serverName")
-            + "/" + (String) settings.get("datasource.databaseName");
+        StringBuffer urlBuffer = new StringBuffer();
+        urlBuffer.append("jdbc:" + platform.toLowerCase() + "://");
+        urlBuffer.append((String) settings.get("datasource.serverName"));
+        if (settings.get("datasource.portNumber") != null) {
+            urlBuffer.append(":" + (String) settings.get("datasource.portNumber"));
+        }
+        urlBuffer.append("/" + (String) settings.get("datasource.databaseName"));
+        String url = urlBuffer.toString();
+
 //        if (platform.equalsIgnoreCase("oracle")) {
 //            //jdbc:oracle:thin:@oracle.flymine.org:1521:XE
 //            url = "jdbc:" + platform.toLowerCase() + ":"                    // oracle

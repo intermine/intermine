@@ -213,11 +213,7 @@ public class TreefamConverter extends BioFileConverter
         String resolvedGenePid = null;
         // test if id has been resolved
         if (resolvedIds.containsKey(new MultiKey(taxonId, geneId, symbol))) {
-            if (resolvedIds.get(new MultiKey(taxonId, geneId, symbol)) != null) {
-                resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
-                LOG.info("This id: " + taxonId + "-" + geneId + "-" + symbol
-                        + " has been resolved as: " + resolvedGenePid);
-            }
+            resolvedGenePid = resolvedIds.get(new MultiKey(taxonId, geneId, symbol));
         } else {
             resolvedGenePid = resolveGene(taxonId, geneId, symbol);
         }
@@ -392,25 +388,20 @@ public class TreefamConverter extends BioFileConverter
     }
 
     private String resolveGene(String taxonId, String identifier, String symbol) {
-        LOG.info("identifer : " + identifier + ", symbol: " + symbol);
         if (rslv == null || !rslv.hasTaxon(taxonId)) {
             // no id resolver available, so return the original identifier
             LOG.info("ID resolver not used for taxon ID " + taxonId);
             return identifier;
         }
 
-        Set<String> resolvedIdSet = rslv.resolveIds(taxonId, Arrays.asList(identifier, symbol));
+        String resolvedId = rslv.resolveIds(taxonId, Arrays.asList(identifier, symbol));
 
-        if (resolvedIdSet != null && resolvedIdSet.size() == 1) {
-            String resolvedId = resolvedIdSet.iterator().next();
-            resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
-            return resolvedId;
+        if (resolvedId != null) {
+            LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
+                    + identifier + " for taxon ID " + taxonId);
         }
 
-        resolvedIds.put(new MultiKey(taxonId, identifier, symbol), null);
-        LOG.info("RESOLVER: failed to resolve gene to one identifier, ignoring gene: "
-                + identifier + " for taxon ID " + taxonId);
-
-        return null;
+        resolvedIds.put(new MultiKey(taxonId, identifier, symbol), resolvedId);
+        return resolvedId;
     }
 }

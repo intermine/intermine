@@ -36,7 +36,7 @@
     <source name="protein-atlas" type="protein-atlas">
       <property name="src.data.dir" location="/micklem/data/metabolic/protein-atlas/current" />
     </source>
-    <source name="ensembl-human" type="ensembl" dump="true">
+    <source name="ensembl-human" type="ensembl-core" dump="true">
       <property name="src.data.dir" location="/micklem/data/ensembl/homo_sapiens/current_core" />
       <property name="src.data.dir.includes" value="9606.xml" />
     </source>

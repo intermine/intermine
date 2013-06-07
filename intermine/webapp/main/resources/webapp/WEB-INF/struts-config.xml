@@ -147,6 +147,7 @@
     <action path="/loadQuery" type="org.intermine.web.struts.LoadQueryAction" parameter="method">
       <forward name="query" redirect="true" path="/query.do"/>
       <forward name="waiting" redirect="true" path="/pollQuery.do"/>
+      <forward name="errors" redirect="true" path="/customQuery.do"/>
     </action>
     <action path="/loadTemplate" type="org.intermine.web.struts.LoadTemplateAction" parameter="method">
       <forward name="template" path="/template.do"/>

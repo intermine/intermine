@@ -1,0 +1,4 @@
+<project name="ensembl-gwas-db-tasks" default="default" basedir=".">
+  <description>build ensembl-gwas-db tasks</description>
+  <import file="../../../../../imbuild/library.xml"/> 
+</project>

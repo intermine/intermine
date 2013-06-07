@@ -13,11 +13,13 @@ package org.intermine.bio.dataconversion;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -54,6 +56,11 @@ public class GFF3Converter extends DataConverter
     private boolean dontCreateLocations;
     private final Map<String, Item> dataSets = new HashMap<String, Item>();
     private final Map<String, Item> dataSources = new HashMap<String, Item>();
+
+    protected String PROP_FILE = "gff_config.properties";
+    protected Map<String, Set<String>> config_term = new HashMap<String, Set<String>>();
+    protected Map<String, Map<String, String>> config_attr =
+            new HashMap<String, Map<String, String>>();
 
     /**
      * Constructor
@@ -92,6 +99,50 @@ public class GFF3Converter extends DataConverter
         handler.setConverter(this);
         handler.setIdentifierMap(identifierMap);
         handler.setOrganism(organism);
+        readConfig();
+    }
+
+    protected void readConfig() {
+        Properties gffConfig = new Properties();
+        try {
+            gffConfig.load(getClass().getClassLoader().getResourceAsStream(
+                    PROP_FILE));
+        } catch (IOException e) {
+            throw new RuntimeException("I/O Problem loading properties '"
+                    + PROP_FILE + "'", e);
+        }
+
+        for (Map.Entry<Object, Object> entry : gffConfig.entrySet()) {
+            if (entry.getKey().toString().contains("terms")) {
+                if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
+                    config_term.put(
+                            entry.getKey().toString().split("\\.")[0],
+                            new HashSet<String>(Arrays.asList(((String)
+                                    entry.getValue()).trim().split(","))));
+                }
+            } else if (entry.getKey().toString().contains("attributes")) {
+                if (entry.getValue() != null || !((String) entry.getValue()).trim().isEmpty()) {
+                    String keyStr = entry.getKey().toString();
+                    String[] keyBits = keyStr.split("\\.");
+                    String taxonid = keyStr.split("\\.")[0];
+                    String attr = entry.getKey().toString().split("\\.")[2];
+                    if (keyBits.length > 3) {
+                        attr = keyStr.substring(
+                                keyStr.indexOf("attributes.") + 11,
+                                keyStr.length());
+                    }
+                    String field = ((String)entry.getValue()).trim();
+                    if (config_attr.get(taxonid) == null) {
+                        Map<String, String> attrMap = new HashMap<String, String>();
+                        attrMap.put(field, attr);
+                        config_attr.put(taxonid, attrMap);
+                    } else {
+                        config_attr.get(taxonid).put(field, attr);
+                    }
+
+                }
+            }
+        }
     }
 
     /**
@@ -156,15 +207,44 @@ public class GFF3Converter extends DataConverter
      * @throws ObjectStoreException if an error occurs storing items
      */
     public void process(GFF3Record record) throws ObjectStoreException {
-        String identifier = record.getId();
-        String refId = identifierMap.get(identifier);
+        String term = record.getType();
+
+        if (config_term != null && !config_term.isEmpty()) { // otherwise all terms are processed
+            if (config_term.containsKey(this.orgTaxonId)) {
+                if (!config_term.get(this.orgTaxonId).contains(term)) {
+                    return;
+                }
+            }
+        }
+
+        // By default, use ID field in attributes
+        String primaryIdentifier = record.getId();
+        // If pid set in gff_config.propeties, look for the attribute field, e.g. locus_tag
+        if (config_attr.containsKey(this.orgTaxonId)) {
+            if (config_attr.get(this.orgTaxonId).containsKey("primaryIdentifier")) {
+                String pidAttr = config_attr.get(this.orgTaxonId).get("primaryIdentifier");
+                if (pidAttr.contains("Dbxref")) {
+                    String pidAttrPrefix = pidAttr.split("\\.")[1];
+                    for (Iterator<?> i = record.getDbxrefs().iterator(); i.hasNext(); ) {
+                        String xref = (String) i.next();
+                        if (xref.contains(pidAttrPrefix)) {
+                            primaryIdentifier = xref.split(":")[1];
+                            break;
+                        }
+                    }
+                } else {
+                    primaryIdentifier = record.getAttributes().get(pidAttr).get(0);
+                }
+            }
+        }
+
+        String refId = identifierMap.get(primaryIdentifier);
 
         // get rid of previous record Items from handler
         handler.clear();
-        List<?> names = record.getNames();
+
         Item seq = getSeq(record.getSequenceID());
 
-        String term = record.getType();
         String className = TypeUtil.javaiseClassName(term);
         String fullClassName = tgtModel.getPackageName() + "." + className;
 
@@ -186,7 +266,7 @@ public class GFF3Converter extends DataConverter
             refId = feature.getIdentifier();
         }
 
-        if (!"chromosome".equals(record.getType()) && seq != null) {
+        if (!"chromosome".equals(term) && seq != null) {
             boolean makeLocation = record.getStart() >= 1 && record.getEnd() >= 1
                 && !dontCreateLocations
                 && handler.createLocations(record);
@@ -215,13 +295,49 @@ public class GFF3Converter extends DataConverter
             return;
         }
 
-        if (identifier != null) {
-            feature.setAttribute("primaryIdentifier", identifier);
+        if (primaryIdentifier != null) {
+            feature.setAttribute("primaryIdentifier", primaryIdentifier);
         }
         handler.setFeature(feature);
-        identifierMap.put(identifier, feature.getIdentifier());
+        identifierMap.put(primaryIdentifier, feature.getIdentifier());
+
+        // for secondaryIdentifier
+        if (config_attr.containsKey(this.orgTaxonId)) {
+            if (config_attr.get(this.orgTaxonId).containsKey("secondaryIdentifier")) {
+                String siAttr = config_attr.get(this.orgTaxonId).get("secondaryIdentifier");
+                if (record.getAttributes().get(siAttr) != null) {
+                    String secondaryIdentifier = record.getAttributes().get(siAttr).get(0);
+                    if (secondaryIdentifier != null) {
+                        feature.setAttribute("secondaryIdentifier", secondaryIdentifier);
+                    }
+                }
+            }
+        }
+
+        List<?> names = record.getNames();
+        String symbol = null;
+        List<String> synonyms = null;
+
+        // get the attribute set for symbol
+        if (config_attr.containsKey(this.orgTaxonId)) {
+            if (config_attr.get(this.orgTaxonId).containsKey("symbol")) {
+                String symbolAttr = config_attr.get(this.orgTaxonId).get("symbol");
+                if (record.getAttributes().get(symbolAttr) != null) {
+                    symbol = record.getAttributes().get(symbolAttr).get(0);
+                }
+            }
+        }
+
+        // get the attribute set for synonym
+        if (config_attr.containsKey(this.orgTaxonId)) {
+            if (config_attr.get(this.orgTaxonId).containsKey("synonym")) {
+                String synonymAttr = config_attr.get(this.orgTaxonId).get("synonym");
+                synonyms = record.getAttributes().get(synonymAttr);
+            }
+        }
+
         if (names != null) {
-            setNames(names, synonymsToAdd, record.getId(), feature, cd);
+            setNames(names, symbol, synonyms, synonymsToAdd, primaryIdentifier, feature, cd);
         }
 
         List<String> parents = record.getParents();
@@ -317,24 +433,44 @@ public class GFF3Converter extends DataConverter
         }
     }
 
-    private void setNames(List<?> names, Set<Item> synonymsToAdd, String recordId,
-            Item feature, ClassDescriptor cd) {
-        if (cd.getFieldDescriptorByName("symbol") == null) {
+    private void setNames(List<?> names, String symbol, List<String> synonyms,
+            Set<Item> synonymsToAdd, String primaryIdentifier, Item feature, ClassDescriptor cd) {
+        if (cd.getFieldDescriptorByName("symbol") == null) { // if symbol is not in the model
             String name = (String) names.get(0);
             feature.setAttribute("name", name);
             for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
-                if (!recordName.equals(recordId) && !recordName.equals(name)) {
+                if (!recordName.equals(primaryIdentifier) && !recordName.equals(name)) {
                     synonymsToAdd.add(getSynonym(feature, recordName));
                 }
             }
+
+            if (synonyms != null) {
+                for (Iterator<?> i = synonyms.iterator(); i.hasNext(); ) {
+                    String recordName = (String) i.next();
+                    if (!recordName.equals(primaryIdentifier) && !recordName.equals(name)) {
+                        synonymsToAdd.add(getSynonym(feature, recordName));
+                    }
+                }
+            }
         } else {
-            String symbol = (String) names.get(0);
-            feature.setAttribute("symbol", (String) names.get(0));
+            if (symbol == null) {
+                symbol = (String) names.get(0);
+            }
+            feature.setAttribute("symbol", symbol);
             for (Iterator<?> i = names.iterator(); i.hasNext(); ) {
                 String recordName = (String) i.next();
-                if (!recordName.equals(recordId) && !recordName.equals(symbol)) {
+                if (!recordName.equals(primaryIdentifier) && !recordName.equals(symbol)) {
                     synonymsToAdd.add(getSynonym(feature, recordName));
+                }
+            }
+
+            if (synonyms != null) {
+                for (Iterator<?> i = synonyms.iterator(); i.hasNext(); ) {
+                    String recordName = (String) i.next();
+                    if (!recordName.equals(primaryIdentifier) && !recordName.equals(symbol)) {
+                        synonymsToAdd.add(getSynonym(feature, recordName));
+                    }
                 }
             }
         }
@@ -530,4 +666,3 @@ public class GFF3Converter extends DataConverter
         return refId;
     }
 }
-
