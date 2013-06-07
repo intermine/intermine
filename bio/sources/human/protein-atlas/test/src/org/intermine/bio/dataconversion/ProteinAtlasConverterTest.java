@@ -47,12 +47,30 @@ public class ProteinAtlasConverterTest extends ItemsTestCase
         converter.close();
 
         // uncomment to write out a new target items file
-        //writeItemsFile(itemWriter.getItems(), "protein-atlas-tgt.xml");
+        // writeItemsFile(itemWriter.getItems(), "protein-atlas-tgt.xml");
 
         assertEquals(readItemSet("ProteinAtlasConverterTest.xml"), itemWriter.getItems());
     }
 
+    @SuppressWarnings("rawtypes")
     protected Collection getExpectedItems() throws Exception {
         return FullParser.parse(getClass().getClassLoader().getResourceAsStream("ProteinAtlasConverterTest.xml"));
+    }
+
+    public void testXMLParsing() throws Exception {
+        MockItemWriter itemWriter = new MockItemWriter(new HashMap<String, Item>());
+        BioFileConverter converter = new ProteinAtlasConverter(itemWriter,
+                                                                   Model.getInstanceByName("genomic"));
+
+        File testFile = new File(getClass().getClassLoader()
+                .getResource("proteinatlas.xml").toURI());
+        converter.setCurrentFile(testFile);
+        converter.process(null);
+        converter.close();
+
+        // uncomment to write out a new target items file
+        // writeItemsFile(itemWriter.getItems(), "protein-atlas-tgt.xml");
+
+        assertEquals(readItemSet("ProteinAtlasConverterXMLParsingTest.xml"), itemWriter.getItems());
     }
 }

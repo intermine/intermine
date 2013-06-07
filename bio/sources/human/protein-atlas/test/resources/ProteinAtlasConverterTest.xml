@@ -2,28 +2,22 @@
 <item id="1_1" class="DataSource">
 <attribute name="name" value="Protein Atlas"/>
 </item>
-<item id="6_1" class="Tissue">
-<attribute name="name" value="adrenal gland"/>
+<item id="7_1" class="ProteinAtlasExpression">
+<attribute name="cellType" value="glandular cells"/>
+<attribute name="expressionType" value="Staining - one antibody only"/>
+<attribute name="level" value="None"/>
+<attribute name="reliability" value="High"/>
+<reference name="gene" ref_id="3_1"/>
+<reference name="tissue" ref_id="6_1"/>
 </item>
 <item id="2_1" class="DataSet">
 <attribute name="name" value="Protein Atlas expression"/>
 <reference name="dataSource" ref_id="1_1"/>
 </item>
-<item id="6_2" class="Tissue">
-<attribute name="name" value="appendix"/>
-</item>
 <item id="5_1" class="SOTerm">
 <attribute name="name" value="gene"/>
 <reference name="ontology" ref_id="0_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
-</item>
-<item id="7_2" class="ProteinAtlasExpression">
-<attribute name="cellType" value="glandular cells"/>
-<attribute name="expressionType" value="Staining - one antibody only"/>
-<attribute name="level" value="Moderate"/>
-<attribute name="reliability" value="Supportive"/>
-<reference name="gene" ref_id="3_1"/>
-<reference name="tissue" ref_id="6_2"/>
 </item>
 <item id="0_1" class="Ontology">
 <attribute name="name" value="Sequence Ontology"/>
@@ -38,12 +32,12 @@
 <reference name="sequenceOntologyTerm" ref_id="5_1"/>
 <collection name="dataSets"><reference ref_id="2_1"/></collection>
 </item>
-<item id="7_1" class="ProteinAtlasExpression">
+<item id="7_2" class="ProteinAtlasExpression">
 <attribute name="cellType" value="glandular cells"/>
 <attribute name="expressionType" value="Staining - one antibody only"/>
-<attribute name="level" value="Negative"/>
-<attribute name="reliability" value="Supportive"/>
+<attribute name="level" value="Medium"/>
+<attribute name="reliability" value="High"/>
 <reference name="gene" ref_id="3_1"/>
-<reference name="tissue" ref_id="6_1"/>
+<reference name="tissue" ref_id="6_2"/>
 </item>
 </items>
