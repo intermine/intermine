@@ -29,7 +29,7 @@ jQuery(document).ready(function() {
         },
         resultsCb: function(pq) {
             (new intermine.Service({'root': service})).query(pq, function(query) {
-                var target, uri, form, field, w;
+                var target, uri, form, w;
 
                 // Generate the target name.
                 target = 'tmp' + +new Date();
@@ -39,11 +39,12 @@ jQuery(document).ready(function() {
 
                 // We will be posting here.
                 uri = service.replace('/service/', '/run.do');
-                // Create the query field.
-                field = jQuery('<input>', { 'type': 'hidden', 'value': query.toXML(), 'name': 'query' });
-                // Create a hidden form & submit it.
+                // Create a form.
                 form = jQuery('<form>', { 'method': 'POST', 'action': uri, 'target': target });
-                form.append(field).submit();
+                // Append the field.
+                form.append(jQuery('<input>', { 'type': 'hidden', 'value': query.toXML(), 'name': 'query' }));
+                // Append the form, submit & remove.
+                form.appendTo('body').submit().remove();
 
                 // Give the window focus.
                 w.focus();
