@@ -174,7 +174,7 @@ public abstract class LoginHandler extends InterMineAction
         if (userName != null && userName.equals(pm.getSuperuser())) {
             permission.addRole("SUPERUSER");
         }
-        if (api.getBagManager().isAnyBagInState(profile, BagState.UPGRADING)) {
+        if (!api.getBagManager().isAnyBagInState(profile, BagState.UPGRADING)) {
             Runnable upgrade = new UpgradeBagList(profile, api.getBagQueryRunner());
             runBagUpgrade(upgrade, api, profile);
         }
