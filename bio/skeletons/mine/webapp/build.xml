@@ -14,7 +14,7 @@
   	<include name="WEB-INF/struts-config.xml"/>
         <include name="WEB-INF/tiles-defs.xml"/>
         <include name="WEB-INF/classes/InterMineWebApp.properties"/>  
- 	      <include name="WEB-INF/classes/model.properties"/>
+        <include name="WEB-INF/classes/model.properties"/>
         <include name="WEB-INF/web.xml"/>
       </patternset>
     </unwar>
