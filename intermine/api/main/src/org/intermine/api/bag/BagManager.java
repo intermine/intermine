@@ -10,6 +10,7 @@ package org.intermine.api.bag;
  *
  */
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -213,21 +214,51 @@ public class BagManager
 
     /**
      * Return true if there is at least one user bag for the given profile in
-     * the 'not_current' state.
+     * at least one of the given states
      * @param profile the user to fetch bags for
-     * @return a map from bag name to bag
+     * @param states the states we are querying for.
+     * @return whether or not there is such a bag.
      */
-    public boolean isAnyBagNotCurrent(Profile profile) {
+    public boolean isAnyBagInStates(Profile profile, Set<BagState> states) {
         Map<String, InterMineBag> savedBags = profile.getSavedBags();
         Map<String, InterMineBag> savedBagsCopy = new HashMap<String, InterMineBag>(savedBags);
         for (InterMineBag bag : savedBagsCopy.values()) {
-            if (bag.getState().equals(BagState.NOT_CURRENT.toString())) {
-                return true;
+            BagState stateOfBag;
+            try {
+                stateOfBag = BagState.valueOf(bag.getState());
+                if (states.contains(stateOfBag)) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                // Be tolerant.
+                LOG.warn("bag has invalid state: " + bag.getState());
             }
         }
         return false;
     }
+    /**
+     * Return true if there is at least one user bag for the given profile in
+     * the given state
+     * @param profile the user to fetch bags for
+     * @param state the state we are querying for.
+     * @return whether or not there is such a bag.
+     */
+    public boolean isAnyBagInState(Profile profile, BagState state) {
+        return isAnyBagInStates(profile, Collections.singleton(state));
+    }
 
+    /**
+     * Return true if there is at least one user bag for the given profile in
+     * the 'not_current' state.
+     * @param profile the user to fetch bags for
+     * @return Whether there is such a bag.
+     */
+    public boolean isAnyBagNotCurrent(Profile profile) {
+        return isAnyBagInState(profile, BagState.NOT_CURRENT);
+    }
+
+    private Set<BagState> notCurrentOrUpgrading = new HashSet<BagState>(
+            Arrays.asList(BagState.NOT_CURRENT, BagState.UPGRADING));
     /**
      * Return true if there is at least one user bag for the given profile in
      * the 'not_current' state or 'upgrading'.
@@ -235,16 +266,7 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public boolean isAnyBagNotCurrentOrUpgrading(Profile profile) {
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        Map<String, InterMineBag> savedBagsCopy = new HashMap<String, InterMineBag>(savedBags);
-
-        for (InterMineBag bag : savedBagsCopy.values()) {
-            if (bag.getState().equals(BagState.NOT_CURRENT.toString())
-                || bag.getState().equals(BagState.UPGRADING.toString())) {
-                return true;
-            }
-        }
-        return false;
+        return isAnyBagInStates(profile, notCurrentOrUpgrading);
     }
 
     /**
@@ -254,15 +276,7 @@ public class BagManager
      * @return a map from bag name to bag
      */
     public boolean isAnyBagToUpgrade(Profile profile) {
-        Map<String, InterMineBag> savedBags = profile.getSavedBags();
-        Map<String, InterMineBag> savedBagsCopy = new HashMap<String, InterMineBag>(savedBags);
-
-        for (InterMineBag bag : savedBagsCopy.values()) {
-            if (bag.getState().equals(BagState.TO_UPGRADE.toString())) {
-                return true;
-            }
-        }
-        return false;
+        return isAnyBagInState(profile, BagState.TO_UPGRADE);
     }
 
     /**

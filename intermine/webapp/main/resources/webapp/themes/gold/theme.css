@@ -400,3 +400,7 @@ div.bagDetails-page div.widget h3 { color:#662F2E; } /* div.basic-table a.link *
 div.bagDetails-page div.widget table.table-striped tbody td { border-top-color:#F7F5DA; } /* div.collection-of-collections div.collection-table h3 */
 div.bagDetails-page div.widget table.table-striped tbody tr:nth-child(odd) td { background-color:#FEFEF6; } /* div.collection-table table tbody tr.odd td */
 div.bagDetails-page div.widget table.table-striped tbody tr:hover td { background-color:#FFF3D3; }
+
+.intermine .im-column-th .dropdown-menu:after {
+  border-bottom-color: #662F2E;
+}

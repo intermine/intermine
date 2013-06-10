@@ -152,9 +152,10 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
     /**
      * {@inheritDoc}
      */
-    public void apply(Map<String, BigDecimal> pValuesPerTerm,
-            PopulationInfo population, Map<String, PopulationInfo> annotatedPopulationInfo) {
+    public void apply(Map<String, BigDecimal> pValuesPerTerm, PopulationInfo population, 
+            Map<String, PopulationInfo> annotatedPopulationInfo, Double maxValue) {
         BigDecimal pValue, pValueCorrected;
+        BigDecimal maxDecimal = new BigDecimal(maxValue);
         String term;
         for (Map.Entry<String, BigDecimal> pValuePerTerm : pValuesPerTerm.entrySet()) {
             pValue = pValuePerTerm.getValue();
@@ -172,10 +173,14 @@ public class GeneLenghtCorrectionCoefficient implements CorrectionCoefficient
                 float populationCountProbability = (float) populationPerTerm / population.getSize();
                 float correctionCoefficient =  geneLenghtProbability / populationCountProbability;
                 pValueCorrected = pValue.multiply(new BigDecimal(correctionCoefficient));
-                if (BigDecimal.ONE.compareTo(pValueCorrected) == -1) {
-                    pValuesPerTerm.put(term, BigDecimal.ONE);
-                } else {
-                    pValuesPerTerm.put(term, pValueCorrected);
+                // only record result if MAXIMUM value is GREATER THAN the new pValue
+                if (maxDecimal.compareTo(pValueCorrected) > 0) {
+                    // pValues shouldn't be greater than 1, it makes people uncomfortable.
+                    if (BigDecimal.ONE.compareTo(pValueCorrected) < 0) {
+                        pValuesPerTerm.put(term, BigDecimal.ONE);
+                    } else {
+                        pValuesPerTerm.put(term, pValueCorrected);
+                    }
                 }
             } else {
                 pValuesPerTerm.put(term, BigDecimal.ZERO);

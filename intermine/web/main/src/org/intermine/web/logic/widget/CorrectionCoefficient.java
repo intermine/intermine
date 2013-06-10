@@ -58,9 +58,11 @@ public interface CorrectionCoefficient
      * @param pValuesPerTerm
      * @param population
      * @param annotatedPopulationInfo
+     * @param maxValue the maximum value to return, ranges from 0.5 (default value) to 1.0. 
+     * determined by user, for display reasons.
      */
-    void apply(Map<String, BigDecimal> pValuesPerTerm,
-            PopulationInfo population, Map<String, PopulationInfo> annotatedPopulationInfo);
+    void apply(Map<String, BigDecimal> pValuesPerTerm, PopulationInfo population, 
+            Map<String, PopulationInfo> annotatedPopulationInfo, Double maxValue);
 
     /**
      * Return the key value pairs to put in the webservice result

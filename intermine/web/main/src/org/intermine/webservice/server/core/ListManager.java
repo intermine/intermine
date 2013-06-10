@@ -26,7 +26,7 @@ import org.intermine.api.profile.Profile;
  **/
 public class ListManager
 {
-    private static final long MAX_WAIT = 20000;
+    private static final long MAX_WAIT = 0;
     private final BagManager bagManager;
     private final Profile profile;
 
