@@ -540,7 +540,7 @@ public abstract class WebUtil
      * the class name.
      *
      * So <code>Employee.department.manager.age<code> becomes
-     * <code>Department > Manager > Years Alive</code>
+     * <code>Department &gt; Manager &gt; Years Alive</code>
      *
      * @param s The path string
      * @param api The InterMine API to use for model lookup.
