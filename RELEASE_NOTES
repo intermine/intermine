@@ -23,6 +23,7 @@
 #350 - Use debug mode in List Widgets
 #363 - Fix List Widgets failing with expecting JSONP by asking for JSON
 #356 - Fix Results Tables not opening from List Widgets in Firefox
+#357 - Color for MouseMine links
 
 intermine-list-widgets#164 - Select all items in a widget list if none are selected
 
