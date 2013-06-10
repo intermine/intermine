@@ -21,6 +21,7 @@
 #343 - Homepage boxes use CSS3 not background images
 #348 - Results tables dropdown menus theme colors
 #350 - Use debug mode in List Widgets
+#363 - Fix List Widgets failing with expecting JSONP by asking for JSON
 
 intermine-list-widgets#164 - Select all items in a widget list if none are selected
 
