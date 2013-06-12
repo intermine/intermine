@@ -1,16 +1,33 @@
 
 <project name="bio-webapp" default="default" basedir=".">
   
-  <description>build, test, package flymine-webapp</description>
+  <description>build, test, package bio-webapp</description>
   <import file="../../imbuild/application.xml"/>
+  <import file="../../imbuild/webapp.xml"/>
   
+  <target name="-pre-jar"
+          depends="application.-pre-jar, -add-struts-config"/>
+
   <target name="-add-struts-config"
     description="Append the struts config modifications to the webapp"
     depends="-pre-init">
-    <loadfile property="bio.web" srcFile="resources/webapp/WEB-INF/bio-web.xml"/>
+
+    <unwar src="${dist.war}" dest="${build.dir}/webapp/">
+      <patternset>
+        <include name="WEB-INF/web.xml"/>
+      </patternset>
+    </unwar>
+
+    <loadfile property="bio.web" srcFile="./resources/webapp/WEB-INF/web-bio.xml"/>
     <replace file="${build.dir}/webapp/WEB-INF/web.xml" value="${bio.web}">
       <!-- can't use normal token as xml must be parseable before this replacement -->
-      <replacetoken><![CDATA[<!--@PLUGIN_INCLUDE@-->]]></replacetoken>
+      <replacetoken><![CDATA[<!--@MODEL_INCLUDE@-->]]></replacetoken>
     </replace>
+
+     <war destfile="${dist.war}" update="true" >
+      <webinf dir="${build.dir}/webapp/WEB-INF/">
+      </webinf>
+    </war>
+
   </target>
 </project>
