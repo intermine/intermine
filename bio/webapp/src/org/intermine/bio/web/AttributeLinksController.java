@@ -60,6 +60,7 @@ public class AttributeLinksController extends TilesAction
 
     static final String ATTR_MARKER_RE = "<<attributeValue>>";
 
+    @SuppressWarnings("serial")
     private class ConfigMap extends HashMap<String, Object>
     {
         // empty
