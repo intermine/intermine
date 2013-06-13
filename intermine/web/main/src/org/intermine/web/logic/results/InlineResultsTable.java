@@ -46,9 +46,12 @@ public class InlineResultsTable
 {
     protected Collection<?> results;
     protected List<?> resultsAsList;
+    public List<?> getResultsAsList() {
+        return resultsAsList;
+    }
+
     // just those objects that we will display
-    @SuppressWarnings("unchecked")
-    protected List rowObjects = new ArrayList();
+    protected List<Object> rowObjects = new ArrayList<Object>();
     protected List<?> columnFullNames = null;
     // a list of list of values for the table
     protected Model model;
@@ -95,7 +98,7 @@ public class InlineResultsTable
             if (results instanceof LazyCollection<?>) {
                 this.resultsAsList = ((LazyCollection<?>) results).asList();
             } else {
-                this.resultsAsList = new ArrayList(results);
+                this.resultsAsList = new ArrayList<Object>(results);
             }
         }
         this.webConfig = webConfig;
