@@ -98,7 +98,7 @@ function showNetwork(wormRegulatoryNetwork, webapp_baseurl, webapp_path, project
                           'All larval TF-TF interactions in HOT regions ' +
                           'were removed. Tissue specificity and number of protein-protein interactions are ' +
                           'shown for each of the hierarchical levles. For further information, please ' +
-                          'refer to <a href="http://www.ncbi.nlm.nih.gov/pubmed/221177976" target="_blank">modENCODE ' +
+                          'refer to <a href="http://www.ncbi.nlm.nih.gov/pubmed/21177976" target="_blank">modENCODE ' +
                           'worm integration paper</a> on <i>Science</i>.</span></div>';
 
         jQuery('.description').html(description).css('background','silver').corner(); // or light blue (#B9E6F0)?
