@@ -63,7 +63,7 @@ public class IntergenicRegionUtil
         this.os = osw.getObjectStore();
         this.model = os.getModel();
         dataSource = (DataSource) DynamicUtil.createObject(Collections.singleton(DataSource.class));
-        dataSource.setName("FlyMine");
+        dataSource.setName("InterMine");
         try {
             dataSource = (DataSource) os.getObjectByExample(dataSource,
                     Collections.singleton("name"));
@@ -93,10 +93,10 @@ public class IntergenicRegionUtil
         Results results = BioQueries.findLocationAndObjects(os, Chromosome.class, Gene.class, false,
                 false, false, 1000);
         dataSet = (DataSet) DynamicUtil.createObject(Collections.singleton(DataSet.class));
-        dataSet.setName("FlyMine intergenic regions");
-        dataSet.setDescription("Intergenic regions created by FlyMine");
+        dataSet.setName("InterMine intergenic regions");
+        dataSet.setDescription("Intergenic regions created by InterMine");
         dataSet.setVersion("" + new Date()); // current time and date
-        dataSet.setUrl("http://www.flymine.org");
+        dataSet.setUrl("http://intermine.org");
         dataSet.setDataSource(dataSource);
 
         Iterator<?> resIter = results.iterator();
