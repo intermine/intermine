@@ -87,7 +87,7 @@ public class EntrezPublicationsRetriever
     private String osAlias = null, outputFile = null;
     private Set<Integer> seenPubMeds = new HashSet<Integer>();
     private Map<String, Item> authorMap = new HashMap<String, Item>();
-    private String cacheDirName;
+    private String cacheDirName = "build/";
     private ItemFactory itemFactory;
     private boolean loadFullRecord = false;
     private Map<String, Item> meshTerms = new HashMap<String, Item>();
@@ -125,7 +125,9 @@ public class EntrezPublicationsRetriever
      * @param cacheDirName The cache file
      */
     public void setCacheDirName(String cacheDirName) {
-        this.cacheDirName = cacheDirName;
+        if (!cacheDirName.startsWith("${")) {
+            this.cacheDirName = cacheDirName;
+        }
     }
 
     /**
