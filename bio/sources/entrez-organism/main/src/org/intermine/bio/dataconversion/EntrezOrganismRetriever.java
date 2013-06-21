@@ -32,10 +32,13 @@ import org.intermine.model.bio.Organism;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -43,8 +46,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
 
 /**
  * Class to fill in organism information using Entrez.
@@ -176,6 +179,11 @@ public class EntrezOrganismRetriever extends Task
         return new BufferedReader(new InputStreamReader(url.openStream()));
     }
 
+    protected static Reader getReader(Integer id) throws Exception {
+        URL url = new URL(ESUMMARY_URL + id);
+        return new BufferedReader(new InputStreamReader(url.openStream()));
+    }
+
 /*
 Example
 
@@ -299,13 +307,26 @@ Example
                 }
             } else if ("AkaTaxId".equals(name)) {
                 if (!"0".equals(characters.toString()) && this.isMerged) {
-                    throw new RuntimeException("Your taxon id "
+                    // Option 1 - Throw an exception
+//                    throw new RuntimeException("Your taxon id "
+//                            + organism.getAttribute("taxonId").getValue()
+//                            + " is replaced by " + characters.toString()
+//                            + ", please update.");
+
+                    // Option 2 - Write to a file
+                    try {
+                        Writer w = new FileWriter("build/organisms_merged.info");
+                        w.append("Your taxon id "
                             + organism.getAttribute("taxonId").getValue()
                             + " is replaced by " + characters.toString()
-                            + ", please update.");
+                            + ", please update.\n");
+                        w.flush();
+                        w.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
-
             name = null;
         }
     }
