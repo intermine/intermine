@@ -25,6 +25,7 @@
 #356 - Fix Results Tables not opening from List Widgets in Firefox
 #357 - Color for MouseMine links
 #??? - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library
+#378 - Show a button instead of a checkbox in List Widgets cull by gene length
 
 intermine-list-widgets#164 - Select all items in a widget list if none are selected
 
