@@ -19,7 +19,7 @@
 <!-- renamableElement.jsp -->
 <html:xhtml/>
  <span id="form_${uid}" style="display:none;">
-    <input type="text" id="newName_${uid}" name="newName_${uid}" value="${currentValue}" size="10" onkeypress="return noenter();" />
+    <input type="text" id="newName_${uid}" name="newName_${uid}" value="${currentValue}" size="60" onkeypress="return noenter();" />
     <input type="button" name="rename" value="Rename" onclick="renameElement('${name}','${type}','${index}')"/>
   </span>
   <span id="name_${uid}">
