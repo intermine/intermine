@@ -56,7 +56,7 @@
 <function>
   <name>getHeadResources</name>
   <function-class>org.intermine.web.logic.WebUtil</function-class>
-  <function-signature>java.util.List getHeadResources( java.lang.String )</function-signature>
+  <function-signature>java.util.List getHeadResources( java.lang.String, java.util.Map )</function-signature>
  </function>
  
  <function>

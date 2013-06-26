@@ -16,7 +16,7 @@
 <div class="description">
   <div class="sectionAddRemove">
     <span id="${issueType}addAllLink" onclick="addAll('${issueType}', '${arrayName}');" class="fakelink">Add all</span> |
-      <span id="${issueType}removeAllLink" onclick="removeAll('${issueType}', '${arrayName}');">Remove all</span>
+      <span id="${issueType}removeAllLink" class="fakelink" onclick="removeAll('${issueType}', '${arrayName}');">Remove all</span>
   </div>
 
   <span>
@@ -33,7 +33,7 @@
   </span>
 </div>
 
-<table border="0" cellspacing="0" class="inlineResultsTable" align="left">
+<table border="0" cellspacing="0" class="type-all-${issueType} inlineResultsTable" align="left">
   <thead>
     <tr>
       <td>Identifier You Entered</td>
@@ -115,7 +115,7 @@
                   onclick="addId2Bag('${resultElementRow.objectId}','${status.count -1}',
                                     '${resultElementRow.identifier}','${issueType}');">Add</span>
               &nbsp;&nbsp;
-              <span id="rem_${issueType}_${resultElementRow.objectId}"
+              <span id="rem_${issueType}_${resultElementRow.objectId}" class="fakelink"
                   onclick="removeIdFromBag('${resultElementRow.objectId}','${status.count -1}',
                                         '${resultElementRow.identifier}','${issueType}');">Remove</span>
             </td>

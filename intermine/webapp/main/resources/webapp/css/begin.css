@@ -229,10 +229,9 @@ html, body {
 
 #boxes div.inner {
     background: #FFF;
-    min-height: 235px;
+    min-height: 210px;
     border-bottom: 1px solid #dfdfdf;
-    margin-bottom: 2px;
-    padding-bottom: 14px;
+    padding-bottom: 60px;
 }
 
 #boxes div.inner div.bottom {
@@ -310,23 +309,26 @@ html, body {
 }
 
 #lists-bochs div.inner .textarea {
-    background: url('../themes/purple/homepage/textarea.png') no-repeat top left transparent;
     margin: 12px 0 10px 11px;
 }
 
 #lists-bochs div.inner textarea {
     padding: 6px 8px 4px 8px;
     height: 50px;
-    width: 240px;
+    width: 240px !important;
     border: none;
-    background: transparent;
+    -moz-box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
+    box-shadow: inset 0px 1px 4px 0px rgba(0,0,0,0.3);
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
 }
 
 #boxes div.input {
-    background: url("../themes/purple/homepage/input-bg.png") no-repeat scroll center top transparent;
     color: #888;
     height: 38px;
-    margin: 10px 0;
+    margin: 10px;
 }
 
 #boxes input[type =
@@ -350,11 +352,16 @@ html, body {
 
 #search-bochs input[type =
 "text"].input {
-    background: none repeat scroll 0 0 transparent;
-    border: medium none;
-    padding: 12px 20px 6px 24px;
-    width: 230px;
+    border: none;
+    padding: 10px;
+    width: 236px;
     font-size: 12px;
+    -moz-box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
+    -webkit-box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
+    box-shadow: inset 1px 1px 5px 0px rgba(0,0,0,0.3);
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
 }
 
 #search-bochs input[type =
