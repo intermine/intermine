@@ -8,23 +8,56 @@
  *
  */
 
-1.2.1 (fixes for WormBase)
+1.2.1 (fixes for C. elegans meeting)
 
+#??? - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library
+#113 - NULL URLs not handled
+#138 - Scroll to top after list creation on List Analysis page
+#192 - Links to external sites should always open in a new window enhancement please-test
+#213 - Do not get actual count of matches on identifier resolution page
 #279 - Updated jQuery UI to be compatible with newer jQuery
+#289 - Results table column summary fails to display when toggling between them 
+#292 - missing icon font stylesheet for Results Tables on Report pages
+#293 - network viewer toggle not working (flymine) 
+#294 - expression graph is blue in flymine
+#299 - remove publication displayer
 #306 - ref #279
 #307 - ref #279
+#309 - Enable working FASTA exporter
 #312 - Upgraded Backbone.js
-#138 - Scroll to top after list creation on List Analysis page
-#213 - Do not get actual count of matches on identifier resolution page
+#313 - YeastMine GFF3 and FASTA not working
+#315 - Friendly mine links to mousemine fail
+#317 - icons on results table not showing up
+#318 - Creating lists with invidual objects doesn't work anymore 
+#319 - Downloading query XML generates an error 
+#320 - tables struggle with outerjoined queries and counts
+#321 - Reordering columns in download doesn't work
+#325 - Summary incorrect on numerical column 
+#326 - Export dialogue is purple in wormmine
+#327 - Can't filter on organism name in query results 
+#328 - Can't delete tags
 #329 - Do nothing if nothing is entered in search boxes on Home page
+#330 - p-values greater than 1 when adjusting for gene length 
+#331 - can't download GO widget data in Safari 
+#334 - Add filter button broken 
+#335 - Submit event not suppressed in dropdown summary form bug please-test
+#336 - "Max value" ignored when correcting by gene length 
+#337 - Correct query not being generated when using portal
+#340 - PathQuery#verifyQuery() returns incorrect status with many OJs
 #341 - Make homepage boxes work with any length of text
 #343 - Homepage boxes use CSS3 not background images
+#347 - opening a Results Table from List Widget should preserve a Query back link or hide it
 #348 - Results tables dropdown menus theme colors
 #350 - Use debug mode in List Widgets
-#363 - Fix List Widgets failing with expecting JSONP by asking for JSON
+#351 - Cross references not linking out automatically
+#352 - Use labels in keyword search results 
+#354 - Cell formatters - make optional
 #356 - Fix Results Tables not opening from List Widgets in Firefox
 #357 - Color for MouseMine links
-#??? - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library
+#363 - Fix List Widgets failing with expecting JSONP by asking for JSON
+#367 - Limited space when renaming lists
+#368 - Inheritance not being handled correctly for list widgets 
+#371 - multiple formatters per class, based on path 
 #378 - Show a button instead of a checkbox in List Widgets cull by gene length
 
 intermine-list-widgets#164 - Select all items in a widget list if none are selected
