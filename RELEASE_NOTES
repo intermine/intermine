@@ -10,7 +10,7 @@
 
 1.2.1 (fixes for C. elegans meeting)
 
-#??? - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library
+#359 - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library
 #113 - NULL URLs not handled
 #138 - Scroll to top after list creation on List Analysis page
 #192 - Links to external sites should always open in a new window enhancement please-test
@@ -59,8 +59,7 @@
 #368 - Inheritance not being handled correctly for list widgets 
 #371 - multiple formatters per class, based on path 
 #378 - Show a button instead of a checkbox in List Widgets cull by gene length
-
-intermine-list-widgets#164 - Select all items in a widget list if none are selected
+#384 - Select all items in a widget list if none are selected
 
 1.2 (27 March 2013)
 
