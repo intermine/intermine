@@ -89,7 +89,7 @@ public class PortalQueryAction extends InterMineAction
         String origin = request.getParameter("origin");
         String className = request.getParameter("class");
         String extId = request.getParameter("externalid");
-        if ((extId == null) || (extId.length() <= 0)) {
+        if (StringUtils.isBlank(extId)) {
             extId = request.getParameter("externalids");
         }
 
@@ -103,7 +103,7 @@ public class PortalQueryAction extends InterMineAction
             SessionMethods.recordMessage(welcomeMsg, session);
         }
 
-        if (extId == null || extId.length() == 0) {
+        if (StringUtils.isBlank(extId)) {
             recordError(new ActionMessage("errors.badportalidentifiers"), request);
             return mapping.findForward("failure");
         }
@@ -113,9 +113,10 @@ public class PortalQueryAction extends InterMineAction
         // Use the old way = quicksearch template in case some people used to link in
         // without class name
         if ((idList.length == 1) && (className == null || className.length() == 0)) {
+            String defaultClass = properties.getProperty("webapp.portal.defaultClass");
             BagQueryRunner bagRunner = im.getBagQueryRunner();
             BagQueryResult bqr
-                = bagRunner.searchForBag("BioEntity", Arrays.asList(idList), null, false);
+                = bagRunner.searchForBag(defaultClass, Arrays.asList(idList), null, false);
 
             Map<Integer, List> matches = bqr.getMatches();
             Map<String, Map<String, Map<String, List>>> issues = bqr.getIssues();
@@ -246,11 +247,9 @@ public class PortalQueryAction extends InterMineAction
 
     private ActionForward goToResults(ActionMapping mapping, HttpSession session,
             WebResults webResults) {
-        PagedTable pc = new PagedTable(webResults);
-        String identifier = "col" + index++;
-        SessionMethods.setResultsTable(session, identifier, pc);
+        SessionMethods.setQuery(session, webResults.getPathQuery());
         return new ForwardParameters(mapping.findForward("results"))
-            .addParameter("table", identifier).addParameter("trail", "").forward();
+            .addParameter("trail", "").forward();
     }
 
     private ActionForward goToReport(ActionMapping mapping, String id) {

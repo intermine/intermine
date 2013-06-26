@@ -118,7 +118,9 @@ if ((typeof intermine != 'undefined') && (intermine.Service != null)) {
         console.log("Webservice is at version " + v);
     });
     if (intermine.widgets != null) {
-        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token);
+        // Make sure we have all deps required in `global.web.properties`, otherwise we fail!!!
+        var opts = { 'root': $SERVICE.root, 'token': $SERVICE.token, 'skipDeps': true };
+        window.widgets = new intermine.widgets($SERVICE.root, $SERVICE.token, opts);
     }
     var ua = jQuery.browser; // kinda evil, but best way to do this for now
     if (ua.msie && parseInt(ua.version, 10) < 9) {
