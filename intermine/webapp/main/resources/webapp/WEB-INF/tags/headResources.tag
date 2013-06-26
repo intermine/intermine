@@ -7,7 +7,7 @@
 <%@ attribute name="section" required="true" %>
 
 <!-- ${section} -->
-<c:forEach var="res" items="${imf:getHeadResources(section)}">
+<c:forEach var="res" items="${imf:getHeadResources(section, PROFILE.preferences)}">
     <!-- ${res.key} -->
     <c:set var="url" value="${res.url}"/>
     <c:choose>

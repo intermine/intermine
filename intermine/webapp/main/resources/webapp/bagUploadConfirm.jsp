@@ -23,7 +23,7 @@
   <c:when test="${!empty buildNewBag}">
     <div id="bigGreen" class='button <c:if test="${matchCount == 0}">inactive</c:if>'>
       <div class="left"></div><input id="saveList" type="button" name="confirmBagUpload"
-          value='Save a list of ${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
+          value='Save a list of ${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if>'
           onclick="if (!updateMatchIDs()) return false;jQuery('#bigGreen').addClass('clicked');validateBagName('bagUploadConfirmForm');"/><div class="right"></div>
     </div>
     </c:when>
@@ -44,28 +44,30 @@
 
   <div style="clear:both;"></div>
 
-  <h2>In your list</h2>
+  <%--
+  <h2>Add additional matches</h2>
   <ul>
-    <li class="added">${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if></li>
+    <!--<li class="added">${matchCount}&nbsp;${bagUploadConfirmForm.bagType}<c:if test="${matchCount != 1}">s</c:if></li>-->
     <c:if test="${! empty lowQualityMatches}">
-      <li class="lowQ"><a>Add</a> ${fn:length(lowQualityMatches)} Synonym match<c:if test="${fn:length(lowQualityMatches) > 1}">es</c:if></li>
+      <li class="lowQ"><a>Add</a> <!--${fn:length(lowQualityMatches)}--> Synonym match<c:if test="${fn:length(lowQualityMatches) > 1}">es</c:if></li>
       <script type="text/javascript">
         jQuery('#sidebar ul li.lowQ a').click(function(e) { addAll('lowQ', '${flatLowQualityMatches}'); });
       </script>
     </c:if>
     <c:if test="${! empty duplicates}">
-      <li class="duplicate"><a>Add</a> ${fn:length(duplicates)} Duplicate match<c:if test="${fn:length(duplicates) != 1}">es</c:if></li>
+      <li class="duplicate"><a>Add</a> <!--${fn:length(duplicates)}--> Duplicate match<c:if test="${fn:length(duplicates) != 1}">es</c:if></li>
       <script type="text/javascript">
         jQuery('#sidebar ul li.duplicate a').click(function(e) { addAll('duplicate', '${flatDuplicate}'); });
       </script>
     </c:if>
     <c:if test="${! empty convertedObjects}">
-      <li class="converted"><a>Add</a> ${fn:length(convertedObjects)} Converted type<c:if test="${fn:length(convertedObjects) != 1}">s</c:if></li>
+      <li class="converted"><a>Add</a> <!--${fn:length(convertedObjects)}--> Converted type<c:if test="${fn:length(convertedObjects) != 1}">s</c:if></li>
       <script type="text/javascript">
         jQuery('#sidebar ul li.converted a').click(function(e) { addAll('converted', '${flatConverted}'); });
       </script>
     </c:if>
   </ul>
+  --%>
 </div>
 
 <html:hidden property="matchIDs" styleId="matchIDs" />
@@ -135,7 +137,7 @@
     <div class="oneline">
       <h2>b) Add additional matches</h2>
       <p class="inline h2"><b><span id="addAllLink" onclick="addAll('all','${jsArray}');" class="fakelink">Add all</span> |
-      <span id="removeAllLink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
+      <span id="removeAllLink" class="fakelink" onclick="removeAll('all','${jsArray}');">Remove all</span></b></p>
     </div>
     <div style="clear:both;"></div>
 
@@ -228,7 +230,7 @@
   var listType = "${bagUploadConfirmForm.bagType}";
   var furtherMatchesText = "There are further matches provided below.";
   initForm("${buildNewBag}");
-  checkIfAlreadyInTheBag();
+  //checkIfAlreadyInTheBag();
 </script>
 
 <!-- /bagUploadConfirm.jsp -->
