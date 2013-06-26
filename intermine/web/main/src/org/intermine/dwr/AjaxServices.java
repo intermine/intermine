@@ -1228,9 +1228,9 @@ public class AjaxServices
             } else {
                 WebSearchable ws = null;
                 if (TagTypes.BAG.equals(type)) {
-                    ws = bm.getGlobalBag(tagged);
+                    ws = (WebSearchable) bm.getBag(profile, tagged); 
                 } else if (TagTypes.TEMPLATE.equals(type)) {
-                    ws = tm.getGlobalTemplate(tagged);
+                    ws = (WebSearchable) tm.getUserOrGlobalTemplate(profile, tagged);
                 }
                 if (ws == null) {
                     throw new RuntimeException("Could not find " + type + " " + tagged);

@@ -342,39 +342,6 @@
                         </center>
                     </div>
                </form>
-               
-				<script type="text/javascript">
-				(function() {
-				    var index = function(value) {
-				        switch (value) {
-				          case "${ids}":
-				          case "${WEB_PROPERTIES['begin.searchBox.example']}":
-				          case "":
-				            // if placeholder text or no text in place, take us to the index
-				            jQuery(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
-				            return false;
-				        }
-				        return true;
-				    }
-					
-					var button = jQuery('#mainSearchForm a'),
-					    input  = jQuery("input#actionsInput");
-					
-					button.click(function(e){
-			        	if( index(input.val()) ) {
-			        		document.getElementById("mainSearchForm").submit();
-			        	}
-					});
-				    input.keypress(function(e){
-				        if(e.which == 13){
-				        	if( index(input.val()) ) {
-				        		document.getElementById("mainSearchForm").submit();
-				        	}
-				        }
-				      });
-				})()
-				</script>
-
                 <div style="clear:both;"></div>
             </div>
         </div>
@@ -684,15 +651,6 @@
             jQuery(this).toggleClass(inputToggleClass);
             jQuery(this).val('');
         }
-    });
-
-    // associate functions with search that redir to a keyword objects listing instead of search results
-    jQuery('#mainSearchButton').click(function() {
-      // if placeholder text in place, take us elsewhere
-      if (jQuery("#actionsInput").val() == placeholder) {
-        jQuery(location).attr('href', "/${WEB_PROPERTIES['webapp.path']}/keywordSearchResults.do?searchBag=");
-        return false;
-      }
     });
 </script>
 
