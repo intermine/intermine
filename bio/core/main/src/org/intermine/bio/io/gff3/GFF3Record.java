@@ -317,9 +317,21 @@ public class GFF3Record
      * Return the first value of the Alias field from the attributes of this record.
      * @return the Alias from the attributes of this record or null of there isn't a value
      */
-    public String getAlias () {
+    public String getFirstAlias () {
         if (getAttributes().containsKey("Alias")) {
             return getAttributes().get("Alias").get(0);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return all values of the Alias field from the attributes of this record.
+     * @return the Alias from the attributes of this record or null of there isn't a value
+     */
+    public List<String> getAliases () {
+        if (getAttributes().containsKey("Alias")) {
+            return getAttributes().get("Alias");
         } else {
             return null;
         }
