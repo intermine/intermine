@@ -63,8 +63,7 @@
   </c:choose>
 
 <%-- show xrefs --%>
-<c:if test="${reportObject.refsAndCollections.count > 0}">
-    <h3>Lookup Report</h3>
+<c:if test="${not empty reportObject.refsAndCollections}">
     <ul>
       <c:forEach var="xrefCol" items="${reportObject.refsAndCollections}">
         <c:if test='${(xrefCol.key == "crossReferences") && (xrefCol.value.size > 0)}'>
@@ -72,9 +71,8 @@
            <c:forEach var="xrefMapItem" items="${xrefMap}">
              <c:if test="${xrefMapItem.key == xref.source.name}">
                <li>
-                 <a target="_new" href="${xrefMapItem.value.url}${xref.identifier}">${xref.source.name}: ${xref.identifier}
-                   <img title="${xref.source.name}: ${xref.identifier}" src="images/ext_link.png">
-                 </a>
+                 <c:set var="url" value="${fn:replace(xrefMapItem.value.url, '<<attributeValue>>', xref.identifier)}" />
+                 <a target="_new" class="ext_link" href="${url}">${xref.source.name}</a>
                </li>
              </c:if>
            </c:forEach>

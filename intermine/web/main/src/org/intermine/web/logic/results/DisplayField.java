@@ -135,7 +135,7 @@ public class DisplayField
         if (size == -1) {
             if (collection instanceof LazyCollection) {
                 try {
-                    LazyCollection lazyCollection = (LazyCollection) collection;
+                    LazyCollection<?> lazyCollection = (LazyCollection<?>) collection;
                     try {
                         // get the first batch to make sure that small collections have an accurate
                         // size
@@ -156,5 +156,4 @@ public class DisplayField
         }
         return size;
     }
-
 }

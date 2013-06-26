@@ -65,8 +65,6 @@ ol.widgetList li {
     margin-left:10px !important;
 }
 .active, a:link.active, a:visited.active {
-    background-color:#9F67AD;
-    color:white;
     padding:0 3px 0 3px;
     /*font-weight: bold;*/
 }

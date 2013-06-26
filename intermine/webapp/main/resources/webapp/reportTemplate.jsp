@@ -33,7 +33,7 @@
 <c:set var="templateName" value="${templateQuery.name}"/>
 <c:set var="uid" value="${fn:replace(placement, ' ', '_')}_${templateName}"/>
 <c:set var="placementAndField" value="${placement}_${templateName}"/>
-
+<c:set var="useLocalStorage" value="${WEB_PROPERTIES['use.localstorage']=='true'}"/>
 
 <c:choose>
     <c:when test="${reportObject != null}">
@@ -82,10 +82,26 @@
                     properties: {pageSize: 10}
                 };
                 jQuery('#${tableContainerId}').imWidget(options);
+                if(typeof(Storage) !=="undefined"){
+                  localStorage.${elemId} = "show";
+                }
                 $(this).unbind('click').click(function(e) {
                     $('#${tableContainerId}').slideToggle('fast');
+
+                    if(${useLocalStorage} && typeof(Storage) !=="undefined"){
+                      if(localStorage.${elemId} == "show"){
+                        localStorage.${elemId} = "hide";
+                      }else{
+                        localStorage.${elemId} = "show";
+                      }
+                    }	
                 });
             });
+            if(${useLocalStorage} && typeof(Storage)!=="undefined"){
+              if(localStorage.${elemId} == "show"){
+                 $('#${elemId} h3').click();
+              }
+            }
         });
     }).call(window, jQuery);
   </script>
