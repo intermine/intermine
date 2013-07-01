@@ -8,6 +8,10 @@
  *
  */
 
+1.2.2
+
+#390 - A tiny gap in the header of report pages
+
 1.2.1 (fixes for C. elegans meeting)
 
 #359 - Allow Inline Refs & Colls on Report pages to be displayed using Results Tables JS library
