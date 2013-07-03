@@ -127,12 +127,12 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(Arrays.asList("Employee.name", "Employee.age", "Employee.department.name"), q.getView());
         assertEquals(Arrays.asList("Employee.name", "Employee.age"), q2.getView());
         assertEquals(Collections.EMPTY_LIST, q2.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.age\"></query>", PathQueryBinding.marshal(q2, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.age\" longDescription=\"\"></query>", PathQueryBinding.marshal(q2, "test", "testmodel", 1));
         q2 = new PathQuery(q2);
         assertEquals(Arrays.asList("Employee.name", "Employee.age", "Employee.department.name"), q.getView());
         assertEquals(Arrays.asList("Employee.name", "Employee.age"), q2.getView());
         assertEquals(Collections.EMPTY_LIST, q2.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.age\"></query>", PathQueryBinding.marshal(q2, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.age\" longDescription=\"\"></query>", PathQueryBinding.marshal(q2, "test", "testmodel", 1));
         PathQuery q3 = new PathQuery(model);
         assertEquals("Queries with empty views are not valid",
                 Arrays.asList("No columns selected for output"), q3.verifyQuery());
@@ -243,11 +243,11 @@ public class PathQueryUnitTest extends TestCase
         assertEquals("Employee.name", q.getOrderBy().iterator().next().getOrderPath());
         assertEquals(Collections.EMPTY_LIST, q2.getOrderBy());
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" sortOrder=\"Employee.name asc\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" longDescription=\"\" sortOrder=\"Employee.name asc\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q2 = new PathQuery(q2);
         assertEquals(Collections.EMPTY_LIST, q2.getOrderBy());
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" sortOrder=\"Employee.name asc\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" longDescription=\"\" sortOrder=\"Employee.name asc\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 
     public void testAttributeConstraints() throws Exception {
@@ -418,12 +418,12 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(new HashSet<PathConstraint>(Arrays.asList(c, c2)), q.getConstraints().keySet());
         assertEquals(Collections.EMPTY_MAP, q2.getConstraints());
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" longDescription=\"\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         assertEquals(new HashSet<PathConstraint>(Arrays.asList(c, c2)), q3.getConstraints().keySet());
         assertEquals(Collections.EMPTY_LIST, q3.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q3, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" longDescription=\"\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/></query>", PathQueryBinding.marshal(q3, "test", "testmodel", 1));
         q.replaceConstraint(c2, new PathConstraintAttribute("Employee.flibble", ConstraintOp.EQUALS, "Flobble"));
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.flibble\" code=\"B\" op=\"=\" value=\"Flobble\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.age\" longDescription=\"\" constraintLogic=\"A and B\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.flibble\" code=\"B\" op=\"=\" value=\"Flobble\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         try {
             q3.replaceConstraint(c2, null);
             fail("Expected exception");
@@ -490,7 +490,7 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(OuterJoinStatus.INNER, OuterJoinStatus.valueOf("INNER"));
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
         assertTrue(q.isValid());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.department.name\"><join path=\"Employee.department\" style=\"INNER\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.department.name\" longDescription=\"\"><join path=\"Employee.department\" style=\"INNER\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.setOuterJoinStatus("Employee.department", null);
         assertEquals(Collections.emptyMap(), q.getOuterJoinStatus());
         assertEquals("Employee", q.getOuterJoinGroup("Employee"));
@@ -596,7 +596,7 @@ public class PathQueryUnitTest extends TestCase
         q.setDescription("Employee.name", "Flibble");
         assertEquals("Flibble", q.getDescription("Employee.name"));
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\"><pathDescription pathString=\"Employee.name\" description=\"Flibble\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"><pathDescription pathString=\"Employee.name\" description=\"Flibble\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         assertNull(q.getDescription("alkjhadlfkjh"));
         try {
             q.setDescription(null, "Flibble");
@@ -622,7 +622,7 @@ public class PathQueryUnitTest extends TestCase
         q.setDescription("Employee.name", null);
         assertEquals(Collections.EMPTY_MAP, q.getDescriptions());
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 
     public void testConstraintLogic() throws Exception {
@@ -650,7 +650,7 @@ public class PathQueryUnitTest extends TestCase
         q.setConstraintLogic("F");
         assertEquals("A and B and C", q.getConstraintLogic());
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" constraintLogic=\"A and B and C\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/><constraint path=\"Employee.age\" code=\"C\" op=\"&gt;\" value=\"2\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name\" longDescription=\"\" constraintLogic=\"A and B and C\"><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"&lt;\" value=\"50\"/><constraint path=\"Employee.age\" code=\"C\" op=\"&gt;\" value=\"2\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
     }
 
     public void testSubclassConstraint() throws Exception {
@@ -661,7 +661,7 @@ public class PathQueryUnitTest extends TestCase
         q.addView("Department.employees.title");
         assertNull(q.addConstraint(new PathConstraintSubclass("Department.employees", "Manager")));
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name Department.employees.title\"><constraint path=\"Department.employees\" type=\"Manager\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name Department.employees.title\" longDescription=\"\"><constraint path=\"Department.employees\" type=\"Manager\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.clearConstraints();
         try {
             q.addConstraint(new PathConstraintSubclass("Department.employees", "Manager"), "A");
@@ -755,7 +755,7 @@ public class PathQueryUnitTest extends TestCase
         assertEquals(Collections.singletonList("Path Department.employees.title in view list is not in the model"), q.verifyQuery());
         q.addConstraint(new PathConstraintSubclass("Department.employees", "Manager"));
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.employees.title\"><constraint path=\"Department.employees\" type=\"Manager\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.employees.title\" longDescription=\"\"><constraint path=\"Department.employees\" type=\"Manager\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.addConstraint(new PathConstraintAttribute("Employee.name", ConstraintOp.EQUALS, "Fred"));
         assertEquals(Collections.singletonList("Multiple root classes in query: Department and Employee"), q.verifyQuery());
         q.clearView();
@@ -782,7 +782,6 @@ public class PathQueryUnitTest extends TestCase
         q.addConstraint(new PathConstraintNull("Department", ConstraintOp.IS_NOT_NULL));
         q.addConstraint(new PathConstraintNull("Department.employees", ConstraintOp.IS_NULL));
         q.addConstraint(new PathConstraintNull("Department.name", ConstraintOp.IS_NULL));
-        q.addConstraint(new PathConstraintNull("Department.employees", ConstraintOp.IS_NOT_NULL));
         q.addConstraint(new PathConstraintBag("Department.name", ConstraintOp.IN, "bagname"));
         q.addConstraint(new PathConstraintBag("Department", ConstraintOp.NOT_IN, "bagname"));
         q.addConstraint(new PathConstraintIds("Department.name", ConstraintOp.IN, Arrays.asList(1, 2, 3)));
@@ -791,7 +790,19 @@ public class PathQueryUnitTest extends TestCase
         q.addConstraint(new PathConstraintMultiValue("Department", ConstraintOp.ONE_OF, Arrays.asList("Albert", "Charlie")));
         q.addConstraint(new PathConstraintMultiValue("Department.employees.age", ConstraintOp.ONE_OF, Arrays.asList("5", "Fred")));
         q.addConstraint(new PathConstraintInvalid("Department"));
-        assertEquals(Arrays.asList("Constraint Department IS NOT NULL cannot be applied to the root path", "Constraint Department.employees IS NULL is invalid - can only set IS NULL on an attribute", "Constraint Department.name IN bagname must not be on an attribute", "Constraint Department.name IN [1, 2, 3] must not be on an attribute", "Constraint Department ONE OF [Albert, Charlie] must be on an attribute", "Value (Fred) in list in constraint Department.employees.age ONE OF [5, Fred] is not in correct format for type of Integer", "Unrecognised constraint type org.intermine.pathquery.PathQueryUnitTest$PathConstraintInvalid"), q.verifyQuery());
+        List<String> expectedErrors = Arrays.asList(
+                "Constraint Department IS NOT NULL cannot be applied to the root path",
+                "Constraint Department.name IN bagname must not be on an attribute",
+                "Constraint Department.name IN [1, 2, 3] must not be on an attribute",
+                "Constraint Department ONE OF [Albert, Charlie] must be on an attribute",
+                "Value (Fred) in list in constraint Department.employees.age ONE OF [5, Fred] is not in correct format for type of Integer",
+                "Unrecognised constraint type org.intermine.pathquery.PathQueryUnitTest$PathConstraintInvalid"
+        );
+        List<String> errors = q.verifyQuery();
+        for (int i = 0; i < errors.size(); i++) {
+            assertEquals(expectedErrors.get(i), errors.get(i));
+        }
+        assertEquals(expectedErrors.size(), errors.size());
         assertEquals(Collections.singleton("bagname"), q.getBagNames());
         q.clearConstraints();
         q.setDescription("Department", "Fred");
@@ -807,20 +818,20 @@ public class PathQueryUnitTest extends TestCase
         q.setOuterJoinStatus("Department.employees", OuterJoinStatus.OUTER);
         q.addView("Department.employees.name");
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\"><join path=\"Department.employees\" style=\"OUTER\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\"><join path=\"Department.employees\" style=\"OUTER\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.addConstraint(new PathConstraintAttribute("Department.name", ConstraintOp.EQUALS, "Fred"));
         q.addConstraint(new PathConstraintAttribute("Department.employees.name", ConstraintOp.EQUALS, "Albert"));
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" constraintLogic=\"A and B\"><join path=\"Department.employees\" style=\"OUTER\"/><constraint path=\"Department.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Department.employees.name\" code=\"B\" op=\"=\" value=\"Albert\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\" constraintLogic=\"A and B\"><join path=\"Department.employees\" style=\"OUTER\"/><constraint path=\"Department.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Department.employees.name\" code=\"B\" op=\"=\" value=\"Albert\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.setConstraintLogic("A or B");
         assertEquals(Collections.singletonList("Logic expression is not compatible with outer join status: Cannot split OR constraint A or B"), q.verifyQuery());
         q.clearConstraints();
         q.clearOuterJoinStatus();
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\"></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         assertEquals("A", q.addConstraint(new PathConstraintLoop("Department.employees.department", ConstraintOp.EQUALS, "Department")));
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\"><constraint path=\"Department.employees.department\" op=\"=\" loopPath=\"Department\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\"><constraint path=\"Department.employees.department\" op=\"=\" loopPath=\"Department\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.addConstraint(new PathConstraintLoop("Department", ConstraintOp.EQUALS, "Department.employees.department"));
         assertEquals(Collections.singletonList("Cannot have two loop constraints between paths Department and Department.employees.department"), q.verifyQuery());
         q.clearConstraints();
@@ -835,10 +846,10 @@ public class PathQueryUnitTest extends TestCase
         assertEquals("A", q.addConstraint(new PathConstraintLoop("Department", ConstraintOp.EQUALS, "Department.employees.department")));
         q.addOrderBy("Department.employees.department.name", OrderDirection.ASC);
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" sortOrder=\"Department.employees.department.name asc\"><constraint path=\"Department\" op=\"=\" loopPath=\"Department.employees.department\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\" sortOrder=\"Department.employees.department.name asc\"><constraint path=\"Department\" op=\"=\" loopPath=\"Department.employees.department\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.clearOrderBy();
         assertEquals(Collections.EMPTY_LIST, q.verifyQuery());
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\"><constraint path=\"Department\" op=\"=\" loopPath=\"Department.employees.department\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\"><constraint path=\"Department\" op=\"=\" loopPath=\"Department.employees.department\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         q.setOuterJoinStatus("Department.employees", OuterJoinStatus.OUTER);
         assertEquals(Collections.singletonList("Loop constraint Department = Department.employees.department crosses an outer join"), q.verifyQuery());
         q.clearOuterJoinStatus();
@@ -939,7 +950,7 @@ public class PathQueryUnitTest extends TestCase
         q.addConstraint(new PathConstraintAttribute("Employee.department.company.name", ConstraintOp.EQUALS, "Ermintrude"));
         q.setConstraintLogic("(A and B) and (C or D)");
         q.setOuterJoinStatus("Employee.department", OuterJoinStatus.OUTER);
-        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name\" constraintLogic=\"A and B and (C or D)\"><join path=\"Employee.department\" style=\"OUTER\"/><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"=\" value=\"12\"/><constraint path=\"Employee.department.name\" code=\"C\" op=\"=\" value=\"Albert\"/><constraint path=\"Employee.department.company.name\" code=\"D\" op=\"=\" value=\"Ermintrude\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
+        assertEquals("<query name=\"test\" model=\"testmodel\" view=\"Employee.name Employee.department.name Employee.department.company.name\" longDescription=\"\" constraintLogic=\"A and B and (C or D)\"><join path=\"Employee.department\" style=\"OUTER\"/><constraint path=\"Employee.name\" code=\"A\" op=\"=\" value=\"Fred\"/><constraint path=\"Employee.age\" code=\"B\" op=\"=\" value=\"12\"/><constraint path=\"Employee.department.name\" code=\"C\" op=\"=\" value=\"Albert\"/><constraint path=\"Employee.department.company.name\" code=\"D\" op=\"=\" value=\"Ermintrude\"/></query>", PathQueryBinding.marshal(q, "test", "testmodel", 1));
         assertEquals("Employee", q.getRootClass());
         assertEquals(Collections.EMPTY_MAP, q.getSubclasses());
         Map<String, String> outerJoinGroups = new HashMap<String, String>();
@@ -998,9 +1009,9 @@ public class PathQueryUnitTest extends TestCase
         PathQuery q = PathQueryBinding.unmarshalPathQuery(new StringReader("<query name=\"\" model=\"testmodel\" view=\"Department.name Department.employees.name Department.employees.company.name Department.employees.title Department.employees.company.departments.name\" sortOrder=\"Department.employees.company.name asc Department.name asc\" constraintLogic=\"A and B and C and D\"><join path=\"Department.employees.address\" style=\"INNER\"/><join path=\"Department.employees\" style=\"INNER\"/><join path=\"Department.employees.company\" style=\"INNER\"/><pathDescription pathString=\"Department\" description=\"wurble\"/><pathDescription pathString=\"Department.employees.company\" description=\"flibble\"/><constraint path=\"Department.employees.address.address\" code=\"A\" op=\"=\" value=\"sdfsg\"/><constraint path=\"Department.employees\" type=\"CEO\"/><constraint path=\"Department.employees.company.vatNumber\" code=\"B\" op=\"=\" value=\"435\"/><constraint path=\"Department\" code=\"C\" op=\"=\" loopPath=\"Department.employees.company.departments\"/><constraint path=\"Department\" code=\"D\" op=\"=\" loopPath=\"Department.company.departments\"/></query>"), 1);
         List<String> messages = Arrays.asList("Removed path Department.employees.company.name from view, because you removed the subclass constraint that it depended on.", "Removed path Department.employees.title from view, because you removed the subclass constraint that it depended on.", "Removed path Department.employees.company.departments.name from view, because you removed the subclass constraint that it depended on.", "Removed constraint Department.employees.company.vatNumber = 435 because you removed the subclass constraint it depended on.", "Removed constraint Department = Department.employees.company.departments because you removed the subclass constraint it depended on.", "Removed path Department.employees.company.name from ORDER BY, because you removed the subclass constraint it depended on.", "Removed description on path Department.employees.company, because you removed the subclass constraint it depended on.");
         assertEquals(messages, q.removeSubclassAndFixUp("Department.employees"));
-        assertEquals("<query name=\"\" model=\"testmodel\" view=\"Department.name Department.employees.name\" sortOrder=\"Department.name asc\" constraintLogic=\"A and D\"><join path=\"Department.employees.address\" style=\"INNER\"/><join path=\"Department.employees\" style=\"INNER\"/><pathDescription pathString=\"Department\" description=\"wurble\"/><constraint path=\"Department.employees.address.address\" code=\"A\" op=\"=\" value=\"sdfsg\"/><constraint path=\"Department\" code=\"D\" op=\"=\" loopPath=\"Department.company.departments\"/></query>", PathQueryBinding.marshal(q, "", "testmodel", 1));
+        assertEquals("<query name=\"\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\" sortOrder=\"Department.name asc\" constraintLogic=\"A and D\"><join path=\"Department.employees.address\" style=\"INNER\"/><join path=\"Department.employees\" style=\"INNER\"/><pathDescription pathString=\"Department\" description=\"wurble\"/><constraint path=\"Department.employees.address.address\" code=\"A\" op=\"=\" value=\"sdfsg\"/><constraint path=\"Department\" code=\"D\" op=\"=\" loopPath=\"Department.company.departments\"/></query>", PathQueryBinding.marshal(q, "", "testmodel", 1));
         assertEquals(Collections.emptyList(), q.removeSubclassAndFixUp("Department.employees"));
-        assertEquals("<query name=\"\" model=\"testmodel\" view=\"Department.name Department.employees.name\" sortOrder=\"Department.name asc\" constraintLogic=\"A and D\"><join path=\"Department.employees.address\" style=\"INNER\"/><join path=\"Department.employees\" style=\"INNER\"/><pathDescription pathString=\"Department\" description=\"wurble\"/><constraint path=\"Department.employees.address.address\" code=\"A\" op=\"=\" value=\"sdfsg\"/><constraint path=\"Department\" code=\"D\" op=\"=\" loopPath=\"Department.company.departments\"/></query>", PathQueryBinding.marshal(q, "", "testmodel", 1));
+        assertEquals("<query name=\"\" model=\"testmodel\" view=\"Department.name Department.employees.name\" longDescription=\"\" sortOrder=\"Department.name asc\" constraintLogic=\"A and D\"><join path=\"Department.employees.address\" style=\"INNER\"/><join path=\"Department.employees\" style=\"INNER\"/><pathDescription pathString=\"Department\" description=\"wurble\"/><constraint path=\"Department.employees.address.address\" code=\"A\" op=\"=\" value=\"sdfsg\"/><constraint path=\"Department\" code=\"D\" op=\"=\" loopPath=\"Department.company.departments\"/></query>", PathQueryBinding.marshal(q, "", "testmodel", 1));
         q = new PathQuery(model);
         q.addView("asdkfgh");
         try {
