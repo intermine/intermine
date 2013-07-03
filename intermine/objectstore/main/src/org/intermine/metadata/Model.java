@@ -40,6 +40,7 @@ public class Model
 {
     private static Map<String, Model> models = new HashMap<String, Model>();
     protected static final String ENDL = System.getProperty("line.separator");
+    private static final String DEFAULT_PACKAGE = "org.intermine.model";
     private final String modelName;
     private final String packageName;
     private final Map<String, ClassDescriptor> cldMap = new LinkedHashMap<String,
@@ -198,10 +199,12 @@ public class Model
     public ClassDescriptor getClassDescriptorByName(String name) {
         ClassDescriptor cd = cldMap.get(name);
         if (cd == null) {
-            return cldMap.get(getPackageName() + "." + name);
-        } else {
-            return cd;
+            cd = cldMap.get(getPackageName() + "." + name);
         }
+        if (cd == null) { // still, maybe it's in the default package?
+            cd = cldMap.get(DEFAULT_PACKAGE + "." + name);
+        }
+        return cd;
     }
 
     /**
