@@ -11,6 +11,7 @@ package org.intermine.bio.dataconversion;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -23,6 +24,7 @@ import org.intermine.bio.dataconversion.IdResolver;
 import org.intermine.bio.dataconversion.IdResolverService;
 import org.intermine.bio.io.gff3.GFF3Record;
 import org.intermine.metadata.Model;
+import org.intermine.util.StringUtil;
 import org.intermine.xml.full.Attribute;
 import org.intermine.xml.full.Item;
 
@@ -93,27 +95,55 @@ public class RedFlyGFF3RecordHandler extends GFF3RecordHandler
 
         List<String> dbxrefs = record.getDbxrefs();
 
+        //Format changed. Ref to FlyReg.
         if (dbxrefs != null) {
             Iterator<String> dbxrefsIter = dbxrefs.iterator();
 
             while (dbxrefsIter.hasNext()) {
                 String dbxref = dbxrefsIter.next();
-                int colonIndex = dbxref.indexOf(":");
-                if (colonIndex == -1) {
-                    throw new RuntimeException("external reference not understood: " + dbxref);
-                }
+                if (dbxref.contains(",")) {
+                    List<String> refList = new ArrayList<String>(
+                            Arrays.asList(StringUtil.split(dbxref, ",")));
+                    for (String ref : refList) {
+                        ref = ref.trim();
+                        int colonIndex = ref.indexOf(":");
+                        if (colonIndex == -1) {
+                            throw new RuntimeException("external reference not understood: " + ref);
+                        }
 
-                if (dbxref.startsWith("Flybase:")) {
-                    geneName = dbxref.substring(colonIndex + 1);
-                } else {
-                    if (dbxref.startsWith("PMID:")) {
-                        pubmedId = dbxref.substring(colonIndex + 1);
-                    } else {
-                        if (dbxref.startsWith(REDFLY_PREFIX)) {
-                            redflyID = dbxref.substring(colonIndex + 1);
+                        if (ref.startsWith("FB:")) {
+                            geneName = ref.substring(colonIndex + 1);
                         } else {
-                            throw new RuntimeException("unknown external reference type: "
-                                    + dbxref);
+                            if (ref.startsWith("PMID:")) {
+                                pubmedId = ref.substring(colonIndex + 1);
+                            } else {
+                                if (ref.startsWith(REDFLY_PREFIX)) {
+                                    redflyID = ref.substring(colonIndex + 1);
+                                } else {
+                                    throw new RuntimeException("unknown external reference type: "
+                                            + ref);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    int colonIndex = dbxref.indexOf(":");
+                    if (colonIndex == -1) {
+                        throw new RuntimeException("external reference not understood: " + dbxref);
+                    }
+
+                    if (dbxref.startsWith("Flybase:")) {
+                        geneName = dbxref.substring(colonIndex + 1);
+                    } else {
+                        if (dbxref.startsWith("PMID:")) {
+                            pubmedId = dbxref.substring(colonIndex + 1);
+                        } else {
+                            if (dbxref.startsWith(REDFLY_PREFIX)) {
+                                redflyID = dbxref.substring(colonIndex + 1);
+                            } else {
+                                throw new RuntimeException("unknown external reference type: "
+                                        + dbxref);
+                            }
                         }
                     }
                 }
